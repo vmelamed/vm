@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects", "Aspects\vm.Aspects.csproj", "{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E6591A70-F79F-4461-90C2-A9D03611B70F}"
+	ProjectSection(SolutionItems) = preProject
+		Common Items\AssemblyInfo.global.cs = Common Items\AssemblyInfo.global.cs
+		Common Items\Dictionary.xml = Common Items\Dictionary.xml
+		Common Items\vm.snk = Common Items\vm.snk
+		Common Items\vmAllRules.ruleset = Common Items\vmAllRules.ruleset
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

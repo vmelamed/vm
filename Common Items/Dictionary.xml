@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Dictionary>
+    <!--
+    See http://msdn.microsoft.com/en-us/library/bb514188.aspx
+    -->
+    <Words>
+        <Recognized>
+            <!--
+            To include a term in the list of terms that code analysis identifies as correctly spelled, 
+            add the term as the inner text of a Dictionary/Words/Recognized/Word element. 
+            Terms in Dictionary/Words/Recognized/Word elements are not case-sensitive.
+            
+            This is a list of case-insensitive words that do not exist in the dictionary
+            but you still want to be considered as recognized by 
+            IdentifiersShouldBeSpelledCorrectly. Do not add compound words (e.g. 'FileName') 
+            to this list as this will cause CompoundWordsShouldBeBeCasedCorrectly to fire on 
+            usages of the compound word stating that they should be changed to their discrete equivalent 
+            (for example 'FileName' -> 'Filename').
+            -->
+            <Word>hi</Word>
+            <Word>lo</Word>
+            <Word>vm</Word>
+            <Word>Melamed</Word>
+            <Word>uuid</Word>
+            <Word>dto</Word>
+            <Word>validator</Word>
+            <Word>validators</Word>
+            <Word>validateable</Word>
+            <Word>configurator</Word>
+            <Word>configurators</Word>
+            <Word>cloneable</Word>
+            <Word>mvc</Word>
+            <Word>sha</Word>
+            <Word>ruleset</Word>
+            <Word>quot</Word>
+            <Word>eof</Word>
+            <Word>msmq</Word>
+            <Word>tx</Word>
+            <!-- transaction -->
+            <Word>WSHttpBinding</Word>
+            <Word>NetTcpBinding</Word>
+            <Word>NetMsmqBinding</Word>
+            <Word>NetNamedPipeBinding</Word>
+            <Word>Mex</Word>
+            <Word>Ser</Word>
+            <Word>Xxp</Word>
+            <Word>Dcs</Word>
+            <Word>validatable</Word>
+            <Word>Combinator</Word>
+            <Word>Combinators</Word>
+            <Word>subquery</Word>
+            <Word>ip</Word>
+        </Recognized>
+        <Unrecognized>
+            <!-- 
+            This is a list of case-insensitive words that exist in the dictionary
+            but you do not want to be recognized by IdentifiersShouldBeSpelledCorrectly.
+            Do not add deprecated terms to this list, instead add these to the 
+            <Deprecated> section below.
+            -->
+            <Word>cb</Word>
+        </Unrecognized>
+        <Deprecated>
+            <!-- 
+            This is a list of deprecated terms with their preferred alternates and is 
+            used by UsePreferredTerms. The deprecated terms are case-insensitive, 
+            however, make sure to pascal-case the preferred alternates. If a word 
+            does not have a preferred alternate, simply leave it blank.                                           
+            -->
+            <Term PreferredAlternate="EnterpriseServices">complus</Term>
+        </Deprecated>
+        <Compound>
+            <!-- 
+            This is a list of discrete terms with their compound alternates and is used by 
+            CompoundWordsShouldBeCasedCorrectly. These are words that exist in the 
+            dictionary as discrete terms, however, should actually be cased as compound words. 
+            For example, 'Filename' exists in the dictionary and hence the spelling rules will 
+            not see it as unrecognized but its actual preferred usage is 'FileName'; adding it
+            below causes CompoundWordsShouldBeCasedCorrectly to fire. The discrete terms are 
+            case-insensitive, however, be sure to pascal-case the compound alternates.
+            Any discrete terms added below automatically get added to the list of discrete
+            exceptions to prevent CompoundWordsShouldBeCasedCorrectly from firing both on the
+            compound word (for example 'WhiteSpace') and its discrete alternate (for example 
+            'Whitespace').
+            -->
+            <Term CompoundAlternate="DataBind">databind</Term>
+            <Term CompoundAlternate="CrossCutting">crosscutting</Term>
+            <Term CompoundAlternate="DateTime">datetime</Term>
+            <Term CompoundAlternate="TimeStamp">timestamp</Term>
+            <Term CompoundAlternate="ByName">byname</Term>
+            <Term CompoundAlternate="ByNames">bynames</Term>
+            <Term CompoundAlternate="NonProxy">nonproxy</Term>
+            <Term CompoundAlternate="CipherText">ciphertext</Term>
+            <Term CompoundAlternate="HiLo">hilo</Term>
+        </Compound>
+        <DiscreteExceptions>
+            <!--
+            This is a list of case-insensitive exceptions to the CompoundWordsShouldBeCasedCorrectly 
+            discrete term check. As this check works solely on the basis of whether two consecutive
+            tokens exists in the dictionary, it can have a high false positive rate. For example, 
+            'onset' exists in the dictionary but the user probably intended it to be 'OnSet'. 
+            Adding this word below prevents this rule from firing telling the user to change 'OnSet' 
+            to 'Onset'.
+            -->
+        </DiscreteExceptions>
+    </Words>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>vm</Acronym>
+            <Acronym>ISO</Acronym>
+            <Acronym>VT</Acronym>
+            <Acronym>COM</Acronym>
+            <Acronym>WCF</Acronym>
+            <Acronym>NaN</Acronym>
+            <Acronym>MSMQ</Acronym>
+            <Acronym>UPN</Acronym>
+            <Acronym>SPN</Acronym>
+            <!-- Comma separated values -->
+            <Acronym>CSV</Acronym>
+            <!-- Comma separated values -->
+            <Acronym>TSV</Acronym>
+            <!-- Tab separated values -->
+            <Acronym>DSV</Acronym>
+            <!-- Delimiter separated values -->
+            <Acronym>ORM</Acronym>
+            <!-- Object/Relational Mapping -->
+            <Acronym>WSHttpBinding</Acronym>
+            <Acronym>NetTcpBinding</Acronym>
+            <Acronym>NetMsmqBinding</Acronym>
+            <Acronym>NetNamedPipeBinding</Acronym>
+            <Acronym>DPAPI</Acronym>
+            <Acronym>ISO</Acronym>
+            <Acronym>UPN</Acronym>
+            <Acronym>SPN</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+</Dictionary>
