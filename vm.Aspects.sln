@@ -10,8 +10,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Common Items\AssemblyInfo.global.cs = Common Items\AssemblyInfo.global.cs
 		Common Items\Dictionary.xml = Common Items\Dictionary.xml
 		Common Items\vm.snk = Common Items\vm.snk
+		Common Items\vm.Test.snk = Common Items\vm.Test.snk
 		Common Items\vmAllRules.ruleset = Common Items\vmAllRules.ruleset
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper", "Aspects\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj", "{372A2FEF-C004-498C-B57F-CF0ACA66C37B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper.Test", "Aspects\Diagnostics\Test\ObjectDumperTest\vm.Aspects.Diagnostics.ObjectDumper.Test.csproj", "{39774AEF-F8CD-4605-A4B2-E563D289CCBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub", "Aspects\Diagnostics\Test\ObjectDumperPartialTrustTestStub\vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub.csproj", "{2C655AF4-8D80-44F1-B64C-F82B763ACF12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,8 +32,24 @@ Global
 		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39774AEF-F8CD-4605-A4B2-E563D289CCBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39774AEF-F8CD-4605-A4B2-E563D289CCBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39774AEF-F8CD-4605-A4B2-E563D289CCBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39774AEF-F8CD-4605-A4B2-E563D289CCBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39774AEF-F8CD-4605-A4B2-E563D289CCBC} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
+		{2C655AF4-8D80-44F1-B64C-F82B763ACF12} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 	EndGlobalSection
 EndGlobal
