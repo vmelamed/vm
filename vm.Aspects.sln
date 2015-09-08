@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{062E90FF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers", "Aspects\Security\Cryptography\Ciphers\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers.Test", "Aspects\Security\Cryptography\Ciphers\Test\vm.Aspects.Security.Cryptography.Ciphers.Test.csproj", "{B55FEE15-775E-462D-B20F-B55BB552EA85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,5 +78,6 @@ Global
 		{39774AEF-F8CD-4605-A4B2-E563D289CCBC} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 		{2C655AF4-8D80-44F1-B64C-F82B763ACF12} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 		{FDF6E9BF-CB09-4E23-9E96-12B203316674} = {27F0A5FF-BA34-402D-84B0-76775021229A}
+		{B55FEE15-775E-462D-B20F-B55BB552EA85} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 	EndGlobalSection
 EndGlobal
