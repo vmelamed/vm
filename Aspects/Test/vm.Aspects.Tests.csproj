@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B55FEE15-775E-462D-B20F-B55BB552EA85}</ProjectGuid>
+    <ProjectGuid>{37B30FDB-7D91-49F8-8C1C-88036D1314FC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers.Test</RootNamespace>
-    <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers.Test</AssemblyName>
+    <RootNamespace>vm.Aspects.Tests</RootNamespace>
+    <AssemblyName>vm.Aspects.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
@@ -67,7 +67,7 @@
     <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
     <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
@@ -75,81 +75,72 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET45</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.Interception.3.5.1405-prerelease\lib\Net45\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.Interception.3.5.1405-prerelease\lib\Net45\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -164,67 +155,75 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CertificateFactory.cs" />
-    <Compile Include="DpapiCipherTest1.cs" />
-    <Compile Include="EncryptedKeyCipherTest.cs" />
-    <Compile Include="EncryptedKeyCipherTest1.cs" />
-    <Compile Include="EncryptedNewKeyCipherTest.cs" />
-    <Compile Include="EncryptedNewKeyHashedCipherTest.cs" />
-    <Compile Include="EncryptedNewKeySha256SignedCipherTest.cs" />
-    <Compile Include="EncryptedNewKeySignedCipherTest.cs" />
-    <Compile Include="ExtensionsTest.cs" />
-    <Compile Include="GenericCipherTest.cs" />
-    <Compile Include="GenericHasherTest.cs" />
-    <Compile Include="HashAlgorithmFactoryTest.cs" />
-    <Compile Include="HasherTest.cs" />
-    <Compile Include="KeyFileTest.cs" />
-    <Compile Include="NullCipherTest.cs" />
-    <Compile Include="NullHasherTest.cs" />
-    <Compile Include="NullStreamTest.cs" />
-    <Compile Include="PasswordHasherTest.cs" />
-    <Compile Include="PasswordProtectedKeyCipherTest.cs" />
+    <Compile Include="AssemblyInitialized.cs" />
+    <Compile Include="ContainerRegistrarTests.cs" />
+    <Compile Include="DIContainerExtentions2Tests.cs" />
+    <Compile Include="DIContainerExtentionsTests.cs" />
+    <Compile Include="DIContainerGenericExtentions2Tests.cs" />
+    <Compile Include="DIContainerGenericExtentionsTests.cs" />
+    <Compile Include="DIContainerTests.cs" />
+    <Compile Include="EnumFlagsExtensionsTests.cs" />
+    <Compile Include="Facilities\ClockTests.cs" />
+    <Compile Include="Facilities\FacilityRegistrarIntegrationTests.cs" />
+    <Compile Include="Facilities\GenericIClockTests.cs" />
+    <Compile Include="Facilities\GenericIGuidGeneratorTests.cs" />
+    <Compile Include="Facilities\GuidGeneratorTests.cs" />
+    <Compile Include="Facilities\TestClockTests.cs" />
+    <Compile Include="Facilities\TestGuidGeneratorTests.cs" />
+    <Compile Include="IdentityTester.cs" />
+    <Compile Include="IListExtensionsTest.cs" />
+    <Compile Include="LambdaExpressionExtensionsTests.cs" />
+    <Compile Include="Validation\Helper.cs" />
+    <Compile Include="Validation\ValidatorBeforeAfterTests.cs" />
+    <Compile Include="Validation\ValidatorEnumDomainTests.cs" />
+    <Compile Include="Validation\ValidatorNonemptyStringTest.cs" />
+    <Compile Include="Validation\ValidatorOptionalStringLengthTests.cs" />
+    <Compile Include="Validation\ValidatorPositivityTests.cs" />
+    <Compile Include="Validation\ValidatorUrlTests.cs" />
+    <Compile Include="Validation\ValidatorXmlStringTests.cs" />
+    <None Include="ObjectPoolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtectedKeyCipherDIAlgorithmTest.cs" />
-    <Compile Include="ProtectedKeyCipherTest.cs" />
-    <Compile Include="RsaSignerSha256Test.cs" />
-    <Compile Include="RsaSignerTest.cs" />
-    <Compile Include="SymmetricAlgorithmFactoryTest.cs" />
-    <Compile Include="SymmetricKeyLocationStrategyTest.cs" />
-    <Compile Include="TestUtilities.cs" />
-    <Compile Include="Xml\EncryptedKeyXmlCipherTest.cs" />
-    <Compile Include="Xml\EncryptedNewKeySignedXmlCipherTest.cs" />
-    <Compile Include="Xml\EncryptedNewKeyXmlCipherTest.cs" />
-    <Compile Include="Xml\GenericXmlCipherTest.cs" />
-    <Compile Include="Xml\GenericXmlSignerTest.cs" />
-    <Compile Include="Xml\ProtectedKeyXmlCipherTest.cs" />
-    <Compile Include="Xml\RsaXmlSignerSha256-1Test.cs" />
-    <Compile Include="Xml\RsaXmlSignerSha256Test.cs" />
-    <Compile Include="Xml\RsaXmlSignerTest.cs" />
-    <Compile Include="Xml\RsaXmlSignerWithKeyInfoTest.cs" />
-    <Compile Include="Xml\TestData.cs" />
+    <Compile Include="ReflectionExtensionsTests.cs" />
+    <None Include="RegexConstantsTests.cs" />
+    <Compile Include="RegistrationLookupTests.cs" />
+    <Compile Include="ResolveNameAttributeTests.cs" />
+    <Compile Include="TargetClasses.cs" />
+    <Compile Include="Utilities.cs" />
+    <None Include="Validation\DataContract.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Validation\Expression.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Validation\Microsoft.Serialization.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Validation\TestDataUrlValidator.csv" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\Common Items\vm.Test.snk">
+    <None Include="..\..\Common Items\vm.Test.snk">
       <Link>vm.Test.snk</Link>
     </None>
     <None Include="app.config" />
-    <None Include="CreateCertificates.cmd" />
-    <None Include="CreateCertificates.ps1" />
     <None Include="packages.config" />
+    <None Include="RegexTestData.csv" />
+    <None Include="test.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="testWithError.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
+    <ProjectReference Include="..\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
       <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
       <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\vm.Aspects.Security.Cryptography.Ciphers.csproj">
-      <Project>{65e08f3e-21ac-4bb0-a7a3-6eacbadae9dd}</Project>
-      <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
+    <ProjectReference Include="..\vm.Aspects.csproj">
+      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
+      <Name>vm.Aspects</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Readme.txt" />
-    <Content Include="Xml\TestOrder.xml" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
