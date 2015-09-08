@@ -19,9 +19,10 @@ namespace vm.Aspects
         /// <param name="value">The value to be tested.</param>
         /// <returns><see langword="true" /> if the value has no others but only some (or none) of the specified flags; otherwise, <see langword="false" />.</returns>
         public static bool IsEmpty<TEnum>(
-            this TEnum value) where TEnum : struct, IConvertible
+            this TEnum value) where TEnum : struct
         {
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The value must be an enum.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
@@ -43,9 +44,10 @@ namespace vm.Aspects
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Flags", Justification="Makes it clerer that it is all about flags.")]
         public static bool HasAnyFlags<TEnum>(
             this TEnum value,
-            TEnum flags) where TEnum : struct, IConvertible
+            TEnum flags) where TEnum : struct
         {
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The value must be an enum.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
@@ -68,9 +70,10 @@ namespace vm.Aspects
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="flags", Justification="Makes it clerer that it is all about flags.")]
         public static bool HasAllFlags<TEnum>(
             this TEnum value,
-            TEnum flags) where TEnum : struct, IConvertible
+            TEnum flags) where TEnum : struct
         {
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The value must be an enum.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
@@ -93,9 +96,10 @@ namespace vm.Aspects
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="flags", Justification="Makes it clerer that it is all about flags.")]
         public static bool HasNoFlagsBut<TEnum>(
             this TEnum value,
-            TEnum flags) where TEnum : struct, IConvertible
+            TEnum flags) where TEnum : struct
         {
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The value must be an enum.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
