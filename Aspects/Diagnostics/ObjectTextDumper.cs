@@ -565,6 +565,8 @@ namespace vm.Aspects.Diagnostics
             object value,
             Type type)
         {
+            Contract.Requires<ArgumentNullException>(state != null, nameof(state));
+
             if (value==null)
                 return false;
 
@@ -583,7 +585,7 @@ namespace vm.Aspects.Diagnostics
                 return false;
 
             if (string.IsNullOrWhiteSpace(dumpMethodName))
-                dumpMethodName = "Dump";
+                dumpMethodName = nameof(Dump);
 
             MethodInfo dumpMethod = null;   // best match
             MethodInfo dumpMethod2 = null;  // second best
@@ -768,6 +770,7 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute,
             bool enumerateCustom = false)
         {
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
             Contract.Requires(sequence != null);
 
             var sequenceType = sequence.GetType();

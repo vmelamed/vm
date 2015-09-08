@@ -50,6 +50,7 @@
             <Word>Combinators</Word>
             <Word>subquery</Word>
             <Word>ip</Word>
+            <Word>DPAPI</Word>
         </Recognized>
         <Unrecognized>
             <!-- 

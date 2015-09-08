@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace vm.Aspects.Diagnostics
@@ -102,6 +103,8 @@ namespace vm.Aspects.Diagnostics
 
         static ClassDumpData? TryGetClassDumpData(Type type)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             ClassDumpData dumpData;
 
             try
@@ -120,11 +123,15 @@ namespace vm.Aspects.Diagnostics
 
         static void AddClassDumpData(Type type, Type buddy, DumpAttribute dumpAttribute)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute));
         }
 
         static void AddClassDumpData(Type type, ClassDumpData classDumpData)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             try
             {
                 TypesDumpDataSync.EnterWriteLock();

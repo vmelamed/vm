@@ -1,8 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Resources;
-using System.Runtime.InteropServices;
-using System.Security;
+﻿using System.Reflection;
 
 [assembly: AssemblyTitle("vm.Aspects.Diagnostics.ObjectDumper")]
 [assembly: AssemblyDescription("Dumps the properties' and fields' values of any .NET object in a text form.")]
