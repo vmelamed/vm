@@ -10,9 +10,9 @@ namespace vm.Aspects.Tests.Validation
     /// Summary description for ValidatorXmlStringTests
     /// </summary>
     [TestClass]
-    [DeploymentItem(".\\Validation\\Microsoft.Serialization.xsd")]
-    [DeploymentItem(".\\Validation\\DataContract.xsd")]
-    [DeploymentItem(".\\Validation\\expression.xsd")]
+    [DeploymentItem("..\\..\\Validation\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\Validation\\DataContract.xsd")]
+    [DeploymentItem("..\\..\\Validation\\expression.xsd")]
     public class ValidatorXmlStringTests
     {
         /// <summary>

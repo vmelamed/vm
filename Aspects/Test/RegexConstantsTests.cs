@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace vm.Aspects.Tests
 {
     [TestClass]
-    [DeploymentItem(".\\RegexTestData.csv")]
+    [DeploymentItem("..\\..\\RegexTestData.csv")]
     public class RegexConstantsTests
     {
         public TestContext TestContext { get; set; }

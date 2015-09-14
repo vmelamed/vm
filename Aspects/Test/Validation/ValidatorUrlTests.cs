@@ -5,7 +5,7 @@ using vm.Aspects.Validation;
 namespace vm.Aspects.Tests.Validation
 {
     [TestClass]
-    [DeploymentItem(".\\Validation\\TestDataUrlValidator.csv")]
+    [DeploymentItem("..\\..\\Validation\\TestDataUrlValidator.csv")]
     public class ValidatorUrlTests
     {
         /// <summary>

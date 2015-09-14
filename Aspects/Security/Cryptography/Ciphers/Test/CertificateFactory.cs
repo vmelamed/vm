@@ -68,8 +68,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
             Contract.Ensures(Contract.Result<X509Certificate2>()!=null);
 
             var store = new X509Store(StoreName.Root, StoreLocation.CurrentUser);
-            var thumbprint = "‎22D5D8DF8F0231D18DF79DB7CF8A2D64C93F6C3A";   // Laura
-            //"4f65566336db6598581d584a596c87934d5f2ab4"; // Stella, Alice
+            var thumbprint = "742c3192e607e424eb4549542be1bbc53e6174e2"; // Stella
+            //"‎22D5D8DF8F0231D18DF79DB7CF8A2D64C93F6C3A";   // Laura
 
             store.Open(OpenFlags.ReadOnly);
             try

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Security.Cryptography.Ciphers.Test
 {
     [TestClass]
-    [DeploymentItem("Readme.txt")]
+    [DeploymentItem("..\\..\\Readme.txt")]
     public class EncryptedNewKeySignedCipherTest : GenericCipherTest<EncryptedNewKeySignedCipher>
     {
         static ICipherAsync GetCipherImpl()

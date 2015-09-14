@@ -6,12 +6,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace vm.Aspects.Tests
 {
     /// <summary>
-    /// Summary description for DIContainerExtentions2Tests
+    /// Summary description for DIContainerExtensions2Tests
     /// </summary>
     [TestClass]
     [DeploymentItem(".\\test.config")]
     [DeploymentItem(".\\testWithError.config")]
-    public class DIContainerExtentions2Tests
+    public class DIContainerExtensions2Tests
     {
         /// <summary>
         ///Gets or sets the test context which provides

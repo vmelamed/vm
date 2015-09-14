@@ -90,6 +90,7 @@ namespace vm.Aspects.Diagnostics
         /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type
         /// Default: &quot;{0}&quot;
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification="Too late to fix - interface is published")]
         public static string GenericParam
         {
             get { return _genericParam; }

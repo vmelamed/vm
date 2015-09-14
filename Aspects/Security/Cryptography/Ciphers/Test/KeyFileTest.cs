@@ -9,7 +9,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
     /// Summary description for KeyFileTest
     /// </summary>
     [TestClass]
-    [DeploymentItem("Readme.txt")]
+    [DeploymentItem("..\\..\\Readme.txt")]
     public class KeyFileTest
     {
         /// <summary>
