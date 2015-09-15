@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- (a, b) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <runtimeVariables>
+        <variables>
+            <parameter type="string"
+                       name="a" />
+            <parameter type="int"
+                       name="b" />
+        </variables>
+    </runtimeVariables>
+</expression>

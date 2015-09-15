@@ -197,6 +197,7 @@
     <Compile Include="..\..\..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IConstantXmlSerializer.cs" />
     <Compile Include="Implementation\DataSerialization.cs" />
     <Compile Include="Implementation\ExpressionDeserializingVisitor.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Implementation\ExpressionSerializingVisitor.ReflectionHelpers.cs" />
     <Compile Include="Implementation\Extensions.cs" />
     <Compile Include="Implementation\Parameter.cs" />
+    <Compile Include="Implementation\TypeNameResolver.cs" />
     <Compile Include="Implementation\XNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- {var value;var result; ... } -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <block type="int">
+        <variables>
+            <parameter type="int"
+                       name="value" />
+            <parameter type="int"
+                       name="result" />
+        </variables>
+        <assign>
+            <parameter name="value" />
+            <constant>
+                <int>5</int>
+            </constant>
+        </assign>
+        <assign>
+            <parameter name="result" />
+            <constant>
+                <int>1</int>
+            </constant>
+        </assign>
+        <loop>
+            <conditional>
+                <greaterThan>
+                    <parameter name="value" />
+                    <constant>
+                        <int>1</int>
+                    </constant>
+                </greaterThan>
+                <multiplyAssign>
+                    <parameter name="result" />
+                    <postDecrementAssign>
+                        <parameter name="value" />
+                    </postDecrementAssign>
+                </multiplyAssign>
+                <goto type="void"
+                      kind="break">
+                    <labelTarget type="int"
+                                 uidref="L1" />
+                    <parameter name="result" />
+                </goto>
+            </conditional>
+            <breakLabel>
+                <labelTarget type="int"
+                             uid="L1" />
+            </breakLabel>
+        </loop>
+    </block>
+</expression>

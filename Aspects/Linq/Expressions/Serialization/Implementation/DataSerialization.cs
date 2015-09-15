@@ -83,69 +83,6 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         };
         #endregion
 
-        #region Maps of types and type names
-        static ReaderWriterLockSlim _typesToNamesLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        /// <summary>
-        /// The map of base type to type names
-        /// </summary>
-        static IDictionary<Type, string> _typesToNames = new Dictionary<Type, string>
-        {
-            { typeof(void),         "void"          },
-            { typeof(char),         "char"          },
-            { typeof(bool),         "boolean"       },
-            { typeof(byte),         "unsignedByte"  },
-            { typeof(sbyte),        "byte"          },
-            { typeof(short),        "short"         },
-            { typeof(ushort),       "unsignedShort" },
-            { typeof(int),          "int"           },
-            { typeof(uint),         "unsignedInt"   },
-            { typeof(long),         "long"          },
-            { typeof(ulong),        "unsignedLong"  },
-            { typeof(float),        "float"         },
-            { typeof(double),       "double"        },
-            { typeof(decimal),      "decimal"       },
-            { typeof(Guid),         "guid"          },
-            { typeof(Uri),          "anyURI"        },
-            { typeof(string),       "string"        },
-            { typeof(TimeSpan),     "duration"      },
-            { typeof(DateTime),     "dateTime"      },
-            { typeof(DBNull),       "dbNull"        },
-            { typeof(Nullable<>),   "nullable"      },
-            { typeof(object),       "custom"        },
-            { typeof(Enum),         "enum"          },
-        };
-
-        /// <summary>
-        /// The map of type names to base type
-        /// </summary>
-        static IDictionary<string, Type> _namesToTypes = new Dictionary<string, Type>
-        {            
-            { "void",           typeof(void)        },
-            { "char",           typeof(char)        },
-            { "boolean",        typeof(bool)        },
-            { "unsignedByte",   typeof(byte)        },
-            { "byte",           typeof(sbyte)       },
-            { "short",          typeof(short)       },
-            { "unsignedShort",  typeof(ushort)      },
-            { "int",            typeof(int)         },
-            { "unsignedInt",    typeof(uint)        },
-            { "long",           typeof(long)        },
-            { "unsignedLong",   typeof(ulong)       },
-            { "float",          typeof(float)       },
-            { "double",         typeof(double)      },
-            { "decimal",        typeof(decimal)     },
-            { "guid",           typeof(Guid)        },
-            { "anyURI",         typeof(Uri)         },
-            { "string",         typeof(string)      },
-            { "duration",       typeof(TimeSpan)    },
-            { "dateTime",       typeof(DateTime)    },
-            { "dbNull",         typeof(DBNull)      },
-            { "nullable",       typeof(Nullable<>)  },
-            { "custom",         typeof(object)      },
-            { "enum",           typeof(Enum)        },
-        };
-        #endregion
-
         /// <summary>
         /// Adds a serializer.
         /// </summary>
@@ -399,7 +336,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                         XNames.Elements.Nullable,
                                         new XAttribute(XNames.Attributes.IsNull, XmlConvert.ToString(nullable == null)),
                                         nullable == null
-                                            ? new XAttribute(XNames.Attributes.Type, GetTypeName(typeArgument))
+                                            ? new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(typeArgument))
                                             : null);
 
             parent.Add(nullableElement);
@@ -415,25 +352,23 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             else
             {
                 var valueElement = new XElement(
-                                            XNames.Elements.Custom,
-                                            new XAttribute(
-                                                    XNames.Attributes.Type, type.AssemblyQualifiedName));
+                                        XNames.Elements.Custom,
+                                        new XAttribute(
+                                                XNames.Attributes.Type, TypeNameResolver.GetTypeName(type)));
 
                 nullableElement.Add(valueElement);
-                if (nullable != null)
-                {
-                    // create a data contract serializer (should work with [Serializable] types too)
-                    var dcSerializer = new DataContractSerializer(
-                                            type,
-                                            Type.EmptyTypes,
-                                            int.MaxValue,
-                                            false,
-                                            false,
-                                            null);
 
-                    using (var writer = valueElement.CreateWriter())
-                        dcSerializer.WriteObject(writer, nullable);
-                }
+                // create a data contract serializer (should work with [Serializable] types too)
+                var dcSerializer = new DataContractSerializer(
+                                        type,
+                                        Type.EmptyTypes,
+                                        int.MaxValue,
+                                        false,
+                                        false,
+                                        null);
+
+                using (var writer = valueElement.CreateWriter())
+                    dcSerializer.WriteObject(writer, nullable);
             }
         }
 
@@ -548,8 +483,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement parent)
         {
             var custom = new XElement(
-                            XNames.Elements.Custom,
-                            new XAttribute(XNames.Attributes.Type, type.AssemblyQualifiedName));
+                                XNames.Elements.Custom,
+                                new XAttribute(
+                                        XNames.Attributes.Type, TypeNameResolver.GetTypeName(type)));
+
             parent.Add(custom);
 
             if (obj == null)
@@ -593,7 +530,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (typeString.StartsWith(anonymousTypePrefix, StringComparison.Ordinal))
                 return DeserializeAnonymous(element, type);
 
-            var serializer = new DataContractSerializer(GetType(typeString));
+            var serializer = new DataContractSerializer(TypeNameResolver.GetType(typeString));
 
             using (var reader = element.Elements().First().CreateReader())
                 return serializer.ReadObject(reader);
@@ -623,74 +560,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (typeAttribute == null)
                 return null;
 
-            return GetType(typeAttribute.Value);
-        }
-
-        /// <summary>
-        /// Gets the type corresponding to a type name written in an xml string.
-        /// </summary>
-        /// <param name="typeName">The name of the type.</param>
-        /// <returns>The specified type.</returns>
-        static Type GetType(string typeName)
-        {
-            if (string.IsNullOrEmpty(typeName))
-                return null;
-
-            Type type;
-
-            using (_typesToNamesLock.UpgradableReaderLock())
-            {
-                if (_namesToTypes.TryGetValue(typeName, out type))
-                    return type;
-
-                type = Type.GetType(typeName);
-
-                if (type != null)
-                    using (_typesToNamesLock.WriterLock())
-                    {
-                        Debug.Assert(type != typeof(int));
-                        _namesToTypes[typeName] = type;
-                        _typesToNames[type] = typeName;
-                    }
-            }
-
-            return type;
-        }
-
-        /// <summary>
-        /// Gets the name of the type appropriate for writing to an XML element.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The name of the type.</returns>
-        internal static string GetTypeName(Type type)
-        {
-            if (type == null)
-                return null;
-
-            string typeName;
-
-            lock (_typesToNamesLock)
-            {
-                if (_typesToNames.TryGetValue(type, out typeName))
-                    return typeName;
-
-                typeName = type.AssemblyQualifiedName;
-
-                if (!string.IsNullOrWhiteSpace(typeName))
-                    using (_typesToNamesLock.WriterLock())
-                    {
-                        Debug.Assert(type != typeof(int));
-                        _typesToNames[type] = typeName;
-                        _namesToTypes[typeName] = type;
-                    }
-            }
-
-            return typeName;
+            return TypeNameResolver.GetType(typeAttribute.Value);
         }
 
         internal static Type GetDataType(XElement element)
         {
-            var type = DataSerialization.GetType(element.Name.LocalName);
+            var type = TypeNameResolver.GetType(element.Name.LocalName);
 
             if (type == null && element.Name==XNames.Elements.Anonymous)
             {
@@ -736,7 +611,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (typeAttribute == null)
                 throw new SerializationException("Expected type attribute.");
 
-            return DataSerialization.GetType(typeAttribute.Value);
+            return TypeNameResolver.GetType(typeAttribute.Value);
         }
 
         static Type GetEnumConstantType(XElement element)
@@ -746,7 +621,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (typeAttribute == null)
                 throw new SerializationException("Expected type attribute.");
 
-            return DataSerialization.GetType(typeAttribute.Value);
+            return TypeNameResolver.GetType(typeAttribute.Value);
         }
     }
 }

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- switch (3) { ... } -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <switch>
+        <constant>
+            <int>3</int>
+        </constant>
+        <case>
+            <value>
+                <constant>
+                    <int>1</int>
+                </constant>
+            </value>
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>First</string>
+                    </constant>
+                </arguments>
+            </call>
+        </case>
+        <case>
+            <value>
+                <constant>
+                    <int>2</int>
+                </constant>
+            </value>
+            <value>
+                <constant>
+                    <int>3</int>
+                </constant>
+            </value>
+            <value>
+                <constant>
+                    <int>4</int>
+                </constant>
+            </value>
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>Second</string>
+                    </constant>
+                </arguments>
+            </call>
+        </case>
+        <defaultCase>
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>Default</string>
+                    </constant>
+                </arguments>
+            </call>
+        </defaultCase>
+    </switch>
+</expression> 

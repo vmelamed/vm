@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- value(System.Nullable`1[vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1][]) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="System.Nullable`1[[vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]][], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <ArrayOfNullableOfStructDataContract1r_S5ybNXZ xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                                          xmlns:d1p1="http://schemas.datacontract.org/2004/07/vm.Aspects.Linq.Expressions.Serialization.Tests"
+                                                          xmlns="http://schemas.datacontract.org/2004/07/System">
+                <StructDataContract1>
+                    <d1p1:IntProperty>0</d1p1:IntProperty>
+                    <d1p1:StringProperty>vm</d1p1:StringProperty>
+                </StructDataContract1>
+                <StructDataContract1 i:nil="true" />
+                <StructDataContract1>
+                    <d1p1:IntProperty>1</d1p1:IntProperty>
+                    <d1p1:StringProperty>vm vm</d1p1:StringProperty>
+                </StructDataContract1>
+                <StructDataContract1 i:nil="true" />
+            </ArrayOfNullableOfStructDataContract1r_S5ybNXZ>
+        </custom>
+    </constant>
+</expression>

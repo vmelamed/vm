@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- { ObjectProperty = , NullIntProperty = , NullLongProperty = 1, BoolProperty = True, CharProperty = A, ByteProperty = 1, SByteProperty = 1, ShortProperty = 1, IntProperty = 1, LongProperty = 1, UShortProperty = 1, UIntProperty = 1, ULongProperty = 1, DoubleProperty = 1, FloatProperty = 1, DecimalProperty = 1, GuidProperty = 00000000-0000-0000-0000-000000000000, UriProperty = http://localhost/, DateTimeProperty = 1/13/2013 12:00:00 AM, TimeSpanProperty = 00:00:00.0000123, DateTimeOffsetProperty = 1/13/2013 12:00:00 AM -05:00 } -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <anonymous type="&lt;&gt;f__AnonymousType0`21[[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Nullable`1[[System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Char, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Byte, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.SByte, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int16, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.UInt16, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.UInt64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.DateTime, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.DateTimeOffset, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+            <property name="ObjectProperty">
+                <custom type="custom" />
+            </property>
+            <property name="NullIntProperty">
+                <nullable isNull="true"
+                          type="int" />
+            </property>
+            <property name="NullLongProperty">
+                <nullable isNull="false">
+                    <long>1</long>
+                </nullable>
+            </property>
+            <property name="BoolProperty">
+                <boolean>true</boolean>
+            </property>
+            <property name="CharProperty">
+                <char>65</char>
+            </property>
+            <property name="ByteProperty">
+                <unsignedByte>1</unsignedByte>
+            </property>
+            <property name="SByteProperty">
+                <byte>1</byte>
+            </property>
+            <property name="ShortProperty">
+                <short>1</short>
+            </property>
+            <property name="IntProperty">
+                <int>1</int>
+            </property>
+            <property name="LongProperty">
+                <long>1</long>
+            </property>
+            <property name="UShortProperty">
+                <unsignedShort>1</unsignedShort>
+            </property>
+            <property name="UIntProperty">
+                <unsignedInt>1</unsignedInt>
+            </property>
+            <property name="ULongProperty">
+                <unsignedLong>1</unsignedLong>
+            </property>
+            <property name="DoubleProperty">
+                <double>1</double>
+            </property>
+            <property name="FloatProperty">
+                <float>1</float>
+            </property>
+            <property name="DecimalProperty">
+                <decimal>1</decimal>
+            </property>
+            <property name="GuidProperty">
+                <guid>00000000-0000-0000-0000-000000000000</guid>
+            </property>
+            <property name="UriProperty">
+                <anyURI>http://localhost/</anyURI>
+            </property>
+            <property name="DateTimeProperty">
+                <dateTime>2013-01-13T00:00:00</dateTime>
+            </property>
+            <property name="TimeSpanProperty">
+                <duration>PT0.0000123S</duration>
+            </property>
+            <property name="DateTimeOffsetProperty">
+                <custom type="System.DateTimeOffset, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                    <DateTimeOffset xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                    xmlns="http://schemas.datacontract.org/2004/07/System">
+                        <DateTime>2013-01-13T05:00:00Z</DateTime>
+                        <OffsetMinutes>-300</OffsetMinutes>
+                    </DateTimeOffset>
+                </custom>
+            </property>
+        </anonymous>
+    </constant>
+</expression>

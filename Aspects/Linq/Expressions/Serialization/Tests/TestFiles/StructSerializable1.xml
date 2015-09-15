@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 
+StructSerializable1 (vm.Aspects.Linq.Expressions.Serialization.Tests.StructSerializable1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  IntProperty              = 8
+  StringProperty           = vm -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="vm.Aspects.Linq.Expressions.Serialization.Tests.StructSerializable1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+            <StructSerializable1 xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                 xmlns="http://schemas.datacontract.org/2004/07/vm.Aspects.Linq.Expressions.Serialization.Tests">
+                <_x003C_IntProperty_x003E_k__BackingField>8</_x003C_IntProperty_x003E_k__BackingField>
+                <_x003C_StringProperty_x003E_k__BackingField>vm</_x003C_StringProperty_x003E_k__BackingField>
+            </StructSerializable1>
+        </custom>
+    </constant>
+</expression>

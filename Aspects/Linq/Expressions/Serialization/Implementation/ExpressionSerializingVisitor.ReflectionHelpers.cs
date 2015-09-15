@@ -36,7 +36,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 element.Add(
                     new XAttribute(
                         XNames.Attributes.Type,
-                        DataSerialization.GetTypeName(expression.Type)));
+                        TypeNameResolver.GetTypeName(expression.Type)));
 
             return element;
         }
@@ -55,7 +55,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 node.Type == null)
                 return null;
 
-            return new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(node.Type));
+            return new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(node.Type));
         }
 
         #region Parameters and arguments
@@ -72,7 +72,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             foreach (var param in parameters)
                 yield return new XElement(
                                     XNames.Elements.Parameter,
-                                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(param.ParameterType)),
+                                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(param.ParameterType)),
                                     new XAttribute(XNames.Attributes.Name, param.Name),
                                     param.IsOut || param.ParameterType.IsByRef
                                         ? new XAttribute(XNames.Attributes.IsByRef, true)
@@ -261,7 +261,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             return new XElement(
                     XNames.Elements.Method,
-                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(methodInfo.DeclaringType)),
+                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(methodInfo.DeclaringType)),
                     visibility,
                     methodInfo.IsStatic ? new XAttribute(XNames.Attributes.Static, true) : null,
                     new XAttribute(XNames.Attributes.Name, methodInfo.Name),
@@ -302,7 +302,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             return new XElement(
                     XNames.Elements.Constructor,
-                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(constructorInfo.DeclaringType)),
+                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(constructorInfo.DeclaringType)),
                     visibility,
                     constructorInfo.IsStatic ? new XAttribute(XNames.Attributes.Static, true) : null,
                     new XElement(
@@ -322,7 +322,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             return new XElement(
                     XNames.Elements.Property,
-                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(eventInfo.DeclaringType)),
+                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(eventInfo.DeclaringType)),
                     new XAttribute(XNames.Attributes.Name, eventInfo.Name));
         }
 
@@ -338,7 +338,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             return new XElement(
                     XNames.Elements.Property,
-                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(propertyInfo.DeclaringType)),
+                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(propertyInfo.DeclaringType)),
                     new XAttribute(XNames.Attributes.Name, propertyInfo.Name),
                     VisitParameters(propertyInfo.GetIndexParameters()));
         }
@@ -376,7 +376,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             return new XElement(
                     XNames.Elements.Field,
-                    new XAttribute(XNames.Attributes.Type, DataSerialization.GetTypeName(fieldInfo.DeclaringType)),
+                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(fieldInfo.DeclaringType)),
                     visibility,
                     fieldInfo.IsStatic ? new XAttribute(XNames.Attributes.Static, true) : null,
                     new XAttribute(XNames.Attributes.Name, fieldInfo.Name));

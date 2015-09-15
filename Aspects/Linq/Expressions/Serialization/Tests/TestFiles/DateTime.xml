@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 1/13/2013 3:48:33 PM -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <dateTime>2013-01-13T15:48:33.222-05:00</dateTime>
+    </constant>
+</expression>

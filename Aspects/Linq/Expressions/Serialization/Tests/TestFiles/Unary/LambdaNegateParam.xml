@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- i => -i -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda>
+        <parameters>
+            <parameter type="int"
+                       name="i" />
+        </parameters>
+        <body>
+            <negate>
+                <parameter name="i"/>
+            </negate>
+        </body>
+    </lambda>
+</expression>

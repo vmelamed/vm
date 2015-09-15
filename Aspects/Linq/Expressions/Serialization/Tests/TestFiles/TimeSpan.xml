@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 3.04:15:32.1230000 -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <duration>P3DT4H15M32.123S</duration>
+    </constant>
+</expression>

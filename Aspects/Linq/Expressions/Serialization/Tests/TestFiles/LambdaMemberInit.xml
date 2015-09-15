@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- () => new TestMembersInitialized() {TheOuterIntProperty = 42, Time = new DateTime(1776, 7, 4), InnerProperty = new Inner() {IntProperty = 23, StringProperty = "inner string"}, MyProperty = new List`1() {Void Add(System.String)("aaa"), Void Add(System.String)("bbb"), Void Add(System.String)("ccc")}} -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda>
+        <parameters />
+        <body>
+            <memberInit>
+                <new>
+                    <constructor type="vm.Aspects.Linq.Expressions.Serialization.Tests.TestMembersInitialized, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+                        <parameters />
+                    </constructor>
+                    <arguments />
+                </new>
+                <bindings>
+                    <assignmentBinding>
+                        <property type="vm.Aspects.Linq.Expressions.Serialization.Tests.TestMembersInitialized, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                                  name="TheOuterIntProperty" />
+                        <constant>
+                            <int>42</int>
+                        </constant>
+                    </assignmentBinding>
+                    <assignmentBinding>
+                        <field type="vm.Aspects.Linq.Expressions.Serialization.Tests.TestMembersInitialized, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                               name="Time" />
+                        <new>
+                            <constructor type="dateTime">
+                                <parameters>
+                                    <parameter type="int"
+                                               name="year" />
+                                    <parameter type="int"
+                                               name="month" />
+                                    <parameter type="int"
+                                               name="day" />
+                                </parameters>
+                            </constructor>
+                            <arguments>
+                                <constant>
+                                    <int>1776</int>
+                                </constant>
+                                <constant>
+                                    <int>7</int>
+                                </constant>
+                                <constant>
+                                    <int>4</int>
+                                </constant>
+                            </arguments>
+                        </new>
+                    </assignmentBinding>
+                    <assignmentBinding>
+                        <property type="vm.Aspects.Linq.Expressions.Serialization.Tests.TestMembersInitialized, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                                  name="InnerProperty" />
+                        <memberInit>
+                            <new>
+                                <constructor type="vm.Aspects.Linq.Expressions.Serialization.Tests.Inner, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+                                    <parameters />
+                                </constructor>
+                                <arguments />
+                            </new>
+                            <bindings>
+                                <assignmentBinding>
+                                    <property type="vm.Aspects.Linq.Expressions.Serialization.Tests.Inner, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                                              name="IntProperty" />
+                                    <constant>
+                                        <int>23</int>
+                                    </constant>
+                                </assignmentBinding>
+                                <assignmentBinding>
+                                    <property type="vm.Aspects.Linq.Expressions.Serialization.Tests.Inner, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                                              name="StringProperty" />
+                                    <constant>
+                                        <string>inner string</string>
+                                    </constant>
+                                </assignmentBinding>
+                            </bindings>
+                        </memberInit>
+                    </assignmentBinding>
+                    <assignmentBinding>
+                        <property type="vm.Aspects.Linq.Expressions.Serialization.Tests.TestMembersInitialized, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393"
+                                  name="MyProperty" />
+                        <listInit>
+                            <new>
+                                <constructor type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                                    <parameters />
+                                </constructor>
+                                <arguments />
+                            </new>
+                            <listInit>
+                                <elementInit>
+                                    <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                            name="Add">
+                                        <parameters>
+                                            <parameter type="string"
+                                                       name="item" />
+                                        </parameters>
+                                    </method>
+                                    <arguments>
+                                        <constant>
+                                            <string>aaa</string>
+                                        </constant>
+                                    </arguments>
+                                </elementInit>
+                                <elementInit>
+                                    <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                            name="Add">
+                                        <parameters>
+                                            <parameter type="string"
+                                                       name="item" />
+                                        </parameters>
+                                    </method>
+                                    <arguments>
+                                        <constant>
+                                            <string>bbb</string>
+                                        </constant>
+                                    </arguments>
+                                </elementInit>
+                                <elementInit>
+                                    <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                            name="Add">
+                                        <parameters>
+                                            <parameter type="string"
+                                                       name="item" />
+                                        </parameters>
+                                    </method>
+                                    <arguments>
+                                        <constant>
+                                            <string>ccc</string>
+                                        </constant>
+                                    </arguments>
+                                </elementInit>
+                            </listInit>
+                        </listInit>
+                    </assignmentBinding>
+                </bindings>
+            </memberInit>
+        </body>
+    </lambda>
+</expression>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- value(System.Collections.Generic.List`1[System.Nullable`1[System.Int32]]) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="System.Collections.Generic.List`1[[System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <ArrayOfNullableOfint xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                  xmlns="http://schemas.datacontract.org/2004/07/System">
+                <int>1</int>
+                <int>2</int>
+                <int i:nil="true" />
+                <int i:nil="true" />
+            </ArrayOfNullableOfint>
+        </custom>
+    </constant>
+</expression>

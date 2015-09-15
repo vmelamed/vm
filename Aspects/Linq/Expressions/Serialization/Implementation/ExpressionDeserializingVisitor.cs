@@ -279,7 +279,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return Expression.Block(
                             DataSerialization.GetType(element) ?? typeof(void),
                             variables,
-                            VisitExpressions(element.Elements().Skip(variablesElement!=null ? 1 : 0)).ToArray());
+                            VisitExpressions(element.Elements().Skip(variablesElement!=null ? 1 : 0)));
             }
             finally
             {

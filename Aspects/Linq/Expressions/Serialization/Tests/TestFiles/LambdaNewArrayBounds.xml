@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- () => new System.String[,,](2, 3, 4) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda>
+        <parameters />
+        <body>
+            <newArrayBounds type="string">
+                <bounds>
+                    <constant>
+                        <int>2</int>
+                    </constant>
+                    <constant>
+                        <int>3</int>
+                    </constant>
+                    <constant>
+                        <int>4</int>
+                    </constant>
+                </bounds>
+            </newArrayBounds>
+        </body>
+    </lambda>
+</expression>

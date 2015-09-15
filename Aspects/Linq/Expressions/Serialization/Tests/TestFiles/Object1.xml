@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- value(vm.Aspects.Linq.Expressions.Serialization.Tests.Object1) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="vm.Aspects.Linq.Expressions.Serialization.Tests.Object1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+            <Object1 xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                     z:Id="i1"
+                     xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                     xmlns="urn:vm.AspectsTest.Diagnostics">
+                <BoolProperty>true</BoolProperty>
+                <ByteProperty>1</ByteProperty>
+                <CharProperty>65</CharProperty>
+                <DateTimeOffsetProperty xmlns:d2p1="http://schemas.datacontract.org/2004/07/System">
+                    <d2p1:DateTime>2013-01-13T05:00:00Z</d2p1:DateTime>
+                    <d2p1:OffsetMinutes>-300</d2p1:OffsetMinutes>
+                </DateTimeOffsetProperty>
+                <DateTimeProperty>2013-01-13T00:00:00</DateTimeProperty>
+                <DecimalProperty>1</DecimalProperty>
+                <DoubleProperty>1</DoubleProperty>
+                <FloatProperty>1</FloatProperty>
+                <GuidProperty>00000000-0000-0000-0000-000000000000</GuidProperty>
+                <IntProperty>1</IntProperty>
+                <LongProperty>1</LongProperty>
+                <NullIntProperty i:nil="true" />
+                <NullLongProperty>1</NullLongProperty>
+                <ObjectProperty i:nil="true" />
+                <SByteProperty>1</SByteProperty>
+                <ShortProperty>1</ShortProperty>
+                <TimeSpanProperty>PT0.0000123S</TimeSpanProperty>
+                <UIntProperty>1</UIntProperty>
+                <ULongProperty>1</ULongProperty>
+                <UShortProperty>1</UShortProperty>
+                <UriProperty>http://localhost/</UriProperty>
+            </Object1>
+        </custom>
+    </constant>
+</expression>

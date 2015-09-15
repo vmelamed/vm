@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 5 -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <nullable isNull="false">
+            <int>5</int>
+        </nullable>
+    </constant>
+</expression>

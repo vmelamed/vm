@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 1/13/2013 3:43:33 PM +00:00 -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="System.DateTimeOffset, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <DateTimeOffset xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                            xmlns="http://schemas.datacontract.org/2004/07/System">
+                <DateTime>2013-01-13T15:43:33.333Z</DateTime>
+                <OffsetMinutes>0</OffsetMinutes>
+            </DateTimeOffset>
+        </custom>
+    </constant>
+</expression>

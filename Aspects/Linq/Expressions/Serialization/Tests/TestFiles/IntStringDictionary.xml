@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- value(System.Collections.Generic.Dictionary`2[System.Int32,System.String]) -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <ArrayOfKeyValueOfintstring xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <KeyValueOfintstring>
+                    <Key>1</Key>
+                    <Value>one</Value>
+                </KeyValueOfintstring>
+                <KeyValueOfintstring>
+                    <Key>2</Key>
+                    <Value>two</Value>
+                </KeyValueOfintstring>
+                <KeyValueOfintstring>
+                    <Key>3</Key>
+                    <Value>three</Value>
+                </KeyValueOfintstring>
+            </ArrayOfKeyValueOfintstring>
+        </custom>
+    </constant>
+</expression>

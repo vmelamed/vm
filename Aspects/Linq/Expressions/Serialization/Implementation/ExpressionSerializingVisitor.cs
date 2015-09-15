@@ -475,7 +475,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                 node.Type != typeof(void)
                                     ? new XAttribute(
                                             XNames.Attributes.Type,
-                                            DataSerialization.GetTypeName(node.Type))
+                                            TypeNameResolver.GetTypeName(node.Type))
                                     : null,
                                 !string.IsNullOrWhiteSpace(node.Name)
                                     ? new XAttribute(
@@ -728,7 +728,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                     XNames.Elements.Catch,
                                     new XAttribute(
                                             XNames.Attributes.Type,
-                                            DataSerialization.GetTypeName(node.Test)),
+                                            TypeNameResolver.GetTypeName(node.Test)),
                                     exception,
                                     filter,
                                     body));
@@ -802,7 +802,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             element.Add(
                 new XAttribute(
                         XNames.Attributes.Type,
-                        DataSerialization.GetTypeName(node.Type.GetElementType())), // the new node
+                        TypeNameResolver.GetTypeName(node.Type.GetElementType())), // the new node
                 new XElement(
                         XNames.Elements.ArrayElements,
                         inits));
@@ -818,7 +818,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             element.Add(
                 new XAttribute(
                         XNames.Attributes.Type,
-                        DataSerialization.GetTypeName(node.Type.GetElementType())), // the new node
+                        TypeNameResolver.GetTypeName(node.Type.GetElementType())), // the new node
                 new XElement(
                         XNames.Elements.Bounds,
                         bounds));

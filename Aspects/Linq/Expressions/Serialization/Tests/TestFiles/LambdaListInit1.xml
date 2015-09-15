@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- () => new Dictionary`2() {Void Add(Int32, System.String)(1, "one"), Void Add(Int32, System.String)(2, "two"), Void Add(Int32, System.String)(3, "three")} -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda delegateType="System.Func`1[System.Collections.Generic.IDictionary`2[System.Int32,System.String]]">
+        <parameters />
+        <body>
+            <listInit>
+                <new>
+                    <constructor type="System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                        <parameters />
+                    </constructor>
+                    <arguments />
+                </new>
+                <listInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="int"
+                                           name="key" />
+                                <parameter type="string"
+                                           name="value" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <int>1</int>
+                            </constant>
+                            <constant>
+                                <string>one</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="int"
+                                           name="key" />
+                                <parameter type="string"
+                                           name="value" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <int>2</int>
+                            </constant>
+                            <constant>
+                                <string>two</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="int"
+                                           name="key" />
+                                <parameter type="string"
+                                           name="value" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <int>3</int>
+                            </constant>
+                            <constant>
+                                <string>three</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                </listInit>
+            </listInit>
+        </body>
+    </lambda>
+</expression>

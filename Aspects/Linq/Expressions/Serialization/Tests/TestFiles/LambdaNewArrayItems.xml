@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- () => new [] {"aaa", "bbb", "ccc"} -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda>
+        <parameters />
+        <body>
+            <newArrayInit type="string">
+                <elements>
+                    <constant>
+                        <string>aaa</string>
+                    </constant>
+                    <constant>
+                        <string>bbb</string>
+                    </constant>
+                    <constant>
+                        <string>ccc</string>
+                    </constant>
+                </elements>
+            </newArrayInit>
+        </body>
+    </lambda>
+</expression>

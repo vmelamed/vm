@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- try { ... } -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <try type="void">
+        <block>
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>TryBody</string>
+                    </constant>
+                </arguments>
+            </call>
+            <throw>
+                <new>
+                    <constructor type="System.Exception, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                        <parameters />
+                    </constructor>
+                    <arguments />
+                </new>
+            </throw>
+        </block>
+        <catch type="System.ArgumentException, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>catch (ArgumentException) {}</string>
+                    </constant>
+                </arguments>
+            </call>
+        </catch>
+        <finally>
+            <call>
+                <method type="System.Console, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                        static="true"
+                        name="WriteLine">
+                    <parameters>
+                        <parameter type="string"
+                                   name="value" />
+                    </parameters>
+                </method>
+                <arguments>
+                    <constant>
+                        <string>finally {}</string>
+                    </constant>
+                </arguments>
+            </call>
+        </finally>
+    </try>
+</expression>

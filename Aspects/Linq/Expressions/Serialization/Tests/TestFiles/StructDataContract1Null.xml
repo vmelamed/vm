@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- null -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <nullable isNull="true"
+                  type="vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393" />
+    </constant>
+</expression>
+
+

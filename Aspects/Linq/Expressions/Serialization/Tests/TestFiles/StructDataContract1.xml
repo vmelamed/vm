@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 
+StructDataContract1 (vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  IntProperty              = 7
+  StringProperty           = vm -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <constant>
+        <custom type="vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
+            <StructDataContract1 xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                 xmlns="http://schemas.datacontract.org/2004/07/vm.Aspects.Linq.Expressions.Serialization.Tests">
+                <IntProperty>7</IntProperty>
+                <StringProperty>vm</StringProperty>
+            </StructDataContract1>
+        </custom>
+    </constant>
+</expression>

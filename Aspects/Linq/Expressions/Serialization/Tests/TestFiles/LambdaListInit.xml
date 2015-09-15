@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- () => new List`1() {Void Add(System.String)("aaa"), Void Add(System.String)("bbb"), Void Add(System.String)("ccc")} -->
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+    <lambda delegateType="System.Func`1[System.Collections.Generic.IEnumerable`1[System.String]]">
+        <parameters />
+        <body>
+            <listInit>
+                <new>
+                    <constructor type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                        <parameters />
+                    </constructor>
+                    <arguments />
+                </new>
+                <listInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="string"
+                                           name="item" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <string>aaa</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="string"
+                                           name="item" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <string>bbb</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                    <elementInit>
+                        <method type="System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                                name="Add">
+                            <parameters>
+                                <parameter type="string"
+                                           name="item" />
+                            </parameters>
+                        </method>
+                        <arguments>
+                            <constant>
+                                <string>ccc</string>
+                            </constant>
+                        </arguments>
+                    </elementInit>
+                </listInit>
+            </listInit>
+        </body>
+    </lambda>
+</expression>

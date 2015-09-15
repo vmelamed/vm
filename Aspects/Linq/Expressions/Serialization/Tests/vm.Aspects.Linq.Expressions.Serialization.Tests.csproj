@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CB93A289-59C4-4934-824B-9AF5F9C4B886}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>vm.Aspects.Linq.Expressions.Serialization.Tests</RootNamespace>
+    <AssemblyName>vm.Aspects.Linq.Expressions.Serialization.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>ReleaseRequires</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugUnitTest\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="AssignmentExpressionDeserializationTest.cs" />
+    <Compile Include="AssignmentExpressionSerializationTest.cs" />
+    <Compile Include="BinaryExpressionDeserializerTest.cs" />
+    <Compile Include="BinaryExpressionSerializerTest.cs" />
+    <Compile Include="ChangeByOneDeserializerTest.cs" />
+    <Compile Include="ChangeByOneSerializerTest.cs" />
+    <Compile Include="ConstantExpressionDeserializerBasicTypesTest.cs" />
+    <Compile Include="ConstantExpressionDeserializerComplexTypesTest.cs" />
+    <Compile Include="ConstantExpressionSerializerBasicTypesTest.cs" />
+    <Compile Include="ConstantExpressionSerializerComplexTypesTest.cs" />
+    <Compile Include="ExpressionDeserializerTest.cs" />
+    <Compile Include="ExpressionSerializerTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestCustomTypes.cs" />
+    <Compile Include="TestHelpers.cs" />
+    <Compile Include="UnaryExpressionDeserializerTest.cs" />
+    <Compile Include="UnaryExpressionSerializerTest.cs" />
+    <Compile Include="XmlValidator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\Common Items\vm.Test.snk">
+      <Link>vm.Test.snk</Link>
+    </None>
+    <None Include="DataContract.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Microsoft.Serialization.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
+      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\vm.Aspects.csproj">
+      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
+      <Name>vm.Aspects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vm.Aspects.Linq.Expressions.Serialization.csproj">
+      <Project>{628d6504-40e3-412a-827f-39f8644ba906}</Project>
+      <Name>vm.Aspects.Linq.Expressions.Serialization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="TestFiles\Anonymous.xml" />
+    <Content Include="TestFiles\ArrayOfClassDataContract1.xml" />
+    <Content Include="TestFiles\ArrayOfInt.xml" />
+    <Content Include="TestFiles\ArrayOfNullableInt.xml" />
+    <Content Include="TestFiles\ArrayOfNullableStructDataContract1.xml" />
+    <Content Include="TestFiles\ArrayOfStructDataContract1.xml" />
+    <Content Include="TestFiles\Assignments\AddAssign.xml" />
+    <Content Include="TestFiles\Assignments\AddAssignChecked.xml" />
+    <Content Include="TestFiles\Assignments\AndAssign.xml" />
+    <Content Include="TestFiles\Assignments\Assign.xml" />
+    <Content Include="TestFiles\Assignments\DivideAssign.xml" />
+    <Content Include="TestFiles\Assignments\LeftShiftAssign.xml" />
+    <Content Include="TestFiles\Assignments\ModuloAssign.xml" />
+    <Content Include="TestFiles\Assignments\MultiplyAssign.xml" />
+    <Content Include="TestFiles\Assignments\MultiplyAssignChecked.xml" />
+    <Content Include="TestFiles\Assignments\OrAssign.xml" />
+    <Content Include="TestFiles\Assignments\PowerAssign.xml" />
+    <Content Include="TestFiles\Assignments\RightShiftAssign.xml" />
+    <Content Include="TestFiles\Assignments\SubtractAssign.xml" />
+    <Content Include="TestFiles\Assignments\SubtractAssignChecked.xml" />
+    <Content Include="TestFiles\Assignments\XorAssign.xml" />
+    <Content Include="TestFiles\Binary\LambdaAdd.xml" />
+    <Content Include="TestFiles\Binary\LambdaAddAdd.xml" />
+    <Content Include="TestFiles\Binary\LambdaAddChecked.xml" />
+    <Content Include="TestFiles\Binary\LambdaAddMultiply.xml" />
+    <Content Include="TestFiles\Binary\LambdaAnd.xml" />
+    <Content Include="TestFiles\Binary\LambdaAndAlso.xml" />
+    <Content Include="TestFiles\Binary\LambdaArrayIndex.xml" />
+    <Content Include="TestFiles\Binary\LambdaCoalesce.xml" />
+    <Content Include="TestFiles\Binary\LambdaDivide.xml" />
+    <Content Include="TestFiles\Binary\LambdaEqual.xml" />
+    <Content Include="TestFiles\Binary\LambdaExclusiveOr.xml" />
+    <Content Include="TestFiles\Binary\LambdaGreaterThan.xml" />
+    <Content Include="TestFiles\Binary\LambdaGreaterThanOrEqual.xml" />
+    <Content Include="TestFiles\Binary\LambdaLeftShift.xml" />
+    <Content Include="TestFiles\Binary\LambdaLessThan.xml" />
+    <Content Include="TestFiles\Binary\LambdaLessThanOrEqual.xml" />
+    <Content Include="TestFiles\Binary\LambdaModulo.xml" />
+    <Content Include="TestFiles\Binary\LambdaMultiply.xml" />
+    <Content Include="TestFiles\Binary\LambdaMultiplyAdd.xml" />
+    <Content Include="TestFiles\Binary\LambdaMultiplyChecked.xml" />
+    <Content Include="TestFiles\Binary\LambdaNotEqual.xml" />
+    <Content Include="TestFiles\Binary\LambdaOr.xml" />
+    <Content Include="TestFiles\Binary\LambdaOrElse.xml" />
+    <Content Include="TestFiles\Binary\LambdaPower.xml" />
+    <Content Include="TestFiles\Binary\LambdaRightShift.xml" />
+    <Content Include="TestFiles\Binary\LambdaSubtract.xml" />
+    <Content Include="TestFiles\Binary\LambdaSubtractChecked.xml" />
+    <Content Include="TestFiles\Block.xml" />
+    <Content Include="TestFiles\Bool.xml" />
+    <Content Include="TestFiles\Byte.xml" />
+    <Content Include="TestFiles\ChangeByOne\Decrement.xml" />
+    <Content Include="TestFiles\ChangeByOne\Increment.xml" />
+    <Content Include="TestFiles\ChangeByOne\PostDecrement.xml" />
+    <Content Include="TestFiles\ChangeByOne\PostIncrement.xml" />
+    <Content Include="TestFiles\ChangeByOne\PreDecrement.xml" />
+    <Content Include="TestFiles\ChangeByOne\PreIncrement.xml" />
+    <Content Include="TestFiles\Char.xml" />
+    <Content Include="TestFiles\ClassDataContract1.xml" />
+    <Content Include="TestFiles\ClassSerializable1.xml" />
+    <Content Include="TestFiles\Conditional.xml" />
+    <Content Include="TestFiles\DateTime.xml" />
+    <Content Include="TestFiles\DateTimeOffset.xml" />
+    <Content Include="TestFiles\DBNull.xml" />
+    <Content Include="TestFiles\Decimal.xml" />
+    <Content Include="TestFiles\DefaultInt.xml" />
+    <Content Include="TestFiles\DefaultNullableInt.xml" />
+    <Content Include="TestFiles\Double.xml" />
+    <Content Include="TestFiles\Enum.xml" />
+    <Content Include="TestFiles\EnumFlags.xml" />
+    <Content Include="TestFiles\Float.xml" />
+    <Content Include="TestFiles\Goto1.xml" />
+    <Content Include="TestFiles\Goto11.xml" />
+    <Content Include="TestFiles\Goto2.xml" />
+    <Content Include="TestFiles\Goto21.xml" />
+    <Content Include="TestFiles\Guid.xml" />
+    <Content Include="TestFiles\Int.xml" />
+    <Content Include="TestFiles\IntPtr.xml" />
+    <Content Include="TestFiles\IntStringDictionary.xml" />
+    <Content Include="TestFiles\Lambda2ParamToConstant.xml" />
+    <Content Include="TestFiles\LambdaArrayAccess.xml" />
+    <Content Include="TestFiles\LambdaComplexParamToConstant.xml" />
+    <Content Include="TestFiles\LambdaInvocation.xml" />
+    <Content Include="TestFiles\LambdaListInit.xml" />
+    <Content Include="TestFiles\LambdaListInit1.xml" />
+    <Content Include="TestFiles\LambdaMemberField.xml" />
+    <Content Include="TestFiles\LambdaMemberInit.xml" />
+    <Content Include="TestFiles\LambdaMemberProperty.xml" />
+    <Content Include="TestFiles\LambdaMethodCall1.xml" />
+    <Content Include="TestFiles\LambdaMethodCall2.xml" />
+    <Content Include="TestFiles\LambdaMethodCall3.xml" />
+    <Content Include="TestFiles\LambdaNewArrayBounds.xml" />
+    <Content Include="TestFiles\LambdaNewArrayItems.xml" />
+    <Content Include="TestFiles\LambdaParamToBoolConstant.xml" />
+    <Content Include="TestFiles\LambdaReturnParam.xml" />
+    <Content Include="TestFiles\LambdaReturnParam2.xml" />
+    <Content Include="TestFiles\LambdaToBoolConstant.xml" />
+    <Content Include="TestFiles\LambdaTypeBinary.xml" />
+    <Content Include="TestFiles\ListOfInt.xml" />
+    <Content Include="TestFiles\ListOfNullableInt.xml" />
+    <Content Include="TestFiles\Long.xml" />
+    <Content Include="TestFiles\Loop1.xml" />
+    <Content Include="TestFiles\NullableInt.xml" />
+    <Content Include="TestFiles\NullableLong.xml" />
+    <Content Include="TestFiles\NullableStructDataContract1.xml" />
+    <Content Include="TestFiles\Object1.xml" />
+    <Content Include="TestFiles\Object1Null.xml" />
+    <Content Include="TestFiles\RuntimeVariables.xml" />
+    <Content Include="TestFiles\SByte.xml" />
+    <Content Include="TestFiles\Short.xml" />
+    <Content Include="TestFiles\String.xml" />
+    <Content Include="TestFiles\StructDataContract1.xml" />
+    <Content Include="TestFiles\StructDataContract1ClassDataContract1Dictionary.xml" />
+    <Content Include="TestFiles\StructDataContract1Null.xml" />
+    <Content Include="TestFiles\StructSerializable1.xml" />
+    <Content Include="TestFiles\Switch.xml" />
+    <Content Include="TestFiles\TimeSpan.xml" />
+    <Content Include="TestFiles\Try1.xml" />
+    <Content Include="TestFiles\Try2.xml" />
+    <Content Include="TestFiles\Try3.xml" />
+    <Content Include="TestFiles\Try4.xml" />
+    <Content Include="TestFiles\Try5.xml" />
+    <Content Include="TestFiles\Try6.xml" />
+    <Content Include="TestFiles\UInt.xml" />
+    <Content Include="TestFiles\UIntPtr.xml" />
+    <Content Include="TestFiles\Ulong.xml" />
+    <Content Include="TestFiles\Unary\LambdaArrayLength.xml" />
+    <Content Include="TestFiles\Unary\LambdaConvert.xml" />
+    <Content Include="TestFiles\Unary\LambdaMethodNot.xml" />
+    <Content Include="TestFiles\Unary\LambdaNegateChecked.xml" />
+    <Content Include="TestFiles\Unary\LambdaNegateOverloaded.xml" />
+    <Content Include="TestFiles\Unary\LambdaNegateParam.xml" />
+    <Content Include="TestFiles\Unary\LambdaNot.xml" />
+    <Content Include="TestFiles\Unary\LambdaTypeAs.xml" />
+    <Content Include="TestFiles\Unary\New.xml" />
+    <Content Include="TestFiles\Unary\OnesComplement.xml" />
+    <Content Include="TestFiles\Unary\Quote.xml" />
+    <Content Include="TestFiles\Unary\Throw.xml" />
+    <Content Include="TestFiles\Unary\TypeAs.xml" />
+    <Content Include="TestFiles\Unary\UnaryPlus.xml" />
+    <Content Include="TestFiles\Uri.xml" />
+    <Content Include="TestFiles\UShort.xml" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
