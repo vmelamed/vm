@@ -1,0 +1,1724 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="urn:schemas-vm-com:Aspects.Expression"
+            targetNamespace="urn:schemas-vm-com:Aspects.Expression"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:xxp="urn:schemas-vm-com:Aspects.Expression">
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en-us">
+            Schema for XML documents representing serialized Microsoft .NET LINQ expression trees
+            (referred to as just expressions in the annotations in this schema).
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="expressions">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                A list of serialized expressions.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:choice>
+                <xsd:element ref="expression"
+                             minOccurs="0"
+                             maxOccurs="unbounded"/>
+            </xsd:choice>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="expression"
+                 type="expressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Single serialized expression element.
+            </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:key name="labelKey">
+            <xsd:selector xpath="label/labelTarget"/>
+            <xsd:field xpath="@uid"/>
+        </xsd:key>
+        <xsd:key name="breakKey">
+            <xsd:selector xpath="break/labelTarget"/>
+            <xsd:field xpath="@uid"/>
+        </xsd:key>
+        <xsd:key name="continueKey">
+            <xsd:selector xpath="continue/labelTarget"/>
+            <xsd:field xpath="@uid"/>
+        </xsd:key>
+
+        <xsd:keyref name="gotoLabelKey"
+                    refer="labelKey">
+            <xsd:selector xpath="goto/labelTarget"/>
+            <xsd:field xpath="@uidref"/>
+        </xsd:keyref>
+
+    </xsd:element>
+
+    <xsd:complexType name ="expressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a single expression of a base type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="expressionBaseGroup"/>
+    </xsd:complexType>
+
+    <xsd:group name="expressionBaseGroup">
+        <xsd:choice>
+            <xsd:element name="constant"
+                         type="constantExpressionType"/>
+
+            <xsd:element name="parameter"
+                         type="parameterExpressionType"/>
+            
+            <xsd:element name="runtimeVariables"
+                         type="runtimeVariablesType"/>
+
+            <xsd:element name="lambda"
+                         type="lambdaExpressionType"/>
+
+            <!-- unary expressions -->
+            <xsd:element name="arrayLength"
+                         type="unaryExpressionType"/>
+            <xsd:element name="convert"
+                         type="unaryExpressionType"/>
+            <xsd:element name="convertChecked"
+                         type="unaryExpressionType"/>
+            <xsd:element name="negate"
+                         type="unaryExpressionType"/>
+            <xsd:element name="negateChecked"
+                         type="unaryExpressionType"/>
+            <xsd:element name="not"
+                         type="unaryExpressionType"/>
+            <xsd:element name="quote"
+                         type="unaryExpressionType"/>
+            <xsd:element name="typeAs"
+                         type="unaryExpressionType"/>
+            <xsd:element name="unaryPlus"
+                         type="unaryExpressionType"/>
+            <xsd:element name="onesComplement"
+                         type="unaryExpressionType"/>
+            <xsd:element name="throw"
+                         type="unaryExpressionType"/>
+
+            <!-- binary expressions -->
+            <xsd:element name="add"
+                         type="binaryExpressionType"/>
+            <xsd:element name="addChecked"
+                         type="binaryExpressionType"/>
+            <xsd:element name="and"
+                         type="binaryExpressionType"/>
+            <xsd:element name="andAlso"
+                         type="binaryExpressionType"/>
+            <xsd:element name="arrayIndex"
+                         type="binaryExpressionType"/>
+            <xsd:element name="divide"
+                         type="binaryExpressionType"/>
+            <xsd:element name="equal"
+                         type="binaryExpressionType"/>
+            <xsd:element name="exclusiveOr"
+                         type="binaryExpressionType"/>
+            <xsd:element name="greaterThan"
+                         type="binaryExpressionType"/>
+            <xsd:element name="greaterThanOrEqual"
+                         type="binaryExpressionType"/>
+            <xsd:element name="leftShift"
+                         type="binaryExpressionType"/>
+            <xsd:element name="lessThan"
+                         type="binaryExpressionType"/>
+            <xsd:element name="lessThanOrEqual"
+                         type="binaryExpressionType"/>
+            <xsd:element name="modulo"
+                         type="binaryExpressionType"/>
+            <xsd:element name="multiply"
+                         type="binaryExpressionType"/>
+            <xsd:element name="multiplyChecked"
+                         type="binaryExpressionType"/>
+            <xsd:element name="notEqual"
+                         type="binaryExpressionType"/>
+            <xsd:element name="or"
+                         type="binaryExpressionType"/>
+            <xsd:element name="orElse"
+                         type="binaryExpressionType"/>
+            <xsd:element name="power"
+                         type="binaryExpressionType"/>
+            <xsd:element name="rightShift"
+                         type="binaryExpressionType"/>
+            <xsd:element name="subtractChecked"
+                         type="binaryExpressionType"/>
+            <xsd:element name="subtract"
+                         type="binaryExpressionType"/>
+
+            <xsd:element name="coalesce"
+                         type="coalesceOrAssignmentExpressionType"/>
+
+            <xsd:element name="assign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="addAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="addAssignChecked"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="andAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="divideAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="exclusiveOrAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="leftShiftAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="moduloAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="multiplyAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="multiplyAssignChecked"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="powerAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="orAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="rightShiftAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="subtractAssign"
+                         type="coalesceOrAssignmentExpressionType"/>
+            <xsd:element name="subtractAssignChecked"
+                         type="coalesceOrAssignmentExpressionType"/>
+
+            <xsd:element name="decrement"
+                         type="changeByOneExpressionType"/>
+            <xsd:element name="increment"
+                         type="changeByOneExpressionType"/>
+            <xsd:element name="postDecrementAssign"
+                         type="changeByOneExpressionType"/>
+            <xsd:element name="postIncrementAssign"
+                         type="changeByOneExpressionType"/>
+            <xsd:element name="preDecrementAssign"
+                         type="changeByOneExpressionType"/>
+            <xsd:element name="preIncrementAssign"
+                         type="changeByOneExpressionType"/>
+
+            <xsd:element name="block"
+                         type="blockExpressionType"/>
+
+            <xsd:element name="call"
+                         type="callExpressionType"/>
+            <xsd:element name="invoke"
+                         type="invokeType"/>
+            <xsd:element name="memberAccess"
+                         type="memberAccessExpressionType"/>
+
+            <xsd:element name="conditional"
+                         type="conditionalExpressionType"/>
+
+            <xsd:element name="default"
+                         type="defaultExpressionType"/>
+
+            <xsd:element name="new"
+                         type="newExpressionType"/>
+            <xsd:element name="memberInit"
+                         type="memberInitExpressionType"/>
+            <xsd:element name="listInit"
+                         type="listInitType"/>
+
+            <xsd:element name="newArrayBounds"
+                         type="newArrayBoundsType"/>
+            <xsd:element name="newArrayInit"
+                         type="newArrayInitType"/>
+
+            <xsd:element name="index"
+                         type="indexType"/>
+
+            <xsd:element name="isFalse"
+                         type="isTestType"/>
+            <xsd:element name="isTrue"
+                         type="isTestType"/>
+
+            <xsd:element name="typeIs"
+                         type="typeBinaryType"/>
+            <xsd:element name="typeEqual"
+                         type="typeBinaryType"/>
+            <xsd:element name="unbox"
+                         type="typeBinaryType"/>
+
+            <xsd:element name="goto"
+                         type="gotoExpressionType" />
+            <xsd:element name="label"
+                         type="labelExpressionType"/>
+
+            <xsd:element name="loop"
+                         type="loopType"/>
+            <xsd:element name="break"
+                         type="labelExpressionType" />
+            <xsd:element name="continue"
+                         type="labelExpressionType" />
+
+            <xsd:element name="switch"
+                         type="switchType"/>
+
+            <xsd:element name="try"
+                         type="tryType"/>
+
+            <xsd:element name="extension"
+                         type="extensionType"/>
+            <!--            
+            <xsd:element name="dynamic" type="dynamicType"/>
+            <xsd:element name="debugInfo" type="debugInfoType"/>
+            -->
+
+        </xsd:choice>
+    </xsd:group>
+
+    <xsd:group name="constantBaseGroup">
+        <xsd:choice>
+            <xsd:element name="anyURI"
+                         type="xsd:anyURI">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a URI string value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="boolean"
+                         type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a boolean value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="byte"
+                         type="xsd:byte">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents an signed byte value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="dateTime"
+                         type="xsd:dateTime">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a date and time value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="decimal"
+                         type="xsd:decimal">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a decimal value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="double"
+                         type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a double precision floating point value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="float"
+                         type="xsd:float">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a single precision floating point value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="int"
+                         type="xsd:int">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents an integer (32bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="long"
+                         type="xsd:long">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a long integer (64bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="short"
+                         type="xsd:short">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a short integer (16bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="string"
+                         type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a string value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="unsignedByte"
+                         type="xsd:unsignedByte">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a unsigned byte value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="unsignedInt"
+                         type="xsd:unsignedInt">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a unsigned integer (32bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="unsignedLong"
+                         type="xsd:unsignedLong">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a unsigned long integer (64bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="unsignedShort"
+                         type="xsd:unsignedShort">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a unsigned short integer (16bit) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+
+            <xsd:element name="char">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a char value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int"/>
+                </xsd:simpleType>
+            </xsd:element>
+
+            <xsd:element name="dbNull">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a data base NULL (DBNull) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType/>
+            </xsd:element>
+
+            <xsd:element name="guid">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a GUID value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+
+            <xsd:element name="duration">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a time duration (span) value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:duration">
+                        <xsd:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+                        <xsd:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+                        <xsd:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+
+            <xsd:element name="enum">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents an enumeration value (enum) in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:token">
+                            <xsd:attribute name="type"
+                                           type="xsd:normalizedString"
+                                           use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="nullable">
+                <xsd:complexType>
+                    <xsd:group ref="constantBaseGroup"
+                               minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation xml:lang="en-us">
+                                Specifies the value of the base type of the nullable. The element is optional if isNull=$quot;true$quot;
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:group>
+                    <xsd:attribute name="isNull"
+                                   type="xsd:boolean"
+                                   default="false"/>
+                    <xsd:attribute name="type"
+                                   type="xsd:normalizedString"
+                                   use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation xml:lang="en-us">
+                                Specifies the base type of the nullable. The attribute is mandatory if isNull=$quot;true$quot;
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="anonymous">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents an anonymous type of value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:annotation>
+                            <xsd:documentation xml:lang="en-us">
+                                Defines an element that represents a property of a value of ananonymous type in a constant expression.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:element name="property"
+                                     minOccurs="0"
+                                     maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:group ref="constantBaseGroup"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="name"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="type"
+                                   type="xsd:normalizedString"
+                                   use="required">
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="custom">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines an element that represents a custom type (user defined class or struct) of value in a constant expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:any processContents="lax"
+                                 minOccurs="0"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="type"
+                                   type="xsd:normalizedString"
+                                   use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:group>
+
+    <xsd:complexType name="constantExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a constant value in an expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="constantBaseGroup"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="parameterExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element type that represents a parameter: name and (optional) type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="name"
+                       type="xsd:token"
+                       use="required"/>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+        <xsd:attribute name="isByRef"
+                       use="optional"
+                       default="false"
+                       type="xsd:boolean"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="parameterExpressionListType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines a type of element that lists method parameters.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="parameter"
+                         type="parameterExpressionType"
+                         minOccurs="0"
+                         maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+                                                                                 
+    <xsd:complexType name="lambdaExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a lambda expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="parameters"
+                         type="parameterExpressionListType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the list of parameters of a lambda expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="body"
+                         type="expressionType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the body of a lambda expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="tailCall"
+                       type="xsd:boolean"
+                       use="optional"
+                       default="false">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Indicates if tail call optimization will be applied when compiling the deserialized expression.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="name"
+                       type="xsd:token"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    The name for the lambda.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="delegateType"
+                       type="xsd:normalizedString"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Gets the delegate type of the lambda.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="unaryExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a unary expression:
+                ArrayLength, Convert, ConvertChecked, Negate,
+                NegateChecked, Not, Quote, TypeAs, UnaryPlus
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression (operand) to that the unary expression should be applied.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="method"
+                         type="methodInfoType"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the optional method that overloads the unary expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Used if a type conversion of the result to the specified type needs to take place.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="binaryExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a binary expression:
+                Arithmetic: Add (+), AddChecked (+), Divide (/), Modulo (%), Multiply (*), MultiplyChecked (*), Power (VB ^), Subtract (-), SubtractChecked (-)
+                Bitwise: And (&amp;), Or (|), ExclusiveOr (^), OnesComplement (~)
+                Shift: LeftShift (&lt;&lt;), RightShift (&gt;&gt;)
+                Boolean: AndAlso (&amp;&amp;), OrElse (||)
+                Comparison: Equal (==), NotEqual (!=), GreaterThanOrEqual (&gt;=), GreaterThan (&gt;), LessThan (&lt;), LessThanOrEqual (&lt;=),
+                Coalesce: Coalesce (??)
+                Array indexing: ArrayIndex (a[i])
+                Assignments: Assign (=), AddAssign (+=), AddCheckedAssign (+=), AndAssign (&amp;=), etc.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the left expression (operand) to that the unary expression should be applied.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the right expression (operand) to that the unary expression should be applied.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="method"
+                         type="methodInfoType"
+                         minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute name="lifted"
+                       type="xsd:boolean"
+                       use="optional"
+                       default="false">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Used if a type conversion of the result to the specified type needs to take place.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="coalesceOrAssignmentExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines a type of element that represents a coalesce operator as: a ?? b.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="binaryExpressionType">
+                <xsd:choice>
+                    <xsd:element name="conversion"
+                                 type="lambdaExpressionType"
+                                 minOccurs="0"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="blockExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines a type of element that represents a block as: { int a; a = 1; a++; a*5; }
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="variables"
+                         type="parameterExpressionListType"
+                         minOccurs="0"/>
+            <xsd:sequence>
+                <xsd:group ref="expressionBaseGroup"
+                           minOccurs="0"
+                           maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="memberAccessExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents accessing either a field or a property. E.g. obj.Name
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression which evaluates to the instance whose member is being accessed.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:choice>
+                <xsd:element name="property"
+                             type="propertyInfoType"/>
+                <xsd:element name="field"
+                             type="fieldInfoType"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="indexType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent applying an array index operator.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression which evaluates to the array being indexed.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="indexes">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="expressionBaseGroup"
+                                   minOccurs="1"
+                                   maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation xml:lang="en-us">
+                                    Represent the expressions which evaluate to the array indexe(s).
+                                    The count of the expressions in this sequence should be equal to the array's rank.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:group>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="callExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a static or instance method call.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup"
+                       minOccurs="0" />
+            <xsd:element name="method"
+                         type="methodInfoType"/>
+            <xsd:element name="arguments"
+                         type="argumentsType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="argumentsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Represents a list of arguments.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup"
+                       minOccurs="0"
+                       maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="conditionalExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents a terniary expression as b ? a : x.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the test expression (operand) of the conditional expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression (operand) that should be calculates if the test expression evaluates to True.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression (operand) that should be calculates if the test expression evaluates to False.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="changeByOneExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents increment, decrement, pre-increment, pre-decrement, post-increment, post-decrement.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the entity that to be changed by one.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="method"
+                         type="methodInfoType"
+                         minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="defaultExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents the default type, e.g. default(int).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="newExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents allocating memory for and calling a constructor of the specified type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="constructor"
+                         type="constructorInfoType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the constructor.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="arguments"
+                         type="argumentsType"/>
+            <xsd:element name="members"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        If members is not empty, it must have the same number of elements as arguments.
+                        Each element of members must be a &quot;propertyInfo&quot;, &quot;fieldInfo&quot; or &quot;methodInfo&quot;
+                        that represents an instance member on the type represented by the attribute &quot;type&quot;.
+                        If it represents a property, the property must be able to retrieve the value of the associated field.
+                        The corresponding element of arguments for each element of members must have a Type property
+                        that represents a type that is assignable to the type of the member that the members element represents.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="memberGroup"
+                                   minOccurs="0"
+                                   maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="methodParameterListType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines a type of elemnt that lists method parameters.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="parameter"
+                         type="methodParameterType"
+                         minOccurs="0"
+                         maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="methodParameterType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Extends the definition of the parameter element type with a modifier (ref, out or in).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="parameterExpressionType">
+                <xsd:attribute name="modifier"
+                               use="optional"
+                               default="in">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                            <xsd:enumeration value="in"/>
+                            <xsd:enumeration value="out"/>
+                            <xsd:enumeration value="ref"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="memberInfoType"
+                     abstract="true">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent property or field information.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="visibility"
+                       use="optional"
+                       default="public">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Represents the visibility of the property or field (the default is public).
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:token">
+                    <xsd:enumeration value="private"/>
+                    <xsd:enumeration value="family"/>
+                    <xsd:enumeration value="assembly"/>
+                    <xsd:enumeration value="familyAndAssembly"/>
+                    <xsd:enumeration value="familyOrAssembly"/>
+                    <xsd:enumeration value="public"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="static"
+                       type="xsd:boolean"
+                       use="optional"
+                       default="false">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Specifies weather the property or field is static (the default is instance).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="name"
+                       type="xsd:token">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Represents the name of the property or field.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Represents the type that defines the property or field.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="methodInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an elemnt that describes a method (MethodInfo).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="memberInfoType">
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="parameters"
+                                 type="parameterExpressionListType"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="constructorInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an elemnt that describes a method (MethodInfo).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="memberInfoType">
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="parameters"
+                                 type="parameterExpressionListType"/>
+                </xsd:choice>
+                <xsd:attribute name="type"
+                               type="xsd:normalizedString"
+                               use="optional" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="fieldInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent properties.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="memberInfoType">
+                <xsd:attribute name="readonly"
+                               type="xsd:boolean"
+                               use="optional"
+                               default="false">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en-us">
+                            Specifies weather the property or field is readonly.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="const"
+                               type="xsd:boolean"
+                               use="optional"
+                               default="false">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en-us">
+                            Specifies weather the property or field is constant.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="propertyInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent properties.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="memberInfoType">
+                <xsd:sequence>
+                    <xsd:element name="get"
+                                 minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:choice minOccurs="0">
+                                <xsd:element name="parameters"
+                                             type="parameterExpressionListType"/>
+                            </xsd:choice>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="set"
+                                 minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:choice minOccurs="0">
+                                <xsd:element name="parameters"
+                                             type="parameterExpressionListType"/>
+                            </xsd:choice>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="eventInfoType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent events.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="memberInfoType">
+                <xsd:sequence>
+                    <xsd:element name="add"
+                                 minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:choice minOccurs="0">
+                                <xsd:element name="parameters"
+                                             type="parameterExpressionListType"/>
+                            </xsd:choice>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="remove"
+                                 minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:choice minOccurs="0">
+                                <xsd:element name="parameters"
+                                             type="parameterExpressionListType"/>
+                            </xsd:choice>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:group name="memberGroup">
+        <xsd:choice>
+            <xsd:element name="property"
+                         type="propertyInfoType"/>
+            <xsd:element name="field"
+                         type="fieldInfoType"/>
+            <xsd:element name="method"
+                         type="methodInfoType"/>
+            <xsd:element name="event"
+                         type="eventInfoType"/>
+        </xsd:choice>
+    </xsd:group>
+
+    <xsd:complexType name="isTestType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent testing the expression result to be true or false.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="memberGroup"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="invokeType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent applying a delegate or lambda to a list of arguments.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+            </xsd:group>
+            <xsd:element name="arguments"
+                         type="argumentsType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="typeBinaryType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent an expression between an expression and a type.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="expressionBaseGroup"/>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="labelTargetType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent label targets.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="name"
+                       type="xsd:string"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the name associated with the label target.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the type of value that is passed when jumping to the label.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="labelType">
+        <xsd:complexContent>
+            <xsd:extension base="labelTargetType">
+                <xsd:attribute name="uid"
+                               type="xsd:ID"
+                               use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="refLabelType">
+        <xsd:complexContent>
+            <xsd:extension base="labelTargetType">
+                <xsd:attribute name="uidref"
+                               type="xsd:IDREF"
+                               use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="labelExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent label expressions.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="labelTarget"
+                         type="labelType"/>
+            <xsd:group ref="expressionBaseGroup"
+                       minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        This is the default value of this LabelExpression when the label is reached through regular control flow.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="gotoExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent the goto expressions: goto, return, break, continue.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="labelTarget"
+                         type="refLabelType"/>
+            <xsd:group ref="expressionBaseGroup"
+                       minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        The value of to pass to the goto target.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+        </xsd:sequence>
+        <xsd:attribute name="kind">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the type of the goto expression.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:normalizedString">
+                    <xsd:enumeration value="goto"/>
+                    <xsd:enumeration value="return"/>
+                    <xsd:enumeration value="break"/>
+                    <xsd:enumeration value="continue"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the type of the returned value.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="loopType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent loop expressions.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup"/>
+            <xsd:element name="breakLabel"
+                         type="labelExpressionType"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines the optional break target used by the loop body.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="continueLabel"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Defines the optional break target used by the loop body.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="labelTargetType">
+                            <xsd:attribute name="uid"
+                                           type="xsd:ID"
+                                           use="required"/>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="switchType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represents a switch expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression which value is to be tested against each case.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="compare"
+                         type="methodInfoType"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the non-default equality comparison method to use.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:sequence>
+                <xsd:element name="case"
+                             minOccurs="0"
+                             maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en-us">
+                            Represents the set of cases for this switch expression.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="value"
+                                         minOccurs="1"
+                                         maxOccurs="unbounded">
+                                <xsd:annotation>
+                                    <xsd:documentation xml:lang="en-us">
+                                        Represents the values of this case.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:group ref="expressionBaseGroup"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:group ref="expressionBaseGroup">
+                                <xsd:annotation>
+                                    <xsd:documentation xml:lang="en-us">
+                                        Represents the body of this case.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:group>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:element name="defaultCase"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the expression which should be executed if the switch expression's value does not match any of the cases.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:group ref="expressionBaseGroup"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="tryType">
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the body of the try statement.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+            <xsd:element name="catch"
+                         minOccurs="0"
+                         maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents a catch type, filter and body.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="exception"
+                                     type="parameterExpressionType"
+                                     minOccurs="0" />
+                        <xsd:element name="filter"
+                                     type="expressionType"
+                                     minOccurs="0" />
+                        <xsd:group ref="expressionBaseGroup" />
+                    </xsd:sequence>
+                    <xsd:attribute name="type"
+                                   type="xsd:normalizedString"
+                                   use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="fault"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents a typeless, filterless catch, e.g. try {...} catch {...}
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:group ref="expressionBaseGroup"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="finally"
+                         minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Represents the body of the finally part of the try statement.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:group ref="expressionBaseGroup"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="elementInitType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent initializers for a single element of an IEnumerable collection.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="method"
+                         type="methodInfoType">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        Specifies the instance method that is used to add an element to an IEnumerable collection.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="arguments">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="expressionBaseGroup"
+                                   minOccurs="0"
+                                   maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="listInitType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent a collection initializer.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="new"
+                         type="newExpressionType" />
+            <xsd:element name="listInit">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="elementInit"
+                                     type="elementInitType"
+                                     minOccurs="1"
+                                     maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="newArrayInitType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent creating a one-dimensional array and initializing it from a list of elements.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="elements">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="expressionBaseGroup"
+                                   minOccurs="0"
+                                   maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the type of elements that represents the element type of the array.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="newArrayBoundsType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represent creating an array that has a specified rank.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="bounds">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="expressionBaseGroup"
+                                   minOccurs="1"
+                                   maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-us">
+                    Defines the type of elements that represents the element type of the array.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="memberInitExpressionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines an element that represents an expression that creates a new object and initializes a property of the object.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="new"
+                         type="newExpressionType"/>
+            <xsd:element name="bindings">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:group ref="memberBinding"
+                                   minOccurs="0"
+                                   maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="memberBindingType"
+                     abstract="true">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Provides the base type for the elements that represent bindings that are used to initialize members of a newly created object derive.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:group ref="memberGroup"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="assignmentBindingType">
+        <xsd:complexContent>
+            <xsd:extension base="memberBindingType">
+                <xsd:group ref="expressionBaseGroup"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="memberMemberBindingType">
+        <xsd:complexContent>
+            <xsd:extension base="memberBindingType">
+                <xsd:sequence>
+                    <xsd:group ref="expressionBaseGroup"
+                               minOccurs="0"
+                               maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="listBindingType">
+        <xsd:complexContent>
+            <xsd:extension base="memberBindingType">
+                <xsd:sequence>
+                    <xsd:element name="elementInit"
+                                 type="elementInitType"
+                                 minOccurs="0"
+                                 maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:group name="memberBinding">
+        <xsd:choice>
+            <xsd:element name="assignmentBinding"
+                         type="assignmentBindingType" />
+            <xsd:element name="memberMemberBinding"
+                         type="memberMemberBindingType" />
+            <xsd:element name="listBinding"
+                         type="listBindingType" />
+        </xsd:choice>
+    </xsd:group>
+
+    <xsd:complexType name="extensionType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of elements that represents an unknown extension expression.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:group ref="expressionBaseGroup"
+                       minOccurs="0"
+                       maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-us">
+                        The child nodes of the extension expression.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:group>
+        </xsd:sequence>
+        <xsd:attribute name="type"
+                       type="xsd:normalizedString"
+                       use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="runtimeVariablesType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-us">
+                Defines the type of element that represents a RuntimeVariablesExpression.
+                An expression that provides runtime read/write permission for variables.
+                This type is necessary for implementing &quot;eval&quot; in dynamic languages.
+                It evaluates to an instance of IList&lt;T&gt; at run time.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="variables"
+                         type="parameterExpressionListType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

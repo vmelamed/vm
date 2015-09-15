@@ -100,6 +100,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void FinalizerTest()
         {
             var target = new WeakReference<HashAlgorithmFactory>(new HashAlgorithmFactory());

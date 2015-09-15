@@ -197,6 +197,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void ConstantTimeEqualsEqualTimesTest()
         {
             const int length = 10000000;

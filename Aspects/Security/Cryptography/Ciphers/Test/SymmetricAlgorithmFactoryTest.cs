@@ -150,7 +150,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
             }
         }
 
-        [TestMethod]
+        [TestMethod]        
         public void InitializedWithAlgorithmFromDITest()
         {
             try
@@ -180,6 +180,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
 #if NET45
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void FinalizerTest()
         {
             var target = new WeakReference<SymmetricAlgorithmFactory>(new SymmetricAlgorithmFactory());

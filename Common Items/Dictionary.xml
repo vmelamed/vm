@@ -20,7 +20,7 @@
             <Word>hi</Word>
             <Word>lo</Word>
             <Word>vm</Word>
-            <Word>Melamed</Word>
+            <Word>melamed</Word>
             <Word>uuid</Word>
             <Word>dto</Word>
             <Word>validator</Word>
@@ -37,20 +37,21 @@
             <Word>msmq</Word>
             <Word>tx</Word>
             <!-- transaction -->
-            <Word>WSHttpBinding</Word>
-            <Word>NetTcpBinding</Word>
-            <Word>NetMsmqBinding</Word>
-            <Word>NetNamedPipeBinding</Word>
-            <Word>Mex</Word>
-            <Word>Ser</Word>
-            <Word>Xxp</Word>
-            <Word>Dcs</Word>
+            <Word>wshttpbinding</Word>
+            <Word>nettcpbinding</Word>
+            <Word>netmsmqbinding</Word>
+            <Word>netnamedpipebinding</Word>
+            <Word>mex</Word>
+            <Word>ser</Word>
+            <Word>xxp</Word>
+            <Word>dcs</Word>
             <Word>validatable</Word>
-            <Word>Combinator</Word>
-            <Word>Combinators</Word>
+            <Word>combinator</Word>
+            <Word>combinators</Word>
             <Word>subquery</Word>
             <Word>ip</Word>
-            <Word>DPAPI</Word>
+            <Word>dpapi</Word>
+            <Word>iso</Word>
         </Recognized>
         <Unrecognized>
             <!-- 
@@ -108,31 +109,7 @@
     <Acronyms>
         <CasingExceptions>
             <Acronym>vm</Acronym>
-            <Acronym>ISO</Acronym>
-            <Acronym>VT</Acronym>
-            <Acronym>COM</Acronym>
-            <Acronym>WCF</Acronym>
             <Acronym>NaN</Acronym>
-            <Acronym>MSMQ</Acronym>
-            <Acronym>UPN</Acronym>
-            <Acronym>SPN</Acronym>
-            <!-- Comma separated values -->
-            <Acronym>CSV</Acronym>
-            <!-- Comma separated values -->
-            <Acronym>TSV</Acronym>
-            <!-- Tab separated values -->
-            <Acronym>DSV</Acronym>
-            <!-- Delimiter separated values -->
-            <Acronym>ORM</Acronym>
-            <!-- Object/Relational Mapping -->
-            <Acronym>WSHttpBinding</Acronym>
-            <Acronym>NetTcpBinding</Acronym>
-            <Acronym>NetMsmqBinding</Acronym>
-            <Acronym>NetNamedPipeBinding</Acronym>
-            <Acronym>DPAPI</Acronym>
-            <Acronym>ISO</Acronym>
-            <Acronym>UPN</Acronym>
-            <Acronym>SPN</Acronym>
         </CasingExceptions>
     </Acronyms>
 </Dictionary>

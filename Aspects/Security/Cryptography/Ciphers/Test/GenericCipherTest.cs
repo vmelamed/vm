@@ -186,6 +186,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void RoundTripEncryptTest()
         {
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -203,6 +204,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void RoundTripEncryptTest64()
         {
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -220,6 +222,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void RoundTripPublicCertFailEncryptTest()
         {
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -247,6 +250,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void RoundTripPublicCertFailEncryptTest64()
         {
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -792,6 +796,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream0EncryptTest()
         {
             RoundTripParameterizedEncryptTest(0);
@@ -804,6 +809,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamLessThan4kEncryptTest()
         {
             RoundTripParameterizedEncryptTest(1024);
@@ -816,30 +822,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream4kEncryptTest()
         {
             RoundTripParameterizedEncryptTest(4096);
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamNx4kEncryptTest()
         {
             StreamParameterizedEncryptTest(3*4096);
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamNx4kEncryptTest()
         {
             RoundTripParameterizedEncryptTest(3*4096);
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamMoreThanNx4kEncryptTest()
         {
             StreamParameterizedEncryptTest(3*4096+734);
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamMoreThanNx4kEncryptTest()
         {
             RoundTripParameterizedEncryptTest(3*4096+734);
@@ -854,6 +865,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream0EncryptTest64()
         {
             RoundTripParameterizedEncryptTest64(0);
@@ -866,6 +878,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamLessThan4kEncryptTest64()
         {
             RoundTripParameterizedEncryptTest64(1024);
@@ -878,30 +891,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream4kEncryptTest64()
         {
             RoundTripParameterizedEncryptTest64(4096);
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamNx4kEncryptTest64()
         {
             StreamParameterizedEncryptTest64(3*4096);
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamNx4kEncryptTest64()
         {
             RoundTripParameterizedEncryptTest64(3*4096);
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamMoreThanNx4kEncryptTest64()
         {
             StreamParameterizedEncryptTest64(3*4096+734);
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamMoreThanNx4kEncryptTest64()
         {
             RoundTripParameterizedEncryptTest64(3*4096+734);
@@ -1096,6 +1114,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream0AsyncEncryptTest()
         {
             RoundTripParameterizedAsyncEncryptTest(0).Wait();
@@ -1108,6 +1127,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamLessThan4kAsyncEncryptTest()
         {
             RoundTripParameterizedAsyncEncryptTest(1024).Wait();
@@ -1120,30 +1140,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream4kAsyncEncryptTest()
         {
             RoundTripParameterizedAsyncEncryptTest(4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void EncryptStreamNx4kAsyncTest()
         {
             StreamParameterizedAsyncEncryptTest(3*4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamNx4kAsyncEncryptTest()
         {
             RoundTripParameterizedAsyncEncryptTest(3*4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamMoreThanNx4kAsyncEncryptTest()
         {
             StreamParameterizedAsyncEncryptTest(3*4096+734).Wait();
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamMoreThanNx4kAsyncEncryptTest()
         {
             RoundTripParameterizedAsyncEncryptTest(3*4096+734).Wait();
@@ -1158,6 +1183,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream0AsyncEncryptTest64()
         {
             RoundTripParameterizedAsyncEncryptTest64(0).Wait();
@@ -1170,6 +1196,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamLessThan4kAsyncEncryptTest64()
         {
             RoundTripParameterizedAsyncEncryptTest64(1024).Wait();
@@ -1182,30 +1209,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStream4kAsyncEncryptTest64()
         {
             RoundTripParameterizedAsyncEncryptTest64(4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void EncryptStreamNx4kAsyncTest64()
         {
             StreamParameterizedAsyncEncryptTest64(3*4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamNx4kAsyncEncryptTest64()
         {
             RoundTripParameterizedAsyncEncryptTest64(3*4096).Wait();
         }
 
         [TestMethod]
+        [TestCategory("SlowTest")]
         public void StreamMoreThanNx4kAsyncEncryptTest64()
         {
             StreamParameterizedAsyncEncryptTest64(3*4096+734).Wait();
         }
 
         [TestMethod]
+        [TestCategory("RoundTripTest")]
         public void RoundTripStreamMoreThanNx4kAsyncEncryptTest64()
         {
             RoundTripParameterizedAsyncEncryptTest64(3*4096+734).Wait();

@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Tests", "Aspects\Test\vm.Aspects.Tests.csproj", "{37B30FDB-7D91-49F8-8C1C-88036D1314FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Linq.Expressions.Serialization", "Aspects\Linq\Expressions\Serialization\vm.Aspects.Linq.Expressions.Serialization.csproj", "{628D6504-40E3-412A-827F-39F8644BA906}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,12 @@ Global
 		{37B30FDB-7D91-49F8-8C1C-88036D1314FC}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{37B30FDB-7D91-49F8-8C1C-88036D1314FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37B30FDB-7D91-49F8-8C1C-88036D1314FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
