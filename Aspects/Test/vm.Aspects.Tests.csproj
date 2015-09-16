@@ -241,15 +241,6 @@
     <Compile Include="ResolveNameAttributeTests.cs" />
     <Compile Include="TargetClasses.cs" />
     <Compile Include="Utilities.cs" />
-    <None Include="Validation\DataContract.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Validation\Expression.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Validation\Microsoft.Serialization.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Validation\TestDataUrlValidator.csv" />
   </ItemGroup>
   <ItemGroup>

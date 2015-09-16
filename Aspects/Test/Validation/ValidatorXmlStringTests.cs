@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Validation;
 
 namespace vm.Aspects.Tests.Validation
@@ -10,16 +7,17 @@ namespace vm.Aspects.Tests.Validation
     /// Summary description for ValidatorXmlStringTests
     /// </summary>
     [TestClass]
-    [DeploymentItem("..\\..\\Validation\\Microsoft.Serialization.xsd")]
-    [DeploymentItem("..\\..\\Validation\\DataContract.xsd")]
-    [DeploymentItem("..\\..\\Validation\\expression.xsd")]
+    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Tests\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Tests\\DataContract.xsd")]
+    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Documents\\Expression.xsd")]
     public class ValidatorXmlStringTests
     {
         /// <summary>
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
         ///</summary>
-        public TestContext TestContext { get; set; }
+        public TestContext TestContext
+        { get; set; }
 
         #region Additional test attributes
         //
@@ -31,7 +29,7 @@ namespace vm.Aspects.Tests.Validation
         {
             XmlStringValidator.AddSchema("http://schemas.microsoft.com/2003/10/Serialization/", "Microsoft.Serialization.xsd");
             XmlStringValidator.AddSchema("http://schemas.datacontract.org/2004/07/System", "DataContract.xsd");
-            XmlStringValidator.AddSchema("urn:schemas-vm-com:Aspects.Expression", "expression.xsd");
+            XmlStringValidator.AddSchema("urn:schemas-vm-com:Aspects.Linq.Expression", "Expression.xsd");
         }
 
         // Use ClassCleanup to run code after all tests in a class have run

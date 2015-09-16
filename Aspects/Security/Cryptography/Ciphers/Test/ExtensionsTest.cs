@@ -367,7 +367,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Test
             Assert.IsNotNull(cryptoResult);
             Assert.IsTrue(cryptoResult.Length > testText.Length*2);
 
-            cryptoResult[5] ^= cryptoResult[5];
+            cryptoResult[5] = (byte)~(cryptoResult[5]);
 
             target.VerifyTextHash(testText, cryptoResult);
         }
