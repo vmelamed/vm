@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Linq.Expressions.Serialization</RootNamespace>
     <AssemblyName>vm.Aspects.Linq.Expressions.Serialization</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
@@ -197,6 +197,24 @@
     <Compile Include="..\..\..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\Constants.cs">
+      <Link>Implementation\vm.Aspects\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Threading\AsyncProducerConsumerCollection.cs">
+      <Link>Implementation\Threading\AsyncProducerConsumerCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Threading\ReaderSlimSync.cs">
+      <Link>Implementation\Threading\ReaderSlimSync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Threading\ReaderWriterLockSlimExtensions.cs">
+      <Link>Implementation\Threading\ReaderWriterLockSlimExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Threading\UpgradeableReaderSlimSync.cs">
+      <Link>Implementation\Threading\UpgradeableReaderSlimSync.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Threading\WriterSlimSync.cs">
+      <Link>Implementation\Threading\WriterSlimSync.cs</Link>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IConstantXmlSerializer.cs" />
     <Compile Include="Implementation\DataSerialization.cs" />
@@ -229,18 +247,13 @@
     <None Include="Documents\Expression.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NuGet\ExpressionSerialization.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\vm.Aspects.csproj">
-      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
-      <Name>vm.Aspects</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

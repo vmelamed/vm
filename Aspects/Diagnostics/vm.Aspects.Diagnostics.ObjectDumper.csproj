@@ -252,9 +252,11 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="ObjectDumper.nuspec" />
+    <None Include="NuGet\ObjectDumper.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
-    <None Include="PublishObjectDumperOnNuGet.cmd" />
+    <None Include="NuGet\PublishObjectDumper.cmd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
