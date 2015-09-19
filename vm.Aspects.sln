@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtectedKey", "Aspects\Sec
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vm.Aspects.Security.Cryptography.Ciphers.Utilities", "vm.Aspects.Security.Cryptography.Ciphers.Utilities", "{A9DCD77C-A0E2-4D01-AB1D-40F8853D4FB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Model", "Aspects\Model\vm.Aspects.Model.csproj", "{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,14 @@ Global
 		{C1BB3B78-C149-451D-8D1F-E6FC6DBFBF5A}.DebygUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{C1BB3B78-C149-451D-8D1F-E6FC6DBFBF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1BB3B78-C149-451D-8D1F-E6FC6DBFBF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.DebygUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.DebygUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

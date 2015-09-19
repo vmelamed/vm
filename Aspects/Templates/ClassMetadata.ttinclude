@@ -1,0 +1,160 @@
+﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="CommonT4Utilities.ttinclude" #><#
+
+    const string metadataDir = "metadata";
+
+    DTE dte = GetEnvDte();
+
+    var sourcePathName    = GetTemplateName(dte);
+    var path              = Path.GetDirectoryName(sourcePathName);
+    var generatedName     = Path.GetFileName(sourcePathName).Replace(".tt", ".cs");
+    var generatedPathName = Path.Combine(path, generatedName);
+    var sourceName        = Path.GetFileName(sourcePathName).Replace("Metadata.tt", ".cs");
+
+    if (path.EndsWith(metadataDir))
+        path = path.Substring(0, path.Length-metadataDir.Length);
+
+    sourcePathName = Path.Combine(path, sourceName);
+
+    var sourceModel        = dte.Solution
+                                .FindProjectItem(sourcePathName)
+                                .FileCodeModel;
+
+    var codeElements = sourceModel.CodeElements;
+    var namespaces = codeElements.OfType<EnvDTE.CodeNamespace>();
+    var ns = namespaces.FirstOrDefault();
+
+    var sourceNameSpace    = sourceModel
+                                .CodeElements
+                                .OfType<EnvDTE.CodeNamespace>()
+                                .FirstOrDefault();
+    var sourceClass        = sourceNameSpace
+                                .Children
+                                .OfType<CodeClass>()
+                                .FirstOrDefault();
+    var sourceProiperties  = sourceClass
+                                .Members
+                                .OfType<CodeProperty>()
+                                .Where(p => p.Parent == sourceClass)
+                                //.OrderBy(p => p.Name)
+                                .ToList();
+
+    var generatedItem      = File.Exists(generatedPathName)
+                                ? dte
+                                    .Solution
+                                    .FindProjectItem(generatedPathName)
+                                : null;
+    var generatedCodeModel = generatedItem != null
+                                ? dte
+                                    .Solution
+                                    .FindProjectItem(generatedPathName)
+                                    .FileCodeModel
+                                : null;
+    var generatedNameSpace = generatedCodeModel != null
+                                ? generatedCodeModel
+                                    .CodeElements
+                                    .OfType<EnvDTE.CodeNamespace>()
+                                    .FirstOrDefault()
+                                : null;
+    var generatedClass     = generatedNameSpace != null
+                                ? generatedNameSpace
+                                    .Children
+                                    .OfType<CodeClass>()
+                                    .FirstOrDefault()
+                                : null;
+    var generatedProperties = new HashSet<string>();
+
+    if (generatedClass != null)
+        generatedProperties.UnionWith(
+                                    generatedClass
+                                        .Members
+                                        .OfType<CodeProperty>()            
+                                        .Where(p => p.Parent == generatedClass)
+                                        .Select(p => p.Name));
+
+    var i = generatedProperties.Count();
+
+    if (i == 0)
+    {
+        // generate the metadata class using plain T4
+#>
+using vm.Aspects.Diagnostics;
+
+namespace <#= sourceNameSpace.Name #>.Metadata
+{
+    abstract class <#= sourceClass.Name #>Metadata
+    {
+<# 
+        foreach (var property in sourceProiperties)
+        {
+            if (!generatedProperties.Contains(property.Name))
+            {
+                if (i > 0)
+                    WriteLine(""); 
+#>
+        [Dump(<#= i++ #>)]
+        public object <#= property.Name #> { get; set; }
+<#          }
+        } #>
+    }
+}<#
+    }
+    else
+    {
+        // read the existing text up to and including the last property (where we need to insert the new properies, if any)
+        generatedItem.Open(EnvDTE.Constants.vsViewKindPrimary);
+        
+        var generatedDocument = generatedItem != null ? generatedItem.Document : null;
+
+        var endPoint   = generatedClass
+                              .GetEndPoint(vsCMPart.vsCMPartBody)
+                              .CreateEditPoint();
+
+        var selection = generatedDocument.Selection as TextSelection;
+        
+        selection.MoveToAbsoluteOffset(1, false);
+        selection.MoveToPoint(endPoint, true);
+        selection.LineUp(true);
+        selection.EndOfLine(true);
+
+        var startText = selection.Text;
+
+        // read to the end of the text
+        selection.MoveToPoint(selection.BottomPoint, false);
+        selection.EndOfDocument(true);
+
+        var endText = selection.Text;
+
+        // write the text up to and including the last property
+        Write(startText);
+
+        // insert the new properties
+        foreach (var property in sourceProiperties)
+        {
+            if (!generatedProperties.Contains(property.Name))
+            {
+#>
+
+
+        [Dump(<#= i++ #>)]
+        public object <#= property.Name #> { get; set; }<#
+            }
+        }
+
+        // write the remaining of the text
+        Write(endText);
+
+        selection.StartOfDocument(false);
+    }
+#>

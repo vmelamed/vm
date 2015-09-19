@@ -1,0 +1,201 @@
+﻿<#@ assembly Name="System.Core" #>
+<#@ assembly Name="System.Xml" #>
+<#@ assembly Name="System.Xml.Linq" #>
+<#@ assembly Name="EnvDTE" #>
+<#@ assembly Name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.Linq" #><#+
+
+    // Gets the DTE.
+    DTE GetEnvDte()
+    {
+        var hostServiceProvider = (IServiceProvider)Host;
+
+        if (hostServiceProvider == null)
+            throw new NotSupportedException("Host does not support IServiceProvider.");
+
+        var dte = hostServiceProvider.GetService(typeof(DTE)) as DTE;
+
+        if (dte == null)
+            throw new NotSupportedException("Could not retrieve EnvDTE.DTE from host.");
+
+        return dte;
+    }
+
+    // Gets the full path name of the template.
+    string GetTemplateFullName(
+        DTE dte = null)
+    {
+        if (dte == null)
+            dte = GetEnvDte();
+        return dte.Solution.FindProjectItem(Host.TemplateFile).Document.FullName;
+    }
+
+    // Gets the file name of the template without the path.
+    string GetTemplateName(
+        DTE dte = null)
+    {
+        if (dte == null)
+            dte = GetEnvDte();
+        //var solution = dte.Solution;
+        //var projItem = solution.FindProjectItem(Host.TemplateFile);
+        //var document = projItem.Document;
+        return dte.Solution.FindProjectItem(Host.TemplateFile).Document.Name;
+        //return document.Name;
+    }
+
+    // Copies all using directives from the code model to the target and appends using-s for a set of required namespaces.
+    void WriteUsings(CodeElements codeElements, params string[] requiredNamespaces)
+    {
+        bool[] writtenNamespaces = new bool[requiredNamespaces.Length];
+
+        foreach (var u in codeElements.OfType<CodeImport>())
+        {    
+            WriteLine("using {0};", u.Namespace);
+            requiredNamespaces.Where((ns,i) => writtenNamespaces[i] |= ns==u.Namespace);
+        }
+        
+        for (var i=0; i < writtenNamespaces.Length; i++)
+            if (!writtenNamespaces[i])
+                WriteLine("using {0};", requiredNamespaces[i]);
+    }
+
+    // Translates the values of the enum vsCMAccess to a C# access modifier keyword.
+    string TranslateCodeAccess(vsCMAccess access)
+    {
+        switch (access)
+        {
+        case vsCMAccess.vsCMAccessPublic:
+            return "public";
+        case vsCMAccess.vsCMAccessProtected:
+            return "protected";
+        case vsCMAccess.vsCMAccessPrivate:
+            return "private";
+        case vsCMAccess.vsCMAccessProject:
+            return "internal";
+        case vsCMAccess.vsCMAccessAssemblyOrFamily:
+        case vsCMAccess.vsCMAccessProjectOrProtected:
+            return "protected internal";
+        default:
+            return "";
+        }
+    }
+
+    // copies the XML comment documentation from the source element to the target, commented with '/// '.
+    void WriteDoc(string doc)
+    {
+        var docElement = XElement.Parse(doc);
+        
+        PushIndent("/// ");
+        docElement.Elements().Select(e => { WriteLine(e.ToString()); return 1;}).Count();
+        PopIndent();
+    }
+
+    // Translates the parameter to a C# string. Note that only type names are used and the namespaces are stripped-off.
+    string GetType(CodeTypeRef type)
+    {
+        return GetTypeFromString(type.AsString);
+    }
+
+    // does the actual work of stripping the namespaces.
+    string GetTypeFromString(string typeStr)
+    {
+        var result = new StringBuilder();
+        var temp = new StringBuilder();
+
+        foreach (var c in typeStr)
+        {
+            if (c == '.')
+                temp.Clear();
+            else
+                if ("<>[,]".Contains(c))
+                {
+                    result.Append(temp);
+                    result.Append(c);
+                    temp.Clear();
+                }
+                else
+                    temp.Append(c);
+        }
+
+        return result.Append(temp).ToString();
+    }
+
+    // gets the value inside of a quoted string - with quotes stripped-off.
+    string GetQuotedValue(string quoted)
+    {
+        if (quoted.StartsWith("\""))
+            return quoted.Substring(1, quoted.Length-2);
+        else
+            return quoted.Substring(2, quoted.Length-3).Replace("\"\"", "\"");
+    }
+
+    // Enumerates an array of methods which return possible path names of a file. Returns the first file name that exists or null.
+    string TryGetExistingFile(params Func<string>[] possiblePathNames)
+    {
+        string fileName;
+
+        foreach (var fn in possiblePathNames)
+        {
+            fileName = fn();
+            if (File.Exists(fileName))
+                return fileName;
+        }
+
+        StringBuilder sb = new StringBuilder("A file with none of the following path names exists:\r\n");
+
+        foreach (var fn in possiblePathNames)
+            sb.AppendLine("    "+fn());
+
+        throw new FileNotFoundException(sb.ToString());
+    }
+
+    // Enumerates an array of methods which return possible path names of a file. Returns the first file name that exists or throws FileNotFoundException.
+    string GetExistingFile(params Func<string>[] possiblePathNames)
+    {
+        string fileName = TryGetExistingFile(possiblePathNames);
+
+        if (fileName != null)
+            return fileName;
+
+        StringBuilder sb = new StringBuilder("A file with none of the following path names exists:\r\n");
+
+        foreach (var fn in possiblePathNames)
+            sb.AppendLine("    "+fn());
+
+        throw new FileNotFoundException(sb.ToString());
+    }
+
+    void SeparatedList<T>(
+        IEnumerable<T> sequence,
+        Action<T> elementAction,
+        Action elementSeparation,
+        Action beforeFirstElement = null,
+        Action afterLastElement = null)
+    {
+        bool isFirst = true;
+
+        foreach (var t in sequence)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+                if (beforeFirstElement != null)
+                    beforeFirstElement();
+            }
+            else
+                elementSeparation();
+            elementAction(t);
+        }
+
+        if (!isFirst  &&  afterLastElement != null)
+            afterLastElement();
+    }
+#>

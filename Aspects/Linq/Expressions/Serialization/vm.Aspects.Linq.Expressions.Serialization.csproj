@@ -197,24 +197,6 @@
     <Compile Include="..\..\..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Constants.cs">
-      <Link>Implementation\vm.Aspects\Constants.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Threading\AsyncProducerConsumerCollection.cs">
-      <Link>Implementation\Threading\AsyncProducerConsumerCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Threading\ReaderSlimSync.cs">
-      <Link>Implementation\Threading\ReaderSlimSync.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Threading\ReaderWriterLockSlimExtensions.cs">
-      <Link>Implementation\Threading\ReaderWriterLockSlimExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Threading\UpgradeableReaderSlimSync.cs">
-      <Link>Implementation\Threading\UpgradeableReaderSlimSync.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Threading\WriterSlimSync.cs">
-      <Link>Implementation\Threading\WriterSlimSync.cs</Link>
-    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IConstantXmlSerializer.cs" />
     <Compile Include="Implementation\DataSerialization.cs" />
@@ -225,6 +207,10 @@
     <Compile Include="Implementation\Extensions.cs" />
     <Compile Include="Implementation\Parameter.cs" />
     <Compile Include="Implementation\TypeNameResolver.cs" />
+    <Compile Include="Implementation\vm.Aspects.Threading\ReaderSlimSync.cs" />
+    <Compile Include="Implementation\vm.Aspects.Threading\ReaderWriterLockSlimExtensions.cs" />
+    <Compile Include="Implementation\vm.Aspects.Threading\UpgradeableReaderSlimSync.cs" />
+    <Compile Include="Implementation\vm.Aspects.Threading\WriterSlimSync.cs" />
     <Compile Include="Implementation\XNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -255,6 +241,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -4,9 +4,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 {
     class Parameter : IEquatable<Parameter>
     {
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public bool IsByRef { get; set; }
+        public string Name
+        { get; set; }
+        public Type Type
+        { get; set; }
+        public bool IsByRef
+        { get; set; }
 
         #region Identity rules implementation.
 
@@ -64,11 +67,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>A hash code for the current <see cref="Parameter"/> instance.</returns>
         public override int GetHashCode()
         {
-            var hashCode = Constants.HashInitializer;
+            var hashCode = 23;
 
-            hashCode = Constants.HashMultiplier * hashCode + Name.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Type.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + IsByRef.GetHashCode();
+            hashCode = 17 * hashCode + Name.GetHashCode();
+            hashCode = 17 * hashCode + Type.GetHashCode();
+            hashCode = 17 * hashCode + IsByRef.GetHashCode();
 
             return hashCode;
         }
@@ -82,10 +85,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(Parameter)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator==(Parameter left, Parameter right)
+        public static bool operator ==(Parameter left, Parameter right)
         {
-            return ReferenceEquals(left, null) 
-                        ? ReferenceEquals(right, null) 
+            return ReferenceEquals(left, null)
+                        ? ReferenceEquals(right, null)
                         : left.Equals(right);
         }
 
@@ -98,7 +101,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(Parameter)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator!=(Parameter left, Parameter right)
+        public static bool operator !=(Parameter left, Parameter right)
         {
             return !(left==right);
         }
