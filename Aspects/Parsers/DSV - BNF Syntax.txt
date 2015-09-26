@@ -1,0 +1,46 @@
+﻿SPECIAL CHARACTERS:
+-------------------
+    null            ::= '\x0'
+    tab             ::= '\x9'
+    vtab            ::= '\xB'
+    ff              ::= '\xC'
+    cr              ::= '\xD'
+    lf              ::= '\xA'
+    eof             ::= '\x1A'
+    eof1            ::= '\xFFFF'
+    eol             ::= [<cr>]<lf>
+    space           ::= ' '
+    whitespace      ::= [<null>|<space>|<tab>|<vtab>|<ff>]
+    comma           ::= ','
+    quote           ::= '"'
+
+    field-separator ::= [<char1>,<char2>,...]                               # usually just one char: <comma>, <tab>, '|', etc.
+    record-separator::= [<cr>,...][^<lf>]*<lf>                              # LF is always the end of the record but other characters may signal the end before that, e.g. <cr>, '~', etc.
+    file-separator  ::= [<eof>, eof1, ...]                                  # EOF and -1 are always present in the set.
+    field-mark      ::= [...]                                               # marks the beginning and the end of a field, usually quote
+    double-mark     ::= <field-mark><field-mark>                            # usually two quotes, which are replaced by a single quote value in the field value
+
+DELIMITER SEPARATED VALUES FORMAT:
+----------------------------------
+
+    unmarked-field  ::= [^ <field-separator>, <record-separator>, <file-separator>]+
+                                                                            # multiple characters not including the field separators, the record separators or the file separators
+    marked-field    ::= <field-mark>[[^ <field-mark> | <file-separator>] | <double-mark>]*<field-mark>
+                                                                            # should read as follows: a quote; 0 or more characters that are anything but EOF and single quote, 
+                                                                            # (including CR, LF, record-separators, two-quotes), a quote
+    field           ::= <unmarked-field> | <marked-field>
+    record          ::= <field> [<field-separator> <field>]*(<record-separator>|<file-separator>)
+    header-name     ::= <field>                                             # same as field usually
+    header-line     ::= <header-name> [<field-separator> <header-name>]*(<record-separator>|<file-separator>)
+    dsv             ::= [<header-line>] [<record>]* [<file-separator>]      # zero or more records
+
+COMMA SEPARATED VALUES FORMAT:
+------------------------------
+
+    nqfield     ::= [^ <quot> | <comma> | <cr> | <lf> | <eof>]*
+    qfield      ::= <quot> [ [^ <quot> | <eof> ] | <quot> <quot>]* <quot>
+    field       ::= qfield | nqfield
+    record      ::= [ <whitespace> ]* <field> [ <whitespace> ]* [ <comma> [<whitespace>]* [<field>] [<whitespace>] ]* <eol>
+    name-line   ::= <record>
+    csv         ::= [<name-line>] [<record>]* [<eof>]
+

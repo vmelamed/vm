@@ -1,0 +1,36 @@
+﻿using Microsoft.Practices.Unity;
+using System.Collections.Generic;
+using System.Data.Entity;
+using vm.Aspects.Model.EFRepository.HiLoIdentity;
+using vm.Aspects.Model.Repository;
+
+namespace vm.Aspects.Model.EFRepository.Tests
+{
+    public partial class TestEFRepository
+    {
+        public const string ConnectionString = "ModelTests";
+
+        private class TestEFRepositoryRegistrar : ContainerRegistrar
+        {
+            protected override void DoRegister(
+                IUnityContainer container,
+                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            {
+                EFRepositoryBase.Registrar.UnsafeRegister(container, registrations, true)
+                    //.RegisterTypeIfNot<IDatabaseInitializer<TestEFRepository>, MigrateDatabaseToLatestVersion<TestEFRepository, Configuration>>(registrations, new InjectionConstructor(true))
+                    .RegisterTypeIfNot<IDatabaseInitializer<TestEFRepository>, DropCreateDatabaseAlways<TestEFRepository>>(registrations)
+                    .RegisterTypeIfNot<IStoreIdProvider, HiLoStoreIdProvider>(registrations, new ContainerControlledLifetimeManager())
+                    .RegisterTypeIfNot<IRepository, TestEFRepository>(registrations, HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, new InjectionConstructor(new InjectionParameter<string>(ConnectionString)))
+                    .RegisterTypeIfNot<IRepository, TestEFRepository>(registrations, new InjectionConstructor(new InjectionParameter<string>(ConnectionString)))
+                    ;
+            }
+        }
+
+        static readonly ContainerRegistrar _registrar = new TestEFRepositoryRegistrar();
+
+        public static new ContainerRegistrar Registrar
+        {
+            get { return _registrar; }
+        }
+    }
+}

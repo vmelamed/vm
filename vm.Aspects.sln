@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Model", "Aspects
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Model.Tests", "Aspects\Model\Tests\vm.Aspects.Model.Tests.csproj", "{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Parsers", "Aspects\Parsers\vm.Aspects.Parsers.csproj", "{DE313580-4D78-44C4-B80A-CAAB3EC580C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,10 +142,16 @@ Global
 		{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
-		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E389BA3C-AF16-49C3-90DA-B52D3FCDD161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE313580-4D78-44C4-B80A-CAAB3EC580C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

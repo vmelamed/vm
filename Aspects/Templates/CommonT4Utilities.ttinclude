@@ -47,7 +47,7 @@
         //var solution = dte.Solution;
         //var projItem = solution.FindProjectItem(Host.TemplateFile);
         //var document = projItem.Document;
-        return dte.Solution.FindProjectItem(Host.TemplateFile).Document.Name;
+        return dte.Solution?.FindProjectItem(Host.TemplateFile).Document.Name;
         //return document.Name;
     }
 
