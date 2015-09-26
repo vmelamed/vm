@@ -218,25 +218,31 @@
       <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.Interception.3.5.1405-prerelease\lib\Net45\Microsoft.Practices.Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.Interception.3.5.1405-prerelease\lib\Net45\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=3.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -256,10 +262,42 @@
     <Compile Include="BaseDomainValue.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainValue.cs" />
+    <Compile Include="EFRepository\EFRepositoryBase.cs" />
+    <Compile Include="EFRepository\EFRepositoryBase.IRepository.cs" />
+    <Compile Include="EFRepository\EFRepositoryBase.Registrar.cs" />
+    <Compile Include="EFRepository\EFSpecifics.cs" />
+    <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGenerator.cs" />
+    <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGeneratorConfiguration.cs" />
+    <Compile Include="EFRepository\HiLoIdentity\HiLoStoreIdProvider.cs" />
+    <Compile Include="EFRepository\IStoreIdProviders.cs" />
+    <Compile Include="EFRepository\ObjectContextExtensions.cs" />
+    <Compile Include="EFRepository\SqlDBTypes.cs" />
+    <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
+    <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHasBusinessKey.cs" />
     <Compile Include="IHasStoreId.cs" />
-    <Compile Include="Metadata\DomainEntityMetadata.cs">
+    <Compile Include="InMemory\ListObjectsRepository.cs" />
+    <Compile Include="InMemory\ListObjectsRepository.Registrar.cs" />
+    <Compile Include="InMemory\MapObjectsRepository.cs" />
+    <Compile Include="InMemory\MapObjectsRepository.Registrar.cs" />
+    <Compile Include="InMemory\ObjectsRepositorySpecifics.cs" />
+    <Compile Include="Metadata\DbEntityValidationResultDumpMetadata.cs" />
+    <Compile Include="Metadata\DbUpdateExceptionDumpMetadata.cs" />
+    <Compile Include="Metadata\DbValidationErrorDumpMetadata.cs" />
+    <Compile Include="Metadata\ObjectStateEntryDumpMetadata.cs" />
+    <Compile Include="Metadata\UpdateExceptionDumpMetadata.cs" />
+    <Compile Include="Repository\EntityState.cs" />
+    <Compile Include="Repository\IOrmSpecifics.cs" />
+    <Compile Include="Repository\IOrmSpecificsContract.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\IRepositoryAsync.cs" />
+    <Compile Include="Repository\IRepositoryAsyncContracts.cs" />
+    <Compile Include="Repository\IRepositoryContracts.cs" />
+    <Compile Include="Repository\IRepositoryExtensions.cs" />
+    <Compile Include="Repository\IStoreUniqueId.cs" />
+    <Compile Include="Repository\OrmBridge.cs" />
+    <Compile Include="DomainEntityMetadata.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DomainEntityMetadata.tt</DependentUpon>
@@ -281,6 +319,7 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -299,11 +338,12 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Metadata\DomainEntityMetadata.tt">
+    <Content Include="DomainEntityMetadata.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DomainEntityMetadata.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

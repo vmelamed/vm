@@ -33,22 +33,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
                 if (ParseArguments(args) && GetCertificate())
                     switch (_command)
                     {
-                    case CreateCommand:
-                        _exitCode = Create();
-                        break;
+                        case CreateCommand:
+                            _exitCode = Create();
+                            break;
 
-                    case ExportCommand:
-                        _exitCode = Export();
-                        break;
+                        case ExportCommand:
+                            _exitCode = Export();
+                            break;
 
-                    case ImportCommand:
-                        _exitCode = Import();
-                        break;
+                        case ImportCommand:
+                            _exitCode = Import();
+                            break;
 
-                    case null:
-                    case HelpCommand:
-                        _exitCode = Usage();
-                        break;
+                        case null:
+                        case HelpCommand:
+                            _exitCode = Usage();
+                            break;
                     }
                 else
                     Usage(1);
@@ -237,11 +237,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetCertificate()
         {
-            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-
-            store.Open(OpenFlags.ReadOnly);
-            try
+            using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
             {
+                store.Open(OpenFlags.ReadOnly);
+
                 var certs = store.Certificates
                                  .Find(X509FindType.FindByThumbprint, _thumbprint, false)
                                  .Find(X509FindType.FindByTimeValid, DateTime.Now, false);
@@ -252,10 +251,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
                     Console.WriteLine(Resources.CannotFindCert);
 
                 return _cert != null;
-            }
-            finally
-            {
-                store.Close();
             }
         }
 

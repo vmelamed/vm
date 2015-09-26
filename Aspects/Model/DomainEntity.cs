@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using vm.Aspects.Model.Metadata;
 
 namespace vm.Aspects.Model
 {
@@ -44,6 +43,7 @@ namespace vm.Aspects.Model
             {
                 if (!_id.Equals(default(TId)))
                     throw new InvalidOperationException("Once the value of the property is set it cannot be changed.");
+
                 _id = value;
             }
         }
@@ -53,8 +53,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Gets or sets the entity business key.
         /// </summary>
-        public abstract TKey Key
-        { get; }
+        public abstract TKey Key { get; }
         #endregion
 
         #region Identity rules implementation.

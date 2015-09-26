@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Properties;
@@ -43,8 +43,8 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <remarks>
         /// When the domain entity instances are created at first they may not have identity yet and the property must return 
-        /// <see langword="false"/>. After assigning identity value/s to the entity (e.g. assigning value/s to the entity's identity property/s) the property should
-        /// return <see langword="true"/>.
+        /// <see langword="false"/>. After assigning identity value/s to the entity (e.g. assigning value/s to the entity's identity property/s),
+        /// the property should return <see langword="true"/>.
         /// </remarks>
         public abstract bool HasIdentity { get; }
 
