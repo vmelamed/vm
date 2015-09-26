@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     /// <summary>
     /// Summary description for KeyFileTest

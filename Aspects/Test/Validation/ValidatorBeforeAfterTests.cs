@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 using vm.Aspects.Validation;
 
-namespace vm.Aspects.Tests.Validation
+namespace vm.Aspects.Validation.Tests
 {
     /// <summary>
     /// Summary description for ValidatorBeforeAfterTests

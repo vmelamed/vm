@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.DumpImplementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Test
+namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {
     /// <summary>
     /// Summary description for DumpTextWriterTest

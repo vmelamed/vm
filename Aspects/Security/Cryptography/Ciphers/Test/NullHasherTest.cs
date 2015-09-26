@@ -3,7 +3,7 @@
 using System;
 #endif
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     [TestClass]
     public class NullHasherTest : GenericHasherTest<NullHasher>

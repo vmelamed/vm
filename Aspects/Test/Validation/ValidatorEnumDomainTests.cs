@@ -3,7 +3,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Validation;
 
-namespace vm.Aspects.Tests.Validation
+namespace vm.Aspects.Validation.Tests
 {
     /// <summary>
     /// Summary description for ValidatorsTests

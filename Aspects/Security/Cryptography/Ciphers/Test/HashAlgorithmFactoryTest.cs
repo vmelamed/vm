@@ -7,7 +7,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
 #if NET45
     /// <summary>

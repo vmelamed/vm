@@ -7,7 +7,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.ServiceLocation;
 #endif
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     [TestClass]
     public class ProtectedKeyCipherTest : GenericCipherTest<ProtectedKeyCipher>

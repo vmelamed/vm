@@ -6,7 +6,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Validation;
 
-namespace vm.Aspects.Tests.Validation
+namespace vm.Aspects.Validation.Tests
 {
     /// <summary>
     /// Summary description for NonemptyStringValidator

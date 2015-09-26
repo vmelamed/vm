@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     [TestClass]
     public class EncryptedKeyCipherTest : GenericCipherTest<EncryptedKeyCipher>

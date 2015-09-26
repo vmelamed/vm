@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Test.PartialTrust
+namespace vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust
 {
     public class Object1
     {

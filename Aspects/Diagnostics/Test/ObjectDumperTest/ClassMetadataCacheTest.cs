@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Test
+namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {
     [TestClass]
     public class ClassMetadataCacheTest

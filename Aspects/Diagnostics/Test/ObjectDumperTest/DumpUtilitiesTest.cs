@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Test
+namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {
     [TestClass]
     public class DumpUtilitiesTest

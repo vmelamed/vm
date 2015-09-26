@@ -4,7 +4,7 @@ using System.Security;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     [TestClass]
     public class PasswordProtectedKeyCipherTest : GenericCipherTest<PasswordProtectedKeyCipher>

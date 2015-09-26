@@ -3,7 +3,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Tests.Validation
+namespace vm.Aspects.Validation.Tests
 {
     public static class Helper
     {

@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.DumpImplementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Test
+namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {
     [TestClass]
     public class PropertyDumpCacheTest

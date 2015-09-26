@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Security.Cryptography.Ciphers.Test;
+using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 {

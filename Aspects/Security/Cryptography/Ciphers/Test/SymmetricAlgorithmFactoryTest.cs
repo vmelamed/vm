@@ -8,7 +8,7 @@ using Microsoft.Practices.ServiceLocation;
 #endif
 
 
-namespace vm.Aspects.Security.Cryptography.Ciphers.Test
+namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     /// <summary>
     /// Summary description for SymmetricAlgorithmFactoryTest

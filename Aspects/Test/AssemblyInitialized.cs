@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
 
-namespace vm.Aspects.Tests.Validation
+namespace vm.Aspects.Validation.Tests
 {
     [TestClass]
     public class AssemblyInitialized
