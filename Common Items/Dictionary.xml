@@ -53,6 +53,7 @@
             <Word>ip</Word>
             <Word>dpapi</Word>
             <Word>iso</Word>
+            <Word>visix</Word>
         </Recognized>
         <Unrecognized>
             <!-- 
