@@ -1,16 +1,18 @@
-﻿using EnvDTE;
-using EnvDTE80;
-using System.Collections;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using EnvDTE;
+using EnvDTE80;
 
 namespace vm.Aspects.Visix.AddRelatedClasses
 {
     class CachedItems
     {
-        public CachedItems()
+        public CachedItems(
+            string targetSuffix)
         {
-            SourceProjectItem = ((IEnumerable)RootCommand.Dte2
+            SourceProjectItem = ((IEnumerable)RootCommand.Dte
                                                          .ToolWindows
                                                          .SolutionExplorer
                                                          .SelectedItems)
@@ -24,14 +26,16 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             if (SourceCodeModel?.Language != CodeModelLanguageConstants.vsCMLanguageCSharp)
                 return;
 
-            SourcePathName = SourceProjectItem.Document.FullName;
-
             if (!FindFirstClassOrInterface(SourceCodeModel.CodeElements))
                 return;
 
-            TargetPathName    = Path.Combine(
-                                        Path.GetDirectoryName(SourcePathName),
-                                        Path.GetFileNameWithoutExtension(SourcePathName) + ".Metadata.cs");
+            if (SourceProjectItem.Document == null)
+                SourceProjectItem.Open(Constants.vsViewKindPrimary);
+
+            SourcePathName = SourceProjectItem.Document.FullName;
+            TargetPathName = Path.Combine(
+                                     Path.GetDirectoryName(SourcePathName),
+                                     Path.GetFileNameWithoutExtension(SourcePathName) + targetSuffix);
         }
 
         private bool FindFirstClassOrInterface(
@@ -63,10 +67,16 @@ namespace vm.Aspects.Visix.AddRelatedClasses
         }
 
         public string SourcePathName { get; set; }
+
         public ProjectItem SourceProjectItem { get; set; }
+
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public CodeNamespace SourceNameSpace { get; set; }
+
         public FileCodeModel2 SourceCodeModel { get; set; }
+
         public CodeClass2 SourceClass { get; set; }
+
         public CodeInterface2 SourceInterface { get; set; }
 
         public string TargetPathName { get; set; }

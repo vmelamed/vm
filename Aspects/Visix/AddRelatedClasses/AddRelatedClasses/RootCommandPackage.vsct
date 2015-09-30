@@ -117,7 +117,7 @@
                 <Parent guid="guidAddRelatedTypePackageCmdSet"
                         id="AddRelatedTypeSubMenuGroup" />
                 <Strings>
-                    <ButtonText>Add Async Interface</ButtonText>
+                    <ButtonText>Add Task Async Interface</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidAddRelatedTypePackageCmdSet"

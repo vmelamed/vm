@@ -1,0 +1,161 @@
+﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="EnvDTE" #>
+<#@ Assembly Name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ parameter name="sourcePathName" type="System.String" #>
+<#@ parameter name="targetPathName" type="System.String" #><#
+
+    var dte = GetEnvDte();
+
+    var sourceProjectItem = dte.Solution.FindProjectItem(sourcePathName);
+    var sourceCodeModel   = sourceProjectItem.FileCodeModel as FileCodeModel2;
+
+    CodeClass2 sourceClass         = null;
+    CodeInterface2 sourceInterface = null;
+    CodeNamespace sourceNameSpace  = null;
+
+    if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceInterface, ref sourceNameSpace) || sourceClass == null)
+        throw new InvalidOperationException("Could not find a class to generate the metadata from.");
+
+    var sourceProperties  = sourceClass.Members.OfType<CodeProperty2>();
+    var sourcePropertyNames  = new HashSet<string>(sourceProperties.Select(p => p.Name));
+
+    var targetProjectItem = dte.Solution.FindProjectItem(targetPathName);
+    var targetCodeModel   = targetProjectItem != null ? targetProjectItem.FileCodeModel as FileCodeModel2 : null;
+    var targetNameSpace   = targetProjectItem != null ? targetCodeModel.CodeElements.OfType<CodeNamespace>().FirstOrDefault() : sourceNameSpace;
+    var targetClass       = targetProjectItem != null ? targetNameSpace.Children.OfType<CodeClass2>().FirstOrDefault() : null;
+
+    if (targetProjectItem == null)
+    {
+        var i = 0;
+
+        // generate the metadata class from scratch using plain T4
+#>
+using vm.Aspects.Diagnostics;
+
+namespace <#= targetNameSpace.Name #>
+{
+    abstract class <#= sourceClass.Name #>Metadata
+    {
+<# 
+        foreach (var propertyName in sourcePropertyNames)
+        {
+            if (i > 0)
+                WriteLine(""); 
+#>
+        [Dump(<#= i++ #>)]
+        public object <#= propertyName #> { get; set; }
+<#      } #>
+    }
+}<#
+    }
+    else
+    {
+        var targetProperties     = targetClass.Members.OfType<CodeProperty2>();
+        var targetPropertyNames  = new HashSet<string>(targetProperties.Select(p => p.Name));
+
+        // remove the metadata properties that were removed from the source's properties
+        foreach (var propertyName in targetPropertyNames.Except(sourcePropertyNames))
+            targetClass.RemoveMember(targetProperties.First(p => p.Name == propertyName));
+        
+        // read the existing text up to and including the last property (where we need to insert the new properties, if any)
+        targetProjectItem.Open(Constants.vsViewKindPrimary);
+        
+        var targetDocument = targetProjectItem.Document;
+
+        var endPoint   = targetClass
+                              .GetEndPoint(vsCMPart.vsCMPartBody)
+                              .CreateEditPoint();
+
+        var selection = targetDocument.Selection as TextSelection;
+        
+        selection.MoveToAbsoluteOffset(1, false);
+        selection.MoveToPoint(endPoint, true);
+        selection.LineUp(true);
+        selection.EndOfLine(true);
+
+        var startText = selection.Text;
+
+        // read to the end of the text
+        selection.MoveToPoint(selection.BottomPoint, false);
+        selection.EndOfDocument(true);
+
+        var endText = selection.Text;
+
+        // write the text up to and including the last property
+        Write(startText);
+
+        var i = targetPropertyNames.Count();
+
+        // insert the new properties
+        foreach (var propertyName in sourcePropertyNames.Except(targetPropertyNames))
+        {
+#>
+
+
+        [Dump(<#= i++ #>)]
+        public object <#= propertyName #> { get; set; }<#
+        }
+
+        // write the remaining of the text
+        Write(endText);
+
+        selection.StartOfDocument(false);
+    }
+#><#+ 
+    DTE2 GetEnvDte()
+    {
+        var hostServiceProvider = (IServiceProvider)Host;
+
+        if (hostServiceProvider == null)
+            throw new NotSupportedException("Host does not support IServiceProvider.");
+
+        var dte = hostServiceProvider.GetService(typeof(DTE)) as DTE2;
+
+        if (dte == null)
+            throw new NotSupportedException("Could not retrieve EnvDTE.DTE2 from host.");
+
+        return dte;
+    }
+
+    bool FindFirstClassOrInterface(
+        CodeElements codeElements,
+        ref CodeClass2 sourceClass,
+        ref CodeInterface2 sourceInterface,
+        ref CodeNamespace sourceNameSpace)
+    {
+        foreach (CodeElement2 element in codeElements)
+        {
+            sourceClass = element as CodeClass2;
+
+            if (sourceClass != null)
+                return true;
+
+            sourceInterface = element as CodeInterface2;
+
+            if (sourceInterface != null)
+                return true;
+
+            var nameSpace = element as CodeNamespace;
+
+            if (nameSpace != null)
+                if (FindFirstClassOrInterface(nameSpace.Children, ref sourceClass, ref sourceInterface, ref sourceNameSpace))
+                {
+                    sourceNameSpace = nameSpace;                    
+                    return true;
+                }
+        }
+
+        return false;
+    }
+#>

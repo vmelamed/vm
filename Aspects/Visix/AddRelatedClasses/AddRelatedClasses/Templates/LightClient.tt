@@ -1,0 +1,316 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="EnvDTE" #>
+<#@ Assembly Name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ parameter name="baseName" type="System.String" #>
+<#@ parameter name="sourcePathName" type="System.String" #>
+<#@ parameter name="targetPathName" type="System.String" #><#
+
+    var dte = GetEnvDte();
+
+    var sourceCodeModel                = dte.Solution.FindProjectItem(sourcePathName).FileCodeModel;
+    CodeClass2 sourceClass             = null;
+    CodeInterface2 sourceCodeInterface = null;
+    CodeNamespace sourceCodeNamespace  = null;
+
+    if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceCodeInterface, ref sourceCodeNamespace) || 
+        sourceCodeInterface == null)
+        throw new InvalidOperationException("Could not find an interface to generate its asynchronous version.");
+
+    WriteUsings(
+        sourceCodeModel.CodeElements,
+        "System.Security.Cryptography.X509Certificates",
+        "System.ServiceModel.Channels",
+        "vm.Aspects.Wcf",
+        "vm.Aspects.Wcf.Clients");
+#>
+
+namespace <#= sourceCodeNamespace.FullName #>
+{
+    public class <#= baseName #>Client : LightClient<<#= sourceCodeInterface.Name #>>, <#= sourceCodeInterface.Name #>
+    {
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory)
+        /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and service address.
+        /// </summary>
+        /// <param name="endpointConfigurationName">Name of the endpoint configuration.</param>
+        /// <param name="remoteAddress">The remote address. If the remote address is <see langword="null" /> or empty
+        /// the constructor will try to use the address in the endpoint configuration.</param>
+        public <#= baseName #>Client(
+            string endpointConfigurationName,
+            string remoteAddress)
+            : base(endpointConfigurationName, remoteAddress)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
+        /// <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="identity">
+        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
+        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
+        /// </param>
+        public <#= baseName #>Client(
+            string remoteAddress,
+            ServiceIdentity identityType,
+            string identity)
+            : base(remoteAddress, identityType, identity)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class.
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="certificate">The identifying certificate.</param>
+        public <#= baseName #>Client(
+            string remoteAddress,
+            ServiceIdentity identityType,
+            X509Certificate2 certificate)
+            : base(remoteAddress, identityType, certificate)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="binding">A binding instance.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
+        /// <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="identity">
+        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
+        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
+        /// </param>
+        public <#= baseName #>Client(
+            Binding binding,
+            string remoteAddress,
+            ServiceIdentity identityType,
+            string identity)
+            : base(binding, remoteAddress, identityType, identity)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class.
+        /// </summary>
+        /// <param name="binding">A binding instance.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="certificate">The identifying certificate.</param>
+        public <#= baseName #>Client(
+            Binding binding,
+            string remoteAddress,
+            ServiceIdentity identityType,
+            X509Certificate2 certificate)
+            : base(binding, remoteAddress, identityType, certificate)
+        {
+        }
+        #endregion
+
+        #region <#= sourceCodeInterface.Name #> implementation
+<#
+    PushIndent("    ");
+    PushIndent("    ");
+    
+    SeparatedList(
+        sourceCodeInterface.Members.OfType<CodeFunction>(),
+        m => WriteMethod(m),
+        () => WriteLine(""));
+
+    WriteLine("#endregion");
+
+    PopIndent();
+    WriteLine("}");
+
+    PopIndent();
+    WriteLine("}");
+#><#+
+    // Gets the DTE.
+    DTE GetEnvDte()
+    {
+        var hostServiceProvider = (IServiceProvider)Host;
+
+        if (hostServiceProvider == null)
+            throw new NotSupportedException("Host does not support IServiceProvider.");
+
+        var dte = hostServiceProvider.GetService(typeof(DTE)) as DTE;
+
+        if (dte == null)
+            throw new NotSupportedException("Could not retrieve EnvDTE.DTE from host.");
+
+        return dte;
+    }
+
+    bool FindFirstClassOrInterface(
+        CodeElements codeElements,
+        ref CodeClass2 sourceClass,
+        ref CodeInterface2 sourceInterface,
+        ref CodeNamespace sourceNameSpace)
+    {
+        foreach (CodeElement2 element in codeElements)
+        {
+            sourceClass = element as CodeClass2;
+
+            if (sourceClass != null)
+                return true;
+
+            sourceInterface = element as CodeInterface2;
+
+            if (sourceInterface != null)
+                return true;
+
+            var nameSpace = element as CodeNamespace;
+
+            if (nameSpace != null)
+                if (FindFirstClassOrInterface(nameSpace.Children, ref sourceClass, ref sourceInterface, ref sourceNameSpace))
+                {
+                    sourceNameSpace = nameSpace;                    
+                    return true;
+                }
+        }
+
+        return false;
+    }
+
+    // Copies all using directives from the code model to the target and appends using-s for a set of required namespaces.
+    void WriteUsings(CodeElements codeElements, params string[] requiredNamespaces)
+    {
+        bool[] writtenNamespaces = new bool[requiredNamespaces.Length];
+
+        foreach (var u in codeElements.OfType<CodeImport>())
+        {    
+            WriteLine("using {0};", u.Namespace);
+            requiredNamespaces.Where((ns,i) => writtenNamespaces[i] |= ns==u.Namespace);
+        }
+        
+        for (var i=0; i < writtenNamespaces.Length; i++)
+            if (!writtenNamespaces[i])
+                WriteLine("using {0};", requiredNamespaces[i]);
+    }
+
+    // copies the XML comment documentation from the source element to the target, commented with '/// '.
+    void WriteDoc(string doc)
+    {
+        var docElement = XElement.Parse(doc);
+        
+        PushIndent("/// ");
+        docElement.Elements().Select(e => { WriteLine(e.ToString()); return 1;}).Count();
+        PopIndent();
+    }
+
+    // Translates the parameter to a C# string. Note that only type names are used and the namespaces are stripped-off.
+    string GetType(CodeTypeRef type)
+    {
+        return GetTypeFromString(type.AsString);
+    }
+
+    // does the actual work of stripping the namespaces.
+    string GetTypeFromString(string typeStr)
+    {
+        var result = new StringBuilder();
+        var temp = new StringBuilder();
+
+        foreach (var c in typeStr)
+        {
+            if (c == '.')
+                temp.Clear();
+            else
+                if ("<>[,]".Contains(c))
+                {
+                    result.Append(temp);
+                    result.Append(c);
+                    temp.Clear();
+                }
+                else
+                    temp.Append(c);
+        }
+
+        return result.Append(temp).ToString();
+    }
+
+    void SeparatedList<T>(
+        IEnumerable<T> sequence,
+        Action<T> elementAction,
+        Action elementSeparation,
+        Action beforeFirstElement = null,
+        Action afterLastElement = null)
+    {
+        bool isFirst = true;
+
+        foreach (var t in sequence)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+                if (beforeFirstElement != null)
+                    beforeFirstElement();
+            }
+            else
+                elementSeparation();
+            elementAction(t);
+        }
+
+        if (!isFirst  &&  afterLastElement != null)
+            afterLastElement();
+    }
+
+    void WriteMethod(CodeFunction method)
+    {
+        WriteDoc(method.DocComment);
+
+        var type = GetType(method.Type as CodeTypeRef2);
+        var isAsync = type == "Task"  || type.StartsWith("Task<");
+
+        Write("public {0}{1} {2}", isAsync ? "async " : "", type, method.Name);
+        WriteLine("(");
+
+        // write parameters
+        PushIndent("    ");
+        SeparatedList(
+            method.Parameters.OfType<CodeParameter>(),
+            p => Write("{0} {1}", GetType(p.Type), p.Name),
+            () => WriteLine(","));
+        PopIndent();
+        WriteLine(")");
+        WriteLine("{");
+        PushIndent("    ");
+        if (type != "void"  &&  type != "Task")
+            Write("return ");
+        Write("{0}Proxy.{1}(", isAsync ? "await " : "", method.Name);
+        // write arguments
+        SeparatedList(
+            method.Parameters.OfType<CodeParameter>(),
+            p => Write("{0}", p.Name),
+            () => Write(", "));
+        WriteLine(");");
+        PopIndent();
+        WriteLine("}");
+    }
+#>

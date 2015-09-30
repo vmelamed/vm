@@ -1,0 +1,408 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="EnvDTE" #>
+<#@ Assembly Name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ parameter name="sourcePathName" type="System.String" #>
+<#@ parameter name="targetPathName" type="System.String" #><# 
+
+    var dte = GetEnvDte();
+
+    var sourceProjectItem = dte.Solution.FindProjectItem(sourcePathName);
+    var sourceCodeModel   = sourceProjectItem.FileCodeModel;
+
+    CodeClass2 sourceClass         = null;
+    CodeInterface2 sourceInterface = null;
+    CodeNamespace sourceNameSpace  = null;
+
+    if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceInterface, ref sourceNameSpace) || 
+        sourceInterface == null)
+        throw new InvalidOperationException("Could not find an interface to generate its asynchronous version.");
+
+    var sourceMethods    = sourceInterface.Children.OfType<EnvDTE.CodeFunction>().FirstOrDefault();
+
+    string soapNamespace;
+    string soapName;
+
+    WriteUsings(sourceCodeModel.CodeElements, "System.Threading.Tasks");
+
+    WriteLine("");
+    WriteLine("namespace {0}", sourceNamespace.FullName);
+    WriteLine("{");
+    PushIndent("    ");
+
+    WriteDoc(sourceInterface.DocComment);
+    
+    WriteInterfaceAttributes(sourceInterface, out soapNamespace, out soapName);
+
+    WriteInterfaceDeclaration(sourceInterface);
+    WriteLine("{");
+    PushIndent("    ");
+
+    foreach (var method in sourceInterface.Members.OfType<CodeFunction>())
+        WriteMethod(method, soapNamespace, soapName);
+
+    PopIndent();
+    WriteLine("}");
+
+    PopIndent();
+    WriteLine("}");
+#><#+
+
+    DTE2 GetEnvDte()
+    {
+        var hostServiceProvider = (IServiceProvider)Host;
+
+        if (hostServiceProvider == null)
+            throw new NotSupportedException("Host does not support IServiceProvider.");
+
+        var dte = hostServiceProvider.GetService(typeof(DTE)) as DTE2;
+
+        if (dte == null)
+            throw new NotSupportedException("Could not retrieve EnvDTE.DTE2 from host.");
+
+        return dte;
+    }
+
+    bool FindFirstClassOrInterface(
+        CodeElements codeElements,
+        ref CodeClass2 sourceClass,
+        ref CodeInterface2 sourceInterface,
+        ref CodeNamespace sourceNameSpace)
+    {
+        foreach (CodeElement2 element in codeElements)
+        {
+            sourceClass = element as CodeClass2;
+
+            if (sourceClass != null)
+                return true;
+
+            sourceInterface = element as CodeInterface2;
+
+            if (sourceInterface != null)
+                return true;
+
+            var nameSpace = element as CodeNamespace;
+
+            if (nameSpace != null)
+                if (FindFirstClassOrInterface(nameSpace.Children, ref sourceClass, ref sourceInterface, ref sourceNameSpace))
+                {
+                    sourceNameSpace = nameSpace;                    
+                    return true;
+                }
+        }
+
+        return false;
+    }
+
+    void SeparatedList<T>(
+        IEnumerable<T> sequence,
+        Action<T> elementAction,
+        Action elementSeparation,
+        Action beforeFirstElement = null,
+        Action afterLastElement = null)
+    {
+        bool isFirst = true;
+
+        foreach (var t in sequence)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+                if (beforeFirstElement != null)
+                    beforeFirstElement();
+            }
+            else
+                elementSeparation();
+            elementAction(t);
+        }
+
+        if (!isFirst  &&  afterLastElement != null)
+            afterLastElement();
+    }
+
+    // gets the value inside of a quoted string - with quotes stripped-off.
+    string GetQuotedValue(string quoted)
+    {
+        if (quoted.StartsWith("\""))
+            return quoted.Substring(1, quoted.Length-2);
+        else
+            return quoted.Substring(2, quoted.Length-3).Replace("\"\"", "\"");
+    }
+
+    // Translates the parameter to a C# string. Note that only type names are used and the namespaces are stripped-off.
+    string GetType(CodeTypeRef type)
+    {
+        return GetTypeFromString(type.AsString);
+    }
+
+    // does the actual work of stripping the namespaces.
+    string GetTypeFromString(string typeStr)
+    {
+        var result = new StringBuilder();
+        var temp = new StringBuilder();
+
+        foreach (var c in typeStr)
+        {
+            if (c == '.')
+                temp.Clear();
+            else
+                if ("<>[,]".Contains(c))
+                {
+                    result.Append(temp);
+                    result.Append(c);
+                    temp.Clear();
+                }
+                else
+                    temp.Append(c);
+        }
+
+        return result.Append(temp).ToString();
+    }
+
+    // Copies all using directives from the code model to the target and appends using-s for a set of required namespaces.
+    void WriteUsings(
+        CodeElements codeElements,
+        params string[] requiredNamespaces)
+    {
+        bool[] writtenNamespaces = new bool[requiredNamespaces.Length];
+
+        foreach (var u in codeElements.OfType<CodeImport>())
+        {    
+            WriteLine("using {0};", u.Namespace);
+            requiredNamespaces.Where((ns,i) => writtenNamespaces[i] |= ns==u.Namespace);
+        }
+        
+        for (var i=0; i < writtenNamespaces.Length; i++)
+            if (!writtenNamespaces[i])
+                WriteLine("using {0};", requiredNamespaces[i]);
+    }
+
+    // copies the XML comment documentation from the source element to the target, commented with '/// '.
+    void WriteDoc(string doc)
+    {
+        var docElement = XElement.Parse(doc);
+        
+        PushIndent("/// ");
+        docElement.Elements().Select(e => { WriteLine(e.ToString()); return 1;}).Count();
+        PopIndent();
+    }
+
+    // Translates the values of the enum vsCMAccess to a C# access modifier keyword.
+    string TranslateCodeAccess(vsCMAccess access)
+    {
+        switch (access)
+        {
+        case vsCMAccess.vsCMAccessPublic:
+            return "public";
+        case vsCMAccess.vsCMAccessProtected:
+            return "protected";
+        case vsCMAccess.vsCMAccessPrivate:
+            return "private";
+        case vsCMAccess.vsCMAccessProject:
+            return "internal";
+        case vsCMAccess.vsCMAccessAssemblyOrFamily:
+        case vsCMAccess.vsCMAccessProjectOrProtected:
+            return "protected internal";
+        default:
+            return "";
+        }
+    }
+
+    void WriteInterfaceAttributes(
+        CodeInterface sourceInterface,
+        out string soapNamespace,
+        out string soapName)
+    {
+        var ns   = "http://tempuri.org";
+        var name = sourceInterface.Name;
+
+        foreach (CodeAttribute a in sourceInterface.Attributes)
+        {
+            Write("[");
+            Write(a.Name);
+
+            SeparatedList(
+                a.Children.OfType<CodeAttributeArgument>(),
+                arg => {
+                            if (string.IsNullOrWhiteSpace(arg.Name))
+                                Write(arg.Value);
+                            else
+                            {
+                                Write("{0}={1}", arg.Name, arg.Value);
+                                if (a.Name == "ServiceContract")
+                                {
+                                    if (arg.Name == "Namespace")
+                                        ns = GetQuotedValue(arg.Value);
+                                    if (arg.Name == "Name")
+                                        name = GetQuotedValue(arg.Value);
+                                }
+                            }
+                       },
+                () => Write(", "),
+                () => Write("("),
+                () => Write(")"));
+
+            WriteLine("]");
+        }
+
+        soapNamespace  = ns;
+        soapName       = name;
+    }
+
+    void WriteInterfaceDeclaration(CodeInterface sourceInterface)
+    {
+        Write("{0} interface {1}Tasks", TranslateCodeAccess(sourceInterface.Access), sourceInterface.Name);
+
+        SeparatedList(
+            sourceInterface.Bases.OfType<CodeType>(),
+            b => Write(GetTypeFromString(b.FullName)),
+            () => Write(", "),
+            () => Write(" : "));
+
+        WriteLine("");
+    }
+
+    void WriteMethod(CodeFunction method, string soapNamespace, string soapName)
+    {
+        WriteDoc(method.DocComment);
+        WriteMethodAttributes(method, soapNamespace, soapName);
+
+        var type = GetType(method.Type as CodeTypeRef2);
+
+        Write("Task");
+        if (type != "void")
+            Write("<{0}>", type);
+
+        Write(" ");
+        Write("{0}Async", method.Name);
+        Write("(");
+        WriteParameters(method.Parameters);
+        WriteLine(");\r\n");
+    }
+
+    string WriteMethodAttributes(
+        CodeFunction method, 
+        string soapNamespace, 
+        string soapName)
+    {
+        var name = method.Name;
+
+        foreach (CodeAttribute a in method.Attributes)
+        {
+            Write("[");
+            Write(a.Name);
+
+            var hasArgs   = false;
+            var hasAction = false;
+            var hasReply  = false;
+
+            SeparatedList(
+                a.Children.OfType<CodeAttributeArgument>(),
+                arg => {
+                           if (string.IsNullOrWhiteSpace(arg.Name))
+                               Write(arg.Value);
+                           else
+                           {
+                               Write("{0}={1}", arg.Name, arg.Value);
+                               if (a.Name == "OperationContract")
+                                   if (arg.Name == "Name")
+                                       name = GetQuotedValue(arg.Value);
+                                   else
+                                   {
+                                       hasAction = arg.Name == "Action";
+                                       hasReply  = arg.Name == "ReplyAction";
+                                   }
+                           }
+                       },
+                () => Write(", "),
+                () => { Write("("); hasArgs = true; });
+
+            if (a.Name == "OperationContract")
+            {
+                PushIndent("    ");
+
+                if (!hasAction)
+                {
+                    if (!hasArgs)
+                    {
+                        WriteLine("(");
+                        hasArgs = true;
+                    }
+                    else
+                        WriteLine(",");
+                    Write("Action=\"{0}/{1}/{2}\"", soapNamespace, soapName, name);
+                }
+                
+                if (!hasReply)
+                {
+                    if (!hasArgs)
+                    {
+                        WriteLine("(");
+                        hasArgs = true;
+                    }
+                    else
+                        WriteLine(",");
+                    Write("ReplyAction=\"{0}/{1}/{2}Response\"", soapNamespace, soapName, name);
+                }
+                
+                PopIndent();
+            }
+
+            if (hasArgs)
+                Write(")");
+            WriteLine("]");
+        }
+
+        return name;
+    }
+
+    void WriteParameters(
+        CodeElements parameters)
+    {
+        PushIndent("    ");
+        SeparatedList(
+            parameters.OfType<CodeParameter>(),
+            p => {
+                    WriteLine("\r\n");
+                    WriteParameterAttributes(p.Attributes);
+                    Write("{0} {1}", GetType(p.Type), p.Name);
+                 },
+            () => Write(","));
+        PopIndent();
+    }
+
+    void WriteParameterAttributes(
+        CodeElements attributes)
+    {
+        foreach(CodeAttribute a in attributes)
+        {
+            Write("[");
+            Write(a.Name);
+
+            SeparatedList(
+                a.Children.OfType<CodeAttributeArgument>(),
+                arg => {
+                            if (string.IsNullOrWhiteSpace(arg.Name))
+                                Write(arg.Value);
+                            else
+                                Write("{0}={1}", arg.Name, arg.Value);
+                       },
+                () => Write(", "),
+                () => Write("("),
+                () => Write(")"));
+
+            WriteLine("]");
+        }
+    }
+#>
