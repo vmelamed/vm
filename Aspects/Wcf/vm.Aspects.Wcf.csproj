@@ -373,48 +373,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="FaultContracts\Metadata\AggregateFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AggregateFaultMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ArgumentFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ArgumentFaultMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ArgumentValidationFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ArgumentValidationFaultMetadata.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\FaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>FaultMetadata2.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\FileNotFoundFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>FileNotFoundFaultMetadata2.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ObjectFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectFaultMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ValidationFaultElementMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ValidationFaultElementMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ValidationFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ValidationFaultMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\ValidationResultsFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ValidationResultsFaultMetadata1.cs</LastGenOutput>
-    </Content>
-    <Content Include="FaultContracts\Metadata\XmlFaultMetadata.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlFaultMetadata1.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
