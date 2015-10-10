@@ -54,6 +54,8 @@
             <Word>dpapi</Word>
             <Word>iso</Word>
             <Word>visix</Word>
+            <Word>upn</Word>
+            <Word>spn</Word>
         </Recognized>
         <Unrecognized>
             <!-- 
