@@ -284,7 +284,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             var t4SessionHost = t4 as ITextTemplatingSessionHost;
 
             t4SessionHost.Session = t4SessionHost.CreateSession();
-            t4SessionHost.Session["baseName"]       = baseName;
+            t4SessionHost.Session["baseName"] = baseName;
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
             t4SessionHost.Session["targetPathName"] = targetPathName;
 

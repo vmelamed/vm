@@ -159,16 +159,22 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Templates\InterfaceTasks.tt">
-      <LastGenOutput>InterfaceTasks1.cs</LastGenOutput>
+    <Content Include="Templates\ClassMetadata.tt">
+      <LastGenOutput>ClassMetadata.cs</LastGenOutput>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\InterfaceTasks.tt">
+      <LastGenOutput>InterfaceTasks1.cs</LastGenOutput>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\LightClient.tt">
       <LastGenOutput>LightClient1.cs</LastGenOutput>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="Templates\CommonT4Utilities.ttinclude" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\..\..\Common Items\Dictionary.xml">
@@ -282,6 +288,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -305,11 +312,6 @@
   <ItemGroup>
     <Content Include="Resources\RootCommand.png" />
     <Content Include="Resources\RootCommandPackage.ico" />
-    <Content Include="Templates\ClassMetadata.tt">
-      <LastGenOutput>ClassMetadata.cs</LastGenOutput>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
