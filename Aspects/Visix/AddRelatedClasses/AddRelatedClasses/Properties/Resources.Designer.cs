@@ -106,6 +106,15 @@ namespace vm.Aspects.Visix.AddRelatedClasses.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dto type can be generated only from a class..
+        /// </summary>
+        internal static string CannotGenerateDto {
+            get {
+                return ResourceManager.GetString("CannotGenerateDto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Metadata type can be generated only for a class..
         /// </summary>
         internal static string CannotGenerateMetadataType {

@@ -156,7 +156,6 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             //
             // TODO: does it make sense to have metadata type on an interface?
             //
-
             if (!cached.HasClass)
             {
                 MessageBox(Resources.AddMetadataType, Resources.CannotGenerateMetadataType);
@@ -215,7 +214,33 @@ namespace vm.Aspects.Visix.AddRelatedClasses
 
         void AddDto(object sender, EventArgs e)
         {
-            throw new NotImplementedException("'Add DTO' is not implemented yet.");
+            var cached = new CachedItems(".Dto.cs");
+
+            if (!cached.HasClass)
+            {
+                MessageBox(Resources.AddMetadataType, Resources.CannotGenerateDto);
+                return;
+            }
+
+            var project = cached.SourceProjectItem.ContainingProject;
+
+            // fire-up the T4 engine and generate the text
+            var t4 = ServiceProvider.GetService(typeof(STextTemplating)) as ITextTemplating;
+            if (t4 == null)
+                return;
+
+            var t4SessionHost = t4 as ITextTemplatingSessionHost;
+
+            t4SessionHost.Session = t4SessionHost.CreateSession();
+            t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
+            t4SessionHost.Session["targetPathName"] = cached.TargetPathName;
+
+            var generatedText = t4.ProcessTemplate("Templates\\ClassDataContract.tt", File.ReadAllText("Templates\\ClassDataContract.tt"));
+
+            // create the new file with the generated text and add it to the project:
+            File.WriteAllText(cached.TargetPathName, generatedText);
+
+            project.ProjectItems.AddFromFile(cached.TargetPathName);
         }
 
         void AddContractClass(object sender, EventArgs e)

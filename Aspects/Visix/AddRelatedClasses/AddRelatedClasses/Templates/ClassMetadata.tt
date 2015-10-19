@@ -27,13 +27,13 @@
     if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceInterface, ref sourceNameSpace) || sourceClass == null)
         throw new InvalidOperationException("Could not find a class to generate the metadata from.");
 
-    var sourceProperties  = sourceClass.Members.OfType<CodeProperty2>();
-    var sourcePropertyNames  = new HashSet<string>(sourceProperties.Select(p => p.Name));
+    var sourceProperties    = sourceClass.Members.OfType<CodeProperty2>();
+    var sourcePropertyNames = new HashSet<string>(sourceProperties.Select(p => p.Name));
 
-    var targetProjectItem = dte.Solution.FindProjectItem(targetPathName);
-    var targetCodeModel   = targetProjectItem != null ? targetProjectItem.FileCodeModel as FileCodeModel2 : null;
-    var targetNameSpace   = targetProjectItem != null ? targetCodeModel.CodeElements.OfType<CodeNamespace>().FirstOrDefault() : sourceNameSpace;
-    var targetClass       = targetProjectItem != null ? targetNameSpace.Children.OfType<CodeClass2>().FirstOrDefault() : null;
+    var targetProjectItem   = dte.Solution.FindProjectItem(targetPathName);
+    var targetCodeModel     = targetProjectItem != null ? targetProjectItem.FileCodeModel as FileCodeModel2 : null;
+    var targetNameSpace     = targetProjectItem != null ? targetCodeModel.CodeElements.OfType<CodeNamespace>().FirstOrDefault() : sourceNameSpace;
+    var targetClass         = targetProjectItem != null ? targetNameSpace.Children.OfType<CodeClass2>().FirstOrDefault() : null;
 
     if (targetProjectItem == null)
     {

@@ -60,7 +60,7 @@
     <Compile Include="ITestInterface.cs" />
     <Compile Include="ITestInterface.Tasks.cs" />
     <Compile Include="ITestInterface1.cs" />
-    <Compile Include="itestinterface1.Tasks.cs" />
+    <Compile Include="ITestInterface1.Tasks.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

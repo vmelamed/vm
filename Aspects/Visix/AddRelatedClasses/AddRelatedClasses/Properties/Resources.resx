@@ -132,6 +132,9 @@
   <data name="CannotGenerateClient" xml:space="preserve">
     <value>Client can be generated only from an interface.</value>
   </data>
+  <data name="CannotGenerateDto" xml:space="preserve">
+    <value>Dto type can be generated only from a class.</value>
+  </data>
   <data name="CannotGenerateMetadataType" xml:space="preserve">
     <value>Metadata type can be generated only for a class.</value>
   </data>

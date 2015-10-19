@@ -1,0 +1,99 @@
+﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="EnvDTE" #>
+<#@ Assembly Name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ parameter name="sourcePathName" type="System.String" #>
+<#@ parameter name="targetPathName" type="System.String" #><#
+
+    var dte = GetEnvDte();
+
+    var sourceProjectItem          = dte.Solution.FindProjectItem(sourcePathName);
+    var sourceCodeModel            = sourceProjectItem.FileCodeModel as FileCodeModel2;
+
+    CodeClass2 sourceClass         = null;
+    CodeInterface2 sourceInterface = null;
+    CodeNamespace sourceNameSpace  = null;
+
+    if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceInterface, ref sourceNameSpace) || sourceClass == null)
+        throw new InvalidOperationException("Could not find a class to generate the metadata from.");
+
+    var sourceProperties           = sourceClass.Members.OfType<CodeProperty2>();
+
+#>
+using System.Runtime.Serialization;
+using vm.Aspects.Diagnostics;
+using vm.Aspects.Wcf.DataContracts;
+
+namespace <#= targetNameSpace.Name #>
+{
+    [DataContract(Namespace="<Enetr here the data contract namespace>")]
+    public class <#= sourceClass.Name #>Dto : DataTransferObject
+    {
+<# 
+        foreach (var property in sourceProperties)
+        {
+            if (i > 0)
+                WriteLine(""); 
+#>
+        [DataMember]
+        public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
+<#      } #>
+    }
+}<#+ 
+
+    DTE2 GetEnvDte()
+    {
+        var hostServiceProvider = (IServiceProvider)Host;
+
+        if (hostServiceProvider == null)
+            throw new NotSupportedException("Host does not support IServiceProvider.");
+
+        var dte = hostServiceProvider.GetService(typeof(DTE)) as DTE2;
+
+        if (dte == null)
+            throw new NotSupportedException("Could not retrieve EnvDTE.DTE2 from host.");
+
+        return dte;
+    }
+
+    bool FindFirstClassOrInterface(
+        CodeElements codeElements,
+        ref CodeClass2 sourceClass,
+        ref CodeInterface2 sourceInterface,
+        ref CodeNamespace sourceNameSpace)
+    {
+        foreach (CodeElement2 element in codeElements)
+        {
+            sourceClass = element as CodeClass2;
+
+            if (sourceClass != null)
+                return true;
+
+            sourceInterface = element as CodeInterface2;
+
+            if (sourceInterface != null)
+                return true;
+
+            var nameSpace = element as CodeNamespace;
+
+            if (nameSpace != null)
+                if (FindFirstClassOrInterface(nameSpace.Children, ref sourceClass, ref sourceInterface, ref sourceNameSpace))
+                {
+                    sourceNameSpace = nameSpace;                    
+                    return true;
+                }
+        }
+
+        return false;
+    }
+#>
