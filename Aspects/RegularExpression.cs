@@ -384,12 +384,26 @@ namespace vm.Aspects
         /// </summary>
         public const string RexCountryIsoCode3 = "(?i:^[a-z][a-z][a-z]$)";
 
-        readonly static Lazy<Regex> _countryIsoCode = new Lazy<Regex>(() => new Regex(RexCountryIsoCode3, RegexOptions.Compiled));
+        readonly static Lazy<Regex> _countryIsoCode3 = new Lazy<Regex>(() => new Regex(RexCountryIsoCode3, RegexOptions.Compiled));
 
         /// <summary>
         /// Gets a Regex object which matches a three letter country code, e.g. USA
         /// </summary>
-        public static Regex CountryIsoCode3 => _countryIsoCode.Value;
+        public static Regex CountryIsoCode3 => _countryIsoCode3.Value;
+        #endregion
+
+        #region Currency ISO code
+        /// <summary>
+        /// Matches a three letter Currency code, e.g. USD
+        /// </summary>
+        public const string RexCurrencyIsoCode = "(?i:^[a-z][a-z][a-z]$)";
+
+        readonly static Lazy<Regex> _CurrencyIsoCode = new Lazy<Regex>(() => new Regex(RexCurrencyIsoCode, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches a three letter Currency code, e.g. USA
+        /// </summary>
+        public static Regex CurrencyIsoCode => _CurrencyIsoCode.Value;
         #endregion
 
         #region Country telephone code
