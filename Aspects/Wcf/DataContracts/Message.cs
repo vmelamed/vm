@@ -24,7 +24,7 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">The results.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
-        public ValidationResults DoValidate(
+        public ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {
@@ -66,7 +66,7 @@ namespace vm.Aspects.Wcf.DataContracts
         public bool IsValid(
             string ruleset = "")
         {
-            return DoValidate(ruleset).IsValid;
+            return Validate(ruleset).IsValid;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace vm.Aspects.Wcf.DataContracts
         public IValidatable ConfirmValid(
             string ruleset = "")
         {
-            var results = DoValidate(ruleset);
+            var results = Validate(ruleset);
 
             if (!results.IsValid)
                 throw new InvalidObjectException(results);

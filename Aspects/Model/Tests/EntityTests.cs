@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
+using vm.Aspects.Validation;
 
 namespace vm.Aspects.Model.Tests
 {

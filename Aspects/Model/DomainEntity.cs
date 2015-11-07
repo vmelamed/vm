@@ -7,8 +7,8 @@ namespace vm.Aspects.Model
     /// <summary>
     /// Class DomainEntity.
     /// </summary>
-    /// <typeparam name="TId">The type of the t identifier.</typeparam>
-    /// <typeparam name="TKey">The type of the t key.</typeparam>
+    /// <typeparam name="TId">The type of the store identifier.</typeparam>
+    /// <typeparam name="TKey">The type of the business key.</typeparam>
     [DebuggerDisplay("{GetType().Name, nq}[{Id,nq}]: {Key,nq}")]
     [MetadataType(typeof(DomainEntityMetadata))]
     public abstract partial class DomainEntity<TId, TKey> : BaseDomainEntity,

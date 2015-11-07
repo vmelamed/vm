@@ -284,6 +284,7 @@
     <Compile Include="Metadata\DbValidationErrorDumpMetadata.cs" />
     <Compile Include="Metadata\ObjectStateEntryDumpMetadata.cs" />
     <Compile Include="Metadata\UpdateExceptionDumpMetadata.cs" />
+    <Compile Include="Money.cs" />
     <Compile Include="Repository\EntityState.cs" />
     <Compile Include="Repository\IOrmSpecifics.cs" />
     <Compile Include="Repository\IOrmSpecificsContract.cs" />

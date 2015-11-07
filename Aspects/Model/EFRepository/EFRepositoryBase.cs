@@ -255,7 +255,7 @@ namespace vm.Aspects.Model.EFRepository
             if (validatable == null)
                 return base.ValidateEntity(entityEntry, items);
 
-            var results = validatable.DoValidate();
+            var results = validatable.Validate();
 
             if (results.IsValid)
                 return new DbEntityValidationResult(entityEntry, new DbValidationError[] { });

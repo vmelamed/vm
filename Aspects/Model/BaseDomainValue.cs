@@ -22,49 +22,12 @@ namespace vm.Aspects.Model
     {
         #region IValidatable Members
         /// <summary>
-        /// Gets a value indicating whether this instance is valid.
-        /// </summary>
-        /// <param name="ruleset">
-        /// The ruleset to test validity against.
-        /// </param>
-        /// <returns>
-        ///   <see langword="true"/> if the specified ruleset is valid; otherwise, <see langword="false"/>.
-        /// </returns>
-        /// <value><see langword="true"/> if this instance is valid; otherwise, <see langword="false"/>.</value>
-        public virtual bool IsValid(
-            string ruleset = "")
-        {
-            return DoValidate(ruleset).IsValid;
-        }
-
-        /// <summary>
-        /// Performs the validation logic and if the object is not valid throws <see cref="InvalidObjectException"/>.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidObjectException">
-        /// Thrown if the object is not valid. Should contain all reasons why the state is not consistent.
-        ///   </exception>
-        public virtual IValidatable ConfirmValid(
-            string ruleset = "")
-        {
-            Contract.Ensures(Contract.Result<IValidatable>() != null);
-
-            var results = DoValidate(ruleset);
-
-            if (!results.IsValid)
-                throw new InvalidObjectException(results);
-
-            return this;
-        }
-
-        /// <summary>
         /// Validates this instance.
         /// </summary>
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">An existing results collection to which the current validation results should be appended to.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
-        public virtual ValidationResults DoValidate(
+        public virtual ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {

@@ -68,44 +68,12 @@ namespace vm.Aspects.Model
 
         #region IValidatable Members
         /// <summary>
-        /// Tests whether this instance is valid according to the validation properties and methods.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test the validity against.</param>
-        /// <returns>This instance.</returns>
-        /// <exception cref="InvalidObjectException"></exception>
-        /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
-        public virtual IValidatable ConfirmValid(
-            string ruleset = "")
-        {
-            Contract.Ensures(Contract.Result<IValidatable>() != null);
-
-            var results = DoValidate(ruleset);
-
-            if (!results.IsValid)
-                throw new InvalidObjectException(results);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is valid according to the validation properties and methods.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns><see langword="true" /> if the object is valid, otherwise <see langword="false" />.</returns>
-        /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
-        public virtual bool IsValid(
-            string ruleset = "")
-        {
-            return DoValidate(ruleset).IsValid;
-        }
-
-        /// <summary>
         /// Validates this instance.
         /// </summary>
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">An existing results collection to which the current validation results should be appended to.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
-        public virtual ValidationResults DoValidate(
+        public virtual ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {
