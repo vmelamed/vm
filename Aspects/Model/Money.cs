@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Model
 {
@@ -12,18 +9,8 @@ namespace vm.Aspects.Model
     /// Class Money represents monetary value.
     /// </summary>
     [Serializable]
-    public partial struct Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
+    public sealed class Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
     {
-        /// <summary>
-        /// The default currency is the good old US dollar.
-        /// </summary>
-        public const string DefaultCurrency = "USD";
-
-        /// <summary>
-        /// The default number of digits to the right of the decimal point.
-        /// </summary>
-        public const int DefaultDecimals = 3;
-
         #region Properties
         /// <summary>
         /// Gets the monetary value represented by the instance - the amount of currency.
@@ -39,11 +26,6 @@ namespace vm.Aspects.Model
         /// represent an actual currency - this is outside the scope of this class.
         /// </remarks>
         public string Currency { get; }
-
-        /// <summary>
-        /// Gets maximal number of digits to the right of the decimal point maintained by the class.
-        /// </summary>
-        public int Decimals { get; } 
         #endregion
 
         #region Constructors
@@ -52,18 +34,19 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="value">The monetary value represented by the instance - the amount of currency.</param>
         /// <param name="currency">The ISO 4217 three letter currency code.</param>
-        /// <param name="decimals">The maximal number of decimal digits maintained by the class.</param>
         public Money(
             decimal value,
-            string currency = DefaultCurrency,
-            int decimals = DefaultDecimals)
+            string currency = null)
         {
-            Contract.Requires<ArgumentException>(RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
-            Contract.Requires<ArgumentException>(decimals >= 0, "The argument " + nameof(currency) + " cannot be negative.");
+            Contract.Requires<ArgumentException>(string.IsNullOrWhiteSpace(currency) || RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
 
-            Value = value;
+            IMoneyDefaults defaults = ServiceLocator.Current.GetInstance<IMoneyDefaults>();
+
+            if (string.IsNullOrWhiteSpace(currency))
+                currency = defaults.Currency;
+
+            Value = decimal.Round(value, defaults.Decimals(currency), defaults.Rounding(currency));
             Currency = currency;
-            Decimals = decimals;
         }
 
         /// <summary>
@@ -79,8 +62,7 @@ namespace vm.Aspects.Model
 
             Value = (decimal)info.GetValue("Value", typeof(decimal));
             Currency = (string)info.GetValue("Currency", typeof(string));
-            Decimals = (int)info.GetValue("Decimals", typeof(int));
-        } 
+        }
         #endregion
 
         #region IEquatable<Money> Members
@@ -95,13 +77,16 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The <see cref="Equals(Money)"/>, <see cref="Equals(object)"/> methods, the overloaded <c>operator==</c> and 
         /// <c>operator!=</c> test for value identity.
-        /// Note that the method does not test the <see cref="Decimals"/> properties because even if these properties are different but
-        /// the <see cref="Value"/> and <see cref="Currency"/> are equal, the money is the same. In other words $1.32==$1.3200.
         /// </remarks>
         public bool Equals(
             Money other)
         {
-            return Value    == other.Value &&
+            if (other == null)
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return Value == other.Value &&
                    Currency == other.Currency;
         }
         #endregion
@@ -117,18 +102,12 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The <see cref="Equals(Money)"/>, <see cref="Equals(object)"/> methods, the overloaded <c>operator==</c> and 
         /// <c>operator!=</c> test for value identity.
-        /// Note that the method does not test the <see cref="Decimals"/> properties because even if these properties are different but
-        /// the <see cref="Value"/> and <see cref="Currency"/> are equal, the money is the same. In other words $1.32==$1.3200.
         /// </remarks>
-        public override bool Equals(object obj) => obj is Money ? Equals((Money)obj) : false;
+        public override bool Equals(object obj) => Equals(obj as Money);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="Money"/> and its derived types.
         /// </summary>
-        /// <returns>A hash code for the current <see cref="Money"/> instance.</returns>
-        /// <remarks>The property <see cref="Decimals"/> does not participate in calculating the hash value, because even if these properties are different but
-        /// the <see cref="Value"/> and <see cref="Currency"/> are equal, the money is the same and their hash should be the same too. In other words $1.32==$1.3200.
-        /// </remarks>
         public override int GetHashCode()
         {
             var hashCode = Constants.HashInitializer;
@@ -148,7 +127,13 @@ namespace vm.Aspects.Model
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(Money)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator == (Money left, Money right) => left.Equals(right);
+        public static bool operator ==(Money left, Money right)
+        {
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
+
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Compares two <see cref="Money"/> objects.
@@ -159,27 +144,7 @@ namespace vm.Aspects.Model
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(Money)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator != (Money left, Money right) => !(left == right);
-
-        #region Public Methods
-        /// <summary>
-        /// Creates a new money objects, that has <see cref="Value"/> equal to the <see cref="Validation"/> of this instance but
-        /// rounded to the specified number of digits after the decimal point applying the specified midpoint rounding method.
-        /// The default rounding is the so called banking rounding, e.g. if we round to two decimals, then 1.535 is rounded to 1.54 and 1.525 is rounded to 1.52.
-        /// </summary>
-        /// <param name="decimals">The decimals.</param>
-        /// <param name="midpointRounding">The midpoint rounding.</param>
-        /// <returns>vm.Aspects.Model.Money.</returns>
-        public Money Round(
-                    int decimals = DefaultDecimals,
-                    MidpointRounding midpointRounding = MidpointRounding.ToEven)
-        {
-            return new Money(
-                        decimal.Round(Value, decimals, midpointRounding),
-                        Currency,
-                        decimals);
-        }
-        #endregion
+        public static bool operator !=(Money left, Money right) => !(left == right);
 
         #region ICloneable
         /// <summary>
@@ -188,7 +153,7 @@ namespace vm.Aspects.Model
         /// <returns>A money instance identical to this.</returns>
         public object Clone()
         {
-            return new Money(Value, Currency, Decimals);
+            return new Money(Value, Currency);
         }
         #endregion
 
@@ -206,15 +171,20 @@ namespace vm.Aspects.Model
         public int CompareTo(
             Money other)
         {
-            CompatibleCurrency(other);
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+            if (!string.Equals(Currency, other.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.", nameof(other));
 
             if (Value == other.Value)
                 return 0;
             else
+            {
                 if (Value > other.Value)
                     return 1;
                 else
                     return -1;
+            }
         }
         #endregion
 
@@ -232,9 +202,15 @@ namespace vm.Aspects.Model
         public int CompareTo(
             object obj)
         {
-            Contract.Requires<ArgumentException>(obj is Money, "The comparand must be of type Money.");
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
 
-            return CompareTo((Money)obj);
+            Money money = obj as Money;
+
+            if (money == null)
+                throw new ArgumentException("The comparand must be of type Money.", nameof(obj));
+
+            return CompareTo(money);
         }
         #endregion
 
@@ -263,15 +239,168 @@ namespace vm.Aspects.Model
             SerializationInfo info,
             StreamingContext context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
 
             info.AddValue("Value", Value);
             info.AddValue("Currency", Currency);
-            info.AddValue("Decimals", Decimals);
         }
         #endregion
 
-        #region Operators
+        #region Operations
+        /// <summary>
+        /// Implements the operation unary plus.
+        /// </summary>
+        /// <param name="operand">The operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="operand"/> is <see langword="null"/>.</exception>
+        /// <remarks>
+        /// The operation returns a new instance identical to this.
+        /// </remarks>
+        public static Money Plus(
+            Money operand)
+        {
+            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+
+            return new Money(
+                        operand.Value,
+                        operand.Currency);
+        }
+
+        /// <summary>
+        /// Implements the operation arithmetic negate represented by unary '-'.
+        /// </summary>
+        /// <param name="operand">The operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <remarks>
+        /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/> and rounded.
+        /// </remarks>
+        public static Money Negate(
+            Money operand)
+        {
+            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+
+            return new Money(
+                        -operand.Value,
+                        operand.Currency);
+        }
+
+        /// <summary>
+        /// Implements the operation addition.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
+        /// <remarks>
+        /// The result object will have <see cref="Value"/> equal to the sum of the <see cref="Value"/>-s of the operands; 
+        /// will have the same currency as the operands; 
+        /// the result value will be rounded.
+        /// </remarks>
+        public static Money Add(
+            Money left,
+            Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+
+            return new Money(
+                        left.Value + right.Value,
+                        left.Currency);
+        }
+
+        /// <summary>
+        /// Implements the operation subtraction.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
+        /// <remarks>
+        /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; the result value will be rounded.
+        /// </remarks>
+        public static Money Subtract(
+            Money left,
+            Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+
+            return new Money(
+                        left.Value - right.Value,
+                        left.Currency);
+        }
+
+        /// <summary>
+        /// Implements the operation division (ratio) represented by the '/' operator.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
+        /// <remarks>
+        /// The result object will be equal to the division of the two moneys (i.e. will be the ratio of the two moneys).
+        /// </remarks>
+        public static decimal Divide(
+            Money left,
+            Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+
+            return left.Value / right.Value;
+        }
+
+        /// <summary>
+        /// Implements the operation division of money object by decimal number represented by the '/' operator.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
+        /// <remarks>
+        /// The result object will be equal to the division of the value of the left operand by the right number; the result value will be rounded. 
+        /// </remarks>
+        public static Money Divide(
+            Money left,
+            decimal right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+
+            return new Money(
+                        left.Value / right,
+                        left.Currency);
+        }
+
+        /// <summary>
+        /// Implements the operation money object modulo decimal number represented by the '%' operator.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns>The result of the operator.</returns>
+        /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
+        /// <remarks>
+        /// The result object will be equal to the reminder of the division of the value of the left operand by the right number, the result value will be rounded.
+        /// </remarks>
+        public static Money Mod(
+            Money left,
+            decimal right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+
+            return new Money(
+                        left.Value % right,
+                        left.Currency);
+        }
+        #endregion
+
+        #region Overloaded operators
         /// <summary>
         /// Implements the operator &gt;.
         /// </summary>
@@ -283,7 +412,7 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            CompatibleCurrencies(left, right);
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
 
             return left.CompareTo(right) > 0;
         }
@@ -299,6 +428,8 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+
             return left.CompareTo(right) < 0;
         }
 
@@ -309,12 +440,7 @@ namespace vm.Aspects.Model
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
-        public static bool operator >=(
-            Money left,
-            Money right)
-        {
-            return left.CompareTo(right) >= 0;
-        }
+        public static bool operator >=(Money left, Money right) => !(left < right);
 
         /// <summary>
         /// Implements the operator &lt;=.
@@ -323,12 +449,7 @@ namespace vm.Aspects.Model
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
-        public static bool operator <=(
-            Money left,
-            Money right)
-        {
-            return left.CompareTo(right) <= 0;
-        }
+        public static bool operator <=(Money left, Money right) => !(left > right);
 
         /// <summary>
         /// Implements the operation unary '+'.
@@ -339,11 +460,7 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The operation returns a new instance identical to this.
         /// </remarks>
-        public static Money operator +(
-            Money operand)
-        {
-            return operand;
-        }
+        public static Money operator +(Money operand) => Plus(operand);
 
         /// <summary>
         /// Implements the operation arithmetic negate represented by unary '-'.
@@ -351,16 +468,9 @@ namespace vm.Aspects.Model
         /// <param name="operand">The operand.</param>
         /// <returns>The result of the operator.</returns>
         /// <remarks>
-        /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/>.
+        /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/> and rounded.
         /// </remarks>
-        public static Money operator -(
-            Money operand)
-        {
-            return new Money(
-                        -operand.Value,
-                        operand.Currency,
-                        operand.Decimals);
-        }
+        public static Money operator -(Money operand) => Negate(operand);
 
         /// <summary>
         /// Implements the operation addition represented by the binary '+' operator.
@@ -370,20 +480,11 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the sum of the <see cref="Value"/>-s of the operands; will have the same currency as the operands; and
-        /// if the two operands have different <see cref="Decimals"/> properties, the result will have the bigger <see cref="Decimals"/>.
+        /// The result object will have <see cref="Value"/> equal to the sum of the <see cref="Value"/>-s of the operands; 
+        /// will have the same currency as the operands; 
+        /// the result value will be rounded.
         /// </remarks>
-        public static Money operator +(
-            Money left,
-            Money right)
-        {
-            CompatibleCurrencies(left, right);
-
-            return new Money(
-                        left.Value + right.Value,
-                        left.Currency,
-                        Math.Max(left.Decimals, right.Decimals));
-        }
+        public static Money operator +(Money left, Money right) => Add(left, right);
 
         /// <summary>
         /// Implements the operation subtraction represented by the binary '-' operator.
@@ -393,20 +494,9 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; will have the same currency as the operands; and
-        /// if the two operands have different <see cref="Decimals"/> properties, the result will have the bigger <see cref="Decimals"/>.
+        /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; the result value will be rounded.
         /// </remarks>
-        public static Money operator -(
-            Money left,
-            Money right)
-        {
-            CompatibleCurrencies(left, right);
-
-            return new Money(
-                        left.Value - right.Value,
-                        left.Currency,
-                        Math.Max(left.Decimals, right.Decimals));
-        }
+        public static Money operator -(Money left, Money right) => Subtract(left, right);
 
         /// <summary>
         /// Implements the operation division (ratio) represented by the '/' operator.
@@ -416,17 +506,9 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will be equal to the division of the two moneys (will be the ratio of the two moneys).
+        /// The result object will be equal to the division of the two moneys (i.e. will be the ratio of the two moneys).
         /// </remarks>
-        public static decimal operator /(
-            Money left,
-            Money right)
-        {
-            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
-            CompatibleCurrencies(left, right);
-
-            return left.Value / right.Value;
-        }
+        public static decimal operator /(Money left, Money right) => Divide(left, right);
 
         /// <summary>
         /// Implements the operation division of money object by decimal number represented by the '/' operator.
@@ -436,32 +518,9 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will be equal to the division of the value of the left operand by the right number. 
-        /// The <see cref="Decimals"/> property of the result will reflect the true scale of the result. If you need to adjust the scale to different scale
-        /// call the method <see cref="Round(int, MidpointRounding)"/> on the result. E.g.
-        /// <code>
-        /// <![CDATA[
-        /// var money = new Money(1.543M);  // 1.543 USD
-        /// var div = money / 1.333;        // 1.157539... USD
-        /// var rounded = div.Round();      // 1.158 USD
-        /// ]]>
-        /// </code>
+        /// The result object will be equal to the division of the value of the left operand by the right number; the result value will be rounded. 
         /// </remarks>
-        public static Money operator /(
-            Money left,
-            decimal right)
-        {
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-
-            var div = left.Value / right;
-            var divBits = (uint[])(object)decimal.GetBits(div);
-            var decimals = checked((int)((divBits[3] >> 16) & 31));
-
-            return new Money(
-                        div,
-                        left.Currency,
-                        decimals);
-        }
+        public static Money operator /(Money left, decimal right) => Divide(left, right);
 
         /// <summary>
         /// Implements the operation money object modulo decimal number represented by the '%' operator.
@@ -471,41 +530,9 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will be equal to the reminder of the division of the value of the left operand by the right number, rounded using 
-        /// <see cref="MidpointRounding.ToEven"/> method, a.k.a. "banking rounding".
-        /// Note that it can be negative or positive. This operation gives basically the "absolute error" of the '/' operator on the same operands;
-        /// or the error from lost of precision.
+        /// The result object will be equal to the reminder of the division of the value of the left operand by the right number, the result value will be rounded.
         /// </remarks>
-        public static Money operator %(
-            Money left,
-            decimal right)
-        {
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-
-            var div = left.Value % right;
-            var divBits = (uint[])(object)decimal.GetBits(div);
-            var decimals = checked((int)((divBits[3] >> 16) & 31));
-
-            return new Money(
-                        div - decimal.Round(left.Value / right, left.Decimals, MidpointRounding.ToEven),
-                        left.Currency,
-                        decimals);
-        } 
+        public static Money operator %(Money left, decimal right) => Mod(left, right);
         #endregion
-
-        [ContractAbbreviator]
-        void CompatibleCurrency(
-            Money other)
-        {
-            Contract.Requires<InvalidOperationException>(string.Equals(Currency, other.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-        }
-
-        [ContractAbbreviator]
-        static void CompatibleCurrencies(
-            Money left,
-            Money right)
-        {
-            Contract.Requires<InvalidOperationException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-        }
     }
 }

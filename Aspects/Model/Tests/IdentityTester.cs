@@ -30,9 +30,9 @@ namespace vm.Aspects.Model.Tests
         /// Initializes the specified class with 4 objects of type T and a method which modifies its argumnt of type T.
         /// </summary>
         /// <param name="obj1">The obj1.</param>
-        /// <param name="obj2">The obj2.</param>
-        /// <param name="obj3">The obj3.</param>
-        /// <param name="obj4">The obj4.</param>
+        /// <param name="obj2">The obj2 must be a different instance from <paramref name="obj1"/> but considered to be equal to it.</param>
+        /// <param name="obj3">The obj3 must be a different instance from <paramref name="obj2"/> but considered to be equal to it.</param>
+        /// <param name="obj4">The obj4 must be a different instance from <paramref name="obj3"/> and not considered to be equal to it.</param>
         /// <param name="modifyingMethods">The modifying method.</param>
         public void Initialize(
             T obj1,
@@ -46,8 +46,8 @@ namespace vm.Aspects.Model.Tests
             Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), "obj3");
             Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), "obj4");
             Contract.Requires<ArgumentNullException>(modifyingMethods != null, nameof(modifyingMethods));
-            Contract.Requires<ArgumentException>(modifyingMethods.Length!=0, "modifyingMethods must not be empty.");
-            Contract.Requires<ArgumentException>(modifyingMethods.All(m => m!=null), "modifyingMethods cannot contain null delegates.");
+            Contract.Requires<ArgumentException>(modifyingMethods.Length != 0, "modifyingMethods must not be empty.");
+            Contract.Requires<ArgumentException>(modifyingMethods.All(m => m != null), "modifyingMethods cannot contain null delegates.");
 
             Contract.Requires<ArgumentException>(!ReferenceEquals(obj1, obj2), "The arguments obj1 and obj2 must be different instances considered to be equal.");
             Contract.Requires<ArgumentException>(!ReferenceEquals(obj2, obj3), "The arguments obj2 and obj3 must be different instances considered to be equal.");
@@ -103,11 +103,11 @@ namespace vm.Aspects.Model.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(_obj1.Equals(_obj2) && 
-                          _obj2.Equals(_obj3) && 
+            Assert.IsTrue(_obj1.Equals(_obj2) &&
+                          _obj2.Equals(_obj3) &&
                           _obj1.Equals(_obj3), "The method Equals must be transitive, i.e. (a==b && b==c) -> (a==c).");
-            Assert.IsTrue(!_obj1.Equals(_obj4) && 
-                          !_obj2.Equals(_obj4) && 
+            Assert.IsTrue(!_obj1.Equals(_obj4) &&
+                          !_obj2.Equals(_obj4) &&
                           !_obj3.Equals(_obj4), "The not-equals is not consistent with the method equals' transitivity, i.e. (a==b && b==c && a!=d) -> (b!=d && c!=d).");
         }
         #endregion
@@ -151,12 +151,12 @@ namespace vm.Aspects.Model.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(_obj1.Equals((object)_obj2) && 
-                          _obj2.Equals((object)_obj3) && 
+            Assert.IsTrue(_obj1.Equals((object)_obj2) &&
+                          _obj2.Equals((object)_obj3) &&
                           _obj1.Equals((object)_obj3),
                           "The method Equals must be transitive, i.e. (obj1.Equals(obj2) && obj2.Equals(obj3) -> obj1.Equals(obj3).");
-            Assert.IsTrue(!_obj1.Equals((object)_obj4) && 
-                          !_obj2.Equals((object)_obj4) && 
+            Assert.IsTrue(!_obj1.Equals((object)_obj4) &&
+                          !_obj2.Equals((object)_obj4) &&
                           !_obj3.Equals((object)_obj4),
                           "The not-equals is not consistent with the method equals' transitivity, i.e. (obj1.Equals(obj2) && obj2.Equals(obj3) && !obj1.Equals(obj4) && !obj2.Equals(obj4) -> !obj3.Equals(obj3).");
         }
@@ -168,15 +168,15 @@ namespace vm.Aspects.Model.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(!(_obj1==null), "obj1 must not be equal to null.");
-            Assert.IsTrue(!(_obj2==null), "obj2 must not be equal to null.");
-            Assert.IsTrue(!(_obj3==null), "obj3 must not be equal to null.");
-            Assert.IsTrue(!(_obj4==null), "obj4 must not be equal to null.");
+            Assert.IsTrue(!(_obj1 == null), "obj1 must not be equal to null.");
+            Assert.IsTrue(!(_obj2 == null), "obj2 must not be equal to null.");
+            Assert.IsTrue(!(_obj3 == null), "obj3 must not be equal to null.");
+            Assert.IsTrue(!(_obj4 == null), "obj4 must not be equal to null.");
 
-            Assert.IsTrue(!(null==_obj1), "null must not be equal to obj1.");
-            Assert.IsTrue(!(null==_obj2), "null must not be equal to obj2.");
-            Assert.IsTrue(!(null==_obj3), "null must not be equal to obj3.");
-            Assert.IsTrue(!(null==_obj4), "null must not be equal to obj4.");
+            Assert.IsTrue(!(null == _obj1), "null must not be equal to obj1.");
+            Assert.IsTrue(!(null == _obj2), "null must not be equal to obj2.");
+            Assert.IsTrue(!(null == _obj3), "null must not be equal to obj3.");
+            Assert.IsTrue(!(null == _obj4), "null must not be equal to obj4.");
         }
 
         [TestMethod]
@@ -184,15 +184,15 @@ namespace vm.Aspects.Model.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(_obj1!=null, "Objects must not be equal to null.");
-            Assert.IsTrue(_obj2!=null, "Objects must not be equal to null.");
-            Assert.IsTrue(_obj3!=null, "Objects must not be equal to null.");
-            Assert.IsTrue(_obj4!=null, "Objects must not be equal to null.");
+            Assert.IsTrue(_obj1 != null, "Objects must not be equal to null.");
+            Assert.IsTrue(_obj2 != null, "Objects must not be equal to null.");
+            Assert.IsTrue(_obj3 != null, "Objects must not be equal to null.");
+            Assert.IsTrue(_obj4 != null, "Objects must not be equal to null.");
 
-            Assert.IsTrue(null!=_obj1, "Objects must not be equal to null.");
-            Assert.IsTrue(null!=_obj2, "Objects must not be equal to null.");
-            Assert.IsTrue(null!=_obj3, "Objects must not be equal to null.");
-            Assert.IsTrue(null!=_obj4, "Objects must not be equal to null.");
+            Assert.IsTrue(null != _obj1, "Objects must not be equal to null.");
+            Assert.IsTrue(null != _obj2, "Objects must not be equal to null.");
+            Assert.IsTrue(null != _obj3, "Objects must not be equal to null.");
+            Assert.IsTrue(null != _obj4, "Objects must not be equal to null.");
         }
 
         //[TestMethod]
@@ -251,7 +251,7 @@ namespace vm.Aspects.Model.Tests
             Assert.IsTrue(hash1 == hash2 && hash2 == hash3, "The hash codes of objects considered to be equal should be equal.");
 
             if (hash1 == hash4)
-                Assert.Inconclusive("Different objects with the same hash code is possible but should be rare. "+
+                Assert.Inconclusive("Different objects with the same hash code is possible but should be rare. " +
                                     "Try to change the obj4's values or change the hash function to give better distribution.");
         }
         #endregion

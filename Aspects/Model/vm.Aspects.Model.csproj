@@ -274,6 +274,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHasBusinessKey.cs" />
     <Compile Include="IHasStoreId.cs" />
+    <Compile Include="IMoneyDefaults.cs" />
     <Compile Include="InMemory\ListObjectsRepository.cs" />
     <Compile Include="InMemory\ListObjectsRepository.Registrar.cs" />
     <Compile Include="InMemory\MapObjectsRepository.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Metadata\ObjectStateEntryDumpMetadata.cs" />
     <Compile Include="Metadata\UpdateExceptionDumpMetadata.cs" />
     <Compile Include="Money.cs" />
+    <Compile Include="MoneyDefaults.cs" />
     <Compile Include="Repository\EntityState.cs" />
     <Compile Include="Repository\IOrmSpecifics.cs" />
     <Compile Include="Repository\IOrmSpecificsContract.cs" />

@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Exceptions;
+using vm.Aspects.Validation;
 using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Model.Tests

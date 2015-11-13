@@ -255,7 +255,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -275,6 +277,7 @@
     <Compile Include="ListObjectsSpecificsTests.cs" />
     <Compile Include="MapObjectsRepositoryTest.cs" />
     <Compile Include="MapObjectsSpecificsTests.cs" />
+    <Compile Include="MoneyTest.cs" />
     <Compile Include="ObjectsSpecificsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEntities.cs" />

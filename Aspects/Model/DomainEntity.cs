@@ -133,11 +133,7 @@ namespace vm.Aspects.Model
         /// <returns>A hash code for the current <see cref="DomainEntity{TId, TKey}"/> instance.</returns>
         public override int GetHashCode()
         {
-            var hashCode = Constants.HashInitializer;
-
-            hashCode = Constants.HashMultiplier * hashCode + Key.GetHashCode();
-
-            return hashCode;
+            return Key.GetHashCode(); ;
         }
 
         /// <summary>
@@ -171,7 +167,7 @@ namespace vm.Aspects.Model
             DomainEntity<TId, TKey> left,
             DomainEntity<TId, TKey> right)
         {
-            return !(left==right);
+            return !(left == right);
         }
         #endregion
     }

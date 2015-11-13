@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+﻿using System;
+using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Configuration;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -28,7 +28,8 @@ namespace vm.Aspects.Model.Tests
                 DIContainer
                     .Initialize()
                     .Register(Facility.Registrar, true)
-                    .Register(TestEFRepository.Registrar, true);
+                    .Register(TestEFRepository.Registrar, true)
+                    .RegisterInstanceIfNot<IMoneyDefaults>(new MoneyDefaults());
             }
             catch (Exception x)
             {
