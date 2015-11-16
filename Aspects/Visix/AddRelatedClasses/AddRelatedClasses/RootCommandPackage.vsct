@@ -100,7 +100,7 @@
                     <ButtonText>Add DTO</ButtonText>
                 </Strings>
             </Button>
-            <Button guid="guidAddRelatedTypePackageCmdSet"
+            <!--Button guid="guidAddRelatedTypePackageCmdSet"
                     id="cmdIdAddContractClass"
                     priority="0x0200"
                     type="Button">
@@ -109,7 +109,7 @@
                 <Strings>
                     <ButtonText>Add Contract Class</ButtonText>
                 </Strings>
-            </Button>
+            </Button-->
             <Button guid="guidAddRelatedTypePackageCmdSet"
                     id="cmdIdAddAsyncInterface"
                     priority="0x0300"
@@ -169,8 +169,8 @@
                       value="0x1201"/>
             <IDSymbol name="cmdIdAddDto"
                       value="0x1202"/>
-            <IDSymbol name="cmdIdAddContractClass"
-                      value="0x1211"/>
+            <!--IDSymbol name="cmdIdAddContractClass"
+                      value="0x1211"/-->
             <IDSymbol name="cmdIdAddAsyncInterface"
                       value="0x1212"/>
             <IDSymbol name="cmdIdAddClient"
