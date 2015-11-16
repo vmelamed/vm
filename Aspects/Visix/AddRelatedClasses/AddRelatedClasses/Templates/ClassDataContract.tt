@@ -17,18 +17,28 @@
 
     var dte = GetEnvDte();
 
-    var sourceProjectItem          = dte.Solution.FindProjectItem(sourcePathName);
-    var sourceCodeModel            = sourceProjectItem.FileCodeModel as FileCodeModel2;
+    var sourceProjectItem           = dte.Solution.FindProjectItem(sourcePathName);
+    var sourceCodeModel             = sourceProjectItem.FileCodeModel as FileCodeModel2;
 
-    CodeClass2 sourceClass         = null;
-    CodeInterface2 sourceInterface = null;
-    CodeNamespace sourceNameSpace  = null;
+    CodeClass2 sourceClass          = null;
+    CodeInterface2 sourceInterface  = null;
+    CodeNamespace sourceNameSpace   = null;
 
     if (!FindFirstClassOrInterface(sourceCodeModel.CodeElements, ref sourceClass, ref sourceInterface, ref sourceNameSpace) || sourceClass == null)
         throw new InvalidOperationException("Could not find a class to generate the metadata from.");
 
-    var sourceProperties           = sourceClass.Members.OfType<CodeProperty2>();
+    var sourceProperties            = sourceClass.Members.OfType<CodeProperty2>();
 
+    var targetProjectItem           = dte.Solution.FindProjectItem(targetPathName);
+    var targetCodeModel             = targetProjectItem != null ? targetProjectItem.FileCodeModel as FileCodeModel2 : null;
+    var targetNameSpace             = targetProjectItem != null ? targetCodeModel.CodeElements.OfType<CodeNamespace>().FirstOrDefault() : sourceNameSpace;
+    var targetClass                 = targetProjectItem != null ? targetNameSpace.Children.OfType<CodeClass2>().FirstOrDefault() : null;
+
+    if (targetProjectItem == null)
+    {
+        var i = 0;
+
+        // generate the metadata class from scratch using plain T4
 #>
 using System.Runtime.Serialization;
 using vm.Aspects.Diagnostics;
@@ -36,7 +46,7 @@ using vm.Aspects.Wcf.DataContracts;
 
 namespace <#= targetNameSpace.Name #>
 {
-    [DataContract(Namespace="<Enetr here the data contract namespace>")]
+    [DataContract(Namespace="<Enter here the data contract namespace>")]
     public class <#= sourceClass.Name #>Dto : DataTransferObject
     {
 <# 
@@ -47,9 +57,70 @@ namespace <#= targetNameSpace.Name #>
 #>
         [DataMember]
         public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
-<#      } #>
+<#      
+            i++;
+        }#>
     }
-}<#+ 
+}<#
+    }
+    else
+    {
+        var sourcePropertyNames  = new HashSet<string>(sourceProperties.Select(p => p.Name));
+        var targetProperties     = targetClass.Members.OfType<CodeProperty2>();
+        var targetPropertyNames  = new HashSet<string>(targetProperties.Select(p => p.Name));
+
+        // remove the metadata properties that were removed from the source's properties
+        foreach (var propertyName in targetPropertyNames.Except(sourcePropertyNames))
+            targetClass.RemoveMember(targetProperties.First(p => p.Name == propertyName));
+        
+        // read the existing text up to and including the last property (where we need to insert the new properties, if any)
+        targetProjectItem.Open(Constants.vsViewKindPrimary);
+        
+        var targetDocument = targetProjectItem.Document;
+        var endPoint       = targetClass
+                                .GetEndPoint(vsCMPart.vsCMPartBody)
+                                .CreateEditPoint();
+
+        var selection      = targetDocument.Selection as TextSelection;
+        
+        selection.MoveToAbsoluteOffset(1, false);
+        selection.MoveToPoint(endPoint, true);
+        selection.LineUp(true);
+        selection.EndOfLine(true);
+
+        var startText = selection.Text;
+
+        // read to the end of the text
+        selection.MoveToPoint(selection.BottomPoint, false);
+        selection.EndOfDocument(true);
+
+        var endText = selection.Text;
+
+        // write the text up to and including the last property
+        Write(startText);
+
+        var i = targetPropertyNames.Count();
+
+        // insert the new properties
+        foreach (var propertyName in sourcePropertyNames.Except(targetPropertyNames))
+        {
+            var property = sourceProperties.FirstOrDefault(p => p.Name == propertyName);
+
+            if (property == null)
+                continue;
+#>
+
+
+        [DataMember]
+        public <#= property.Type.AsString #> <#= property.Name #> { get; set; }<#
+        }
+
+        // write the remaining of the text
+        Write(endText);
+
+        selection.StartOfDocument(false);
+    }
+#><#+ 
 
     DTE2 GetEnvDte()
     {

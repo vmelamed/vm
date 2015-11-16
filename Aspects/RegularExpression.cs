@@ -36,7 +36,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches numeric IPv4 addresses, e.g. 192.168.10.113
         /// </summary>
-        const string rexNumIpV4Adr = "(?<ipV4>(?:" + rexIpV4Segment + @"\.){3}" + rexIpV4Segment +")";
+        const string rexNumIpV4Adr = "(?<ipV4>(?:" + rexIpV4Segment + @"\.){3}" + rexIpV4Segment + ")";
 
         /// <summary>
         /// Matches a double octet (number in the closed range 0-ffff hexadecimal) from an IPv6 address, e.g. fdee (should be case insensitive!)
@@ -66,7 +66,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches numeric IPv6 addresses, e.g. 1:2:3:4:5::8 (should be case insensitive!)
         /// </summary>
-        const string rexNumIpV6Adr = "(?<ipV6>" + 
+        const string rexNumIpV6Adr = "(?<ipV6>" +
                                         "(?:fe80:(?::" + rexIpV6Segment + "){0,4}%[0-9a-z]+)|" +
                                         "(?:::(?:ffff(?::0{1,4})?:)?" + rexNumIpV4Adr + ")|" +
                                         "(?:(?:" + rexIpV6Segment + ":){1,4}:" + rexNumIpV4Adr + ")|" +
@@ -112,7 +112,7 @@ namespace vm.Aspects
         /// top level domain, e.g. com, net, etc. (should be case insensitive!)
         /// </summary>
         //const string rexDnsIpAdr1  = "(?<topLevel>aero|asia|cat|biz|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|xxx|[a-z]{2})";
-        const string rexDnsIpAdr1  = @"(?<topLevel>\p{L}{2,32})";
+        const string rexDnsIpAdr1 = @"(?<topLevel>\p{L}{2,32})";
 
         /// <summary>
         /// Matches domain name - microsoft.com
@@ -191,9 +191,9 @@ namespace vm.Aspects
         const string rexEmailId = "(?<userId>" + rexUserId + ")";
 
         const string rexXalpha = @"[a-z0-9$_@.&+!*""'(),-]|%[0-9a-f][0-9a-f]";
-        const string rexXalphas = @"(?:"+ rexXalpha + ")+";
+        const string rexXalphas = @"(?:" + rexXalpha + ")+";
         const string rexQalpha = @"[a-z0-9$_@.+!*""'(),-]|%[0-9a-f][0-9a-f]";
-        const string rexQalphas = @"(?:"+ rexQalpha + ")+";
+        const string rexQalphas = @"(?:" + rexQalpha + ")+";
 
         /// <summary>
         /// Matches a URL path segment
@@ -541,7 +541,7 @@ namespace vm.Aspects
         #region ConnectionString
         /// <summary>
         /// Matches a connection string. For a list of the formatting rules see http://www.connectionstrings.com/formating-rules-for-connection-strings/.
-        /// e.g. &quot;Server=(localdb)\ProjectsV12;Database=Northwind;Integrated Security=true;MultipleActiveResultSets=True;Asynchronous Processing=True;Application Name=IQToolkit;&quot;
+        /// e.g. &quot;Server=(localdb)\MSSQLLocalDB;Database=Northwind;Integrated Security=true;MultipleActiveResultSets=True;Asynchronous Processing=True;Application Name=IQToolkit;&quot;
         /// </summary>
         public const string RexConnectionString = @"(?<key>(?:[^""'=;\s]|==)*(?:[^""'=;\s]|==))\s*=\s*(?:(?<value>[^;'""{\s][^;]*[^;\s])|(?:""(?<value>[^""]+)"")|(?:'(?<value>[^']+)')|(?:\{(?<value>[^\}]+)\}))";
 
@@ -549,7 +549,7 @@ namespace vm.Aspects
 
         /// <summary>
         /// Matches a connection string. For a list of the formatting rules see http://www.connectionstrings.com/formating-rules-for-connection-strings/.
-        /// e.g. &quot;Server=(localdb)\ProjectsV12;Database=Northwind;Integrated Security=true;MultipleActiveResultSets=True;Asynchronous Processing=True;Application Name=IQToolkit;&quot;
+        /// e.g. &quot;Server=(localdb)\MSSQLLocalDB;Database=Northwind;Integrated Security=true;MultipleActiveResultSets=True;Asynchronous Processing=True;Application Name=IQToolkit;&quot;
         /// </summary>
         public static Regex ConnectionString => _connectionString.Value;
         #endregion
@@ -560,11 +560,11 @@ namespace vm.Aspects
         /// Dumps all regular expressions in this class.
         /// </summary>
         [Conditional("DEBUG")]
-        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId="System.Console.WriteLine(System.String,System.Object,System.Object)")]
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)")]
         public static void DumpAllRegularExpressions()
         {
             typeof(RegularExpression)
-                .GetFields(BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly)
+                .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
                 .Where(fi => fi.Name.StartsWith("rex", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(fi => fi.Name, StringComparer.Ordinal)
                 .Select(fi => { Console.WriteLine("{0} : {1}", fi.Name, fi.GetValue(null)); return 1; })

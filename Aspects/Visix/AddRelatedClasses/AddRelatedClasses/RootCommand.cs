@@ -153,9 +153,6 @@ namespace vm.Aspects.Visix.AddRelatedClasses
         {
             var cached = new CachedItems(".Metadata.cs");
 
-            //
-            // TODO: does it make sense to have metadata type on an interface?
-            //
             if (!cached.HasClass)
             {
                 MessageBox(Resources.AddMetadataType, Resources.CannotGenerateMetadataType);
@@ -223,6 +220,12 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             }
 
             var project = cached.SourceProjectItem.ContainingProject;
+
+            // add reference to the System.Runtime.Serialization.dll
+            var vsProject = project.Object as VSProject;
+
+            if (!vsProject.References.OfType<Reference>().Any(r => r.Name == "System.Runtime.Serialization"))
+                vsProject.References.Add("System.Runtime.Serialization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 
             // fire-up the T4 engine and generate the text
             var t4 = ServiceProvider.GetService(typeof(STextTemplating)) as ITextTemplating;
