@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>0.9.0</version>
+        <version>0.91.0</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,7 +12,8 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            This is the first NuGet package release of the vm.Aspects project.
+            Migrated to GitHub.
+            Added Money class.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -51,10 +52,12 @@
     </metadata>
     <files>
         <file src="Aspects\bin\Release\vm.Aspects.dll"
-              target="lib\net45"/>
+              target="lib\net46"/>
         <file src="Model\bin\Release\vm.Aspects.Model.dll"
-              target="lib\net45"/>
+              target="lib\net46"/>
         <file src="Wcf\bin\Release\vm.Aspects.Wcf.dll"
-              target="lib\net45"/>
+              target="lib\net46"/>
+        <file src="Wcf\bin\Release\vm.Aspects.Parsers.dll"
+              target="lib\net46"/>
     </files>
 </package>

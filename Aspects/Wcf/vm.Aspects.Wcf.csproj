@@ -355,8 +355,6 @@
     </None>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Templates\InterfaceTasks.ttinclude" />
-    <None Include="Templates\LightClient.ttinclude" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

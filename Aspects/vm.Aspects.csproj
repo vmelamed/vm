@@ -332,8 +332,7 @@
     <None Include="NuGet\PublishAspects.cmd" />
     <None Include="NuGet\vm.Aspects.nuspec" />
     <None Include="packages.config" />
-    <None Include="Templates\ClassMetadata.ttinclude" />
-    <None Include="Templates\CommonT4Utilities.ttinclude" />
+    <None Include="vm.Aspects.Messages.reg" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common Items\Dictionary.xml">

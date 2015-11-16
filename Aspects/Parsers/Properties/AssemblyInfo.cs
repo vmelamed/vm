@@ -5,9 +5,9 @@
 // associated with an assembly.
 [assembly: AssemblyTitle("vm.Aspects.Parser")]
 [assembly: AssemblyDescription("Text parsing readers, e.g. CSV/TSV reader.")]
-[assembly: AssemblyVersion("0.9.0")]
-[assembly: AssemblyFileVersion("0.9.0")]
-[assembly: AssemblyInformationalVersion("0.9.0")]
+[assembly: AssemblyVersion("0.9.1")]
+[assembly: AssemblyFileVersion("0.9.1")]
+[assembly: AssemblyInformationalVersion("0.9.1")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Parsers.Tests, " +
