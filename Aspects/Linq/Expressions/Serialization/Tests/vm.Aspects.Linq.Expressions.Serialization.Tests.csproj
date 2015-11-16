@@ -226,6 +226,7 @@
     <None Include="..\..\..\..\..\Common Items\vm.Test.snk">
       <Link>vm.Test.snk</Link>
     </None>
+    <None Include="app.config" />
     <None Include="DataContract.xsd">
       <SubType>Designer</SubType>
     </None>
