@@ -51,13 +51,13 @@
         <tags></tags>
     </metadata>
     <files>
-        <file src="Aspects\bin\Release\vm.Aspects.dll"
+        <file src="..\bin\Release\vm.Aspects.dll"
               target="lib\net46"/>
-        <file src="Model\bin\Release\vm.Aspects.Model.dll"
+        <file src="..\Model\bin\Release\vm.Aspects.Model.dll"
               target="lib\net46"/>
-        <file src="Wcf\bin\Release\vm.Aspects.Wcf.dll"
+        <file src="..\Wcf\bin\Release\vm.Aspects.Wcf.dll"
               target="lib\net46"/>
-        <file src="Wcf\bin\Release\vm.Aspects.Parsers.dll"
+        <file src="..\Parsers\bin\Release\vm.Aspects.Parsers.dll"
               target="lib\net46"/>
     </files>
 </package>
