@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Text;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -17,7 +18,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="text">The text.</param>
         /// <returns>The encrypted text.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static byte[] EncryptText(
             this ICipher cipher,
             string text)
@@ -35,7 +36,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="text">The text.</param>
         /// <returns>The encrypted text encoded Base64.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static string EncryptText64(
             this ICipher cipher,
             string text)
@@ -61,7 +62,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data to be encrypted.</param>
         /// <returns>The encrypted text encoded Base64.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static string EncryptData64(
             this ICipher cipher,
             byte[] data)
@@ -87,7 +88,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedText">The crypto text.</param>
         /// <returns>The decrypted text.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static string DecryptText(
             this ICipher cipher,
             byte[] encryptedText)
@@ -110,7 +111,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedText64">The crypto text encoded Base64.</param>
         /// <returns>The decrypted text.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static string DecryptText64(
             this ICipher cipher,
             string encryptedText64)
@@ -139,7 +140,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedData64">The crypto text encoded Base64.</param>
         /// <returns>The decrypted text.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static byte[] DecryptData64(
             this ICipher cipher,
             string encryptedData64)
@@ -159,6 +160,133 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             cipher.Base64Encoded = base64;
 
             return decryptedData;
+        }
+
+        /// <summary>
+        /// Encrypts the <paramref name="data" />.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of data to be encrypted. 
+        /// Only <see langword="null"/>, <see cref="DBNull"/>, primitive types, <see cref="string"/>, <see cref="DateTime"/> and single dimension arrays of these can be encrypted.
+        /// </typeparam>
+        /// <param name="cipher">The cipher.</param>
+        /// <param name="data">The data.</param>
+        /// <returns>The encrypted text.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher" /> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when <paramref name="data"/> is not one of the allowed types:
+        /// <see langword="null"/>, <see cref="DBNull"/>, primitive types, <see cref="string"/>, <see cref="DateTime"/> and one-dimensional arrays of these.
+        /// </exception>
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
+        public static byte[] Encrypt<T>(
+            this ICipher cipher,
+            T data)
+        {
+            Contract.Requires<ArgumentNullException>(cipher != null, "cipher");
+
+            byte[] bytes = GetBytes(data);
+
+            return bytes != null ? cipher.Encrypt(bytes) : null;
+        }
+
+        static byte[] GetBytes(object data)
+        {
+            if (data == null)
+                return null;
+
+            var byteArray = data as byte[];
+
+            if (byteArray != null)
+                return byteArray;
+
+            var dataType = data.GetType();
+
+            if (dataType.IsArray)
+                return GetArrayBytes(data as Array);
+
+            switch (Type.GetTypeCode(data.GetType()))
+            {
+            case TypeCode.Empty:
+            case TypeCode.DBNull:
+                return null;
+
+            case TypeCode.Boolean:
+                return BitConverter.GetBytes((bool)data);
+
+            case TypeCode.Char:
+                return BitConverter.GetBytes((char)data);
+
+            case TypeCode.SByte:
+                return BitConverter.GetBytes((sbyte)data);
+
+            case TypeCode.Byte:
+                return BitConverter.GetBytes((byte)data);
+
+            case TypeCode.Int16:
+                return BitConverter.GetBytes((short)data);
+
+            case TypeCode.UInt16:
+                return BitConverter.GetBytes((ushort)data);
+
+            case TypeCode.Int32:
+                return BitConverter.GetBytes((int)data);
+
+            case TypeCode.UInt32:
+                return BitConverter.GetBytes((uint)data);
+
+            case TypeCode.Int64:
+                return BitConverter.GetBytes((long)data);
+
+            case TypeCode.UInt64:
+                return BitConverter.GetBytes((ulong)data);
+
+            case TypeCode.Single:
+                return BitConverter.GetBytes((float)data);
+
+            case TypeCode.Double:
+                return BitConverter.GetBytes((double)data);
+
+            case TypeCode.DateTime:
+                return BitConverter.GetBytes(((DateTime)data).ToBinary());
+
+            case TypeCode.String:
+                return Encoding.UTF8.GetBytes((string)data);
+
+            case TypeCode.Decimal:
+                return GetArrayBytes(decimal.GetBits((decimal)data));
+
+            case TypeCode.Object:
+            default:
+                throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "Cannot encrypt data of type {0}.",
+                                data.GetType().FullName));
+            }
+        }
+
+        static byte[] GetArrayBytes(Array data)
+        {
+            var elementType = data.GetType().GetElementType();
+
+            if (!elementType.IsPrimitive  &&  elementType!=typeof(decimal)  &&  !elementType.IsEnum)
+                throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "Cannot encrypt data of type {0}.",
+                                data.GetType().FullName));
+
+            var elementSize = elementType.StructLayoutAttribute.Size;
+            byte[] dataBytes = new byte[data.Length * elementSize];
+            var n = 0;
+
+            foreach (var e in data as Array)
+            {
+                Array.Copy(GetBytes(e), 0, dataBytes, n, elementSize);
+                n += elementSize;
+            }
+
+            return dataBytes;
         }
     }
 }

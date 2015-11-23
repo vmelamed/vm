@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -83,10 +84,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this byte[] array,
             byte[] other)
         {
-            if (array == null)
-                throw new ArgumentNullException("array");
-            if (other == null)
-                throw new ArgumentNullException("other");
+            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
+            Contract.Requires<ArgumentNullException>(other != null, nameof(other));
 
             bool equal = array.Length == other.Length;
 
