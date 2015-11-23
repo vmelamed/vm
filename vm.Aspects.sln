@@ -28,9 +28,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{062E90FF-3383-4422-B321-C077636658AF}"
 	ProjectSection(SolutionItems) = preProject
 		Aspects\Security\Cryptography\Ciphers\Nuget\Ciphers.nuspec = Aspects\Security\Cryptography\Ciphers\Nuget\Ciphers.nuspec
+		Aspects\Linq\Expressions\Serialization\NuGet\ExpressionSerialization.nuspec = Aspects\Linq\Expressions\Serialization\NuGet\ExpressionSerialization.nuspec
 		Aspects\Diagnostics\NuGet\ObjectDumper.nuspec = Aspects\Diagnostics\NuGet\ObjectDumper.nuspec
+		Aspects\NuGet\PublishAspects.cmd = Aspects\NuGet\PublishAspects.cmd
 		Aspects\Security\Cryptography\Ciphers\Nuget\PublishCiphers.cmd = Aspects\Security\Cryptography\Ciphers\Nuget\PublishCiphers.cmd
 		Aspects\Diagnostics\NuGet\PublishObjectDumper.cmd = Aspects\Diagnostics\NuGet\PublishObjectDumper.cmd
+		Aspects\NuGet\vm.Aspects.nuspec = Aspects\NuGet\vm.Aspects.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers", "Aspects\Security\Cryptography\Ciphers\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}"

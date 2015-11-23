@@ -1,23 +1,14 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
 [assembly: AssemblyTitle("vm.Aspects.Linq.Expressions.Serialization")]
-[assembly: AssemblyDescription("")]
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
+[assembly: AssemblyDescription("Serializes and deserializes LINQ expression trees to and from XML documents.")]
+
+[assembly: AssemblyVersion("1.0.2")]
+[assembly: AssemblyFileVersion("1.0.2")]
+[assembly: AssemblyInformationalVersion("1.0.2")]
+
+[assembly: InternalsVisibleTo(
     "vm.Aspects.Linq.Expressions.Serialization.Test, " +
     "PublicKey=00240000048000009400000006020000002400005253413100040000010001004b151837822bdb" +
               "b18296865918eb87882f2528630f673f17668fff4c6e51b8563b1985ec7ec5e6877611068c595a" +
