@@ -65,7 +65,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] bytes = new byte[data.Length * elementSize];
             int index = 0;
 
-            for (var i = 1; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
             {
                 Array.Copy(
                     BitConverter.GetBytes(data[i].ToBinary()), 0,
@@ -176,7 +176,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] bytes = new byte[data.Length * elementSize];
             int index = 0;
 
-            for (var i = 1; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
             {
                 var element = decimal.GetBits(data[i]);
                 for (var j = 0; j < sizeof(int); j++)
@@ -260,7 +260,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(data != null, "text");
+
+            if (data == null)
+                return null;
 
             return cipher.Encrypt(Encoding.UTF8.GetBytes(data));
         }
@@ -379,6 +381,117 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var decryptedData = cipher.Decrypt(encryptedText);
 
             return Encoding.UTF8.GetString(decryptedData);
+        }
+        #endregion
+
+        #region En/Decrypt decimal-s
+        /// <summary>
+        /// Encrypts the <paramref name="data"/>.
+        /// </summary>
+        /// <param name="cipher">The cipher.</param>
+        /// <param name="data">The data to be encrypted.</param>
+        /// <returns>The encrypted text.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
+        public static byte[] Encrypt(
+            this ICipher cipher,
+            Guid data)
+        {
+            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+
+            return cipher.Encrypt(data.ToByteArray());
+        }
+
+        /// <summary>
+        /// Decrypts the <paramref name="encrypted"/> text to a <see cref="decimal"/> value.
+        /// </summary>
+        /// <param name="cipher">The cipher.</param>
+        /// <param name="encrypted">The encrypted text.</param>
+        /// <returns>The decrypted value.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="cipher"/> or <paramref name="encrypted"/> are <see langword="null"/>.</exception>
+        public static Guid DecryptGuid(
+            this ICipher cipher,
+            byte[] encrypted)
+        {
+            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
+
+            byte[] bytes = cipher.Decrypt(encrypted);
+
+            if (bytes.Length != 16)
+                throw new ArgumentException("The encrypted data does not represent a valid decimal value.", nameof(encrypted));
+
+            return new Guid(bytes);
+        }
+
+        static readonly int SizeOfGuid = Guid.Empty.ToByteArray().Length;
+
+        /// <summary>
+        /// Encrypts the <paramref name="data"/>.
+        /// </summary>
+        /// <param name="cipher">The cipher.</param>
+        /// <param name="data">The data to be encrypted.</param>
+        /// <returns>The encrypted text.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
+        public static byte[] Encrypt(
+            this ICipher cipher,
+            Guid[] data)
+        {
+            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+
+            if (data == null)
+                return null;
+
+            int elementSize = SizeOfGuid;
+            byte[] bytes = new byte[data.Length * elementSize];
+            int index = 0;
+
+            for (var i = 0; i < data.Length; i++)
+            {
+                Array.Copy(
+                    data[i].ToByteArray(), 0,
+                    bytes, index,
+                    elementSize);
+
+                index += elementSize;
+            }
+
+            return cipher.Encrypt(bytes);
+        }
+
+        /// <summary>
+        /// Decrypts the <paramref name="encrypted"/> to an array of <see cref="Guid"/> values.
+        /// </summary>
+        /// <param name="cipher">The cipher.</param>
+        /// <param name="encrypted">The data to be decrypted.</param>
+        /// <returns>The encrypted text.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
+        public static Guid[] DecryptGuidArray(
+            this ICipher cipher,
+            byte[] encrypted)
+        {
+            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+
+            if (encrypted == null)
+                return null;
+
+            var bytes = cipher.Decrypt(encrypted);
+            int elementSize = SizeOfGuid;
+
+            if (bytes.Length % elementSize != 0)
+                throw new ArgumentException("The encrypted value does not represent a valid array of decimal values.");
+
+            var guidBytes = new byte[elementSize];
+            var data = new Guid[bytes.Length / elementSize];
+            var index = 0;
+
+            for (var i = 0; i < data.Length; i++)
+            {
+                Array.Copy(bytes, index, guidBytes, 0, elementSize);
+                data[i] = new Guid(guidBytes);
+                index += elementSize;
+            }
+
+            return data;
         }
         #endregion
 

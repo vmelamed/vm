@@ -226,10 +226,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             var data = cipher.Decrypt(encrypted);
 
-            if (data.Length != 1)
+            if (data.Length != sizeof(short))
                 throw new ArgumentException("The encrypted data does not represent a valid SByte value.", nameof(encrypted));
 
-            return (sbyte)data[0];
+            return unchecked( (sbyte)BitConverter.ToInt16(data, 0) );
         }
 
         /// <summary>

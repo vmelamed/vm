@@ -395,7 +395,7 @@
     <Compile Include="Hasher.cs" />
     <Compile Include="ICipher.cs" />
     <Compile Include="ICipherAsync.cs" />
-    <Compile Include="ICipherExtensions.cs" />
+    <Compile Include="ICipherExtensions.Bool-Ushort.cs" />
     <Compile Include="ICipherExtensions.Etc.cs" />
     <Compile Include="ICipherExtensions.Int-Double.cs" />
     <Compile Include="IHashAlgorithmFactory.cs" />

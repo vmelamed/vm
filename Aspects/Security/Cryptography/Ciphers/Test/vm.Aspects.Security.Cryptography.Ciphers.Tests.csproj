@@ -211,7 +211,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -229,6 +231,8 @@
     <Compile Include="GenericHasherTest.cs" />
     <Compile Include="HashAlgorithmFactoryTest.cs" />
     <Compile Include="HasherTest.cs" />
+    <Compile Include="ICipherExtensionsTest.cs" />
+    <Compile Include="IHasherExtensionsTest.cs" />
     <Compile Include="KeyFileTest.cs" />
     <Compile Include="NullCipherTest.cs" />
     <Compile Include="NullHasherTest.cs" />
