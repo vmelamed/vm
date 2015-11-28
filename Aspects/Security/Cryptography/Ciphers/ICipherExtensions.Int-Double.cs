@@ -21,6 +21,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             int data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
             return cipher.Encrypt(BitConverter.GetBytes(data));
         }
@@ -39,9 +40,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToInt32(data, 0);
+            return FromByteArray.ToInt32(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -56,25 +55,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             int[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(int);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -89,26 +75,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<int[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(int);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of int values.");
-
-            var data = new int[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToInt32(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToInt32Array(cipher.Decrypt(encrypted));
         }
         #endregion
 
@@ -126,8 +98,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             uint data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return cipher.Encrypt(BitConverter.GetBytes(data));
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -145,9 +118,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToUInt32(data, 0);
+            return FromByteArray.ToUInt32(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -163,25 +134,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             uint[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(uint);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -197,26 +155,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<uint[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(uint);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of int values.");
-
-            var data = new uint[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToUInt32(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToUInt32Array(cipher.Decrypt(encrypted));
         }
         #endregion
 
@@ -233,8 +177,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             long data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return cipher.Encrypt(BitConverter.GetBytes(data));
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -251,9 +196,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToInt64(data, 0);
+            return FromByteArray.ToInt64(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -268,25 +211,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             long[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(long);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -301,26 +231,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<long[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(long);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of long values.");
-
-            var data = new long[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToInt64(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToInt64Array(cipher.Decrypt(encrypted));
         }
         #endregion
 
@@ -338,8 +254,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             ulong data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return cipher.Encrypt(BitConverter.GetBytes(data));
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -357,9 +274,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToUInt64(data, 0);
+            return FromByteArray.ToUInt64(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -375,25 +290,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             ulong[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(ulong);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -409,26 +311,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<ulong[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(ulong);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of ulong values.");
-
-            var data = new ulong[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToUInt64(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToUInt64Array(cipher.Decrypt(encrypted));
         }
         #endregion
 
@@ -445,8 +333,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             float data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return cipher.Encrypt(BitConverter.GetBytes(data));
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -463,9 +352,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToSingle(data, 0);
+            return FromByteArray.ToSingle(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -480,25 +367,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             float[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(float);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -513,26 +387,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<float[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(float);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of float values.");
-
-            var data = new float[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToSingle(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToSingleArray(cipher.Decrypt(encrypted));
         }
         #endregion
 
@@ -549,8 +409,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             double data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return cipher.Encrypt(BitConverter.GetBytes(data));
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -567,9 +428,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
-
-            return BitConverter.ToDouble(data, 0);
+            return FromByteArray.ToDouble(cipher.Decrypt(encrypted));
         }
 
         /// <summary>
@@ -584,25 +443,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             double[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
 
-            int elementSize = sizeof(double);
-            byte[] bytes = new byte[data.Length * elementSize];
-            int index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                Array.Copy(
-                    BitConverter.GetBytes(data[i]), 0,
-                    bytes, index,
-                    elementSize);
-
-                index += elementSize;
-            }
-
-            return cipher.Encrypt(bytes);
+            return cipher.Encrypt(ToByteArray.Convert(data));
         }
 
         /// <summary>
@@ -617,26 +463,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(!(encrypted == null ^ Contract.Result<double[]>() == null));
 
             if (encrypted == null)
                 return null;
 
-            var bytes = cipher.Decrypt(encrypted);
-            int elementSize = sizeof(double);
-
-            if (bytes.Length % elementSize != 0)
-                throw new ArgumentException("The encrypted value does not represent a valid array of double values.");
-
-            var data = new double[bytes.Length / elementSize];
-            var index = 0;
-
-            for (var i = 0; i < data.Length; i++)
-            {
-                data[i] = BitConverter.ToDouble(bytes, index);
-                index += elementSize;
-            }
-
-            return data;
+            return FromByteArray.ToDoubleArray(cipher.Decrypt(encrypted));
         }
         #endregion
     }
