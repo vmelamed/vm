@@ -82,6 +82,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
+#pragma warning disable 618
         [TestMethod]
         public void HashNullTextHasherTest()
         {
@@ -135,6 +136,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             target.VerifyTextHash(testText, cryptoResult);
         }
+#pragma warning restore 618
 
         [TestMethod]
         public void RoundTripHashTest()
