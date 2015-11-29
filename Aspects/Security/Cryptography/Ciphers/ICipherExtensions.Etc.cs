@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Text;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -361,6 +360,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
+        #region Obsolete Base64 methods.
         /// <summary>
         /// Encrypts the array of bytes <paramref name="data"/> and encodes the result with Base64.
         /// </summary>
@@ -368,6 +368,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data to be encrypted.</param>
         /// <returns>The encrypted text encoded Base64.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
+        [Obsolete("Chain cipher.Encrypt(data).ToBase64String() instead.")]
         public static string EncryptData64(
             this ICipher cipher,
             byte[] data)
@@ -393,6 +394,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedData64">The crypto text encoded Base64.</param>
         /// <returns>The decrypted text.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="cipher"/> is <see langword="null"/>.</exception>
+        [Obsolete("Use cipher.Encrypt(encryptedData64.FromBase64String()) instead.")]
         public static byte[] DecryptData64(
             this ICipher cipher,
             string encryptedData64)
@@ -412,6 +414,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             cipher.Base64Encoded = base64;
 
             return decryptedData;
-        }
+        } 
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.7.0</version>
+        <version>1.8.0</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -18,11 +18,18 @@
             * Built and tested with .NET 4.0, 4.5 and 4.6.
         </description>
         <releaseNotes>
-            * No significant changes:
-                - Fixed minor bug.
-                - Removed any dependencies on vm.Aspects.
-                
-            Moved the source code to GitHub.
+            Added sets of ICipher and IHasher extension overrides for data of the primitive and some basic types and arrays of those:
+            Boolean, Char, String Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal, DateTime and Guid.
+            All extension methods over string data with suffix "Text" are now marked osolete - use the new extension overrides instead:
+            
+            ICipherExtensions.Encrypt(this ICipher cipher, string data);
+            ICipherExtensions.Decrypt(this ICipher cipher, string data);
+            
+            IHasherExtensions.Hash(this ICipher cipher, string data);
+            IHasherExtensions.VerifyHash(this ICipher cipher, string data, byte[] hash);
+            IHasherExtensions.TryVerifyHash(this ICipher cipher, string data, byte[] hash);
+            
+            All Base64 extension methods are obsolete now - use the byte[] extension methods ToBase64String and FromBas64String instead.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>

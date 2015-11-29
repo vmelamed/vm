@@ -56,7 +56,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-        #region HashText obsolete methods.
+        #region HashText and base64 obsolete methods.
         /// <summary>
         /// Generates hash of the specified text.
         /// </summary>
@@ -120,86 +120,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             VerifyHashText(hasher, text, hash);
         }
-        #endregion
-
-        #region Base 64 hashes
-        /// <summary>
-        /// Generates hash of the specified text and encode is in Base64.
-        /// </summary>
-        /// <param name="hasher">The hasher.</param>
-        /// <param name="text">The text.</param>
-        /// <returns>The generated Base64 encoded hash.</returns>
-        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hasher" /> is <see langword="null" />.</exception>
-        /// <exception cref="T:System.Security.Cryptography.CryptographicException">The hash or the encryption failed.</exception>
-        public static string HashTextBase64(
-            this IHasher hasher,
-            string text)
-        {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
-
-            if (text == null)
-                return null;
-
-            var hash = hasher.Hash(Encoding.UTF8.GetBytes(text));
-
-            if (hash == null)
-                return null;
-
-            return Convert.ToBase64String(hash);
-        }
-
-        /// <summary>
-        /// Verifies that the Base64 encoded <paramref name="hash64" /> of a <paramref name="text" /> is correct.
-        /// If it is not, the method throws <see cref="T:System.Security.Cryptography.CryptographicException" />.
-        /// </summary>
-        /// <param name="hasher">The hasher.</param>
-        /// <param name="text">The text.</param>
-        /// <param name="hash64">The Base64 encoded hash to verify with (optionally) appended the generated salt.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="hasher"/> is <see langword="null" />.</exception>
-        /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
-        [Obsolete("Use hasher.VerifyHashText64(string text, string hash64) instead.")]
-        public static void VerifyTextHashBase64(
-            this IHasher hasher,
-            string text,
-            string hash64)
-        {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
-            Contract.Requires<CryptographicException>(text != null || hash64 == null, "Invalid hash.");
-
-            if (text == null)
-                return;
-
-            var hash = Convert.FromBase64String(hash64);
-
-            if (!hasher.TryVerifyHash(Encoding.UTF8.GetBytes(text), hash))
-                throw new CryptographicException("Invalid hash.");
-        }
-
-        /// <summary>
-        /// Verifies that the Base64 encoded <paramref name="hash64" /> of a <paramref name="text" /> is correct.
-        /// If it is not, the method throws <see cref="T:System.Security.Cryptography.CryptographicException" />.
-        /// </summary>
-        /// <param name="hasher">The hasher.</param>
-        /// <param name="text">The text.</param>
-        /// <param name="hash64">The Base64 encoded hash to verify with (optionally) appended the generated salt.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="hasher"/> is <see langword="null" />.</exception>
-        /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
-        public static void VerifyHashText64(
-            this IHasher hasher,
-            string text,
-            string hash64)
-        {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
-            Contract.Requires<CryptographicException>(text != null || hash64 == null, "Invalid hash.");
-
-            if (text == null)
-                return;
-
-            var hash = Convert.FromBase64String(hash64);
-
-            if (!hasher.TryVerifyHash(Encoding.UTF8.GetBytes(text), hash))
-                throw new CryptographicException("Invalid hash.");
-        }
 
         /// <summary>
         /// Generates hash of the specified data and encode is in Base64.
@@ -210,6 +130,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hasher" /> is <see langword="null" />.</exception>
         /// <exception cref="T:System.Security.Cryptography.CryptographicException">The hash or the encryption failed.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "DataBase", Justification = "Follows naming convention and has nothing to do with databases.")]
+        [Obsolete("Chain hasher.Hash(data).ToBase64String() instead.")]
         public static string HashDataBase64(
             this IHasher hasher,
             byte[] data)
@@ -233,6 +154,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash64">The Base64 encoded hash to verify with (optionally) appended the generated salt.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="hasher"/> is <see langword="null" />.</exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
+        [Obsolete("Use hasher.VerifyHash(data, hash64.FromBase64String()) instead.")]
         public static void VerifyHashBase64(
             this IHasher hasher,
             byte[] data,
@@ -251,6 +173,33 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
+        /// Verifies that the Base64 encoded <paramref name="hash64" /> of a <paramref name="text" /> is correct.
+        /// If it is not, the method throws <see cref="T:System.Security.Cryptography.CryptographicException" />.
+        /// </summary>
+        /// <param name="hasher">The hasher.</param>
+        /// <param name="text">The text.</param>
+        /// <param name="hash64">The Base64 encoded hash to verify with (optionally) appended the generated salt.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="hasher"/> is <see langword="null" />.</exception>
+        /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
+        [Obsolete("Use hasher.VerifyHash(text, hash64.FromBase64String()) instead.")]
+        public static void VerifyTextHashBase64(
+            this IHasher hasher,
+            string text,
+            string hash64)
+        {
+            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<CryptographicException>(text != null || hash64 == null, "Invalid hash.");
+
+            if (text == null)
+                return;
+
+            var hash = Convert.FromBase64String(hash64);
+
+            if (!hasher.TryVerifyHash(Encoding.UTF8.GetBytes(text), hash))
+                throw new CryptographicException("Invalid hash.");
+        }
+
+        /// <summary>
         /// Verifies that the Base64 encoded <paramref name="hash64" /> of a <paramref name="dataStream" /> is correct.
         /// If it is not, the method throws <see cref="T:System.Security.Cryptography.CryptographicException" />.
         /// </summary>
@@ -259,6 +208,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash64">The hash to verify with (optionally) appended the generated salt.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="hasher"/> is <see langword="null" />.</exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
+        [Obsolete("Use hasher.VerifyHash(dataStream, hash64.FromBase64String()) instead.")]
         public static void VerifyHashBase64(
             this IHasher hasher,
             Stream dataStream,
@@ -275,7 +225,60 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!hasher.TryVerifyHash(dataStream, hash))
                 throw new CryptographicException("Invalid hash.");
         }
+        #endregion
 
+        #region Hash strin-s
+        /// <summary>
+        /// Hashes the specified <paramref name="data"/>.
+        /// </summary>
+        /// <param name="hasher">The hasher.</param>
+        /// <param name="data">The data.</param>
+        /// <returns>The hash value as a byte array.</returns>
+        public static byte[] Hash(
+            this IHasher hasher,
+            string data)
+        {
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
+            return hasher.Hash(ToByteArray.Convert(data));
+        }
+
+        /// <summary>
+        /// Verifies that the passed <paramref name="hash"/> was produced from the same <paramref name="data"/>.
+        /// </summary>
+        /// <param name="hasher">The hasher.</param>
+        /// <param name="data">The data, which hash must be verified.</param>
+        /// <param name="hash">The hash to be tested.</param>
+        /// <returns><c>true</c> if the hash has a value that was produced rom the <paramref name="data"/>; <c>false</c> otherwise.</returns>
+        public static bool TryVerifyHash(
+            this IHasher hasher,
+            string data,
+            byte[] hash)
+        {
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
+            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
+
+            return hasher.TryVerifyHash(ToByteArray.Convert(data), hash);
+        }
+
+        /// <summary>
+        /// Verifies that the passed <paramref name="hash"/> was produced from the same <paramref name="data"/>.
+        /// </summary>
+        /// <param name="hasher">The hasher.</param>
+        /// <param name="data">The data, which hash must be verified.</param>
+        /// <param name="hash">The hash to be tested.</param>
+        /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
+        public static void VerifyHash(
+              this IHasher hasher,
+              string data,
+              byte[] hash)
+        {
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
+            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
+
+            hasher.VerifyHash(ToByteArray.Convert(data), hash);
+        }
         #endregion
 
         #region Hash DateTime-s

@@ -19,7 +19,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public static byte[] FillRandom(this byte[] array)
         {
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             using (var generator = new RNGCryptoServiceProvider())
                 generator.GetBytes(array);
@@ -98,6 +98,42 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             }
 
             return equal;
+        }
+
+        /// <summary>
+        /// Converts the <c>byte[]</c> parameter to base64 string.
+        /// </summary>
+        /// <param name="array">The array to be converted.</param>
+        /// <param name="options">The base64 conversion options.</param>
+        /// <returns>The base64 representation of the array.</returns>
+        /// <remarks>
+        /// Note that the returned string contains only the following characters: a-z, A-Z, 0-9, +, / and =.
+        /// If stored, for saving space, consider storing the result as an ASCII string instead of Unicode string.
+        /// </remarks>
+        public static string ToBase64String(
+            this byte[] array,
+            Base64FormattingOptions options = Base64FormattingOptions.None)
+        {
+            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
+
+            return Convert.ToBase64String(array, options);
+        }
+
+        /// <summary>
+        /// Coverts base64 encoded string to the original byte array.
+        /// </summary>
+        /// <param name="base64">The base64 string to convert.</param>
+        /// <param name="offset">The offset in the string to start the conversion from.</param>
+        /// <param name="length">The length of the string to convert over, if negative - converts the string to the end.</param>
+        /// <returns>The original byte array.</returns>
+        public static byte[] FromBase64String(
+            this string base64,
+            int offset = 0,
+            int length = -1)
+        {
+            Contract.Requires<ArgumentNullException>(base64 != null, nameof(base64));
+
+            return Convert.FromBase64CharArray(base64.ToCharArray(), offset, length < 0 ? base64.Length : length);
         }
     }
 }
