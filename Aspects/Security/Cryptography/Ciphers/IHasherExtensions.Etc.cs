@@ -286,7 +286,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>The hash value as a byte array.</returns>
         public static byte[] Hash(
-            IHasher hasher,
+            this IHasher hasher,
             DateTime data)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
@@ -303,7 +303,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <returns><c>true</c> if the hash has a value that was produced rom the <paramref name="data"/>; <c>false</c> otherwise.</returns>
         public static bool TryVerifyHash(
-            IHasher hasher,
+            this IHasher hasher,
             DateTime data,
             byte[] hash)
         {
@@ -321,7 +321,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
         public static void VerifyHash(
-              IHasher hasher,
+              this IHasher hasher,
               DateTime data,
               byte[] hash)
         {
@@ -338,7 +338,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>The hash value as a byte array.</returns>
         public static byte[] Hash(
-            IHasher hasher,
+            this IHasher hasher,
             DateTime[] data)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
@@ -358,12 +358,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <returns><c>true</c> if the hash has a value that was produced rom the <paramref name="data"/>; <c>false</c> otherwise.</returns>
         public static bool TryVerifyHash(
-            IHasher hasher,
+            this IHasher hasher,
             DateTime[] data,
             byte[] hash)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
-            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
             Contract.Requires<CryptographicException>(data != null || hash == null, "Invalid hash.");
 
             return hasher.TryVerifyHash(ToByteArray.Convert(data), hash);
@@ -377,12 +376,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
         public static void VerifyHash(
-              IHasher hasher,
+              this IHasher hasher,
               DateTime[] data,
               byte[] hash)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
-            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
             Contract.Requires<CryptographicException>(data != null || hash == null, "Invalid hash.");
 
             hasher.VerifyHash(ToByteArray.Convert(data), hash);
@@ -397,7 +395,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>The hash value as a byte array.</returns>
         public static byte[] Hash(
-            IHasher hasher,
+            this IHasher hasher,
             Guid data)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
@@ -414,7 +412,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <returns><c>true</c> if the hash has a value that was produced rom the <paramref name="data"/>; <c>false</c> otherwise.</returns>
         public static bool TryVerifyHash(
-            IHasher hasher,
+            this IHasher hasher,
             Guid data,
             byte[] hash)
         {
@@ -432,7 +430,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
         public static void VerifyHash(
-              IHasher hasher,
+              this IHasher hasher,
               Guid data,
               byte[] hash)
         {
@@ -449,7 +447,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>The hash value as a byte array.</returns>
         public static byte[] Hash(
-            IHasher hasher,
+            this IHasher hasher,
             Guid[] data)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
@@ -469,12 +467,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <returns><c>true</c> if the hash has a value that was produced rom the <paramref name="data"/>; <c>false</c> otherwise.</returns>
         public static bool TryVerifyHash(
-            IHasher hasher,
+            this IHasher hasher,
             Guid[] data,
             byte[] hash)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
-            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
             Contract.Requires<CryptographicException>(data != null || hash == null, "Invalid hash.");
 
             return hasher.TryVerifyHash(ToByteArray.Convert(data), hash);
@@ -488,12 +485,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hash">The hash to be tested.</param>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the hash is not valid.</exception>
         public static void VerifyHash(
-              IHasher hasher,
+              this IHasher hasher,
               Guid[] data,
               byte[] hash)
         {
             Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
-            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
             Contract.Requires<CryptographicException>(data != null || hash == null, "Invalid hash.");
 
             hasher.VerifyHash(ToByteArray.Convert(data), hash);
