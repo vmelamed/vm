@@ -387,6 +387,7 @@
     <Compile Include="Contracts\Xml\IXmlCipherContract.cs" />
     <Compile Include="Contracts\Xml\IXmlSignerContract.cs" />
     <Compile Include="DpapiCipher.cs" />
+    <Compile Include="DecryptedAttribute.cs" />
     <Compile Include="EncryptedKeyCipher.cs" />
     <Compile Include="EncryptedNewKeyCipher.cs" />
     <Compile Include="EncryptedNewKeyHashedCipher.cs" />
