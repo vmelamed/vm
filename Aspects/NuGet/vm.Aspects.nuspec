@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.3-beta</version>
+        <version>1.0.4-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,7 +12,9 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            Moved EncryptedAttribute in the Ciphers project (where it should've been in a first place...)
+            * Added new method GetEntityType to IOrmSpecifics interface and to the OrmBridge.
+            * If no IOrmSpecifics is found in the DI container, the OrmBridge now defaults to using the ObjectsRepositorySpecifics.
+            * Changed the test for the same type in DomainEntity&lt;TId,TKey&gt;.Equals(DomainEntity&lt;TId,TKey&gt;) to use the OrmBridge.GetEntityType instead of directly comparing the types of the entities.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
