@@ -387,10 +387,12 @@
     <Compile Include="Contracts\Xml\IXmlCipherContract.cs" />
     <Compile Include="Contracts\Xml\IXmlSignerContract.cs" />
     <Compile Include="DpapiCipher.cs" />
+    <Compile Include="DecryptedAttribute.cs" />
     <Compile Include="EncryptedKeyCipher.cs" />
     <Compile Include="EncryptedNewKeyCipher.cs" />
     <Compile Include="EncryptedNewKeyHashedCipher.cs" />
     <Compile Include="EncryptedNewKeySignedCipher.cs" />
+    <Compile Include="FromByteArray.cs" />
     <Compile Include="HashAlgorithmFactory.cs" />
     <Compile Include="Hasher.cs" />
     <Compile Include="ICipher.cs" />
@@ -401,7 +403,9 @@
     <Compile Include="IHashAlgorithmFactory.cs" />
     <Compile Include="IHasher.cs" />
     <Compile Include="IHasherAsync.cs" />
-    <Compile Include="IHasherExtensions.cs" />
+    <Compile Include="IHasherExtensions.Etc.cs" />
+    <Compile Include="IHasherExtensions.Bool-Ushort.cs" />
+    <Compile Include="IHasherExtensions.Int-Double.cs" />
     <Compile Include="IKeyLocationStrategy.cs" />
     <Compile Include="IKeyManagement.cs" />
     <Compile Include="IKeyStorage.cs" />
@@ -422,6 +426,7 @@
     <Compile Include="ServiceResolver.cs" />
     <Compile Include="SymmetricAlgorithmFactory.cs" />
     <Compile Include="SymmetricKeyCipherBase.cs" />
+    <Compile Include="ToByteArray.cs" />
     <Compile Include="X509Certificate2Extensions.cs" />
     <Compile Include="Xml\EncryptedKeyXmlCipher.cs" />
     <Compile Include="Xml\EncryptedNewKeySignedXmlCipher.cs" />

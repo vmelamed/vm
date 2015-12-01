@@ -5,6 +5,6 @@
 // associated with an assembly.
 [assembly: AssemblyTitle("ProtectedKey")]
 [assembly: AssemblyDescription("Command line utility for managing DPAPI protected symmetric encryption keys.")]
-[assembly: AssemblyVersion("1.7.0")]
-[assembly: AssemblyFileVersion("1.7.0")]
-[assembly: AssemblyInformationalVersion("1.7.0")]
+[assembly: AssemblyVersion("1.8.0")]
+[assembly: AssemblyFileVersion("1.8.0")]
+[assembly: AssemblyInformationalVersion("1.8.0")]
