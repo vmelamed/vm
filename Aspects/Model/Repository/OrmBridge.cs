@@ -3,6 +3,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using vm.Aspects.Model.InMemory;
 
 namespace vm.Aspects.Model.Repository
 {
@@ -30,7 +32,7 @@ namespace vm.Aspects.Model.Repository
         }
 
         /// <summary>
-        /// Gets the object implementing <see cref="T:IOrmSpecifics"/>.
+        /// Gets the object implementing <see cref="T:IOrmSpecifics"/>. If not found in the service locator, defaults to <see cref="ObjectsRepositorySpecifics"/>.
         /// </summary>
         static IOrmSpecifics OrmSpecifics
         {
@@ -39,7 +41,18 @@ namespace vm.Aspects.Model.Repository
                 Contract.Ensures(Contract.Result<IOrmSpecifics>() != null);
 
                 if (_ormSpecifics == null)
-                    SetOrmSpecifics(ServiceLocator.Current.GetInstance<IOrmSpecifics>());
+                    try
+                    {
+                        SetOrmSpecifics(ServiceLocator.Current.GetInstance<IOrmSpecifics>());
+                    }
+                    catch (ResolutionFailedException)
+                    {
+                        SetOrmSpecifics(new ObjectsRepositorySpecifics());
+                    }
+                    catch (ActivationException)
+                    {
+                        SetOrmSpecifics(new ObjectsRepositorySpecifics());
+                    }
 
                 return _ormSpecifics;
             }
@@ -95,6 +108,19 @@ namespace vm.Aspects.Model.Repository
             Contract.Ensures(Contract.Result<IRepository>() != null);
 
             return OrmSpecifics.EnlistInAmbientTransaction(repository);
+        }
+
+        /// <summary>
+        /// Gets the type of the entity.
+        /// </summary>
+        /// <param name="reference">The reference which POCO entity type is sought.</param>
+        /// <returns>The POCO type of the reference.</returns>
+        public static Type GetEntityType(
+            object reference)
+        {
+            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+
+            return OrmSpecifics.GetEntityType(reference);
         }
 
         /// <summary>

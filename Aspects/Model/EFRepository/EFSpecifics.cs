@@ -67,6 +67,18 @@ namespace vm.Aspects.Model.EFRepository
         }
 
         /// <summary>
+        /// Gets the type of the entity.
+        /// </summary>
+        /// <param name="reference">The reference which POCO entity type is sought.</param>
+        /// <returns>The POCO type of the reference.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public Type GetEntityType(
+            object reference)
+        {
+            return ObjectContext.GetObjectType(reference.GetType());
+        }
+
+        /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
         /// </summary>
         /// <param name="reference">The reference to be tested.</param>
@@ -83,7 +95,7 @@ namespace vm.Aspects.Model.EFRepository
 
         static IDictionary<TypeCode, Func<object, object>> _changeValue = new Dictionary<TypeCode, Func<object, object>>
         {
-            [TypeCode.Boolean]  = v => !((bool)v),              
+            [TypeCode.Boolean]  = v => !((bool)v),
             [TypeCode.Byte]     = v => ((byte)v) + 1,
             [TypeCode.Char]     = v => ((char)v) + 1,
             [TypeCode.DateTime] = v => ((DateTime)v).AddMilliseconds(1),
@@ -131,10 +143,10 @@ namespace vm.Aspects.Model.EFRepository
             if (entry.State != EFEntityState.Unchanged)
                 return result;
 
-            // Find a simple non-key property which can be modified easily:
+            // Find a simple non-key property which can be easily modified:
             var propertyInfo = reference.GetType()
-                                        .GetProperties(BindingFlags.Public | 
-                                                       BindingFlags.NonPublic | 
+                                        .GetProperties(BindingFlags.Public |
+                                                       BindingFlags.NonPublic |
                                                        BindingFlags.Instance |
                                                        BindingFlags.FlattenHierarchy)
                                         .FirstOrDefault(pi => !pi.Name.Contains("Id")  &&  (pi.PropertyType.IsPrimitive ||

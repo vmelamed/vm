@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model
 {
@@ -79,7 +80,7 @@ namespace vm.Aspects.Model
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
-            if (GetType() != other.GetType())
+            if (OrmBridge.GetEntityType(this) != OrmBridge.GetEntityType(other))
                 return false;
 
             return Key.Equals(other.Key);

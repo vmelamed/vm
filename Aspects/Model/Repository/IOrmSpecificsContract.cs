@@ -43,6 +43,14 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public Type GetEntityType(
+            object reference)
+        {
+            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+
+            throw new NotImplementedException();
+        }
+
         public bool IsProxy(
             object reference)
         {

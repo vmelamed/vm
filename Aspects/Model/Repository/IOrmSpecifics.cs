@@ -39,6 +39,13 @@ namespace vm.Aspects.Model.Repository
         IRepository EnlistInAmbientTransaction(IRepository repository);
 
         /// <summary>
+        /// Gets the type of the entity.
+        /// </summary>
+        /// <param name="reference">The reference which POCO entity type is sought.</param>
+        /// <returns>The POCO type of the reference.</returns>
+        Type GetEntityType(object reference);
+
+        /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
         /// </summary>
         /// <param name="reference">The reference to be tested.</param>

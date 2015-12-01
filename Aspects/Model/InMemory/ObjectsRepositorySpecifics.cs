@@ -58,6 +58,18 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Gets the type of the entity.
+        /// </summary>
+        /// <param name="reference">The reference which POCO entity type is sought.</param>
+        /// <returns>The POCO type of the reference.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public Type GetEntityType(
+            object reference)
+        {
+            return reference.GetType();
+        }
+
+        /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
         /// Here always returns <see langword="false"/>.
         /// </summary>
