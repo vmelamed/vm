@@ -52,7 +52,7 @@ namespace vm.Aspects.Model
 
         #region IHasBusinessKey<TKey> Members
         /// <summary>
-        /// Gets or sets the entity business key.
+        /// Gets the entity business key.
         /// </summary>
         public abstract TKey Key { get; }
         #endregion
