@@ -14,7 +14,6 @@ namespace vm.Aspects.Model
     {
         #region IHasStoreId<TId> Members
         TId _id;
-        bool _idSet;
 
         /// <summary>
         /// Gets or sets the store identifier.
@@ -24,10 +23,9 @@ namespace vm.Aspects.Model
             get { return _id; }
             set
             {
-                if (_idSet)
+                if (!_id.Equals(default(TId)))
                     throw new InvalidOperationException("Once the value of the property is set it cannot be changed.");
                 _id = value;
-                _idSet = true;
             }
         }
         #endregion
