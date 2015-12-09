@@ -96,7 +96,7 @@ namespace vm.Aspects.Wcf.Services
         /// If not set explicitly in the inheriting classes, defaults to <see cref="TransientLifetimeManager"/> (per-call).
         /// </summary>
         /// <returns>Service's lifetime manager</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="Unity will dispose it.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will dispose it.")]
         protected virtual LifetimeManager ServiceLifetimeManager
         {
             get { return new TransientLifetimeManager(); }
@@ -120,8 +120,8 @@ namespace vm.Aspects.Wcf.Services
         protected MessagingPatternServiceHostFactory(
             string messagingPattern = null)
         {
-            MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern) 
-                                    ? typeof(TContract).GetMessagingPattern() 
+            MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern)
+                                    ? typeof(TContract).GetMessagingPattern()
                                     : messagingPattern;
         }
 
@@ -153,7 +153,6 @@ namespace vm.Aspects.Wcf.Services
                 identityType == ServiceIdentity.Upn  &&  !string.IsNullOrWhiteSpace(identity)  ||
                 identityType == ServiceIdentity.Spn  &&  !string.IsNullOrWhiteSpace(identity),
                 "Invalid combination of identity parameters.");
-
 
             _identityType = identityType;
             _identity     = identity;
@@ -466,5 +465,14 @@ namespace vm.Aspects.Wcf.Services
                         serviceType.Name);
         }
         #endregion
+
+        //[ContractInvariantMethod]
+        //[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        //private void ObjectInvariant()
+        //{
+        //    Contract.Invariant(_identity != null || _identityType != ServiceIdentity.Certificate || _identifyingCertificate != null);
+        //    Contract.Invariant(_identity != null || _identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Rsa);
+        //    Contract.Invariant(_identity == null || _identityType == ServiceIdentity.Dns         || _identityType == ServiceIdentity.Rsa || _identityType == ServiceIdentity.Upn || _identityType == ServiceIdentity.Spn);
+        //}
     }
 }

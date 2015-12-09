@@ -22,6 +22,7 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
 
             return new SortedDictionary<string, string>
@@ -42,6 +43,7 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
 
             return new SortedDictionary<string, string>(context)
@@ -62,6 +64,7 @@ namespace vm.Aspects.Wcf
             string value)
         {
             Contract.Requires<ArgumentNullException>(innerChannel != null, nameof(innerChannel));
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
 
             SetContext(innerChannel, CreateContext(key, value));
         }
@@ -93,6 +96,7 @@ namespace vm.Aspects.Wcf
             string value)
         {
             Contract.Requires<ArgumentNullException>(innerChannel != null, nameof(innerChannel));
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
 
             return CreateContext(innerChannel.GetProperty<IContextManager>().GetContext(), key, value);
@@ -111,6 +115,7 @@ namespace vm.Aspects.Wcf
             string value) where T : class
         {
             Contract.Requires<ArgumentNullException>(proxy != null, nameof(proxy));
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
 
             SetContext(proxy.InnerChannel, key, value);
         }
@@ -128,6 +133,7 @@ namespace vm.Aspects.Wcf
             string value) where T : class
         {
             Contract.Requires<ArgumentNullException>(proxy != null, nameof(proxy));
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
 
             UpdateContext(proxy.InnerChannel, key, value);
         }

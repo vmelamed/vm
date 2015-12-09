@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -73,8 +74,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// <exception cref="System.ArgumentNullException">If <paramref name="expression"/> is <see langword="null"/></exception>
         public XDocument ToXmlDocument(Expression expression)
         {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
+            Contract.Requires<ArgumentNullException>(expression != null, nameof(expression));
+            Contract.Ensures(Contract.Result<XDocument>() != null);
 
             return new XDocument(
                             new XDeclaration(XmlVersion, XmlEncoding, XmlStandalone),
@@ -97,9 +98,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// If <paramref name="expression"/> is <see langword="null"/></exception>
         public static XElement ToXmlElement(Expression expression)
         {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-
+            Contract.Requires<ArgumentNullException>(expression != null, nameof(expression));
+            Contract.Ensures(Contract.Result<XElement>() != null);
+            
             var visitor = new ExpressionSerializingVisitor();
 
             visitor.Visit(expression);
@@ -122,8 +123,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// <exception cref="System.Xml.XmlException">If the <paramref name="document"/> is not a well-formed or valid document.</exception>
         public static Expression ToExpression(XDocument document)
         {
-            if (document == null)
-                throw new ArgumentNullException("document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
 
             return ToExpression(document.Root);
         }
@@ -140,8 +140,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         public static Expression ToExpression(
             XElement element)
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
 
             if (element.Name != XNames.Elements.Expression)
                 throw new ArgumentException(

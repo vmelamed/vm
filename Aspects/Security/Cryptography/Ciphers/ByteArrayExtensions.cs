@@ -16,10 +16,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>The filled array.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="array"/> is <see langword="null"/></exception>
         /// <exception cref="CryptographicException">The encryption failed.</exception>
-        public static byte[] FillRandom(this byte[] array)
+        public static byte[] FillRandom(
+            this byte[] array)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
             using (var generator = new RNGCryptoServiceProvider())
                 generator.GetBytes(array);
@@ -115,6 +116,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Base64FormattingOptions options = Base64FormattingOptions.None)
         {
             Contract.Requires<ArgumentNullException>(array != null, nameof(array));
+            Contract.Ensures(Contract.Result<string>() != null);
 
             return Convert.ToBase64String(array, options);
         }
@@ -132,6 +134,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             int length = -1)
         {
             Contract.Requires<ArgumentNullException>(base64 != null, nameof(base64));
+            Contract.Requires<ArgumentException>(offset >= 0, nameof(offset));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
             return Convert.FromBase64CharArray(base64.ToCharArray(), offset, length < 0 ? base64.Length : length);
         }

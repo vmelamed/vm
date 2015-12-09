@@ -32,16 +32,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Contracts
 
         public byte[] Encrypt(byte[] data)
         {
-            Contract.Ensures(data==null && Contract.Result<byte[]>()==null ||
-                             data!=null && Contract.Result<byte[]>()!=null);
+            Contract.Ensures(!(data==null ^ Contract.Result<byte[]>()==null));
 
             throw new NotImplementedException();
         }
 
         public byte[] Decrypt(byte[] encryptedData)
         {
-            Contract.Ensures(encryptedData==null && Contract.Result<byte[]>()==null ||
-                             encryptedData!=null && Contract.Result<byte[]>()!=null);
+            Contract.Ensures(!(encryptedData==null ^ Contract.Result<byte[]>()==null));
 
             throw new NotImplementedException();
         }

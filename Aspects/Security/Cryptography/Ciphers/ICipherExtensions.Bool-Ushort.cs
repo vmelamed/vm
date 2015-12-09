@@ -40,7 +40,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToBoolean(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 1)
+                throw new ArgumentException("The argument is not a valid encrypted Boolean value.");
+
+            return FromByteArray.ToBoolean(decrypted);
         }
 
         /// <summary>
@@ -80,7 +85,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (encrypted == null)
                 return null;
 
-            return FromByteArray.ToBooleanArray(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            return FromByteArray.ToBooleanArray(decrypted);
         }
         #endregion
 
@@ -116,9 +123,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            var data = cipher.Decrypt(encrypted);
+            var decrypted = cipher.Decrypt(encrypted);
 
-            return FromByteArray.ToChar(data);
+            if (decrypted.Length < 2)
+                throw new ArgumentException("The argument is not a valid encrypted Char value.");
+
+            return FromByteArray.ToChar(decrypted);
         }
 
         /// <summary>
@@ -197,7 +207,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToSByte(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 1)
+                throw new ArgumentException("The argument is not a valid encrypted SByte value.");
+
+            return FromByteArray.ToSByte(decrypted);
         }
 
         /// <summary>
@@ -276,7 +291,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToByte(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 1)
+                throw new ArgumentException("The argument is not a valid encrypted Byte value.");
+
+            return FromByteArray.ToByte(decrypted);
         }
         #endregion
 
@@ -312,7 +332,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToInt16(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 2)
+                throw new ArgumentException("The argument is not a valid encrypted Int16 value.");
+
+            return FromByteArray.ToInt16(decrypted);
         }
 
         /// <summary>
@@ -390,7 +415,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToUInt16(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 2)
+                throw new ArgumentException("The argument is not a valid encrypted UInt16 value.");
+
+            return FromByteArray.ToChar(decrypted);
         }
 
         /// <summary>

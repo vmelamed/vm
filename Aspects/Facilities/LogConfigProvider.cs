@@ -28,7 +28,15 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the log configuration default registrar.
         /// </summary>
-        public static ContainerRegistrar Registrar => _registrar;
+        public static ContainerRegistrar Registrar
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
+
+                return _registrar;
+            }
+        }
 
         /// <summary>
         /// The resolve name for the test log configuration in the DI container - TestLogger.
@@ -89,7 +97,7 @@ namespace vm.Aspects.Facilities
         /// Creates a debug suitable log configuration, where all sources are associated with the VS output window.
         /// </summary>
         /// <returns>LoggingConfiguration.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="EL will do it.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "EL will do it.")]
         static LoggingConfiguration ConfigureDebugLog()
         {
             Contract.Ensures(Contract.Result<LoggingConfiguration>() != null);
@@ -117,7 +125,7 @@ namespace vm.Aspects.Facilities
         /// Creates a test suitable log configuration, where all sources are associated with the in-memory test trace listener.
         /// </summary>
         /// <returns>LoggingConfiguration.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="EL will do it.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "EL will do it.")]
         static LoggingConfiguration ConfigureTestLog()
         {
             // configure a log that outputs everything in the in-memory test listener (List<string>) log:
@@ -148,7 +156,7 @@ namespace vm.Aspects.Facilities
         /// <exception cref="System.Configuration.ConfigurationErrorsException">
         /// If no registered logging configuration can be found in the DI container.
         /// </exception>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="N/A")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "N/A")]
         public static LogWriter CreateLogWriterFromContainer(
             string logConfigurationResolveName)
         {
@@ -183,7 +191,7 @@ namespace vm.Aspects.Facilities
         /// </param>
         /// <returns>LogWriter.</returns>
         /// <exception cref="System.Configuration.ConfigurationErrorsException"></exception>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="N/A")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "N/A")]
         public static LogWriter CreateLogWriterFromConfigFile(
             string configFileName)
         {
@@ -260,7 +268,7 @@ namespace vm.Aspects.Facilities
         /// If you want to change the precedence, set this parameter to <see langword="true"/>.
         /// </param>
         /// <returns>Microsoft.Practices.EnterpriseLibrary.Logging.LogWriter instance.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="This is the return value.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "This is the return value.")]
         public static LogWriter CreateLogWriter(
             string configFileName,
             string resolveName,

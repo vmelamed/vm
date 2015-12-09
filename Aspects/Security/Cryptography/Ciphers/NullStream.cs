@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Diagnostics.Contracts;
 #if NET45
 using System.Threading.Tasks;
 using System.Threading;
@@ -18,7 +19,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override bool CanRead
         {
-            get { return true; }
+            get
+            {
+                Contract.Ensures(Contract.Result<bool>() == true);
+
+                return true;
+            }
         }
 
         /// <summary>
@@ -26,7 +32,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override bool CanWrite
         {
-            get { return true; }
+            get
+            {
+                Contract.Ensures(Contract.Result<bool>() == true);
+
+                return true;
+            }
         }
 
         /// <summary>
@@ -34,7 +45,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override bool CanSeek
         {
-            get { return false; }
+            get
+            {
+                Contract.Ensures(Contract.Result<bool>() == false);
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -49,7 +65,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override long Length
         {
-            get { return 0; }
+            get
+            {
+                Contract.Ensures(Contract.Result<long>() == 0L);
+
+                return 0L;
+            }
         }
 
         /// <summary>
@@ -57,7 +78,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override long Position
         {
-            get { return 0; }
+            get
+            {
+                Contract.Ensures(Contract.Result<long>() == 0L);
+
+                return 0L;
+            }
             set { }
         }
 
@@ -68,7 +94,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="offset">The zero-based byte offset in <paramref name="buffer" /> at which to begin storing the data read from the current stream.</param>
         /// <param name="count">The maximum number of bytes to be read from the current stream.</param>
         /// <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override int Read(
             byte[] buffer,
             int offset,
@@ -83,7 +109,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="buffer">An array of bytes. This method copies <paramref name="count" /> bytes from <paramref name="buffer" /> to the current stream.</param>
         /// <param name="offset">The zero-based byte offset in <paramref name="buffer" /> at which to begin copying bytes to the current stream.</param>
         /// <param name="count">The number of bytes to be written to the current stream.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override void Write(
             byte[] buffer,
             int offset,
@@ -150,6 +176,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>The new position within the current stream.</returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
+            Contract.Ensures(Contract.Result<long>() == 0L);
+
             return 0L;
         }
 

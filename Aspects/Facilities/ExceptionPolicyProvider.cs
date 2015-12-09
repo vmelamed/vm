@@ -25,7 +25,15 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the registrar of the policies.
         /// </summary>
-        public static ContainerRegistrar Registrar => _registrar;
+        public static ContainerRegistrar Registrar
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
+
+                return _registrar;
+            }
+        }
 
         /// <summary>
         /// The registration name for the facilities policy provider by the facilities.
@@ -82,7 +90,7 @@ namespace vm.Aspects.Facilities
                 return new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
                 {
                     {
-                        LogAndSwallow, 
+                        LogAndSwallow,
                         new List<ExceptionPolicyEntry>
                         {
                             new ExceptionPolicyEntry(
@@ -99,10 +107,10 @@ namespace vm.Aspects.Facilities
                                             typeof(DumpExceptionFormatter),
                                             Facility.LogWriter),
                                 }),
-                        } 
+                        }
                     },
                     {
-                        LogAndRethrow, 
+                        LogAndRethrow,
                         new List<ExceptionPolicyEntry>
                         {
                             new ExceptionPolicyEntry(

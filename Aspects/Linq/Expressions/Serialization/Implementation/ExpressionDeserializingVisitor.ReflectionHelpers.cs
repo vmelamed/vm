@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -12,6 +13,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
     {
         static string GetName(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var nameAttribute = element.Attribute(XNames.Attributes.Name);
 
             return nameAttribute != null
@@ -21,11 +24,15 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static Type ConvertTo(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return DataSerialization.GetType(element.Attribute(XNames.Attributes.Type));
         }
 
         static IEnumerable<MemberInfo> GetMembers(Type type, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var members = element.Elements(XNames.Elements.Members).FirstOrDefault();
 
             if (members == null)
@@ -39,6 +46,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static ConstructorInfo GetConstructorInfo(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var constructor = element.Elements(XNames.Elements.Constructor).FirstOrDefault();
 
             if (constructor == null)
@@ -51,6 +60,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static MethodInfo GetMethodInfo(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var method = element.Elements(XNames.Elements.Method).FirstOrDefault();
 
             if (method == null)
@@ -102,6 +113,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static PropertyInfo GetPropertyInfo(Type type, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             return type.GetProperty(
                             GetName(element),
                             GetBindingFlags(element));
@@ -121,6 +134,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static FieldInfo GetFieldInfo(Type type, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             return type.GetField(
                             GetName(element),
                             GetBindingFlags(element));
@@ -128,6 +143,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static EventInfo GetEventInfo(Type type, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             return type.GetEvent(
                             GetName(element),
                             GetBindingFlags(element));
@@ -150,12 +167,14 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static BindingFlags GetBindingFlags(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var visibility = element.Attribute(XNames.Attributes.Visibility);
 
             BindingFlags flags = visibility == null
                                     ? BindingFlags.Public
-                                    : visibility.Value == "public" 
-                                            ? BindingFlags.Public 
+                                    : visibility.Value == "public"
+                                            ? BindingFlags.Public
                                             : BindingFlags.NonPublic;
 
             var stat = element.Attribute(XNames.Attributes.Static);

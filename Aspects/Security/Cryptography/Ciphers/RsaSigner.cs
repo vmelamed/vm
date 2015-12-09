@@ -28,7 +28,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         protected AsymmetricAlgorithm Asymmetric
         {
-            get { return _asymmetric; }
+            get
+            {
+                Contract.Ensures(Contract.Result<AsymmetricAlgorithm>() != null);
+
+                return _asymmetric;
+            }
         }
         #endregion
 
@@ -94,7 +99,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="dataStream">The data stream.</param>
         /// <param name="signature">The signature.</param>
         /// <returns><see langword="true" /> if the hash is valid, <see langword="false" /> otherwise.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="1#", Justification="n/a")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "n/a")]
         public override bool TryVerifyHash(
             Stream dataStream,
             byte[] signature)
@@ -136,7 +141,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <param name="signature">The signature.</param>
         /// <returns><see langword="true" /> if the hash is valid, <see langword="false" /> otherwise.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="1#", Justification="n/a")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "n/a")]
         public override bool TryVerifyHash(
             byte[] data,
             byte[] signature)
@@ -178,7 +183,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="dataStream">The data stream.</param>
         /// <param name="signature">The signature.</param>
         /// <returns>Task&lt;System.Boolean&gt;.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="1#", Justification="n/a")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "n/a")]
         public override async Task<bool> TryVerifyHashAsync(
             Stream dataStream,
             byte[] signature)

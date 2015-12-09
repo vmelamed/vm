@@ -68,7 +68,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <item>the <paramref name="saltLength" /> is less than <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
         /// </list>
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public PasswordProtectedKeyCipher(
             string password,
             int numberOfIterations = PasswordDerivationConstants.DefaultNumberOfIterations,
@@ -117,7 +117,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <item>the <paramref name="saltLength" /> is less than <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
         /// </list>
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public PasswordProtectedKeyCipher(
             SecureString password,
             int numberOfIterations = PasswordDerivationConstants.DefaultNumberOfIterations,
@@ -143,7 +143,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override bool ShouldEncryptIV
         {
-            get { return false; }
+            get
+            {
+                Contract.Ensures(Contract.Result<bool>() == false);
+
+                return false;
+            }
             set { }
         }
         #endregion
@@ -164,7 +169,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override void ImportSymmetricKey(
             byte[] key)
         {
@@ -186,7 +191,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override Task ImportSymmetricKeyAsync(
             byte[] key)
         {
@@ -269,7 +274,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedKey">The encrypted key.</param>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
@@ -286,7 +291,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
         /// <exception cref="System.ArgumentException">The input stream cannot be written to.;encryptedStream</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
@@ -316,7 +321,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The input data does not represent a valid crypto package: could not read the salt.;encryptedStream
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeReadDecrypted(
             Stream encryptedStream)
         {
@@ -351,7 +356,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
         /// <exception cref="System.ArgumentException">The input stream cannot be written to.;encryptedStream</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
@@ -381,7 +386,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The input data does not represent a valid crypto package: could not read the salt.;encryptedStream
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {

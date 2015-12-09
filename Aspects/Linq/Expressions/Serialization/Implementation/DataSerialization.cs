@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using vm.Aspects.Threading;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 {
@@ -42,9 +40,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             { typeof(TimeSpan), (c, t, x) => x.Add(new XElement(XNames.Elements.Duration,      c!=null ? XmlConvert.ToString((TimeSpan)c) : null)) },
             { typeof(string),   (c, t, x) => x.Add(new XElement(XNames.Elements.String,        c))                                                 },
             { typeof(DBNull),   (c, t, x) => x.Add(new XElement(XNames.Elements.DBNull))                                                           },
-            { typeof(char),     (c, t, x) => x.Add(new XElement(XNames.Elements.Char,          c!=null ? XmlConvert.ToString(Convert.ToInt32((char)c, CultureInfo.InvariantCulture)) 
+            { typeof(char),     (c, t, x) => x.Add(new XElement(XNames.Elements.Char,          c!=null ? XmlConvert.ToString(Convert.ToInt32((char)c, CultureInfo.InvariantCulture))
                                                                                                                                           : null)) },
-            { typeof(DateTime), (c, t, x) => x.Add(new XElement(XNames.Elements.DateTime,      c!=null ? XmlConvert.ToString((DateTime)c, XmlDateTimeSerializationMode.RoundtripKind) 
+            { typeof(DateTime), (c, t, x) => x.Add(new XElement(XNames.Elements.DateTime,      c!=null ? XmlConvert.ToString((DateTime)c, XmlDateTimeSerializationMode.RoundtripKind)
                                                                                                                                           : null)) },
         };
         #endregion
@@ -54,7 +52,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// The map of base type constants de-serializers
         /// </summary>
         static IDictionary<XName, Func<XElement, Type, object>> _constantDeserializers = new Dictionary<XName, Func<XElement, Type, object>>
-        {            
+        {
             { XNames.Elements.Boolean,       (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToBoolean(x.Value)  : default(bool)       },
             { XNames.Elements.UnsignedByte,  (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToByte(x.Value)     : default(byte)       },
             { XNames.Elements.Byte,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToSByte(x.Value)    : default(sbyte)      },
@@ -72,9 +70,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             { XNames.Elements.AnyURI,        (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? new Uri(x.Value)               : null                },
             { XNames.Elements.String,        (x, t) => x.Value                                                                                    },
             { XNames.Elements.DBNull,        (x, t) => DBNull.Value                                                                               },
-            { XNames.Elements.Char,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? Convert.ToChar(Convert.ToInt32(x.Value, CultureInfo.InvariantCulture)) 
+            { XNames.Elements.Char,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? Convert.ToChar(Convert.ToInt32(x.Value, CultureInfo.InvariantCulture))
                                                                                                                             : default(char)       },
-            { XNames.Elements.DateTime,      (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDateTime(x.Value, XmlDateTimeSerializationMode.RoundtripKind) 
+            { XNames.Elements.DateTime,      (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDateTime(x.Value, XmlDateTimeSerializationMode.RoundtripKind)
                                                                                                                             : default(DateTime)   },
             { XNames.Elements.Nullable,      DeserializeNullable                                                                                  },
             { XNames.Elements.Enum,          DeserializeEnum                                                                                      },
@@ -216,8 +214,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// A delegate that can serialize a value of the specified <paramref name="type"/> into an XML element (<see cref="XElement"/>).
         /// </returns>
         /// <exception cref="System.Runtime.Serialization.SerializationException"></exception>
-        internal static Action<object, Type, XElement> GetSerializer(Type type)
+        internal static Action<object, Type, XElement> GetSerializer(
+            Type type)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             if (!CanSerialize(type))
                 throw new SerializationException(
                             string.Format(
@@ -256,6 +257,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The de-serializing delegate corresponding to the <paramref name="element"/>.</returns>
         internal static Func<XElement, Type, object> GetDeserializer(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return _constantDeserializers[element.Name];
         }
 
@@ -267,8 +270,15 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="type">The type.</param>
         /// <param name="parent">The parent.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        static void SerializeEnum(object @enum, Type type, XElement parent)
+        static void SerializeEnum(
+            object @enum,
+            Type type,
+            XElement parent)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            Contract.Requires<ArgumentNullException>(@enum != null, nameof(@enum));
+            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+
             parent.Add(
                 new XElement(
                         XNames.Elements.Enum,
@@ -286,6 +296,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </exception>
         static object DeserializeEnum(XElement element, Type type)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var enumType = GetType(element);
 
             if (enumType == null)
@@ -329,8 +341,15 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="nullable">The nullable value to be serialized.</param>
         /// <param name="type">The type of the value.</param>
         /// <param name="parent">The parent element where to add the serialized.</param>
-        static void SerializeNullable(object nullable, Type type, XElement parent)
+        static void SerializeNullable(
+            object nullable,
+            Type type,
+            XElement parent)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+            Contract.Requires<ArgumentException>(type.GetGenericArguments().Length > 0, nameof(type));
+
             var typeArgument = type.GetGenericArguments()[0];
             var nullableElement = new XElement(
                                         XNames.Elements.Nullable,
@@ -382,6 +401,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             if (XmlConvert.ToBoolean(element.Attribute(XNames.Attributes.IsNull).Value))
                 return null;
 
@@ -406,6 +427,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+
             var anonymousElement = new XElement(
                                         XNames.Elements.Anonymous,
                                         new XAttribute(XNames.Attributes.Type, type.AssemblyQualifiedName));
@@ -443,6 +467,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             if (!element.Elements(XNames.Elements.Property).Any())
                 return null;
 
@@ -482,6 +508,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
+            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+
             var custom = new XElement(
                                 XNames.Elements.Custom,
                                 new XAttribute(
@@ -516,6 +544,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             if (element.Elements().FirstOrDefault() == null)
                 return null;
 
@@ -565,6 +595,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         internal static Type GetDataType(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var type = TypeNameResolver.GetType(element.Name.LocalName);
 
             if (type == null && element.Name==XNames.Elements.Anonymous)
@@ -606,6 +638,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static Type GetCustomConstantType(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var typeAttribute = element.Attribute(XNames.Attributes.Type);
 
             if (typeAttribute == null)
@@ -616,6 +650,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static Type GetEnumConstantType(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var typeAttribute = element.Attribute(XNames.Attributes.Type);
 
             if (typeAttribute == null)

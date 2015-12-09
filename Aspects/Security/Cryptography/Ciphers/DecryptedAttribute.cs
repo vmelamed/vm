@@ -17,10 +17,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// The default name of a property or field that holds the encrypted value.
         /// </summary>
-        public const string DefaultEncryptedProperty = "Encypted";
+        public const string DefaultEncryptedProperty = "Encrypted";
 
         /// <summary>
         /// Gets or sets the name of the property or field which holds the encrypted value.
+        /// The type of the specified property or field must be array of bytes.
         /// </summary>
         public string EncryptedIn { get; }
 
@@ -32,13 +33,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes a new instance of the <see cref="DecryptedAttribute"/> class.
         /// </summary>
-        /// <param name="encrypted">
+        /// <param name="encryptedIn">
         /// Sets the name of a property or field that holds the encrypted value.
+        /// The type of the specified property or field must be array of bytes.
         /// </param>
         public DecryptedAttribute(
-            string encrypted = DefaultEncryptedProperty)
+            string encryptedIn = DefaultEncryptedProperty)
         {
-            EncryptedIn = encrypted;
+            EncryptedIn = encryptedIn;
         }
     }
 }

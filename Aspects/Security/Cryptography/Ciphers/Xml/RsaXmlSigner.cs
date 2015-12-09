@@ -38,7 +38,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         readonly AsymmetricAlgorithm _asymmetric;
 
 #if NET45
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification="N/A")]
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "N/A")]
         static RsaXmlSigner()
         {
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), XmlConstants.XmlDsigRSAPKCS1SHA256Url);
@@ -51,7 +51,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         public string HashAlgorithmName
         {
-            get { return _hashAlgorithmName; }
+            get
+            {
+                Contract.Ensures(Contract.Result<string>() != null);
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+                return _hashAlgorithmName;
+            }
         }
 
         /// <summary>
@@ -59,7 +65,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         protected AsymmetricAlgorithm Asymmetric
         {
-            get { return _asymmetric; }
+            get
+            {
+                Contract.Ensures(Contract.Result<AsymmetricAlgorithm>() != null);
+
+                return _asymmetric;
+            }
         }
 
         /// <summary>
@@ -478,7 +489,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(true)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

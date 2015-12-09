@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
@@ -13,13 +14,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <summary>
         /// Holds the parameters of the lambda expressions that are referred to inside the lambda expressions' bodies.
         /// </summary>
-        IDictionary<string, ParameterExpression> _references = new SortedDictionary<string, ParameterExpression>();
+        readonly IDictionary<string, ParameterExpression> _references = new SortedDictionary<string, ParameterExpression>();
 
         #region Expression XML deserializing visitors
         /// <summary>
         /// Holds dictionary of expression element name - delegate to the respective de-serializer.
         /// </summary>
-        static IDictionary<XName, Func<ExpressionDeserializingVisitor, XElement, Expression>> _deserializers = new Dictionary<XName, Func<ExpressionDeserializingVisitor, XElement, Expression>>
+        static readonly IDictionary<XName, Func<ExpressionDeserializingVisitor, XElement, Expression>> _deserializers = new Dictionary<XName, Func<ExpressionDeserializingVisitor, XElement, Expression>>
         {
             { XNames.Elements.Constant,             (v, e) => ExpressionDeserializingVisitor.VisitConstant(e) },
             { XNames.Elements.Parameter,            (v, e) => v.VisitParameter(e)           },
@@ -124,8 +125,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             return _deserializers[element.Name](this, element);
         }
 
-        static ExpressionType GetExpressionType(XElement element)
+        static ExpressionType GetExpressionType(
+            XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return (ExpressionType)Enum.Parse(
                                         typeof(ExpressionType),
                                         element.Name.LocalName,
@@ -134,6 +138,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static ConstantExpression VisitConstant(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var constantElement = element.Elements().FirstOrDefault();
 
             if (constantElement == null)
@@ -153,6 +159,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         ParameterExpression VisitParameter(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var name = GetName(element);
             var type = DataSerialization.GetType(element);
             ParameterExpression parameter;
@@ -188,6 +196,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         IEnumerable<Expression> VisitArguments(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var arguments = element.Elements(XNames.Elements.Arguments).FirstOrDefault();
 
             if (arguments == null)
@@ -214,6 +224,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LambdaExpression VisitLambda(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var parameters = VisitParameters(element.Element(XNames.Elements.Parameters));
             var tailCallAttribute = element.Attribute(XNames.Attributes.TailCall);
             var delegateType = DataSerialization.GetType(element.Attribute(XNames.Attributes.DelegateType));
@@ -243,6 +255,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         UnaryExpression VisitUnary(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.MakeUnary(
                         GetExpressionType(element),
                         Visit(element.Elements().First()),
@@ -252,6 +266,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         BinaryExpression VisitBinary(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var liftedAttribute = element.Attribute(XNames.Attributes.IsLiftedToNull);
 
             return Expression.MakeBinary(
@@ -264,6 +280,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         TypeBinaryExpression VisitTypeBinary(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.TypeIs(
                         Visit(element.Elements().First()),
                         DataSerialization.GetType(element));
@@ -271,6 +289,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         BlockExpression VisitBlock(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var variablesElement = element.Element(XNames.Elements.Variables);
             var variables = VisitParameters(variablesElement);
 
@@ -290,6 +310,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         ConditionalExpression VisitConditional(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.Condition(
                          Visit(element.Elements().ElementAt(0)),
                          Visit(element.Elements().ElementAt(1)),
@@ -299,6 +321,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         MemberExpression VisitMember(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var memberElement = element.Element(XNames.Elements.Property);
 
             if (memberElement == null)
@@ -313,6 +337,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         IndexExpression VisitIndex(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.ArrayAccess(
                                 Visit(element.Elements().First()),
                                 VisitExpressions(element.Element(XNames.Elements.Indexes)));
@@ -320,7 +346,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitMethodCall(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var methodElement = element.Elements().First();
+
+            Contract.Assume(GetMethodInfo(element) != null);
 
             if (methodElement.Name == XNames.Elements.Method)
                 return Expression.Call(
@@ -335,17 +365,21 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         UnaryExpression VisitThrow(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.Throw(
                         Visit(element.Elements().First()));
         }
 
         NewExpression VisitNew(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var constructor = GetConstructorInfo(element);
             var arguments = VisitArguments(element);
             var members = GetMembers(constructor.DeclaringType, element);
 
-            if (members == null || !members.Any())
+            if (!members.Any())
                 return Expression.New(
                             constructor,
                             arguments);
@@ -360,6 +394,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LabelTarget GetLabelTarget(string uid, string name, Type type)
         {
+            Contract.Requires<ArgumentNullException>(uid != null, nameof(uid));
+
             if (_uidLabelTargets == null)
                 _uidLabelTargets = new Dictionary<string, LabelTarget>();
 
@@ -368,7 +404,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (!_uidLabelTargets.TryGetValue(uid, out target))
             {
                 target = type != null
-                            ? name != null 
+                            ? name != null
                                 ? Expression.Label(type, name)
                                 : Expression.Label(type)
                             : name != null
@@ -382,6 +418,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LabelTarget VisitLabelTarget(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var name = GetName(element);
 
             return GetLabelTarget(
@@ -392,6 +430,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LabelExpression VisitLabel(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var target = VisitLabelTarget(element.Element(XNames.Elements.LabelTarget));
             var expression = Visit(element.Elements().Skip(1).FirstOrDefault());
 
@@ -402,18 +442,24 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LabelTarget VisitBreakLabel(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return VisitLabelTarget(
                         element.Element(XNames.Elements.LabelTarget));
         }
 
         LabelTarget VisitContinueLabel(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return VisitLabelTarget(
                         element.Element(XNames.Elements.LabelTarget));
         }
 
         GotoExpression VisitGoto(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             return Expression.MakeGoto(
                                 (GotoExpressionKind)Enum.Parse(
                                                 typeof(GotoExpressionKind),
@@ -426,6 +472,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         LoopExpression VisitLoop(XElement element)
         {
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+
             var count = element.Elements().Count();
 
             if (count == 1)
@@ -451,6 +499,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitSwitch(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             var defaultElement = e.Elements(XNames.Elements.DefaultCase).FirstOrDefault();
 
             return Expression.Switch(
@@ -465,6 +515,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         SwitchCase VisitSwitchCase(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.SwitchCase(
                         Visit(e.Elements().Last()),
                         e.Elements(XNames.Elements.Value)
@@ -474,6 +526,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitTry(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.MakeTry(
                         DataSerialization.GetType(e),
                         Visit(e.Elements().First()),
@@ -484,9 +538,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         CatchBlock VisitCatchBlock(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             var exceptionElement = e.Elements(XNames.Elements.Exception)
                                     .FirstOrDefault();
-            var exception = exceptionElement != null 
+            var exception = exceptionElement != null
                                         ? Expression.Parameter(
                                                         DataSerialization.GetType(exceptionElement),
                                                         GetName(exceptionElement))
@@ -524,6 +580,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitListInit(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.ListInit(
                         VisitNew(e.Elements().First()),
                         e.Elements()
@@ -535,6 +593,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         ElementInit VisitElementInit(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
+            Contract.Assume(GetMethodInfo(e) != null);
+
             return Expression.ElementInit(
                         GetMethodInfo(e),
                         VisitArguments(e));
@@ -542,6 +604,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitNewArrayInit(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.NewArrayInit(
                         DataSerialization.GetType(e),
                         VisitExpressions(e.Element(XNames.Elements.ArrayElements).Elements()));
@@ -549,6 +613,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitNewArrayBounds(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.NewArrayBounds(
                         DataSerialization.GetType(e),
                         VisitExpressions(e.Element(XNames.Elements.Bounds).Elements()));
@@ -556,6 +622,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitMemberInit(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.MemberInit(
                         Visit(e.Elements().First()) as NewExpression,
                         VisitMemberBindings(e.Element(XNames.Elements.Bindings)));
@@ -563,22 +631,28 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         IEnumerable<MemberBinding> VisitMemberBindings(XElement xElement)
         {
+            Contract.Requires<ArgumentNullException>(xElement != null, nameof(xElement));
+
             return VisitMemberBindings(
                         xElement.Elements());
         }
 
         IEnumerable<MemberBinding> VisitMemberBindings(IEnumerable<XElement> xElements)
         {
+            Contract.Requires<ArgumentNullException>(xElements != null, nameof(xElements));
+
             return xElements.Select(
                         e => VisitMemberBinding(e));
         }
 
         MemberBinding VisitMemberBinding(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return _typeToMemberBinding[e.Name](this, e);
         }
 
-        IDictionary<XName, Func<ExpressionDeserializingVisitor, XElement, MemberBinding>> _typeToMemberBinding = 
+        readonly IDictionary<XName, Func<ExpressionDeserializingVisitor, XElement, MemberBinding>> _typeToMemberBinding =
             new Dictionary<XName, Func<ExpressionDeserializingVisitor, XElement, MemberBinding>>
             {
                 { XNames.Elements.AssignmentBinding,    (v, e) => Expression.Bind(
@@ -598,6 +672,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         Expression VisitRuntimeVariables(XElement e)
         {
+            Contract.Requires<ArgumentNullException>(e != null, nameof(e));
+
             return Expression.RuntimeVariables(
                         VisitParameters(
                             e.Element(

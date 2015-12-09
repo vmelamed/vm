@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.DataContracts
     /// WCF DTO's base class. Takes care of the forward and backward compatibility of the DTO-s and standardizes on <see cref="T:vm.Aspects.Validation.IValidatable"/>.
     /// Can be easily used also in a non-WCF context.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf.DataContracts", IsReference=true)]
+    [DataContract(Namespace = "urn:vm.Aspects.Wcf.DataContracts", IsReference = true)]
     public abstract class DataTransferObject : IExtensibleDataObject, IValidatable
     {
         #region IExtensibleDataObject Members
@@ -41,6 +41,8 @@ namespace vm.Aspects.Wcf.DataContracts
             string ruleset = "",
             ValidationResults results = null)
         {
+            Contract.Ensures(Contract.Result<ValidationResults>() != null);
+
             var validator = Facility.ValidatorFactory.CreateValidator(GetType(), ruleset);
 
             if (results == null)
@@ -79,6 +81,8 @@ namespace vm.Aspects.Wcf.DataContracts
         public IValidatable ConfirmValid(
             string ruleset = "")
         {
+            Contract.Ensures(Contract.Result<IValidatable>() != null);
+
             var results = Validate(ruleset);
 
             if (!results.IsValid)

@@ -200,8 +200,16 @@ namespace vm.Aspects.Diagnostics
         /// </remarks>
         public string MaskValue
         {
-            get { return _maskValue ?? Resources.MaskInLogs; }
-            set { _maskValue = value; }
+            get
+            {
+                Contract.Ensures(Contract.Result<string>() != null);
+
+                return _maskValue ?? Resources.MaskInLogs;
+            }
+            set
+            {
+                _maskValue = value;
+            }
         }
 
         /// <summary>

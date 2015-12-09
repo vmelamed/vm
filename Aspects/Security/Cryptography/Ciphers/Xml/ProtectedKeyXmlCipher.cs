@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
@@ -11,7 +12,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     /// Class ProtectedKeyXmlCipher encrypts an XML document or selected elements of it with a symmetric key encryption.
     /// The symmetric key is protected with DPAPI into a file.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="Nothing to dispose here.")]
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Nothing to dispose here.")]
     public class ProtectedKeyXmlCipher : SymmetricKeyCipherBase, IXmlCipher
     {
         readonly string _encryptionUri;
@@ -83,7 +84,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <param name="encryptedKey">The encrypted key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
@@ -116,7 +117,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="CryptographicException">
         /// The specified symmetric algorithm is not supported. Only the TripleDES, DES, AES-128, AES-192 and AES-256 algorithms are supported.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual void Encrypt(
             XmlDocument document,
             string xmlPath = null,
@@ -140,7 +141,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="ArgumentNullException">
         /// The <paramref name="document"/> is <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual void Decrypt(
             XmlDocument document)
         {
@@ -163,15 +164,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// or
         /// encryptedXml
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId="System.Xml.XmlNode", Justification="We encrypt/decrypt XmlElement-s only.")]
+        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We encrypt/decrypt XmlElement-s only.")]
         protected virtual void EncryptElement(
             XmlElement element,
             EncryptedXml encryptedXml)
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
-            if (encryptedXml == null)
-                throw new ArgumentNullException("encryptedXml");
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            Contract.Requires<ArgumentNullException>(encryptedXml != null, nameof(encryptedXml));
 
             var encryptedElement = new EncryptedData
             {
@@ -200,12 +199,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         /// <param name="element">The element.</param>
         /// <exception cref="System.ArgumentNullException">element</exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId="System.Xml.XmlNode", Justification="We encrypt/decrypt XmlElement-s only.")]
+        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We encrypt/decrypt XmlElement-s only.")]
         protected virtual void DecryptElement(
             XmlElement element)
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
 
             var encryptedElement = new EncryptedData();
 
@@ -234,6 +232,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="System.Security.Cryptography.CryptographicException">The specified symmetric algorithm is not supported for XML encryption.</exception>
         protected string SymmetricXmlNamespace()
         {
+            Contract.Ensures(Contract.Result<string>() != null);
+
             if (Symmetric is TripleDES)
                 return EncryptedXml.XmlEncTripleDESUrl;
 

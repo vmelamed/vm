@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Text;
 
@@ -481,7 +483,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             Contract.Ensures(Contract.Result<byte[]>() != null);
 
-            return Convert(decimal.GetBits(data));
+            var bits = decimal.GetBits(data);
+
+            Contract.Assume(bits != null);
+
+            return Convert(bits);
         }
 
         /// <summary>
@@ -502,8 +508,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             for (var i = 0; i < data.Length; i++)
             {
+                var bits = decimal.GetBits(data[i]);
+
+                Contract.Assume(bits != null);
+
                 Array.Copy(
-                    Convert(decimal.GetBits(data[i])), 0,
+                    Convert(bits), 0,
                     bytes, index,
                     elementSize);
 
@@ -608,6 +618,81 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             }
 
             return bytes;
+        }
+
+        /// <summary>
+        /// Dictionary of types and the corresponding methods that can decrypt those types.
+        /// </summary>
+        public readonly static IReadOnlyDictionary<Type, Func<object, byte[]>> ConvertTypedData = new ReadOnlyDictionary<Type, Func<object, byte[]>>( new Dictionary<Type, Func<object, byte[]>>
+        {
+            [typeof(bool)]       = d => Convert((bool)      d),
+            [typeof(bool[])]     = d => Convert((bool[])    d),
+            [typeof(char)]       = d => Convert((char)      d),
+            [typeof(char[])]     = d => Convert((char[])    d),
+            [typeof(sbyte)]      = d => Convert((sbyte)     d),
+            [typeof(sbyte[])]    = d => Convert((sbyte[])   d),
+            [typeof(byte)]       = d => Convert((byte)      d),
+            [typeof(byte[])]     = d => Convert((byte[])    d),
+            [typeof(short)]      = d => Convert((short)     d),
+            [typeof(short[])]    = d => Convert((short[])   d),
+            [typeof(ushort)]     = d => Convert((ushort)    d),
+            [typeof(ushort[])]   = d => Convert((ushort[])  d),
+            [typeof(int)]        = d => Convert((int)       d),
+            [typeof(int[])]      = d => Convert((int[])     d),
+            [typeof(uint)]       = d => Convert((uint)      d),
+            [typeof(uint[])]     = d => Convert((uint[])    d),
+            [typeof(long)]       = d => Convert((long)      d),
+            [typeof(long[])]     = d => Convert((long[])    d),
+            [typeof(ulong)]      = d => Convert((ulong)     d),
+            [typeof(ulong[])]    = d => Convert((ulong[])   d),
+            [typeof(float)]      = d => Convert((float)     d),
+            [typeof(float[])]    = d => Convert((float[])   d),
+            [typeof(double)]     = d => Convert((double)    d),
+            [typeof(double[])]   = d => Convert((double[])  d),
+            [typeof(decimal)]    = d => Convert((decimal)   d),
+            [typeof(decimal[])]  = d => Convert((decimal[]) d),
+            [typeof(DateTime)]   = d => Convert((DateTime)  d),
+            [typeof(DateTime[])] = d => Convert((DateTime[])d),
+            [typeof(Guid)]       = d => Convert((Guid)      d),
+            [typeof(Guid[])]     = d => Convert((Guid[])    d),
+            [typeof(string)]     = d => Convert((string)    d),
+        });
+
+        public static byte[] Convert(
+            object data,
+            Type dataType)
+        {
+            Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
+
+            if (!ConvertTypedData.ContainsKey(dataType))
+                throw new ArgumentException("The specified data type cannot be converted.");
+
+            return ConvertTypedData[dataType](data);
+        }
+
+        public static byte[] Convert<T>(
+            T data)
+        {
+            if (!ConvertTypedData.ContainsKey(typeof(T)))
+                throw new ArgumentException("The specified data type cannot be converted.");
+
+            return Convert(data, typeof(T));
+        }
+
+        public static byte[] ConvertNullable<T>(
+            Nullable<T> data) where T : struct
+        {
+            if (!ConvertTypedData.ContainsKey(typeof(T)))
+                throw new ArgumentException("The specified data type cannot be converted.");
+
+            var hasValueArray = ToByteArray.Convert(data.HasValue);
+            var valueArray    = ToByteArray.Convert(data.GetValueOrDefault());
+            var array         = new byte[hasValueArray.Length + valueArray.Length];
+
+            Array.Copy(hasValueArray, array, hasValueArray.Length);
+            Array.Copy(valueArray, 0, array, hasValueArray.Length, valueArray.Length);
+
+            return Convert(data, typeof(T));
         }
     }
 }

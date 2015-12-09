@@ -393,6 +393,7 @@
     <Compile Include="EncryptedNewKeyHashedCipher.cs" />
     <Compile Include="EncryptedNewKeySignedCipher.cs" />
     <Compile Include="FromByteArray.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="HashAlgorithmFactory.cs" />
     <Compile Include="Hasher.cs" />
     <Compile Include="ICipher.cs" />

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Text;
 
@@ -10,14 +12,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </summary>
     static class FromByteArray
     {
-        public static bool ToBoolean(byte[] data)
+        public static bool ToBoolean(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            Contract.Requires<ArgumentException>(data.Length >= 1, "Invalid length of the data.");
 
             return BitConverter.ToBoolean(data, 0);
         }
 
-        public static bool[] ToBooleanArray(byte[] data)
+        public static bool[] ToBooleanArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<bool[]>() == null));
 
@@ -37,14 +42,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static char ToChar(byte[] data)
+        public static char ToChar(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            Contract.Requires<ArgumentException>(data.Length >= 2, "Invalid length of the data.");
 
             return BitConverter.ToChar(data, 0);
         }
 
-        public static char[] ToCharArray(byte[] data)
+        public static char[] ToCharArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<char[]>() == null));
 
@@ -54,7 +62,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return ToString(data).ToCharArray();
         }
 
-        public static byte ToByte(byte[] data)
+        public static byte ToByte(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
             Contract.Requires<ArgumentException>(data.Length > 0, "The encrypted value does not represent a valid array.");
@@ -62,7 +71,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return (byte)data[0];
         }
 
-        public static byte[] ToByteArray(byte[] data)
+        public static byte[] ToByteArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
@@ -77,7 +87,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return (sbyte)data[0];
         }
 
-        public static sbyte[] ToSByteArray(byte[] data)
+        public static sbyte[] ToSByteArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<sbyte[]>() == null));
 
@@ -92,15 +103,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static short ToInt16(byte[] data)
+        public static short ToInt16(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(Int16), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(Int16), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToInt16(data, 0);
         }
 
-        public static short[] ToInt16Array(byte[] data)
+        public static short[] ToInt16Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<short[]>() == null));
 
@@ -126,15 +139,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static ushort ToUInt16(byte[] data)
+        public static ushort ToUInt16(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(UInt16), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(UInt16), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToUInt16(data, 0);
         }
 
-        public static ushort[] ToUInt16Array(byte[] data)
+        public static ushort[] ToUInt16Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<ushort[]>() == null));
 
@@ -160,15 +175,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static int ToInt32(byte[] data)
+        public static int ToInt32(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(Int32), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(Int32), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToInt32(data, 0);
         }
 
-        public static int[] ToInt32Array(byte[] data)
+        public static int[] ToInt32Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<int[]>() == null));
 
@@ -194,15 +211,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static uint ToUInt32(byte[] data)
+        public static uint ToUInt32(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(UInt32), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(UInt32), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToUInt32(data, 0);
         }
 
-        public static uint[] ToUInt32Array(byte[] data)
+        public static uint[] ToUInt32Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<uint[]>() == null));
 
@@ -228,15 +247,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static long ToInt64(byte[] data)
+        public static long ToInt64(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(Int64), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(Int64), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToInt64(data, 0);
         }
 
-        public static long[] ToInt64Array(byte[] data)
+        public static long[] ToInt64Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<long[]>() == null));
 
@@ -262,15 +283,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static ulong ToUInt64(byte[] data)
+        public static ulong ToUInt64(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(UInt64), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(UInt64), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToUInt64(data, 0);
         }
 
-        public static ulong[] ToUInt64Array(byte[] data)
+        public static ulong[] ToUInt64Array(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<ulong[]>() == null));
 
@@ -296,15 +319,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static float ToSingle(byte[] data)
+        public static float ToSingle(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(float), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(float), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToSingle(data, 0);
         }
 
-        public static float[] ToSingleArray(byte[] data)
+        public static float[] ToSingleArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<float[]>() == null));
 
@@ -330,15 +355,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static double ToDouble(byte[] data)
+        public static double ToDouble(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(double), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(double), "The encrypted value does not represent a valid array.");
 
             return BitConverter.ToDouble(data, 0);
         }
 
-        public static double[] ToDoubleArray(byte[] data)
+        public static double[] ToDoubleArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<double[]>() == null));
 
@@ -364,15 +391,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static decimal ToDecimal(byte[] data)
+        public static decimal ToDecimal(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(decimal), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(decimal), "The encrypted value does not represent a valid Decimal value.");
 
-            return new decimal(ToInt32Array(data));
+            var bits = ToInt32Array(data);
+
+            if (bits.Length != 4)
+                throw new ArgumentException("The encrypted value does not represent a valid Decimal value.");
+
+            return new decimal(bits);
         }
 
-        public static decimal[] ToDecimalArray(byte[] data)
+        public static decimal[] ToDecimalArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<decimal[]>() == null));
 
@@ -392,6 +426,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             for (var i = 0; i < array.Length; i++)
             {
+                Contract.Assume(index+3 < intData.Length);
+
                 array[i] = new decimal(
                                     intData[index+0],
                                     intData[index+1],
@@ -404,7 +440,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static string ToString(byte[] data)
+        public static string ToString(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<string>() == null));
 
@@ -414,15 +451,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return Encoding.UTF8.GetString(data);
         }
 
-        public static DateTime ToDateTime(byte[] data)
+        public static DateTime ToDateTime(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Requires<ArgumentException>(data.Length == sizeof(Int64), "The encrypted value does not represent a valid array.");
+            Contract.Requires<ArgumentException>(data.Length >= sizeof(Int64), "The encrypted value does not represent a valid array.");
 
             return new DateTime(ToInt64(data));
         }
 
-        public static DateTime[] ToDateTimeArray(byte[] data)
+        public static DateTime[] ToDateTimeArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<DateTime[]>() == null));
 
@@ -448,7 +487,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return array;
         }
 
-        public static Guid ToGuid(byte[] data)
+        public static Guid ToGuid(
+            byte[] data)
         {
             Contract.Requires<ArgumentNullException>(data != null, nameof(data));
             Contract.Requires<ArgumentException>(data.Length == 16, "The encrypted value does not represent a valid array.");
@@ -456,7 +496,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return new Guid(data);
         }
 
-        public static Guid[] ToGuidArray(byte[] data)
+        public static Guid[] ToGuidArray(
+            byte[] data)
         {
             Contract.Ensures(!(data == null ^ Contract.Result<Guid[]>() == null));
 
@@ -482,6 +523,83 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             }
 
             return array;
+        }
+
+        /// <summary>
+        /// Dictionary of types and the corresponding methods that can decrypt those types.
+        /// </summary>
+        public readonly static IReadOnlyDictionary<Type, Func<byte[], object>> ToTypedData = new ReadOnlyDictionary<Type, Func<byte[], object>>( new Dictionary<Type, Func<byte[], object>>
+        {
+            [typeof(bool)]       = d => ToBoolean(d),
+            [typeof(bool[])]     = d => ToBooleanArray(d),
+            [typeof(char)]       = d => ToChar(d),
+            [typeof(char[])]     = d => ToCharArray(d),
+            [typeof(sbyte)]      = d => ToSByte(d),
+            [typeof(sbyte[])]    = d => ToSByteArray(d),
+            [typeof(byte)]       = d => ToByte(d),
+            [typeof(byte[])]     = d => ToByteArray(d),
+            [typeof(short)]      = d => ToInt16(d),
+            [typeof(short[])]    = d => ToInt16Array(d),
+            [typeof(ushort)]     = d => ToUInt16(d),
+            [typeof(ushort[])]   = d => ToUInt16Array(d),
+            [typeof(int)]        = d => ToInt32(d),
+            [typeof(int[])]      = d => ToInt32Array(d),
+            [typeof(uint)]       = d => ToUInt32(d),
+            [typeof(uint[])]     = d => ToUInt32Array(d),
+            [typeof(long)]       = d => ToInt64(d),
+            [typeof(long[])]     = d => ToInt64Array(d),
+            [typeof(ulong)]      = d => ToUInt64(d),
+            [typeof(ulong[])]    = d => ToUInt64Array(d),
+            [typeof(float)]      = d => ToSingle(d),
+            [typeof(float[])]    = d => ToSingleArray(d),
+            [typeof(double)]     = d => ToDouble(d),
+            [typeof(double[])]   = d => ToDoubleArray(d),
+            [typeof(decimal)]    = d => ToDecimal(d),
+            [typeof(decimal[])]  = d => ToDecimalArray(d),
+            [typeof(DateTime)]   = d => ToDateTime(d),
+            [typeof(DateTime[])] = d => ToDateTimeArray(d),
+            [typeof(Guid)]       = d => ToGuid(d),
+            [typeof(Guid[])]     = d => ToGuidArray(d),
+            [typeof(string)]     = d => ToString(d),
+        });
+
+        public static object ToObject(
+            byte[] data,
+            Type dataType)
+        {
+            Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
+
+            if (!ToTypedData.ContainsKey(dataType))
+                throw new ArgumentException("The data type is not supported.", nameof(dataType));
+
+            return ToTypedData[dataType](data);
+        }
+
+        public static T To<T>(
+            byte[] data)
+        {
+            return (T)ToObject(data, typeof(T));
+        }
+
+        public static Nullable<T> ToNullable<T>(
+            byte[] data) where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            Contract.Requires<ArgumentException>(data.Length > 1, "Invalid length of the data.");
+
+            if (!ToTypedData.ContainsKey(typeof(T)))
+                throw new ArgumentException("The type argument is not supported.");
+
+            var hasValue = ToBoolean(data);
+
+            if (!hasValue)
+                return null;
+
+            var notNullData = new byte[data.Length-1];
+
+            Array.Copy(data, 1, notNullData, 0, data.Length-1);
+
+            return To<T>(notNullData);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -38,7 +39,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </para>
         /// In the end of a successful visit the stack should contain only one element - the root of the whole expression.
         /// </summary>
-        Stack<XElement> _elements = new Stack<XElement>();
+        readonly Stack<XElement> _elements = new Stack<XElement>();
 
 #if DEBUG
         public ExpressionSerializingVisitor()
@@ -54,7 +55,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         {
             get
             {
-                Debug.Assert(_elements.Count == 1, "There must be exactly one element in the queue - the root element of the expression.");
+                Contract.Assume(_elements.Count == 1, "There must be exactly one element in the queue - the root element of the expression.");
+
                 return _elements.Pop();
             }
         }
@@ -97,6 +99,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Func<E, Expression> baseVisit,
             Action<E, XElement> thisVisit) where E : Expression
         {
+            Contract.Requires<ArgumentNullException>(baseVisit != null, nameof(baseVisit));
+
             var reducedNode = baseVisit(expressionNode);
             var node = reducedNode as E;
 
@@ -441,6 +445,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         string GetLabelTargetUid(LabelTarget target)
         {
+            Contract.Requires<ArgumentNullException>(target != null, nameof(target));
+
             if (_labelTargetsUid == null)
                 _labelTargetsUid = new Dictionary<LabelTarget, string>();
 
@@ -794,6 +800,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         void VisitNewArrayInit(NewArrayExpression node, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             var inits = new Stack<XElement>();
 
             for (var i=0; i<node.Expressions.Count(); i++)
@@ -810,6 +818,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         void VisitNewArrayBounds(NewArrayExpression node, XElement element)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             var bounds = new Stack<XElement>();
 
             for (var i=0; i<node.Expressions.Count(); i++)

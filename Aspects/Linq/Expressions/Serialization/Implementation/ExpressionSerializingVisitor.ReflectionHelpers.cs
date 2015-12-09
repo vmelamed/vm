@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,13 +27,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Expression expression,
             Type defaultType = null)
         {
-            if (element == null)
-                throw new ArgumentNullException("element");
-            if (expression == null)
-                throw new ArgumentNullException("expression");
+            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            Contract.Requires<ArgumentNullException>(expression != null, nameof(expression));
 
-            if (expression.Type != null &&
-                expression.Type != defaultType)
+            if (expression.Type != defaultType)
                 element.Add(
                     new XAttribute(
                         XNames.Attributes.Type,
@@ -51,8 +49,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>An &quot;asType&quot; attribute or <see langword="null"/> if <paramref name="node"/> does not contain type conversion component.</returns>
         static XAttribute VisitAsType(UnaryExpression node)
         {
-            if (node.NodeType != ExpressionType.TypeAs && node.NodeType != ExpressionType.Convert  || 
-                node.Type == null)
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
+            if (node.NodeType != ExpressionType.TypeAs && node.NodeType != ExpressionType.Convert)
                 return null;
 
             return new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(node.Type));
@@ -92,22 +91,30 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         IEnumerable<XElement> PopParameters(IEnumerable<ParameterExpression> parameters)
         {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
             return PopExpressions(parameters.Count());
         }
 
         IEnumerable<XElement> PopArguments(IEnumerable<Expression> arguments)
         {
+            Contract.Requires<ArgumentNullException>(arguments != null, nameof(arguments));
+
             return PopExpressions(arguments.Count());
         }
 
         XElement AddParameters(IEnumerable<ParameterExpression> parameters, XElement node)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             node.Add(PopParameters(parameters));
             return node;
         }
 
         XElement AddArguments(IEnumerable<Expression> arguments, XElement node)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             node.Add(PopArguments(arguments));
             return node;
         }
@@ -143,6 +150,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static XElement ReplaceParameterWithReference(XElement parameter, XElement body)
         {
+            Contract.Requires<ArgumentException>(parameter == null || body != null);
+
             if (parameter == null)
                 return body;
 
@@ -178,6 +187,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(BinaryExpression node)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             return VisitMethodInfo(node.Method);
         }
 
@@ -188,6 +199,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(UnaryExpression node)
         {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
             return VisitMethodInfo(node.Method);
         }
 

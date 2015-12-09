@@ -21,7 +21,15 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the facilities registrar instance.
         /// </summary>
-        public static ContainerRegistrar Registrar => _registrar;
+        public static ContainerRegistrar Registrar
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
+
+                return _registrar;
+            }
+        }
 
         /// <summary>
         /// Class FacilitiesRegistrar. Registers facilities of type IClock, IGuidGenerator, ValidatorFactory, LogWriter, ExceptionManager

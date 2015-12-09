@@ -9,22 +9,6 @@ namespace vm.Aspects.Diagnostics
     /// </summary>
     public static class DumpFormat
     {
-        static string _cyclicalReference;
-        static string _delegate;
-        static string _enum;
-        static string _genericParam;
-        static string _indexerIndexType;
-        static string _memberInfoMemberType;
-        static string _methodInfo;
-        static string _methodParameter;
-        static string _defaultPropertyLabel;
-        static string _sequenceDumpTruncated;
-        static string _sequenceType;
-        static string _sequenceTypeName;
-        static string _type;
-        static string _typeInfo;
-        static string _value;
-
         static DumpFormat()
         {
             Reset();
@@ -35,21 +19,21 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         public static void Reset()
         {
-            _cyclicalReference     = Resources.CyclicalReferenceDesignator;
-            _delegate              = Resources.DelegateDumpFormat;
-            _enum                  = Resources.EnumDumpFormat;
-            _genericParam          = Resources.GenericParamFormat;
-            _indexerIndexType      = Resources.IndexerIndexDumpFormat;
-            _memberInfoMemberType  = Resources.MemberInfoMemberTypeDumpFormat;
-            _methodInfo            = Resources.MethodInfoDumpFormat;
-            _methodParameter       = Resources.MethodParameterFormat;
-            _defaultPropertyLabel  = Resources.PropertyLabelFormat;
-            _sequenceDumpTruncated = Resources.SequenceDumpTruncatedFormat;
-            _sequenceType          = Resources.SequenceTypeFormat;
-            _sequenceTypeName      = Resources.SequenceTypeNameFormat;
-            _type                  = Resources.TypeDumpFormat;
-            _typeInfo              = Resources.TypeInfoFormat;
-            _value                 = Resources.ValueFormat;
+            CyclicalReference     = Resources.CyclicalReferenceDesignator;
+            Delegate              = Resources.DelegateDumpFormat;
+            Enum                  = Resources.EnumDumpFormat;
+            GenericParam          = Resources.GenericParamFormat;
+            IndexerIndexType      = Resources.IndexerIndexDumpFormat;
+            MemberInfoMemberType  = Resources.MemberInfoMemberTypeDumpFormat;
+            MethodInfo            = Resources.MethodInfoDumpFormat;
+            MethodParameter       = Resources.MethodParameterFormat;
+            DefaultPropertyLabel  = Resources.PropertyLabelFormat;
+            SequenceDumpTruncated = Resources.SequenceDumpTruncatedFormat;
+            SequenceType          = Resources.SequenceTypeFormat;
+            SequenceTypeName      = Resources.SequenceTypeNameFormat;
+            Type                  = Resources.TypeDumpFormat;
+            TypeInfo              = Resources.TypeInfoFormat;
+            Value                 = Resources.ValueFormat;
         }
 
         /// <summary>
@@ -57,67 +41,43 @@ namespace vm.Aspects.Diagnostics
         /// Parameters: 0 - type name, 1 - type namespace and 2 - assembly qualified name of the type.
         /// Default: &quot;{0} (see above)&quot;
         /// </summary>
-        public static string CyclicalReference
-        {
-            get { return _cyclicalReference; }
-            set { _cyclicalReference = value; }
-        }
+        public static string CyclicalReference { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for delegate objects.
         /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type, 3 - the name of the method and 4 - access modifier (e.g. 'static ').
         /// Default: &quot;{4}{0}.{3}&quot;
         /// </summary>
-        public static string Delegate
-        {
-            get { return _delegate; }
-            set { _delegate = value; }
-        }
+        public static string Delegate { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for enum values.
         /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type and 3 - the value.
         /// Default: &quot;{0}.{3}&quot;
         /// </summary>
-        public static string Enum
-        {
-            get { return _enum; }
-            set { _enum = value; }
-        }
+        public static string Enum { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for generic parameters.
         /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type
         /// Default: &quot;{0}&quot;
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification="Too late to fix - interface is published")]
-        public static string GenericParam
-        {
-            get { return _genericParam; }
-            set { _genericParam = value; }
-        }
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = "Too late to fix - interface is published")]
+        public static string GenericParam { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for the type of the indexers' indexes.
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type
         /// Default: &quot;{0}&quot;
         /// </summary>
-        public static string IndexerIndexType
-        {
-            get { return _indexerIndexType; }
-            set { _indexerIndexType = value; }
-        }
+        public static string IndexerIndexType { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for objects of type <seealso cref="System.Reflection.MemberInfo"/>.
         /// Parameters: 0 - value
         /// Default: &quot;{0}&quot;
         /// </summary>
-        public static string MemberInfoMemberType
-        {
-            get { return _memberInfoMemberType; }
-            set { _memberInfoMemberType = value; }
-        }
+        public static string MemberInfoMemberType { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format <see cref="MethodInfo"/>.
@@ -125,55 +85,35 @@ namespace vm.Aspects.Diagnostics
         /// 3 - declaring type name, 4 - declaring type namespace, 5 - assembly qualified name of the declaring type, 6 - method name.
         /// Default: &quot;{0} {3}.{6}&quot;
         /// </summary>
-        public static string MethodInfo
-        {
-            get { return _methodInfo; }
-            set { _methodInfo = value; }
-        }
+        public static string MethodInfo { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for method parameters.
         /// Parameters: 0 - parameter type name, 1 - parameter type namespace, 2 - assembly qualified name of the parameter type, 3 - parameter name.
         /// Default: &quot;{0} {3}&quot;
         /// </summary>
-        public static string MethodParameter
-        {
-            get { return _methodParameter; }
-            set { _methodParameter = value; }
-        }
+        public static string MethodParameter { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for a property dump label.
         /// Parameters: 0 - property name.
         /// Default: &quot;{0,-24} = &quot;
         /// </summary>
-        public static string DefaultPropertyLabel
-        {
-            get { return _defaultPropertyLabel; }
-            set { _defaultPropertyLabel = value; }
-        }
+        public static string DefaultPropertyLabel { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for the string designating that a sequence dump has been truncated.
         /// Parameters: 0 - the maximum number of dumped sequence elements.
         /// Default: &quot;... dumped the first {0} elements.&quot;
         /// </summary>
-        public static string SequenceDumpTruncated
-        {
-            get { return _sequenceDumpTruncated; }
-            set { _sequenceDumpTruncated = value; }
-        }
+        public static string SequenceDumpTruncated { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for the type of a sequence.
         /// Parameters: 0 - sequence type name, 1 - number of elements in the sequence.
         /// Default: &quot;{0}[{1}]: &quot;
         /// </summary>
-        public static string SequenceTypeName
-        {
-            get { return _sequenceTypeName; }
-            set { _sequenceTypeName = value; }
-        }
+        public static string SequenceTypeName { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for the type of a sequence. Note that by the time this format is used, the sequence type name, 
@@ -181,43 +121,49 @@ namespace vm.Aspects.Diagnostics
         /// Parameters: 0 - sequence type name, 1 - sequence type namespace, 2 - assembly qualified name of the sequence type, 
         /// Default: &quot;({2})&quot;
         /// </summary>
-        public static string SequenceType
-        {
-            get { return _sequenceType; }
-            set { _sequenceType = value; }
-        }
+        public static string SequenceType { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for a type.
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
         /// Default: &quot;{0} ({2}): &quot;
         /// </summary>
-        public static string Type
-        {
-            get { return _type; }
-            set { _type = value; }
-        }
+        public static string Type { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for dumped values of type <see cref="Type"/>.
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
         /// Default: &quot;{2}&quot;
         /// </summary>
-        public static string TypeInfo
-        {
-            get { return _typeInfo; }
-            set { _typeInfo = value; }
-        }
+        public static string TypeInfo { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for a value.
         /// Parameters: 0 - the value to be dumped.
         /// Default: &quot;{0}&quot;
         /// </summary>
-        public static string Value
+        public static string Value { get; set; }
+
+        [ContractInvariantMethod]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        static void ObjectInvariant()
         {
-            get { return _value; }
-            set { _value = value; }
+            Contract.Invariant(!string.IsNullOrWhiteSpace(CyclicalReference));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(Delegate));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(Enum));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(GenericParam));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(IndexerIndexType));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(MemberInfoMemberType));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(MethodInfo));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(MethodParameter));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(DefaultPropertyLabel));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceDumpTruncated));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceType));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceTypeName));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(Type));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(TypeInfo));
+            Contract.Invariant(!string.IsNullOrWhiteSpace(Value));
         }
+
     }
 }

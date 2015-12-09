@@ -128,7 +128,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </exception>
         public override bool Base64Encoded
         {
-            get { return false; }
+            get
+            {
+                Contract.Ensures(Contract.Result<bool>() == false);
+
+                return false;
+            }
             set
             {
                 if (value)
@@ -195,7 +200,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the encrypted stream <paramref name="encryptedStream"/> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
@@ -210,7 +215,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void ReserveSpaceForHash(
             Stream encryptedStream)
         {
@@ -237,7 +242,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> is <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override CryptoStream CreateEncryptingStream(
             Stream encryptedStream)
         {
@@ -258,8 +263,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> or <paramref name="cryptoStream" /> are <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void AfterWriteEncrypted(
             Stream encryptedStream,
             CryptoStream cryptoStream)
@@ -275,7 +280,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <param name="hash">The hash.</param>
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void WriteHashInReservedSpace(
             Stream encryptedStream,
             byte[] hash)
@@ -312,7 +317,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> is <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override CryptoStream CreateDecryptingStream(
             Stream encryptedStream)
         {
@@ -335,7 +340,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The input data does not represent a valid crypto package.
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeReadDecrypted(
             Stream encryptedStream)
         {
@@ -354,7 +359,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// The input data does not represent a valid crypto package: could not read the hash.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual void LoadHashToValidate(
             Stream encryptedStream)
         {
@@ -391,8 +396,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentException">Thrown when the <paramref name="encryptedStream" /> cannot be read.</exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Thrown when the original and the computed hashes do not match.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void AfterReadDecrypted(
             Stream encryptedStream,
             CryptoStream cryptoStream)
@@ -422,8 +427,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// cryptoStream
         /// </exception>
         /// <exception cref="System.ArgumentException">The encrypted stream cannot be written.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual byte[] FinalizeHashAfterWrite(
             Stream encryptedStream,
             CryptoStream cryptoStream)
@@ -459,8 +464,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// cryptoStream
         /// </exception>
         /// <exception cref="System.ArgumentException">The encrypted stream cannot be read.;encryptedStream</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected byte[] FinalizeHashAfterRead(
             Stream encryptedStream,
             CryptoStream cryptoStream)
@@ -469,6 +474,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument \"encryptedStream\" cannot be read from.");
             Contract.Requires<ArgumentNullException>(cryptoStream != null, "cryptoStream");
             Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument \"cryptoStream\" cannot be read from.");
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
             Contract.Assume(_hasher != null);
 
@@ -496,7 +502,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous encryption.</returns>
         /// <exception cref="System.ArgumentException">The encrypted stream must be seek-able.</exception>
         public override Task EncryptAsync(
-            Stream dataStream, 
+            Stream dataStream,
             Stream encryptedStream)
         {
             if (!encryptedStream.CanSeek)
@@ -515,7 +521,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous decryption.</returns>
         /// <exception cref="System.ArgumentException">The encrypted stream must be seek-able.</exception>
         public override Task DecryptAsync(
-            Stream encryptedStream, 
+            Stream encryptedStream,
             Stream dataStream)
         {
             if (!encryptedStream.CanSeek)
@@ -537,7 +543,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the encrypted stream <paramref name="encryptedStream"/> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
@@ -558,7 +564,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The input data does not represent a valid crypto package.
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
@@ -577,7 +583,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// The input data does not represent a valid crypto package: could not read the hash.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual async Task LoadHashToValidateAsync(
             Stream encryptedStream)
         {

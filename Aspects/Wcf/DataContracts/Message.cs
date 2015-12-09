@@ -28,6 +28,8 @@ namespace vm.Aspects.Wcf.DataContracts
             string ruleset = "",
             ValidationResults results = null)
         {
+            Contract.Ensures(Contract.Result<ValidationResults>() != null);
+            
             var validator = Facility.ValidatorFactory.CreateValidator(GetType(), ruleset);
 
             if (results == null)
@@ -78,6 +80,8 @@ namespace vm.Aspects.Wcf.DataContracts
         public IValidatable ConfirmValid(
             string ruleset = "")
         {
+            Contract.Ensures(Contract.Result<IValidatable>() != null);
+
             var results = Validate(ruleset);
 
             if (!results.IsValid)

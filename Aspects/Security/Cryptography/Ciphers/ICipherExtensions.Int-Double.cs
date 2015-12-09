@@ -40,7 +40,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToInt32(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 4)
+                throw new ArgumentException("The argument is not a valid encrypted Int32 value.");
+
+            return FromByteArray.ToInt32(decrypted);
         }
 
         /// <summary>
@@ -118,7 +123,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToUInt32(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 4)
+                throw new ArgumentException("The argument is not a valid encrypted UInt32 value.");
+
+            return FromByteArray.ToUInt32(decrypted);
         }
 
         /// <summary>
@@ -196,7 +206,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToInt64(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 8)
+                throw new ArgumentException("The argument is not a valid encrypted Int64 value.");
+
+            return FromByteArray.ToInt64(decrypted);
         }
 
         /// <summary>
@@ -274,7 +289,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToUInt64(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 8)
+                throw new ArgumentException("The argument is not a valid encrypted UInt64 value.");
+
+            return FromByteArray.ToUInt64(decrypted);
         }
 
         /// <summary>
@@ -352,7 +372,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToSingle(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 4)
+                throw new ArgumentException("The argument is not a valid encrypted Single value.");
+
+            return FromByteArray.ToSingle(decrypted);
         }
 
         /// <summary>
@@ -428,7 +453,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
 
-            return FromByteArray.ToDouble(cipher.Decrypt(encrypted));
+            var decrypted = cipher.Decrypt(encrypted);
+
+            if (decrypted.Length < 8)
+                throw new ArgumentException("The argument is not a valid encrypted Double value.");
+
+            return FromByteArray.ToDouble(decrypted);
         }
 
         /// <summary>
