@@ -625,6 +625,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public readonly static IReadOnlyDictionary<Type, Func<object, byte[]>> ConvertTypedData = new ReadOnlyDictionary<Type, Func<object, byte[]>>( new Dictionary<Type, Func<object, byte[]>>
         {
+            #region ConvertTypedData
             [typeof(bool)]       = d => Convert((bool)      d),
             [typeof(bool[])]     = d => Convert((bool[])    d),
             [typeof(char)]       = d => Convert((char)      d),
@@ -656,6 +657,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             [typeof(Guid)]       = d => Convert((Guid)      d),
             [typeof(Guid[])]     = d => Convert((Guid[])    d),
             [typeof(string)]     = d => Convert((string)    d),
+            #endregion
         });
 
         public static byte[] Convert(
@@ -682,17 +684,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public static byte[] ConvertNullable<T>(
             Nullable<T> data) where T : struct
         {
+            Contract.Ensures(Contract.Result<byte[]>() != null);
+
             if (!ConvertTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be converted.");
 
-            var hasValueArray = ToByteArray.Convert(data.HasValue);
-            var valueArray    = ToByteArray.Convert(data.GetValueOrDefault());
+            var hasValueArray = Convert(data.HasValue);
+            var valueArray    = Convert(data.GetValueOrDefault());
             var array         = new byte[hasValueArray.Length + valueArray.Length];
 
             Array.Copy(hasValueArray, array, hasValueArray.Length);
             Array.Copy(valueArray, 0, array, hasValueArray.Length, valueArray.Length);
 
-            return Convert(data, typeof(T));
+            return array;
         }
     }
 }

@@ -84,7 +84,7 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Gets the binding pattern.
         /// </summary>
-        public string MessagingPattern { get; private set; }
+        public string MessagingPattern { get; }
 
         /// <summary>
         /// Gets the container resolve name of the service.
@@ -147,11 +147,8 @@ namespace vm.Aspects.Wcf.Services
             : this(messagingPattern)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                           ||
-                identityType == ServiceIdentity.Dns  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Rsa  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Upn  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Spn  &&  !string.IsNullOrWhiteSpace(identity),
+                identityType == ServiceIdentity.None ||
+                identityType != ServiceIdentity.Certificate && !string.IsNullOrWhiteSpace(identity),
                 "Invalid combination of identity parameters.");
 
             _identityType = identityType;
@@ -174,10 +171,10 @@ namespace vm.Aspects.Wcf.Services
             : this(messagingPattern)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                               ||
-                identityType == ServiceIdentity.Certificate &&  certificate!=null  ||
-                identityType == ServiceIdentity.Dns         &&  certificate!=null  ||
-                identityType == ServiceIdentity.Rsa         &&  certificate!=null,
+                identityType == ServiceIdentity.None  ||
+                certificate!=null && (identityType == ServiceIdentity.Certificate ||
+                                      identityType == ServiceIdentity.Dns         ||
+                                      identityType == ServiceIdentity.Rsa),
                 "Invalid combination of identity parameters.");
 
             _identityType           = identityType;
@@ -466,13 +463,15 @@ namespace vm.Aspects.Wcf.Services
         }
         #endregion
 
-        //[ContractInvariantMethod]
-        //[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        //private void ObjectInvariant()
-        //{
-        //    Contract.Invariant(_identity != null || _identityType != ServiceIdentity.Certificate || _identifyingCertificate != null);
-        //    Contract.Invariant(_identity != null || _identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Rsa);
-        //    Contract.Invariant(_identity == null || _identityType == ServiceIdentity.Dns         || _identityType == ServiceIdentity.Rsa || _identityType == ServiceIdentity.Upn || _identityType == ServiceIdentity.Spn);
-        //}
+        [ContractInvariantMethod]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(
+                _identityType == ServiceIdentity.None  ||
+                (_identityType != ServiceIdentity.None  && _identityType != ServiceIdentity.Certificate) && !string.IsNullOrWhiteSpace(_identity)  ||
+                (_identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Dns || _identityType == ServiceIdentity.Rsa) && _identifyingCertificate!=null);
+        }
+
     }
 }

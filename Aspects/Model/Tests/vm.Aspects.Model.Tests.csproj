@@ -273,6 +273,7 @@
     <Compile Include="EFRepository\TestEFRepository.Registrar.cs" />
     <Compile Include="EFRepository\TestEFRepositoryConfiguration.cs" />
     <Compile Include="EFRepository\TestEntityConfigurations.cs" />
+    <Compile Include="EncryptedPartsTest.cs" />
     <Compile Include="EntityTests.cs" />
     <Compile Include="IdentityTester.cs" />
     <Compile Include="IOrmSpecificsTests.cs" />
@@ -297,6 +298,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Security\Cryptography\Ciphers\vm.Aspects.Security.Cryptography.Ciphers.csproj">
+      <Project>{65e08f3e-21ac-4bb0-a7a3-6eacbadae9dd}</Project>
+      <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\vm.Aspects.csproj">
       <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
       <Name>vm.Aspects</Name>

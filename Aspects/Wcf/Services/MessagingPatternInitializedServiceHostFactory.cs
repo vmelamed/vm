@@ -1,12 +1,12 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Services
@@ -143,11 +143,8 @@ namespace vm.Aspects.Wcf.Services
             : base(messagingPattern, identityType, identity)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                           ||
-                identityType == ServiceIdentity.Dns  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Rsa  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Upn  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Spn  &&  !string.IsNullOrWhiteSpace(identity),
+                identityType == ServiceIdentity.None  ||
+                identityType != ServiceIdentity.Certificate && !string.IsNullOrWhiteSpace(identity),
                 "Invalid combination of identity parameters.");
 
             InitializerResolveName = initializerResolveName;
@@ -171,9 +168,10 @@ namespace vm.Aspects.Wcf.Services
             : base(messagingPattern, identityType, certificate)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                               ||
-                identityType == ServiceIdentity.Certificate &&  certificate!=null  ||
-                identityType == ServiceIdentity.Rsa         &&  certificate!=null,
+                identityType == ServiceIdentity.None  ||
+                certificate!=null && (identityType == ServiceIdentity.Certificate ||
+                                      identityType == ServiceIdentity.Dns         ||
+                                      identityType == ServiceIdentity.Rsa),
                 "Invalid combination of identity parameters.");
 
             InitializerResolveName = initializerResolveName;

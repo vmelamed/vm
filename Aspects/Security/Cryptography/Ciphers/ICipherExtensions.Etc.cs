@@ -394,6 +394,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Nullable<T> data) where T : struct
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            Contract.Ensures(Contract.Result<byte[]>() != null);
 
             if (!EncryptTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be converted.", nameof(data));
@@ -407,6 +408,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public readonly static IReadOnlyDictionary<Type, Func<ICipher, object, byte[]>> EncryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, object, byte[]>>( new Dictionary<Type, Func<ICipher, object, byte[]>>
         {
+            #region EncryptTypedData
             [typeof(bool)]       = (c,d) => c.Encrypt((bool)      d),
             [typeof(bool[])]     = (c,d) => c.Encrypt((bool[])    d),
             [typeof(char)]       = (c,d) => c.Encrypt((char)      d),
@@ -453,7 +455,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             [typeof(double?)]    = (c,d) => c.EncryptNullable((double?)d),
             [typeof(decimal?)]   = (c,d) => c.EncryptNullable((decimal?)d),
             [typeof(DateTime?)]  = (c,d) => c.EncryptNullable((DateTime?)d),
-            [typeof(Guid?)]      = (c,d) => c.EncryptNullable((Guid?)d),
+            [typeof(Guid?)]      = (c,d) => c.EncryptNullable((Guid?)d), 
+            #endregion
         });
 
         /// <summary>
@@ -527,6 +530,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public readonly static IReadOnlyDictionary<Type, Func<ICipher, byte[], object>> DecryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, byte[], object>>( new Dictionary<Type, Func<ICipher, byte[], object>>
         {
+            #region DecryptTypedData
             [typeof(bool)]       = (c,d) => c.DecryptBoolean(d),
             [typeof(bool[])]     = (c,d) => c.DecryptBooleanArray(d),
             [typeof(char)]       = (c,d) => c.DecryptChar(d),
@@ -573,7 +577,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             [typeof(double?)]    = (c,d) => c.DecryptNullable<double>(d),
             [typeof(decimal?)]   = (c,d) => c.DecryptNullable<decimal>(d),
             [typeof(DateTime?)]  = (c,d) => c.DecryptNullable<DateTime>(d),
-            [typeof(Guid?)]      = (c,d) => c.DecryptNullable<Guid>(d),
+            [typeof(Guid?)]      = (c,d) => c.DecryptNullable<Guid>(d), 
+            #endregion
         });
 
         /// <summary>

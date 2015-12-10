@@ -141,6 +141,112 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.AreEqual(testText, textResult);
         }
+
+        [TestMethod]
+        public void RoundTripEncryptTypedStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            var testText = "test text";
+
+            var cryptoResult = target.Encrypt(testText, typeof(string));
+
+            Assert.IsNotNull(cryptoResult);
+            Assert.IsTrue(cryptoResult.Length > testText.Length * 2);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt(cryptoResult, typeof(string));
+
+            Assert.AreEqual(testText, textResult);
+        }
+
+        [TestMethod]
+        public void RoundTripEncryptTypedEmptyStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            var testText = string.Empty;
+
+            var cryptoResult = target.Encrypt(testText, typeof(string));
+
+            Assert.IsNotNull(cryptoResult);
+            Assert.IsTrue(cryptoResult.Length > testText.Length * 2);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt(cryptoResult, typeof(string));
+
+            Assert.AreEqual(testText, textResult);
+        }
+
+        [TestMethod]
+        public void RoundTripEncryptNullTypedStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            string testText = null;
+
+            var cryptoResult = target.Encrypt(testText, typeof(string));
+
+            Assert.IsNull(cryptoResult);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt(cryptoResult, typeof(string));
+
+            Assert.AreEqual(testText, textResult);
+        }
+
+        [TestMethod]
+        public void RoundTripEncryptGenericStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            var testText = "test text";
+
+            var cryptoResult = target.Encrypt<string>(testText);
+
+            Assert.IsNotNull(cryptoResult);
+            Assert.IsTrue(cryptoResult.Length > testText.Length * 2);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt<string>(cryptoResult);
+
+            Assert.AreEqual(testText, textResult);
+        }
+
+        [TestMethod]
+        public void RoundTripEncryptGenericEmptyStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            var testText = string.Empty;
+
+            var cryptoResult = target.Encrypt<string>(testText);
+
+            Assert.IsNotNull(cryptoResult);
+            Assert.IsTrue(cryptoResult.Length > testText.Length * 2);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt<string>(cryptoResult);
+
+            Assert.AreEqual(testText, textResult);
+        }
+
+        [TestMethod]
+        public void RoundTripEncryptNullGenericStringTest()
+        {
+            ICipherAsync target = GetCipher();
+            string testText = null;
+
+            var cryptoResult = target.Encrypt<string>(testText);
+
+            Assert.IsNull(cryptoResult);
+
+            target = GetCipher();
+
+            var textResult = target.Decrypt<string>(cryptoResult);
+
+            Assert.AreEqual(testText, textResult);
+        }
         #endregion
 
         #region Encrypt bool
@@ -159,6 +265,70 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             cryptoText = target.Encrypt(expected);
             actual = target.DecryptBoolean(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedBooleanRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = true;
+
+            var cryptoText = target.Encrypt(expected, typeof(bool));
+            var actual = target.Decrypt(cryptoText, typeof(bool));
+
+            Assert.AreEqual(expected, actual);
+
+            expected = false;
+
+            cryptoText = target.Encrypt(expected, typeof(bool));
+            actual = target.Decrypt(cryptoText, typeof(bool));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericBooleanRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = true;
+
+            var cryptoText = target.Encrypt<bool>(expected);
+            var actual = target.Decrypt<bool>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = false;
+
+            cryptoText = target.Encrypt<bool>(expected);
+            actual = target.Decrypt<bool>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableBooleanRoundTripTest()
+        {
+            var target = GetCipher();
+            bool? expected = true;
+
+            var cryptoText = target.Encrypt<bool?>(expected);
+            var actual = target.Decrypt<bool?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = false;
+
+            cryptoText = target.Encrypt<bool?>(expected);
+            actual = target.Decrypt<bool?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<bool?>(expected);
+            actual = target.Decrypt<bool?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -205,10 +375,53 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void EncryptCharRoundTripTest()
         {
             var target = GetCipher();
-            var expected = 'Ю';
+            var expected = 'Й';
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptChar(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedCharRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = 'ь';
+
+            var cryptoText = target.Encrypt(expected, typeof(char));
+            var actual = (char)target.Decrypt(cryptoText, typeof(char));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericCharRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = 'Ю';
+
+            var cryptoText = target.Encrypt<char>(expected);
+            var actual = target.Decrypt<char>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableCharRoundTripTest()
+        {
+            var target = GetCipher();
+            char? expected = 'я';
+
+            var cryptoText = target.Encrypt<char?>(expected);
+            char? actual = target.Decrypt<char?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<char?>(expected);
+            actual = target.Decrypt<char?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -264,6 +477,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void EncryptTypedSByteRoundTripTest()
+        {
+            var target = GetCipher();
+            sbyte expected = -3;
+
+            var cryptoText = target.Encrypt(expected, typeof(sbyte));
+            var actual = (sbyte)target.Decrypt(cryptoText, typeof(sbyte));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericSByteRoundTripTest()
+        {
+            var target = GetCipher();
+            sbyte expected = -3;
+
+            var cryptoText = target.Encrypt<sbyte>(expected);
+            var actual = target.Decrypt<sbyte>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableSByteRoundTripTest()
+        {
+            var target = GetCipher();
+            sbyte? expected = -3;
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.Decrypt<sbyte?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt(expected);
+            actual = target.Decrypt<sbyte?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void EncryptEmptySByteArrayRoundTripTest()
         {
             var target = GetCipher();
@@ -305,10 +561,53 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void EncryptByteRoundTripTest()
         {
             var target = GetCipher();
-            sbyte expected = -3;
+            byte expected = 250;
 
             var cryptoText = target.Encrypt(expected);
-            var actual = target.DecryptSByte(cryptoText);
+            var actual = target.DecryptByte(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedByteRoundTripTest()
+        {
+            var target = GetCipher();
+            byte expected = 250;
+
+            var cryptoText = target.Encrypt(expected, typeof(byte));
+            var actual = (byte)target.Decrypt(cryptoText, typeof(byte));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericByteRoundTripTest()
+        {
+            var target = GetCipher();
+            byte expected = 250;
+
+            var cryptoText = target.Encrypt<byte>(expected);
+            var actual = target.Decrypt<byte>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableByteRoundTripTest()
+        {
+            var target = GetCipher();
+            byte? expected = 250;
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.Decrypt<byte?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt(expected);
+            actual = target.Decrypt<byte?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -323,6 +622,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptInt16(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            short expected = -3;
+
+            var cryptoText = target.Encrypt(expected, typeof(short));
+            var actual = (short)target.Decrypt(cryptoText, typeof(short));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            short expected = -3;
+
+            var cryptoText = target.Encrypt<short>(expected);
+            var actual = target.Decrypt<short>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            short? expected = -3;
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.Decrypt<short?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt(expected);
+            actual = target.Decrypt<short?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -378,6 +720,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void EncryptTypedUInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            ushort expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(ushort));
+            var actual = (ushort)target.Decrypt(cryptoText, typeof(ushort));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericUInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            ushort expected = 3;
+
+            var cryptoText = target.Encrypt<ushort>(expected);
+            var actual = target.Decrypt<ushort>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableUInt16RoundTripTest()
+        {
+            var target = GetCipher();
+            ushort? expected = 3;
+
+            var cryptoText = target.Encrypt<ushort?>(expected);
+            var actual = target.Decrypt<ushort?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<ushort?>(expected);
+            actual = target.Decrypt<ushort?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void EncryptEmptyUInt16ArrayRoundTripTest()
         {
             var target = GetCipher();
@@ -423,6 +808,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptInt32(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            int expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(int));
+            var actual = (int)target.Decrypt(cryptoText, typeof(int));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            int expected = 3;
+
+            var cryptoText = target.Encrypt<int>(expected);
+            var actual = target.Decrypt<int>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            int? expected = 3;
+
+            var cryptoText = target.Encrypt<int?>(expected);
+            var actual = target.Decrypt<int?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<int?>(expected);
+            actual = target.Decrypt<int?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -478,6 +906,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void EncryptTypedUInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            uint expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(uint));
+            var actual = (uint)target.Decrypt(cryptoText, typeof(uint));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericUInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            uint expected = 3;
+
+            var cryptoText = target.Encrypt<uint>(expected);
+            var actual = target.Decrypt<uint>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableUInt32RoundTripTest()
+        {
+            var target = GetCipher();
+            uint? expected = 3;
+
+            var cryptoText = target.Encrypt<uint?>(expected);
+            var actual = target.Decrypt<uint?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<uint?>(expected);
+            actual = target.Decrypt<uint?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void EncryptEmptyUUInt32ArrayRoundTripTest()
         {
             var target = GetCipher();
@@ -523,6 +994,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptInt64(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            long expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(long));
+            var actual = (long)target.Decrypt(cryptoText, typeof(long));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            long expected = 3;
+
+            var cryptoText = target.Encrypt<long>(expected);
+            var actual = target.Decrypt<long>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            long? expected = 3;
+
+            var cryptoText = target.Encrypt<long?>(expected);
+            var actual = target.Decrypt<long?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<long?>(expected);
+            actual = target.Decrypt<long?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -578,6 +1092,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void EncryptTypedUInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            ulong expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(ulong));
+            var actual = (ulong)target.Decrypt(cryptoText, typeof(ulong));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericUInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            ulong expected = 3;
+
+            var cryptoText = target.Encrypt<ulong>(expected);
+            var actual = target.Decrypt<ulong>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableUInt64RoundTripTest()
+        {
+            var target = GetCipher();
+            ulong? expected = 3;
+
+            var cryptoText = target.Encrypt<ulong?>(expected);
+            var actual = target.Decrypt<ulong?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<ulong?>(expected);
+            actual = target.Decrypt<ulong?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void EncryptEmptyUInt64ArrayRoundTripTest()
         {
             var target = GetCipher();
@@ -628,6 +1185,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void EncryptTypedDecimalRoundTripTest()
+        {
+            var target = GetCipher();
+            decimal expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(decimal));
+            var actual = (decimal)target.Decrypt(cryptoText, typeof(decimal));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericDecimalRoundTripTest()
+        {
+            var target = GetCipher();
+            decimal expected = 3;
+
+            var cryptoText = target.Encrypt<decimal>(expected);
+            var actual = target.Decrypt<decimal>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableDecimalRoundTripTest()
+        {
+            var target = GetCipher();
+            decimal? expected = 3;
+
+            var cryptoText = target.Encrypt<decimal?>(expected);
+            var actual = target.Decrypt<decimal?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = 3;
+
+            cryptoText = target.Encrypt<decimal?>(expected);
+            actual = target.Decrypt<decimal?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void EncryptEmptyDecimalArrayRoundTripTest()
         {
             var target = GetCipher();
@@ -669,10 +1269,53 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void EncryptSingleRoundTripTest()
         {
             var target = GetCipher();
-            Single expected = 3;
+            float expected = 3;
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptSingle(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedSingleRoundTripTest()
+        {
+            var target = GetCipher();
+            float expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(float));
+            var actual = (float)target.Decrypt(cryptoText, typeof(float));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericSingleRoundTripTest()
+        {
+            var target = GetCipher();
+            float expected = 3;
+
+            var cryptoText = target.Encrypt<float>(expected);
+            var actual = target.Decrypt<float>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableSingleRoundTripTest()
+        {
+            var target = GetCipher();
+            float? expected = 3;
+
+            var cryptoText = target.Encrypt<float?>(expected);
+            var actual = target.Decrypt<float?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<float?>(expected);
+            actual = target.Decrypt<float?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -719,10 +1362,53 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void EncryptDoubleRoundTripTest()
         {
             var target = GetCipher();
-            Double expected = 3;
+            double expected = 3;
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptDouble(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedDoubleRoundTripTest()
+        {
+            var target = GetCipher();
+            double expected = 3;
+
+            var cryptoText = target.Encrypt(expected, typeof(double));
+            var actual = (double)target.Decrypt(cryptoText, typeof(double));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericDoubleRoundTripTest()
+        {
+            var target = GetCipher();
+            double expected = 3;
+
+            var cryptoText = target.Encrypt<double>(expected);
+            var actual = target.Decrypt<double>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableDoubleRoundTripTest()
+        {
+            var target = GetCipher();
+            double? expected = 3;
+
+            var cryptoText = target.Encrypt<double?>(expected);
+            var actual = target.Decrypt<double?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<double?>(expected);
+            actual = target.Decrypt<double?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -764,7 +1450,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
         #endregion
 
-        #region Encrypt Guid
+        #region Encrypt DateTime
         [TestMethod]
         public void EncryptDateTimeRoundTripTest()
         {
@@ -773,6 +1459,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptDateTime(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedDateTimeRoundTripTest()
+        {
+            var target = GetCipher();
+            DateTime expected = new DateTime(3);
+
+            var cryptoText = target.Encrypt(expected, typeof(DateTime));
+            var actual = (DateTime)target.Decrypt(cryptoText, typeof(DateTime));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericDateTimeRoundTripTest()
+        {
+            var target = GetCipher();
+            DateTime expected = new DateTime(3);
+
+            var cryptoText = target.Encrypt<DateTime>(expected);
+            var actual = target.Decrypt<DateTime>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableDateTimeRoundTripTest()
+        {
+            var target = GetCipher();
+            DateTime? expected = new DateTime(3);
+
+            var cryptoText = target.Encrypt<DateTime?>(expected);
+            var actual = target.Decrypt<DateTime?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<DateTime?>(expected);
+            actual = target.Decrypt<DateTime?>(cryptoText);
 
             Assert.AreEqual(expected, actual);
         }
@@ -809,6 +1538,99 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var cryptoText = target.Encrypt(expected);
             var actual = target.DecryptDateTimeArray(cryptoText);
+
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+        #endregion
+
+        #region Encrypt Guid
+        [TestMethod]
+        public void EncryptGuidRoundTripTest()
+        {
+            var target = GetCipher();
+            Guid expected = Guid.NewGuid();
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.DecryptGuid(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptTypedGuidRoundTripTest()
+        {
+            var target = GetCipher();
+            Guid expected = Guid.NewGuid();
+
+            var cryptoText = target.Encrypt(expected, typeof(Guid));
+            var actual = (Guid)target.Decrypt(cryptoText, typeof(Guid));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptGenericGuidRoundTripTest()
+        {
+            var target = GetCipher();
+            Guid expected = Guid.NewGuid();
+
+            var cryptoText = target.Encrypt<Guid>(expected);
+            var actual = target.Decrypt<Guid>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptNullableGuidRoundTripTest()
+        {
+            var target = GetCipher();
+            Guid? expected = Guid.NewGuid();
+
+            var cryptoText = target.Encrypt<Guid?>(expected);
+            var actual = target.Decrypt<Guid?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+
+            expected = null;
+
+            cryptoText = target.Encrypt<Guid?>(expected);
+            actual = target.Decrypt<Guid?>(cryptoText);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EncryptEmptyGuidArrayRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = new Guid[0];
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.DecryptGuidArray(cryptoText);
+
+            Assert.IsTrue(expected.SequenceEqual(actual));
+        }
+
+        [TestMethod]
+        public void EncryptNullGuidArrayRoundTripTest()
+        {
+            var target = GetCipher();
+            Guid[] expected = null;
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.DecryptGuidArray(cryptoText);
+
+            Assert.IsNull(actual);
+        }
+
+        [TestMethod]
+        public void EncryptGuidArrayRoundTripTest()
+        {
+            var target = GetCipher();
+            var expected = new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), Guid.NewGuid(), };
+
+            var cryptoText = target.Encrypt(expected);
+            var actual = target.DecryptGuidArray(cryptoText);
 
             Assert.IsTrue(expected.SequenceEqual(actual));
         }

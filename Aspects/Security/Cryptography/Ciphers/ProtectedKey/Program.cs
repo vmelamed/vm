@@ -182,12 +182,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static byte[] ParseHexValue(string argument)
         {
-            Contract.Requires<ArgumentException>(argument == null || argument.Length % 2 == 0, "The argument \"argument\" can be null, empty or must be at least two characters long.");
+            Contract.Requires<ArgumentException>(argument == null || argument.Length % 2 == 0, "The argument \"argument\" can be null, or it must be even number of characters long.");
 
             if (argument == null)
                 return null;
 
-            var hexValue = new byte[(argument.Length+1)/2];
+            var hexValue = new byte[argument.Length/2];
 
             for (var i = 0; i<argument.Length; i += 2)
                 hexValue[i/2] = byte.Parse(argument.Substring(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
