@@ -18,7 +18,7 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            In 1.8.0 added sets of ICipher extension overrides for data of the primitive and some basic types and arrays of the same:
+            In 1.9.2 added sets of ICipher extension overrides for data of the primitive and some basic types and arrays of the same:
             Boolean, Char, String Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal, DateTime and Guid.
             In this release added typed version of the same:
 
