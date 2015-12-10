@@ -386,7 +386,6 @@
       <Link>vm.snk</Link>
     </None>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\..\..\..\Common Items\Dictionary.xml">
