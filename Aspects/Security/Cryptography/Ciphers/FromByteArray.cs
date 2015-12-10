@@ -528,7 +528,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
+#if NET45
         public readonly static IReadOnlyDictionary<Type, Func<byte[], object>> ToTypedData = new ReadOnlyDictionary<Type, Func<byte[], object>>( new Dictionary<Type, Func<byte[], object>>
+#elif NET40
+        public readonly static IDictionary<Type, Func<byte[], object>> ToTypedData = (new Dictionary<Type, Func<byte[], object>>
+#endif
         {
             [typeof(bool)]       = d => ToBoolean(d),
             [typeof(bool[])]     = d => ToBooleanArray(d),

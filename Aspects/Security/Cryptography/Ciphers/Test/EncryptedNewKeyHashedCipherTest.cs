@@ -64,7 +64,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET40
+#if NET45
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()

@@ -17,6 +17,8 @@ msbuild ProtectedKey\ProtectedKey.csproj /t:Rebuild /p:Configuration=Release /p:
 if errorlevel 1 goto exit
 NuGet Pack NuGet\Ciphers.nuspec -Prop Configuration=Release
 if errorlevel 1 goto exit
+@echo Press any key to push to NuGet... > con:
+@pause > nul:
 NuGet Push *.nupkg
 :exit
 del *.nupkg

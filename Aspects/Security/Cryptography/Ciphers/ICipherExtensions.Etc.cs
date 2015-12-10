@@ -406,7 +406,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+#if NET45
         public readonly static IReadOnlyDictionary<Type, Func<ICipher, object, byte[]>> EncryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, object, byte[]>>( new Dictionary<Type, Func<ICipher, object, byte[]>>
+#elif NET40
+        public readonly static IDictionary<Type, Func<ICipher, object, byte[]>> EncryptTypedData = (new Dictionary<Type, Func<ICipher, object, byte[]>>
+#endif
         {
             #region EncryptTypedData
             [typeof(bool)]       = (c,d) => c.Encrypt((bool)      d),
@@ -527,8 +531,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+#if NET45
         public readonly static IReadOnlyDictionary<Type, Func<ICipher, byte[], object>> DecryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, byte[], object>>( new Dictionary<Type, Func<ICipher, byte[], object>>
+#elif NET40
+        public readonly static IDictionary<Type, Func<ICipher, byte[], object>> DecryptTypedData = (new Dictionary<Type, Func<ICipher, byte[], object>>
+#endif
         {
             #region DecryptTypedData
             [typeof(bool)]       = (c,d) => c.DecryptBoolean(d),
@@ -578,7 +586,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             [typeof(decimal?)]   = (c,d) => c.DecryptNullable<decimal>(d),
             [typeof(DateTime?)]  = (c,d) => c.DecryptNullable<DateTime>(d),
             [typeof(Guid?)]      = (c,d) => c.DecryptNullable<Guid>(d), 
-            #endregion
+#endregion
         });
 
         /// <summary>

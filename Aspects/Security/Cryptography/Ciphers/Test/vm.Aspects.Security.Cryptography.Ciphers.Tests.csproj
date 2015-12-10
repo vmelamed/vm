@@ -131,7 +131,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET45;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40;TEST</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>

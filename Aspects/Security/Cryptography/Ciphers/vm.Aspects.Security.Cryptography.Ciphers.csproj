@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
     <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
@@ -134,7 +134,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;NET45;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;NET40;TEST</DefineConstants>
     <DocumentationFile>bin\DebugUnitTest\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
