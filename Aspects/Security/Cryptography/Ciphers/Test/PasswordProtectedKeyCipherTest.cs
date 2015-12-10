@@ -60,7 +60,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
@@ -84,8 +83,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 target.ImportSymmetricKey(new byte[17]);
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
-        } 
-#endif
+        }
         #endregion
 
         #region IsDisposed tests
@@ -104,7 +102,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -115,8 +112,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             PasswordProtectedKeyCipher collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
-#endif
+        }
         #endregion
 
         SecureString CreateSecureString(string password)
@@ -168,7 +164,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.BeforeReadDecrypted(encryptedStream);
             }
 
-#if NET45
             public Task PublicBeforeWriteEncryptedAsync(
                     Stream encryptedStream)
             {
@@ -179,8 +174,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Stream encryptedStream)
             {
                 return base.BeforeReadDecryptedAsync(encryptedStream);
-            } 
-#endif
+            }
 
             public byte[] PublicEncryptSymmetricKey()
             {
@@ -212,7 +206,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.PublicBeforeReadDecrypted(TestUtilities.CreateNonReadableStream());
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void EncryptSymmetricKeyTest()
@@ -268,7 +261,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.PublicBeforeReadDecryptedAsync(TestUtilities.CreateNonReadableStream()).Wait();
             });
-        } 
-#endif
+        }
     }
 }

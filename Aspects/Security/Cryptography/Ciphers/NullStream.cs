@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Diagnostics.Contracts;
-#if NET45
-using System.Threading.Tasks;
+using System.IO;
 using System.Threading;
-#endif
+using System.Threading.Tasks;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -117,7 +115,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously reads a sequence of bytes from the current stream, advances the position within the stream by the number of bytes read, and monitors cancellation requests.
         /// </summary>
@@ -166,7 +163,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             return Task.FromResult<object>(null);
         }
-#endif
 
         /// <summary>
         /// When overridden in a derived class, sets the position within the current stream.

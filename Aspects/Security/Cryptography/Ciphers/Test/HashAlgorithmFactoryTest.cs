@@ -1,15 +1,12 @@
-﻿#if NET45
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Threading;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
-#if NET45
     /// <summary>
     /// Summary description for HasherBadNameTest
     /// </summary>
@@ -22,7 +19,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         ///</summary>
         public TestContext TestContext { get; set; }
 
-    #region Additional test attributes
+        #region Additional test attributes
         static UnityServiceLocator _unityServiceLocator;
 
         public static void InitializeHashNameTest(string name)
@@ -52,7 +49,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
         #endregion
 
-    #region IsDisposed tests
+        #region IsDisposed tests
         [TestMethod]
         public void IsDisposedTest()
         {
@@ -111,7 +108,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             HashAlgorithmFactory collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
+        }
         #endregion
 
         [TestMethod]
@@ -172,7 +169,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
                 CleanupTest();
             }
-        } 
+        }
 
         [TestMethod]
         public void InitializedWithAlgorithmFromDITest()
@@ -381,7 +378,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
                 CleanupTest();
             }
-        }  
+        }
     }
-#endif
 }

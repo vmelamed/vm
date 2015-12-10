@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.ServiceLocation;
-#endif
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -23,40 +21,32 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public TestContext TestContext { get; set; }
 
         #region Additional test attributes
-#if NET45
         static UnityServiceLocator _unityServiceLocator;
-#endif
 
         public static void InitializeSymmetricNameTest(string name)
         {
-#if NET45
             ServiceLocatorWrapper.Reset();
             _unityServiceLocator = new UnityServiceLocator(
                         new UnityContainer()
                             .RegisterInstance<string>(Algorithms.Symmetric.ResolveName, name));
             ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
-#endif
         }
 
         public static void InitializeSymmetricAlgorithmTest()
         {
-#if NET45
             ServiceLocatorWrapper.Reset();
             _unityServiceLocator = new UnityServiceLocator(
                         new UnityContainer()
                             .RegisterType<SymmetricAlgorithm, Rijndael>());
             ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
-#endif
         }
 
         public static void CleanupTest()
         {
-#if NET45
             ServiceLocator.SetLocatorProvider(null);
             if (_unityServiceLocator != null)
                 _unityServiceLocator.Dispose();
             ServiceLocatorWrapper.Reset();
-#endif
         }
         #endregion
 
@@ -150,7 +140,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void InitializedWithAlgorithmFromDITest()
         {
             try
@@ -176,8 +166,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 CleanupTest();
             }
         }
-
-#if NET45
 
         [TestMethod]
         [TestCategory("SlowTest")]
@@ -348,7 +336,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 CleanupTest();
             }
         }
-#endif
 
         [TestMethod]
         public void InitializedWithEmptyNameFromDITest()
@@ -376,7 +363,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ActivationException))]
         public void InitializedWithBadNameFromDISymmetricTest()
@@ -393,7 +379,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
                 CleanupTest();
             }
-        } 
-#endif
+        }
     }
 }

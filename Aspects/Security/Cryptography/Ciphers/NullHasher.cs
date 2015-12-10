@@ -9,7 +9,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// The class NullHasher is a development and test-friendly convenience class which implements trivially the <see cref="IHasherAsync"/> interface:
     /// generates an empty array for hash and always verifies the hash to be correct.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="N/A")]
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
     public class NullHasher : IHasherAsync
     {
         #region IHasher Members
@@ -89,7 +89,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public int SaltLength { get; set; }
         #endregion
 
-#if NET45
         #region IHasherAsync implementation
         /// <summary>
         /// hash as an asynchronous operation.
@@ -130,14 +129,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return await Task.FromResult(true);
         }
         #endregion
-#endif
 
         #region IDisposable Members
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="N/A")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
         public void Dispose()
         {
             GC.SuppressFinalize(this);

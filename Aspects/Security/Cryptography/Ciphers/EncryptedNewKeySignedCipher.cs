@@ -36,7 +36,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </para>
     /// </remarks>
     /// </summary>
-    [SuppressMessage("Microsoft.Maintainability", "CA1501:AvoidExcessiveInheritance", Justification="Makes sense.")]
+    [SuppressMessage("Microsoft.Maintainability", "CA1501:AvoidExcessiveInheritance", Justification = "Makes sense.")]
     public class EncryptedNewKeySignedCipher : EncryptedNewKeyHashedCipher
     {
         #region Fields
@@ -95,7 +95,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string symmetricAlgorithmName = null,
             string hashAlgorithmName = null)
             : base(exchangeCertificate, symmetricAlgorithmName, !string.IsNullOrWhiteSpace(hashAlgorithmName)
-                                                                    ? hashAlgorithmName 
+                                                                    ? hashAlgorithmName
                                                                     : signCertificate.HashAlgorithm())
         {
             if (signCertificate == null)
@@ -120,7 +120,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void ReserveSpaceForHash(
             Stream encryptedStream)
         {
@@ -138,7 +138,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <param name="hash">The hash.</param>
         /// <exception cref="System.ArgumentNullException">encryptedStream</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void WriteHashInReservedSpace(
             Stream encryptedStream,
             byte[] hash)
@@ -173,7 +173,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// The input data does not represent a valid crypto package: could not read the signature.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void LoadHashToValidate(
             Stream encryptedStream)
         {
@@ -200,8 +200,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="cryptoStream">The crypto stream.</param>
         /// <exception cref="System.Security.Cryptography.CryptographicException">Invalid signature.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void AfterReadDecrypted(
             Stream encryptedStream,
             CryptoStream cryptoStream)
@@ -222,7 +222,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region Overrides of the async primitives
         /// <summary>
         /// Loads asynchronously the signature to validate.
@@ -234,7 +233,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// The input data does not represent a valid crypto package: could not read the signature.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task LoadHashToValidateAsync(
             Stream encryptedStream)
         {
@@ -252,7 +251,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", "encryptedStream");
         }
         #endregion
-#endif
 
         #region IDisposable Members
         /// <summary>

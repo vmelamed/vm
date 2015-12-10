@@ -2,9 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -91,7 +89,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override void ImportSymmetricKey(
             byte[] key)
         {
@@ -107,13 +105,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             throw new NotImplementedException();
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously imports the symmetric key as a clear text.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override Task ImportSymmetricKeyAsync(
             byte[] key)
         {
@@ -128,7 +125,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             throw new NotImplementedException();
         }
-#endif
         #endregion
 
         #region Initialization of the symmetric key overrides
@@ -154,7 +150,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> is <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
@@ -181,7 +177,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </list>
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void BeforeReadDecrypted(Stream encryptedStream)
         {
             // read the length of the key and allocate an array for it
@@ -204,7 +200,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         /// <summary>
         /// Initializes asynchronously the symmetric key by either reading it from the storage with the specified key location name or by
         /// generating a new key and saving it in it.
@@ -229,7 +224,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> is <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
@@ -256,7 +251,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </list>
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
@@ -279,6 +274,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             await base.BeforeReadDecryptedAsync(encryptedStream);
         }
         #endregion
-#endif
     }
 }

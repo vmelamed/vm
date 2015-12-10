@@ -4,9 +4,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -141,7 +139,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the hash has an invalid size.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         public virtual bool TryVerifyHash(
             Stream dataStream,
             byte[] hash)
@@ -161,10 +159,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     else
                         // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
                         if (hash.Length > hashAlgorithm.HashSize/8)
-                            SaltLength = hash.Length - hashAlgorithm.HashSize/8;
-                        else
-                            // this is wrong...
-                            return false;
+                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    else
+                        // this is wrong...
+                        return false;
 
                     using (var hashStream = CreateHashStream(hashAlgorithm))
                     {
@@ -215,7 +213,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the hash is invalid.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         public virtual bool TryVerifyHash(
             byte[] data,
             byte[] hash)
@@ -235,10 +233,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     else
                         // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
                         if (hash.Length > hashAlgorithm.HashSize/8)
-                            SaltLength = hash.Length - hashAlgorithm.HashSize/8;
-                        else
-                            // this is wrong...
-                            return false;
+                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    else
+                        // this is wrong...
+                        return false;
 
                     using (var hashStream = CreateHashStream(hashAlgorithm))
                     {
@@ -258,7 +256,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region IhasherAsync members
         /// <summary>
         /// Computes the hash of a <paramref name="dataStream" /> stream.
@@ -314,10 +311,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     else
                         // the hash has the same length as the length of the key + the length of the salt - there is salt in the parameter salt
                         if (hash.Length > hashAlgorithm.HashSize/8)
-                            SaltLength = hash.Length - hashAlgorithm.HashSize/8;
-                        else
-                            // this is wrong...
-                            return false;
+                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    else
+                        // this is wrong...
+                        return false;
 
                     using (var hashStream = CreateHashStream(hashAlgorithm))
                     {
@@ -336,14 +333,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
         }
         #endregion
-#endif
 
         #region Primitives called by the GoF method templates.
         /// <summary>
         /// Creates the crypto stream.
         /// </summary>
         /// <returns>CryptoStream.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="It will be disposed by the calling code.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "It will be disposed by the calling code.")]
         protected virtual CryptoStream CreateHashStream(
             HashAlgorithm hashAlgorithm)
         {
@@ -358,7 +354,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hashStream">The hash stream.</param>
         /// <param name="salt">The salt.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hashStream"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual byte[] WriteSalt(
             CryptoStream hashStream,
             byte[] salt)
@@ -387,9 +383,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="salt">The salt.</param>
         /// <returns>The hash.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hashStream" /> is <see langword="null" />.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="2", Justification="salt is conditionally validated.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "2", Justification = "salt is conditionally validated.")]
         protected virtual byte[] FinalizeHashing(
             CryptoStream hashStream,
             HashAlgorithm hashAlgorithm,
@@ -414,7 +410,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region Async primitives called by the GoF method templates.
         /// <summary>
         /// Writes the salt (if any) into the crypto stream.
@@ -422,7 +417,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="hashStream">The hash stream.</param>
         /// <param name="salt">The salt.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hashStream"/> is <see langword="null"/>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected virtual async Task<byte[]> WriteSaltAsync(
             CryptoStream hashStream,
             byte[] salt)
@@ -443,7 +438,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return salt;
         }
         #endregion
-#endif
 
         #region IDisposable pattern implementation
         /// <summary>
@@ -456,15 +450,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </remarks>
         int _disposed;
 
-#if NET40
-        /// <summary>
-        /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get { return _disposed != 0; }
-        }
-#else
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
@@ -472,12 +457,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get { return Volatile.Read(ref _disposed) != 0; }
         }
-#endif
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(true)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

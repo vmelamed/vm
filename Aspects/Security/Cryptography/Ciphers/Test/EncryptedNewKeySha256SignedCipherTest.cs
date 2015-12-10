@@ -75,7 +75,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
@@ -99,8 +98,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 target.ImportSymmetricKey(new byte[17]);
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
-        } 
-#endif
+        }
         #endregion
 
         #region IsDisposed tests
@@ -119,7 +117,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -130,8 +127,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             EncryptedNewKeySignedCipher collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
-#endif
+        }
         #endregion
     }
 }

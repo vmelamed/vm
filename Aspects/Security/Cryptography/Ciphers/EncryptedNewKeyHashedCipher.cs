@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -491,7 +489,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         /// <summary>
         /// Asynchronously reads the clear text from the <paramref name="dataStream" />, encrypts it and writes the result into the
         /// <paramref name="encryptedStream" /> stream. This is the reverse method of <see cref="M:DecryptAsync(System.Stream, System.Stream)" />.
@@ -610,7 +607,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                             : storedHash;
         }
         #endregion
-#endif
 
         #region IDisposable Members
 

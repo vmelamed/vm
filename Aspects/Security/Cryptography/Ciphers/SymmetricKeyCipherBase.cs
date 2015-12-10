@@ -131,7 +131,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Imports the symmetric key as a clear text.
         /// </summary>
         /// <param name="key">The key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual void ImportSymmetricKey(
             byte[] key)
         {
@@ -152,7 +152,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return Symmetric.Key;
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously imports the symmetric key as a clear text.
         /// </summary>
@@ -160,7 +159,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>
         /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual async Task ImportSymmetricKeyAsync(
             byte[] key)
         {
@@ -180,7 +179,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             await InitializeSymmetricKeyAsync();
             return Symmetric.Key;
         }
-#endif
         #endregion
 
         #region Initialization of the symmetric key
@@ -206,7 +204,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IsSymmetricKeyInitialized = true;
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously initializes the symmetric key for encryption.
         /// </summary>
@@ -229,7 +226,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             IsSymmetricKeyInitialized = true;
         }
-#endif
 
         /// <summary>
         /// Encrypts the symmetric key in preparation to put it in the crypto-package.
@@ -260,15 +256,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </remarks>
         int _disposed;
 
-#if NET40
-        /// <summary>
-        /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get { return _disposed != 0; }
-        }
-#else
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
@@ -276,13 +263,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get { return Volatile.Read(ref _disposed) != 0; }
         }
-#endif
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(true)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             Contract.Ensures(_disposed!=0, "The object was not disposed successfully.");

@@ -53,7 +53,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override void ImportSymmetricKey(
             byte[] key)
         {
@@ -69,13 +69,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             throw new NotImplementedException();
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously imports the symmetric key as a clear text.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <exception cref="NotImplementedException">Always thrown.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override Task ImportSymmetricKeyAsync(
             byte[] key)
         {
@@ -90,7 +89,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         {
             throw new NotImplementedException();
         }
-#endif
         #endregion
 
         #region Overrides of the crypto-operations called by the GoF template-method

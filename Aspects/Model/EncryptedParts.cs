@@ -97,10 +97,10 @@ namespace vm.Aspects.Model
                                   .All(mi =>
                                   {
                                       var pi = mi as PropertyInfo;
+                                      var pType = pi != null ? pi.PropertyType : ((FieldInfo)mi).FieldType;
 
-                                      return ICipherExtensions.DecryptTypedData.ContainsKey(pi != null
-                                                                                                ? pi.PropertyType
-                                                                                                : ((FieldInfo)mi).FieldType);
+                                      return pType.IsSerializable  &&
+                                             ICipherExtensions.DecryptTypedData.ContainsKey(pType);
                                   }))
                 throw new InvalidOperationException("The properties marked with DecryptedAttribute must be encryptable: must be of any of the following types: "+
                                                     "bool, char, byte, sbyte, short, ushort, int, uint, long, ulong, decimal, float, double, DateTime, Guid, "+

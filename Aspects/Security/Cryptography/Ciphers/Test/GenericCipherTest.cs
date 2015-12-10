@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -563,7 +561,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         async Task StreamParameterizedAsyncEncryptTest(int length)
         {
             using (var target = GetCipher())
@@ -609,8 +606,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 }
             }
         }
-#endif
-
 
         void RoundTripParameterizedEncryptTest(int length)
         {
@@ -699,7 +694,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         async Task RoundTripParameterizedAsyncEncryptTest(int length)
         {
             byte[] clearData = new byte[length].FillRandom();
@@ -785,7 +779,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     Assert.IsTrue(clearData.SequenceEqual(decryptedData));
             }
         }
-#endif
 
         // --------------------------------------
 
@@ -927,7 +920,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         // --------------------------------------
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void StreamNullInputAsyncEncryptTest()
@@ -1242,6 +1234,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             RoundTripParameterizedAsyncEncryptTest64(3*4096+734).Wait();
         }
-#endif
     }
 }

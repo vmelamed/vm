@@ -4,10 +4,8 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Practices.ServiceLocation;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -157,7 +155,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region IHasherAsync methods
         /// <summary>
         /// hash as an asynchronous operation.
@@ -198,7 +195,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             return deformatter.VerifySignature(hash, signature);
         }
         #endregion
-#endif
 
         #region IDisposable pattern implementation
         /// <summary>

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -36,7 +34,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -48,7 +45,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.IsFalse(target.TryGetTarget(out collected));
         }
-#endif
         #endregion
 
         class InheritedHasher : Hasher
@@ -60,14 +56,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 return base.WriteSalt(hashStream, salt);
             }
 
-#if NET45
             public async Task<byte[]> PublicWriteSaltAsync(
                     CryptoStream hashStream,
                     byte[] salt)
             {
                 return await base.WriteSaltAsync(hashStream, salt);
             }
-#endif
 
             public byte[] PublicFinalizeHashing(
                 CryptoStream hashStream,
@@ -111,7 +105,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                             new byte[8]);
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void WriteSaltNullStreamAsyncTest()
@@ -135,7 +128,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                                 new byte[8]).Wait();
             });
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]

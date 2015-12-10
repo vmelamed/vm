@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.9.1</version>
+        <version>1.9.2</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -15,7 +15,7 @@
             * It is very easy to integrate with a Dependency Injection container like Unity, i.e. the behaviors are abstracted with a handful of simple interfaces.
             * It is very easy to use and configure the objects. No configuration parameters default to sensible defaults.
             * The package does not have dependencies except the .NET framework BCL and the Common Service Locator 1.3.
-            * Built and tested with .NET 4.0, 4.5 and 4.6.
+            * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
             In 1.8.0 added sets of ICipher extension overrides for data of the primitive and some basic types and arrays of the same:
@@ -29,10 +29,10 @@
 
             byte[] ICipherExtensions.Encrypt&lt;T&gt;(ICipher cipher, T data);
             T ICipherExtensions.Decrypt&lt;T&gt;(ICipher cipher, byte[] encrypted);
-            
+
             The generics work with nullable types too.
-            
-            This is the last version which supports .NET 4.0 and .NET 4.5. In the next release the only supported version will be .NET 4.6.
+
+            This is the first version which supports only .NET 4.6. (Microsoft is dropping support for .NET v4.5 and v4.5.1. I do not want to support v4.0 anymore.)
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -46,29 +46,16 @@
     </metadata>
     <files>
         <file src="..\bin\Release\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="lib\net45"/>
+              target="lib\net46"/>
         <file src="..\ProtectedKey\bin\Release\Microsoft.Practices.ServiceLocation.dll"
-              target="lib\net45"/>
+              target="lib\net46"/>
         <file src="..\EncryptedKey\bin\Release\EncryptedKey.exe"
-              target="tools\net45"/>
+              target="tools\net46"/>
         <file src="..\ProtectedKey\bin\Release\ProtectedKey.exe"
-              target="tools\net45"/>
+              target="tools\net46"/>
         <file src="..\ProtectedKey\bin\Release\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="tools\net45"/>
+              target="tools\net46"/>
         <file src="..\ProtectedKey\bin\Release\Microsoft.Practices.ServiceLocation.dll"
-              target="tools\net45"/>
-
-        <file src="..\bin\Release40\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="lib\net40"/>
-        <file src="..\ProtectedKey\bin\Release40\Microsoft.Practices.ServiceLocation.dll"
-              target="lib\net40"/>
-        <file src="..\EncryptedKey\bin\Release40\EncryptedKey.exe"
-              target="tools\net40"/>
-        <file src="..\ProtectedKey\bin\Release40\ProtectedKey.exe"
-              target="tools\net40"/>
-        <file src="..\ProtectedKey\bin\Release40\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="tools\net40"/>
-        <file src="..\ProtectedKey\bin\Release\Microsoft.Practices.ServiceLocation.dll"
-              target="tools\net45"/>
+              target="tools\net46"/>
     </files>
 </package>

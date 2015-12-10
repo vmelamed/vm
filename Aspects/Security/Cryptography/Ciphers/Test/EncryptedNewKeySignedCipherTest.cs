@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -64,7 +62,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var output =  target.Decrypt(encrypted);
         }
 
-#if NET45
         [ExpectedException(typeof(CryptographicException))]
         [TestMethod]
         public void SignatureVerificationFailAsyncTest()
@@ -90,7 +87,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 target.DecryptAsync(input, output).Wait();
             });
         }
-#endif
 
         class InheritedEncryptedNewKeySignedCipher : EncryptedNewKeySignedCipher
         {
@@ -118,13 +114,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.LoadHashToValidate(encryptedStream);
             }
 
-#if NET45
             public async Task PublicLoadHashToValidateAsync(
                    Stream encryptedStream)
             {
                 await base.LoadHashToValidateAsync(encryptedStream);
             }
-#endif
         }
 
         [TestMethod]
@@ -155,7 +149,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 target.PublicLoadHashToValidate(stream);
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void LoadHashToValidateAsyncNullStreamTest()
@@ -180,6 +173,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     target.PublicLoadHashToValidateAsync(stream).Wait();
             });
         }
-#endif
     }
 }

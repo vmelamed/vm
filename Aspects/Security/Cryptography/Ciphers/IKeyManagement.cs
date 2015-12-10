@@ -28,7 +28,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="key">The key.</param>
         void ImportSymmetricKey(byte[] key);
 
-#if NET45
         /// <summary>
         /// Asynchronously exports the symmetric key as a clear text.
         /// </summary>
@@ -46,6 +45,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         Task ImportSymmetricKeyAsync(byte[] key);
-#endif
     }
 }

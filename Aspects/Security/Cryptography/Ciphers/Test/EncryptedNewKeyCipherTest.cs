@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -65,8 +63,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
-
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
@@ -91,7 +87,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
         }
-#endif
         #endregion
 
         #region IsDisposed tests
@@ -110,7 +105,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -122,7 +116,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.IsFalse(target.TryGetTarget(out collected));
         }
-#endif
         #endregion
 
         class InheritedEncryptedNewKeyCipher : EncryptedNewKeyCipher
@@ -146,7 +139,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.BeforeReadDecrypted(encryptedStream);
             }
 
-#if NET45
             public async Task PublicBeforeWriteEncryptedAsync(
                     Stream encryptedStream)
             {
@@ -160,7 +152,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 await InitializeSymmetricKeyAsync();
                 await base.BeforeReadDecryptedAsync(encryptedStream);
             }
-#endif
         }
 
         [TestMethod]
@@ -172,7 +163,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.PublicBeforeWriteEncrypted(TestUtilities.CreateNonWritableStream());
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void BeforeWriteEncryptedAsyncNullStreamTest()
@@ -221,7 +211,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     target.PublicBeforeReadDecryptedAsync(stream).Wait();
             });
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]

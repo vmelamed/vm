@@ -2,10 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -81,7 +79,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         public void RoundTripAsyncTest0()
         {
@@ -119,8 +116,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 if (!string.IsNullOrWhiteSpace(keyFile))
                     File.Delete(keyFile);
             }
-        } 
-#endif
+        }
 
         #region IsDisposed tests
         [TestMethod]
@@ -138,7 +134,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -149,8 +144,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             ProtectedKeyCipher collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
-#endif
+        }
         #endregion
 
         #region IKeyManagement tests
@@ -190,7 +184,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Assert.IsTrue(key.Length >= 24);
         }
 
-#if NET45
         [TestMethod]
         public void ExportSymmetricKeyAsyncTest()
         {
@@ -217,9 +210,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var key = new byte[keyOld.Length].FillRandom();
 
             target.ImportSymmetricKeyAsync(key).Wait();
-        } 
-#endif
-
+        }
         #endregion
 
         class InheritedProtectedKeyCipher : ProtectedKeyCipher
@@ -241,19 +232,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.BeforeReadDecrypted(encryptedStream);
             }
 
-#if NET45
             public Task PublicBeforeWriteEncryptedAsync(
                     Stream encryptedStream)
             {
                 return base.BeforeWriteEncryptedAsync(encryptedStream);
-            } 
+            }
 
             public Task PublicBeforeReadDecryptedAsync(
                 Stream encryptedStream)
             {
                 return base.BeforeReadDecryptedAsync(encryptedStream);
             }
-#endif
 
             public CryptoStream PublicCreateEncryptingStream(
                 Stream encryptedStream)
@@ -281,7 +270,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.DoDecrypt(cryptoStream, dataStream);
             }
 
-#if NET45
             public Task PublicDoEncryptAsync(
                     Stream dataStream,
                     Stream cryptoStream)
@@ -294,8 +282,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Stream dataStream)
             {
                 return base.DoDecryptAsync(cryptoStream, dataStream);
-            } 
-#endif
+            }
         }
 
         [TestMethod]
@@ -316,7 +303,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.PublicBeforeReadDecrypted(TestUtilities.CreateNonReadableStream());
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void BeforeWriteEncryptedNullStreamAsyncTest()
@@ -363,8 +349,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.PublicBeforeReadDecryptedAsync(TestUtilities.CreateNonReadableStream()).Wait();
             });
-        } 
-#endif
+        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -403,7 +388,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void DoEncryptNullDataAsyncTest()
@@ -450,8 +434,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.PublicDoEncryptAsync(new MemoryStream(new byte[10]), TestUtilities.CreateNonWritableStream()).Wait();
             });
-        } 
-#endif
+        }
 
         ////
 
@@ -474,7 +457,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void DoDecryptNullCryptoAsyncTest()
@@ -521,8 +503,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.PublicDoDecryptAsync(new MemoryStream(new byte[10]), TestUtilities.CreateNonWritableStream()).Wait();
             });
-        } 
-#endif
-
+        }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
 using System.Security.Cryptography;
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.ServiceLocation;
-#endif
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -14,21 +12,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         const string keyFileName = "protected.key";
 
-#if NET45
         static IUnityContainer _container;
         static IServiceLocator _serviceLocator;
-#endif
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
         {
-#if NET45
             _container = new UnityContainer();
             _container.RegisterType<SymmetricAlgorithm, TripleDESCryptoServiceProvider>();
 
             _serviceLocator = new UnityServiceLocator(_container);
             ServiceLocator.SetLocatorProvider(() => _serviceLocator);
-#endif
 
             ClassCleanup();
         }

@@ -84,7 +84,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Assert.IsTrue(buffer.SequenceEqual(new byte[10] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
         }
 
-#if NET45
         [TestMethod]
         public void ReadAsyncTest()
         {
@@ -93,8 +92,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.AreEqual(0, target.ReadAsync(buffer, 0, buffer.Length).Result);
             Assert.IsTrue(buffer.SequenceEqual(new byte[10] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
-        } 
-#endif
+        }
 
         [TestMethod]
         public void WriteTest()
@@ -111,7 +109,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Assert.AreEqual(0, target.Length);
         }
 
-#if NET45
         [TestMethod]
         public void WriteAsyncTest()
         {
@@ -125,7 +122,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.AreEqual(0, target.Position);
             Assert.AreEqual(0, target.Length);
-        } 
+        }
 
         [TestMethod]
         public void CopyToAsyncTest()
@@ -142,7 +139,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Assert.AreEqual(0, stream.Length);
             }
         }
-#endif
 
         [TestMethod]
         public void SeekTest()

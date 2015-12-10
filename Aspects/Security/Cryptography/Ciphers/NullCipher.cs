@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -11,7 +9,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// The class <c>NullCipher</c> is a development- and test-friendly convenience class which implements trivially the <see cref="T:ICipherAsync"/> interface:
     /// copies the source data blindly into the output target.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="N/A")]
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
     public sealed class NullCipher : ICipherAsync
     {
         #region ICipher Members
@@ -34,8 +32,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// encryptedStream
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void Encrypt(
             Stream dataStream,
             Stream encryptedStream)
@@ -57,8 +55,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// encryptedStream
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void Decrypt(
             Stream encryptedStream,
             Stream dataStream)
@@ -99,7 +97,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region ICipherAsync Members
         /// <summary>
         /// encrypt as an asynchronous operation.
@@ -113,8 +110,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// encryptedStream
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task EncryptAsync(
             Stream dataStream,
             Stream encryptedStream)
@@ -134,8 +131,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// or
         /// encryptedStream
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task DecryptAsync(
             Stream encryptedStream,
             Stream dataStream)
@@ -143,13 +140,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             await encryptedStream.CopyToAsync(dataStream);
         }
         #endregion
-#endif
 
         #region IDisposable pattern implementation
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="N/A")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
         public void Dispose()
         {
             GC.SuppressFinalize(this);

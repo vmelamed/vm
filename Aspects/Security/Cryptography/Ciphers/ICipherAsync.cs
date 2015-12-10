@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
-#if NET45
-using System.Threading.Tasks;
 using System.IO;
-#endif
+using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -14,7 +12,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     [ContractClass(typeof(ICipherAsyncContract))]
     public interface ICipherAsync : ICipher
     {
-#if NET45
         /// <summary>
         /// Asynchronously reads the clear text from the <paramref name="dataStream"/>, encrypts it and writes the result into the 
         /// <paramref name="encryptedStream"/> stream. This is the reverse method of <see cref="M:ICipherAsync.DecryptAsync(System.Stream, System.Stream)"/>.
@@ -76,6 +73,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         Task DecryptAsync(
             Stream encryptedStream,
             Stream dataStream);
-#endif
     }
 }

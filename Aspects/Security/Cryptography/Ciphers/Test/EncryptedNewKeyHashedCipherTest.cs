@@ -1,11 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if NET45
-using System.Linq;
 using System.Threading.Tasks;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -64,7 +62,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
@@ -89,7 +86,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
         }
-#endif
         #endregion
 
         #region IsDisposed tests
@@ -108,7 +104,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -120,7 +115,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.IsFalse(target.TryGetTarget(out collected));
         }
-#endif
         #endregion
 
         [TestMethod]
@@ -202,7 +196,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 base.BeforeReadDecrypted(encryptedStream);
             }
 
-#if NET45
             public async Task PublicBeforeWriteEncryptedAsync(
                     Stream encryptedStream)
             {
@@ -226,7 +219,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
                 await base.LoadHashToValidateAsync(encryptedStream);
             }
-#endif
 
             public void PublicAfterReadDecrypted(
                 Stream encryptedStream,
@@ -290,7 +282,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void BeforeWriteEncryptedAsync1Test()
@@ -320,7 +311,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 throw x.InnerExceptions.First();
             }
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -374,7 +364,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void BeforeReadDecryptedAsync1Test()
@@ -439,7 +428,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 }
             });
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]

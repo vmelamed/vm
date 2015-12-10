@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Threading;
@@ -128,15 +127,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </remarks>
         int _disposed;
 
-#if NET40
-        /// <summary>
-        /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get { return _disposed != 0; }
-        }
-#else
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
@@ -144,13 +134,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get { return Volatile.Read(ref _disposed) != 0; }
         }
-#endif
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(true)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

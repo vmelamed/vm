@@ -78,7 +78,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -89,8 +88,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             EncryptedKeyCipher collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
-#endif
+        }
         #endregion
 
         #region IKeyManagement tests
@@ -130,7 +128,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Assert.AreEqual(32, key.Length);
         }
 
-#if NET45
         [TestMethod]
         public void ExportSymmetricKeyAsyncTest()
         {
@@ -158,9 +155,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var key = new byte[keyOld.Length].FillRandom();
 
             target.ImportSymmetricKeyAsync(key).Wait();
-        } 
-#endif
-
+        }
         #endregion
 
         class InheritedEncryptedKeyCipher : EncryptedKeyCipher

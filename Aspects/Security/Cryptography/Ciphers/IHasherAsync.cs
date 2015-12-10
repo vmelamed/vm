@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
-#if NET45
-using System.Threading.Tasks;
 using System.IO;
-#endif
+using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -14,7 +12,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     [ContractClass(typeof(IHasherAsyncContract))]
     public interface IHasherAsync : IHasher
     {
-#if NET45
         /// <summary>
         /// Computes the hash of the <paramref name="dataStream" /> asynchronously.
         /// </summary>
@@ -54,6 +51,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="System.ArgumentException">Thrown if <paramref name="hash"/> has invalid length.</exception>
         /// <exception cref="T:System.Security.Cryptography.CryptographicException">The hash or the encryption failed.</exception>
         Task<bool> TryVerifyHashAsync(Stream dataStream, byte[] hash);
-#endif
     }
 }

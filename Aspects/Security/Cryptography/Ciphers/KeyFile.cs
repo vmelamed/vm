@@ -3,9 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -60,7 +58,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The specified path, file name, or both exceed the system-defined maximum length. 
         /// For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters. 
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void PutKey(
             byte[] key,
             string keyLocation)
@@ -120,7 +118,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             }
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously puts the key in the specified file. 
         /// If the file doesn't exist it creates it, stores the key and sets the appropriate security on the file.
@@ -155,7 +152,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The specified path, file name, or both exceed the system-defined maximum length. 
         /// For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters. 
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task PutKeyAsync(
             byte[] key,
             string keyLocation)
@@ -217,7 +214,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return key;
             }
         }
-#endif
 
         /// <summary>
         /// Deletes the storage (the file) with the specified location name.

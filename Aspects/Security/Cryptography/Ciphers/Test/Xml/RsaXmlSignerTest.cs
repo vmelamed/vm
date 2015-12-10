@@ -45,7 +45,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
             target.Dispose();
         }
 
-#if NET45
         [TestMethod]
         public void FinalizerTest()
         {
@@ -56,8 +55,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
             RsaXmlSigner collected;
 
             Assert.IsFalse(target.TryGetTarget(out collected));
-        } 
-#endif
+        }
         #endregion
     }
 }

@@ -2,9 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
-#if NET45
 using System.Threading.Tasks;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -18,7 +16,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <item><description>The bytes of the encrypted text.</description></item>
     /// </list>
     /// </remarks>
-    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="Nothing to dispose")]
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Nothing to dispose")]
     public sealed class DpapiCipher : ICipherAsync
     {
         const int BlockLength = 4096;
@@ -49,7 +47,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets or sets the entropy which makes the encryption stronger.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification="It is an opaque value.")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It is an opaque value.")]
         public byte[] Entropy { get; set; }
 
         /// <summary>
@@ -88,9 +86,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="T:System.IO.IOException">
         /// An I/O error occurred.
         /// </exception>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="The CryptoStream will do it.")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The CryptoStream will do it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void Encrypt(
             Stream dataStream,
             Stream encryptedStream)
@@ -156,9 +154,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="T:System.IO.IOException">
         /// An I/O error occurred.
         /// </exception>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="The CryptoStream will do it.")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The CryptoStream will do it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void Decrypt(
             Stream encryptedStream,
             Stream dataStream)
@@ -193,7 +191,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                         buffer = new byte[bufferLen];
                     else
                         if (buffer.Length != bufferLen)
-                            Array.Resize(ref buffer, bufferLen);
+                        Array.Resize(ref buffer, bufferLen);
 
                     read = inputStream.Read(buffer, 0, bufferLen);
 
@@ -261,7 +259,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region ICipherAsync Members
         /// <summary>
         /// Asynchronously reads the clear text from the <paramref name="dataStream"/>, encrypts it and writes the result into the 
@@ -290,8 +287,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="T:System.IO.IOException">
         /// An I/O error occurred.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task EncryptAsync(
             Stream dataStream,
             Stream encryptedStream)
@@ -308,7 +305,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     first = false;
                 else
                     if (read == 0)
-                        return;
+                    return;
 
                 if (read < buffer.Length)
                     Array.Resize(ref buffer, read);
@@ -348,8 +345,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="T:System.IO.IOException">
         /// An I/O error occurred.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task DecryptAsync(
             Stream encryptedStream,
             Stream dataStream)
@@ -369,7 +366,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     first = false;
                 else
                     if (read == 0)
-                        return;
+                    return;
 
                 if (read != bufferLenBytes.Length)
                     throw new ArgumentException("The input stream does not seem to be produced with compatible cipher.", "encryptedStream");
@@ -380,7 +377,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     buffer = new byte[bufferLen];
                 else
                     if (buffer.Length != bufferLen)
-                        Array.Resize(ref buffer, bufferLen);
+                    Array.Resize(ref buffer, bufferLen);
 
                 read = await encryptedStream.ReadAsync(buffer, 0, bufferLen);
 
@@ -393,14 +390,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             while (decrypted.Length == BlockLength);
         }
         #endregion
-#endif
 
         #region IDisposable Members
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources, here it does nothing.
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly", Justification="Nothing to dispose")]
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="Nothing to dispose")]
+        [SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly", Justification = "Nothing to dispose")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Nothing to dispose")]
         public void Dispose()
         {
             GC.SuppressFinalize(this);

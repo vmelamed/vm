@@ -185,7 +185,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             throw new NotImplementedException();
         }
 
-#if NET45
         /// <summary>
         /// Asynchronously imports the symmetric key as a clear text.
         /// </summary>
@@ -206,7 +205,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             throw new NotImplementedException();
         }
-#endif
         #endregion
 
         #region Initialization of the symmetric key overrides
@@ -222,7 +220,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IsSymmetricKeyInitialized = true;
         }
 
-#if NET45
         /// <summary>
         /// If not yet initialized, the method initializes the symmetric key by deriving it from the password and generating new salt bytes.
         /// </summary>
@@ -232,7 +229,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IsSymmetricKeyInitialized = true;
             return Task.FromResult<object>(null);
         }
-#endif
 
         /// <summary>
         /// If not yet initialized, the method initializes the symmetric key by deriving it from the password and generating new salt bytes.
@@ -346,7 +342,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-#if NET45
         #region Async encrypting primitives
         /// <summary>
         /// Allows the inheritors to write asynchronously some unencrypted information to the <paramref name="encryptedStream" />
@@ -410,7 +405,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             await base.BeforeReadDecryptedAsync(encryptedStream);
         }
         #endregion
-#endif
 
         /// <summary>
         /// Performs the actual job of disposing the object. Here it disposes the password if it is not disposed yet.

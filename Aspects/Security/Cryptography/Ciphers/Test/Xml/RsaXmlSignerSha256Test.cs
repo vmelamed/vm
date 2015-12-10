@@ -3,7 +3,6 @@ using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 {
-#if NET45
     [TestClass]
     public class RsaXmlSignerSha256Test : GenericXmlSignerTest<RsaXmlSigner>
     {
@@ -11,6 +10,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         {
             return new RsaXmlSigner(CertificateFactory.GetSigningSha256Certificate()) { SignatureLocation = signatureLocation };     // SHA1 also works with this cert
         }
-    } 
-#endif
+    }
 }

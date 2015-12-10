@@ -623,11 +623,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
-#if NET45
         public readonly static IReadOnlyDictionary<Type, Func<object, byte[]>> ConvertTypedData = new ReadOnlyDictionary<Type, Func<object, byte[]>>( new Dictionary<Type, Func<object, byte[]>>
-#elif NET40
-        public readonly static IDictionary<Type, Func<object, byte[]>> ConvertTypedData = (new Dictionary<Type, Func<object, byte[]>>
-#endif
         {
             #region ConvertTypedData
             [typeof(bool)]       = d => Convert((bool)      d),

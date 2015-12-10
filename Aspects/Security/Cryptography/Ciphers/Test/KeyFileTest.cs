@@ -105,7 +105,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         #endregion
 
         #region PutKeyAsync tests
-#if NET45
         [TestMethod]
         public void PutKeyAsyncTest()
         {
@@ -167,8 +166,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, " \t").Wait();
             });
-        } 
-#endif
+        }
         #endregion
 
         #region GetKey tests
@@ -212,7 +210,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         #endregion
 
         #region GetKeyAsync tests
-#if NET45
         [TestMethod]
         public void GetKeyAsyncTest()
         {
@@ -269,8 +266,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 target.GetKeyAsync(" \t").Wait();
             });
-        } 
-#endif
+        }
         #endregion
 
         #region DeleteKey tests

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Internal.CodeSigning;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -10,9 +11,6 @@ using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml;
 using Microsoft.Practices.ServiceLocation;
-#if NET45
-using System.Deployment.Internal.CodeSigning;
-#endif
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -37,13 +35,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         readonly string _digestMethod;
         readonly AsymmetricAlgorithm _asymmetric;
 
-#if NET45
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "N/A")]
         static RsaXmlSigner()
         {
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), XmlConstants.XmlDsigRSAPKCS1SHA256Url);
         }
-#endif
 
         #region Properties
         /// <summary>
@@ -467,15 +463,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </remarks>
         int _disposed;
 
-#if NET40
-        /// <summary>
-        /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-        /// </summary>
-        public bool IsDisposed
-        {
-            get { return _disposed != 0; }
-        }
-#else
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
@@ -483,7 +470,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         {
             get { return Volatile.Read(ref _disposed) != 0; }
         }
-#endif
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

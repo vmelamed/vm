@@ -148,7 +148,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Assert.IsNull(hash);
         }
 
-#if NET45
         [TestMethod]
         public void StreamNullInputAsyncHashTest()
         {
@@ -180,8 +179,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var verifiedTask = target.TryVerifyHashAsync(input, null);
 
             Assert.IsTrue(verifiedTask.Result);
-        } 
-#endif
+        }
 
         [TestMethod]
         public void VerifyStreamNullInputHashTest()
@@ -233,7 +231,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         [TestMethod]
         public void RoundTripWrongLengthAsyncHashTest()
         {
@@ -271,8 +268,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 Assert.IsNotNull(hashTask.Result);
                 Assert.IsTrue(hashTask.Result.Length > 0);
             }
-        } 
-#endif
+        }
 
         void RoundTripParameterizedHashTest(int length, int saltLength = 8, bool failed = false)
         {
@@ -304,7 +300,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-#if NET45
         void RoundTripParameterizedAsyncHashTest(int length, int saltLength = 8, bool failed = false)
         {
             var clearData = new byte[length].FillRandom();
@@ -333,8 +328,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 else
                     Assert.AreEqual(actual, !failed);
             }
-        } 
-#endif
+        }
 
         [TestMethod]
         public void Stream0HashTest()
@@ -436,7 +430,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         // --------------------------------------------
 
-#if NET45
         [TestMethod]
         public void Stream0AsyncHashTest()
         {
@@ -533,7 +526,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void RoundTripStreamMoreThanNx4kAsyncHashTest()
         {
             RoundTripParameterizedAsyncHashTest(3*4096+734);
-        } 
-#endif
+        }
     }
 }
