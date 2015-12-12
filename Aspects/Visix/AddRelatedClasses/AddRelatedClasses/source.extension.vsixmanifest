@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="vm.Aspects.AddRelatedClasses" Version="0.2" Language="en-US" Publisher="Val Melamed" />
+        <Identity Id="vm.Aspects.AddRelatedClasses" Version="0.3" Language="en-US" Publisher="Val Melamed" />
         <DisplayName>Add Related Classes</DisplayName>
         <Description xml:space="preserve">Adds a new context sub-menu in the solution explorer: when you right-click on a class the context menu shows a new sub-menu item "Add Related Type &gt;" with the following </Description>
         <License>LICENSE.txt</License>

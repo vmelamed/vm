@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
@@ -148,6 +149,12 @@ namespace vm.Aspects.Visix.AddRelatedClasses
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
 
+        string ProcessTemplate(ITextTemplating t4, string template)
+        {
+            var templateFile = Path.Combine(Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location), "Templates", template);
+            return t4.ProcessTemplate(templateFile, File.ReadAllText(templateFile));
+        }
+
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "EnvDTE.EditPoint.Insert(System.String)", Justification = "partial is a C# keyword.")]
         void AddMetadataType(object sender, EventArgs e)
         {
@@ -201,7 +208,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
             t4SessionHost.Session["targetPathName"] = cached.TargetPathName;
 
-            var generatedText = t4.ProcessTemplate("Templates\\ClassMetadata.tt", File.ReadAllText("Templates\\ClassMetadata.tt"));
+            var generatedText = ProcessTemplate(t4, "ClassMetadata.tt");
 
             // create the new file with the generated text and add it to the project:
             File.WriteAllText(cached.TargetPathName, generatedText);
@@ -238,7 +245,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
             t4SessionHost.Session["targetPathName"] = cached.TargetPathName;
 
-            var generatedText = t4.ProcessTemplate("Templates\\ClassDataContract.tt", File.ReadAllText("Templates\\ClassDataContract.tt"));
+            var generatedText = ProcessTemplate(t4, "ClassDataContract.tt");
 
             // create the new file with the generated text and add it to the project:
             File.WriteAllText(cached.TargetPathName, generatedText);
@@ -272,7 +279,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
             t4SessionHost.Session["targetPathName"] = cached.TargetPathName;
 
-            var generatedText = t4.ProcessTemplate("Templates\\InterfaceTasks.tt", File.ReadAllText("Templates\\InterfaceTasks.tt"));
+            var generatedText = ProcessTemplate(t4, "InterfaceTasks.tt");
 
             // create the new file with the generated text and add it to the project:
             File.WriteAllText(cached.TargetPathName, generatedText);
@@ -316,7 +323,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
             t4SessionHost.Session["targetPathName"] = targetPathName;
 
-            var generatedText = t4.ProcessTemplate("Templates\\LightClient.tt", File.ReadAllText("Templates\\LightClient.tt"));
+            var generatedText = ProcessTemplate(t4, "LightClient.tt");
 
             // create the new file with the generated text and add it to the project:
             File.WriteAllText(cached.TargetPathName, generatedText);
