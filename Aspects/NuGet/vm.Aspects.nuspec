@@ -12,8 +12,7 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Removed dependencies on Newtonsoft.Json and Ciphers.
-            * Removed the class EncryptedParts from vm.Aspects.Model
+            * Applied PureAttribute to the IValidateable.Validate and the extension IValidateableExtensions.IsValid. Now you can include IsValid in contracts' statements.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
