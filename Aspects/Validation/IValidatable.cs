@@ -25,6 +25,7 @@ namespace vm.Aspects.Validation
     abstract class IValidatableContract : IValidatable
     {
         #region IValidatable Members
+        [Pure]
         public ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)

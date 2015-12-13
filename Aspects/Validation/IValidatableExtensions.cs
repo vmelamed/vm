@@ -44,6 +44,7 @@ namespace vm.Aspects.Validation
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <returns><see langword="true" /> if the object is valid, otherwise <see langword="false" />.</returns>
         /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
+        [Pure]
         public static bool IsValid(
             this IValidatable validatable,
             string ruleset = "")
