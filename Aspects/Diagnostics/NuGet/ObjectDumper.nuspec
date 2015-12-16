@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.4.0</version>
+        <version>1.4.2</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -25,13 +25,10 @@
                 - the maximum number of dumped elements of sequence properties.
             * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute.
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes.
-            * Build and tested with .NET 4.0, 4.5, 4.5.1. This package targets .NET 4.0.
+            * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            In version 1.4.0:
-            * No significant changes:
-                - fixed minor bug;
-            Moved source code to GitHub
+            Added the XML documentation.
         </releaseNotes>
         <licenseUrl>https://aspectobjectdumper.codeplex.com/license</licenseUrl>
         <projectUrl>https://aspectobjectdumper.codeplex.com/</projectUrl>
@@ -44,7 +41,9 @@
         <tags>dump object .net diagnostics debug log aspects</tags>
     </metadata>
     <files>
-        <file src="ObjectDumper\bin\Release\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\Release\vm.Aspects.Diagnostics.ObjectDumper.dll"
+              target="lib\net40"/>
+        <file src="..\bin\Release\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net40"/>
     </files>
 </package>

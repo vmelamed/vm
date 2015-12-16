@@ -255,8 +255,8 @@
     <None Include="NuGet\ObjectDumper.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
     <None Include="NuGet\PublishObjectDumper.cmd" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

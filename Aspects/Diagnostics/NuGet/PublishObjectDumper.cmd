@@ -7,6 +7,8 @@ msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj /t:Rebuild /p:Configuration=R
 if errorlevel 1 goto exit
 NuGet Pack NuGet\ObjectDumper.nuspec -Prop Configuration=Release
 if errorlevel 1 goto exit
+@echo Press any key to push to NuGet... > con:
+@pause > nul:
 NuGet Push *.nupkg
 :exit
 del *.nupkg

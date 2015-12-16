@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.9.3</version>
+        <version>1.9.5</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -18,23 +18,7 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            In 1.9.3 added sets of ICipher extension overrides for data of the primitive and some basic types and arrays of the same:
-            Boolean, Char, String Byte, SByte, Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal, DateTime and Guid.
-            In this release added typed version of the same:
-
-            byte[] ICipherExtensions.Encrypt(ICipher cipher, object data, Type type);
-            object ICipherExtensions.Decrypt(ICipher cipher, byte[] encrypted, Type type);
-
-            And generic overrides:
-
-            byte[] ICipherExtensions.Encrypt&lt;T&gt;(ICipher cipher, T data);
-            T ICipherExtensions.Decrypt&lt;T&gt;(ICipher cipher, byte[] encrypted);
-
-            The generics work with nullable types too.
-
-            This is the first version which supports only .NET 4.6. (Microsoft is dropping support for .NET v4.5 and v4.5.1. I do not want to support v4.0 anymore.)
-            
-            Removed unnecessary dependencies on Newtonsoft.Json.
+            Added the XML documentation.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -48,6 +32,8 @@
     </metadata>
     <files>
         <file src="..\bin\Release\vm.Aspects.Security.Cryptography.Ciphers.dll"
+              target="lib\net46"/>
+        <file src="..\bin\Release\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net46"/>
         <file src="..\ProtectedKey\bin\Release\Microsoft.Practices.ServiceLocation.dll"
               target="lib\net46"/>

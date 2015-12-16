@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.8-beta</version>
+        <version>1.0.9-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -43,20 +43,28 @@
                         version="6.0.1304.0" />
             <dependency id="EntityFramework"
                         version="6.1.3" />
-            
+
             <dependency id="AspectObjectDumper"
-                        version="1.4.0" />
+                        version="1.4.2" />
         </dependencies>
         <tags></tags>
     </metadata>
     <files>
         <file src="..\bin\Release\vm.Aspects.dll"
               target="lib\net46"/>
+        <file src="..\bin\Release\vm.Aspects.xml"
+              target="lib\net46"/>
         <file src="..\Model\bin\Release\vm.Aspects.Model.dll"
+              target="lib\net46"/>
+        <file src="..\Model\bin\Release\vm.Aspects.Model.xml"
               target="lib\net46"/>
         <file src="..\Wcf\bin\Release\vm.Aspects.Wcf.dll"
               target="lib\net46"/>
+        <file src="..\Wcf\bin\Release\vm.Aspects.Wcf.xml"
+              target="lib\net46"/>
         <file src="..\Parsers\bin\Release\vm.Aspects.Parsers.dll"
+              target="lib\net46"/>
+        <file src="..\Parsers\bin\Release\vm.Aspects.Parsers.xml"
               target="lib\net46"/>
     </files>
 </package>

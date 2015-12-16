@@ -14,6 +14,8 @@ if errorlevel 1 goto exit
 cd ..
 NuGet Pack NuGet\vm.Aspects.nuspec -Prop Configuration=Release
 if errorlevel 1 goto exit
+@echo Press any key to push to NuGet... > con:
+@pause > nul:
 NuGet Push *.nupkg
 :exit
 del *.nupkg
