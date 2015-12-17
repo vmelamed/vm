@@ -438,7 +438,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches a telephone number
         /// </summary>
-        public const string RexTelephoneNumber = @"\d{4,20}";
+        public const string RexTelephoneNumber = @"\d{4,15}";
 
         readonly static Lazy<Regex> _telephoneNumber = new Lazy<Regex>(() => new Regex(RexTelephoneNumber, RegexOptions.Compiled));
 
