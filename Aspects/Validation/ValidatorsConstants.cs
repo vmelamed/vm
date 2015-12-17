@@ -32,7 +32,7 @@ namespace vm.Aspects.Validation
                 return (short)0;
 
             case TypeCode.Decimal:
-                return 0M;
+                return decimal.Zero;
 
             case TypeCode.Double:
                 return 0.0;

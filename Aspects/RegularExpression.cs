@@ -478,6 +478,7 @@ namespace vm.Aspects
                                                              @"[89]\d\d-\d\d-\d\d\d\d|" +
                                                              @"7[89]\d-\d\d-\d\d\d\d|" +
                                                              @"77[3-9]-\d\d-\d\d\d\d|" +
+                                                             // well known invalid SSN-s:
                                                              @"001-01-0001|" +
                                                              @"078-05-1120|" +
                                                              @"433-54-3937";
@@ -488,6 +489,20 @@ namespace vm.Aspects
         /// Gets a Regex object which tests the commonly formatted social security number for invalidity, including some notorious SSN-s
         /// </summary>
         public static Regex InvalidSocialSecurityNumber => _invalidSsn.Value;
+        #endregion
+
+        #region IndividualTaxpayerIdentification
+        /// <summary>
+        /// Tests the commonly formatted social security number for Individual Taxpayer Identification Number (ITIN) - issued to foreigners.
+        /// </summary>
+        public const string RexIndividualTaxpayerIdentificationNumber = @"9\d\d-[7-9]\d-\d\d\d\d|";
+
+        readonly static Lazy<Regex> _itin = new Lazy<Regex>(() => new Regex(RexIndividualTaxpayerIdentificationNumber, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which tests the commonly formatted social security number for for Individual Taxpayer Identification Number (ITIN)
+        /// </summary>
+        public static Regex IndividualTaxpayerIdentificationNumber => _itin.Value;
         #endregion
         #endregion
 
@@ -553,7 +568,6 @@ namespace vm.Aspects
         /// </summary>
         public static Regex ConnectionString => _connectionString.Value;
         #endregion
-
         #endregion
 
         /// <summary>
