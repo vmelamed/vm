@@ -20,7 +20,10 @@ namespace vm.Aspects.Model.EFRepository.Tests
                     //.RegisterTypeIfNot<IDatabaseInitializer<TestEFRepository>, MigrateDatabaseToLatestVersion<TestEFRepository, Configuration>>(registrations, new InjectionConstructor(true))
                     .RegisterTypeIfNot<IDatabaseInitializer<TestEFRepository>, DropCreateDatabaseAlways<TestEFRepository>>(registrations)
                     .RegisterTypeIfNot<IStoreIdProvider, HiLoStoreIdProvider>(registrations, new ContainerControlledLifetimeManager())
+
+                    // the repo used by the HiLo generator
                     .RegisterTypeIfNot<IRepository, TestEFRepository>(registrations, HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, new InjectionConstructor(new InjectionParameter<string>(ConnectionString)))
+                    // the repo used by the rest of the tests
                     .RegisterTypeIfNot<IRepository, TestEFRepository>(registrations, new InjectionConstructor(new InjectionParameter<string>(ConnectionString)))
                     ;
             }
