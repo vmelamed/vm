@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using vm.Aspects.Model.Repository;
@@ -42,8 +43,10 @@ namespace vm.Aspects.Model
 
         /// <summary>
         /// Gets or sets the store identifier.
+        /// The property is applied the attributes <see cref="KeyAttribute"/> and <see cref="ColumnAttribute"/> with parameter <c>Order = 0</c>.
         /// </summary>
         [Key]
+        [Column(Order = 0)]
         public virtual TId Id
         {
             get { return _id; }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.11-beta</version>
+        <version>1.0.12-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,10 +12,11 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Changed the visibility of the field _id in the classes vm.Aspects.Model.DomainEntity and  vm.Aspects.Model.DomainValue from private to protected.
-            This will allow the inheritors to modify the behavior of the property Id, without unnecessary duplicating the backing field.
-            * Marked both classes with CLSCompatible(false). This will allow the inheritors to use types like uint or ulong for the properties Id,
-            which are usually mapped to the primary key of the corresponding DB tables. Negative Id-s (PK-s) do not make a lot of sense.
+* Changed the visibility of the field _id in the classes vm.Aspects.Model.DomainEntity and  vm.Aspects.Model.DomainValue from private to protected.
+This will allow the inheritors to modify the behavior of the property Id, without unnecessary duplicating the backing field.
+* The property Id was applied the attributes KeyAttribute and ColumnAttribute with argument Order=0.
+* Marked both classes with CLSCompatible(false). This will allow the inheritors to use types like uint or ulong for the properties Id,
+which are usually mapped to the primary key of the corresponding DB tables. Negative Id-s (PK-s) do not make a lot of sense.            
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
