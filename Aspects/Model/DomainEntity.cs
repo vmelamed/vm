@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model
@@ -10,6 +11,7 @@ namespace vm.Aspects.Model
     /// </summary>
     /// <typeparam name="TId">The type of the store identifier.</typeparam>
     /// <typeparam name="TKey">The type of the business key.</typeparam>
+    [CLSCompliant(false)]
     [DebuggerDisplay("{GetType().Name, nq}[{Id,nq}]: {Key,nq}")]
     [MetadataType(typeof(DomainEntityMetadata))]
     public abstract partial class DomainEntity<TId, TKey> : BaseDomainEntity,
@@ -32,11 +34,16 @@ namespace vm.Aspects.Model
         }
 
         #region IHasStoreId<TId> Members
-        TId _id;
+        /// <summary>
+        /// Provides the inheritors with an access to the backing field of the property <see cref="Id"/>.
+        /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "The inheritors may want to override the default behavior without duplicating the field.")]
+        protected TId _id;
 
         /// <summary>
         /// Gets or sets the store identifier.
         /// </summary>
+        [Key]
         public virtual TId Id
         {
             get { return _id; }
