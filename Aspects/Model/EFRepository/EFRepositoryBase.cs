@@ -98,9 +98,13 @@ namespace vm.Aspects.Model.EFRepository
             if (storeIdProvider != null)
                 StoreIdProvider = storeIdProvider;
             else
+            {
                 try
                 {
-                    StoreIdProvider = ServiceLocator.Current.GetInstance<IStoreIdProvider>();
+                    if (DIContainer.IsInitialized)
+                        StoreIdProvider = ServiceLocator.Current.GetInstance<IStoreIdProvider>();
+                    else
+                        StoreIdProvider = new SqlStoreIdProvider();
                 }
                 catch (ActivationException)
                 {
@@ -110,6 +114,7 @@ namespace vm.Aspects.Model.EFRepository
                 {
                     StoreIdProvider = new SqlStoreIdProvider();
                 }
+            }
         }
 
         /// <summary>
