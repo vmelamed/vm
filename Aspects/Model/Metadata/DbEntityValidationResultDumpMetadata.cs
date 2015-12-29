@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using vm.Aspects.Diagnostics;
+﻿using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Model.Metadata
 {
@@ -16,19 +10,19 @@ namespace vm.Aspects.Model.Metadata
         /// <summary>
         /// The entry
         /// </summary>
-        [Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(0)]
         public object Entry;
 
         /// <summary>
         /// The is valid
         /// </summary>
-        [Dump(0)]
+        [Dump(1)]
         public object IsValid;
 
         /// <summary>
         /// The validation errors
         /// </summary>
-        [Dump(1)]
-        public object ValidationErrors;        
+        [Dump(2)]
+        public object ValidationErrors;
     }
 }

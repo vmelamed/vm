@@ -283,11 +283,11 @@
     <Compile Include="InMemory\MapObjectsRepository.cs" />
     <Compile Include="InMemory\MapObjectsRepository.Registrar.cs" />
     <Compile Include="InMemory\ObjectsRepositorySpecifics.cs" />
+    <Compile Include="Metadata\DbEntityEntryDumpMetadata.cs" />
     <Compile Include="Metadata\DbEntityValidationResultDumpMetadata.cs" />
     <Compile Include="Metadata\DbUpdateExceptionDumpMetadata.cs" />
     <Compile Include="Metadata\DbValidationErrorDumpMetadata.cs" />
     <Compile Include="Metadata\ObjectStateEntryDumpMetadata.cs" />
-    <Compile Include="Metadata\UpdateExceptionDumpMetadata.cs" />
     <Compile Include="Money.cs" />
     <Compile Include="MoneyDefaults.cs" />
     <Compile Include="Repository\EntityState.cs" />
@@ -327,15 +327,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\vm.Aspects.csproj">
       <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
       <Name>vm.Aspects</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,9 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
+using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Metadata;

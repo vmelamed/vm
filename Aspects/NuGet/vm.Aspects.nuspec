@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.13-beta</version>
+        <version>1.0.2-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -16,6 +16,7 @@
 This will allow the inheritors to modify the behavior of the property Id, without unnecessary duplicating the backing field.
 * The property Id was applied the attributes KeyAttribute and ColumnAttribute with argument Order=0.
 * Removed the attribute CLSCompatibleAttribute(false) from both classes.
+* Better handling of GetUniqueIdProvider()
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

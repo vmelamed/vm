@@ -101,7 +101,7 @@ namespace vm.Aspects.Model.EFRepository
             {
                 try
                 {
-                    if (DIContainer.IsInitialized)
+                    if (DIContainer.IsInitialized  &&  DIContainer.Root.IsRegistered<IStoreIdProvider>())
                         StoreIdProvider = ServiceLocator.Current.GetInstance<IStoreIdProvider>();
                     else
                         StoreIdProvider = new SqlStoreIdProvider();
@@ -289,7 +289,7 @@ namespace vm.Aspects.Model.EFRepository
 
             foreach (var r in results)
             {
-                errors.Add(new DbValidationError(r.Message, r.Key));
+                errors.Add(new DbValidationError(r.Key, r.Message));
                 if (r.NestedValidationResults != null)
                     ToValidationErrors(r.NestedValidationResults, errors);
             }
