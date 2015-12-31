@@ -143,8 +143,6 @@ namespace vm.Aspects.Model.EFRepository
                 CommitChanges();
             }
 
-            //... ?? ObjectContext.ObjectStateManager.GetObjectStateEntry(instance).EntityKey.EntityKeyValues[0].Key;
-
             var isChangeTracking = new EFSpecifics().IsChangeTracking(instance, this);
 
             if (remove)

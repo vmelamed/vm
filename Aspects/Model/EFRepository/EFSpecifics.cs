@@ -143,15 +143,30 @@ namespace vm.Aspects.Model.EFRepository
             if (entry.State != EFEntityState.Unchanged)
                 return result;
 
-            // Find a simple non-key property which can be easily modified:
-            var propertyInfo = reference.GetType()
-                                        .GetProperties(BindingFlags.Public |
-                                                       BindingFlags.NonPublic |
-                                                       BindingFlags.Instance |
-                                                       BindingFlags.FlattenHierarchy)
-                                        .FirstOrDefault(pi => !pi.Name.Contains("Id")  &&  (pi.PropertyType.IsPrimitive ||
-                                                                                            pi.PropertyType==typeof(string) ||
-                                                                                            pi.PropertyType==typeof(DateTime)));
+            // Find a simple property which is not a member of the entity's key and can be easily modified:
+            var keyMembers = efRepository
+                                    .ObjectContext
+                                    .ObjectStateManager
+                                    .GetObjectStateEntry(reference)
+                                    .EntityKey
+                                    .EntityKeyValues
+                                    .Select(k => k.Key)
+                                    .ToList();
+            var propertyInfo = reference
+                                    .GetType()
+                                    .GetProperties(BindingFlags.Public |
+                                                    BindingFlags.NonPublic |
+                                                    BindingFlags.Instance |
+                                                    BindingFlags.FlattenHierarchy)
+                                    .FirstOrDefault(pi => keyMembers.All(k => k != pi.Name)  &&
+                                                          (pi.PropertyType.IsPrimitive ||
+                                                           pi.PropertyType==typeof(string) ||
+                                                           pi.PropertyType==typeof(DateTime)));
+
+            if (propertyInfo == null)
+                return false;
+
+            // find a function that can change the property
             Func<object, object> change;
 
             if (!_changeValue.TryGetValue(Type.GetTypeCode(propertyInfo.PropertyType), out change))
