@@ -128,7 +128,6 @@ namespace vm.Aspects.Model.EFRepository
         protected bool IsChangeTrackingProxy<T>(
             Action<T> initialize) where T : class, new()
         {
-#if DEBUG
             var instance = Set<T>().FirstOrDefault();
             var remove = false;
 
@@ -144,6 +143,8 @@ namespace vm.Aspects.Model.EFRepository
                 CommitChanges();
             }
 
+            //... ?? ObjectContext.ObjectStateManager.GetObjectStateEntry(instance).EntityKey.EntityKeyValues[0].Key;
+
             var isChangeTracking = new EFSpecifics().IsChangeTracking(instance, this);
 
             if (remove)
@@ -157,7 +158,7 @@ namespace vm.Aspects.Model.EFRepository
                 Debug.WriteLine("The repository does not create change-tracking dynamic proxies for instances of type {0}.", typeof(T).Name);
                 return false;
             }
-#endif
+
             return true;
         }
 
