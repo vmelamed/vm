@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Threading;
 
 namespace vm.Aspects.Diagnostics
@@ -42,10 +42,19 @@ namespace vm.Aspects.Diagnostics
         /// <param name="type">The type for which to set buddy type and dump attribute.</param>
         /// <param name="metadata">The metadata type (buddy class).</param>
         /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <param name="replace">
+        /// If set to <see langword="false" /> and there is already dump metadata associated with the <paramref name="type"/>
+        /// the method will throw exception of type <see cref="InvalidOperationException"/>;
+        /// otherwise it will silently override the existing metadata with <paramref name="metadata"/> and <paramref name="dumpAttribute"/>.
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
+        /// </exception>
         public static void SetClassDumpData(
             Type type,
             Type metadata = null,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute dumpAttribute = null,
+            bool replace = false)
         {
             Contract.Requires<ArgumentNullException>(type != null, "type");
 
@@ -58,7 +67,7 @@ namespace vm.Aspects.Diagnostics
                                 : type;
             }
 
-            AddClassDumpData(type, metadata, dumpAttribute);
+            AddClassDumpData(type, metadata, dumpAttribute, replace);
         }
 
         /// <summary>
@@ -80,10 +89,17 @@ namespace vm.Aspects.Diagnostics
             // extract the dump data from the type
             dumpData = ExtractClassDumpData(type);
 
-            AddClassDumpData(type, dumpData.Value);
+            try
+            {
+                AddClassDumpData(type, dumpData.Value, false);
 
-            // return what we found
-            return dumpData.Value;
+                // return what we found
+                return dumpData.Value;
+            }
+            catch (InvalidOperationException)
+            {
+                return TryGetClassDumpData(type).Value;
+            }
         }
 
         static ClassDumpData ExtractClassDumpData(Type type)
@@ -121,20 +137,35 @@ namespace vm.Aspects.Diagnostics
             return null;
         }
 
-        static void AddClassDumpData(Type type, Type buddy, DumpAttribute dumpAttribute)
+        static void AddClassDumpData(Type type, Type buddy, DumpAttribute dumpAttribute, bool replace)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
-            AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute));
+            AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
         }
 
-        static void AddClassDumpData(Type type, ClassDumpData classDumpData)
+        static void AddClassDumpData(Type type, ClassDumpData classDumpData, bool replace)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
+            TypesDumpDataSync.EnterWriteLock();
             try
             {
-                TypesDumpDataSync.EnterWriteLock();
+                ClassDumpData dumpData;
+
+                if (!replace  &&  TypesDumpData.TryGetValue(type, out dumpData))
+                {
+                    if (dumpData == classDumpData)
+                        return;
+
+                    throw new InvalidOperationException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "The type {0} is already associated with metadata type {1} and a DumpAttribute instance.",
+                            type.FullName,
+                            TypesDumpData[type].Metadata.FullName));
+                }
+
                 TypesDumpData[type] = classDumpData;
             }
             finally

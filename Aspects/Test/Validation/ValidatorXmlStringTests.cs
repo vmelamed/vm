@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Validation;
 
 namespace vm.Aspects.Validation.Tests
 {
@@ -7,9 +6,9 @@ namespace vm.Aspects.Validation.Tests
     /// Summary description for ValidatorXmlStringTests
     /// </summary>
     [TestClass]
-    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Tests\\Microsoft.Serialization.xsd")]
-    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Tests\\DataContract.xsd")]
-    [DeploymentItem("..\\..\\Linq\\Expressions\\Serialization\\Documents\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\Linq\\Expressions\\Serialization\\Tests\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\Linq\\Expressions\\Serialization\\Tests\\DataContract.xsd")]
+    [DeploymentItem("..\\..\\..\\Linq\\Expressions\\Serialization\\Documents\\Expression.xsd")]
     public class ValidatorXmlStringTests
     {
         /// <summary>

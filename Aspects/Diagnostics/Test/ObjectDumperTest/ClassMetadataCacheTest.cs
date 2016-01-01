@@ -21,7 +21,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData_NullArg2n3()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null, true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
             Assert.AreEqual(
@@ -32,7 +32,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData_NullArg2()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false));
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
             Assert.AreEqual(
@@ -43,7 +43,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData_NullArg3()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
             Assert.AreEqual(
@@ -54,13 +54,49 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false));
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
             Assert.AreEqual(
                 new ClassDumpData(typeof(ClassMetadataResolver), new DumpAttribute(false)),
                 TypesDumpData[typeof(ClassMetadataCacheTest)]);
         }
+
+        //////////////////////////////////////////////////////////////////////////////
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestSetClassDumpData_NullArg2n3_Exception()
+        {
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null, true);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, false);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestSetClassDumpData_NullArg2_Exception()
+        {
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(true), false);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestSetClassDumpData_NullArg3_Exception()
+        {
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), null, false);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestSetClassDumpData_Exception()
+        {
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), new DumpAttribute(true), false);
+        }
+
+        //////////////////////////////////////////////////////////////////////////////
 
         [TestMethod]
         public void TestGetClassDumpAttribute_InCache()

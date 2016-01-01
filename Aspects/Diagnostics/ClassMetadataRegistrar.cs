@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 //using System.Data;
@@ -55,24 +54,31 @@ namespace vm.Aspects.Diagnostics
         }
 
         /// <summary>
-        /// Registers the dump metadata and <see cref="DumpAttribute"/> instance related to the specified type.
+        /// Registers the dump metadata and <see cref="DumpAttribute" /> instance related to the specified type.
         /// </summary>
         /// <param name="type">The type for which the metadata is being registered.</param>
         /// <param name="metadataType">The dump metadata type.</param>
         /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <param name="replace">
+        /// If set to <see langword="false" /> and there is already dump metadata associated with the <paramref name="type"/>
+        /// the method will throw exception of type <see cref="InvalidOperationException"/>;
+        /// otherwise it will silently override the existing metadata with <paramref name="metadataType"/> and <paramref name="dumpAttribute"/>.
+        /// </param>
         /// <returns>The current instance of ClassMetadataRegistrar.</returns>
-        /// <exception cref="T:System.ArgumentNullException">
-        /// Thrown if <paramref name="type"/> is <see langword="null"/>.
+        /// <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="type" /> is <see langword="null" />.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
         /// </exception>
         public ClassMetadataRegistrar Register(
             Type type,
             Type metadataType,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute dumpAttribute = null,
+            bool replace = false)
         {
             Contract.Requires<ArgumentNullException>(type != null, "type");
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
-            ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute);
+            ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute, replace);
             return this;
         }
 
@@ -82,14 +88,23 @@ namespace vm.Aspects.Diagnostics
         /// <typeparam name="T">The type for which the metadata is being registered.</typeparam>
         /// <typeparam name="TMetadata">The dump metadata type.</typeparam>
         /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <param name="replace">
+        /// If set to <see langword="false" /> and there is already dump metadata associated with the <typeparamref name="T"/>
+        /// the method will throw exception of type <see cref="InvalidOperationException"/>;
+        /// otherwise it will silently override the existing metadata with <typeparamref name="TMetadata"/> and the <paramref name="dumpAttribute"/>.
+        /// </param>
         /// <returns>The current instance of ClassMetadataRegistrar.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
+        /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public ClassMetadataRegistrar Register<T, TMetadata>(
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute dumpAttribute = null,
+            bool replace = false)
         {
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
-            return Register(typeof(T), typeof(TMetadata), dumpAttribute);
+            return Register(typeof(T), typeof(TMetadata), dumpAttribute, replace);
         }
 
         /// <summary>
@@ -97,14 +112,23 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// <typeparam name="T">The type for which the dump attribute is being registered.</typeparam>
         /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <param name="replace">
+        /// If set to <see langword="false" /> and there is already dump metadata associated with the <typeparamref name="T"/>
+        /// the method will throw exception of type <see cref="InvalidOperationException"/>;
+        /// otherwise it will silently override the existing metadata with itself - <typeparamref name="T"/> and the <paramref name="dumpAttribute"/>.
+        /// </param>
         /// <returns>The current instance of ClassMetadataRegistrar.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
+        /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public ClassMetadataRegistrar Register<T>(
-            DumpAttribute dumpAttribute)
+            DumpAttribute dumpAttribute,
+            bool replace = false)
         {
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
-            return Register(typeof(T), null, dumpAttribute);
+            return Register(typeof(T), null, dumpAttribute, replace);
         }
     }
 }
