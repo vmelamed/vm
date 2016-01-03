@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -6,6 +7,7 @@ namespace vm.Aspects.Model.EFRepository
     /// <summary>
     /// Interface IStoreIdProvider defines the behavior of the unique store ID-s providers.
     /// </summary>
+    [ContractClass(typeof(IStoreIdProviderContract))]
     public interface IStoreIdProvider
     {
         /// <summary>
@@ -18,4 +20,19 @@ namespace vm.Aspects.Model.EFRepository
         /// </exception>
         IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>;
     }
+
+    #region IStoreIdProvider contract binding
+    [ContractClassFor(typeof(IStoreIdProvider))]
+    abstract class IStoreIdProviderContract : IStoreIdProvider
+    {
+        public IStoreUniqueId<TId> GetProvider<TId>()
+            where TId : IEquatable<TId>
+        {
+            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
+
+            throw new NotImplementedException();
+        }
+    }
+    #endregion
+
 }

@@ -153,7 +153,7 @@ namespace vm.Aspects.Model.EFRepository
 
             if (!isChangeTracking)
             {
-                Debug.WriteLine("The repository does not create change-tracking dynamic proxies for instances of type {0}.", typeof(T).Name);
+                Debug.WriteLine("The repository does not create change-tracking dynamic proxies for instances of type {0}.", typeof(T).FullName, null);
                 return false;
             }
 

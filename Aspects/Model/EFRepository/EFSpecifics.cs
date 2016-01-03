@@ -96,20 +96,20 @@ namespace vm.Aspects.Model.EFRepository
         static IDictionary<TypeCode, Func<object, object>> _changeValue = new Dictionary<TypeCode, Func<object, object>>
         {
             [TypeCode.Boolean]  = v => !((bool)v),
-            [TypeCode.Byte]     = v => ((byte)v) + 1,
-            [TypeCode.Char]     = v => ((char)v) + 1,
+            [TypeCode.Byte]     = v => unchecked((byte)((byte)v + 1)),
+            [TypeCode.Char]     = v => unchecked((char)((char)v + 1)),
             [TypeCode.DateTime] = v => ((DateTime)v).AddMilliseconds(1),
-            [TypeCode.Decimal]  = v => ((decimal)v) + 1,
-            [TypeCode.Double]   = v => ((double)v) + 1,
-            [TypeCode.Int16]    = v => ((short)v) + 1,
-            [TypeCode.Int32]    = v => ((int)v) + 1,
-            [TypeCode.Int64]    = v => ((long)v) + 1,
-            [TypeCode.UInt16]   = v => ((ushort)v) + 1,
-            [TypeCode.UInt32]   = v => ((uint)v) + 1,
-            [TypeCode.UInt64]   = v => ((ulong)v) + 1,
-            [TypeCode.SByte]    = v => ((sbyte)v) + 1,
-            [TypeCode.Single]   = v => ((float)v) + 1,
-            [TypeCode.String]   = v => ((string)v) + 1,
+            [TypeCode.Decimal]  = v => (decimal)v + 1,
+            [TypeCode.Double]   = v => (double)v + 1,
+            [TypeCode.Int16]    = v => unchecked((short)((short)v + 1)),
+            [TypeCode.Int32]    = v => (int)v + 1,
+            [TypeCode.Int64]    = v => (long)v + 1,
+            [TypeCode.UInt16]   = v => unchecked((ushort)((ushort)v + 1)),
+            [TypeCode.UInt32]   = v => (uint)v + 1,
+            [TypeCode.UInt64]   = v => (ulong)v + 1,
+            [TypeCode.SByte]    = v => unchecked((sbyte)((sbyte)v + 1)),
+            [TypeCode.Single]   = v => (float)v + 1,
+            [TypeCode.String]   = v => (string)v + "1",
         };
 
         /// <summary>
@@ -126,10 +126,8 @@ namespace vm.Aspects.Model.EFRepository
             object reference,
             IRepository repository)
         {
-            bool result = false;
-
             if (!IsProxy(reference))
-                return result;
+                return false;
 
             var efRepository = repository as EFRepositoryBase;
 
@@ -141,7 +139,7 @@ namespace vm.Aspects.Model.EFRepository
                                     .FirstOrDefault(e => ReferenceEquals(e.Entity, reference));
 
             if (entry.State != EFEntityState.Unchanged)
-                return result;
+                return true;
 
             // Find a simple property which is not a member of the entity's key and can be easily modified:
             var keyMembers = efRepository
@@ -152,38 +150,45 @@ namespace vm.Aspects.Model.EFRepository
                                     .EntityKeyValues
                                     .Select(k => k.Key)
                                     .ToList();
-            var propertyInfo = reference
+            var propertyInfos = reference
                                     .GetType()
                                     .GetProperties(BindingFlags.Public |
-                                                    BindingFlags.NonPublic |
-                                                    BindingFlags.Instance |
-                                                    BindingFlags.FlattenHierarchy)
-                                    .FirstOrDefault(pi => keyMembers.All(k => k != pi.Name)  &&
-                                                          (pi.PropertyType.IsPrimitive ||
-                                                           pi.PropertyType==typeof(string) ||
-                                                           pi.PropertyType==typeof(DateTime)));
+                                                   BindingFlags.NonPublic |
+                                                   BindingFlags.Instance |
+                                                   BindingFlags.FlattenHierarchy)
+                                    .Where(pi => pi.GetSetMethod() != null  &&
+                                                 pi.GetGetMethod() != null  &&
+                                                 keyMembers.All(k => k != pi.Name)  &&
+                                                 (pi.PropertyType.IsPrimitive ||
+                                                  pi.PropertyType==typeof(string) ||
+                                                  pi.PropertyType==typeof(DateTime)));
 
-            if (propertyInfo == null)
-                return false;
+            foreach (var pi in propertyInfos)
+            {
+                // find a function that can change the property
+                Func<object, object> change;
 
-            // find a function that can change the property
-            Func<object, object> change;
+                if (!_changeValue.TryGetValue(Type.GetTypeCode(pi.PropertyType), out change))
+                    continue;
 
-            if (!_changeValue.TryGetValue(Type.GetTypeCode(propertyInfo.PropertyType), out change))
-                return result;
+                // change the property's value and see if the state of the object changes too
+                var propOriginalValue = pi.GetValue(reference, null);
+                var propChangedValue  = change(propOriginalValue);
 
-            var propOriginalValue = propertyInfo.GetValue(reference, null);
+                try
+                {
+                    pi.SetValue(reference, propChangedValue);
+                    if (entry.State==EFEntityState.Modified)
+                        return true;
+                }
+                finally
+                {
+                    // restore the value
+                    pi.SetValue(reference, propOriginalValue, null);
+                }
+            }
 
-            // change the value of the property
-            propertyInfo.SetValue(reference, change(propOriginalValue), null);
-
-            // if the entry's state changed - this is change tracking entity
-            result = entry.State==System.Data.Entity.EntityState.Modified;
-
-            // restore the value
-            propertyInfo.SetValue(reference, propOriginalValue, null);
-
-            return result;
+            return false;
         }
 
         /// <summary>

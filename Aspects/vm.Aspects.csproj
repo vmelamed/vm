@@ -241,6 +241,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.5.0.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\Almond Bank Core Services\Services\packages\AspectObjectDumper.1.5.0\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Common Items\AssemblyInfo.global.cs">
@@ -331,19 +335,15 @@
     <None Include="app.config" />
     <None Include="NuGet\PublishAspects.cmd" />
     <None Include="NuGet\vm.Aspects.nuspec" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="vm.Aspects.Messages.reg" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\Common Items\Dictionary.xml">
       <Link>Dictionary.xml</Link>
     </CodeAnalysisDictionary>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
-      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

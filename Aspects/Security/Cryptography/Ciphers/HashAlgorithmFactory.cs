@@ -25,7 +25,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         HashAlgorithm _hashAlgorithm;
 
-        #region IHashAlgorithmFactory mmbers
+        #region IHashAlgorithmFactory members
         /// <summary>
         /// Initializes a new instance of the <see cref="HashAlgorithmFactory"/> class with optional hash algorithm name.
         /// </summary>

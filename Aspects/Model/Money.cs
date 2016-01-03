@@ -239,9 +239,6 @@ namespace vm.Aspects.Model
             SerializationInfo info,
             StreamingContext context)
         {
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
             info.AddValue("Value", Value);
             info.AddValue("Currency", Currency);
         }
@@ -261,6 +258,7 @@ namespace vm.Aspects.Model
             Money operand)
         {
             Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         operand.Value,
@@ -279,6 +277,7 @@ namespace vm.Aspects.Model
             Money operand)
         {
             Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         -operand.Value,
@@ -304,6 +303,7 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<ArgumentNullException>(right != null, nameof(right));
             Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         left.Value + right.Value,
@@ -327,6 +327,7 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<ArgumentNullException>(right != null, nameof(right));
             Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         left.Value - right.Value,
@@ -371,6 +372,7 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         left.Value / right,
@@ -393,6 +395,7 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+            Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
                         left.Value % right,
@@ -440,7 +443,12 @@ namespace vm.Aspects.Model
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
-        public static bool operator >=(Money left, Money right) => !(left < right);
+        public static bool operator >=(Money left, Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+
+            return !(left < right);
+        }
 
         /// <summary>
         /// Implements the operator &lt;=.
@@ -449,7 +457,12 @@ namespace vm.Aspects.Model
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
-        public static bool operator <=(Money left, Money right) => !(left > right);
+        public static bool operator <=(Money left, Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+
+            return !(left > right);
+        }
 
         /// <summary>
         /// Implements the operation unary '+'.
@@ -460,7 +473,13 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The operation returns a new instance identical to this.
         /// </remarks>
-        public static Money operator +(Money operand) => Plus(operand);
+        public static Money operator +(Money operand)
+        {
+            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Plus(operand);
+        }
 
         /// <summary>
         /// Implements the operation arithmetic negate represented by unary '-'.
@@ -470,7 +489,13 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/> and rounded.
         /// </remarks>
-        public static Money operator -(Money operand) => Negate(operand);
+        public static Money operator -(Money operand)
+        {
+            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Negate(operand);
+        }
 
         /// <summary>
         /// Implements the operation addition represented by the binary '+' operator.
@@ -484,7 +509,15 @@ namespace vm.Aspects.Model
         /// will have the same currency as the operands; 
         /// the result value will be rounded.
         /// </remarks>
-        public static Money operator +(Money left, Money right) => Add(left, right);
+        public static Money operator +(Money left, Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Add(left, right);
+        }
 
         /// <summary>
         /// Implements the operation subtraction represented by the binary '-' operator.
@@ -496,7 +529,15 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; the result value will be rounded.
         /// </remarks>
-        public static Money operator -(Money left, Money right) => Subtract(left, right);
+        public static Money operator -(Money left, Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Subtract(left, right);
+        }
 
         /// <summary>
         /// Implements the operation division (ratio) represented by the '/' operator.
@@ -508,7 +549,15 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The result object will be equal to the division of the two moneys (i.e. will be the ratio of the two moneys).
         /// </remarks>
-        public static decimal operator /(Money left, Money right) => Divide(left, right);
+        public static decimal operator /(Money left, Money right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
+            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+
+            return Divide(left, right);
+        }
 
         /// <summary>
         /// Implements the operation division of money object by decimal number represented by the '/' operator.
@@ -520,7 +569,14 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The result object will be equal to the division of the value of the left operand by the right number; the result value will be rounded. 
         /// </remarks>
-        public static Money operator /(Money left, decimal right) => Divide(left, right);
+        public static Money operator /(Money left, decimal right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Divide(left, right);
+        }
 
         /// <summary>
         /// Implements the operation money object modulo decimal number represented by the '%' operator.
@@ -532,7 +588,14 @@ namespace vm.Aspects.Model
         /// <remarks>
         /// The result object will be equal to the reminder of the division of the value of the left operand by the right number, the result value will be rounded.
         /// </remarks>
-        public static Money operator %(Money left, decimal right) => Mod(left, right);
+        public static Money operator %(Money left, decimal right)
+        {
+            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
+            Contract.Ensures(Contract.Result<Money>() != null);
+
+            return Mod(left, right);
+        }
         #endregion
     }
 }

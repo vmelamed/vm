@@ -110,7 +110,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         public HiLoStoreIdProvider(
             Func<EFRepositoryBase> generatorsRepositoryFactory)
         {
-            _generatorsRepositoryFactory = generatorsRepositoryFactory ?? 
+            _generatorsRepositoryFactory = generatorsRepositoryFactory ??
                                                 (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName) as EFRepositoryBase);
         }
 
@@ -154,6 +154,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         HiLoIdentityGenerator CreateOrGetFreshGenerator(
             string entitySetName)
         {
+            Contract.Requires<ArgumentNullException>(entitySetName!=null, nameof(entitySetName));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(entitySetName), "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
+
             HiLoIdentityGenerator generator;
 
             // Start a new, independent serializable transaction and use a repository with a *transient* lifetime manager.
