@@ -85,7 +85,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="NotSupportedException">
         /// <paramref name="keyLocation"/> refers to a non-file device, such as &quot;con:&quot;, &quot;com1:&quot;, &quot;lpt1:&quot;, etc. in an NTFS environment.
         /// </exception>
-        /// <exception cref="T:System.IO.FileNotFoundException">
+        /// <exception cref="FileNotFoundException">
         /// <paramref name="keyLocation"/> refers to a non-existent file.
         /// </exception>
         /// <exception cref="IOException">

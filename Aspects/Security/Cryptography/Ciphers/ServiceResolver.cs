@@ -101,12 +101,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// <c>true</c> if the objects are considered to be equal (<see cref="M:Equals{TypeAndName}"/>);
             /// otherwise <c>false</c>.
             /// </returns>
-            public static bool operator==(
+            public static bool operator ==(
                 TypeAndName left,
                 TypeAndName right)
             {
-                return ReferenceEquals(left, null) 
-                        ? ReferenceEquals(right, null) 
+                return ReferenceEquals(left, null)
+                        ? ReferenceEquals(right, null)
                         : left.Equals(right);
             }
 
@@ -119,7 +119,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// <c>true</c> if the objects are not considered to be equal (<see cref="M:Equals{TypeAndName}"/>);
             /// otherwise <c>false</c>.
             /// </returns>
-            public static bool operator!=(
+            public static bool operator !=(
                 TypeAndName left,
                 TypeAndName right)
             {
@@ -137,12 +137,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         readonly IDictionary<TypeAndName, Lazy<object>> _defaultServices = new Dictionary<TypeAndName, Lazy<object>>
         {
-            { new TypeAndName(typeof(IKeyLocationStrategy),       string.Empty),                     new Lazy<object>(() => new KeyLocationStrategy())  },
+            { new TypeAndName(typeof(IKeyLocationStrategy),       string.Empty),                     new Lazy<object>(() => new KeyLocationStrategy())           },
             { new TypeAndName(typeof(IKeyStorage),                string.Empty),                     new Lazy<object>(() => new KeyFile())                       },
-            { new TypeAndName(typeof(IHashAlgorithmFactory),      string.Empty),                     new Lazy<object>(() => new HashAlgorithmFactory())          },
-            { new TypeAndName(typeof(ISymmetricAlgorithmFactory), string.Empty),                     new Lazy<object>(() => new SymmetricAlgorithmFactory())     },
+
             { new TypeAndName(typeof(string),                     Algorithms.Symmetric.ResolveName), new Lazy<object>(() => Algorithms.Symmetric.Default)        },
+            { new TypeAndName(typeof(ISymmetricAlgorithmFactory), string.Empty),                     new Lazy<object>(() => new SymmetricAlgorithmFactory())     },
+
             { new TypeAndName(typeof(string),                     Algorithms.Hash.ResolveName),      new Lazy<object>(() => Algorithms.Hash.Default)             },
+            { new TypeAndName(typeof(IHashAlgorithmFactory),      string.Empty),                     new Lazy<object>(() => new HashAlgorithmFactory())          },
+
+            { new TypeAndName(typeof(string),                     Algorithms.KeyedHash.ResolveName), new Lazy<object>(() => Algorithms.KeyedHash.Default)        },
+            { new TypeAndName(typeof(IHashAlgorithmFactory),      Algorithms.KeyedHash.ResolveName), new Lazy<object>(() => new KeyedHashAlgorithmFactory())     },
+
+            { new TypeAndName(typeof(string),                     Algorithms.Signature.ResolveName), new Lazy<object>(() => Algorithms.Signature.Default)        },
         };
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The DI container should do it.")]

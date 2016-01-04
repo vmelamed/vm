@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
 {
@@ -23,8 +24,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
         public const string Default = Sha256;
 
         /// <summary>
-        /// SHA1. Acceptable for signing. For hashing prefer SHA256, and higher.
+        /// SHA1. Not recommended. Prefer SHA256, and higher. Use for backwards compatibility only.
         /// </summary>
+        [Obsolete("SHA-1 is not a recommended hash algorithm.")]
         public const string Sha1 = "SHA1";
         /// <summary>
         /// SHA256.
@@ -42,12 +44,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
         /// <summary>
         /// MD5. Not recommended, use for backwards compatibility only.
         /// </summary>
+        [Obsolete("MD5 is not a recommended hash algorithm.")]
         public const string MD5 = "MD5";
-
         /// <summary>
         /// RIPEMD160 implemented by RIPEMD160Managed. Not recommended, use for backwards compatibility only.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="Ripemd")]
+        [Obsolete("RIPEMD5 is not a recommended hash algorithm.")]
         public const string Ripemd160 = "RIPEMD160";
     }
 }

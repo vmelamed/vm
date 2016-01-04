@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
 {
@@ -8,44 +8,49 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
     public static class KeyedHash
     {
         /// <summary>
-        /// The default and preferred hash algorithm implementation is HMACSHA256.
+        /// The user can register a certificate instance in the Common Service Locator for encrypting the symmetric key with a resolve name - &quot;EncryptingHashKeyCertificate&quot;.
+        /// </summary>
+        public const string CertificateResolveName = "EncryptingHashKeyCertificate";
+
+        /// <summary>
+        /// The user can register hash algorithm name string instance in the Common Service Locator with a resolve name - &quot;DefaultHash&quot;.
+        /// </summary>
+        public const string ResolveName = "DefaultKeyedHash";
+
+        /// <summary>
+        /// The default and preferred hash algorithm implementation - &quot;HMACSHA256&quot;.
         /// </summary>
         public const string Default = HmacSha256;
 
         /// <summary>
-        /// HMACSHA1. Prefer HMACSHA256, and higher.
+        /// The MAC-TripleDES. Recommended.
         /// </summary>
-        public const string HmacSha1 = "HMACSHA1";
+        public const string MacTripleDes = "MACTripleDES";
 
         /// <summary>
-        /// HMACSHA256. Recommended.
+        /// The HMAC-SHA256. Recommended.
         /// </summary>
         public const string HmacSha256 = "HMACSHA256";
 
         /// <summary>
-        /// HMACSHA384.
+        /// The HMAC-SHA384. Recommended.
         /// </summary>
         public const string HmacSha384 = "HMACSHA384";
 
         /// <summary>
-        /// HMACSHA512. Recommended.
+        /// The HMAC-SHA512. Recommended.
         /// </summary>
         public const string HmacSha512 = "HMACSHA512";
 
         /// <summary>
-        /// HMACMD5. Not recommended, use for backwards compatibility only.
+        /// The HMAC-SHA1. Not recommended, use for backwards compatibility only.
         /// </summary>
-        public const string HmacMD5 = "HMACMD5";
-
+        [Obsolete("HMAC-SHA-1 is not a recommended hash algorithm.")]
+        public const string HmacSha1 = "HMACSHA1";
         /// <summary>
-        /// HMACRIPEMD160 implemented by RIPEMD160Managed. Not recommended, use for backwards compatibility only.
+        /// The HMAC-RIPEMD160. Not recommended, use for backwards compatibility only.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="Ripemd")]
+        [Obsolete("HMAC-RIPEMD160 is not a recommended hash algorithm.")]
         public const string HmacRipemd160 = "HMACRIPEMD160";
-
-        /// <summary>
-        /// MACTripleDES. Not recommended, use for backwards compatibility only.
-        /// </summary>
-        public const string MacTripleDes = "MACTripleDES";
     }
 }

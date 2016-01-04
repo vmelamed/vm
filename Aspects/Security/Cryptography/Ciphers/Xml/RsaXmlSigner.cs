@@ -123,7 +123,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 providerType            = Sha256ProviderType;
                 break;
 
+#pragma warning disable CS0612 // Type or member is obsolete - used for bacwards compatibility
             case Algorithms.Hash.Sha1:
+#pragma warning restore CS0612 // Type or member is obsolete
                 _canonicalizationMethod = SignedXml.XmlDsigCanonicalizationUrl;
                 _signatureMethod        = SignedXml.XmlDsigRSASHA1Url;
                 _digestMethod           = XmlConstants.Sha1DigestMethod;
@@ -413,7 +415,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         reference.AddTransform(new XmlDsigExcC14NTransform());
                         break;
 
+#pragma warning disable CS0612 // Type or member is obsolete - used for bacwards compatibility
                     case Algorithms.Hash.Sha1:
+#pragma warning restore CS0612 // Type or member is obsolete
                         reference.AddTransform(new XmlDsigC14NTransform());
                         break;
                     }

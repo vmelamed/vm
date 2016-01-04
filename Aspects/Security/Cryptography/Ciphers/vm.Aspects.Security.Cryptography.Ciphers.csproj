@@ -231,6 +231,7 @@
     <Compile Include="FromByteArray.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="HashAlgorithmFactory.cs" />
+    <Compile Include="KeyedHasher .cs" />
     <Compile Include="Hasher.cs" />
     <Compile Include="ICipher.cs" />
     <Compile Include="ICipherAsync.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="IKeyStorage.cs" />
     <Compile Include="IKeyStorageAsync.cs" />
     <Compile Include="ISymmetricAlgorithmFactory.cs" />
+    <Compile Include="KeyedHashAlgorithmFactory.cs" />
     <Compile Include="KeyFile.cs" />
     <Compile Include="KeyLocationStrategy.cs" />
     <Compile Include="NullCipher.cs" />
