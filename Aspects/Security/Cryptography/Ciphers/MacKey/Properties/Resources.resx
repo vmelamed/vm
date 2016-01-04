@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotFindCert" xml:space="preserve">
+    <value>Could not find a valid certificate with the specified thumb print in the personal certificates store of the current user.</value>
+  </data>
+  <data name="FileExist" xml:space="preserve">
+    <value>The file {0} already exists. Do you want to override it? [Y/N]: </value>
+  </data>
+  <data name="FileNotExist" xml:space="preserve">
+    <value>The file {0} does not exist.</value>
+  </data>
+  <data name="InvalidCommand" xml:space="preserve">
+    <value>{0} is not a valid command.</value>
+  </data>
+  <data name="InvalidKey" xml:space="preserve">
+    <value>The key is not valid.</value>
+  </data>
+  <data name="PressAnyKey" xml:space="preserve">
+    <value>Press any key to exit...</value>
+  </data>
+  <data name="SpecifyFileName" xml:space="preserve">
+    <value>Please, specify a file name.</value>
+  </data>
+  <data name="SpecifyKey" xml:space="preserve">
+    <value>Please, specify a key.</value>
+  </data>
+  <data name="SpecifyThumbprint" xml:space="preserve">
+    <value>Please, spcify the certificate's thumbprint.</value>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>Manages certificate encrypted MAC key files for use with the class
+vm.Aspects.Security.Cryptography.KeyedHasher.
+
+Command syntax:
+
+MacKey &lt;command&gt; &lt;thumbprint&gt; &lt;file path&gt; [&lt;key&gt;]
+
+&lt;command&gt;   - specifies the operation that needs to be performed:
+    create      creates a MAC key and stores it in the specified file.
+    export      displays the clear text of the MAC key.
+    import      stores the specified key in the specified file.
+    help        displays this help. Also: ?, -?, /? or no parameters at all.
+
+            The commands can be abbreviated, e.g. "i", "imp" and "import" are
+            equivalent commands.
+
+&lt;thumbprint&gt; - specifies the thumbprint of the certificate. The 
+			certificate must reside in the personal certificates store of the 
+			current user. The thumbprint must be in the form "XX XX XX ... XX"
+			or XX-XX-...-XX or XXXXXX...XX, where X is a hexadecimal digit.
+
+&lt;file path&gt; - specifies the key file. For the command "export" the file must
+			  exist.
+
+&lt;key&gt;       - text representation of the clear text of the MAC key in the form
+			XX-XX-XX-...-XX or "XX XX XX ... XX" or XXXXXX...XX, where X is a
+			hexadecimal digit. Required only for the command "import".
+
+Examples:
+
+MacKey create "dc 0d 71 48 74 41 aa 1b 8f fa 83 5b 21 62 c4 55 76 b8 8c 3a" MyApplication.exe.key
+
+    Creates, encrypts and stores a key in a file named MyApplication.key.
+
+MacKey export dc0d71487441aa1b8ffa835b2162c45576b88c3a Services.key
+
+    Displays the key stored in the file Services.key
+
+MacKey import dc-0d-71-48-74-41-aa-1b-8f-fa-83-5b-21-62-c4-55-76-b8-8c-3a C:\inetpub\wwwroot\MyWebSite\MyWebSite.key 08-FF-F9-D3-2D-BD-BF-B5-06-20-15-2B-5F-D0-3A-E5-B1-12-F4-0A-B1-3E-3B-EF-9E-7A-17-9C-FD-0A-1D-F6
+        
+    Encrypts the specified key and stores it in the specified file.</value>
+  </data>
+</root>

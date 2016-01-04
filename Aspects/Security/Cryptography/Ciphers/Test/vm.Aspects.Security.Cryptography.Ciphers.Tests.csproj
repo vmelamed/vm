@@ -233,6 +233,7 @@
     <Compile Include="HasherTest.cs" />
     <Compile Include="ICipherExtensionsTest.cs" />
     <Compile Include="IHasherExtensionsTest.cs" />
+    <Compile Include="KeyedHasherTest.cs" />
     <Compile Include="KeyFileTest.cs" />
     <Compile Include="NullCipherTest.cs" />
     <Compile Include="NullHasherTest.cs" />

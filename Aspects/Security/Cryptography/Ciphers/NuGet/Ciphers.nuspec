@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.9.5</version>
+        <version>1.10.0</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -18,12 +18,13 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            Added the XML documentation.
+            Added MAC keyed hashers like HMAC-SHA256 or MAC-3DES.
+            Added a MAC key importing/exporting utility &quot;MacKey&quot; in the style of EncryptedKey or ProtectedKey.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2015</copyright>
+        <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
                         version="1.3" />

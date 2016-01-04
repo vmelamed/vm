@@ -37,7 +37,7 @@
         <licenseUrl>https://aspectobjectdumper.codeplex.com/license</licenseUrl>
         <projectUrl>https://aspectobjectdumper.codeplex.com/</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2015</copyright>
+        <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
                         version="1.3" />

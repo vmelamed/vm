@@ -17,7 +17,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <para>
     /// Crypto package contents:
     ///     <list type="number">
-    ///         <item><description>Length of the hash (serialized Int32) - 4 bytes.</description></item>
     ///         <item><description>The bytes of the hash.</description></item>
     ///     </list>
     /// </para>
@@ -440,7 +439,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         bool IsHashKeyInitialized
         {
-            get { return _hashKey.Length > 0; }
+            get { return _hashKey?.Length > 0; }
         }
 
         /// <summary>
@@ -531,7 +530,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns>CryptoStream.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "It will be disposed by the calling code.")]
-        static CryptoStream CreateHashStream(
+        protected virtual CryptoStream CreateHashStream(
             HashAlgorithm hashAlgorithm)
         {
             Contract.Requires<ArgumentNullException>(hashAlgorithm != null, "hashAlgorithm");
@@ -549,7 +548,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "2", Justification = "salt is conditionally validated.")]
-        static byte[] FinalizeHashing(
+        protected virtual byte[] FinalizeHashing(
             CryptoStream hashStream,
             HashAlgorithm hashAlgorithm)
         {

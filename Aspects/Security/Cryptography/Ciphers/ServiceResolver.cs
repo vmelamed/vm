@@ -139,6 +139,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             { new TypeAndName(typeof(IKeyLocationStrategy),       string.Empty),                     new Lazy<object>(() => new KeyLocationStrategy())           },
             { new TypeAndName(typeof(IKeyStorage),                string.Empty),                     new Lazy<object>(() => new KeyFile())                       },
+            { new TypeAndName(typeof(IKeyStorageAsync),           string.Empty),                     new Lazy<object>(() => new KeyFile())                       },
 
             { new TypeAndName(typeof(string),                     Algorithms.Symmetric.ResolveName), new Lazy<object>(() => Algorithms.Symmetric.Default)        },
             { new TypeAndName(typeof(ISymmetricAlgorithmFactory), string.Empty),                     new Lazy<object>(() => new SymmetricAlgorithmFactory())     },

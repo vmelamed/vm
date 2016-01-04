@@ -13,7 +13,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         public override ICipherAsync GetCipher(bool base64 = false)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             var cipher = new EncryptedNewKeyHashedCipher(CertificateFactory.GetDecryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             // ignore the parameter base64
             return cipher;
@@ -21,7 +23,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return new EncryptedNewKeyHashedCipher(CertificateFactory.GetEncryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         #region Test disabled IKeyManagement

@@ -15,9 +15,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <para>
     /// Crypto package contents:
     ///     <list type="number">
-    ///         <item><description>If the salt length is greater than 0, the length of the salt (serialized Int32) - 4 bytes.</description></item>
     ///         <item><description>If the salt length is greater than 0, the bytes of the salt.</description></item>
-    ///         <item><description>Length of the hash (serialized Int32) - 4 bytes.</description></item>
     ///         <item><description>The bytes of the hash.</description></item>
     ///     </list>
     /// </para>

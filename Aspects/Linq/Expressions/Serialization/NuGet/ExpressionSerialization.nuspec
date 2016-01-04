@@ -31,7 +31,7 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2015</copyright>
+        <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
         </dependencies>
         <tags>.net LINQ expression tree serialization XML aspects</tags>

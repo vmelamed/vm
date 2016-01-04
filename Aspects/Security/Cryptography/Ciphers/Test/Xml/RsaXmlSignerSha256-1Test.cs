@@ -10,7 +10,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     {
         public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             return new RsaXmlSigner(CertificateFactory.GetSigningSha256Certificate(), Algorithms.Hash.Sha1) { SignatureLocation = signatureLocation };     // SHA1 also works with this cert
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }
