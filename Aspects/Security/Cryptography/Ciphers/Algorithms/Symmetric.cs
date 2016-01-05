@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
 {
     /// <summary>
@@ -39,6 +41,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
         /// <summary>
         /// The DES implemented by DESCryptoServiceProvider. Not recommended, use for backwards compatibility only.
         /// </summary>
+        [Obsolete("DES is not a recommended hash algorithm. It should be used only for backwards compatibility.")]
         public const string Des = "DES";
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
         /// <summary>
         /// The RC2 implemented by RC2CryptoServiceProvider. Not recommended, use for backwards compatibility only.
         /// </summary>
+        [Obsolete("RC2 is not a recommended hash algorithm. It should be used only for backwards compatibility.")]
         public const string RC2 = "RC2";
     }
 }

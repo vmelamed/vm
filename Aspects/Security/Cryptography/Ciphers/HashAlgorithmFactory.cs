@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <summary>
     /// Class <c>HashAlgorithmFactory</c> encapsulates the strategy for determining and realizing the hash algorithm.
     /// </summary>
-    sealed class HashAlgorithmFactory : IHashAlgorithmFactory
+    public sealed class HashAlgorithmFactory : IHashAlgorithmFactory
     {
         /// <summary>
         /// The resolved hash algorithm name

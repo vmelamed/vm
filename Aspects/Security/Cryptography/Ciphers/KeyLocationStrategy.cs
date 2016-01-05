@@ -11,7 +11,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///         <item>by the path and name of the entry assembly with added suffix &quot;.KEY&quot;, e.g. &quot;MyApp.exe.KEY&quot;.</item>.
     ///     </list>
     /// </summary>
-    sealed class KeyLocationStrategy : IKeyLocationStrategy
+    public sealed class KeyLocationStrategy : IKeyLocationStrategy
     {
         /// <summary>
         /// The default key location suffix - .key

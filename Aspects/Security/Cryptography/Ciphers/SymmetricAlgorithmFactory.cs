@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <summary>
     /// Class <c>SymmetricAlgorithmFactory</c> encapsulates the strategy for determining and realizing the symmetric algorithm.
     /// </summary>
-    sealed class SymmetricAlgorithmFactory : ISymmetricAlgorithmFactory
+    public sealed class SymmetricAlgorithmFactory : ISymmetricAlgorithmFactory
     {
         /// <summary>
         /// The resolved symmetric algorithm name

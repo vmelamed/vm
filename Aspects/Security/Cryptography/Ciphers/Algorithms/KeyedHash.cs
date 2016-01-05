@@ -45,12 +45,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
         /// <summary>
         /// The HMAC-SHA1. Not recommended, use for backwards compatibility only.
         /// </summary>
-        [Obsolete("HMAC-SHA-1 is not a recommended hash algorithm.")]
+        [Obsolete("HMAC-SHA-1 is not a recommended hash algorithm. It should be used only for backwards compatibility.")]
         public const string HmacSha1 = "HMACSHA1";
         /// <summary>
         /// The HMAC-RIPEMD160. Not recommended, use for backwards compatibility only.
         /// </summary>
-        [Obsolete("HMAC-RIPEMD160 is not a recommended hash algorithm.")]
+        [Obsolete("HMAC-RIPEMD160 is not a recommended hash algorithm. It should be used only for backwards compatibility.")]
         public const string HmacRipemd160 = "HMACRIPEMD160";
     }
 }

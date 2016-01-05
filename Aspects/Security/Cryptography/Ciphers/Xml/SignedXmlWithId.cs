@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     {
         const string xmlIdXPathFormat = "//*[@{0}=\"{1}\"]";
 
-        static readonly string[] idAttributeDefaultNames = 
+        static readonly string[] idAttributeDefaultNames =
         {
             XmlConstants.Id,
         };
@@ -35,11 +35,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         }
 
         /// <summary>
-        /// Returns the <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object.
+        /// Returns the <see cref="XmlElement" /> object with the specified ID from the specified <see cref="XmlDocument" /> object.
         /// </summary>
-        /// <param name="document">The <see cref="T:System.Xml.XmlDocument" /> object to retrieve the <see cref="T:System.Xml.XmlElement" /> object from.</param>
-        /// <param name="idValue">The ID of the <see cref="T:System.Xml.XmlElement" /> object to retrieve from the <see cref="T:System.Xml.XmlDocument" /> object.</param>
-        /// <returns>The <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object, or null if it could not be found.</returns>
+        /// <param name="document">The <see cref="XmlDocument" /> object to retrieve the <see cref="XmlElement" /> object from.</param>
+        /// <param name="idValue">The ID of the <see cref="T:System.Xml.XmlElement" /> object to retrieve from the <see cref="XmlDocument" /> object.</param>
+        /// <returns>The <see cref="XmlElement" /> object with the specified ID from the specified <see cref="XmlDocument" /> object, or null if it could not be found.</returns>
         public override XmlElement GetIdElement(
             XmlDocument document,
             string idValue)

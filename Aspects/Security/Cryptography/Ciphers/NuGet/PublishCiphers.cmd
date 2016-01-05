@@ -9,6 +9,8 @@ msbuild EncryptedKey\EncryptedKey.csproj /t:Rebuild /p:Configuration=Release /p:
 if errorlevel 1 goto exit
 msbuild ProtectedKey\ProtectedKey.csproj /t:Rebuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.6
 if errorlevel 1 goto exit
+msbuild MacKey\MacKey.csproj /t:Rebuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.6
+if errorlevel 1 goto exit
 NuGet Pack NuGet\Ciphers.nuspec -Prop Configuration=Release
 if errorlevel 1 goto exit
 @echo Press any key to push to NuGet... > con:

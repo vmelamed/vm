@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// <summary>
     /// Class <c>KeyedHashAlgorithmFactory</c> encapsulates the strategy for determining and realizing the keyed hash algorithm.
     /// </summary>
-    sealed class KeyedHashAlgorithmFactory : IHashAlgorithmFactory
+    public sealed class KeyedHashAlgorithmFactory : IHashAlgorithmFactory
     {
         /// <summary>
         /// The resolved keyed hash algorithm name

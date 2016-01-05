@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.10.0</version>
+        <version>1.10.2</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -19,7 +19,8 @@
         </description>
         <releaseNotes>
             Added MAC keyed hashers like HMAC-SHA256 or MAC-3DES.
-            Added a MAC key importing/exporting utility &quot;MacKey&quot; in the style of EncryptedKey or ProtectedKey.
+            Added a MAC key importing/exporting utility MacKey in the style of EncryptedKey or ProtectedKey.
+            Changed the access of the classes `HashAlgorithmFactory`,`KeyedHashAlgorithmFactory`,`SymmetricAlgorithmFactory`, `KeyLocationStrategy` to public.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -41,6 +42,8 @@
         <file src="..\EncryptedKey\bin\Release\EncryptedKey.exe"
               target="tools\net46"/>
         <file src="..\ProtectedKey\bin\Release\ProtectedKey.exe"
+              target="tools\net46"/>
+        <file src="..\MacKey\bin\Release\MacKey.exe"
               target="tools\net46"/>
         <file src="..\ProtectedKey\bin\Release\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net46"/>
