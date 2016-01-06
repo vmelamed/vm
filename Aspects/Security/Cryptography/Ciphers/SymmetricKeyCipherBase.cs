@@ -26,7 +26,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// The underlying .NET symmetric cipher.
         /// </summary>
-        readonly SymmetricAlgorithm _symmetric;
+        SymmetricAlgorithm _symmetric;
         #endregion
 
         #region Constructor
@@ -136,10 +136,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key)
         {
             Symmetric.Key = key;
-
-            var encryptedKey = EncryptSymmetricKey();
-
-            _keyStorage.PutKey(encryptedKey, KeyLocation);
+            _keyStorage.PutKey(EncryptSymmetricKey(), KeyLocation);
+            IsSymmetricKeyInitialized = true;
         }
 
         /// <summary>
@@ -295,11 +293,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
         /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~SymmetricKeyCipherBase"/>.
         /// </param>
         /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, 
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, 
         /// it will try to release all managed resources (usually aggregated objects which implement <see cref="IDisposable"/> as well) 
         /// and then it will release all unmanaged resources if any. If the parameter is <c>false</c> then 
         /// the method will only try to release the unmanaged resources.
@@ -324,6 +322,32 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             Contract.Invariant(Symmetric != null, "The symmetric key was not instantiated.");
             Contract.Invariant(!IsDisposed, "The object was disposed.");
+        }
+
+        /// <summary>
+        /// Copies certain characteristics of this instance to the <paramref name="cipher"/> parameter.
+        /// The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
+        /// Here it creates a <see cref="SymmetricAlgorithm"/> object identical to the current <see cref="Symmetric"/> and assigns it to <paramref name="cipher"/>'s <see cref="Symmetric"/>.
+        /// </summary>
+        /// <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        protected virtual void CopyTo(
+            SymmetricKeyCipherBase cipher)
+        {
+            if (!IsSymmetricKeyInitialized)
+                return;
+
+            cipher._symmetric = SymmetricAlgorithm.Create(Symmetric.GetType().FullName);
+
+            cipher.IsSymmetricKeyInitialized = true;
+            cipher.ShouldEncryptIV           = ShouldEncryptIV;
+
+            cipher.Symmetric.Mode            = Symmetric.Mode;
+            cipher.Symmetric.Padding         = Symmetric.Padding;
+            cipher.Symmetric.BlockSize       = Symmetric.BlockSize;
+            cipher.Symmetric.FeedbackSize    = Symmetric.FeedbackSize;
+            cipher.Symmetric.KeySize         = Symmetric.KeySize;
+            cipher.Symmetric.Key             = (byte[])Symmetric.Key.Clone();
+            cipher.Symmetric.IV              = (byte[])Symmetric.IV.Clone();
         }
     }
 }

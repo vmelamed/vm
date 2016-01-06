@@ -118,6 +118,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             InitializeAsymmetricKeys(certificate);
         }
+
+        EncryptedKeyCipher()
+        {
+        }
         #endregion
 
         /// <summary>
@@ -147,6 +151,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
+        /// Flag indicating whether to encrypt the initialization vector. Here the setter checks if the certificate has a private key.
+        /// </summary>
+        public override bool ShouldEncryptIV
+        {
+            get { return base.ShouldEncryptIV; }
+            set
+            {
+                if (value == true  &&  PrivateKey == null)
+                    throw new InvalidOperationException("The certificate does not contain a private key.");
+                base.ShouldEncryptIV = value;
+            }
+        }
+
+
+        /// <summary>
         /// Encrypts the symmetric key using the public key.
         /// </summary>
         /// <remarks>
@@ -155,6 +174,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>System.Byte[].</returns>
         protected override byte[] EncryptSymmetricKey()
         {
+            if (PublicKey == null)
+                throw new InvalidOperationException("The method is not available on duplicates.");
+
             return PublicKey.Encrypt(Symmetric.Key, true);
         }
 
@@ -165,10 +187,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <param name="encryptedKey">The encrypted key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
+            if (PublicKey == null)
+                throw new InvalidOperationException("The method is not available on duplicates.");
             if (PrivateKey == null)
                 throw new InvalidOperationException("The certificate does not contain a private key.");
 
@@ -184,6 +208,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <remarks>The method is called by the GoF template-methods.</remarks>
         protected override byte[] EncryptIV()
         {
+            if (ShouldEncryptIV  &&  PublicKey == null)
+                throw new InvalidOperationException("The method is not available on duplicates.");
+
             return ShouldEncryptIV
                         ? PublicKey.Encrypt(Symmetric.IV, true)
                         : Symmetric.IV;
@@ -195,11 +222,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedIV">The encrypted initialization vector.</param>
         /// <exception cref="System.InvalidOperationException">The certificate did not contain a private key.</exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// See also <seealso cref="Duplicate"/>.
         protected override void DecryptIV(
             byte[] encryptedIV)
         {
-            if (PrivateKey == null)
-                throw new InvalidOperationException("The certificate does not contain a private key.");
+            if (ShouldEncryptIV  &&  PrivateKey == null)
+                    throw new InvalidOperationException(PublicKey == null 
+                                                            ? "The method is not available on duplicates."
+                                                            : "The certificate does not contain a private key.");
 
             Symmetric.IV = ShouldEncryptIV
                                 ? PrivateKey.Decrypt(encryptedIV, true)
@@ -224,21 +255,81 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (disposing)
             {
-                if (!ReferenceEquals(PrivateKey, PublicKey) &&
-                    PrivateKey != null)
+                if (PrivateKey != null)
                     PrivateKey.Dispose();
 
-                PublicKey.Dispose();
+                if (PublicKey != null)
+                    PublicKey.Dispose();
             }
 
             base.Dispose(disposing);
         }
         #endregion
 
-        [ContractInvariantMethod]
-        void Invariant()
+        /// <summary>
+        /// Creates a new, lightweight <see cref="EncryptedKeyCipher"/> instance and copies certain characteristics of this instance to it.
+        /// A duplicate can be created only if the underlying symmetric algorithm instance is already initialized and the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV"/> is <see langword="false"/>.
+        /// The duplicate can be used only for encryption and decryption of data (the <see cref="ICipher"/> and <see cref="ICipherAsync"/> behavior). The <see cref="IKeyManagement"/> behavior is disabled and
+        /// calling any of its members would throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <returns>The duplicate.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </exception>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller must dispose it.")]
+        public virtual ICipherAsync Duplicate()
         {
-            Contract.Invariant(PublicKey != null, "The class was not initialized with a valid certificate.");
+            if (!IsSymmetricKeyInitialized || ShouldEncryptIV)
+                throw new InvalidOperationException("This object cannot create duplicate because eithr the symmetric key is not initialized yet or the property "+
+                                                    nameof(ShouldEncryptIV)+" is true.");
+
+            var cipher = new EncryptedKeyCipher();
+
+            CopyTo(cipher);
+            return cipher;
+        }
+
+        /// <summary>
+        /// Resets the asymmetric keys. By doing so the instance looses its <see cref="IKeyManagement" /> behavior but becomes lighter in terms of memory footprint.
+        /// The asymmetric keys can be reset only if the underlying symmetric algorithm instance is already initialized and
+        /// the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </exception>
+        /// See also <seealso cref="Duplicate"/>.
+        public virtual void ResetAsymmetricKeys()
+        {
+            if (!IsSymmetricKeyInitialized || ShouldEncryptIV)
+                throw new InvalidOperationException("This object cannot reset its asymmetric keys because eithr the symmetric key is not initialized yet or the property "+
+                                                    nameof(ShouldEncryptIV)+" is true.");
+
+            if (PublicKey == null)
+                return;
+
+            PublicKey.Dispose();
+            PublicKey = null;
+
+            PrivateKey.Dispose();
+            PrivateKey = null;
+        }
+
+        /// <summary>
+        /// Copies certain characteristics of this instance to the <paramref name="cipher"/> parameter.
+        /// The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
+        /// </summary>
+        /// <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        protected override void CopyTo(
+            SymmetricKeyCipherBase cipher)
+        {
+            base.CopyTo(cipher);
+
+            var c = cipher as ProtectedKeyCipher;
+
+            if (c == null)
+                return;
+
+            c.Base64Encoded = Base64Encoded;
         }
     }
 }

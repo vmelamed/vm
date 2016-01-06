@@ -29,7 +29,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyedHashAlgorithmFactory"/> class with optional keyed hash algorithm name.
         /// </summary>
-        /// <param name="keyedHashAlgorithmName">Name of the keyed hash algorithm.</param>
+        /// <param name="hashAlgorithmName">Name of the keyed hash algorithm.</param>
         /// <exception cref="ActivationException">
         /// If the supplied keyed hash algorithm name is not valid.
         /// </exception>
@@ -52,12 +52,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </list>
         /// </remarks>
         public void Initialize(
-            string keyedHashAlgorithmName = null)
+            string hashAlgorithmName = null)
         {
             // 1. If the user passed keyed hash algorithm name that is not null, empty or whitespace characters only, 
             //    it will be used in creating the <see cref="KeyedHashAlgorithm"/> object.
-            if (!string.IsNullOrWhiteSpace(keyedHashAlgorithmName))
-                _hashAlgorithmName = keyedHashAlgorithmName;
+            if (!string.IsNullOrWhiteSpace(hashAlgorithmName))
+                _hashAlgorithmName = hashAlgorithmName;
             else
             {
                 try

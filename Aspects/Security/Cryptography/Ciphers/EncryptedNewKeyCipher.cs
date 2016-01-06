@@ -274,5 +274,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             await base.BeforeReadDecryptedAsync(encryptedStream);
         }
         #endregion
+
+        /// <summary>
+        /// Throws <see cref="NotSupportedException"/>.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">Always.</exception>
+        public override ICipherAsync Duplicate()
+        {
+            throw new NotSupportedException("The method Duplicate() is not supported on this cipher.");
+        }
+
+        /// <summary>
+        /// Throws <see cref="NotSupportedException"/>.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">Always.</exception>
+        public override void ResetAsymmetricKeys()
+        {
+            throw new NotSupportedException("The method ResetAsymmetricKeys() is not supported on this cipher.");
+        }
     }
 }

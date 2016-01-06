@@ -53,6 +53,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// The cipher can also be used to encrypt elements of or entire XML documents.
     /// </para>
     /// </remarks>
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is implemented correctly.")]
     public class ProtectedKeyCipher : SymmetricKeyCipherBase, ICipherAsync
     {
         #region Constructors
@@ -813,26 +814,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-        #region IDisposable pattern implementation
         /// <summary>
-        /// Performs the actual job of disposing the object.
+        /// Copies certain characteristics of this instance to the <paramref name="cipher"/> parameter.
+        /// The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
         /// </summary>
-        /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~SymmetricCipher()"/>.
-        /// </param>
-        /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, it will try to release all managed resources 
-        /// (usually aggregated objects which implement <see cref="IDisposable"/> as well) and then it will release all unmanaged resources if any.
-        /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
-        /// </remarks>
-        protected override void Dispose(bool disposing)
+        /// <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        protected override void CopyTo(
+            SymmetricKeyCipherBase cipher)
         {
-            if (disposing)
-                Symmetric.Dispose();
+            base.CopyTo(cipher);
 
-            base.Dispose(disposing);
+            var c = cipher as ProtectedKeyCipher;
+
+            if (c == null)
+                return;
+
+            c.Base64Encoded = Base64Encoded;
         }
-        #endregion
     }
 }

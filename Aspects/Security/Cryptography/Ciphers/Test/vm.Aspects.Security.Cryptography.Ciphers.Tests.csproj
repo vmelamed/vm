@@ -220,6 +220,8 @@
   <ItemGroup>
     <Compile Include="CertificateFactory.cs" />
     <Compile Include="DpapiCipherTest1.cs" />
+    <Compile Include="ResetToDuplicateTest.cs" />
+    <Compile Include="DuplicateTest.cs" />
     <Compile Include="EncryptedKeyCipherTest.cs" />
     <Compile Include="EncryptedKeyCipherTest1.cs" />
     <Compile Include="EncryptedNewKeyCipherTest.cs" />
