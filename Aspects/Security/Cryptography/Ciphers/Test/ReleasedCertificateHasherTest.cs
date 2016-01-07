@@ -12,12 +12,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         const string keyFileName = "releasedCertificateHash.key";
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        //public TestContext TestContext { get; set; }
-
         public override IHasherAsync GetHasher()
         {
             return new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate();
@@ -45,6 +39,60 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
+        [TestMethod]
+        public void OriginalCanVerifyStripped()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
 
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            {
+                var hash = stripped.Hash(expected);
+
+                Assert.IsTrue(original.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void StrippedCanVerifyOriginal()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            {
+                var hash = original.Hash(expected);
+
+                var stripped = ((KeyedHasher)original).ReleaseCertificate();
+
+                Assert.IsTrue(stripped.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void StrippedCanVerifyStripped()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            using (var stripped2 = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            {
+                var hash = stripped.Hash(expected);
+
+                Assert.IsTrue(stripped2.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void StrippedCanVerifyItsOwn()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            {
+                var hash = stripped.Hash(expected);
+
+                Assert.IsTrue(stripped.TryVerifyHash(expected, hash));
+            }
+        }
     }
 }

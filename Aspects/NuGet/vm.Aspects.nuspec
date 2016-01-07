@@ -14,6 +14,12 @@
         <releaseNotes>
             * Added and tested MAC keyed hashers like HMAC-SHA256 or MAC-3DES.
             * Added and tested a MAC key importing/exporting utility "MacKey" in the style of EncryptedKey or ProtectedKey.
+            * Added interface `ILightCipher` with methods `ReleaseCertificate` and `CloneCipher` to the class `EncryptedKeyCipher` and
+            `ILightHasher` with methods `ReleaseCertificate` and `CloneHasher` to the class `KeyedHasher`.
+            `ReleaseCertificate` strips the public/private keys from the objects and now they can be used only for encryption/hashing.
+            This way the objects become lighter and more suitable for caching and using it in a big numbers of cryptographic operations.
+            `CloneCipher` creates a copy of the current object, without the public/private keys.
+            * Some performance improvements in the classes `Hasher` and `Signer`.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

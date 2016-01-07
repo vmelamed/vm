@@ -65,10 +65,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             public byte[] PublicFinalizeHashing(
                 CryptoStream hashStream,
-                HashAlgorithm hashAlgorithm,
                 byte[] salt)
             {
-                return base.FinalizeHashing(hashStream, hashAlgorithm, salt);
+                return base.FinalizeHashing(hashStream, salt);
             }
         }
 
@@ -134,7 +133,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void FinalizeHashingNonWritableCryptoStreamTest()
         {
             using (var hasher = GetInheritedHasher())
-                hasher.PublicFinalizeHashing(GetCryptoStream(hasher), HashAlgorithm.Create(Algorithms.Hash.Sha256), new byte[8]);
+                hasher.PublicFinalizeHashing(GetCryptoStream(hasher), new byte[8]);
         }
 
         [TestMethod]
@@ -142,7 +141,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void FinalizeHashingNullSaltTest()
         {
             using (var hasher = GetInheritedHasher())
-                hasher.PublicFinalizeHashing(GetCryptoStream2(hasher), HashAlgorithm.Create(Algorithms.Hash.Sha256), null);
+                hasher.PublicFinalizeHashing(GetCryptoStream2(hasher), null);
         }
     }
 }
