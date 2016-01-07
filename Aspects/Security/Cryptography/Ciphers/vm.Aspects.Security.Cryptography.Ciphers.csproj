@@ -231,6 +231,8 @@
     <Compile Include="FromByteArray.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="HashAlgorithmFactory.cs" />
+    <Compile Include="ILightCipher.cs" />
+    <Compile Include="ILightHasher.cs" />
     <Compile Include="KeyedHasher .cs" />
     <Compile Include="Hasher.cs" />
     <Compile Include="ICipher.cs" />

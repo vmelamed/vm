@@ -275,12 +275,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
+        #region ILightCipher
         /// <summary>
         /// Throws <see cref="NotSupportedException"/>.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Always.</exception>
-        public override ICipherAsync Duplicate()
+        public override ICipherAsync CloneLightCipher()
         {
             throw new NotSupportedException("The method Duplicate() is not supported on this cipher.");
         }
@@ -290,9 +291,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Always.</exception>
-        public override void ResetAsymmetricKeys()
+        public override ICipherAsync ReleaseCertificate()
         {
             throw new NotSupportedException("The method ResetAsymmetricKeys() is not supported on this cipher.");
         }
+        #endregion
     }
 }

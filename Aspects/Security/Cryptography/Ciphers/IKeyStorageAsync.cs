@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
@@ -9,7 +8,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// The interface <c>IKeyStorageAsync</c> extends <c>IKeyStorage</c> with asynchronous versions of the methods 
     /// <see cref="M:PutKey"/> and <see cref="M:GetKey"/>.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces", Justification = "Only for .NET 4.0")]
     [ContractClass(typeof(IKeyStorageAsyncContract))]
     public interface IKeyStorageAsync : IKeyStorage
     {

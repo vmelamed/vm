@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     /// Summary description for DuplicateGenericTest
     /// </summary>
     [TestClass]
-    public class DuplicateTest
+    public class ClonedLightCipherTest
     {
         const string keyFileName = "duplicate.key";
 
@@ -25,9 +25,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
             {
                 cipher.Base64Encoded = base64;
-                cipher.ExportSymmetricKey();
-
-                return cipher.Duplicate() as EncryptedKeyCipher;
+                return cipher.CloneLightCipher() as EncryptedKeyCipher;
             }
         }
 
@@ -40,9 +38,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName) as IKeyManagement;
+            const string expected = "The quick fox jumps over the lazy dog.";
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, expected) as IKeyManagement;
 
-            if (keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+            if (keyManagement.KeyLocation.EndsWith(expected, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
@@ -50,16 +49,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public virtual void DuplicateCanDecryptFromOriginal()
         {
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            const string expected = "The quick fox jumps over the lazy dog.";
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, expected))
             {
                 cipher.ExportSymmetricKey();
 
-                using (var dupe = cipher.Duplicate())
+                using (var dupe = cipher.CloneLightCipher())
                 {
-                    var encrypted = cipher.Encrypt(keyFileName);
+                    var encrypted = cipher.Encrypt(expected);
                     var decrypted = dupe.Decrypt<string>(encrypted);
 
-                    Assert.AreEqual(keyFileName, decrypted);
+                    Assert.AreEqual(expected, decrypted);
                 }
             }
         }
@@ -67,16 +67,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public virtual void OriginalCanDecryptFromDuplicate()
         {
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            const string expected = "The quick fox jumps over the lazy dog.";
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, expected))
             {
                 cipher.ExportSymmetricKey();
 
-                using (var dupe = cipher.Duplicate())
+                using (var dupe = cipher.CloneLightCipher())
                 {
-                    var encrypted = dupe.Encrypt(keyFileName);
+                    var encrypted = dupe.Encrypt(expected);
                     var decrypted = cipher.Decrypt<string>(encrypted);
 
-                    Assert.AreEqual(keyFileName, decrypted);
+                    Assert.AreEqual(expected, decrypted);
                 }
             }
         }
@@ -88,12 +89,30 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
 
             cipher.ShouldEncryptIV = true;
-            cipher.Duplicate();
+            cipher.CloneLightCipher();
+        }
+
+
+        [TestMethod]
+        public void DuplicateFromDuplicateRoundTrip()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+            var reset = GetCipher();
+            var dupe = reset.CloneLightCipher();
+
+            var encrypted = reset.Encrypt(expected);
+            var decrypted = dupe.Decrypt<string>(encrypted);
+
+            Assert.AreEqual(expected, decrypted);
+
+            encrypted = dupe.Encrypt(expected);
+            decrypted = reset.Decrypt<string>(encrypted);
+
+            Assert.AreEqual(expected, decrypted);
         }
 
         #region IKeyManagement tests
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void ImportSymmetricKeyTest()
         {
             var target = GetCipher() as IKeyManagement;

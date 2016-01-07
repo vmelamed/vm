@@ -21,7 +21,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///     </list>
     /// </para>
     /// </remarks>
-    public class KeyedHasher : IHasherAsync, IKeyManagement
+    public class KeyedHasher : IHasherAsync, IKeyManagement, ILightHasher
     {
         #region Fields
         /// <summary>
@@ -38,14 +38,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         IKeyStorageAsync _keyStorage;
         /// <summary>
-        /// Caches the hash algorithm factory.
+        /// The underlying hash algorithm.
         /// </summary>
-        readonly IHashAlgorithmFactory _hashAlgorithmFactory;
-        /// <summary>
-        /// The hash key.
-        /// </summary>
-        byte[] _hashKey;
+        KeyedHashAlgorithm _hashAlgorithm;
         #endregion
+
+        bool IsHashKeyInitialized { get; set; }
 
         #region Constructors
         /// <summary>
@@ -74,27 +72,23 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
         /// </param>
         public KeyedHasher(
-            X509Certificate2 certificate = null,
+            X509Certificate2 certificate,
             string hashAlgorithmName = null,
             string keyLocation = null,
             IKeyLocationStrategy keyLocationStrategy = null,
             IKeyStorageAsync keyStorage = null)
         {
-            _hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>(Algorithms.KeyedHash.ResolveName);
-            _hashAlgorithmFactory.Initialize(hashAlgorithmName);
+            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>(Algorithms.KeyedHash.ResolveName);
+
+            hashAlgorithmFactory.Initialize(hashAlgorithmName);
+            _hashAlgorithm = (KeyedHashAlgorithm)hashAlgorithmFactory.Create();
+
             ResolveKeyStorage(keyLocation, keyLocationStrategy, keyStorage);
             InitializeAsymmetricKeys(certificate);
         }
-        #endregion
 
-        #region Properties
-        /// <summary>
-        /// Gets the name of the hash algorithm.
-        /// </summary>
-        /// <value>The name of the hash algorithm.</value>
-        public string HashAlgorithmName
+        private KeyedHasher()
         {
-            get { return _hashAlgorithmFactory.HashAlgorithmName; }
         }
         #endregion
 
@@ -128,19 +122,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
 
             InitializeHashKey();
-
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    dataStream.CopyTo(hashStream);
-                    return FinalizeHashing(hashStream, hashAlgorithm);
-                }
+                dataStream.CopyTo(hashStream);
+                return FinalizeHashing(hashStream);
             }
         }
 
@@ -155,7 +143,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the hash has an invalid size.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         public virtual bool TryVerifyHash(
             Stream dataStream,
             byte[] hash)
@@ -164,24 +151,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return hash==null;
 
             InitializeHashKey();
+            if (hash.Length != _hashAlgorithm.HashSize/8)
+                return false;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
+                dataStream.CopyTo(hashStream);
 
-                // the parameter hash must have the length of the expected product from this algorithm
-                if (hash.Length != hashAlgorithm.HashSize/8)
-                    return false;
+                byte[] computedHash = FinalizeHashing(hashStream);
 
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    dataStream.CopyTo(hashStream);
-
-                    byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm);
-
-                    return computedHash.ConstantTimeEquals(hash);
-                }
+                return computedHash.ConstantTimeEquals(hash);
             }
         }
 
@@ -198,16 +177,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             InitializeHashKey();
-
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    hashStream.Write(data, 0, data.Length);
-                    return FinalizeHashing(hashStream, hashAlgorithm);
-                }
+                hashStream.Write(data, 0, data.Length);
+                return FinalizeHashing(hashStream);
             }
         }
 
@@ -221,7 +194,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the hash is invalid.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         public virtual bool TryVerifyHash(
             byte[] data,
             byte[] hash)
@@ -230,24 +202,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return hash==null;
 
             InitializeHashKey();
+            if (hash.Length != _hashAlgorithm.HashSize/8)
+                return false;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
+                hashStream.Write(data, 0, data.Length);
 
-                // the parameter hash must have the length of the expected product from this algorithm
-                if (hash.Length != hashAlgorithm.HashSize/8)
-                    return false;
+                byte[] computedHash = FinalizeHashing(hashStream);
 
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    hashStream.Write(data, 0, data.Length);
-
-                    byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm);
-
-                    return computedHash.ConstantTimeEquals(hash);
-                }
+                return computedHash.ConstantTimeEquals(hash);
             }
         }
         #endregion
@@ -268,16 +232,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             await InitializeHashKeyAsync();
-
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    await dataStream.CopyToAsync(hashStream);
-                    return FinalizeHashing(hashStream, hashAlgorithm);
-                }
+                await dataStream.CopyToAsync(hashStream);
+                return FinalizeHashing(hashStream);
             }
         }
 
@@ -300,24 +258,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return hash==null;
 
             await InitializeHashKeyAsync();
+            if (hash.Length != _hashAlgorithm.HashSize/8)
+                return false;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm)
+            using (var hashStream = CreateHashStream(_hashAlgorithm))
             {
-                Contract.Assert(hashAlgorithm != null);
+                await dataStream.CopyToAsync(hashStream);
 
-                // the hash has the same length as the length of the key - there is no salt
-                if (hash.Length != hashAlgorithm.HashSize/8)
-                    return false;
+                byte[] computedHash = FinalizeHashing(hashStream);
 
-                hashAlgorithm.Key = _hashKey;
-                using (var hashStream = CreateHashStream(hashAlgorithm))
-                {
-                    await dataStream.CopyToAsync(hashStream);
-
-                    byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm);
-
-                    return computedHash.ConstantTimeEquals(hash);
-                }
+                return computedHash.ConstantTimeEquals(hash);
             }
         }
         #endregion
@@ -332,12 +282,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Imports the symmetric key as a clear text.
         /// </summary>
         /// <param name="key">The key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public void ImportSymmetricKey(
             byte[] key)
         {
-            _hashKey = key;
-            _keyStorage.PutKey(EncryptHashKey(), KeyLocation);
+            _hashAlgorithm.Key = key;
+            IsHashKeyInitialized = true;
+            _keyStorage?.PutKey(EncryptHashKey(), KeyLocation);
         }
 
         /// <summary>
@@ -347,7 +297,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public byte[] ExportSymmetricKey()
         {
             InitializeHashKey();
-            return _hashKey;
+            return _hashAlgorithm.Key;
         }
 
         /// <summary>
@@ -357,11 +307,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>
         /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public async Task ImportSymmetricKeyAsync(
             byte[] key)
         {
-            _hashKey = key;
+            _hashAlgorithm.Key = key;
             await _keyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
         }
 
@@ -375,7 +324,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public async Task<byte[]> ExportSymmetricKeyAsync()
         {
             await InitializeHashKeyAsync();
-            return _hashKey;
+            return _hashAlgorithm.Key;
         }
         #endregion
 
@@ -437,39 +386,33 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 _privateKey = (RSACryptoServiceProvider)certificate.PrivateKey;
         }
 
-        bool IsHashKeyInitialized
-        {
-            get { return _hashKey?.Length > 0; }
-        }
-
         /// <summary>
         /// Initializes the asymmetric key.
         /// </summary>
         void InitializeHashKey()
         {
-            if (IsHashKeyInitialized)
-                return;
-
-            byte[] encryptedKey;
-
-            try
+            if (!IsHashKeyInitialized)
             {
-                encryptedKey = _keyStorage.GetKey(KeyLocation);
-            }
-            catch (FileNotFoundException)
-            {
-                encryptedKey = null;
+                byte[] encryptedKey;
+
+                try
+                {
+                    encryptedKey = _keyStorage.GetKey(KeyLocation);
+                }
+                catch (FileNotFoundException)
+                {
+                    encryptedKey = null;
+                }
+
+                if (encryptedKey == null)
+                    ImportSymmetricKey(_hashAlgorithm.Key);
+                else
+                    DecryptHashKey(encryptedKey);
+
+                IsHashKeyInitialized = true;
             }
 
-            if (encryptedKey == null)
-            {
-                var hash = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm;
-
-                Contract.Assert(hash != null);
-                ImportSymmetricKey(hash.Key);
-            }
-            else
-                DecryptHashKey(encryptedKey);
+            _hashAlgorithm.Initialize();
         }
 
         /// <summary>
@@ -477,29 +420,28 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         async Task InitializeHashKeyAsync()
         {
-            if (IsHashKeyInitialized)
-                return;
-
-            byte[] encryptedKey;
-
-            try
+            if (!IsHashKeyInitialized)
             {
-                encryptedKey = await _keyStorage.GetKeyAsync(KeyLocation);
-            }
-            catch (FileNotFoundException)
-            {
-                encryptedKey = null;
+                byte[] encryptedKey;
+
+                try
+                {
+                    encryptedKey = await _keyStorage.GetKeyAsync(KeyLocation);
+                }
+                catch (FileNotFoundException)
+                {
+                    encryptedKey = null;
+                }
+
+                if (encryptedKey == null)
+                    await ImportSymmetricKeyAsync(_hashAlgorithm.Key);
+                else
+                    DecryptHashKey(encryptedKey);
+
+                IsHashKeyInitialized = true;
             }
 
-            if (encryptedKey == null)
-            {
-                var hash = _hashAlgorithmFactory.Create() as KeyedHashAlgorithm;
-
-                Contract.Assert(hash != null);
-                await ImportSymmetricKeyAsync(hash.Key);
-            }
-            else
-                DecryptHashKey(encryptedKey);
+            _hashAlgorithm.Initialize();
         }
 
         /// <summary>
@@ -508,21 +450,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>The key bytes.</returns>
         byte[] EncryptHashKey()
         {
-            return _publicKey.Encrypt(_hashKey, true);
+            if (_publicKey == null)
+                throw new InvalidOperationException("The method is not available on light clones.");
+
+            return _publicKey.Encrypt(_hashAlgorithm.Key, true);
         }
 
         /// <summary>
         /// Decrypts the hash key using the private key.
         /// </summary>
         /// <param name="encryptedKey">The encrypted key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         void DecryptHashKey(
             byte[] encryptedKey)
         {
             if (_privateKey == null)
-                throw new InvalidOperationException("The certificate does not contain a private key.");
+                throw new InvalidOperationException(_publicKey == null
+                                                        ? "The method is not available on light clones."
+                                                        : "The certificate does not contain a private key.");
 
-            _hashKey = _privateKey.Decrypt(encryptedKey, true);
+            _hashAlgorithm.Key = _privateKey.Decrypt(encryptedKey, true);
         }
 
         /// <summary>
@@ -542,26 +488,20 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Finalizes the hashing.
         /// </summary>
         /// <param name="hashStream">The hash stream.</param>
-        /// <param name="hashAlgorithm">The hash algorithm.</param>
         /// <returns>The hash.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hashStream" /> is <see langword="null" />.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "2", Justification = "salt is conditionally validated.")]
         protected virtual byte[] FinalizeHashing(
-            CryptoStream hashStream,
-            HashAlgorithm hashAlgorithm)
+            CryptoStream hashStream)
         {
             Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
             Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, "hashAlgorithm");
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
 
-            var hash = new byte[hashAlgorithm.HashSize/8];
+            var hash = new byte[_hashAlgorithm.HashSize/8];
 
-            hashAlgorithm.Hash.CopyTo(hash, 0);
+            _hashAlgorithm.Hash.CopyTo(hash, 0);
 
             return hash;
         }
@@ -626,14 +566,57 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                _hashAlgorithmFactory.Dispose();
+                _hashAlgorithm.Dispose();
         }
         #endregion
 
-        [ContractInvariantMethod]
-        void Invariant()
+        #region ILightHasher
+        /// <summary>
+        /// Releases the associated asymmetric keys. By doing so the instance looses its <see cref="IKeyManagement" /> behavior but the memory footprint becomes much lighter.
+        /// The certificate can be dropped only if the underlying symmetric algorithm instance is already initialized.
+        /// </summary>
+        /// <returns>The hasher.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying hash instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption as well, e.g. signing.
+        /// </exception>
+        public IHasherAsync ReleaseCertificate()
         {
-            Contract.Invariant(_hashAlgorithmFactory != null, "The hash algorithm factory cannot be null.");
+            if (_publicKey == null)
+                return this;
+
+            InitializeHashKey();
+
+            _publicKey.Dispose();
+            _publicKey = null;
+
+            _privateKey?.Dispose();
+            _privateKey = null;
+
+            _keyStorage = null;
+
+            return this;
         }
+
+        /// <summary>
+        /// Creates a new, lightweight clone off of the current hasher and copies certain characteristics, e.g. the hashing key of this instance to it.
+        /// </summary>
+        /// <returns>The clone.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying hashing algorithm instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption, e.g. signing.
+        /// </exception>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller owns it.")]
+        public IHasherAsync CloneLightHasher()
+        {
+            InitializeHashKey();
+
+            var hasher = new KeyedHasher();
+
+            hasher._hashAlgorithm       = KeyedHashAlgorithm.Create(_hashAlgorithm.GetType().FullName);
+            hasher._hashAlgorithm.Key   = _hashAlgorithm.Key;
+            hasher.IsHashKeyInitialized = true;
+            
+            return hasher;
+        }
+        #endregion
     }
 }

@@ -19,11 +19,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     {
         #region Fields
         /// <summary>
-        /// The object which is responsible for storing and retrieving the encrypted symmetric key 
-        /// to and from the store with the determined store location name (e.g file I/O).
-        /// </summary>
-        IKeyStorageAsync _keyStorage;
-        /// <summary>
         /// The underlying .NET symmetric cipher.
         /// </summary>
         SymmetricAlgorithm _symmetric;
@@ -64,6 +59,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         #region Properties
         /// <summary>
+        /// The object which is responsible for storing and retrieving the encrypted symmetric key 
+        /// to and from the store with the determined store location name (e.g file I/O).
+        /// </summary>
+        protected IKeyStorageAsync KeyStorage { get; set; }
+
+        /// <summary>
         /// Gets the underlying .NET symmetric cipher.
         /// </summary>
         protected SymmetricAlgorithm Symmetric
@@ -94,7 +95,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IKeyStorageAsync keyStorage)
         {
             Contract.Ensures(KeyLocation != null, "Could not determine the key's physical location.");
-            Contract.Ensures(_keyStorage != null, "Could not resolve the IKeyStorageAsync object.");
+            Contract.Ensures(KeyStorage != null, "Could not resolve the IKeyStorageAsync object.");
 
             try
             {
@@ -118,7 +119,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 keyStorage = new KeyFile();
             }
 
-            _keyStorage = keyStorage;
+            KeyStorage = keyStorage;
         }
 
         #region IKeyManagement Members
@@ -136,7 +137,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key)
         {
             Symmetric.Key = key;
-            _keyStorage.PutKey(EncryptSymmetricKey(), KeyLocation);
+            KeyStorage?.PutKey(EncryptSymmetricKey(), KeyLocation);
             IsSymmetricKeyInitialized = true;
         }
 
@@ -162,7 +163,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key)
         {
             Symmetric.Key = key;
-            await _keyStorage.PutKeyAsync(EncryptSymmetricKey(), KeyLocation);
+            await KeyStorage?.PutKeyAsync(EncryptSymmetricKey(), KeyLocation);
         }
 
         /// <summary>
@@ -191,12 +192,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return;
 
             // get or create and put the file from/to its physical location
-            if (_keyStorage.KeyLocationExists(KeyLocation))
-                DecryptSymmetricKey(_keyStorage.GetKey(KeyLocation));
+            if (KeyStorage.KeyLocationExists(KeyLocation))
+                DecryptSymmetricKey(KeyStorage.GetKey(KeyLocation));
             else
             {
                 Symmetric.GenerateKey();
-                _keyStorage.PutKey(EncryptSymmetricKey(), KeyLocation);
+                KeyStorage.PutKey(EncryptSymmetricKey(), KeyLocation);
             }
 
             IsSymmetricKeyInitialized = true;
@@ -214,12 +215,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return;
 
             // get or create and put the file from/to its location
-            if (_keyStorage.KeyLocationExists(KeyLocation))
-                DecryptSymmetricKey(await _keyStorage.GetKeyAsync(KeyLocation));
+            if (KeyStorage.KeyLocationExists(KeyLocation))
+                DecryptSymmetricKey(await KeyStorage.GetKeyAsync(KeyLocation));
             else
             {
                 Symmetric.GenerateKey();
-                await _keyStorage.PutKeyAsync(EncryptSymmetricKey(), KeyLocation);
+                await KeyStorage.PutKeyAsync(EncryptSymmetricKey(), KeyLocation);
             }
 
             IsSymmetricKeyInitialized = true;
@@ -309,7 +310,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             {
                 Symmetric.Dispose();
 
-                var disposable = _keyStorage as IDisposable;
+                var disposable = KeyStorage as IDisposable;
 
                 if (disposable != null)
                     disposable.Dispose();
@@ -338,9 +339,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             cipher._symmetric = SymmetricAlgorithm.Create(Symmetric.GetType().FullName);
 
-            cipher.IsSymmetricKeyInitialized = true;
-            cipher.ShouldEncryptIV           = ShouldEncryptIV;
-
             cipher.Symmetric.Mode            = Symmetric.Mode;
             cipher.Symmetric.Padding         = Symmetric.Padding;
             cipher.Symmetric.BlockSize       = Symmetric.BlockSize;
@@ -348,6 +346,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             cipher.Symmetric.KeySize         = Symmetric.KeySize;
             cipher.Symmetric.Key             = (byte[])Symmetric.Key.Clone();
             cipher.Symmetric.IV              = (byte[])Symmetric.IV.Clone();
+
+            cipher.IsSymmetricKeyInitialized = true;
+            cipher.ShouldEncryptIV           = ShouldEncryptIV;
         }
     }
 }

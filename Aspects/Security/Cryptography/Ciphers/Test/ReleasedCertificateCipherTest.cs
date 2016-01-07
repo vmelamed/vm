@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -10,7 +6,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     /// Summary description for DuplicateGenericTest
     /// </summary>
     [TestClass]
-    public class ResetToDuplicateTest : DuplicateTest
+    public class ReleasedCertificateCipherTest : ClonedLightCipherTest
     {
         const string keyFileName = "resetToDuplicate.key";
 
@@ -19,46 +15,47 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
 
             cipher.Base64Encoded = base64;
-            cipher.ExportSymmetricKey();
-
-            cipher.ResetAsymmetricKeys();
+            cipher.ReleaseCertificate();
             return cipher;
         }
-
 
         [TestMethod]
         public override void DuplicateCanDecryptFromOriginal()
         {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
             using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
             {
                 cipher.ExportSymmetricKey();
 
-                var encrypted = cipher.Encrypt(keyFileName);
+                var encrypted = cipher.Encrypt(expected);
 
-                cipher.ResetAsymmetricKeys();
+                cipher.ReleaseCertificate();
 
                 var decrypted = cipher.Decrypt<string>(encrypted);
 
-                Assert.AreEqual(keyFileName, decrypted);
+                Assert.AreEqual(expected, decrypted);
             }
         }
 
         [TestMethod]
         public override void OriginalCanDecryptFromDuplicate()
         {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
             using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
             {
                 cipher.ExportSymmetricKey();
 
-                using (var dupe = cipher.Duplicate())
+                using (var dupe = cipher.CloneLightCipher())
                 {
-                    var encrypted = dupe.Encrypt(keyFileName);
+                    var encrypted = dupe.Encrypt(expected);
 
-                    cipher.ResetAsymmetricKeys();
+                    cipher.ReleaseCertificate();
 
                     var decrypted = cipher.Decrypt<string>(encrypted);
 
-                    Assert.AreEqual(keyFileName, decrypted);
+                    Assert.AreEqual(expected, decrypted);
                 }
             }
         }

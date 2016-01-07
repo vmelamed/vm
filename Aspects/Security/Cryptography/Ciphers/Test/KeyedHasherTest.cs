@@ -81,10 +81,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public byte[] PublicFinalizeHashing(
-                CryptoStream hashStream,
-                HashAlgorithm hashAlgorithm)
+                CryptoStream hashStream)
             {
-                return base.FinalizeHashing(hashStream, hashAlgorithm);
+                return base.FinalizeHashing(hashStream);
             }
         }
 
@@ -109,14 +108,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                             new MemoryStream(new byte[10], true),
                             HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256),
                             CryptoStreamMode.Write);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void FinalizeHashingNonWritableCryptoStreamTest()
-        {
-            using (var hasher = GetInheritedHasher())
-                hasher.PublicFinalizeHashing(GetCryptoStream(hasher), HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256));
         }
     }
 }
