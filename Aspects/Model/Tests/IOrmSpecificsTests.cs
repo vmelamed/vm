@@ -35,6 +35,7 @@ namespace vm.Aspects.Model.Tests
         protected abstract IOrmSpecifics GetSpecifics();
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void FetchTest()
         {
             IRepository target;

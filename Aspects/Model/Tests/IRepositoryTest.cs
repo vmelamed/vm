@@ -39,6 +39,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void InitializeTest()
         {
             try
@@ -66,6 +67,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void GetGenericStoreIdTest()
         {
             var target = GetInitializedRepository();
@@ -85,6 +87,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void CreateEntityTest()
         {
             var target = GetInitializedRepository();
@@ -97,6 +100,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void CreateValueTest()
         {
             var target = GetInitializedRepository();
@@ -109,6 +113,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AddTest()
         {
             long id;
@@ -137,6 +142,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AddDerivedTest()
         {
             long id, id1;
@@ -180,6 +186,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AddBaseTest()
         {
             long id2, id1;
@@ -223,6 +230,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachTest()
         {
             long id;
@@ -253,6 +261,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachModifiedTest()
         {
             long id;
@@ -285,6 +294,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachAddedExistingTest()
         {
             long id;
@@ -339,6 +349,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachAddedNonExistingTest()
         {
             long id;
@@ -386,6 +397,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachDeletedExistingTest()
         {
             long id;
@@ -418,6 +430,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void AttachDeletedNonExistingTest()
         {
             long id;
@@ -478,6 +491,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void DetachTest()
         {
             long id;
@@ -510,6 +524,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void GetByStoreIdExistingTest()
         {
             long id;
@@ -542,6 +557,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void GetByStoreIdNotExistingTest()
         {
             long id;
@@ -559,6 +575,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void DeleteExistingFromContextTest()
         {
             long id;
@@ -589,6 +606,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void DeleteExistingTest()
         {
             long id;
@@ -629,6 +647,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void DeleteNotExistingTest()
         {
             long id;
@@ -658,6 +677,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void EntitiesTest()
         {
             IRepository target;
@@ -713,6 +733,7 @@ namespace vm.Aspects.Model.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public virtual void DetachedEntitiesTest()
         {
             IRepository target;

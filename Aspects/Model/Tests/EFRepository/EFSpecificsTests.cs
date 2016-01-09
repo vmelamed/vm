@@ -54,6 +54,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void EnlistInAmbientTransactionRolledBack()
         {
             var specifics = GetSpecifics();
@@ -90,6 +91,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void EnlistInAmbientTransaction()
         {
             var specifics = GetSpecifics();
@@ -126,6 +128,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ObjectIsProxyTest()
         {
             try
@@ -195,6 +198,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ObjectIsLoadedTest()
         {
             long id;
@@ -249,6 +253,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ObjectIsChangeTrackingTest()
         {
             var specifics = GetSpecifics();
@@ -281,6 +286,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ExceptionIsOptimisticConcurrencyTest()
         {
             var specifics = GetSpecifics();
@@ -291,6 +297,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ExceptionIsConnectionRelatedTest()
         {
             // SqlException-s cannot be instantiated or mocked.
@@ -298,6 +305,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public override void ExceptionIsTransientTest()
         {
             var specifics = GetSpecifics();
