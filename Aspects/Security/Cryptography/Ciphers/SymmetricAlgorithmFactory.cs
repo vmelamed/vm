@@ -86,9 +86,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
-        /// Creates a <see cref="T:Symmetric" /> instance.
+        /// Creates a <see cref="SymmetricAlgorithm" /> instance.
         /// </summary>
-        /// <returns><see cref="T:Symmetric" /> instance.</returns>
+        /// <returns><see cref="SymmetricAlgorithm" /> instance.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public SymmetricAlgorithm Create()
         {

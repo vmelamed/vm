@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -33,5 +32,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>The name of the symmetric algorithm.</value>
         string SymmetricAlgorithmName { get; }
+    }
+
+    [ContractClassFor(typeof(ISymmetricAlgorithmFactory))]
+    abstract class ISymmetricAlgorithmFactoryContract : ISymmetricAlgorithmFactory
+    {
+        #region ISymmetricAlgorithmFactory Members
+        public void Initialize(
+            string symmetricAlgorithmName)
+        {
+        }
+
+        public SymmetricAlgorithm Create()
+        {
+            Contract.Ensures(Contract.Result<SymmetricAlgorithm>() != null, "Could not create a symmetric algorithm.");
+
+            throw new NotImplementedException();
+        }
+
+        public string SymmetricAlgorithmName
+        {
+            get { throw new NotImplementedException(); }
+        }
+        #endregion
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

@@ -77,7 +77,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public string HashAlgorithmName
         {
-            get { return _hashAlgorithm.GetType().FullName; }
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+                return _hashAlgorithm.GetType().FullName;
+            }
         }
 
         /// <summary>

@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Xml;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts.Xml;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -39,7 +38,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="T:System.Security.CryptographicException">
         /// The specified symmetric algorithm is not supported. Only the TripleDES, DES, AES-128, AES-192 and AES-256 algorithms are supported.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId="System.Xml.XmlNode", Justification="We need here the whole document.")]
+        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We need here the whole document.")]
         void Encrypt(XmlDocument document, string xmlPath = null, XmlNamespaceManager namespaceManager = null);
 
         /// <summary>
@@ -49,7 +48,52 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="T:System.ArgumentNullException">
         /// The <paramref name="document"/> is <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId="System.Xml.XmlNode", Justification="We need here the whole document.")]
+        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We need here the whole document.")]
         void Decrypt(XmlDocument document);
+    }
+
+    [ContractClassFor(typeof(IXmlCipher))]
+    abstract class IXmlCipherContract : IXmlCipher
+    {
+        #region IXmlCipher Members
+
+        public bool ContentOnly
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void Encrypt(
+            XmlDocument document,
+            string xmlPath = null,
+            XmlNamespaceManager namespaceManager = null)
+        {
+            Contract.Requires<ArgumentNullException>(document != null, "document");
+            throw new NotImplementedException();
+        }
+
+        public void Decrypt(
+            XmlDocument document)
+        {
+            Contract.Requires<ArgumentNullException>(document != null, "document");
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

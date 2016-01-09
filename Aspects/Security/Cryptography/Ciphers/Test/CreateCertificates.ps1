@@ -32,3 +32,4 @@ if ($Host.Name -eq "ConsoleHost")
 	$Host.UI.RawUI.FlushInputBuffer();
 	$Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp") > $null;
 }
+ 
