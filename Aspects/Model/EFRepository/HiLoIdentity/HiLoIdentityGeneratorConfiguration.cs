@@ -7,7 +7,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
     {
         public HiLoIdentityGeneratorConfiguration()
         {
-            ToTable("_HiLoIdentityGenerator");
+            ToTable("_HiLoIdentityGenerator", "HiLoIdentity");
 
             HasKey(g => g.EntitySetName);
 

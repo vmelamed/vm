@@ -325,7 +325,6 @@ namespace vm.Aspects
         /// <param name="container">
         /// The container.
         /// </param>
-        [Conditional("DEBUG")]
         public static void DebugDump(
             this IUnityContainer container)
         {
@@ -334,12 +333,14 @@ namespace vm.Aspects
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
                 container.Dump(writer);
-                Debug.WriteLine(
-                    "==============================={1}"+
-                    "{0}{1}"+
-                    "==============================={1}",
-                    writer.GetStringBuilder(),
-                    writer.NewLine);
+                Debug.Print(
+@"===============================
+
+{0}
+
+===============================
+",
+                    writer.GetStringBuilder());
             }
         }
     }

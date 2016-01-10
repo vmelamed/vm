@@ -92,9 +92,9 @@ namespace vm.Aspects.Model.EFRepository
             if (initializer != null)
                 // Database.SetInitializer<MyRepository>(initializer);
                 typeof(Database)
-                        .GetMethod("SetInitializer")
+                        .GetMethod(nameof(Database.SetInitializer))
                         .MakeGenericMethod(GetType())
-                        .Invoke((object)null, new object[] { initializer });
+                        .Invoke(null, new object[] { initializer });
         }
 
         /// <summary>

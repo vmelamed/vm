@@ -30,7 +30,7 @@ namespace vm.Aspects.Model
         /// </remarks>
         public override bool HasIdentity
         {
-            get { return !Key.Equals(default(TKey)); }
+            get { return !(ReferenceEquals(Key, null)  || Key.Equals(default(TKey))); }
         }
 
         #region IHasStoreId<TId> Members

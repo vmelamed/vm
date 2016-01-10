@@ -1,20 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using vm.Aspects;
-using vm.Aspects.Exceptions;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using System.Diagnostics.Contracts;
+using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
-using System.Collections.Generic;
 
 namespace vm.Aspects.Model
 {
     /// <summary>
     /// The class PerCallContextRepositoryCallHandler is meant to be used as a policy (AOP aspect) in the call context of a WCF call.
-    /// It is assumed that the repository is resolved from the DI container and has <see cref="T:PerCallContextLifetimeManager"/>, i.e. all
+    /// It is assumed that the repository is resolved from the DI container and has <see cref="PerCallContextLifetimeManager"/>, i.e. all
     /// resolutions for <see cref="IRepository"/> with the same resolve name in the same WCF call context will return one and the same repository object.
     /// This handler implements two post-call actions: if there are no exceptions, it commits the unit of work, otherwise rolls back the current transaction
     /// and then removes the repository's lifetime manager from the container. In other words the application developer does not need to worry about 
@@ -39,7 +37,7 @@ namespace vm.Aspects.Model
         /// chain.</param>
         /// <returns>Return value from the target.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when either <paramref name="input"/> or <paramref name="getNext"/> are <see langword="null"/>-s.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="It's OK here.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "It's OK here.")]
         public IMethodReturn Invoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
@@ -47,9 +45,9 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             if (getNext == null)
-                throw new ArgumentNullException("getNext");
+                throw new ArgumentNullException(nameof(getNext));
 
             var result = getNext().Invoke(input, getNext);
 
@@ -70,13 +68,13 @@ namespace vm.Aspects.Model
 
         #endregion
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="It is re-thrown.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "It is re-thrown.")]
         IMethodReturn CommitWork(
             IMethodInvocation input,
             IMethodReturn result)
         {
             IDictionary<RegistrationLookup, ContainerRegistration> registrations;
-            
+
             lock (DIContainer.Root)
                 registrations = DIContainer.Root.GetRegistrationsSnapshot();
 
@@ -86,7 +84,7 @@ namespace vm.Aspects.Model
             if (!registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration) ||
                 !(registration.LifetimeManager is PerCallContextLifetimeManager))
                 return result;
-                
+
             try
             {
                 var repository = registration.LifetimeManager.GetValue() as IRepository;
@@ -127,7 +125,7 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
-            
+
             var parameters = new DoCommitWorkAsyncParameters
             {
                 Input      = input,
@@ -144,22 +142,22 @@ namespace vm.Aspects.Model
             var commitWorkAsyncGeneric = typeof(Func<,>).MakeGenericType(typeof(DoCommitWorkAsyncParameters), returnType);
 
             // create a delegate out of an instantiated DoCommitWorkAsync<T>
-            var doCommitWorkAsyncDelegate = GetType().GetMethod("DoCommitWorkAsync")
+            var doCommitWorkAsyncDelegate = GetType().GetMethod(nameof(DoCommitWorkAsync))
                                                      .MakeGenericMethod(returnType)
                                                      .CreateDelegate(commitWorkAsyncGeneric);
             // pass the delegate to a Task<T> c-tor
             var wrappedTask = typeof(Task).MakeGenericType(returnType)
                                           .GetConstructor(new Type[] { commitWorkAsyncGeneric })
-                                          .Invoke(new object[] 
-                                                  { 
-                                                      doCommitWorkAsyncDelegate, 
+                                          .Invoke(new object[]
+                                                  {
+                                                      doCommitWorkAsyncDelegate,
                                                       parameters,
                                                   }) as Task;
             wrappedTask.Start();
             return input.CreateMethodReturn(wrappedTask);
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification="Called via reflection.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called via reflection.")]
         async Task<T> DoCommitWorkAsync<T>(
             DoCommitWorkAsyncParameters parameters)
         {
