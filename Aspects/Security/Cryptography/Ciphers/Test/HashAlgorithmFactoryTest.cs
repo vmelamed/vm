@@ -49,68 +49,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
         #endregion
 
-        #region IsDisposed tests
-        [TestMethod]
-        public void IsDisposedTest()
-        {
-            try
-            {
-                var target = new HashAlgorithmFactory();
-
-                Assert.IsNotNull(target);
-
-                using (target as IDisposable)
-                    Assert.IsFalse(target.IsDisposed);
-                Assert.IsTrue(target.IsDisposed);
-
-                // should do nothing:
-                target.Dispose();
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-
-        [TestMethod]
-        public void IsDisposedTest2()
-        {
-            try
-            {
-                var target = new HashAlgorithmFactory();
-
-                Assert.IsNotNull(target);
-
-                target.Initialize("SHA1");
-
-                using (target as IDisposable)
-                    Assert.IsFalse(target.IsDisposed);
-                Assert.IsTrue(target.IsDisposed);
-
-                // should do nothing:
-                target.Dispose();
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-
-        [TestMethod]
-        [TestCategory("SlowTest")]
-        public void FinalizerTest()
-        {
-            var target = new WeakReference<HashAlgorithmFactory>(new HashAlgorithmFactory());
-
-            Thread.Sleep(1000);
-            GC.Collect();
-
-            HashAlgorithmFactory collected;
-
-            Assert.IsFalse(target.TryGetTarget(out collected));
-        }
-        #endregion
-
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void UninitializedTest()

@@ -144,7 +144,7 @@ namespace vm.Aspects.Model
         /// <returns>A hash code for the current <see cref="DomainEntity{TId, TKey}"/> instance.</returns>
         public override int GetHashCode()
         {
-            return Key.GetHashCode(); ;
+            return HasIdentity ? Key.GetHashCode() : 0;
         }
 
         /// <summary>
