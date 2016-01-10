@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// hash algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
     [ContractClass(typeof(IHashAlgorithmFactoryContract))]
-    public interface IHashAlgorithmFactory : IDisposable
+    public interface IHashAlgorithmFactory
     {
         /// <summary>
         /// Initializes the factory with an optional hash algorithm name.
@@ -55,15 +55,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public string HashAlgorithmName
         {
             get { throw new NotImplementedException(); }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

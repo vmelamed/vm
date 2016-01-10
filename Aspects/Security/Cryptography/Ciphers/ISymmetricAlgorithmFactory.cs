@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// symmetric algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
     [ContractClass(typeof(ISymmetricAlgorithmFactoryContract))]
-    public interface ISymmetricAlgorithmFactory : IDisposable
+    public interface ISymmetricAlgorithmFactory
     {
         /// <summary>
         /// Initializes the factory with an optional symmetric algorithm name.
@@ -53,13 +53,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public string SymmetricAlgorithmName
         {
             get { throw new NotImplementedException(); }
-        }
-        #endregion
-
-        #region IDisposable Members
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }
