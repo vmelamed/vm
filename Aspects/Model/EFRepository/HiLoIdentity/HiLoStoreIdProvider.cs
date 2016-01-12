@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 
@@ -98,7 +99,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// </summary>
         public const string DefaultEntitySetName = "_";
 
-        readonly Func<EFRepositoryBase> _generatorsRepositoryFactory;
+        readonly Func<IRepository> _generatorsRepositoryFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HiLoStoreIdProvider"/> class.
@@ -108,10 +109,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// the constructor will try to resolve it from the service locator with resolve name <see cref="F:HiLoGeneratorsRepositoryResolveName"/>
         /// </param>
         public HiLoStoreIdProvider(
-            Func<EFRepositoryBase> generatorsRepositoryFactory)
+            [Dependency(HiLoGeneratorsRepositoryResolveName)]
+            Func<IRepository> generatorsRepositoryFactory)
         {
             _generatorsRepositoryFactory = generatorsRepositoryFactory ??
-                                                (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName) as EFRepositoryBase);
+                                                (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName));
         }
 
         #region Transaction scope defaults:
@@ -177,16 +179,17 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
                     // get a fresh generator object from the DB
                     generator = localRepository
-                                    .Set<HiLoIdentityGenerator>()
-                                    .FirstOrDefault(g => g.EntitySetName == entitySetName);
+                                    .Entities<HiLoIdentityGenerator>()
+                                    .FirstOrDefault(g => g.EntitySetName == entitySetName)
+                                    ;
 
                     if (generator == null)
                     {
                         // create a new generator
                         generator = new HiLoIdentityGenerator(entitySetName, HiLoIdentityGenerator.DefaultMaxLowValue);
                         localRepository
-                                    .Set<HiLoIdentityGenerator>()
-                                    .Add(generator);
+                                    .Add<HiLoIdentityGenerator>(generator)
+                                    ;
                     }
 
                     generator.IncrementHighValue();

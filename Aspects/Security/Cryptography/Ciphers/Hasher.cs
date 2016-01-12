@@ -35,9 +35,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         #region Fields
         /// <summary>
-        /// Caches the hash algorithm factory
+        /// The underlying hash algorithm.
         /// </summary>
-        readonly IHashAlgorithmFactory _hashAlgorithmFactory;
+        readonly HashAlgorithm _hashAlgorithm;
         /// <summary>
         /// The salt length.
         /// </summary>
@@ -62,8 +62,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             Contract.Requires<ArgumentException>(saltLength==0 || saltLength>=DefaultSaltLength, "The salt length should be either 0 or not less than 8 bytes.");
 
-            _hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>();
-            _hashAlgorithmFactory.Initialize(hashAlgorithmName);
+            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>();
+            hashAlgorithmFactory.Initialize(hashAlgorithmName);
+
+            _hashAlgorithm = hashAlgorithmFactory.Create();
 
             _saltLength = saltLength;
         }
@@ -71,20 +73,24 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         #region Properties
         /// <summary>
+        /// Gets the name of the hash algorithm.
+        /// </summary>
+        public string HashAlgorithmName
+        {
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+                return _hashAlgorithm.GetType().FullName;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the hash should be salted.
         /// </summary>
         public bool ShouldSalt
         {
             get { return SaltLength > 0; }
-        }
-
-        /// <summary>
-        /// Gets the name of the hash algorithm.
-        /// </summary>
-        /// <value>The name of the hash algorithm.</value>
-        public string HashAlgorithmName
-        {
-            get { return _hashAlgorithmFactory.HashAlgorithmName; }
         }
         #endregion
 
@@ -116,13 +122,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!dataStream.CanRead)
                 throw new ArgumentException("The data stream cannot be read.", "dataStream");
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-            using (var hashStream = CreateHashStream(hashAlgorithm))
+            _hashAlgorithm.Initialize();
+            using (var hashStream = CreateHashStream())
             {
                 var salt = WriteSalt(hashStream, null);
 
                 dataStream.CopyTo(hashStream);
-                return FinalizeHashing(hashStream, hashAlgorithm, salt);
+                return FinalizeHashing(hashStream, salt);
             }
         }
 
@@ -148,35 +154,38 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             // save the property value - it may change for this call only depending on the length of the hash
             var savedSaltLength = SaltLength;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-                try
+            try
+            {
+                _hashAlgorithm.Initialize();
+
+                // the parameter hash has the length of the expected product from this algorithm, i.e. there is no salt
+                if (hash.Length == _hashAlgorithm.HashSize/8)
+                    SaltLength = 0;
+                else
                 {
-                    // the parameter hash has the length of the expected product from this algorithm, i.e. there is no salt
-                    if (hash.Length == hashAlgorithm.HashSize/8)
-                        SaltLength = 0;
-                    else
-                        // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
-                        if (hash.Length > hashAlgorithm.HashSize/8)
-                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
+                    if (hash.Length > _hashAlgorithm.HashSize/8)
+                        SaltLength = hash.Length - _hashAlgorithm.HashSize/8;
                     else
                         // this is wrong...
                         return false;
-
-                    using (var hashStream = CreateHashStream(hashAlgorithm))
-                    {
-                        WriteSalt(hashStream, hash);
-                        dataStream.CopyTo(hashStream);
-
-                        byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm, hash);
-
-                        return computedHash.ConstantTimeEquals(hash);
-                    }
                 }
-                finally
+
+                using (var hashStream = CreateHashStream())
                 {
-                    // restore the value of the property
-                    SaltLength = savedSaltLength;
+                    WriteSalt(hashStream, hash);
+                    dataStream.CopyTo(hashStream);
+
+                    byte[] computedHash = FinalizeHashing(hashStream, hash);
+
+                    return computedHash.ConstantTimeEquals(hash);
                 }
+            }
+            finally
+            {
+                // restore the value of the property
+                SaltLength = savedSaltLength;
+            }
         }
 
         /// <summary>
@@ -191,13 +200,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (data == null)
                 return null;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-            using (var hashStream = CreateHashStream(hashAlgorithm))
+            _hashAlgorithm.Initialize();
+            using (var hashStream = CreateHashStream())
             {
                 var salt = WriteSalt(hashStream, null);
 
                 hashStream.Write(data, 0, data.Length);
-                return FinalizeHashing(hashStream, hashAlgorithm, salt);
+                return FinalizeHashing(hashStream, salt);
             }
         }
 
@@ -222,35 +231,38 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             // save the property value - it may change for this call only
             var savedSaltLength = SaltLength;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-                try
+            try
+            {
+                _hashAlgorithm.Initialize();
+
+                // the parameter hash has the length of the expected product from this algorithm, i.e. there is no salt
+                if (hash.Length == _hashAlgorithm.HashSize/8)
+                    SaltLength = 0;
+                else
                 {
-                    // the parameter hash has the length of the expected product from this algorithm, i.e. there is no salt
-                    if (hash.Length == hashAlgorithm.HashSize/8)
-                        SaltLength = 0;
-                    else
-                        // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
-                        if (hash.Length > hashAlgorithm.HashSize/8)
-                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    // the parameter hash has the length of the expected product from this algorithm + the length of the salt, i.e. there is salt in the parameter salt
+                    if (hash.Length > _hashAlgorithm.HashSize/8)
+                        SaltLength = hash.Length - _hashAlgorithm.HashSize/8;
                     else
                         // this is wrong...
                         return false;
-
-                    using (var hashStream = CreateHashStream(hashAlgorithm))
-                    {
-                        WriteSalt(hashStream, hash);
-                        hashStream.Write(data, 0, data.Length);
-
-                        byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm, hash);
-
-                        return computedHash.ConstantTimeEquals(hash);
-                    }
                 }
-                finally
+
+                using (var hashStream = CreateHashStream())
                 {
-                    // restore the property value
-                    SaltLength = savedSaltLength;
+                    WriteSalt(hashStream, hash);
+                    hashStream.Write(data, 0, data.Length);
+
+                    byte[] computedHash = FinalizeHashing(hashStream, hash);
+
+                    return computedHash.ConstantTimeEquals(hash);
                 }
+            }
+            finally
+            {
+                // restore the property value
+                SaltLength = savedSaltLength;
+            }
         }
         #endregion
 
@@ -269,13 +281,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-            using (var hashStream = CreateHashStream(hashAlgorithm))
+            _hashAlgorithm.Initialize();
+            using (var hashStream = CreateHashStream())
             {
                 var salt = await WriteSaltAsync(hashStream, null);
 
                 await dataStream.CopyToAsync(hashStream);
-                return FinalizeHashing(hashStream, hashAlgorithm, salt);
+                return FinalizeHashing(hashStream, salt);
             }
         }
 
@@ -300,35 +312,38 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             // save the property value - it may change for this call only depending on the length of the hash
             var savedSaltLength = SaltLength;
 
-            using (var hashAlgorithm = _hashAlgorithmFactory.Create())
-                try
+            try
+            {
+                _hashAlgorithm.Initialize();
+
+                // the hash has the same length as the length of the key - there is no salt
+                if (hash.Length == _hashAlgorithm.HashSize/8)
+                    SaltLength = 0;
+                else
                 {
-                    // the hash has the same length as the length of the key - there is no salt
-                    if (hash.Length == hashAlgorithm.HashSize/8)
-                        SaltLength = 0;
-                    else
-                        // the hash has the same length as the length of the key + the length of the salt - there is salt in the parameter salt
-                        if (hash.Length > hashAlgorithm.HashSize/8)
-                        SaltLength = hash.Length - hashAlgorithm.HashSize/8;
+                    // the hash has the same length as the length of the key + the length of the salt - there is salt in the parameter salt
+                    if (hash.Length > _hashAlgorithm.HashSize/8)
+                        SaltLength = hash.Length - _hashAlgorithm.HashSize/8;
                     else
                         // this is wrong...
                         return false;
-
-                    using (var hashStream = CreateHashStream(hashAlgorithm))
-                    {
-                        await WriteSaltAsync(hashStream, hash);
-                        await dataStream.CopyToAsync(hashStream);
-
-                        byte[] computedHash = FinalizeHashing(hashStream, hashAlgorithm, hash);
-
-                        return computedHash.ConstantTimeEquals(hash);
-                    }
                 }
-                finally
+
+                using (var hashStream = CreateHashStream())
                 {
-                    // restore the value of the property
-                    SaltLength = savedSaltLength;
+                    await WriteSaltAsync(hashStream, hash);
+                    await dataStream.CopyToAsync(hashStream);
+
+                    byte[] computedHash = FinalizeHashing(hashStream, hash);
+
+                    return computedHash.ConstantTimeEquals(hash);
                 }
+            }
+            finally
+            {
+                // restore the value of the property
+                SaltLength = savedSaltLength;
+            }
         }
         #endregion
 
@@ -338,12 +353,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns>CryptoStream.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "It will be disposed by the calling code.")]
-        protected virtual CryptoStream CreateHashStream(
-            HashAlgorithm hashAlgorithm)
+        protected virtual CryptoStream CreateHashStream()
         {
-            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, "hashAlgorithm");
-
-            return new CryptoStream(new NullStream(), hashAlgorithm, CryptoStreamMode.Write);
+            return new CryptoStream(new NullStream(), _hashAlgorithm, CryptoStreamMode.Write);
         }
 
         /// <summary>
@@ -377,7 +389,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Finalizes the hashing.
         /// </summary>
         /// <param name="hashStream">The hash stream.</param>
-        /// <param name="hashAlgorithm">The hash algorithm.</param>
         /// <param name="salt">The salt.</param>
         /// <returns>The hash.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="hashStream" /> is <see langword="null" />.</exception>
@@ -386,23 +397,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "2", Justification = "salt is conditionally validated.")]
         protected virtual byte[] FinalizeHashing(
             CryptoStream hashStream,
-            HashAlgorithm hashAlgorithm,
             byte[] salt)
         {
             Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
             Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, "hashAlgorithm");
             Contract.Requires<ArgumentNullException>(!ShouldSalt || salt != null, "salt");
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
 
-            var hash = new byte[SaltLength + hashAlgorithm.HashSize/8];
+            var hash = new byte[SaltLength + _hashAlgorithm.HashSize/8];
 
             if (SaltLength > 0)
                 salt.CopyTo(hash, 0);
 
-            hashAlgorithm.Hash.CopyTo(hash, SaltLength);
+            _hashAlgorithm.Hash.CopyTo(hash, SaltLength);
 
             return hash;
         }
@@ -497,14 +506,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                _hashAlgorithmFactory.Dispose();
+                _hashAlgorithm.Dispose();
         }
         #endregion
 
         [ContractInvariantMethod]
         void Invariant()
         {
-            Contract.Invariant(_hashAlgorithmFactory != null, "The hash algorithm factory cannot be null.");
+            Contract.Invariant(_hashAlgorithm != null, "The hash algorithm factory cannot be null.");
             Contract.Invariant(_saltLength==0 || _saltLength>=DefaultSaltLength, "Invalid salt length.");
         }
     }

@@ -612,9 +612,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var hasher = new KeyedHasher();
 
             hasher._hashAlgorithm       = KeyedHashAlgorithm.Create(_hashAlgorithm.GetType().FullName);
-            hasher._hashAlgorithm.Key   = _hashAlgorithm.Key;
+            hasher._hashAlgorithm.Key   = (byte[])_hashAlgorithm.Key.Clone();
             hasher.IsHashKeyInitialized = true;
-            
+
             return hasher;
         }
         #endregion

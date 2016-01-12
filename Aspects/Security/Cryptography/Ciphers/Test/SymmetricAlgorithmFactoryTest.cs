@@ -50,54 +50,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
         #endregion
 
-        #region IsDisposed tests
-        [TestMethod]
-        public void IsDisposedTest()
-        {
-            try
-            {
-                var target = new SymmetricAlgorithmFactory();
-
-                Assert.IsNotNull(target);
-
-                using (target as IDisposable)
-                    Assert.IsFalse(target.IsDisposed);
-                Assert.IsTrue(target.IsDisposed);
-
-                // should do nothing:
-                target.Dispose();
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-
-        [TestMethod]
-        public void IsDisposedTest2()
-        {
-            try
-            {
-                var target = new SymmetricAlgorithmFactory();
-
-                Assert.IsNotNull(target);
-
-                target.Initialize("DES");
-
-                using (target as IDisposable)
-                    Assert.IsFalse(target.IsDisposed);
-                Assert.IsTrue(target.IsDisposed);
-
-                // should do nothing:
-                target.Dispose();
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-        #endregion
-
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void UninitializedTest()

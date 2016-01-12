@@ -1,7 +1,7 @@
 ﻿
+using System;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -45,5 +45,47 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         Task ImportSymmetricKeyAsync(byte[] key);
+    }
+
+    [ContractClassFor(typeof(IKeyManagement))]
+    abstract class IKeyManagementContract : IKeyManagement
+    {
+        #region IKeyManagement Members
+        public string KeyLocation
+        {
+            get
+            {
+                Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()), "The key location cannot be null, empty or consist of whitespace characters only.");
+
+                throw new NotImplementedException();
+            }
+        }
+
+        public byte[] ExportSymmetricKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<byte[]> ExportSymmetricKeyAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ImportSymmetricKey(byte[] key)
+        {
+            Contract.Requires<ArgumentNullException>(key != null, "key");
+            Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
+
+            throw new NotImplementedException();
+        }
+
+        public Task ImportSymmetricKeyAsync(byte[] key)
+        {
+            Contract.Requires<ArgumentNullException>(key != null, "key");
+            Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
+
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

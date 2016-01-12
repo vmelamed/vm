@@ -48,6 +48,61 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
+        [TestMethod]
+        public void CloneCanVerifyOriginal()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
 
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            {
+                var hash = hasher.Hash(expected);
+
+                using (var clone = hasher.CloneLightHasher())
+                    Assert.IsTrue(clone.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void OriginalCanVerifyClone()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var clone = hasher.CloneLightHasher())
+            {
+                var hash = clone.Hash(expected);
+
+                Assert.IsTrue(hasher.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void CloneCanVerifyClone()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var clone = hasher.CloneLightHasher())
+            using (var clone2 = hasher.CloneLightHasher())
+            {
+                var hash = clone.Hash(expected);
+
+                Assert.IsTrue(clone2.TryVerifyHash(expected, hash));
+            }
+        }
+
+        [TestMethod]
+        public void CloneCanVerifyItsOwn()
+        {
+            const string expected = "The quick fox jumps over the lazy dog.";
+
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var clone = hasher.CloneLightHasher())
+            {
+                var hash = clone.Hash(expected);
+
+                Assert.IsTrue(clone.TryVerifyHash(expected, hash));
+            }
+        }
     }
 }

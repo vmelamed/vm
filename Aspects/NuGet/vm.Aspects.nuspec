@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.23-beta</version>
+        <version>1.0.25-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,8 +12,7 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Added and tested MAC keyed hashers like HMAC-SHA256 or MAC-3DES.
-            * Added and tested a MAC key importing/exporting utility "MacKey" in the style of EncryptedKey or ProtectedKey.
+            vm.Aspects.Model: Fixed a bug in the DomainEntity and in the resolution of the HiLoStoreIdProvider.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

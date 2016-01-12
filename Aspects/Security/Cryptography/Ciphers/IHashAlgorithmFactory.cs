@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
-using vm.Aspects.Security.Cryptography.Ciphers.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -11,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// hash algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
     [ContractClass(typeof(IHashAlgorithmFactoryContract))]
-    public interface IHashAlgorithmFactory : IDisposable
+    public interface IHashAlgorithmFactory
     {
         /// <summary>
         /// Initializes the factory with an optional hash algorithm name.
@@ -33,5 +32,31 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>The name of the hash algorithm.</value>
         string HashAlgorithmName { get; }
+    }
+
+    [ContractClassFor(typeof(IHashAlgorithmFactory))]
+    abstract class IHashAlgorithmFactoryContract : IHashAlgorithmFactory
+    {
+        #region IHashAlgorithmFactory Members
+
+        public void Initialize(
+            string hashAlgorithmName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public HashAlgorithm Create()
+        {
+            Contract.Ensures(Contract.Result<HashAlgorithm>() != null, "Could not create a hash algorithm.");
+
+            throw new NotImplementedException();
+        }
+
+        public string HashAlgorithmName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        #endregion
     }
 }
