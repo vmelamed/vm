@@ -118,7 +118,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             InitializeAsymmetricKeys(certificate);
         }
 
-        EncryptedKeyCipher()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EncryptedKeyCipher"/> class.
+        /// </summary>
+        /// <param name="symmetricKeyAlgorithm">The symmetric key algorithm.</param>
+        protected EncryptedKeyCipher(
+            string symmetricKeyAlgorithm)
+            : base(symmetricKeyAlgorithm)
         {
         }
         #endregion
@@ -313,7 +319,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             InitializeSymmetricKey();
 
-            var cipher = new EncryptedKeyCipher();
+            var cipher = new EncryptedKeyCipher(Symmetric.GetType().FullName);
 
             CopyTo(cipher);
             cipher.KeyStorage = null;
