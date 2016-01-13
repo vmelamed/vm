@@ -17,16 +17,21 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         public const int EntitySetNameMaxLength = 100;
 
         /// <summary>
-        /// The default value of the maximum value of the low value: 100
+        /// The default value of the maximum value of the low value: DEBUG - 100, RELEASE - 1000.
         /// </summary>
-        public const int DefaultMaxLowValue = 1000;
+        public const int DefaultMaxLowValue =
+#if DEBUG
+                                              100;
+#else
+                                              1000;
+#endif
         #endregion
 
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="HiLoIdentityGenerator"/> class.
         /// </summary>
-        public HiLoIdentityGenerator()
+        public HiLoIdentityGenerator(int maxLowValue = DefaultMaxLowValue)
         {
             MaxLowValue = DefaultMaxLowValue;
         }

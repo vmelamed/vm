@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.11.3</version>
+        <version>1.11.4</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -18,7 +18,17 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            Performance improvements in the algorithm factories.
+            * Added interface `ILightCipher` with methods `ReleaseCertificate` and `CloneCipher` to the class `EncryptedKeyCipher` and
+            `ILightHasher` with methods `ReleaseCertificate` and `CloneHasher` to the class `KeyedHasher`.
+            `ReleaseCertificate` strips the public/private keys from the objects and now they can be used only for encryption/hashing.
+            This way the objects become lighter and more suitable for caching and using it in a big numbers of cryptographic operations.
+            `CloneCipher` creates a copy of the current object, without the public/private keys.
+
+            * Some performance improvements in the classes `Hasher` and `Signer`.
+
+            * Performance improvements in the algorithm factories.
+
+            * Fixed a bug in `EncryptedKeyCipher.CloneCipher`
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
