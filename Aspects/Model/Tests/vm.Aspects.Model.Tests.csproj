@@ -271,6 +271,7 @@
     <Compile Include="EFRepository\TestEntityConfigurations.cs" />
     <None Include="EncryptedPartsTest.cs" />
     <Compile Include="EntityTests.cs" />
+    <Compile Include="HiLoIdentityGeneratorTests.cs" />
     <Compile Include="IdentityTester.cs" />
     <Compile Include="IOrmSpecificsTests.cs" />
     <Compile Include="IRepositoryTest.cs" />

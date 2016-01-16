@@ -71,11 +71,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
         //
         #endregion
 
-        static IStoreIdProvider _storeIdProvider = new HiLoStoreIdProvider(() => new TestEFRepository("ModelTests"));
-
         public static IRepository CreateRepository()
         {
-            return new TestEFRepository("ModelTests", _storeIdProvider);
+            return new TestEFRepository("ModelTests");
         }
 
         protected override IRepository GetRepository()

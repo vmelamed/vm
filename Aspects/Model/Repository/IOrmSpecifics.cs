@@ -46,6 +46,14 @@ namespace vm.Aspects.Model.Repository
         Type GetEntityType(object reference);
 
         /// <summary>
+        /// Gets the name of the entity set associated with the specified type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns>System.String.</returns>
+        string GetEntitySetName(Type type, IRepository repository);
+
+        /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
         /// </summary>
         /// <param name="reference">The reference to be tested.</param>
@@ -116,5 +124,125 @@ namespace vm.Aspects.Model.Repository
         ///   <see langword="true"/> if the specified exception is allows for the operation to be repeated; otherwise, <see langword="false"/>.
         /// </returns>
         bool IsTransient(Exception exception);
+    }
+
+    [ContractClassFor(typeof(IOrmSpecifics))]
+    abstract class IOrmSpecificsContract : IOrmSpecifics
+    {
+        #region IOrmSpecifics Members
+
+        public IQueryable<T> Fetch<T>(
+            IQueryable<T> sequence,
+            string path) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
+            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(path), "path");
+            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<T> Fetch<T, TProperty>(
+            IQueryable<T> sequence,
+            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
+            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
+            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
+
+            throw new NotImplementedException();
+        }
+
+
+        public IRepository EnlistInAmbientTransaction(
+            IRepository repository)
+        {
+            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public Type GetEntityType(
+            object reference)
+        {
+            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+
+            throw new NotImplementedException();
+        }
+
+        public string GetEntitySetName(
+            Type type,
+            IRepository repository)
+        {
+            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsProxy(
+            object reference)
+        {
+            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsChangeTracking(
+            object reference,
+            IRepository repository)
+        {
+            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsLoaded(
+            object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            Contract.Requires<ArgumentNullException>(associated != null, nameof(associated));
+            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
+            Contract.Requires<ArgumentNullException>(propertyName != null, nameof(propertyName));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(propertyName), "The argument \"propertyName\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsOptimisticConcurrency(
+            Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsConnectionRelated(Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsTransactionRelated(Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsTransient(Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

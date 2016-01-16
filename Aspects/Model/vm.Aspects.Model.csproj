@@ -271,6 +271,7 @@
     <Compile Include="EFRepository\EFRepositoryBase.Registrar.cs" />
     <Compile Include="EFRepository\EFSpecifics.cs" />
     <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGenerator.cs" />
+    <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGenerator.Metadata.cs" />
     <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGeneratorConfiguration.cs" />
     <Compile Include="EFRepository\HiLoIdentity\HiLoStoreIdProvider.cs" />
     <Compile Include="EFRepository\IStoreIdProviders.cs" />
@@ -298,10 +299,8 @@
     <Compile Include="MoneyDefaults.cs" />
     <Compile Include="Repository\EntityState.cs" />
     <Compile Include="Repository\IOrmSpecifics.cs" />
-    <Compile Include="Repository\IOrmSpecificsContract.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\IRepositoryAsync.cs" />
-    <Compile Include="Repository\IRepositoryAsyncContracts.cs" />
     <Compile Include="Repository\IRepositoryContracts.cs" />
     <Compile Include="Repository\IRepositoryExtensions.cs" />
     <Compile Include="Repository\IStoreUniqueId.cs" />

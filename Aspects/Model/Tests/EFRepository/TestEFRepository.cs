@@ -13,13 +13,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
 {
     public partial class TestEFRepository : EFRepositoryBase
     {
-        public IDbSet<HiLoIdentityGenerator> HiLoIdentityGenerators { get; set; }
-        public IDbSet<TestXEntity> TestXEntities { get; set; }
-        public IDbSet<TestEntity> TestEntities { get; set; }
-
         public long GetStoreId<T>() where T : IHasStoreId<long>
         {
-            return base.GetStoreId<T, long>();
+            return GetStoreId<T, long>();
         }
 
         #region Constructors

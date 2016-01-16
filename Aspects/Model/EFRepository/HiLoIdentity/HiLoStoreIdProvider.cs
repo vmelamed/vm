@@ -66,11 +66,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
             var id = DoGetNew<T>(efRepository);
 
-            if (id > 0x0FFFFFFFF)
+            if (id > 0x7FFFFFFF0)
                 throw new InvalidOperationException(
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        "Fatal error: the ID generator for type {0} has reached the maximum value.",
+                        "FATAL ERROR: the ID generator for type {0} has reached the maximum value.",
                         typeof(T).FullName));
 
             return unchecked((int)id);
@@ -186,10 +186,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                     if (generator == null)
                     {
                         // create a new generator
-                        generator = new HiLoIdentityGenerator(entitySetName, HiLoIdentityGenerator.DefaultMaxLowValue);
-                        localRepository
-                                    .Add<HiLoIdentityGenerator>(generator)
-                                    ;
+                        generator = new HiLoIdentityGenerator(entitySetName);
+                        localRepository.Add(generator);
                     }
 
                     generator.IncrementHighValue();

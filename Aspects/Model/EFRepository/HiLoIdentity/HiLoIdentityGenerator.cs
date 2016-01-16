@@ -1,14 +1,16 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 {
     /// <summary>
     /// Class HiLoIdentityGenerator. Implements the Hi-Lo algorithm for generating unique ID-s.
     /// </summary>
-    public class HiLoIdentityGenerator : BaseDomainEntity, IEquatable<HiLoIdentityGenerator>
+    [MetadataType(typeof(HiLoIdentityGeneratorMetadata))]
+    public partial class HiLoIdentityGenerator : BaseDomainEntity, IEquatable<HiLoIdentityGenerator>
     {
         #region Constants
         /// <summary>
@@ -27,29 +29,38 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 #endif
         #endregion
 
+        /// <summary>
+        /// The maximum high value beyond which ID-s cannot be generated.
+        /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+        public long MaxHighValue { get; }
+
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="HiLoIdentityGenerator"/> class.
         /// </summary>
-        public HiLoIdentityGenerator(int maxLowValue = DefaultMaxLowValue)
+        public HiLoIdentityGenerator()
+            : this(null, DefaultMaxLowValue)
         {
-            MaxLowValue = DefaultMaxLowValue;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HiLoIdentityGenerator"/> class.
+        /// Initializes a new instance of the <see cref="HiLoIdentityGenerator" /> class.
         /// </summary>
         /// <param name="entitySetName">Name of the entity set.</param>
         /// <param name="maxLowValue">The max low value.</param>
+        /// <param name="initialHighValue">The initial high value.</param>
         public HiLoIdentityGenerator(
             string entitySetName,
-            int maxLowValue = DefaultMaxLowValue)
+            int maxLowValue = DefaultMaxLowValue,
+            long initialHighValue = 1)
         {
-            if (string.IsNullOrWhiteSpace(entitySetName))
-                throw new ArgumentNullException("entitySetName");
+            Contract.Requires<ArgumentException>(entitySetName==null || RegularExpression.CSharpIdentifier.IsMatch(entitySetName));
 
             EntitySetName = entitySetName;
             MaxLowValue   = maxLowValue;
+            HighValue     = initialHighValue;
+            MaxHighValue  = long.MaxValue/MaxLowValue;
         }
         #endregion
 
@@ -60,24 +71,22 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <value>
         /// The name of the entities set.
         /// </value>
-        [StringLengthValidator(EntitySetNameMaxLength)]
-        [RegexValidator(@"^[_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Mc}\p{Cf}\p{Pc}\p{Lm}][_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]*$")]
-        public string EntitySetName { get; protected internal set; }
+        public string EntitySetName { get; set; }
 
         /// <summary>
         /// Gets the next value of the high value.
         /// </summary>
-        public int HighValue { get; protected internal set; }
+        public long HighValue { get; set; }
 
         /// <summary>
         /// Gets the low value.
         /// </summary>
-        public int LowValue { get; protected internal set; }
+        public int LowValue { get; set; }
 
         /// <summary>
         /// Gets the maximum value of the low value.
         /// </summary>
-        public int MaxLowValue { get; protected internal set; }
+        public int MaxLowValue { get; set; }
         #endregion
 
         /// <summary>
@@ -97,11 +106,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         {
             unchecked
             {
-                if (HighValue+1 == 0L)
+                if (HighValue+1 >= MaxHighValue)
                     throw new InvalidOperationException(
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "Fatal error: the HighValue of the ID generator for entity set {0} has reached the maximum value.",
+                            "FATAL ERROR: the HighValue of the ID generator for entity set {0} has reached the maximum value.",
                             EntitySetName));
 
                 HighValue++;
@@ -116,13 +125,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "n/a")]
         public long GetId()
         {
-            if (HighValue < 1L || LowValue >= MaxLowValue)
+            if (HighValue <= 1L || LowValue >= MaxLowValue)
                 return -1L;
 
-            return unchecked(((long)(HighValue-1) * MaxLowValue) + ++LowValue);
+            return unchecked((HighValue-1)*MaxLowValue + ++LowValue);
         }
         #endregion
-
 
         #region Identity rules implementation.
         #region IEquatable<HiLoIdentityGenerator> Members
@@ -133,9 +141,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <returns>
         /// <list type="number">
         ///     <item><see langword="false"/> if <paramref name="other"/> is equal to <see langword="null"/>, otherwise</item>
-        ///     <item><see langword="true"/> if <paramref name="other"/> refers to <c>this</c> object, otherwise</item>
+        ///     <item><see langword="true"/>  if <paramref name="other"/> refers to <c>this</c> object, otherwise</item>
         ///     <item><see langword="false"/> if <paramref name="other"/> is not the same type as <c>this</c> object, otherwise</item>
-        ///     <item><see langword="true"/> if the current object and the <paramref name="other"/> are considered to be equal, 
+        ///     <item><see langword="true"/>  if the current object and the <paramref name="other"/> are considered to be equal, 
         ///                                  e.g. their business identities are equal; otherwise, <see langword="false"/>.</item>
         /// </list>
         /// </returns>
@@ -165,9 +173,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <list type="number">
         ///     <item><see langword="false"/> if <paramref name="obj"/> cannot be cast to <see cref="HiLoIdentityGenerator"/>, otherwise</item>
         ///     <item><see langword="false"/> if <paramref name="obj"/> is equal to <see langword="null"/>, otherwise</item>
-        ///     <item><see langword="true"/> if <paramref name="obj"/> refers to <c>this</c> object, otherwise</item>
+        ///     <item><see langword="true"/>  if <paramref name="obj"/> refers to <c>this</c> object, otherwise</item>
         ///     <item><see langword="false"/> if <paramref name="obj"/> is not the same type as <c>this</c> object, otherwise</item>
-        ///     <item><see langword="true"/> if the current object and the <paramref name="obj"/> are considered to be equal, 
+        ///     <item><see langword="true"/>  if the current object and the <paramref name="obj"/> are considered to be equal, 
         ///                                  e.g. their business identities are equal; otherwise, <see langword="false"/>.</item>
         /// </list>
         /// </returns>
@@ -220,8 +228,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <param name="other">A reference to another object of type <see cref="BaseDomainEntity"/> to compare with this object.</param>
         /// <returns>
         /// <see langword="false"/> if <paramref name="other"/> is equal to <see langword="null"/>, otherwise
-        /// <see langword="true"/> if <paramref name="other"/> refers to <c>this</c> object, otherwise
-        /// <see langword="true"/> if <i>the business identities</i> of the current object and the <paramref name="other"/> are equal by value,
+        /// <see langword="true"/>  if <paramref name="other"/> refers to <c>this</c> object, otherwise
+        /// <see langword="true"/>  if <i>the business identities</i> of the current object and the <paramref name="other"/> are equal by value,
         /// e.g. <c>BusinessKeyProperty == other.BusinessKeyProperty</c>; otherwise, <see langword="false"/>.
         /// </returns>
         /// <remarks>

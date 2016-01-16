@@ -38,7 +38,7 @@ namespace vm.Aspects.Model.EFRepository
         int IStoreUniqueId<int>.GetNewId<T>(IRepository repository)
         {
             // the value should be ignored by SQL Server
-            return -1;
+            return 0;
         }
         #endregion
 
@@ -46,7 +46,7 @@ namespace vm.Aspects.Model.EFRepository
         long IStoreUniqueId<long>.GetNewId<T>(IRepository repository)
         {
             // the value should be ignored by SQL Server
-            return -1L;
+            return 0L;
         }
         #endregion
 

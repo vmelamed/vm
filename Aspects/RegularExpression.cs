@@ -190,9 +190,9 @@ namespace vm.Aspects
         /// </summary>
         const string rexEmailId = "(?<userId>" + rexUserId + ")";
 
-        const string rexXalpha = @"[a-z0-9$_@.&+!*""'(),-]|%[0-9a-f][0-9a-f]";
+        const string rexXalpha  = @"[a-z0-9$_@.&+!*""'(),-]|%[0-9a-f][0-9a-f]";
         const string rexXalphas = @"(?:" + rexXalpha + ")+";
-        const string rexQalpha = @"[a-z0-9$_@.+!*""'(),-]|%[0-9a-f][0-9a-f]";
+        const string rexQalpha  = @"[a-z0-9$_@.+!*""'(),-]|%[0-9a-f][0-9a-f]";
         const string rexQalphas = @"(?:" + rexQalpha + ")+";
 
         /// <summary>
@@ -603,6 +603,20 @@ namespace vm.Aspects
         /// e.g. &quot;Server=(localdb)\MSSQLLocalDB;Database=Northwind;Integrated Security=true;MultipleActiveResultSets=True;Asynchronous Processing=True;Application Name=IQToolkit;&quot;
         /// </summary>
         public static Regex ConnectionString => _connectionString.Value;
+        #endregion
+
+        #region C# identifier
+        /// <summary>
+        /// Matches a C# identifier.
+        /// </summary>
+        public const string RexCSharpIdentifier = @"^[_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Mc}\p{Cf}\p{Pc}\p{Lm}][_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]*$";
+
+        readonly static Lazy<Regex> _cSharpIdentifier = new Lazy<Regex>(() => new Regex(RexCSharpIdentifier, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Matches a C# identifier.
+        /// </summary>
+        public static Regex CSharpIdentifier => _cSharpIdentifier.Value;
         #endregion
         #endregion
 

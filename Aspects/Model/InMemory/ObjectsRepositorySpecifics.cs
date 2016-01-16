@@ -70,6 +70,22 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Gets the name of the entity set associated with the specified type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns>System.String.</returns>
+        public string GetEntitySetName(
+            Type type,
+            IRepository repository)
+        {
+            if (repository is ListObjectsRepository)
+                return null;
+
+            return MapObjectsRepository.GetEntitySetRootType(type).FullName;
+        }
+
+        /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
         /// Here always returns <see langword="false"/>.
         /// </summary>

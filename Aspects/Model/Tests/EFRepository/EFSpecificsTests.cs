@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Transactions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;
@@ -225,6 +225,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
                 target.Add(principal);
 
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = principal.Id;
             }
 
             using (var target = GetRepository())

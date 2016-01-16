@@ -72,6 +72,9 @@ namespace vm.Aspects.Model.Tests
         {
             var target = GetInitializedRepository();
 
+            if ((target as EFRepositoryBase)?.StoreIdProvider is SqlStoreIdProvider)
+                return;
+
             var id1 = target.GetStoreId<TestEntity, long>();
 
             Assert.AreNotEqual(0, id1);
@@ -130,6 +133,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -169,6 +175,10 @@ namespace vm.Aspects.Model.Tests
                 target.Add(entity1);
 
                 target.CommitChanges();
+
+                // the store may have generated it
+                id1 = entity1.Id;
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -213,6 +223,10 @@ namespace vm.Aspects.Model.Tests
                 target.Add(entity1);
 
                 target.CommitChanges();
+
+                // the store may have generated it
+                id1 = entity1.Id;
+                id2 = entity2.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -247,6 +261,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -278,6 +295,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             entity.StringProperty = "testValue";
@@ -311,6 +331,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             entity.StringProperty = "testValue";
@@ -337,9 +360,10 @@ namespace vm.Aspects.Model.Tests
             {
                 TestContext.WriteLine(x.DumpString());
 
-                // swallow InvalidOperationException here - it is expected from the InMemory repositories
+                // swallow InvalidOperationException here - it is expected from the InMemory repositories or from repositories with SqlStoreIdProvider
                 Assert.IsTrue(typeof(ListObjectsRepository).IsAssignableFrom(targetType) ||
-                              typeof(MapObjectsRepository).IsAssignableFrom(targetType));
+                              typeof(MapObjectsRepository).IsAssignableFrom(targetType)  ||
+                              (GetInitializedRepository() as EFRepositoryBase)?.StoreIdProvider is SqlStoreIdProvider);
             }
             // Add here more similar exception handlers for expected exceptions from different types of repositories.
             catch (Exception x)
@@ -366,6 +390,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             entity.StringProperty = "testValue";
@@ -387,11 +414,12 @@ namespace vm.Aspects.Model.Tests
 
                 target.Attach(entity1, EntityState.Added);
                 target.CommitChanges();
+                id1 = entity1.Id;
 
                 var entity2 = target.GetByStoreId<TestEntity, long>(id1);
 
-                Assert.AreEqual(entity1, entity2);
                 Assert.AreEqual(entity1.Id, entity2.Id);
+                Assert.AreEqual(entity1, entity2);
                 Assert.IsTrue(ReferenceEquals(entity1, entity2));
             }
         }
@@ -415,7 +443,13 @@ namespace vm.Aspects.Model.Tests
                 target.Add(entity);
                 target.CommitChanges();
 
+                // the store may have generated it
+                id = entity.Id;
+
                 Assert.IsNotNull(target.GetByStoreId<TestEntity, long>(id));
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             entity.StringProperty = "testValue";
@@ -447,6 +481,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             entity.StringProperty = "testValue";
@@ -513,6 +550,9 @@ namespace vm.Aspects.Model.Tests
 
                 entity.StringProperty = "testValue";
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -544,6 +584,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -597,6 +640,9 @@ namespace vm.Aspects.Model.Tests
                 Assert.IsNull(target.GetByStoreId<TestEntity, long>(id));
 
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -626,6 +672,9 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -664,6 +713,9 @@ namespace vm.Aspects.Model.Tests
                 entity.StringProperty = "testValue";
 
                 target.CommitChanges();
+
+                // the store may have generated it
+                id = entity.Id;
             }
 
             using (target = GetInitializedRepository())
@@ -690,17 +742,17 @@ namespace vm.Aspects.Model.Tests
             {
                 entity1 = target.CreateEntity<TestEntity>();
                 entity1.Id = target.GetStoreId<TestEntity, long>();
-                entity1.Name = name1 = "test"+entity1.Id;
+                entity1.Name = name1 = "test"+1234561;
                 target.Add(entity1);
 
                 entity2 = target.CreateEntity<TestEntity1>();
                 entity2.Id = target.GetStoreId<TestEntity1, long>();
-                entity2.Name = name2 = "test"+entity2.Id;
+                entity2.Name = name2 = "test"+1234562;
                 target.Add(entity2);
 
                 entity3 = target.CreateEntity<TestEntity2>();
                 entity3.Id = target.GetStoreId<TestEntity2, long>();
-                entity3.Name = name3 = "test"+entity3.Id;
+                entity3.Name = name3 = "test"+1234563;
                 target.Add(entity3);
 
                 target.CommitChanges();
@@ -746,28 +798,29 @@ namespace vm.Aspects.Model.Tests
             {
                 entity1 = target.CreateEntity<TestEntity>();
                 entity1.Id = target.GetStoreId<TestEntity, long>();
-                entity1.Name = name1 = "test"+entity1.Id;
+                entity1.Name = name1 = "test"+76395051;
                 target.Add(entity1);
 
                 entity2 = target.CreateEntity<TestEntity1>();
                 entity2.Id = target.GetStoreId<TestEntity1, long>();
-                entity2.Name = name2 = "test"+entity2.Id;
+                entity2.Name = name2 = "test"+76395052;
                 target.Add(entity2);
 
                 entity3 = target.CreateEntity<TestEntity2>();
                 entity3.Id = target.GetStoreId<TestEntity2, long>();
-                entity3.Name = name3 = "test"+entity3.Id;
+                entity3.Name = name3 = "test"+76395053;
                 target.Add(entity3);
 
                 target.CommitChanges();
             }
+
             using (target = GetInitializedRepository())
             {
                 Assert.IsTrue(target.DetachedEntities<TestEntity>().Count() >= 3);
                 Assert.AreEqual(entity1, target.DetachedEntities<TestEntity>().Where(o => o.Name == name1).FirstOrDefault());
                 Assert.AreEqual(entity2, target.DetachedEntities<TestEntity>().Where(o => o.Name == name2).FirstOrDefault());
                 Assert.AreEqual(entity3, target.DetachedEntities<TestEntity>().Where(o => o.Name == name3).FirstOrDefault());
-                Assert.IsNull(target.DetachedEntities<TestEntity>().Where(o => o.Name == "test2828").FirstOrDefault());
+                Assert.IsNull(target.DetachedEntities<TestEntity>().Where(o => o.Name == "test76395054").FirstOrDefault());
 
                 entity1 = target.DetachedEntities<TestEntity>().Where(o => o.Name == name1).FirstOrDefault();
                 entity1.StringProperty = "aha!";

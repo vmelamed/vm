@@ -50,9 +50,9 @@ namespace vm.Aspects.Model.Tests
 
                 entity2 = target.CreateEntity<TestEntity2>();
                 entity2.Id = target.GetStoreId<TestEntity2, long>();
-                entity2.Name = name1 = "test" + entity2.Id;
-                name2 = "test"+(entity2.Id+1);
-                name3 = "test"+(entity2.Id+2);
+                entity2.Name = name1 = "test" + 139821;
+                name2 = "test"+139822;
+                name3 = "test"+139823;
                 entity2.InternalValues.Add(
                     new TestValue
                     {

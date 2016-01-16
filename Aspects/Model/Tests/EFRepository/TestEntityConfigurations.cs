@@ -17,7 +17,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasKey(e => e.Id);
             Property(e => e.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
+                //.HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
                 .HasColumnOrder(0)
                 ;
 
@@ -57,7 +58,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasKey(e => e.Id);
             Property(e => e.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
+                //.HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
                 .HasColumnOrder(0)
                 ;
 
@@ -141,7 +143,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasKey(e => e.Id);
             Property(e => e.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
+                //.HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
                 .HasColumnOrder(0)
                 ;
 
