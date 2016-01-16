@@ -245,7 +245,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -268,6 +270,7 @@
     <Compile Include="IdentityTester.cs" />
     <Compile Include="IListExtensionsTest.cs" />
     <Compile Include="LambdaExpressionExtensionsTests.cs" />
+    <Compile Include="SemanticVersionTests.cs" />
     <Compile Include="Validation\Helper.cs" />
     <Compile Include="Validation\ValidatorBeforeAfterTests.cs" />
     <Compile Include="Validation\ValidatorEnumDomainTests.cs" />
@@ -284,6 +287,8 @@
     <Compile Include="ResolveNameAttributeTests.cs" />
     <Compile Include="TargetClasses.cs" />
     <Compile Include="Utilities.cs" />
+    <None Include="SemVerCompareTestData.csv" />
+    <None Include="SemVerParseTestData.csv" />
     <None Include="Validation\TestDataUrlValidator.csv" />
   </ItemGroup>
   <ItemGroup>

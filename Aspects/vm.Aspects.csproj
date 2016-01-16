@@ -299,6 +299,7 @@
     <Compile Include="RegularExpression.cs" />
     <Compile Include="ResolveNameAttribute.cs" />
     <Compile Include="Security\CertificateFactory.cs" />
+    <Compile Include="SemanticVersion.cs" />
     <Compile Include="Threading\AsyncProducerConsumerCollection.cs" />
     <Compile Include="Threading\ReaderSlimSync.cs" />
     <Compile Include="Threading\ReaderWriterLockSlimExtensions.cs" />

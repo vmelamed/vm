@@ -536,6 +536,42 @@ namespace vm.Aspects
         #endregion
         #endregion
 
+        #region Semantic version
+        /// <summary>
+        /// The semantic versioning prerelease version syntax.
+        /// </summary>
+        public const string RexSemanticVersionPrerelease = @"[0-9a-z-]+(?:\.[0-9a-z-]+)*";
+
+        readonly static Lazy<Regex> _semanticVersionPrerelease = new Lazy<Regex>(() => new Regex(RexSemanticVersionPrerelease, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a regular expression object that tests semantic versioning prerelease strings.
+        /// </summary>
+        public static Regex SemanticVersionPrerelease => _semanticVersionPrerelease.Value;
+
+        /// <summary>
+        /// The semantic versioning prerelease version syntax.
+        /// </summary>
+        public const string RexSemanticVersionBuild = RexSemanticVersionPrerelease;
+
+        /// <summary>
+        /// Gets a regular expression object that tests semantic versioning build strings.
+        /// </summary>
+        public static Regex SemanticVersionBuild => _semanticVersionPrerelease.Value;
+
+        /// <summary>
+        /// Tests semantic versioning strings: http://semver.org/
+        /// </summary>
+        public const string RexSemanticVersion = @"^(?i:)(?<major>0|(?:0|[1-9][0-9]*))\.(?<minor>0|[1-9][0-9]*)\.(?<patch>0|[1-9][0-9]*)(?:-(?<prerelease>"+RexSemanticVersionPrerelease+@"))?(?:\+(?<build>"+RexSemanticVersionBuild+@"))?$";
+
+        readonly static Lazy<Regex> _semanticVersion = new Lazy<Regex>(() => new Regex(RexSemanticVersion, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a regular expression object that tests semantic versioning strings.
+        /// </summary>
+        public static Regex SemanticVersion => _semanticVersion.Value;
+        #endregion
+
         #region Misceleaneous
         #region ByteArray
         /// <summary>
