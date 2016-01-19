@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.29-beta</version>
+        <version>1.0.30-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,10 +12,8 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            In vm.Aspects.Model:
-            * Fixed a bug in HiLoIdentityGenerator where the generated long ID-s would not go above int.MaxValue.
-            * Made all repositpory tests to work with both HiLo and SQL identity providers.
-            * Added new method IOrmSpecifics.GetEntitySetName. Implemented for EFRepositoryBase and for MapObjectsRepository.
+            In vm.Aspects:
+            * Added overloaded operators &gt;= and &lt;= to `SemanticVersion`.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

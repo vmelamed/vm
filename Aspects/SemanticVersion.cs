@@ -298,7 +298,7 @@ namespace vm.Aspects
         }
 
         /// <summary>
-        /// Implements the operator greater than.
+        /// Implements the operator less than or equal.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
@@ -312,7 +312,7 @@ namespace vm.Aspects
         }
 
         /// <summary>
-        /// Implements the operator less than.
+        /// Implements the operator greater than or equal.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
