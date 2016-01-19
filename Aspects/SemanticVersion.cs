@@ -228,9 +228,9 @@ namespace vm.Aspects
             if (result != 0)
                 return result;
 
-            if (string.IsNullOrWhiteSpace(Prerelease)  &&  string.IsNullOrWhiteSpace(other.Prerelease))
+            if (string.IsNullOrWhiteSpace(Prerelease)   &&  string.IsNullOrWhiteSpace(other.Prerelease))
                 return 0;
-            if (string.IsNullOrWhiteSpace(Prerelease)  &&  !string.IsNullOrWhiteSpace(other.Prerelease))
+            if (string.IsNullOrWhiteSpace(Prerelease)   &&  !string.IsNullOrWhiteSpace(other.Prerelease))
                 return 1;
             if (!string.IsNullOrWhiteSpace(Prerelease)  &&  string.IsNullOrWhiteSpace(other.Prerelease))
                 return -1;
@@ -261,9 +261,9 @@ namespace vm.Aspects
 
                 if (i == thisPrerelease.Length  &&  i == otherPrerelease.Length)
                     return 0;
-                if (i < thisPrerelease.Length  &&  i >= otherPrerelease.Length)
+                if (i  < thisPrerelease.Length  &&  i >= otherPrerelease.Length)
                     return 1;
-                if (i >= thisPrerelease.Length  &&  i < otherPrerelease.Length)
+                if (i >= thisPrerelease.Length  &&  i <  otherPrerelease.Length)
                     return -1;
             }
             while (true);
