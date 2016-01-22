@@ -164,8 +164,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     // output hash, signature, etc.
                     AfterWriteEncrypted(encryptedStream, cryptoStream);
                 }
-
-                outputStream.Flush();
             }
             finally
             {

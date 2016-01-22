@@ -1,4 +1,4 @@
-﻿pushd
+pushd
 cd %~dp0..
 NuGet Update -self
 call "%VS140COMNTOOLS%vsvars32.bat"

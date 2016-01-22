@@ -22,7 +22,7 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// No metadata behaviors
         /// </summary>
-        None     = 0,
+        None = 0,
         /// <summary>
         /// Generate a help page
         /// </summary>
@@ -30,15 +30,15 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// GET WSDL behavior
         /// </summary>
-        Wsdl     = 2,
+        Wsdl = 2,
         /// <summary>
         /// IMetadataBehavior
         /// </summary>
-        Mex      = 4,
+        Mex = 4,
         /// <summary>
         /// All of the above
         /// </summary>
-        All      = 7,
+        All = 7,
     }
 
     /// <summary>
@@ -177,13 +177,14 @@ namespace vm.Aspects.Wcf.Services
                 else
                     // add necessary behaviors for REST-ful services
                     if (ep.Binding is WebHttpBinding)
-                        ep.EndpointBehaviors.Add(
-                            new WebHttpBehavior
-                            {
-                                AutomaticFormatSelectionEnabled = true,
-                                DefaultOutgoingResponseFormat   = WebMessageFormat.Json,
-                                HelpEnabled                     = true,
-                            });
+                    ep.EndpointBehaviors.Add(
+                        new WebHttpBehavior
+                        {
+                            AutomaticFormatSelectionEnabled = true,
+                            DefaultOutgoingResponseFormat   = WebMessageFormat.Json,
+                            HelpEnabled                     = true,
+                            // ? FaultExceptionEnabled           = false,
+                        });
             }
 
             return host;
@@ -260,7 +261,7 @@ namespace vm.Aspects.Wcf.Services
                 var serviceDebugBehavior = host.Description.Behaviors.Find<ServiceDebugBehavior>();
 
                 if (serviceDebugBehavior != null)
-                    serviceDebugBehavior.HttpHelpPageEnabled = 
+                    serviceDebugBehavior.HttpHelpPageEnabled =
                     serviceDebugBehavior.HttpsHelpPageEnabled = false;
             }
 
@@ -278,7 +279,7 @@ namespace vm.Aspects.Wcf.Services
             }
             else
             {
-                serviceMetadataBehavior.HttpGetEnabled  =                
+                serviceMetadataBehavior.HttpGetEnabled  =
                 serviceMetadataBehavior.HttpsGetEnabled = false;
                 serviceMetadataBehavior.HttpGetUrl  =
                 serviceMetadataBehavior.HttpsGetUrl = null;

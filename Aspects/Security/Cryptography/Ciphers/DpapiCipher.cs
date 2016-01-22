@@ -126,8 +126,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 if (Base64Encoded)
                     outputStream.Dispose();
             }
-
-            outputStream.Flush();
         }
 
         /// <summary>
