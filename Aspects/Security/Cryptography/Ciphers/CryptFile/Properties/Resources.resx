@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CertNotFound" xml:space="preserve">
+    <value>Could not find the specified certificate.</value>
+  </data>
+  <data name="InvalidThumbprint" xml:space="preserve">
+    <value>Invalid thumbprint.</value>
+  </data>
+  <data name="MissingCertificate" xml:space="preserve">
+    <value>Please, specify a certificate thumbprint or subject.</value>
+  </data>
+  <data name="MissingRoundtrip" xml:space="preserve">
+    <value>Please, specify the round-trip filename.</value>
+  </data>
+  <data name="MissingSource" xml:space="preserve">
+    <value>Please, specify source filename.</value>
+  </data>
+  <data name="MissingSubject" xml:space="preserve">
+    <value>The option /s must be followed by the subject of the certificate.</value>
+  </data>
+  <data name="MissingTarget" xml:space="preserve">
+    <value>Please, specify target filename.</value>
+  </data>
+  <data name="MissingThumbprint" xml:space="preserve">
+    <value>The option /t must be followed by the thumbprint of the certificate.</value>
+  </data>
+  <data name="PressAnyKey" xml:space="preserve">
+    <value>Press any key to finish...</value>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>FileCrypt encrypts and decrypts files using a certificate from the user's 
+certificate store.
+
+Options:
+
+/s  The next argument must be the subject of the certificate to be used.
+/t  The next argument must be the thumbprint of the certificate to be used.
+/e  Perform encryption. This is the default action and can be omitted.
+/d  Perform decryption.
+
+Note that the options can be specified with dashes too, e.g. instead of /d
+you can use -d instead.
+
+Parameters:
+
+&lt;certificate subject&gt; - specifies the subject of the certificate from the 
+    user's certificate store to be used for encryption. Must be preceded by
+    the option /s.
+
+&lt;certificate thumbprint&gt; - specifies the thumbprint of the certificate from the
+    user's certificate store to be used for encryption. Must be preceded by
+    the option /t. The thumbprint must be in the form "XX XX XX...XX" or 
+    XX-XX-...-XX or XXXXXX...XX, where X is a hexadecimal digit.
+
+&lt;source file&gt; - specifies the name of the source file that must be transformed
+    (encrypted or decrypted).
+
+&lt;destination file&gt; - specifies the name of the destination file that will 
+    receive the transformed file. If the file already exists, it will be 
+    truncated first.
+
+&lt;round-trip file&gt; - specifies a destination file in the case of a round trip
+    testing: encrypt the source file into the destination file and then
+    decrypt the destination file into the round-trip file. The source and the
+    round-trip files must be equal. In this case both /e and /d options can be
+    omitted.
+
+Examples:
+
+FileCrypt /s MyCert document.txt document.encr
+    Uses the certificate from the user's certificate store with the subject 
+    "MyCert" to encrypt the file document.txt into document.encr.
+
+FileCrypt -s MyCert document.txt document.encr -e
+    The same as above.
+
+FileCrypt /t "80 37 53 1f d5 a3 42 a6 42 f0 89 ec 5c a6 30 ce 54 5f 8e 22" document.txt document.encr
+    Uses the certificate from the user's certificate store with the specified 
+    thumbprint to encrypt the file document.txt into document.encr.
+
+FileCrypt -s MyCert -d document.encr document.txt
+    Uses the certificate from the user's certificate store with the subject 
+    "MyCert" to decrypt the file document.encr into document.txt.
+
+FileCrypt -s MyCert document.txt document.encr document.sencr 
+    Uses the certificate from the user's certificate store with the subject 
+    "MyCert" to do an "encryption round trip": will encrypt the document.txt
+    into document.encr and will decrypt the latter into document.decr.</value>
+  </data>
+</root>
