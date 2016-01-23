@@ -41,8 +41,11 @@
 
         // generate the metadata class from scratch using plain T4
 #>
-using vm.Aspects.Diagnostics;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using vm.Aspects.Diagnostics;
+using vm.Aspects.Validation;
 
 namespace <#= targetNameSpace.Name #>
 {

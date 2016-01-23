@@ -1,10 +1,4 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="RootCommand.cs" company="vm">
-//     Copyright (c) vm.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -175,7 +169,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             if (!vsProject.References.OfType<Reference>().Any(r => r.Name == "System.ComponentModel.DataAnnotations"))
                 vsProject.References.Add("System.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-            // 2. add the using System.ComponentModel.DataAnnotation
+            // 2. add using System.ComponentModel.DataAnnotation
             if (!cached.SourceCodeModel.CodeElements.OfType<CodeImport>().Any(i => i.Namespace == "System.ComponentModel.DataAnnotations"))
                 cached.SourceCodeModel.AddImport("System.ComponentModel.DataAnnotations");
 
@@ -199,6 +193,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
 
             // fire-up the T4 engine and generate the text
             var t4 = ServiceProvider.GetService(typeof(STextTemplating)) as ITextTemplating;
+
             if (t4 == null)
                 return;
 

@@ -6,7 +6,7 @@ using System.Security;
 
 [assembly: AssemblyCompany("vm")]
 [assembly: AssemblyProduct("vm.Aspects")]
-[assembly: AssemblyCopyright("Copyright © vm 2013-2015")]
+[assembly: AssemblyCopyright("Copyright © vm 2013-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 #if DEBUG
@@ -31,6 +31,6 @@ using System.Security;
 // associated with an assembly.
 [assembly: AssemblyTitle("AddRelatedClasses")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyVersion("0.0.2")]
-[assembly: AssemblyFileVersion("0.0.2")]
-[assembly: AssemblyInformationalVersion("0.0.2")]
+[assembly: AssemblyVersion("0.0.5")]
+[assembly: AssemblyFileVersion("0.0.5")]
+[assembly: AssemblyInformationalVersion("0.0.5")]

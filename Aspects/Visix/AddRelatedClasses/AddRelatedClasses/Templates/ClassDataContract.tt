@@ -1,6 +1,8 @@
 ﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
 <#@ output extension=".cs" #>
 <#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Xml" #>
+<#@ Assembly Name="System.Xml.Linq" #>
 <#@ Assembly Name="EnvDTE" #>
 <#@ Assembly Name="EnvDTE80" #>
 <#@ import namespace="EnvDTE" #>
@@ -10,6 +12,8 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ parameter name="sourcePathName" type="System.String" #>
@@ -46,20 +50,28 @@ using vm.Aspects.Wcf.DataContracts;
 
 namespace <#= targetNameSpace.Name #>
 {
-    [DataContract(Namespace="<Enter here the data contract namespace>")]
-    public class <#= sourceClass.Name #>Dto : DataTransferObject
-    {
+<#
+    PushIndent("    ");
+    WriteDoc(sourceClass.DocComment);
+#>
+[DataContract(Namespace="<Enter here the data contract namespace>")]
+public class <#= sourceClass.Name #>Dto : DataTransferObject
+{
 <# 
+        PushIndent("    ");
         foreach (var property in sourceProperties)
         {
             if (i > 0)
                 WriteLine(""); 
+            WriteDoc(property.DocComment);
 #>
-        [DataMember]
-        public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
+[DataMember]
+public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
 <#      
             i++;
-        }#>
+        }
+        PopIndent();
+        PopIndent();#>
     }
 }<#
     }
@@ -69,7 +81,7 @@ namespace <#= targetNameSpace.Name #>
         var targetProperties     = targetClass.Members.OfType<CodeProperty2>();
         var targetPropertyNames  = new HashSet<string>(targetProperties.Select(p => p.Name));
 
-        // remove the metadata properties that were removed from the source's properties
+        // remove the properties that were removed from the source's properties
         foreach (var propertyName in targetPropertyNames.Except(sourcePropertyNames))
             targetClass.RemoveMember(targetProperties.First(p => p.Name == propertyName));
         
@@ -101,6 +113,8 @@ namespace <#= targetNameSpace.Name #>
 
         var i = targetPropertyNames.Count();
 
+        PushIndent("    ");
+        PushIndent("    ");
         // insert the new properties
         foreach (var propertyName in sourcePropertyNames.Except(targetPropertyNames))
         {
@@ -108,12 +122,16 @@ namespace <#= targetNameSpace.Name #>
 
             if (property == null)
                 continue;
+            WriteLine(""); 
+            WriteLine(""); 
+            WriteDoc(property.DocComment);
 #>
-
-
-        [DataMember]
-        public <#= property.Type.AsString #> <#= property.Name #> { get; set; }<#
+[DataMember]
+public <#= property.Type.AsString #> <#= property.Name #> { get; set; }<#
         }
+    
+        PopIndent();
+        PopIndent();
 
         // write the remaining of the text
         Write(endText);
@@ -121,6 +139,19 @@ namespace <#= targetNameSpace.Name #>
         selection.StartOfDocument(false);
     }
 #><#+ 
+
+    // copies the XML comment documentation from the source element to the target, commented with '/// '.
+    void WriteDoc(string doc)
+    {
+        if (string.IsNullOrWhiteSpace(doc))
+            return;
+
+        var docElement = XElement.Parse(doc);
+        
+        PushIndent("/// ");
+        docElement.Elements().Select(e => { WriteLine(e.ToString()); return 1;}).Count();
+        PopIndent();
+    }
 
     DTE2 GetEnvDte()
     {

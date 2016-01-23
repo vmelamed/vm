@@ -35,6 +35,8 @@
 
     var sourceMethods    = sourceInterface.Children.OfType<EnvDTE.CodeFunction>().FirstOrDefault();
 
+    bool soapNamespaceIsQuoted;
+    bool soapNameIsQuoted;
     string soapNamespace;
     string soapName;
 
@@ -47,7 +49,7 @@
 
     WriteDoc(sourceInterface.DocComment);
     
-    WriteInterfaceAttributes(sourceInterface, out soapNamespace, out soapName);
+    WriteInterfaceAttributes(sourceInterface, out soapNamespace, out soapNamespaceIsQuoted, out soapName, out soapNameIsQuoted);
 
     WriteInterfaceDeclaration(sourceInterface);
     WriteLine("{");
@@ -61,7 +63,7 @@
             first = false;
         else
             WriteLine("");
-        WriteMethod(method, soapNamespace, soapName);
+        WriteMethod(method, soapNamespace, soapNamespaceIsQuoted, soapName, soapNameIsQuoted);
     }
 
     PopIndent();
@@ -223,7 +225,10 @@
         if (quoted.StartsWith("\""))
             return quoted.Substring(1, quoted.Length-2);
         else
+        if (quoted.StartsWith("@\""))
             return quoted.Substring(2, quoted.Length-3).Replace("\"\"", "\"");
+        else
+            return quoted;
     }
 
     // Enumerates an array of methods which return possible path names of a file. Returns the first file name that exists or null.
@@ -291,10 +296,19 @@
     void WriteInterfaceAttributes(
         CodeInterface sourceInterface,
         out string soapNamespace,
-        out string soapName)
+        out bool soapNamespaceIsQuoted,
+        out string soapName,
+        out bool soapNameIsQuoted)
     {
-        var ns   = "http://tempuri.org";
-        var name = sourceInterface.Name;
+        soapNamespace         = "http://tempuri.org";
+        soapNamespaceIsQuoted = true;
+        soapName              = sourceInterface.Name;
+        soapNameIsQuoted      = true;
+
+        var ns         = "http://tempuri.org";
+        var nm         = sourceInterface.Name;
+        var nsIsQuoted = true;
+        var nmIsQuoted = true;
 
         foreach (CodeAttribute a in sourceInterface.Attributes)
         {
@@ -312,9 +326,15 @@
                                 if (a.Name == "ServiceContract")
                                 {
                                     if (arg.Name == "Namespace")
+                                    {
                                         ns = GetQuotedValue(arg.Value);
+                                        nsIsQuoted = arg.Value.StartsWith("\"") || arg.Value.StartsWith("@\"");
+                                    }
                                     if (arg.Name == "Name")
-                                        name = GetQuotedValue(arg.Value);
+                                    {
+                                        nm = GetQuotedValue(arg.Value);
+                                        nmIsQuoted = arg.Value.StartsWith("\"") || arg.Value.StartsWith("@\"");
+                                    }
                                 }
                             }
                        },
@@ -325,8 +345,10 @@
             WriteLine("]");
         }
 
-        soapNamespace  = ns;
-        soapName       = name;
+        soapNamespace         = ns;
+        soapNamespaceIsQuoted = nsIsQuoted;
+        soapName              = nm;
+        soapNameIsQuoted      = nmIsQuoted;
     }
 
     void WriteInterfaceDeclaration(CodeInterface sourceInterface)
@@ -342,10 +364,15 @@
         WriteLine("");
     }
 
-    void WriteMethod(CodeFunction method, string soapNamespace, string soapName)
+    void WriteMethod(
+        CodeFunction method,
+        string soapNamespace,
+        bool soapNamespaceIsQuoted,
+        string soapName,
+        bool soapNameIsQuoted)
     {
         WriteDoc(method.DocComment);
-        WriteMethodAttributes(method, soapNamespace, soapName);
+        WriteMethodAttributes(method, soapNamespace, soapNamespaceIsQuoted, soapName, soapNameIsQuoted);
 
         var type = GetType(method.Type as CodeTypeRef2);
 
@@ -362,10 +389,13 @@
 
     string WriteMethodAttributes(
         CodeFunction method, 
-        string soapNamespace, 
-        string soapName)
+        string soapNamespace,
+        bool soapNamespaceIsQuoted,
+        string soapName,
+        bool soapNameIsQuoted)
     {
         var name = method.Name;
+        var nameIsQuoted = true;
 
         foreach (CodeAttribute a in method.Attributes)
         {
@@ -386,7 +416,10 @@
                                Write("{0}={1}", arg.Name, arg.Value);
                                if (a.Name == "OperationContract")
                                    if (arg.Name == "Name")
+                                   {
                                        name = GetQuotedValue(arg.Value);
+                                       nameIsQuoted = arg.Value.StartsWith("\"") || arg.Value.StartsWith("@\"");
+                                   }
                                    else
                                    {
                                        hasAction = arg.Name == "Action";
@@ -410,7 +443,22 @@
                     }
                     else
                         WriteLine(",");
-                    Write("Action=\"{0}/{1}/{2}\"", soapNamespace, soapName, name);
+
+                    Write("Action=");
+                    if (soapNamespaceIsQuoted)
+                        Write("\"{0}", soapNamespace);
+                    else
+                        Write("{0}+\"", soapNamespace);
+                    Write("/");
+                    if (soapNameIsQuoted)
+                        Write(soapName);
+                    else
+                        Write("\"+{0}+\"", soapName);
+
+                    if (nameIsQuoted)
+                        Write("/{0}\"", name);
+                    else
+                        Write("/\"+{0}", name);
                 }
                 
                 if (!hasReply)
@@ -422,7 +470,22 @@
                     }
                     else
                         WriteLine(",");
-                    Write("ReplyAction=\"{0}/{1}/{2}Response\"", soapNamespace, soapName, name);
+
+                    Write("ReplyAction=");
+                    if (soapNamespaceIsQuoted)
+                        Write("\"{0}", soapNamespace);
+                    else
+                        Write("{0}+\"", soapNamespace);
+                    Write("/");
+                    if (soapNameIsQuoted)
+                        Write(soapName);
+                    else
+                        Write("\"+{0}+\"", soapName);
+
+                    if (nameIsQuoted)
+                        Write("/{0}Response\"", name);
+                    else
+                        Write("/\"+{0}+\"Response\"", name);
                 }
                 
                 PopIndent();
