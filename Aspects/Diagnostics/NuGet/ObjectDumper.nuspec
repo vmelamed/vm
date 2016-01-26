@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,11 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            ATTENTION: possible breaking change.
-            The methods registering metadata information - the overloaded family 'ClassMetadataRegistrar.Register' - were added a new parameter `bool replace = false`.
-            If the parameter is false (the default) and the method is invoked to replace existing mapping of a type to different pair of dump metadata type and `DumpAttribute` instance, it will throw `InvalidOperationException`.
-            This will allow to detect confusing dump behavior, when one registrar registers some metadata and another replaces it with different metadata. To preserve the old behavior or to allow overriding of dump behavior, set
-            the parameter 'replace = true'.
+            Fixing the dependencies.
         </releaseNotes>
         <licenseUrl>https://aspectobjectdumper.codeplex.com/license</licenseUrl>
         <projectUrl>https://aspectobjectdumper.codeplex.com/</projectUrl>

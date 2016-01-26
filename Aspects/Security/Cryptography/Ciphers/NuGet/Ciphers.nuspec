@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.11.5</version>
+        <version>1.11.6</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -18,7 +18,7 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            * Fixed a bug in ProtectedKeyCipher.
+            Fixing the dependencies.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>

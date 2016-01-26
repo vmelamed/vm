@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.30-beta</version>
+        <version>1.0.33-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,8 +12,8 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            In vm.Aspects:
-            * Added overloaded operators &gt;= and &lt;= to `SemanticVersion`.
+            Fixing the dependencies.
+            Improvement in vm.Aspects.Model.EFRepository.EFSpecifics.IsChangeTracking method.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -38,15 +38,16 @@
                         version="6.0.1304.0" />
             <dependency id="EnterpriseLibrary.Logging"
                         version="6.0.1304.0" />
-            <dependency id="EnterpriseLibrary.PolicyInjection"
-                        version="6.0.1304.0" />
             <dependency id="EnterpriseLibrary.Validation"
                         version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.PolicyInjection"
+                        version="6.0.1304.0" />
+
             <dependency id="EntityFramework"
                         version="6.1.3" />
 
             <dependency id="AspectObjectDumper"
-                        version="1.5.0" />
+                        version="1.5.1" />
         </dependencies>
         <tags></tags>
     </metadata>

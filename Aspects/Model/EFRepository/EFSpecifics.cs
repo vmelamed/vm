@@ -8,7 +8,6 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Transactions;
 using vm.Aspects.Model.Repository;
 
@@ -147,36 +146,35 @@ namespace vm.Aspects.Model.EFRepository
             if (efRepository == null)
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", "repository");
 
-            var entry = efRepository.ChangeTracker
+            var dbEntry = efRepository
+                                    .ChangeTracker
                                     .Entries()
                                     .FirstOrDefault(e => ReferenceEquals(e.Entity, reference));
 
-            if (entry.State != EFEntityState.Unchanged)
+            // if the state of the entity is already changed, then it must be change tracking
+            if (dbEntry.State != EFEntityState.Unchanged)
                 return true;
 
             // Find a simple property which is not a member of the entity's key and can be easily modified:
-            var keyMembers = efRepository
-                                    .ObjectContext
-                                    .ObjectStateManager
-                                    .GetObjectStateEntry(reference)
-                                    .EntityKey
-                                    .EntityKeyValues
-                                    .Select(k => k.Key)
+            //      get all mapped property names that are not in the PK
+            var propertyNames = dbEntry
+                                    .OriginalValues
+                                    .PropertyNames
+                                    .Except(efRepository
+                                                .ObjectContext
+                                                .ObjectStateManager
+                                                .GetObjectStateEntry(reference)
+                                                .EntityKey
+                                                .EntityKeyValues
+                                                .Select(k => k.Key))
                                     .ToList();
-            var propertyInfos = reference
-                                    .GetType()
-                                    .GetProperties(BindingFlags.Public |
-                                                   BindingFlags.NonPublic |
-                                                   BindingFlags.Instance |
-                                                   BindingFlags.FlattenHierarchy)
-                                    .Where(pi => pi.GetSetMethod() != null  &&
-                                                 pi.GetGetMethod() != null  &&
-                                                 keyMembers.All(k => k != pi.Name)  &&
-                                                 (pi.PropertyType.IsPrimitive ||
-                                                  pi.PropertyType==typeof(string) ||
-                                                  pi.PropertyType==typeof(DateTime)));
 
-            foreach (var pi in propertyInfos)
+            //      foreach mapped property that is not in the PK and is of primitive, string or DateTime type:
+            foreach (var pi in reference
+                                    .GetType()
+                                    .GetProperties()
+                                    .Where(pi => propertyNames.Any(n => n == pi.Name)  &&
+                                                 (pi.PropertyType.IsPrimitive || pi.PropertyType==typeof(string) || pi.PropertyType==typeof(DateTime))))
             {
                 // find a function that can change the property
                 Func<object, object> change;
@@ -191,7 +189,7 @@ namespace vm.Aspects.Model.EFRepository
                 try
                 {
                     pi.SetValue(reference, propChangedValue);
-                    if (entry.State==EFEntityState.Modified)
+                    if (dbEntry.State==EFEntityState.Modified)
                         return true;
                 }
                 finally
