@@ -189,8 +189,8 @@ namespace vm.Aspects.Wcf.Services
         /// <code>
         /// lock (DIContainer.Root)
         /// {
-        /// var registrations = DIContainer.Root.GetRegistrationDictionary();
-        /// RegisterDefaults(serviceType, registrations);
+        ///     var registrations = DIContainer.Root.GetRegistrationDictionary();
+        ///     RegisterDefaults(serviceType, registrations);
         /// }
         /// </code></remarks>
         protected override IUnityContainer DoRegisterDefaults(

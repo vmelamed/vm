@@ -284,7 +284,9 @@ namespace vm.Aspects.Wcf.Services
                         new Interceptor<InterfaceInterceptor>(),
                         new InterceptionBehavior<PolicyInjectionBehavior>());
 
+#if DEBUG
                 DIContainer.Root.DebugDump();
+#endif
 
                 AreRegistered = true;
                 return DIContainer.Root;
