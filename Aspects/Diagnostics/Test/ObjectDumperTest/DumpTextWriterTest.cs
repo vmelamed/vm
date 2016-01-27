@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.DumpImplementation;
 
@@ -50,8 +48,14 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 w.Write(new char[] { 'a', 'b', 'c' }, -1, -2);
                 Assert.Fail("Expected System.Diagnostics.Contracts.__ContractsRuntime+ContractException");
             }
+            catch (AssertFailedException x)
+            {
+                TestContext.WriteLine(x.DumpString());
+                throw;
+            }
             catch (Exception x)
             {
+                TestContext.WriteLine(x.DumpString());
                 Assert.AreEqual("System.Diagnostics.Contracts.__ContractsRuntime+ContractException", x.GetType().FullName);
             }
         }

@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Runtime.Serialization;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
@@ -14,15 +15,23 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Class AggregateFault. Mirrors <see cref="T:AggregateException"/>.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message} Parameter: {ParamName, nq}")]
     [MetadataType(typeof(AggregateFaultMetadata))]
     public sealed class AggregateFault : Fault
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="AggregateFault"/> class.
+        /// </summary>
+        public AggregateFault()
+            : base(HttpStatusCode.InternalServerError)
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the inner exceptions.
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification="N/A")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "N/A")]
         public ReadOnlyCollection<Exception> InnerExceptions
         {
             get

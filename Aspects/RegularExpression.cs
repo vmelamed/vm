@@ -572,7 +572,21 @@ namespace vm.Aspects
         public static Regex SemanticVersion => _semanticVersion.Value;
         #endregion
 
-        #region Misceleaneous
+        #region Guid
+        /// <summary>
+        /// Regular expression pattern which matches ...
+        /// </summary>
+        public const string RexGuid = @"(?i:^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|(?:[0-9a-f]{32})$)";
+
+        readonly static Lazy<Regex> _rexGuid = new Lazy<Regex>(() => new Regex(RexGuid, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex Guid => _rexGuid.Value;
+        #endregion
+
+
         #region ByteArray
         /// <summary>
         /// Matches a text representation of a byte array the way it is produces by BitConverter,
@@ -617,7 +631,6 @@ namespace vm.Aspects
         /// Matches a C# identifier.
         /// </summary>
         public static Regex CSharpIdentifier => _cSharpIdentifier.Value;
-        #endregion
         #endregion
 
         /// <summary>

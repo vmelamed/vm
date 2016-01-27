@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Net;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
     /// Class DirectoryNotFoundFault. This class cannot be inherited.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
     public sealed class DirectoryNotFoundFault : IOFault
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DirectoryNotFoundFault"/> class.
+        /// </summary>
+        public DirectoryNotFoundFault()
+            : base(HttpStatusCode.NotFound)
+        {
+        }
     }
 }

@@ -18,7 +18,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         // the default maximum length of the dump
         public const int DefaultMaxLength = 4 * 1024 * 1024;
 
-        bool _isClosed;
         readonly StringWriter _writer;
         readonly bool _isOwnWriter;
         int _indent;
@@ -48,7 +47,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             _maxLength = maxLength;
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="N/A")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "N/A")]
         public DumpTextWriter(
             StringBuilder existing,
             int maxLength = 0)
@@ -95,9 +94,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             set { _indentSize = value < 0 ? 0 : value; }
         }
 
+        public bool IsClosed { get; private set; }
+
         public override void Close()
         {
-            _isClosed = true;
+            IsClosed = true;
             _writer.Close();
         }
 
@@ -106,34 +107,26 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (string.IsNullOrEmpty(value))
                 return;
 
-            if (_isClosed)
-                throw new InvalidOperationException("The writer is closed.");
-
             WriteCharBuffer(value.ToCharArray(), 0, value.Length);
         }
 
         public override void Write(char value)
         {
-            if (_isClosed)
-                throw new InvalidOperationException("The writer is closed.");
-
             WriteChar(value);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public override void Write(
             char[] buffer,
             int index,
             int count)
         {
-            if (_isClosed)
-                throw new InvalidOperationException("The writer is closed.");
-
             WriteCharBuffer(buffer, index, count);
         }
 
         void WriteCharBuffer(char[] buffer, int index, int count)
         {
+            Contract.Requires<InvalidOperationException>(!IsClosed, "The writer is closed.");
             Contract.Requires(buffer != null, "buffer");
             Contract.Requires(index >= 0, "The parameter index must be non-negative.");
             Contract.Requires(count >= 0, "The parameter count must be non-negative.");
@@ -159,10 +152,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 _mustIndent = true;
             else
                 if (_mustIndent && value != '\r')   // we don't want to insert indentation blank strings on empty lines                
-                {
-                    _writer.Write(GetIndent());
-                    _mustIndent = false;
-                }
+            {
+                _writer.Write(GetIndent());
+                _mustIndent = false;
+            }
 
             _writer.Write(value);
         }
@@ -179,7 +172,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         protected override void Dispose(bool disposing)
         {
-            _isClosed = true;
+            IsClosed = true;
             if (disposing && _isOwnWriter)
                 _writer.Dispose();
             base.Dispose(disposing);

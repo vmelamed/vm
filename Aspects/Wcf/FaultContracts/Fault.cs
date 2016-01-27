@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Threading;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
@@ -15,7 +16,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// Note that the fields StackTrace and Source are transferred in 
     /// DEBUG mode only.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}")]
     [MetadataType(typeof(FaultMetadata))]
     public class Fault
@@ -41,6 +42,13 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         [DataMember]
         public string InnerExceptionsMessages { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the HTTP status code. Used for WebHttpBinding scenarios.
+        /// Note that the property is not serialized: for SOAP scenarios it doesn't make sense, for WebHttpBinding it should be set to the response.
+        /// The property should be used by an exception handling mechanism to set the adequate HTTP status code.
+        /// </summary>
+        public HttpStatusCode HttpStatusCode { get; protected set; }
         #endregion
 
         /// <summary>
@@ -68,7 +76,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         }
 
 #if DEBUG
-        #region Debug only properties and constructor
         /// <summary>
         /// Gets or sets the user who experienced the fault.
         /// </summary>
@@ -104,7 +111,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets or sets a collection of key-value pairs that provide additional, user-defined information about the exception.
         /// </summary>
         [DataMember]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification="It is a DTO.")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
         public IDictionary Data { get; set; }
 
         /// <summary>
@@ -118,7 +125,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         [DataMember]
         public string Source { get; set; }
-        #endregion
 
         #region Constructor
         /// <summary>
@@ -129,14 +135,25 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             var process = Process.GetCurrentProcess();
 
-            ProcessId	= process.Id;
+            ProcessId   = process.Id;
             ProcessName = process.ProcessName;
-            ThreadId	= Thread.CurrentThread.ManagedThreadId;
+            ThreadId    = Thread.CurrentThread.ManagedThreadId;
             MachineName = Environment.MachineName;
-            User		= Environment.UserName;
+            User        = Environment.UserName;
         }
         #endregion
 #endif
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fault"/> class.
+        /// </summary>
+        /// <param name="httpStatusCode">The HTTP status code.</param>
+        protected Fault(HttpStatusCode httpStatusCode)
+        {
+            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status greater or equal to 400 (HTTP 400 Bad request.)");
+
+            HttpStatusCode = httpStatusCode;
+        }
 
         #region Methods
 

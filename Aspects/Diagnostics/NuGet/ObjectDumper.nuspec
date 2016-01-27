@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.5.1</version>
+        <version>1.5.2</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,7 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            Fixing the dependencies.
+            Added contracts to the internal DumpTextWriter.
         </releaseNotes>
         <licenseUrl>https://aspectobjectdumper.codeplex.com/license</licenseUrl>
         <projectUrl>https://aspectobjectdumper.codeplex.com/</projectUrl>

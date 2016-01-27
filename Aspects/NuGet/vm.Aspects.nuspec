@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.33-beta</version>
+        <version>1.0.34-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,8 +12,12 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            Fixing the dependencies.
-            Improvement in vm.Aspects.Model.EFRepository.EFSpecifics.IsChangeTracking method.
+            * Copied the ExceptionShieldingErrorHandler from Enterprise Library and modified to set the `HttpStatusCode`.
+            For faults that inherit from `vm.Aspects.Wcf.FaultContract.Fault` it takes the code from the fault property `HttpStatusCode`,
+            for all others - sets the error code to HTTP 500 - internal server error.
+            * Added the property `HttpStatusCode` to the base class 
+            * Removed the dependency on the NuGet package Microsoft.Practices.EnterpriseLibrary.PolicyInjection which depended on Unity 3.0.
+            Recompiled and added Microsoft.Practices.EnterpriseLibrary.PolicyInjection as a standalone assembly depending on Unity 4.0.1.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -40,8 +44,6 @@
                         version="6.0.1304.0" />
             <dependency id="EnterpriseLibrary.Validation"
                         version="6.0.1304.0" />
-            <dependency id="EnterpriseLibrary.PolicyInjection"
-                        version="6.0.1304.0" />
 
             <dependency id="EntityFramework"
                         version="6.1.3" />
@@ -67,6 +69,10 @@
         <file src="..\Parsers\bin\Release\vm.Aspects.Parsers.dll"
               target="lib\net46"/>
         <file src="..\Parsers\bin\Release\vm.Aspects.Parsers.xml"
+              target="lib\net46"/>
+        <file src="..\bin\Release\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
+              target="lib\net46"/>
+        <file src="..\bin\Release\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
               target="lib\net46"/>
     </files>
 </package>
