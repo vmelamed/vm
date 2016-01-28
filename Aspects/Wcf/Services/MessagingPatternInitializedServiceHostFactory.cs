@@ -8,6 +8,7 @@ using System.ServiceModel;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
+using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Services
 {
@@ -25,15 +26,10 @@ namespace vm.Aspects.Wcf.Services
     /// 		registers some Dump metadata, 
     /// 		initializes the DIContainer, 
     /// 		gets the registrations, 
-    /// 		registers Facility-s, ExceptionHandler-s, BindingConfigurator-s
+    /// 		registers Facility-s, SEH-s, BindingConfigurator-s
     /// 	)
     /// 	DoRegisterDefaults
     /// 		(
-    /// 			[ MessagingPatternInitializedServiceHostFactory override:
-    /// 				ObtainInitializerResolveName,
-    /// 				registers the initializer with InitializerResolveName and ServiceInitializerLifetimeManager
-    /// 			]
-    /// 			
     /// 			*** good method to override in order to add registration of other facilities, e.g. repositories, etc. ***
     /// 		)
     /// 	(
@@ -49,28 +45,32 @@ namespace vm.Aspects.Wcf.Services
     /// 			*** good method to override in order to add programmaticly endpoints ***
     /// 		)
     /// 	(
-    /// 		configures the host with bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,
+    /// 		configures the bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,
     /// 		subscribes to host.Opening with InitializeHost and host.Closing with CleanupHost
     /// 		*** good method to override in order to add more stuff to the host ***
     /// 	)
     /// 	
+    /// </code>
     /// when the service host is created it fires host.Opening
+    /// <code>
+    ///
     /// InitializeHost		
     /// 	(
     /// 		makes sure that the service is registered
-    /// 		[  MessagingPatternInitializedServiceHostFactory
-    /// 			if it resolves the service initializer - calls it asynchronously
-    /// 		]
     /// 		writes a message to the event log
-    /// 		*** good method to override in order to add service specific initialization tasks, e.g. data access layer initialization, etc. ***
+    /// 		*** good method to override in order to add initialization tasks ***
     /// 	)
+    /// HostInitialized
+    ///     (
+    ///         here it simply writes an entry in the event log that the service is up fully initialized and ready to process requests.
+    ///     }
     /// 	
     /// ...
     /// 
     /// CleanupHost
     /// 	(
     /// 		writes a message to the event log.
-    /// 		*** good method in order to call to add some cleanup tasks ***
+    /// 		*** good method to call in order to add some cleanup tasks ***
     /// 	)
     /// </code>
     /// See also <seealso cref="MessagingPatternServiceHostFactory{TContract}"/>.
@@ -86,8 +86,9 @@ namespace vm.Aspects.Wcf.Services
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;"/> class
-        /// with a messaging pattern set on the interface with <see cref="T:MessagingPatternAttribute"/> or the default and default initializer resolve name (<see langword="null"/>).
+        /// Initializes a new instance of the <see cref="MessagingPatternInitializedServiceHostFactory{TContract, TInitializeer}"/> class
+        /// with a messaging pattern set on the interface with <see cref="MessagingPatternAttribute"/> or the default configured in the configuration file
+        /// and the default initializer resolve name (<see langword="null"/>).
         /// </summary>
         public MessagingPatternInitializedServiceHostFactory()
             : this(null, null)
@@ -100,7 +101,10 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <param name="messagingPattern">
         /// The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern"/> registered values, e.g. <c>RequestResponseConfigurator.MessagingPattern</c>.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         public MessagingPatternInitializedServiceHostFactory(
             string messagingPattern)
@@ -111,8 +115,12 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
-        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern" /> registered values, e.g. <c>RequestResponseConfigurator.MessagingPattern</c>.
+        /// <param name="messagingPattern">
+        /// The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         /// <param name="initializerResolveName">The resolve name of the initializer.</param>
         public MessagingPatternInitializedServiceHostFactory(
@@ -126,21 +134,24 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
-        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern" /> registered values,
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c> or it can be <see langword="null" /> in which case
-        /// the host will try to resolve it from the <see cref="T:MessagingPatternAttribute" /> applied to the service's interface if present.</param>
         /// <param name="identityType">Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" /> or <see cref="ServiceIdentity.Rsa" />.</param>
         /// <param name="identity">The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
         /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
         /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.</param>
+        /// <param name="messagingPattern">
+        /// The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
+        /// </param>
         /// <param name="initializerResolveName">The resolve name of the initializer.</param>
         public MessagingPatternInitializedServiceHostFactory(
-            string messagingPattern,
             ServiceIdentity identityType,
             string identity,
+            string messagingPattern = null,
             string initializerResolveName = null)
-            : base(messagingPattern, identityType, identity)
+            : base(identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentException>(
                 identityType == ServiceIdentity.None  ||
@@ -153,19 +164,22 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
-        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern" /> registered values,
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c> or it can be <see langword="null" /> in which case
-        /// the host will try to resolve it from the <see cref="T:MessagingPatternAttribute" /> applied to the service's interface if present.</param>
         /// <param name="identityType">Type of the identity should be either <see cref="ServiceIdentity.Certificate"/> or <see cref="ServiceIdentity.Rsa"/>.</param>
         /// <param name="certificate">Specifies the identifying certificate. Assumes that the identity type is <see cref="ServiceIdentity.Certificate" />.</param>
+        /// <param name="messagingPattern">
+        /// The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
+        /// </param>
         /// <param name="initializerResolveName">The resolve name of the initializer.</param>
         public MessagingPatternInitializedServiceHostFactory(
-            string messagingPattern,
             ServiceIdentity identityType,
             X509Certificate2 certificate,
+            string messagingPattern = null,
             string initializerResolveName = null)
-            : base(messagingPattern, identityType, certificate)
+            : base(identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentException>(
                 identityType == ServiceIdentity.None  ||

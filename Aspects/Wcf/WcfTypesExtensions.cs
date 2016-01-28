@@ -184,9 +184,7 @@ namespace vm.Aspects.Wcf
 
             var messagingPatternAttribute = type.GetCustomAttribute<MessagingPatternAttribute>(false);
 
-            return messagingPatternAttribute != null
-                        ? messagingPatternAttribute.Name
-                        : null;
+            return messagingPatternAttribute?.Name;
         }
     }
 }

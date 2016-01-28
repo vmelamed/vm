@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.34-beta</version>
+        <version>1.0.35-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,12 +12,8 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Copied the ExceptionShieldingErrorHandler from Enterprise Library and modified to set the `HttpStatusCode`.
-            For faults that inherit from `vm.Aspects.Wcf.FaultContract.Fault` it takes the code from the fault property `HttpStatusCode`,
-            for all others - sets the error code to HTTP 500 - internal server error.
-            * Added the property `HttpStatusCode` to the base class 
-            * Removed the dependency on the NuGet package Microsoft.Practices.EnterpriseLibrary.PolicyInjection which depended on Unity 3.0.
-            Recompiled and added Microsoft.Practices.EnterpriseLibrary.PolicyInjection as a standalone assembly depending on Unity 4.0.1.
+            * Reordered the parameters of the HostFactory classes' constructors.
+            * Minor cosmetic changes.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

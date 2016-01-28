@@ -13,42 +13,75 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 
-namespace vm.Aspects.Wcf.ExceptionHandling
+namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
 {
     /// <summary>
-    /// The behavior class that set up the <see cref="ExceptionShieldingErrorHandler"/> 
-    /// for implementing the exception shielding process.
+    /// Indicates that an implementation service class will use exception shielding. 
     /// </summary>
-    public class ExceptionShieldingBehavior : IServiceBehavior, IContractBehavior
+    /// <remarks>
+    /// Add this attribute to your service implementation class or your service contract interface 
+    /// and configure your host configuration file to use the Enterprise Library Exception Handling 
+    /// Application Block adding the <see cref="FaultContractExceptionHandler"/> class to the 
+    /// exceptionHandlers collection and set your FaultContract type that maps to a particular exception.
+    /// </remarks>
+    [AttributeUsage(
+        AttributeTargets.Class | AttributeTargets.Interface,
+        Inherited = false,
+        AllowMultiple = false)]
+    public sealed class ExceptionShieldingAttribute : Attribute, IServiceBehavior, IContractBehavior, IErrorHandler
     {
-        #region ExceptionShieldingBehavior Members
+        #region ExceptionShieldingAttribute Members 
 
-        private string exceptionPolicyName;
+        IServiceBehavior _serviceBehavior;
+        IContractBehavior _contractBehavior;
+        IErrorHandler _errorHandler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExceptionShieldingBehavior"/> class.
+        /// Initializes a new instance of the <see cref="ExceptionShieldingAttribute"/> class.
         /// </summary>
-        public ExceptionShieldingBehavior()
+        public ExceptionShieldingAttribute()
             : this(ExceptionShielding.DefaultExceptionPolicy)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExceptionShieldingBehavior"/> class.
+        /// Initializes a new instance of the <see cref="ExceptionShieldingAttribute"/> class.
         /// </summary>
         /// <param name="exceptionPolicyName">Name of the exception policy.</param>
-        public ExceptionShieldingBehavior(
+        public ExceptionShieldingAttribute(
             string exceptionPolicyName)
         {
-            this.exceptionPolicyName = exceptionPolicyName;
+            Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(exceptionPolicyName), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+
+            ExceptionPolicyName = exceptionPolicyName;
+
+            //The ServiceHost applies behaviors in the following order:
+            // Contract
+            // Operation
+            // Endpoint
+            // Service
+
+            var behavior = new ExceptionShieldingBehavior(exceptionPolicyName);
+
+            _contractBehavior = behavior;
+            _serviceBehavior  = behavior;
+            _errorHandler     = new ExceptionShieldingErrorHandler(exceptionPolicyName);
         }
+
+        /// <summary>
+        /// Gets or sets the name of the exception policy.
+        /// </summary>
+        /// <value>The name of the exception policy.</value>
+        public string ExceptionPolicyName { get; }
 
         #endregion
 
@@ -63,7 +96,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            // Not implemented.
+            _serviceBehavior.Validate(serviceDescription, serviceHostBase);
         }
 
         /// <summary>
@@ -79,7 +112,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             Collection<ServiceEndpoint> endpoints,
             BindingParameterCollection bindingParameters)
         {
-            // Not implemented.
+            _serviceBehavior.AddBindingParameters(serviceDescription, serviceHostBase, endpoints, bindingParameters);
         }
 
         /// <summary>
@@ -91,8 +124,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            foreach (ChannelDispatcher dispatcher in serviceHostBase.ChannelDispatchers)
-                AddErrorHandler(dispatcher);
+            _serviceBehavior.ApplyDispatchBehavior(serviceDescription, serviceHostBase);
         }
 
         #endregion
@@ -110,7 +142,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             ServiceEndpoint endpoint,
             BindingParameterCollection bindingParameters)
         {
-            // Not implemented.
+            _contractBehavior.AddBindingParameters(contractDescription, endpoint, bindingParameters);
         }
 
         /// <summary>
@@ -124,7 +156,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             ServiceEndpoint endpoint,
             ClientRuntime clientRuntime)
         {
-            // Not implemented.
+            _contractBehavior.ApplyClientBehavior(contractDescription, endpoint, clientRuntime);
         }
 
         /// <summary>
@@ -138,10 +170,7 @@ namespace vm.Aspects.Wcf.ExceptionHandling
             ServiceEndpoint endpoint,
             DispatchRuntime dispatchRuntime)
         {
-            if (dispatchRuntime == null)
-                throw new ArgumentNullException("dispatchRuntime");
-
-            AddErrorHandler(dispatchRuntime.ChannelDispatcher);
+            _contractBehavior.ApplyDispatchBehavior(contractDescription, endpoint, dispatchRuntime);
         }
 
         /// <summary>
@@ -149,26 +178,53 @@ namespace vm.Aspects.Wcf.ExceptionHandling
         /// </summary>
         /// <param name="contractDescription">The contract to validate.</param>
         /// <param name="endpoint">The endpoint to validate.</param>
-        public void Validate(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint)
+        public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
-            // Not implemented.
+            _contractBehavior.Validate(contractDescription, endpoint);
         }
 
         #endregion
 
-        #region Private Members
+        #region IErrorHandler Members
 
-        void AddErrorHandler(
-            ChannelDispatcher channelDispatcher)
+        /// <summary>
+        /// Enables error-related processing and returns a value that indicates whether subsequent HandleError implementations are called.
+        /// </summary>
+        /// <param name="error">The exception thrown during processing.</param>
+        /// <returns>
+        /// true if subsequent <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler"></see> implementations must not be called; otherwise, false. The default is false.
+        /// </returns>
+        public bool HandleError(
+            Exception error)
         {
-            if (!channelDispatcher.IncludeExceptionDetailInFaults                              &&
-                !channelDispatcher.ErrorHandlers.Any(h => h is ExceptionShieldingErrorHandler) &&
-                !channelDispatcher.Endpoints.Any(mx => mx.ContractName == nameof(IMetadataExchange)))
-                channelDispatcher.ErrorHandlers.Add(new ExceptionShieldingErrorHandler(exceptionPolicyName));
+            return _errorHandler.HandleError(error);
+        }
+
+        /// <summary>
+        /// Enables the creation of a custom <see cref="T:System.ServiceModel.FaultException`1"></see> that is returned from an exception in the course of a service method.
+        /// </summary>
+        /// <param name="error">The <see cref="T:System.Exception"></see> object thrown in the course of the service operation.</param>
+        /// <param name="version">The SOAP version of the message.</param>
+        /// <param name="fault">The <see cref="T:System.ServiceModel.Channels.Message"></see> object that is returned to the client, or service, in the duplex case.</param>
+        public void ProvideFault(
+            Exception error,
+            MessageVersion version,
+            ref Message fault)
+        {
+            _errorHandler.ProvideFault(error, version, ref fault);
         }
 
         #endregion
+
+        [ContractInvariantMethod]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        void ObjectInvariant()
+        {
+            Contract.Invariant(!string.IsNullOrWhiteSpace(ExceptionPolicyName));
+            Contract.Invariant(_errorHandler != null);
+            Contract.Invariant(_contractBehavior != null);
+            Contract.Invariant(_serviceBehavior != null);
+        }
+
     }
 }

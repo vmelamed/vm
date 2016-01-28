@@ -28,7 +28,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using vm.Aspects.Wcf.FaultContracts;
 
-namespace vm.Aspects.Wcf.ExceptionHandling
+namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
 {
     /// <summary>
     /// The error handler class that implements the exception shielding logic.

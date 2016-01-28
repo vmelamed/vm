@@ -291,9 +291,9 @@
     <Compile Include="DIBehavior\DIEndpointBehavior.cs" />
     <Compile Include="DIBehavior\DIInstanceProvider.cs" />
     <Compile Include="EndpointIdentityFactory.cs" />
-    <Compile Include="ExceptionHandling\ExceptionShieldingAttribute.cs" />
-    <Compile Include="ExceptionHandling\ExceptionShieldingBehavior.cs" />
-    <Compile Include="ExceptionHandling\ExceptionShieldingErrorHandler.cs" />
+    <Compile Include="ExceptionShieldingBehavior\ExceptionShieldingAttribute.cs" />
+    <Compile Include="ExceptionShieldingBehavior\ExceptionShieldingBehavior.cs" />
+    <Compile Include="ExceptionShieldingBehavior\ExceptionShieldingErrorHandler.cs" />
     <Compile Include="FaultContracts\AggregateFault.cs" />
     <Compile Include="FaultContracts\ArgumentFault.cs" />
     <Compile Include="FaultContracts\ArgumentNullFault.cs" />

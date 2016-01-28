@@ -37,7 +37,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 container
                     .RegisterInstanceIfNot<IExceptionPolicyProvider>(
                             registrations,
-                            "vm.Aspects.Wcf",
+                            "vm.Aspects.Wcf.ServicePolicies",
                             new ServiceExceptionHandlingPolicies());
             }
         }
@@ -83,10 +83,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         }
         #endregion
 
-        static NameValueCollection _faultMappings = new NameValueCollection
-                                                    {
-                                                        { "HandlingInstanceId", "{Guid}" },
-                                                    };
+        static readonly NameValueCollection _faultMappings = new NameValueCollection {["HandlingInstanceId"] = "{Guid}"};
 
         /// <summary>
         /// Creates an exception policy entry that logs the exception and throws a new fault exception created out of the original exception.
@@ -95,7 +92,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="faultType">Type of the fault.</param>
         /// <param name="eventId">The event identifier.</param>
         /// <returns>An <see cref="ExceptionPolicyEntry"/> instance.</returns>
-        static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry(
+        public static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry(
             Type exceptionType,
             Type faultType,
             int eventId)
@@ -120,7 +117,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                            });
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification="Refers to many exceptions that can be thrown.")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Refers to many exceptions that can be thrown.")]
         static List<ExceptionPolicyEntry> WcfExceptionShieldingPolicyEntries()
         {
             int eventId = 3000;

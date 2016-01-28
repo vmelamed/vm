@@ -57,13 +57,20 @@ namespace vm.Aspects.Wcf.Services
     /// 		*** good method to override in order to add more stuff to the host ***
     /// 	)
     /// 	
+    /// </code>
     /// when the service host is created it fires host.Opening
+    /// <code>
+    ///
     /// InitializeHost		
     /// 	(
     /// 		makes sure that the service is registered
     /// 		writes a message to the event log
     /// 		*** good method to override in order to add initialization tasks ***
     /// 	)
+    /// HostInitialized
+    ///     (
+    ///         here it simply writes an entry in the event log that the service is up fully initialized and ready to process requests.
+    ///     }
     /// 	
     /// ...
     /// 
@@ -114,8 +121,10 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <param name="messagingPattern">
         /// The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern"/> registered values, 
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c> or <see langword="null"/>.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         protected MessagingPatternServiceHostFactory(
             string messagingPattern = null)
@@ -128,10 +137,6 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingPatternServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
-        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern" /> registered values,
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c> or it can be <see langword="null" /> in which case
-        /// the host will try to resolve it from the <see cref="T:MessagingPatternAttribute" /> applied to the service's interface if present.</param>
         /// <param name="identityType">
         /// Type of the identity: can be <see cref="ServiceIdentity.Dns"/>, <see cref="ServiceIdentity.Spn"/>, <see cref="ServiceIdentity.Upn"/> or <see cref="ServiceIdentity.Rsa"/>.
         /// </param>
@@ -140,10 +145,17 @@ namespace vm.Aspects.Wcf.Services
         /// If the identity type is <see cref="ServiceIdentity.Upn"/> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn"/> - use the SPN and if
         /// <see cref="ServiceIdentity.Rsa"/> - use the RSA key.
         /// </param>
+        /// <param name="messagingPattern">
+        /// The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
+        /// </param>
         protected MessagingPatternServiceHostFactory(
-            string messagingPattern,
             ServiceIdentity identityType,
-            string identity)
+            string identity = null,
+            string messagingPattern = null)
             : this(messagingPattern)
         {
             Contract.Requires<ArgumentException>(
@@ -158,16 +170,19 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingPatternServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
-        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="P:BindingConfigurator.MessagingPattern" /> registered values,
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c> or it can be <see langword="null" /> in which case
-        /// the host will try to resolve it from the <see cref="T:MessagingPatternAttribute" /> applied to the service's interface if present.</param>
         /// <param name="identityType">Type of the identity should be either <see cref="ServiceIdentity.Certificate"/> or <see cref="ServiceIdentity.Rsa"/>.</param>
         /// <param name="certificate">Specifies the identifying certificate. Assumes that the identity type is <see cref="ServiceIdentity.Certificate" />.</param>
+        /// <param name="messagingPattern">
+        /// The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
+        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
+        /// </param>
         protected MessagingPatternServiceHostFactory(
-            string messagingPattern,
             ServiceIdentity identityType,
-            X509Certificate2 certificate)
+            X509Certificate2 certificate,
+            string messagingPattern)
             : this(messagingPattern)
         {
             Contract.Requires<ArgumentException>(
@@ -183,11 +198,11 @@ namespace vm.Aspects.Wcf.Services
         #endregion
 
         /// <summary>
-        /// Creates a <see cref="T:System.ServiceModel.ServiceHost" /> for a specified type of service with a specific base address.
+        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
         /// </summary>
         /// <param name="serviceType">Specifies the type of service to host.</param>
-        /// <param name="baseAddresses">The <see cref="T:System.Array" /> of type <see cref="T:System.Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="T:System.ServiceModel.ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
         protected override ServiceHost CreateServiceHost(
             Type serviceType,
             Uri[] baseAddresses)
@@ -215,10 +230,10 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <param name="serviceType">Specifies the type of service to host.</param>
         /// <param name="baseAddresses">
-        /// The <see cref="T:System.Array"/> of type <see cref="T:System.Uri"/> that contains the base addresses for the service hosted.
+        /// The <see cref="Array"/> of type <see cref="Uri"/> that contains the base addresses for the service hosted.
         /// </param>
         /// <returns>
-        /// A <see cref="T:System.ServiceModel.ServiceHost"/> for the type of service specified with a specific base address.
+        /// A <see cref="ServiceHost"/> for the type of service specified with a specific base address.
         /// </returns>
         public ServiceHost CreateHost(
             Type serviceType,
@@ -283,10 +298,6 @@ namespace vm.Aspects.Wcf.Services
                         ServiceLifetimeManager,
                         new Interceptor<InterfaceInterceptor>(),
                         new InterceptionBehavior<PolicyInjectionBehavior>());
-
-#if DEBUG
-                DIContainer.Root.DebugDump();
-#endif
 
                 AreRegistered = true;
                 return DIContainer.Root;
@@ -474,6 +485,5 @@ namespace vm.Aspects.Wcf.Services
                 (_identityType != ServiceIdentity.None  && _identityType != ServiceIdentity.Certificate) && !string.IsNullOrWhiteSpace(_identity)  ||
                 (_identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Dns || _identityType == ServiceIdentity.Rsa) && _identifyingCertificate!=null);
         }
-
     }
 }

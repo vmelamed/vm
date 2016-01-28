@@ -20,7 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using ExceptionShieldingErrorHandler = vm.Aspects.Wcf.ExceptionHandling.ExceptionShieldingErrorHandler;
+using ExceptionShieldingErrorHandler = vm.Aspects.Wcf.ExceptionShieldingBehavior.ExceptionShieldingErrorHandler;
 
 namespace vm.Aspects.Wcf.Tests
 {

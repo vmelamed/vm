@@ -175,8 +175,8 @@ namespace vm.Aspects.Wcf.Services
                     ((NetMsmqBinding)ep.Binding).CustomDeadLetterQueue = new Uri(dlqAddress);
                 }
                 else
-                    // add necessary behaviors for REST-ful services
-                    if (ep.Binding is WebHttpBinding)
+                // add necessary behaviors for REST-ful services
+                if (ep.Binding is WebHttpBinding)
                     ep.EndpointBehaviors.Add(
                         new WebHttpBehavior
                         {

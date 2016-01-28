@@ -325,6 +325,7 @@ namespace vm.Aspects
         /// <param name="container">
         /// The container.
         /// </param>
+        [Conditional("DEBUG")]
         public static void DebugDump(
             this IUnityContainer container)
         {
