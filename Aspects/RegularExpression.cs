@@ -574,18 +574,31 @@ namespace vm.Aspects
 
         #region Guid
         /// <summary>
-        /// Regular expression pattern which matches ...
+        /// Regular expression pattern which matches GUID.
         /// </summary>
         public const string RexGuid = @"(?i:^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|(?:[0-9a-f]{32})$)";
 
         readonly static Lazy<Regex> _rexGuid = new Lazy<Regex>(() => new Regex(RexGuid, RegexOptions.Compiled));
 
         /// <summary>
-        /// Gets a Regex object which matches ...
+        /// Gets a Regex object which matches GUID
         /// </summary>
         public static Regex Guid => _rexGuid.Value;
         #endregion
 
+        #region Content-type or Accepts header values:
+        /// <summary>
+        /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
+        /// </summary>
+        public const string RexContentType = @"(?i:)^(?<type>text|application)/(?:(?<vendor>[^\s,;+-]+)(?:-(?<version>[^\s,;+]+))?\+)?(?<format>[^\s\+,;]+)$";
+
+        readonly static Lazy<Regex> _contentType = new Lazy<Regex>(() => new Regex(RexContentType, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
+        /// </summary>
+        public static Regex ContentType => _contentType.Value;
+        #endregion
 
         #region ByteArray
         /// <summary>

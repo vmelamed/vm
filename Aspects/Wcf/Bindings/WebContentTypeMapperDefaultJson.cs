@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel.Channels;
+﻿using System.ServiceModel.Channels;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -19,12 +18,20 @@ namespace vm.Aspects.Wcf.Bindings
             if (string.IsNullOrWhiteSpace(contentType))
                 return WebContentFormat.Default;
 
-            if (contentType.StartsWith("text/javascript", StringComparison.OrdinalIgnoreCase)  ||
-                contentType.StartsWith("text/plain", StringComparison.OrdinalIgnoreCase))
-                return WebContentFormat.Json;
+            var match = RegularExpression.ContentType.Match(contentType);
 
-            if (contentType.StartsWith("text/xml", StringComparison.OrdinalIgnoreCase))
-                return WebContentFormat.Xml;
+            if (match.Success)
+                switch (match.Groups["format"].Value.ToUpperInvariant())
+                {
+                case "JAVASCRIPT":
+                case "JSON":
+                case "X-JAVASCRIPT":
+                case "X-JSON":
+                    return WebContentFormat.Json;
+
+                case "XML":
+                    return WebContentFormat.Xml;
+                }
 
             return WebContentFormat.Default;
         }
