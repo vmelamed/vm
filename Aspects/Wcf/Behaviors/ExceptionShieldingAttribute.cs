@@ -21,7 +21,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 
-namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Indicates that an implementation service class will use exception shielding. 

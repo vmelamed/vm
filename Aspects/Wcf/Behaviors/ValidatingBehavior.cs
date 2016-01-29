@@ -11,7 +11,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Wcf.FaultContracts;
 using vm.Aspects.Wcf.Properties;
 
-namespace vm.Aspects.Wcf.ValidationBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// The behavior class that set up the validation contract behavior

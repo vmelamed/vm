@@ -2,7 +2,7 @@
 using System.ServiceModel.Channels;
 using System.Xml;
 
-namespace vm.Aspects.Wcf.ValidationBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Represents the binding element that contains the message validation policy.

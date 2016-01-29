@@ -3,7 +3,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace vm.Aspects.Wcf.ValidationBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Indicates that an implementation service class will use message validation constraints. 

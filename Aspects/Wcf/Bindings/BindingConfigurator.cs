@@ -138,7 +138,7 @@ namespace vm.Aspects.Wcf.Bindings
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
 
             IncompatibleBinding(binding);
-            return (CustomBinding)binding;
+            return binding;
         }
 
         /// <summary>

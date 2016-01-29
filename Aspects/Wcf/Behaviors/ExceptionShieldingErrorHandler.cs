@@ -26,9 +26,10 @@ using System.Web.Services.Protocols;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
 
-namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// The error handler class that implements the exception shielding logic.
@@ -111,7 +112,7 @@ namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
                 Exception exceptionToThrow;
 
                 // Execute the EHAB policy pipeline
-                if (ExceptionPolicy.HandleException(error, ExceptionPolicyName, out exceptionToThrow))
+                if (Facility.ExceptionManager.HandleException(error, ExceptionPolicyName, out exceptionToThrow))
                 {
                     var wrapper = exceptionToThrow as FaultContractWrapperException;
 
@@ -131,7 +132,7 @@ namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
                 // defined in the specified policy so treat it as unhandled if not in the default policy
                 // run first the default exception policy
                 if (!ExceptionPolicyName.Equals(ExceptionShielding.DefaultExceptionPolicy, StringComparison.OrdinalIgnoreCase)  &&
-                    ExceptionPolicy.HandleException(error, ExceptionShielding.DefaultExceptionPolicy, out exceptionToThrow))
+                    Facility.ExceptionManager.HandleException(error, ExceptionShielding.DefaultExceptionPolicy, out exceptionToThrow))
                 {
                     var wrapper = exceptionToThrow as FaultContractWrapperException;
 

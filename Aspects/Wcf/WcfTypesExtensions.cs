@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using vm.Aspects.Wcf.Bindings;
-using vm.Aspects.Wcf.DIBehavior;
+using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Wcf
 {

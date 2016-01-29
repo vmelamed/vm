@@ -3,7 +3,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.Diagnostics.Contracts;
 
-namespace vm.Aspects.Wcf.ValidationBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Represents a configuration element that specifies a message validation.

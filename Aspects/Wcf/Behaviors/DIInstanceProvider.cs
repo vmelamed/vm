@@ -4,7 +4,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.ServiceLocation;
 
-namespace vm.Aspects.Wcf.DIBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Class DIInstanceProvider. This class cannot be inherited. Instantiates the service by resolving it from the DI container represented by the service locator.

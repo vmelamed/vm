@@ -13,7 +13,7 @@ using System.Diagnostics.Contracts;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
 
-namespace vm.Aspects.Wcf.ValidationBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Class ValidatingParameterInspector. Implements <see cref="IParameterInspector"/> using the 

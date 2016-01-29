@@ -20,7 +20,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 
-namespace vm.Aspects.Wcf.ExceptionShieldingBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// The behavior class that set up the <see cref="ExceptionShieldingErrorHandler"/> 

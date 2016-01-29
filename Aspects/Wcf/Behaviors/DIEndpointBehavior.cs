@@ -3,7 +3,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace vm.Aspects.Wcf.DIBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Class DIEndpointBehavior. This class cannot be inherited. Endpoint behavior which supplies the instance provider 

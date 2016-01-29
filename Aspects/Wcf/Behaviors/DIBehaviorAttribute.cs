@@ -4,7 +4,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace vm.Aspects.Wcf.DIBehavior
+namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
     /// Class DIBehaviorAttribute. This class cannot be inherited. Should be applied to WCF service classes definitions that should not be created
