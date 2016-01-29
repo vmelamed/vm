@@ -302,6 +302,7 @@
     <Compile Include="FaultContracts\DataFault.cs" />
     <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
     <Compile Include="FaultContracts\Fault.cs" />
+    <Compile Include="FaultContracts\Fault.HttpStatusDescriptions.cs" />
     <Compile Include="FaultContracts\FileNotFoundFault.cs" />
     <Compile Include="FaultContracts\FormatFault.cs" />
     <Compile Include="FaultContracts\InvalidOperationFault.cs" />

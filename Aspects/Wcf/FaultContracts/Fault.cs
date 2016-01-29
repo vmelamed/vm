@@ -19,7 +19,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}")]
     [MetadataType(typeof(FaultMetadata))]
-    public class Fault
+    public partial class Fault
     {
         #region Properties
         /// <summary>
@@ -72,6 +72,19 @@ namespace vm.Aspects.Wcf.FaultContracts
             {
                 if (value != null)
                     InnerExceptionsMessages = value.Message;
+            }
+        }
+
+        /// <summary>
+        /// Gets the HTTP status description of the <see cref="HttpStatusCode"/>.
+        /// </summary>
+        public string HttpStatusDescription
+        {
+            get
+            {
+                string description;
+
+                return _httpStatusDescriptions.TryGetValue(HttpStatusCode, out description) ? description : null;
             }
         }
 

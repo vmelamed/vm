@@ -18,6 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -67,27 +68,6 @@ namespace vm.Aspects.Wcf.Behaviors
         #endregion
 
         #region IErrorHandler Members
-
-        /// <summary>
-        /// Handles the error.
-        /// </summary>
-        /// <param name="error">The error.</param>
-        /// <returns></returns>
-        public bool HandleError(Exception error)
-        {
-            // Typical use of this method:
-            // Implement the HandleError method to ensure error-related behaviors 
-            // (error logging, assuring a fail fast, shutting down the application, and so on). 
-            // If any implementation of HandleError returns true, subsequent implementations are
-            // not called. If there are no implementations or no implementation returns true, it 
-            // is processed according to the ServiceBehaviorAttribute.IncludeExceptionDetailInFaults 
-            // property value.
-
-            // Since we did all the exception handling and shielding in ProvideFault method,
-            // we just return true.
-            return true;
-        }
-
         /// <summary>
         /// Provides the fault.
         /// </summary>
@@ -104,7 +84,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (error is FaultException)
                 return;
 
-            // Will create a default Message in case is null
+            // Will create a default Message in case it is null
             EnsureMessage(ref fault, version);
 
             try
@@ -114,16 +94,20 @@ namespace vm.Aspects.Wcf.Behaviors
                 // Execute the EHAB policy pipeline
                 if (Facility.ExceptionManager.HandleException(error, ExceptionPolicyName, out exceptionToThrow))
                 {
-                    var wrapper = exceptionToThrow as FaultContractWrapperException;
+                    var faultContractWrapper = exceptionToThrow as FaultContractWrapperException;
 
-                    if (wrapper != null)
-                        HandleFault(wrapper, ref fault);
+                    if (faultContractWrapper != null)
+                        HandleFaultWrapper(faultContractWrapper, ref fault);
                     else
-                    if (exceptionToThrow is FaultException)
-                        return;
-                    else
-                        // this is an unhandled exception so treat it as server and shield it.
-                        ProcessUnhandledException(exceptionToThrow, ref fault);
+                    {
+                        var faultException = exceptionToThrow as FaultException;
+
+                        if (faultException != null)
+                            HandleFault(faultException, ref fault);
+                        else
+                            // this is an unhandled exception so treat it as server and shield it.
+                            ProcessUnhandledException(exceptionToThrow, ref fault);
+                    }
 
                     return;
                 }
@@ -137,13 +121,17 @@ namespace vm.Aspects.Wcf.Behaviors
                     var wrapper = exceptionToThrow as FaultContractWrapperException;
 
                     if (wrapper != null)
-                        HandleFault(wrapper, ref fault);
+                        HandleFaultWrapper(wrapper, ref fault);
                     else
-                    if (exceptionToThrow is FaultException)
-                        return;
-                    else
-                        // this is an unhandled exception so treat it as server and shield it.
-                        ProcessUnhandledException(exceptionToThrow, ref fault);
+                    {
+                        var faultException = exceptionToThrow as FaultException;
+
+                        if (faultException != null)
+                            HandleFault(faultException, ref fault);
+                        else
+                            // this is an unhandled exception so treat it as server and shield it.
+                            ProcessUnhandledException(exceptionToThrow, ref fault);
+                    }
 
                     return;
                 }
@@ -158,6 +146,17 @@ namespace vm.Aspects.Wcf.Behaviors
             }
         }
 
+        /// <summary>
+        /// Handles the error.
+        /// </summary>
+        /// <param name="error">The error.</param>
+        /// <returns></returns>
+        public bool HandleError(Exception error)
+        {
+            // Since we did all the exception handling and shielding in ProvideFault method, we just return true.
+            return true;
+        }
+
         #endregion
 
         #region Internal Implementation
@@ -168,31 +167,57 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             // if the current error is not already a FaultException
             // process and return, otherwise, just return the current FaultException.
-            if (!(unhandledException is FaultException))
+            var faultException = unhandledException as FaultException;
+
+            if (faultException != null)
             {
-                // Log only if we don't get any handling instance ID in the exception message.
-                // in the configuration file. (see exception handlers for logging)
-                Guid handlingInstanceId = GetHandlingInstanceId(unhandledException, Guid.Empty);
-
-                if (handlingInstanceId == Guid.Empty)
-                    handlingInstanceId = LogServerException(unhandledException);
-
-                HandleFault(unhandledException, ref fault, handlingInstanceId, null);
+                HandleFault(faultException, ref fault);
+                return;
             }
+
+            // Log only if we don't get any handling instance ID in the exception message.
+            // in the configuration file. (see exception handlers for logging)
+            Guid handlingInstanceId = GetHandlingInstanceId(unhandledException, Guid.Empty);
+
+            if (handlingInstanceId == Guid.Empty)
+                handlingInstanceId = LogServerException(unhandledException);
+
+            HandleFault(unhandledException, ref fault, handlingInstanceId, null);
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
-        static void HandleFault(
+        static void HandleFaultWrapper(
             FaultContractWrapperException faultContractWrapper,
             ref Message fault)
         {
             try
             {
-                var messageFault = BuildMessageFault(faultContractWrapper);
+                var faultDetails   = faultContractWrapper.FaultContract as Fault;
+                var isSerializable = faultContractWrapper.FaultContract.GetType().IsSerializable;
+                var action         = GetFaultAction(faultContractWrapper) ?? fault.Headers.Action;
 
-                SetHttpStatusCode(faultContractWrapper);
+                if (WebOperationContext.Current == null)
+                {
+                    var messageFault = BuildMessageFault(faultContractWrapper);
 
-                fault = Message.CreateMessage(fault.Version, messageFault, GetFaultAction(faultContractWrapper) ?? fault.Headers.Action);
+                    fault = Message.CreateMessage(fault.Version, messageFault, action);
+                    return;
+                }
+
+                fault = Message.CreateMessage(fault.Version, action, faultDetails, new DataContractJsonSerializer(faultContractWrapper.FaultContract.GetType()));
+
+                var webBodyFormat = new WebBodyFormatMessageProperty(WebContentFormat.Json);
+
+                fault.Properties.Add(WebBodyFormatMessageProperty.Name, webBodyFormat);
+
+                var responseMessageProperty = new HttpResponseMessageProperty
+                {
+                    StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                    StatusDescription = "",
+                };
+
+                responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/json";
+                fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
             }
             catch (Exception unhandledException)
             {
@@ -205,25 +230,42 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         static void HandleFault(
+            FaultException faultException,
+            ref Message fault)
+        {
+            if (WebOperationContext.Current == null)
+                return;
+
+            throw new NotImplementedException();
+        }
+
+        static void HandleFault(
             Exception error,
             ref Message fault,
             Guid handlingInstanceId,
             FaultContractWrapperException faultContractWrapper)
         {
-            var messageFault = BuildMessageFault(error, handlingInstanceId);
+            if (WebOperationContext.Current == null)
+            {
+                var messageFault = BuildMessageFault(error, handlingInstanceId);
 
-            SetHttpStatusCode(faultContractWrapper);
-
-            fault = Message.CreateMessage(fault.Version, messageFault, GetFaultAction(faultContractWrapper) ?? fault.Headers.Action);
+                fault = Message.CreateMessage(fault.Version, messageFault, GetFaultAction(faultContractWrapper) ?? fault.Headers.Action);
+                return;
+            }
         }
 
         static string GetFaultAction(
             FaultContractWrapperException faultContractWrapper)
         {
-            if (OperationContext.Current == null) // we are running outside a host
+            if (OperationContext.Current == null) // we are running outside of a host
                 return null;
 
-            string operationAction = OperationContext.Current.RequestContext.RequestMessage.Headers.Action;
+            string operationAction = OperationContext
+                                        .Current
+                                        .RequestContext
+                                        .RequestMessage
+                                        .Headers
+                                        .Action;
 
             // for unhandled exception use the operation action
             if (faultContractWrapper == null)
@@ -232,14 +274,14 @@ namespace vm.Aspects.Wcf.Behaviors
             var faultContractType = faultContractWrapper.FaultContract.GetType();
 
             operationAction = OperationContext
-                                    .Current
-                                    .EndpointDispatcher
-                                    .DispatchRuntime
-                                    .Operations
-                                    .FirstOrDefault(o => o.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
-                                    ?.FaultContractInfos
-                                    .FirstOrDefault(f => f.Detail == faultContractType)
-                                    ?.Action;
+                                        .Current
+                                        .EndpointDispatcher
+                                        .DispatchRuntime
+                                        .Operations
+                                        .FirstOrDefault(o => o.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
+                                        ?.FaultContractInfos
+                                        .FirstOrDefault(f => f.Detail == faultContractType)
+                                        ?.Action;
 
             return operationAction;
         }
@@ -271,7 +313,8 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <param name="faultContractWrapper"></param>
         /// <returns></returns>
-        static MessageFault BuildMessageFault(FaultContractWrapperException faultContractWrapper)
+        static MessageFault BuildMessageFault(
+            FaultContractWrapperException faultContractWrapper)
         {
             Type faultExceptionType = typeof(FaultException<>);
             Type constructedFaultExceptionType = faultExceptionType.MakeGenericType(faultContractWrapper.FaultContract.GetType());
