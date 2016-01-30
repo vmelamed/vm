@@ -18,9 +18,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Web.Services.Protocols;
@@ -28,6 +32,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using vm.Aspects.Facilities;
+using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.Behaviors
@@ -103,7 +108,7 @@ namespace vm.Aspects.Wcf.Behaviors
                         var faultException = exceptionToThrow as FaultException;
 
                         if (faultException != null)
-                            HandleFault(faultException, ref fault);
+                            HandleFaultException(faultException, ref fault);
                         else
                             // this is an unhandled exception so treat it as server and shield it.
                             ProcessUnhandledException(exceptionToThrow, ref fault);
@@ -127,7 +132,7 @@ namespace vm.Aspects.Wcf.Behaviors
                         var faultException = exceptionToThrow as FaultException;
 
                         if (faultException != null)
-                            HandleFault(faultException, ref fault);
+                            HandleFaultException(faultException, ref fault);
                         else
                             // this is an unhandled exception so treat it as server and shield it.
                             ProcessUnhandledException(exceptionToThrow, ref fault);
@@ -161,6 +166,198 @@ namespace vm.Aspects.Wcf.Behaviors
 
         #region Internal Implementation
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
+        static void HandleFaultWrapper(
+            FaultContractWrapperException faultContractWrapper,
+            ref Message fault)
+        {
+            try
+            {
+                var action = GetFaultAction(faultContractWrapper.FaultContract.GetType()) ?? fault.Headers.Action;
+
+                if (WebOperationContext.Current == null)
+                {
+                    fault = Message.CreateMessage(
+                                        fault.Version,
+                                        BuildMessageFault(faultContractWrapper),
+                                        action);
+                    return;
+                }
+
+                var faultDetails = faultContractWrapper.FaultContract as Fault;
+                var webFormat    = GetWebContentFormat();
+                HttpResponseMessageProperty responseMessageProperty;
+
+                if (webFormat == WebContentFormat.Json)
+                {
+                    fault = Message.CreateMessage(
+                                            fault.Version,
+                                            action,
+                                            faultDetails,
+                                            new DataContractJsonSerializer(faultContractWrapper.FaultContract.GetType()));
+
+                    fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                    responseMessageProperty = new HttpResponseMessageProperty
+                    {
+                        StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                        StatusDescription = "",
+                    };
+
+                    responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/json";
+
+                    fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                    return;
+                }
+
+                if (webFormat == WebContentFormat.Xml)
+                {
+                    fault = Message.CreateMessage(
+                                            fault.Version,
+                                            action,
+                                            faultDetails,
+                                            new DataContractSerializer(faultContractWrapper.FaultContract.GetType()));
+
+                    fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                    responseMessageProperty = new HttpResponseMessageProperty
+                    {
+                        StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                        StatusDescription = "",
+                    };
+
+                    responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/xml";
+
+                    fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                    return;
+                }
+
+                fault = Message.CreateMessage(
+                                        fault.Version,
+                                        action,
+                                        faultContractWrapper.FaultContract.DumpString());
+
+                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                responseMessageProperty = new HttpResponseMessageProperty
+                {
+                    StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                    StatusDescription = "",
+                };
+
+                responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "text/plain";
+
+                fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                return;
+            }
+            catch (Exception unhandledException)
+            {
+                // There was an error during MessageFault build process, so treat it as an Unhandled Exception
+                // log the exception and send an unhandled server exception
+                var handlingInstanceId = LogServerException(unhandledException);
+
+                HandleFault(unhandledException, ref fault, handlingInstanceId, null);
+            }
+        }
+
+        static void HandleFaultException(
+            FaultException faultException,
+            ref Message fault)
+        {
+            if (WebOperationContext.Current == null)
+                return;
+
+            faultException.
+
+            try
+            {
+                var action = GetFaultAction(faultContractWrapper.FaultContract.GetType()) ?? fault.Headers.Action;
+
+                if (WebOperationContext.Current == null)
+                {
+                    fault = Message.CreateMessage(
+                                        fault.Version,
+                                        BuildMessageFault(faultContractWrapper),
+                                        action);
+                    return;
+                }
+
+                var faultDetails = faultContractWrapper.FaultContract as Fault;
+                var webFormat    = GetWebContentFormat();
+                HttpResponseMessageProperty responseMessageProperty;
+
+                if (webFormat == WebContentFormat.Json)
+                {
+                    fault = Message.CreateMessage(
+                                            fault.Version,
+                                            action,
+                                            faultDetails,
+                                            new DataContractJsonSerializer(faultContractWrapper.FaultContract.GetType()));
+
+                    fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                    responseMessageProperty = new HttpResponseMessageProperty
+                    {
+                        StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                        StatusDescription = "",
+                    };
+
+                    responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/json";
+
+                    fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                    return;
+                }
+
+                if (webFormat == WebContentFormat.Xml)
+                {
+                    fault = Message.CreateMessage(
+                                            fault.Version,
+                                            action,
+                                            faultDetails,
+                                            new DataContractSerializer(faultContractWrapper.FaultContract.GetType()));
+
+                    fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                    responseMessageProperty = new HttpResponseMessageProperty
+                    {
+                        StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                        StatusDescription = "",
+                    };
+
+                    responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/xml";
+
+                    fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                    return;
+                }
+
+                fault = Message.CreateMessage(
+                                        fault.Version,
+                                        action,
+                                        faultContractWrapper.FaultContract.DumpString());
+
+                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+
+                responseMessageProperty = new HttpResponseMessageProperty
+                {
+                    StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
+                    StatusDescription = "",
+                };
+
+                responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "text/plain";
+
+                fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                return;
+            }
+            catch (Exception unhandledException)
+            {
+                // There was an error during MessageFault build process, so treat it as an Unhandled Exception
+                // log the exception and send an unhandled server exception
+                var handlingInstanceId = LogServerException(unhandledException);
+
+                HandleFault(unhandledException, ref fault, handlingInstanceId, null);
+            }
+        }
+
         static void ProcessUnhandledException(
             Exception unhandledException,
             ref Message fault)
@@ -171,7 +368,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
             if (faultException != null)
             {
-                HandleFault(faultException, ref fault);
+                HandleFaultException(faultException, ref fault);
                 return;
             }
 
@@ -185,60 +382,6 @@ namespace vm.Aspects.Wcf.Behaviors
             HandleFault(unhandledException, ref fault, handlingInstanceId, null);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
-        static void HandleFaultWrapper(
-            FaultContractWrapperException faultContractWrapper,
-            ref Message fault)
-        {
-            try
-            {
-                var faultDetails   = faultContractWrapper.FaultContract as Fault;
-                var isSerializable = faultContractWrapper.FaultContract.GetType().IsSerializable;
-                var action         = GetFaultAction(faultContractWrapper) ?? fault.Headers.Action;
-
-                if (WebOperationContext.Current == null)
-                {
-                    var messageFault = BuildMessageFault(faultContractWrapper);
-
-                    fault = Message.CreateMessage(fault.Version, messageFault, action);
-                    return;
-                }
-
-                fault = Message.CreateMessage(fault.Version, action, faultDetails, new DataContractJsonSerializer(faultContractWrapper.FaultContract.GetType()));
-
-                var webBodyFormat = new WebBodyFormatMessageProperty(WebContentFormat.Json);
-
-                fault.Properties.Add(WebBodyFormatMessageProperty.Name, webBodyFormat);
-
-                var responseMessageProperty = new HttpResponseMessageProperty
-                {
-                    StatusCode        = faultDetails?.HttpStatusCode ?? HttpStatusCode.BadRequest,
-                    StatusDescription = "",
-                };
-
-                responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/json";
-                fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
-            }
-            catch (Exception unhandledException)
-            {
-                // There was an error during MessageFault build process, so treat it as an Unhandled Exception
-                // log the exception and send an unhandled server exception
-                var handlingInstanceId = LogServerException(unhandledException);
-
-                HandleFault(unhandledException, ref fault, handlingInstanceId, null);
-            }
-        }
-
-        static void HandleFault(
-            FaultException faultException,
-            ref Message fault)
-        {
-            if (WebOperationContext.Current == null)
-                return;
-
-            throw new NotImplementedException();
-        }
-
         static void HandleFault(
             Exception error,
             ref Message fault,
@@ -249,41 +392,9 @@ namespace vm.Aspects.Wcf.Behaviors
             {
                 var messageFault = BuildMessageFault(error, handlingInstanceId);
 
-                fault = Message.CreateMessage(fault.Version, messageFault, GetFaultAction(faultContractWrapper) ?? fault.Headers.Action);
+                fault = Message.CreateMessage(fault.Version, messageFault, GetFaultAction(faultContractWrapper.FaultContract.GetType()) ?? fault.Headers.Action);
                 return;
             }
-        }
-
-        static string GetFaultAction(
-            FaultContractWrapperException faultContractWrapper)
-        {
-            if (OperationContext.Current == null) // we are running outside of a host
-                return null;
-
-            string operationAction = OperationContext
-                                        .Current
-                                        .RequestContext
-                                        .RequestMessage
-                                        .Headers
-                                        .Action;
-
-            // for unhandled exception use the operation action
-            if (faultContractWrapper == null)
-                return operationAction;
-
-            var faultContractType = faultContractWrapper.FaultContract.GetType();
-
-            operationAction = OperationContext
-                                        .Current
-                                        .EndpointDispatcher
-                                        .DispatchRuntime
-                                        .Operations
-                                        .FirstOrDefault(o => o.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
-                                        ?.FaultContractInfos
-                                        .FirstOrDefault(f => f.Detail == faultContractType)
-                                        ?.Action;
-
-            return operationAction;
         }
 
         /// <summary>
@@ -316,16 +427,12 @@ namespace vm.Aspects.Wcf.Behaviors
         static MessageFault BuildMessageFault(
             FaultContractWrapperException faultContractWrapper)
         {
-            Type faultExceptionType = typeof(FaultException<>);
-            Type constructedFaultExceptionType = faultExceptionType.MakeGenericType(faultContractWrapper.FaultContract.GetType());
-
             //Encapsulate the FaultContract in the FaultException
-            FaultException faultException =
-                (FaultException)Activator.CreateInstance(
-                    constructedFaultExceptionType,
-                    faultContractWrapper.FaultContract,
-                    new FaultReason(new FaultReasonText(faultContractWrapper.Message, CultureInfo.CurrentCulture)),
-                    FaultCode.CreateSenderFaultCode(SoapException.ClientFaultCode.Name, SoapException.ClientFaultCode.Namespace));
+            FaultException faultException = (FaultException)Activator.CreateInstance(
+                                                                            typeof(FaultException<>).MakeGenericType(faultContractWrapper.FaultContract.GetType()),
+                                                                            faultContractWrapper.FaultContract,
+                                                                            new FaultReason(new FaultReasonText(faultContractWrapper.Message, CultureInfo.CurrentCulture)),
+                                                                            FaultCode.CreateSenderFaultCode(SoapException.ClientFaultCode.Name, SoapException.ClientFaultCode.Namespace));
 
             return faultException.CreateMessageFault();
         }
@@ -385,6 +492,102 @@ namespace vm.Aspects.Wcf.Behaviors
             }
 
             return handlingInstanceId;
+        }
+
+        static string GetFaultAction(
+            Type faultContractType)
+        {
+            if (OperationContext.Current == null) // we are running outside of a host
+                return null;
+
+            string operationAction = OperationContext
+                                    .Current
+                                    .RequestContext
+                                    .RequestMessage
+                                    .Headers
+                                    .Action;
+
+            // for unhandled exception use the operation action
+            if (faultContractType == null)
+                return operationAction;
+
+            operationAction = OperationContext
+                                    .Current
+                                    .EndpointDispatcher
+                                    .DispatchRuntime
+                                    .Operations
+                                    .FirstOrDefault(o => o.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
+                                    ?.FaultContractInfos
+                                    .FirstOrDefault(f => f.Detail == faultContractType)
+                                    ?.Action;
+
+            return operationAction;
+        }
+
+        static WebContentFormat GetWebContentFormat()
+        {
+            if (WebOperationContext.Current == null)
+                return WebContentFormat.Default;
+
+            // 1. The media types in the request message’s Accept header.
+            var typeMapper = new WebContentTypeMapperDefaultJson();
+
+            var contentType = new ContentType(WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Accept]);
+            WebContentFormat format;
+
+            format = typeMapper.GetMessageFormatForContentType(contentType.MediaType);
+
+            if (format != WebContentFormat.Default)
+                return format;
+
+            // 2. The content-type of the request message.
+            var requestContentType = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.ContentType];
+
+            format = typeMapper.GetMessageFormatForContentType(requestContentType);
+
+            if (format != WebContentFormat.Default)
+                return format;
+
+            // 3. The default format setting in the operation.
+            string operationAction = OperationContext
+                                    .Current
+                                    .RequestContext
+                                    .RequestMessage
+                                    .Headers
+                                    .Action;
+
+            var operation = OperationContext
+                                    .Current
+                                    .EndpointDispatcher
+                                    .DispatchRuntime
+                                    .Type
+                                    .GetMethods()
+                                    .FirstOrDefault(m => operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
+                                                         operationAction.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase));
+
+            var webGet = operation.GetCustomAttribute<WebGetAttribute>();
+
+            if (webGet != null  &&  webGet.IsResponseFormatSetExplicitly)
+                return webGet.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+
+            var webInvoke = operation.GetCustomAttribute<WebInvokeAttribute>();
+
+            if (webInvoke != null  &&  webInvoke.IsResponseFormatSetExplicitly)
+                return webInvoke.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+
+            // 4. The default format setting in the WebHttpBehavior.
+            var webBehavior = OperationContext
+                                    .Current
+                                    .Host
+                                    .Description
+                                    .Behaviors
+                                    .OfType<WebHttpBehavior>()
+                                    .FirstOrDefault();
+
+            if (webBehavior != null)
+                return webBehavior.DefaultOutgoingResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+
+            return WebContentFormat.Default;
         }
 
         static void SetHttpStatusCode(
