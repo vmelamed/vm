@@ -26,50 +26,59 @@ namespace vm.Aspects.Wcf.Behaviors
         /// Gets the action.
         /// </summary>
         /// <returns>The fault action.</returns>
-        public string GetOperationAction()
+        public string OperationAction
         {
-            if (OperationContext.Current == null)
-                return null;
+            get
+            {
+                if (OperationContext.Current == null)
+                    return null;
 
-            return OperationContext
-                        .Current
-                        .RequestContext
-                        .RequestMessage
-                        .Headers
-                        .Action;
+                return OperationContext
+                            .Current
+                            .RequestContext
+                            .RequestMessage
+                            .Headers
+                            .Action;
+            }
         }
 
         /// <summary>
         /// Gets the method corresponding to the operation action.
         /// </summary>
         /// <returns>The method.</returns>
-        public MethodInfo GetOperationMethod()
+        public MethodInfo OperationMethod
         {
-            var operationAction = GetOperationAction();
+            get
+            {
+                var operationAction = OperationAction;
 
-            return OperationContext
-                        .Current
-                        .EndpointDispatcher
-                        .DispatchRuntime
-                        .Type
-                        .GetMethods()
-                        .FirstOrDefault(m => operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
-                                             operationAction.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase));
+                return OperationContext
+                            .Current
+                            .EndpointDispatcher
+                            .DispatchRuntime
+                            .Type
+                            .GetMethods()
+                            .FirstOrDefault(m => operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
+                                                 operationAction.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         /// <summary>
         /// Gets the web HTTP behavior.
         /// </summary>
         /// <returns>The WebHttpBehavior.</returns>
-        public WebHttpBehavior GetWebHttpBehavior()
+        public WebHttpBehavior WebHttpBehavior
         {
-            return OperationContext
-                        .Current
-                        .Host
-                        .Description
-                        .Behaviors
-                        .OfType<WebHttpBehavior>()
-                        .FirstOrDefault();
+            get
+            {
+                return OperationContext
+                            .Current
+                            .Host
+                            .Description
+                            .Behaviors
+                            .OfType<WebHttpBehavior>()
+                            .FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -80,7 +89,7 @@ namespace vm.Aspects.Wcf.Behaviors
         public string GetFaultedAction(
             Type faultContractType)
         {
-            var operationAction = GetOperationAction();
+            var operationAction = OperationAction;
 
             // for unhandled exception use the operation action
             if (operationAction == null || faultContractType == null)

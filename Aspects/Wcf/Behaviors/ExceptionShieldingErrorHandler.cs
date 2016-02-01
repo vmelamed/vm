@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Net;
 using System.Net.Mime;
 using System.Reflection;
@@ -75,7 +76,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="version">The SOAP version of the message.</param>
         /// <param name="fault">The <see cref="Message"/> object that is returned to the client, or service, in the duplex case.</param>
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "exceptionToThrow is evaluated two times.")]
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the handler.")]
         public void ProvideFault(
             Exception error,
             MessageVersion version,
@@ -177,7 +178,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
         #region Internal Implementation
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the handler.")]
         void HandleFaultWrapper(
             FaultContractWrapperException faultContractWrapper,
             ref Message fault)
@@ -221,6 +222,7 @@ namespace vm.Aspects.Wcf.Behaviors
             }
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the handler.")]
         void HandleFaultException(
             FaultException faultException,
             ref Message fault)
@@ -295,6 +297,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (_wcfContext.HasWebOperationContext)
                 BuildHttpResponseMessage(
                     string.Format(
+                        CultureInfo.InvariantCulture,
                         "An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {0}",
                         GetHandlingInstanceId(error, handlingInstanceId)),
                     fault.Headers.Action,
@@ -305,9 +308,12 @@ namespace vm.Aspects.Wcf.Behaviors
                                     fault.Version,
                                     new FaultException(
                                             new FaultReason(
-                                                    string.Format(
-                                                        "An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {0}",
-                                                        GetHandlingInstanceId(error, handlingInstanceId))),
+                                                new FaultReasonText(
+                                                        string.Format(
+                                                            CultureInfo.InvariantCulture,
+                                                            "An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {0}",
+                                                            GetHandlingInstanceId(error, handlingInstanceId)),
+                                                        CultureInfo.InvariantCulture)),
                                             FaultCode.CreateReceiverFaultCode(
                                                     SoapException.ServerFaultCode.Name,
                                                     SoapException.ServerFaultCode.Namespace))
@@ -381,7 +387,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 return format;
 
             // 3. The default format setting in the operation.
-            var operation = _wcfContext.GetOperationMethod();
+            var operation = _wcfContext.OperationMethod;
             var webGet = operation.GetCustomAttribute<WebGetAttribute>();
 
             if (webGet != null  &&  webGet.IsResponseFormatSetExplicitly)
@@ -393,7 +399,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 return webInvoke.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
 
             // 4. The default format setting in the WebHttpBehavior.
-            var webBehavior = _wcfContext.GetWebHttpBehavior();
+            var webBehavior = _wcfContext.WebHttpBehavior;
 
             if (webBehavior != null)
                 return webBehavior.DefaultOutgoingResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;

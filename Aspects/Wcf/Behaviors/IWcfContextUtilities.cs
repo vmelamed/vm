@@ -24,20 +24,17 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <summary>
         /// Gets the operation action.
         /// </summary>
-        /// <returns>The action.</returns>
-        string GetOperationAction();
+        string OperationAction { get; }
 
         /// <summary>
         /// Gets the method corresponding to the operation action.
         /// </summary>
-        /// <returns>The method.</returns>
-        MethodInfo GetOperationMethod();
+        MethodInfo OperationMethod { get; }
 
         /// <summary>
         /// Gets the <see cref="WebHttpBehavior"/>.
         /// </summary>
-        /// <returns>The <see cref="WebHttpBehavior"/>.</returns>
-        WebHttpBehavior GetWebHttpBehavior();
+        WebHttpBehavior WebHttpBehavior { get; }
 
         /// <summary>
         /// Gets the fault action either from the fault's type or if not specified, from the action in the current <see cref="OperationContext"/>.

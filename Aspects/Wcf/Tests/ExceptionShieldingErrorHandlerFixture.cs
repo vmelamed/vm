@@ -54,11 +54,11 @@ namespace vm.Aspects.Wcf.Tests
 
             public string GetFaultedAction(Type faultContractType) => null;
 
-            public string GetOperationAction() => null;
+            public string OperationAction => null;
 
-            public MethodInfo GetOperationMethod() => null;
+            public MethodInfo OperationMethod => null;
 
-            public WebHttpBehavior GetWebHttpBehavior() => null;
+            public WebHttpBehavior WebHttpBehavior => null;
         }
 
         [TestMethod]
