@@ -13,7 +13,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// This class is used to return information to a WCF
     /// client when validation fails on a service parameter.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ValidationFaultMetadata))]
     public sealed class ValidationFault : Fault
     {

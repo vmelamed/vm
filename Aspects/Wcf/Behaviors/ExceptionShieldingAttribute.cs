@@ -20,6 +20,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -74,7 +75,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
             _contractBehavior = behavior;
             _serviceBehavior  = behavior;
-            _errorHandler     = new ExceptionShieldingErrorHandler(exceptionPolicyName);
+            _errorHandler     = new ExceptionShieldingErrorHandler(ServiceLocator.Current.GetInstance<IWcfContextUtilities>(), exceptionPolicyName);
         }
 
         /// <summary>

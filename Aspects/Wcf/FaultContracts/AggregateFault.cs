@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Class AggregateFault. Mirrors <see cref="T:AggregateException"/>.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message} Parameter: {ParamName, nq}")]
     [MetadataType(typeof(AggregateFaultMetadata))]
     public sealed class AggregateFault : Fault

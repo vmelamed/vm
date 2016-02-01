@@ -198,7 +198,6 @@ namespace vm.Aspects.Facilities
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
             if (!string.IsNullOrWhiteSpace(configFileName))
-            {
                 if (Path.IsPathRooted(configFileName))
                     _logConfigurationFileName = configFileName;
                 else
@@ -213,10 +212,9 @@ namespace vm.Aspects.Facilities
 
                     configFileName = Path.Combine(path, configFileName);
                     _logConfigurationFileName = !string.IsNullOrWhiteSpace(configFileName) && File.Exists(configFileName)
-                                            ? configFileName
-                                            : null;
+                                                            ? configFileName
+                                                            : null;
                 }
-            }
 
             try
             {

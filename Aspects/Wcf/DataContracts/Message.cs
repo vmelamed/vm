@@ -14,7 +14,7 @@ namespace vm.Aspects.Wcf.DataContracts
     /// Messages (contracts) base class. Standardizes on <see cref="T:vm.Aspects.Validation.IValidatable"/>.
     /// This is just another type of DTO. Prefer <see cref="T:DataTransferObject"/> where possible.
     /// </summary>
-    [MessageContract(WrapperNamespace="urn:vm.Aspects.Wcf.DataContracts")]
+    [MessageContract(WrapperNamespace="urn:service:vm.Aspects.Wcf.DataContracts")]
     public abstract class Message : IValidatable
     {
         #region IValidatable Members

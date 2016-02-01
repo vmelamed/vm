@@ -11,15 +11,17 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.Text.RegularExpressions;
 using System.Web.Services.Protocols;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using vm.Aspects.Facilities;
+using vm.Aspects.Wcf.Behaviors;
 using ExceptionShieldingErrorHandler = vm.Aspects.Wcf.Behaviors.ExceptionShieldingErrorHandler;
 
 namespace vm.Aspects.Wcf.Tests
@@ -30,21 +32,41 @@ namespace vm.Aspects.Wcf.Tests
         [TestInitialize]
         public void Initialize()
         {
-            Logger.SetLogWriter(new LogWriterFactory().Create(), false);
-            ExceptionPolicy.SetExceptionManager(new ExceptionPolicyFactory().CreateManager(), false);
+            DIContainer
+                .Initialize()
+                .Register(Facility.Registrar)
+                ;
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            ExceptionPolicy.Reset();
-            Logger.Reset();
+            // DO NOT FORGET TO DEFINE THE CONDITIONAL SYMBOL TEST!
+            Facility.Registrar.Reset();
+            DIContainer.Reset();
+        }
+
+        class NoContext : IWcfContextUtilities
+        {
+            public bool HasOperationContext => false;
+
+            public bool HasWebOperationContext => false;
+
+            public string GetFaultedAction(Type faultContractType) => null;
+
+            public string GetOperationAction() => null;
+
+            public MethodInfo GetOperationMethod() => null;
+
+            public WebHttpBehavior GetWebHttpBehavior() => null;
         }
 
         [TestMethod]
         public void CanCreateInstance()
         {
-            ExceptionShieldingErrorHandler instance = new ExceptionShieldingErrorHandler();
+            var context = new NoContext();
+            var instance = new ExceptionShieldingErrorHandler(context);
+
             Assert.IsNotNull(instance);
             Assert.AreEqual(ExceptionShielding.DefaultExceptionPolicy, instance.ExceptionPolicyName);
         }
@@ -52,26 +74,33 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanCreateInstanceWithPolicyName()
         {
-            ExceptionShieldingErrorHandler instance = new ExceptionShieldingErrorHandler("Policy");
+            var context = new NoContext();
+            var instance = new ExceptionShieldingErrorHandler(context, "Policy");
+
             Assert.AreEqual("Policy", instance.ExceptionPolicyName);
         }
 
         [TestMethod]
         public void CanHandleErrorWithMessageFault()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+
             bool result = shielding.HandleError(null);
+
             Assert.IsTrue(result);
         }
 
         [TestMethod]
         public void CanProvideFaultWithNullException()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(null, MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsReceiverFault);
             CheckHandlingInstanceId("DefaultLogs.txt", fault.Reason.ToString());
         }
@@ -79,36 +108,40 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultWithNullVersion()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var message = GetDefaultMessage();
             shielding.ProvideFault(new ArithmeticException(), null, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsSenderFault);
         }
 
         [TestMethod]
         public void CanProvideFaultWithNullMessage()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
             Message message = null;
+
             shielding.ProvideFault(new ArithmeticException(), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsSenderFault);
         }
 
         [TestMethod]
         public void CanProvideFaultWithMockHandler()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            ArithmeticException exception = new ArithmeticException("My Exception");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var exception = new ArithmeticException("My Exception");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(exception, MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsSenderFault);
-            //DataContractSerializer serializer = new DataContractSerializer(typeof(MockFaultContract));
             MockFaultContract details = fault.GetDetail<MockFaultContract>();
             Assert.IsNotNull(details);
             Assert.AreEqual(exception.Message, details.Message);
@@ -117,11 +150,13 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultOnInvalidPolicyName()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("Invalid Policy");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "Invalid Policy");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(new Exception(), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsFalse(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsReceiverFault);
             CheckHandlingInstanceId("DefaultLogs.txt", fault.Reason.ToString());
@@ -130,15 +165,16 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultOnCustomPolicyName()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("CustomPolicy");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "CustomPolicy");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(new ArgumentException("Arg"), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsSenderFault);
-            //DataContractSerializer serializer = new DataContractSerializer(typeof(MockFaultContract));
-            MockFaultContract details = fault.GetDetail<MockFaultContract>();
+            var details = fault.GetDetail<MockFaultContract>();
             Assert.IsNotNull(details);
             Assert.AreEqual("Arg", details.Message);
         }
@@ -146,11 +182,13 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultOnUnhandledLoggedExceptions()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("UnhandledLoggedExceptions");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "UnhandledLoggedExceptions");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(new Exception(), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsFalse(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsReceiverFault);
             CheckHandlingInstanceId("UnhandledLogs.txt", fault.Reason.ToString());
@@ -159,11 +197,13 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultOnHandledLoggedExceptions()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("HandledLoggedExceptions");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "HandledLoggedExceptions");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(new ArithmeticException(), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsSenderFault);
             CheckLoggedMessage("HandledLogs.txt", fault.Reason.ToString());
@@ -172,11 +212,13 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanProvideFaultOnExceptionTypeNotFound()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("ExceptionTypeNotFound");
-            Message message = GetDefaultMessage();
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "ExceptionTypeNotFound");
+            var message = GetDefaultMessage();
+
             shielding.ProvideFault(new Exception(), MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsFalse(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsReceiverFault);
             CheckHandlingInstanceId("DefaultLogs.txt", fault.Reason.ToString());
@@ -185,12 +227,14 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void ShouldReturnReceiverFault()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("CustomPolicy");
-            Message message = GetDefaultMessage();
-            Exception exception = new NotSupportedException("NotSupportedException");
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "CustomPolicy");
+            var message = GetDefaultMessage();
+            var exception = new NotSupportedException("NotSupportedException");
+
             shielding.ProvideFault(exception, MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsReceiverFault);
             Assert.IsFalse(string.IsNullOrEmpty(fault.Reason.ToString()));
             Assert.IsFalse(fault.HasDetail);
@@ -200,12 +244,14 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void ShouldReturnSenderFault()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            Message message = GetDefaultMessage();
-            Exception exception = new ArithmeticException("Message");
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var message = GetDefaultMessage();
+            var exception = new ArithmeticException("Message");
+
             shielding.ProvideFault(exception, MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.Code.IsSenderFault);
             Assert.IsFalse(string.IsNullOrEmpty(fault.Reason.ToString()));
             Assert.IsTrue(fault.HasDetail);
@@ -217,12 +263,14 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void CanPopulateFaultContractFromExceptionProperties()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            Message message = GetDefaultMessage();
-            Exception exception = new ArgumentNullException("MyMessage");
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var message = GetDefaultMessage();
+            var exception = new ArgumentNullException("MyMessage");
+
             shielding.ProvideFault(exception, MessageVersion.Default, ref message);
 
-            MessageFault fault = GetFaultFromMessage(message);
+            var fault = GetFaultFromMessage(message);
             Assert.IsTrue(fault.HasDetail);
             Assert.IsTrue(fault.Code.IsSenderFault);
             MockFaultContract details = fault.GetDetail<MockFaultContract>();
@@ -234,13 +282,15 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void ShouldGetFaultExceptionWithPolicy()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler("FaultException");
-            FaultException faultException = GetFaultException("test", SoapException.ServerFaultCode.Name);
-            Message message = Message.CreateMessage(MessageVersion.Default, faultException.CreateMessageFault(), "");
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context, "FaultException");
+            var faultException = GetFaultException("test", SoapException.ServerFaultCode.Name);
+            var message = Message.CreateMessage(MessageVersion.Default, faultException.CreateMessageFault(), "");
+
             shielding.ProvideFault(faultException, MessageVersion.Default, ref message);
 
-            MessageFault actualFault = GetFaultFromMessage(message);
-            MessageFault expectedFault = faultException.CreateMessageFault();
+            var actualFault = GetFaultFromMessage(message);
+            var expectedFault = faultException.CreateMessageFault();
             Assert.AreEqual(expectedFault.Reason.ToString(), actualFault.Reason.ToString());
             Assert.AreEqual(expectedFault.HasDetail, actualFault.HasDetail);
             Assert.AreEqual(expectedFault.Code.IsReceiverFault, actualFault.Code.IsReceiverFault);
@@ -249,20 +299,23 @@ namespace vm.Aspects.Wcf.Tests
         [TestMethod]
         public void ShouldGetFaultExceptionWithoutPolicy()
         {
-            ExceptionShieldingErrorHandler shielding = new ExceptionShieldingErrorHandler();
-            FaultException faultException = GetFaultException("test", SoapException.ServerFaultCode.Name);
-            Message message = Message.CreateMessage(MessageVersion.Default, faultException.CreateMessageFault(), "");
+            var context = new NoContext();
+            var shielding = new ExceptionShieldingErrorHandler(context);
+            var faultException = GetFaultException("test", SoapException.ServerFaultCode.Name);
+            var message = Message.CreateMessage(MessageVersion.Default, faultException.CreateMessageFault(), "");
+
             shielding.ProvideFault(faultException, MessageVersion.Default, ref message);
 
-            MessageFault actualFault = GetFaultFromMessage(message);
-            MessageFault expectedFault = faultException.CreateMessageFault();
+            var actualFault = GetFaultFromMessage(message);
+            var expectedFault = faultException.CreateMessageFault();
             Assert.AreEqual(expectedFault.Reason.ToString(), actualFault.Reason.ToString());
             Assert.AreEqual(expectedFault.HasDetail, actualFault.HasDetail);
             Assert.AreEqual(expectedFault.Code.IsReceiverFault, actualFault.Code.IsReceiverFault);
         }
 
-        void CheckLoggedMessage(string logFileName,
-                                string message)
+        void CheckLoggedMessage(
+            string logFileName,
+            string message)
         {
             // close the current logger
             Logger.Writer.Dispose();
@@ -270,28 +323,28 @@ namespace vm.Aspects.Wcf.Tests
             Assert.IsTrue(logFileContent.Contains(message));
         }
 
-        void CheckHandlingInstanceId(string logFileName,
-                                     string message)
+        void CheckHandlingInstanceId(
+            string logFileName,
+            string message)
         {
             // close the current logger
             Logger.Writer.Dispose();
             string logFileContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFileName));
-            Regex regex = new Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
-            Match match = regex.Match(message);
+            Match match = RegularExpression.Guid.Match(message);
 
             Assert.IsFalse(string.IsNullOrEmpty(match.Value));
             Assert.IsTrue(logFileContent.Contains(match.Value));
         }
 
-        FaultException GetFaultException(string faultReason,
-                                         string faultCode)
+        FaultException GetFaultException(
+            string faultReason,
+            string faultCode)
         {
-            FaultException faultException =
-                new FaultException(
+            return new FaultException(
                     new FaultReason(faultReason),
-                    FaultCode.CreateReceiverFaultCode(faultCode,
-                                                      SoapException.ServerFaultCode.Namespace));
-            return faultException;
+                    FaultCode.CreateReceiverFaultCode(
+                        faultCode,
+                        SoapException.ServerFaultCode.Namespace));
         }
 
         Message GetDefaultMessage()
@@ -303,6 +356,7 @@ namespace vm.Aspects.Wcf.Tests
         {
             Assert.IsNotNull(message);
             Assert.IsTrue(message.IsFault);
+
             return MessageFault.CreateFault(message, 0x1000);
         }
     }

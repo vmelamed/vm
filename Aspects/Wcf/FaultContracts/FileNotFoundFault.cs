@@ -9,7 +9,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Class FileNotFoundFault. This class cannot be inherited. Mirrors <see cref="T:FileNotFoundException"/>.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}: ObjectIdentifier: {ObjectIdentifier} (Type: {ObjectType})")]
     [MetadataType(typeof(FileNotFoundFaultMetadata))]
     public sealed class FileNotFoundFault : IOFault

@@ -210,10 +210,6 @@
       <HintPath>..\..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EnterpriseLibrary.Validation.Integration.WCF.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
@@ -263,6 +259,8 @@
     <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="Behaviors\IWcfContextUtilities.cs" />
+    <Compile Include="Behaviors\WcfContextUtilities.cs" />
     <Compile Include="Bindings\BindingConfigurator.cs" />
     <Compile Include="Bindings\BindingConfigurator.Registrar.cs" />
     <Compile Include="Bindings\BindingExtensions.cs" />
@@ -341,6 +339,7 @@
     <Compile Include="ServiceIdentity.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
+    <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
     <Compile Include="Services\IInitializeService.cs" />
     <Compile Include="Services\MessagingPatternInitializedServiceHostFactory.cs" />

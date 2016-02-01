@@ -14,7 +14,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors the <see cref="T:ArgumentValidationException"/> from the Enterprise Library.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace="urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ArgumentValidationFaultMetadata))]
     public sealed class ArgumentValidationFault : ArgumentFault
     {

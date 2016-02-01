@@ -159,9 +159,14 @@ namespace vm.Aspects.Facilities
 
             // create the exception manager
             var exceptionManager = new ExceptionManager(
-                                            policyEntries.Select(
-                // create a policy definition out of the name and the merged entries
-                                                pe => new ExceptionPolicyDefinition(pe.Key, pe.Value)));
+                                            new ExceptionPolicyFactory()
+                                                    .CreateManager()
+                                                    .Policies           // load the exception handling definitions in the log file
+                                                    .Union(             // add after that the exception handling definitions from the registrars
+                                                        policyEntries
+                                                            .Select(
+                                                                // create a policy definition out of the name and the merged entries
+                                                                pe => new ExceptionPolicyDefinition(pe.Key, pe.Value))));
 
             // set the manager in the ExceptionPolicy class
             ExceptionPolicy.SetExceptionManager(exceptionManager, false);

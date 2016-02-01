@@ -9,7 +9,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Class XmlFault. This class cannot be inherited. Corresponds to <see cref="T:XmlException"/>
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(XmlFaultMetadata))]
     public sealed class XmlFault : Fault
     {

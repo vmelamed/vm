@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -15,7 +14,6 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
@@ -26,37 +24,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which add a number of mappings of exceptions to faults 
     /// which will be used by the WCF exception shielding mechanism. 
     /// </summary>
-    public class ServiceExceptionHandlingPolicies : IExceptionPolicyProvider
+    public partial class ServiceExceptionHandlingPolicies : IExceptionPolicyProvider
     {
-        private class WcfExceptionHandlingPoliciesRegistrar : ContainerRegistrar
-        {
-            protected override void DoRegister(
-                IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
-            {
-                container
-                    .RegisterInstanceIfNot<IExceptionPolicyProvider>(
-                            registrations,
-                            "vm.Aspects.Wcf.ServicePolicies",
-                            new ServiceExceptionHandlingPolicies());
-            }
-        }
-
-        static readonly WcfExceptionHandlingPoliciesRegistrar _registrar = new WcfExceptionHandlingPoliciesRegistrar();
-
-        /// <summary>
-        /// Gets the WCF exception handling policies registrar.
-        /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
-
         /// <summary>
         /// The name of the exception handling policy.
         /// </summary>

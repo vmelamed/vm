@@ -12,7 +12,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors ValidationResult.
     /// </summary>
-    [DataContract(Namespace="urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace="urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}: {Message}")]
     [MetadataType(typeof(ValidationFaultElementMetadata))]
     public sealed class ValidationFaultElement

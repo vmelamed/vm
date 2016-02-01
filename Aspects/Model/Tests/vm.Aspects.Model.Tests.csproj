@@ -278,13 +278,13 @@
     <Compile Include="TestEntitiesMetadata.cs" />
     <Compile Include="TestEntityVisitor.cs" />
     <Compile Include="ValueTests.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Common Items\vm.Test.snk">
       <Link>vm.Test.snk</Link>
     </None>
     <None Include="app.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Security\Cryptography\Ciphers\vm.Aspects.Security.Cryptography.Ciphers.csproj">

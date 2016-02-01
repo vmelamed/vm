@@ -16,7 +16,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors the <see cref="T:ValidationException"/> exception.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ValidationResultsFaultMetadata))]
     public sealed class ValidationResultsFault : Fault
     {

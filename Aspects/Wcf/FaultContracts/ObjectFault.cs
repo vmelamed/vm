@@ -11,7 +11,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Class ObjectFault. Corresponds to <see cref="T:ObjectException"/>
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}: ObjectIdentifier: {ObjectIdentifier} (Type: {ObjectType})")]
     [MetadataType(typeof(ObjectFaultMetadata))]
     public abstract class ObjectFault : BusinessFault

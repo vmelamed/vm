@@ -5,7 +5,7 @@ namespace vm.Aspects.Wcf.FaultContracts
 {
     public partial class Fault
     {
-        IDictionary<HttpStatusCode, string> _httpStatusDescriptions = new Dictionary<HttpStatusCode, string>
+        static readonly IDictionary<HttpStatusCode, string> _httpStatusDescriptions = new Dictionary<HttpStatusCode, string>
         {
             // 1×× Informational
             [HttpStatusCode.Continue]                     = "Continue",

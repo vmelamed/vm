@@ -573,10 +573,15 @@ namespace vm.Aspects
         #endregion
 
         #region Guid
+        const string rexGuidWithDashes = @"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+        const string rexGuidWithNoDashes = @"[0-9a-f]{32}";
+        const string rexGuid = @"\{?(?:"+rexGuidWithDashes+@")|(?:"+rexGuidWithNoDashes+@")\}?";
+
+        #region GUID somewhere in the input string
         /// <summary>
-        /// Regular expression pattern which matches GUID.
+        /// Regular expression pattern which matches GUID somewhere in the input string.
         /// </summary>
-        public const string RexGuid = @"(?i:^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|(?:[0-9a-f]{32})$)";
+        public const string RexGuid = @"(?i:)"+rexGuid;
 
         readonly static Lazy<Regex> _rexGuid = new Lazy<Regex>(() => new Regex(RexGuid, RegexOptions.Compiled));
 
@@ -584,6 +589,21 @@ namespace vm.Aspects
         /// Gets a Regex object which matches GUID
         /// </summary>
         public static Regex Guid => _rexGuid.Value;
+        #endregion
+
+        #region Matches exactly GUID against the input string
+        /// <summary>
+        /// Regular expression pattern which matches exactly GUID against the input string.
+        /// </summary>
+        public const string RexExactGuid = @"(?i:)^"+rexGuid+@"$";
+
+        readonly static Lazy<Regex> _rexExactGuid = new Lazy<Regex>(() => new Regex(RexExactGuid, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches GUID
+        /// </summary>
+        public static Regex ExactGuid => _rexExactGuid.Value;
+        #endregion
         #endregion
 
         #region Content-type or Accepts header values:

@@ -10,7 +10,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors ArgumentException.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message} Parameter: {ParamName, nq}")]
     [MetadataType(typeof(ArgumentFaultMetadata))]
     public class ArgumentFault : Fault

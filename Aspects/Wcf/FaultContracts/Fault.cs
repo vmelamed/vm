@@ -16,7 +16,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// Note that the fields StackTrace and Source are transferred in 
     /// DEBUG mode only.
     /// </summary>
-    [DataContract(Namespace = "urn:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}")]
     [MetadataType(typeof(FaultMetadata))]
     public partial class Fault
@@ -52,6 +52,11 @@ namespace vm.Aspects.Wcf.FaultContracts
         #endregion
 
         /// <summary>
+        /// Gets the HTTP status description of the <see cref="HttpStatusCode"/>.
+        /// </summary>
+        public string HttpStatusDescription => GetHttpStatusDescription(HttpStatusCode);
+
+        /// <summary>
         /// Appends the text of the related exception's inner exception(s) to the Message property.
         /// </summary>
         /// <remarks>
@@ -72,19 +77,6 @@ namespace vm.Aspects.Wcf.FaultContracts
             {
                 if (value != null)
                     InnerExceptionsMessages = value.Message;
-            }
-        }
-
-        /// <summary>
-        /// Gets the HTTP status description of the <see cref="HttpStatusCode"/>.
-        /// </summary>
-        public string HttpStatusDescription
-        {
-            get
-            {
-                string description;
-
-                return _httpStatusDescriptions.TryGetValue(HttpStatusCode, out description) ? description : null;
             }
         }
 
@@ -190,6 +182,19 @@ namespace vm.Aspects.Wcf.FaultContracts
         public string ToString(int indentLevel)
         {
             return this.DumpString(indentLevel);
+        }
+
+        /// <summary>
+        /// Gets the HTTP status description corresponding to an HTTP status code.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>System.String.</returns>
+        public static string GetHttpStatusDescription(
+            HttpStatusCode code)
+        {
+            string description;
+
+            return _httpStatusDescriptions.TryGetValue(code, out description) ? description : null;
         }
         #endregion
 

@@ -19,6 +19,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -166,7 +167,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (!channelDispatcher.IncludeExceptionDetailInFaults                              &&
                 !channelDispatcher.ErrorHandlers.Any(h => h is ExceptionShieldingErrorHandler) &&
                 !channelDispatcher.Endpoints.Any(mx => mx.ContractName == nameof(IMetadataExchange)))
-                channelDispatcher.ErrorHandlers.Add(new ExceptionShieldingErrorHandler(exceptionPolicyName));
+                channelDispatcher.ErrorHandlers.Add(new ExceptionShieldingErrorHandler(ServiceLocator.Current.GetInstance<IWcfContextUtilities>(), exceptionPolicyName));
         }
 
         #endregion
