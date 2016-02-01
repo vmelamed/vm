@@ -30,15 +30,23 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             get
             {
-                if (OperationContext.Current == null)
+                if (HasWebOperationContext)
+                    return WebOperationContext
+                                    .Current
+                                    .IncomingRequest
+                                    .UriTemplateMatch
+                                    .Data
+                                    .ToString();
+                else
+                if (HasOperationContext)
+                    return OperationContext
+                                    .Current
+                                    .RequestContext
+                                    .RequestMessage
+                                    .Headers
+                                    .Action;
+                else
                     return null;
-
-                return OperationContext
-                            .Current
-                            .RequestContext
-                            .RequestMessage
-                            .Headers
-                            .Action;
             }
         }
 
@@ -51,6 +59,13 @@ namespace vm.Aspects.Wcf.Behaviors
             get
             {
                 var operationAction = OperationAction;
+                var action = OperationContext
+                                .Current
+                                .EndpointDispatcher
+                                .DispatchRuntime
+                                .Operations
+                                .FirstOrDefault(o => operationAction.Equals(o.Name, StringComparison.OrdinalIgnoreCase))
+                                .Action;
 
                 return OperationContext
                             .Current
@@ -59,7 +74,7 @@ namespace vm.Aspects.Wcf.Behaviors
                             .Type
                             .GetMethods()
                             .FirstOrDefault(m => operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
-                                                 operationAction.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase));
+                                                 action.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase));
             }
         }
 
@@ -75,7 +90,8 @@ namespace vm.Aspects.Wcf.Behaviors
                             .Current
                             .Host
                             .Description
-                            .Behaviors
+                            .Endpoints
+                            .SelectMany(ep => ep.EndpointBehaviors)
                             .OfType<WebHttpBehavior>()
                             .FirstOrDefault();
             }
@@ -100,7 +116,7 @@ namespace vm.Aspects.Wcf.Behaviors
                         .EndpointDispatcher
                         .DispatchRuntime
                         .Operations
-                        .FirstOrDefault(o => o.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault(o => o.Name.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
                         ?.FaultContractInfos
                         ?.FirstOrDefault(f => f.Detail == faultContractType)
                         ?.Action

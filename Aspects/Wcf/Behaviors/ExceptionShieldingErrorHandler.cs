@@ -241,12 +241,15 @@ namespace vm.Aspects.Wcf.Behaviors
                 if (faultExceptionType.IsGenericType)
                 {
                     // it is FaultException<T> - extract the detail and build the message
-                    var faultDetail = faultExceptionType.GetProperty("Detail").GetGetMethod().Invoke(faultException, null);
+                    var faultDetail = faultExceptionType
+                                            .GetProperty("Detail")
+                                            .GetGetMethod()
+                                            .Invoke(faultException, null);
 
                     BuildHttpResponseMessage(
                         faultDetail,
                         _wcfContext.GetFaultedAction(faultDetail.GetType()) ?? fault.Headers.Action,
-                        HttpStatusCode.InternalServerError,
+                        (faultDetail as Fault)?.HttpStatusCode ?? HttpStatusCode.InternalServerError,
                         ref fault);
                 }
                 else
@@ -367,36 +370,49 @@ namespace vm.Aspects.Wcf.Behaviors
             if (WebOperationContext.Current == null)
                 return WebContentFormat.Default;
 
-            // 1. The media types in the request message’s Accept header.
             var typeMapper = new WebContentTypeMapperDefaultJson();
+            var format = WebContentFormat.Default;
+            ContentType contentType = null;
 
-            var contentType = new ContentType(WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Accept]);
-            WebContentFormat format;
+            // 1. The media types in the request message’s Accept header.
+            var acceptHeader = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Accept];
 
-            format = typeMapper.GetMessageFormatForContentType(contentType.MediaType);
+            if (!string.IsNullOrWhiteSpace(acceptHeader))
+            {
+                contentType = new ContentType(acceptHeader);
+                format = typeMapper.GetMessageFormatForContentType(contentType.MediaType);
 
-            if (format != WebContentFormat.Default)
-                return format;
+                if (format != WebContentFormat.Default)
+                    return format;
+            }
 
             // 2. The content-type of the request message.
             var requestContentType = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.ContentType];
 
-            format = typeMapper.GetMessageFormatForContentType(requestContentType);
+            if (!string.IsNullOrWhiteSpace(requestContentType))
+            {
+                contentType = new ContentType(requestContentType);
+                format = typeMapper.GetMessageFormatForContentType(contentType.MediaType);
 
-            if (format != WebContentFormat.Default)
-                return format;
+                if (format != WebContentFormat.Default)
+                    return format;
+            }
 
             // 3. The default format setting in the operation.
             var operation = _wcfContext.OperationMethod;
-            var webGet = operation.GetCustomAttribute<WebGetAttribute>();
 
-            if (webGet != null  &&  webGet.IsResponseFormatSetExplicitly)
-                return webGet.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+            if (operation != null)
+            {
+                var webGet = operation.GetCustomAttribute<WebGetAttribute>();
 
-            var webInvoke = operation.GetCustomAttribute<WebInvokeAttribute>();
+                if (webGet != null  &&  webGet.IsResponseFormatSetExplicitly)
+                    return webGet.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
 
-            if (webInvoke != null  &&  webInvoke.IsResponseFormatSetExplicitly)
-                return webInvoke.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+                var webInvoke = operation.GetCustomAttribute<WebInvokeAttribute>();
+
+                if (webInvoke != null  &&  webInvoke.IsResponseFormatSetExplicitly)
+                    return webInvoke.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
+            }
 
             // 4. The default format setting in the WebHttpBehavior.
             var webBehavior = _wcfContext.WebHttpBehavior;
@@ -413,17 +429,16 @@ namespace vm.Aspects.Wcf.Behaviors
             HttpStatusCode httpStatusCode,
             ref Message fault)
         {
-            //var faultDetails = faultContractWrapper.FaultContract as Fault;
-            var webFormat    = GetWebContentFormat();
+            var responseMessageProperty               = new HttpResponseMessageProperty();
 
-            HttpResponseMessageProperty responseMessageProperty;
+            responseMessageProperty.StatusCode        = httpStatusCode;
+            responseMessageProperty.StatusDescription = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);
+
+            var webFormat    = GetWebContentFormat();
 
             if (webFormat == WebContentFormat.Json)
             {
                 // set the status code, description and content type in the response header:
-                responseMessageProperty                                         = new HttpResponseMessageProperty();
-                responseMessageProperty.StatusCode                              = httpStatusCode;
-                responseMessageProperty.StatusDescription                       = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);
                 responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/json";
 
                 // build a new fault message. In the body use a JSON serializer to serialize the fault details.
@@ -433,8 +448,8 @@ namespace vm.Aspects.Wcf.Behaviors
                                         faultDetails,
                                         new DataContractJsonSerializer(faultDetails.GetType()));
 
-                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
                 fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
+                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
                 return;
             }
 
@@ -442,9 +457,6 @@ namespace vm.Aspects.Wcf.Behaviors
             {
 
                 // set the status code, description and content type in the response header:
-                responseMessageProperty                                         = new HttpResponseMessageProperty();
-                responseMessageProperty.StatusCode                              = httpStatusCode;
-                responseMessageProperty.StatusDescription                       = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);
                 responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "application/xml";
 
                 // build a new fault message. In the body use a data contract (XML) serializer to serialize the fault details.
@@ -461,9 +473,6 @@ namespace vm.Aspects.Wcf.Behaviors
             else
             {
                 // just dump the message as text
-                responseMessageProperty                                         = new HttpResponseMessageProperty();
-                responseMessageProperty.StatusCode                              = httpStatusCode;
-                responseMessageProperty.StatusDescription                       = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);
                 responseMessageProperty.Headers[HttpResponseHeader.ContentType] = "text/plain";
 
                 fault = Message.CreateMessage(
@@ -472,7 +481,7 @@ namespace vm.Aspects.Wcf.Behaviors
                                         faultDetails.DumpString());
 
                 fault.Properties.Add(HttpResponseMessageProperty.Name, responseMessageProperty);
-                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(webFormat));
+                fault.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));
             }
         }
         #endregion
