@@ -33,7 +33,7 @@ namespace vm.Aspects.Wcf.Bindings
                     return WebContentFormat.Xml;
                 }
 
-            return WebContentFormat.Default;
+            return WebContentFormat.Json;
         }
     }
 }

@@ -2,16 +2,19 @@
 
 namespace vm.Aspects.Wcf.FaultContracts.Metadata
 {
-    [Dump(DumpNullValues=ShouldDump.Skip)]
+    [Dump(DumpNullValues = ShouldDump.Skip)]
     abstract class FaultMetadata
     {
         [Dump(0)]
+        public object FaultType { get; set; }
+
+        [Dump(1)]
         public object HandlingInstanceId { get; set; }
 
-        [Dump(1, ValueFormat="\n{0}")]
+        [Dump(2, ValueFormat = "\n{0}")]
         public object Message { get; set; }
 
-        [Dump(2, ValueFormat="\n{0}")]
+        [Dump(3, ValueFormat = "\n{0}")]
         public object InnerExceptionsMessages { get; set; }
 
 #if DEBUG

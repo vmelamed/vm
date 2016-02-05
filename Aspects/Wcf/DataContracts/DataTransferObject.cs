@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.DataContracts
     /// WCF DTO's base class. Takes care of the forward and backward compatibility of the DTO-s and standardizes on <see cref="IValidatable"/>.
     /// Can be easily used also in a non-WCF context.
     /// </summary>
-    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf.DataContracts", IsReference = true)]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf.DataContracts")]
     public abstract class DataTransferObject : IExtensibleDataObject, IValidatable
     {
         #region IExtensibleDataObject Members

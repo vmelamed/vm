@@ -61,7 +61,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// Creates the call data.
         /// </summary>
         /// <returns>CallData.</returns>
-        protected virtual CallData CreateCallData()
+        protected override CallData CreateCallData()
         {
             return new ServiceCallData();
         }
@@ -87,7 +87,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
                     var contextType = typeof(CustomDataContext<>).MakeGenericType(customContextTypeAttribute.CustomDataContextType);
                     var context = contextType.GetProperty("Current").GetValue(null, null);
 
-                    callData.CustomContext = contextType.GetProperty("Value").GetValue(context, null);
+                    if (context != null)
+                        callData.CustomContext = contextType.GetProperty("Value").GetValue(context, null);
                 }
             }
 
@@ -178,7 +179,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            //Contract.Requires<ArgumentException>(callData is ServiceCallData, "callData must be of type ServiceCallData");
 
             if (!IncludeCustomContext)
                 return;

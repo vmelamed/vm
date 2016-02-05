@@ -189,6 +189,16 @@ namespace vm.Aspects.Policies
         #endregion
 
         #region Overridables
+
+        /// <summary>
+        /// Creates the call data.
+        /// </summary>
+        /// <returns>CallData.</returns>
+        protected virtual CallData CreateCallData()
+        {
+            return new CallData();
+        }
+
         /// <summary>
         /// Creates and fills a new call data object with additional audit data about the call.
         /// </summary>
@@ -200,7 +210,7 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
             Contract.Ensures(Contract.Result<CallData>() != null);
 
-            var callData = new CallData();
+            var callData = CreateCallData();
 
             if (IncludeCallStack)
                 callData.CallStack = Environment.StackTrace;
@@ -545,7 +555,7 @@ namespace vm.Aspects.Policies
 
             writer.Write("(");
             writer.Indent(2);
-            for (var i=0; i<input.Inputs.Count; i++)
+            for (var i = 0; i<input.Inputs.Count; i++)
             {
                 // dump the parameter
                 DumpParameter(writer, input.Inputs.GetParameterInfo(i), input.Inputs[i]);
@@ -577,7 +587,7 @@ namespace vm.Aspects.Policies
             writer.Indent(2);
 
             // dump the parameters
-            for (var i=0; i<input.Inputs.Count; i++)
+            for (var i = 0; i<input.Inputs.Count; i++)
             {
                 var pi = input.Inputs.GetParameterInfo(i);
 
@@ -701,20 +711,20 @@ namespace vm.Aspects.Policies
             }
             else
                 if (IncludeReturnValue && methodReturn.ReturnValue!=null)
-                {
-                    var methodInfo = input.MethodBase as MethodInfo;
+            {
+                var methodInfo = input.MethodBase as MethodInfo;
 
-                    if (methodInfo == null || methodInfo.ReturnType == typeof(void))
-                        return;
+                if (methodInfo == null || methodInfo.ReturnType == typeof(void))
+                    return;
 
-                    writer.Write("RETURN VALUE: ");
-                    methodReturn.ReturnValue.DumpText(
-                        writer,
-                        2,
-                        null,
-                        methodInfo.ReturnTypeCustomAttributes
-                                  .GetCustomAttribute<DumpAttribute>());
-                }
+                writer.Write("RETURN VALUE: ");
+                methodReturn.ReturnValue.DumpText(
+                    writer,
+                    2,
+                    null,
+                    methodInfo.ReturnTypeCustomAttributes
+                              .GetCustomAttribute<DumpAttribute>());
+            }
         }
     }
 }

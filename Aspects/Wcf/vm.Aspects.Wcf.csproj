@@ -320,6 +320,7 @@
     <Compile Include="FaultContracts\ObjectIdentifierNotUniqueFault.cs" />
     <Compile Include="FaultContracts\ObjectNotFoundFault.cs" />
     <Compile Include="FaultContracts\PathTooLongFault.cs" />
+    <Compile Include="FaultContracts\ProtocolExceptionToWebFaultResolver.cs" />
     <Compile Include="FaultContracts\RepeatableOperationFault.cs" />
     <Compile Include="FaultContracts\SerializationFault.cs" />
     <Compile Include="FaultContracts\UnauthorizedAccessFault.cs" />

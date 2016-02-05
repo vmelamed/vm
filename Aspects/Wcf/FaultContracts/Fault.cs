@@ -23,6 +23,18 @@ namespace vm.Aspects.Wcf.FaultContracts
     {
         #region Properties
         /// <summary>
+        /// Gets or sets the full type name of the fault for easier analysis (incl. deserialization) of the fault on the front end.
+        /// IMPORTANT: Any change in the name or namespace of the faults will be potentially breaking changes in the API-s.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "WCF will complain.")]
+        [DataMember]
+        public string FaultType
+        {
+            get { return GetType().AssemblyQualifiedName; }
+            set { }
+        }
+
+        /// <summary>
         /// Gets or sets the handling instance ID.
         /// <c>PostHandlingAction.ThrowNewException</c> causes the exception handling application block to throw a new exception of type 
         /// FaultException{XyzFault} containing the same <c>handlingInstanceID</c> after the entire chain of handlers runs.
@@ -130,14 +142,30 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         [DataMember]
         public string Source { get; set; }
+#endif
 
         #region Constructor
         /// <summary>
         /// Initializes a new instance with some default data in DEBUG mode only.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Fault()
+            : this(HttpStatusCode.InternalServerError)
         {
+        }
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fault"/> class.
+        /// </summary>
+        /// <param name="httpStatusCode">The HTTP status code.</param>
+        public Fault(HttpStatusCode httpStatusCode)
+        {
+            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status code equal to or greater than 400 (HTTP 400 Bad request.)");
+
+            HttpStatusCode = httpStatusCode;
+
+#if DEBUG
             var process = Process.GetCurrentProcess();
 
             ProcessId   = process.Id;
@@ -145,19 +173,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             ThreadId    = Thread.CurrentThread.ManagedThreadId;
             MachineName = Environment.MachineName;
             User        = Environment.UserName;
-        }
-        #endregion
 #endif
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Fault"/> class.
-        /// </summary>
-        /// <param name="httpStatusCode">The HTTP status code.</param>
-        protected Fault(HttpStatusCode httpStatusCode)
-        {
-            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status greater or equal to 400 (HTTP 400 Bad request.)");
-
-            HttpStatusCode = httpStatusCode;
         }
 
         #region Methods
@@ -197,12 +213,5 @@ namespace vm.Aspects.Wcf.FaultContracts
             return _httpStatusDescriptions.TryGetValue(code, out description) ? description : null;
         }
         #endregion
-
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        void ObjectInvariant()
-        {
-            Contract.Invariant(InnerException == null);
-        }
     }
 }

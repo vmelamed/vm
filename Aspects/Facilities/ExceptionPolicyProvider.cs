@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.ServiceLocation;
@@ -154,8 +156,24 @@ namespace vm.Aspects.Facilities
                         // add a new policy
                         policyEntries[d.Key] = d.Value.ToList();
                     else
+                    {
+                        var duplicates = list.Intersect(d.Value).ToList();
+
+                        if (duplicates.Any())
+                        {
+                            var message = new StringBuilder(
+                                                string.Format(
+                                                    CultureInfo.InvariantCulture,
+                                                    "One of the exception policy providers brings duplicate exception entries to policy {0}:\n{1}",
+                                                    d.Key,
+                                                    string.Join("\n  ", duplicates.Select(x => x.ExceptionType.FullName))));
+
+                            throw new InvalidOperationException(message.ToString());
+                        }
+
                         // add the entries to the existing policy
                         list.AddRange(d.Value);
+                    }
 
             // create the exception manager
             var exceptionManager = new ExceptionManager(

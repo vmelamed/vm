@@ -4,11 +4,12 @@ using System.Diagnostics.Contracts;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
 {
     /// <summary>
-    /// A lightweight WCF service client class based on <see cref="T:ChannelFactory{T}"/>, includes interceptor behavior.
+    /// A lightweight WCF service client class based on <see cref="ChannelFactory{T}"/>, includes interceptor behavior.
     /// </summary>
     /// <typeparam name="TContract">The service interface.</typeparam>
     public abstract class InterceptorLightClient<TContract> : LightClientBase<TContract>, ICallIntercept where TContract : class
@@ -38,7 +39,7 @@ namespace vm.Aspects.Wcf.Clients
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:InterceptorLightClient{T}"/> class
+        /// Initializes a new instance of the <see cref="InterceptorLightClient{T}"/> class
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName"/> and a remote address.
         /// If <paramref name="endpointConfigurationName"/> is <see langword="null" />, empty or consist of whitespace characters
         /// the constructor will try to resolve the binding from the schema in the given remote address from the <see cref="DIContainer"/>.
@@ -48,11 +49,17 @@ namespace vm.Aspects.Wcf.Clients
         /// The remote address. If the remote address is <see langword="null" /> or empty
         /// the constructor will try to use the address in the endpoint configuration.
         /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected InterceptorLightClient(
             string endpointConfigurationName,
-            string remoteAddress)
-            : base(endpointConfigurationName, remoteAddress)
+            string remoteAddress,
+            string messagingPattern = null)
+            : base(endpointConfigurationName, remoteAddress, messagingPattern)
         {
             Contract.Requires<ArgumentException>(
                 !string.IsNullOrWhiteSpace(endpointConfigurationName) &&
@@ -75,12 +82,18 @@ namespace vm.Aspects.Wcf.Clients
         /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
         /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
         /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected InterceptorLightClient(
             string remoteAddress,
             ServiceIdentity identityType,
-            string identity)
-            : base(remoteAddress, identityType, identity)
+            string identity,
+            string messagingPattern = null)
+            : base(remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(remoteAddress), "The argument \"remoteAddress\" cannot be null, empty or consist of whitespace characters only.");
@@ -104,12 +117,18 @@ namespace vm.Aspects.Wcf.Clients
         /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
         /// </param>
         /// <param name="certificate">The identifying certificate.</param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected InterceptorLightClient(
             string remoteAddress,
             ServiceIdentity identityType,
-            X509Certificate2 certificate)
-            : base(remoteAddress, identityType, certificate)
+            X509Certificate2 certificate,
+            string messagingPattern = null)
+            : base(remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(remoteAddress), "The argument \"remoteAddress\" cannot be null, empty or consist of whitespace characters only.");
@@ -137,13 +156,19 @@ namespace vm.Aspects.Wcf.Clients
         /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
         /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
         /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected InterceptorLightClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
-            string identity)
-            : base(binding, remoteAddress, identityType, identity)
+            string identity,
+            string messagingPattern = null)
+            : base(binding, remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
@@ -169,13 +194,19 @@ namespace vm.Aspects.Wcf.Clients
         /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
         /// </param>
         /// <param name="certificate">The identifying certificate.</param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected InterceptorLightClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
-            X509Certificate2 certificate)
-            : base(binding, remoteAddress, identityType, certificate)
+            X509Certificate2 certificate,
+            string messagingPattern = null)
+            : base(binding, remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));

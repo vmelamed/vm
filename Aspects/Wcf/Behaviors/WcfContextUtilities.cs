@@ -116,7 +116,7 @@ namespace vm.Aspects.Wcf.Behaviors
                         .EndpointDispatcher
                         .DispatchRuntime
                         .Operations
-                        .FirstOrDefault(o => o.Name.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault(o => operationAction.Equals(o.Name, StringComparison.OrdinalIgnoreCase))
                         ?.FaultContractInfos
                         ?.FirstOrDefault(f => f.Detail == faultContractType)
                         ?.Action

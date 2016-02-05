@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -9,7 +10,8 @@ namespace vm.Aspects
     /// <summary>
     /// Class SemanticVersion as defined at http://semver.org/.
     /// </summary>
-    public sealed class SemanticVersion : IEquatable<SemanticVersion>, IComparable<SemanticVersion>
+    [MetadataType(typeof(SemanticVersionMetadata))]
+    public sealed partial class SemanticVersion : IEquatable<SemanticVersion>, IComparable<SemanticVersion>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SemanticVersion"/> class.

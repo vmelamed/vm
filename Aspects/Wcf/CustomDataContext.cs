@@ -2,10 +2,15 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Web;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace vm.Aspects.Wcf
@@ -18,11 +23,12 @@ namespace vm.Aspects.Wcf
     /// The type of the context. Must be either marked with <see cref="T:System.Runtime.Serialization.DataContractAttribute"/> or it must be serializable type.
     /// The size of the type plus the size of the other headers are limited by the property <c>MaxBufferSize</c>.
     /// </typeparam>
-    [DataContract(Namespace="vm.Aspects.Wcf")]
+    [DataContract(Namespace = "vm.Aspects.Wcf")]
     public class CustomDataContext<T>
     {
         static string _name;
         static string _namespace;
+        static string _webHeaderName;
         static object _syncInitialize = new object();
 
         /// <summary>
@@ -58,6 +64,22 @@ namespace vm.Aspects.Wcf
         }
 
         /// <summary>
+        /// Gets the name of the web header.
+        /// </summary>
+        public string WebHeaderName
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<string>() != null);
+
+                if (_webHeaderName == null)
+                    Initialize();
+
+                return _webHeaderName;
+            }
+        }
+
+        /// <summary>
         /// Initializes the name and namespace of the custom context.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
@@ -83,14 +105,18 @@ namespace vm.Aspects.Wcf
                 // if the namespace and the name of the context are not specified explicitly in the attribute,
                 // assume the namespace and the name of the context type.
                 _name = dataContractAttribute!=null &&
-                        !string.IsNullOrWhiteSpace(dataContractAttribute.Name) 
-                                ? dataContractAttribute.Name 
+                        !string.IsNullOrWhiteSpace(dataContractAttribute.Name)
+                                ? dataContractAttribute.Name
                                 : typeof(T).Name;
 
                 _namespace = dataContractAttribute!=null &&
-                             !string.IsNullOrWhiteSpace(dataContractAttribute.Namespace) 
-                                ? dataContractAttribute.Namespace 
+                             !string.IsNullOrWhiteSpace(dataContractAttribute.Namespace)
+                                ? dataContractAttribute.Namespace
                                 : typeof(T).Namespace;
+
+                _webHeaderName = string.IsNullOrWhiteSpace(_namespace)
+                                    ? _name
+                                    : string.Format(CultureInfo.InvariantCulture, "{0}-{1}", _namespace, _name);
             }
         }
 
@@ -129,7 +155,7 @@ namespace vm.Aspects.Wcf
         /// <item>Could not obtain the current operation context. It must be invoked from within a WCF service or OperationContextScope.</item>
         /// <item>A header with this namespace and name already exists in the message.</item>
         /// </list></exception>
-        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification="It's OK here.")]
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "It's OK here.")]
         public static CustomDataContext<T> Current
         {
             // get the custom header from the incoming message which is in the current operation context (called by the services)
@@ -142,40 +168,67 @@ namespace vm.Aspects.Wcf
                     return null;
 
                 // find the header by namespace and name
-                var index = OperationContext.Current.IncomingMessageHeaders.FindHeader(_name, _namespace);
+                if (WebOperationContext.Current != null)
+                {
+                    var serialized = WebOperationContext.Current.IncomingRequest.Headers.Get(_webHeaderName);
 
-                if (index == -1)
-                    return null;
+                    if (string.IsNullOrWhiteSpace(serialized))
+                        return null;
+
+                    using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(serialized)))
+                    {
+                        var serializer = GetJsonSerializer();
+
+                        return new CustomDataContext<T>((T)serializer.ReadObject(stream));
+                    }
+                }
                 else
-                    return OperationContext.Current.IncomingMessageHeaders.GetHeader<CustomDataContext<T>>(index);
+                {
+                    var index = OperationContext.Current.IncomingMessageHeaders.FindHeader(_name, _namespace);
+
+                    if (index == -1)
+                        return null;
+                    else
+                        return OperationContext.Current.IncomingMessageHeaders.GetHeader<CustomDataContext<T>>(index);
+                }
             }
 
             set
             {
                 // put the custom header into the outgoing message which is in the current operation context (called by the clients)
                 Contract.Requires<ArgumentNullException>(value != null, nameof(value));
-                Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(value.Name));
+                Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(value.Name));
+                Contract.Requires<InvalidOperationException>(OperationContext.Current != null, "The current thread does not have operation context.");
 
                 // make sure the header is initialized.
                 Initialize();
 
-                var opContext = OperationContext.Current;
-
-                if (opContext == null)
-                    throw new InvalidOperationException("The current thread does not have operation context.");
-
                 //make sure that there are no multiple CustomContextData<T> objects.
-                var index = opContext.OutgoingMessageHeaders.FindHeader(_name, _namespace);
+                if (WebOperationContext.Current != null)
+                {
+                    if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) == null)
+                        value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
+                    else
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "A header {0} already exists in the message.",
+                                _webHeaderName));
+                }
+                else
+                {
+                    var index = OperationContext.Current.OutgoingMessageHeaders.FindHeader(_name, _namespace);
 
-                if (index != -1)
-                    throw new InvalidOperationException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "A header {1}/{0} already exists in the message.",
-                            _name,
-                            _namespace));
-
-                value.AddToHeaders(opContext.OutgoingMessageHeaders);
+                    if (index == -1)
+                        value.AddToHeaders(OperationContext.Current.OutgoingMessageHeaders);
+                    else
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "A header {1}/{0} already exists in the message.",
+                                _name,
+                                _namespace));
+                }
             }
         }
 
@@ -193,6 +246,38 @@ namespace vm.Aspects.Wcf
             headers.Add(
                 new MessageHeader<CustomDataContext<T>>(this)
                         .GetUntypedHeader(Name, Namespace));
+        }
+
+        /// <summary>
+        /// Adds the value of the context to the current outgoing web message headers.
+        /// </summary>
+        /// <param name="headers">The headers collection.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="headers"/> is <see langword="null"/></exception>
+        public void AddToHeaders(
+            WebHeaderCollection headers)
+        {
+            Contract.Requires<ArgumentNullException>(headers != null, nameof(headers));
+            Contract.Requires<InvalidOperationException>(!string.IsNullOrWhiteSpace(Name), "Property Name");
+
+            using (var stream = new MemoryStream())
+            {
+                var serializer = GetJsonSerializer();
+
+                serializer.WriteObject(stream, Value);
+                headers.Add(_webHeaderName, Encoding.Default.GetString(stream.ToArray()));
+            }
+        }
+
+        static DataContractJsonSerializer GetJsonSerializer()
+        {
+            return new DataContractJsonSerializer(
+                            typeof(T),
+                            new DataContractJsonSerializerSettings
+                            {
+                                DateTimeFormat            = new DateTimeFormat("o", CultureInfo.InvariantCulture),
+                                EmitTypeInformation       = EmitTypeInformation.Never,
+                                UseSimpleDictionaryFormat = true,
+                            });
         }
     }
 }

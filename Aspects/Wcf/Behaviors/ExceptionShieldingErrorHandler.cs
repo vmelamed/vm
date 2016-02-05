@@ -206,7 +206,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
                     // we need to build a JSON or XML message out of the wrapped fault and put it in the web response:
                     BuildHttpResponseMessage(
-                        faultContractWrapper.FaultContract,
+                        faultDetails,
                         action,
                         faultDetails?.HttpStatusCode ?? HttpStatusCode.InternalServerError,
                         ref fault);

@@ -13,7 +13,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Initializes a new instance of the <see cref="InvalidOperationFault"/> class.
         /// </summary>
         public InvalidOperationFault()
-            : base(HttpStatusCode.Forbidden)
+            : base(HttpStatusCode.Conflict)
         {
         }
     }

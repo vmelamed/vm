@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using vm.Aspects.Exceptions;
+using System.ServiceModel.Web;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
 
@@ -38,11 +37,11 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="ruleset">The ruleset.</param>
         /// <exception cref="System.ArgumentNullException">operation</exception>
         public ValidatingParameterInspector(
-            OperationDescription operation, 
+            OperationDescription operation,
             string ruleset)
         {
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
-            
+
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
             if (methodInfo == null)
@@ -72,13 +71,13 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="ruleset">The ruleset.</param>
         /// <returns>Validator.</returns>
         static Validator CreateInputParameterValidator(
-            ParameterInfo param, 
+            ParameterInfo param,
             string ruleset)
         {
             Contract.Requires<ArgumentNullException>(param != null, nameof(param));
 
             return new AndCompositeValidator(
-                            ParameterValidatorFactory.CreateValidator(param), 
+                            ParameterValidatorFactory.CreateValidator(param),
                             Facility.ValidatorFactory.CreateValidator(param.ParameterType, ruleset));
         }
 
@@ -94,24 +93,30 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <exception cref="FaultException{ValidationFault}"></exception>
         /// <exception cref="ValidationFault"></exception>
         public object BeforeCall(
-            string operationName, 
+            string operationName,
             object[] inputs)
         {
             Contract.Ensures(Contract.Result<object>() == null);
 
             if (inputs == null)
                 throw new ArgumentNullException("inputs");
-            
+
             var results = new ValidationResults();
 
-            for (var i=0; i<InputValidators.Count(); i++)
+            for (var i = 0; i<InputValidators.Count(); i++)
                 InputValidators[i].DoValidate(inputs[i], inputs[i], InputValidatorParameterNames[i], results);
 
             if (results.IsValid)
                 return null;
 
-            throw new FaultException<ValidationFault>(
-                        AddFaultDetails(new ValidationFault(), results));
+            var validationFault = new ValidationFault();
+
+            if (WebOperationContext.Current != null)
+                throw new WebFaultException<ValidationFault>(
+                            AddFaultDetails(validationFault, results), validationFault.HttpStatusCode);
+            else
+                throw new FaultException<ValidationFault>(
+                                AddFaultDetails(validationFault, results));
         }
 
         /// <summary>
@@ -122,9 +127,9 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="returnValue">The return value of the operation.</param>
         /// <param name="correlationState">Any correlation state returned from the <see cref="M:System.ServiceModel.Dispatcher.IParameterInspector.BeforeCall(System.String,System.Object[])" /> method, or null.</param>
         public void AfterCall(
-            string operationName, 
-            object[] outputs, 
-            object returnValue, 
+            string operationName,
+            object[] outputs,
+            object returnValue,
             object correlationState)
         {
             // We don't need to do anything after the call
@@ -137,7 +142,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="results">The results.</param>
         /// <returns>ValidationFault.</returns>
         static ValidationFault AddFaultDetails(
-            ValidationFault fault, 
+            ValidationFault fault,
             ValidationResults results)
         {
             Contract.Requires<ArgumentNullException>(results != null, nameof(results));
