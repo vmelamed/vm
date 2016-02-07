@@ -14,10 +14,20 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors the <see cref="T:ArgumentValidationException"/> from the Enterprise Library.
     /// </summary>
-    [DataContract(Namespace="urn:service:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ArgumentValidationFaultMetadata))]
     public sealed class ArgumentValidationFault : ArgumentFault
     {
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentValidationFault"/> class.
+        /// </summary>
+        public ArgumentValidationFault()
+        {
+            ValidationElements = new List<ValidationFaultElement>();
+        }
+        #endregion
+
         #region Properties
         /// <summary>
         /// Gets the nested validation results from a composite failed validation.
@@ -84,16 +94,6 @@ namespace vm.Aspects.Wcf.FaultContracts
                         base.Message = textWriter.GetStringBuilder().ToString();
                     }
             }
-        }
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentValidationFault"/> class.
-        /// </summary>
-        public ArgumentValidationFault()
-        {
-            ValidationElements = new List<ValidationFaultElement>();
         }
         #endregion
 

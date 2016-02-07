@@ -20,6 +20,17 @@ namespace vm.Aspects.Wcf.FaultContracts
     [MetadataType(typeof(ValidationResultsFaultMetadata))]
     public sealed class ValidationResultsFault : Fault
     {
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentValidationFault"/> class.
+        /// </summary>
+        public ValidationResultsFault()
+            : base(HttpStatusCode.BadRequest)
+        {
+            ValidationElements = new List<ValidationFaultElement>();
+        }
+        #endregion
+
         #region Properties
         /// <summary>
         /// Gets the nested validation results from a composite failed validation.
@@ -84,17 +95,6 @@ namespace vm.Aspects.Wcf.FaultContracts
                         base.Message = textWriter.GetStringBuilder().ToString();
                     }
             }
-        }
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentValidationFault"/> class.
-        /// </summary>
-        public ValidationResultsFault()
-            : base(HttpStatusCode.BadRequest)
-        {
-            ValidationElements = new List<ValidationFaultElement>();
         }
         #endregion
 

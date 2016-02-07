@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Initializes a new instance of the <see cref="IOFault"/> class.
         /// </summary>
         public IOFault()
-            : base(HttpStatusCode.Conflict)
+            : base(HttpStatusCode.InternalServerError)
         {
         }
 

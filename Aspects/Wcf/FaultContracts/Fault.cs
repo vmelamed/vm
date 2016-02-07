@@ -21,6 +21,38 @@ namespace vm.Aspects.Wcf.FaultContracts
     [MetadataType(typeof(FaultMetadata))]
     public partial class Fault
     {
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance with some default data in DEBUG mode only.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Fault()
+            : this(HttpStatusCode.InternalServerError)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Fault"/> class.
+        /// </summary>
+        /// <param name="httpStatusCode">The HTTP status code.</param>
+        public Fault(HttpStatusCode httpStatusCode)
+        {
+            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status code equal to or greater than 400 (HTTP 400 Bad request.)");
+
+            HttpStatusCode = httpStatusCode;
+
+#if DEBUG
+            var process = Process.GetCurrentProcess();
+
+            ProcessId   = process.Id;
+            ProcessName = process.ProcessName;
+            ThreadId    = Thread.CurrentThread.ManagedThreadId;
+            MachineName = Environment.MachineName;
+            User        = Environment.UserName;
+#endif
+        }
+        #endregion
+
         #region Properties
         /// <summary>
         /// Gets or sets the full type name of the fault for easier analysis (incl. deserialization) of the fault on the front end.
@@ -61,7 +93,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// The property should be used by an exception handling mechanism to set the adequate HTTP status code.
         /// </summary>
         public HttpStatusCode HttpStatusCode { get; protected set; }
-        #endregion
 
         /// <summary>
         /// Gets the HTTP status description of the <see cref="HttpStatusCode"/>.
@@ -143,41 +174,9 @@ namespace vm.Aspects.Wcf.FaultContracts
         [DataMember]
         public string Source { get; set; }
 #endif
-
-        #region Constructor
-        /// <summary>
-        /// Initializes a new instance with some default data in DEBUG mode only.
-        /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Fault()
-            : this(HttpStatusCode.InternalServerError)
-        {
-        }
         #endregion
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Fault"/> class.
-        /// </summary>
-        /// <param name="httpStatusCode">The HTTP status code.</param>
-        public Fault(HttpStatusCode httpStatusCode)
-        {
-            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status code equal to or greater than 400 (HTTP 400 Bad request.)");
-
-            HttpStatusCode = httpStatusCode;
-
-#if DEBUG
-            var process = Process.GetCurrentProcess();
-
-            ProcessId   = process.Id;
-            ProcessName = process.ProcessName;
-            ThreadId    = Thread.CurrentThread.ManagedThreadId;
-            MachineName = Environment.MachineName;
-            User        = Environment.UserName;
-#endif
-        }
-
         #region Methods
-
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>

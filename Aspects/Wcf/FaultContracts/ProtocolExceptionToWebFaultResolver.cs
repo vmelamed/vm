@@ -8,11 +8,13 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
+using vm.Aspects.Wcf.Clients;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
     /// Contains a utility method for translating <see cref="ProtocolException"/>-s to <see cref="Fault"/>-s.
+    /// The utility is useful when calling Web/HTTP services from WCF clients, e.g. based on <see cref="LightClient{TContract}"/>
     /// </summary>
     public static class ProtocolExceptionToWebFaultResolver
     {

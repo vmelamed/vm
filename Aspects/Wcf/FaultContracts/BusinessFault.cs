@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Initializes a new instance of the <see cref="BusinessFault"/> class.
         /// </summary>
         public BusinessFault()
-            : base(HttpStatusCode.Conflict)
+            : base(HttpStatusCode.BadRequest)
         {
         }
 
