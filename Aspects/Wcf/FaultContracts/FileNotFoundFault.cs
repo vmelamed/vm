@@ -25,13 +25,13 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets the name of the file that cannot be found.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "fileName")]
         public string FileName { get; set; }
 
         /// <summary>
         /// Gets or sets the log file that describes why loading of an assembly failed.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "fusionLog")]
         public string FusionLog { get; set; }
     }
 }

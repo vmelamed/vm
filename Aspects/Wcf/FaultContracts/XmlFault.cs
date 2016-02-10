@@ -33,20 +33,20 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets the XML document's source URI.
         /// </summary>
-        [DataMember]
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Matches the XmlException property.")]
+        [DataMember(Name = "sourceUri")]
         public string SourceUri { get; set; }
 
         /// <summary>
         /// Gets or sets the XML document's line number where the problem was encountered.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "lineNumber")]
         public int LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the XML document's line position where the problem was encountered.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "linePosition")]
         public int LinePosition { get; set; }
     }
 }

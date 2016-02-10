@@ -59,7 +59,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// IMPORTANT: Any change in the name or namespace of the faults will be potentially breaking changes in the API-s.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "WCF will complain.")]
-        [DataMember]
+        [DataMember(Name = "faultType")]
         public string FaultType
         {
             get { return GetType().AssemblyQualifiedName; }
@@ -72,19 +72,19 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// FaultException{XyzFault} containing the same <c>handlingInstanceID</c> after the entire chain of handlers runs.
         /// This would help to track the fault caught at the client down to the original exception logged by the WCF service.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "handlingInstanceId")]
         public Guid HandlingInstanceId { get; set; }
 
         /// <summary>
         /// Gets or sets the fault's message
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "message")]
         public virtual string Message { get; set; }
 
         /// <summary>
         /// Gets or sets the text of the messages of the inner exception(s) of the original exception that caused this fault.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "innerExceptionsMessages")]
         public string InnerExceptionsMessages { get; protected set; }
 
         /// <summary>
@@ -128,50 +128,50 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets or sets the user who experienced the fault.
         /// </summary>
         /// <value>The user login ID.</value>
-        [DataMember]
+        [DataMember(Name = "user")]
         public string User { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the machine where the exception happened.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "machineName")]
         public string MachineName { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the process where the exception happened.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "processName")]
         public string ProcessName { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the process where the exception happened.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "processId")]
         public int ProcessId { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the thread on which the exception happened.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "threadId")]
         public int ThreadId { get; set; }
 
         /// <summary>
         /// Gets or sets a collection of key-value pairs that provide additional, user-defined information about the exception.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "data")]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
         public IDictionary Data { get; set; }
 
         /// <summary>
         /// String representation of the frames on the call stack at the time the current exception was thrown.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "stackTrace")]
         public string StackTrace { get; set; }
 
         /// <summary>
         /// The name of the application or the object that causes the error.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "source")]
         public string Source { get; set; }
 #endif
         #endregion

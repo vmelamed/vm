@@ -29,14 +29,14 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets or sets the assembly fully qualified name of the type of the object which is at fault.
         /// </summary>
         /// <value>The type of the object.</value>
-        [DataMember]
+        [DataMember(Name = "objectType")]
         public string ObjectType { get; set; }
 
         /// <summary>
         /// Gets or sets the object identifier - the reference used by the client call.
         /// </summary>
         /// <value>The object identifier.</value>
-        [DataMember]
+        [DataMember(Name = "objectIdentifier")]
         public string ObjectIdentifier { get; set; }
     }
 }
