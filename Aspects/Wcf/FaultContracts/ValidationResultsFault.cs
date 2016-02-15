@@ -8,7 +8,6 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -35,14 +34,13 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets the nested validation results from a composite failed validation.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "validationElements")]
         public ICollection<ValidationFaultElement> ValidationElements { get; private set; }
 
         /// <summary>
         /// Allows for member-wise copying of <c>ArgumentValidationException.ValidationElements</c> by the
         /// exception shielding handlers.
         /// </summary>
-        [Dump(false)]
         public ValidationResults ValidationResults
         {
             get
@@ -76,8 +74,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets the fault's message
         /// </summary>
-        [DataMember]
-        [Dump(false)]   // the base will dump it
+        [DataMember(Name = "message")]
         public override string Message
         {
             get { return base.Message; }

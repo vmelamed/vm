@@ -59,7 +59,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             get { return InternalDetails.Count == 0; }
         }
 
-        [DataMember]
+        [DataMember(Name = "internalDetails")]
         IList<ValidationFaultElement> InternalDetails { get; set; }
 
         /// <summary>

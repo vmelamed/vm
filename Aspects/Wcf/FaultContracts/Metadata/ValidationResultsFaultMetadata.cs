@@ -7,10 +7,10 @@ namespace vm.Aspects.Wcf.FaultContracts.Metadata
         [Dump(0)]
         public object ValidationElements { get; set; }
 
-        [Dump(1)]
+        [Dump(false)]
         public object ValidationResults { get; set; }
 
-        [Dump(2)]
+        [Dump(false)]
         public object Message { get; set; }
     }
 }

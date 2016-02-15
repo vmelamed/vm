@@ -32,7 +32,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets the nested validation results from a composite failed validation.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "validationElements")]
         public ICollection<ValidationFaultElement> ValidationElements { get; private set; }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets the fault's message
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "message")]
         public override string Message
         {
             get { return base.Message; }

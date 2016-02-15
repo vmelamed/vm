@@ -12,7 +12,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// <summary>
     /// Mirrors ValidationResult.
     /// </summary>
-    [DataContract(Namespace="urn:service:vm.Aspects.Wcf")]
+    [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}: {Message}")]
     [MetadataType(typeof(ValidationFaultElementMetadata))]
     public sealed class ValidationFaultElement
@@ -21,32 +21,32 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets a message describing the failure.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "message")]
         public string Message { get; set; }
 
         /// <summary>
         /// Gets or sets the type name of the object to which the validation rule was applied.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "targetTypeName")]
         public string TargetTypeName { get; set; }
 
         /// <summary>
         /// Gets or sets a name describing the location of the validation result.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "key")]
         public string Key { get; set; }
 
         /// <summary>
         /// Gets or sets a value characterizing the result.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "tag")]
         public string Tag { get; set; }
 
         /// <summary>
         /// Gets or sets the nested validation results for a composite failed validation.
         /// </summary>
-        [DataMember]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification="It is a DTO.")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
+        [DataMember(Name = "nestedValidationElements")]
         public ICollection<ValidationFaultElement> NestedValidationElements { get; set; }
         #endregion
 

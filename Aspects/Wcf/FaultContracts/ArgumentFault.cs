@@ -27,7 +27,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Gets or sets the name of the parameter that causes this exception.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "parameterName")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param", Justification = "From ArgumentException")]
         public string ParamName { get; set; }
         #endregion

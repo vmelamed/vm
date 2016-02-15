@@ -28,15 +28,13 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(BasicHttpBinding binding)
         {
             base.Configure(binding);
 
             if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
-            binding.BypassProxyOnLocal = true;
 
             return binding;
         }
@@ -46,7 +44,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             BasicHttpsBinding binding)
         {
@@ -55,8 +53,6 @@ namespace vm.Aspects.Wcf.Bindings
             if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
 
-            binding.BypassProxyOnLocal = true;
-
             return binding;
         }
 
@@ -65,7 +61,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetHttpBinding binding)
         {
@@ -74,7 +70,6 @@ namespace vm.Aspects.Wcf.Bindings
             if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
 
-            binding.BypassProxyOnLocal = true;
             binding.ReliableSession    = new OptionalReliableSession
             {
                 Enabled = false,
@@ -89,7 +84,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetHttpsBinding binding)
         {
@@ -98,7 +93,6 @@ namespace vm.Aspects.Wcf.Bindings
             if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
 
-            binding.BypassProxyOnLocal = true;
             binding.ReliableSession    = new OptionalReliableSession
             {
                 Enabled = false,
@@ -113,7 +107,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             WebHttpBinding binding)
         {
@@ -133,7 +127,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             WSHttpBinding binding)
         {
@@ -143,7 +137,6 @@ namespace vm.Aspects.Wcf.Bindings
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
 
             binding.TransactionFlow    = false;
-            binding.BypassProxyOnLocal = true;
             binding.ReliableSession    = new OptionalReliableSession
             {
                 Enabled = false,
@@ -162,7 +155,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetNamedPipeBinding binding)
         {
@@ -185,7 +178,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetTcpBinding binding)
         {
