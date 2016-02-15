@@ -408,49 +408,9 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         protected virtual void DisposeObjectGraph()
         {
-            DisposeCommunicationObject(ChannelFactory as ICommunicationObject);
+            ChannelFactory.DisposeCommunicationObject();
         }
         #endregion
-
-        /// <summary>
-        /// Disposes a communication object. Handles the situation where the disposal may fail due to a failed state.
-        /// </summary>
-        /// <param name="co">The communication object to dispose.</param>
-        protected static void DisposeCommunicationObject(
-            ICommunicationObject co)
-        {
-            if (co == null)
-                return;
-
-            switch (co.State)
-            {
-            case CommunicationState.Opening:
-            case CommunicationState.Opened:
-            case CommunicationState.Created:
-                try
-                {
-                    co.Close();
-                }
-                catch (CommunicationException ex)
-                {
-                    co.Abort();
-                    // abort, would be nice to log and swallow this exception but 
-                    // do not re-throw as most likely there is another exception - 
-                    // the root cause of this one - and we want that one handled properly.
-
-                    Facility.LogWriter.ExceptionError(ex);
-                }
-                break;
-
-            case CommunicationState.Closing:
-            case CommunicationState.Faulted:
-                co.Abort();
-                break;
-
-            case CommunicationState.Closed:
-                break;
-            }
-        }
 
         [ContractInvariantMethod]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]

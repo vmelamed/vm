@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
-using vm.Aspects.Wcf.Bindings;
+using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
+using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf
 {
@@ -157,19 +158,12 @@ namespace vm.Aspects.Wcf
         {
             Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
 
-            string resolveName = null;
-
             var serviceDIBehaviorAttribute = serviceType.GetCustomAttribute<DIBehaviorAttribute>(false);
 
             if (serviceDIBehaviorAttribute != null)
-                return resolveName = serviceDIBehaviorAttribute.ResolveName;
-
-            var serviceResolveNameAttribute = serviceType.GetCustomAttribute<ResolveNameAttribute>(false);
-
-            if (serviceResolveNameAttribute != null)
-                return resolveName = serviceResolveNameAttribute.Name;
-
-            return resolveName;
+                return serviceDIBehaviorAttribute.ResolveName;
+            else
+                return serviceType.GetCustomAttribute<ResolveNameAttribute>(false)?.Name;
         }
 
         /// <summary>
@@ -182,9 +176,47 @@ namespace vm.Aspects.Wcf
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
-            var messagingPatternAttribute = type.GetCustomAttribute<MessagingPatternAttribute>(false);
+            return type.GetCustomAttribute<MessagingPatternAttribute>(false)?.Name;
+        }
 
-            return messagingPatternAttribute?.Name;
+        /// <summary>
+        /// Disposes correctly any communication object.
+        /// </summary>
+        /// <param name="co">The co.</param>
+        public static void DisposeCommunicationObject(
+            this ICommunicationObject co)
+        {
+            if (co == null)
+                return;
+
+            switch (co.State)
+            {
+            case CommunicationState.Opening:
+            case CommunicationState.Opened:
+            case CommunicationState.Created:
+                try
+                {
+                    co.Close();
+                }
+                catch (CommunicationException ex)
+                {
+                    co.Abort();
+                    // abort, would be nice to log and swallow this exception but 
+                    // do not re-throw as most likely there is another exception - 
+                    // the root cause of this one - and we want that one handled properly.
+
+                    Facility.LogWriter.ExceptionError(ex);
+                }
+                break;
+
+            case CommunicationState.Closing:
+            case CommunicationState.Faulted:
+                co.Abort();
+                break;
+
+            case CommunicationState.Closed:
+                break;
+            }
         }
     }
 }

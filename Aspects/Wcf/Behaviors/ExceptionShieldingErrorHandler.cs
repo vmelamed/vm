@@ -27,9 +27,8 @@ namespace vm.Aspects.Wcf.Behaviors
     /// </summary>
     public class ExceptionShieldingErrorHandler : IErrorHandler
     {
-        IWcfContextUtilities _wcfContext;
-
         #region Constructors and Fields
+        readonly IWcfContextUtilities _wcfContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ExceptionShieldingErrorHandler" /> class with
@@ -65,7 +64,6 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <value>The name of the exception policy.</value>
         public string ExceptionPolicyName { get; }
-
         #endregion
 
         #region IErrorHandler Members
@@ -173,16 +171,17 @@ namespace vm.Aspects.Wcf.Behaviors
             // Since we did all the exception handling and shielding in the ProvideFault method, we should return true.
             return true;
         }
-
         #endregion
 
         #region Internal Implementation
-
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the handler.")]
         void HandleFaultWrapper(
             FaultContractWrapperException faultContractWrapper,
             ref Message fault)
         {
+            Contract.Requires<ArgumentNullException>(faultContractWrapper != null, nameof(faultContractWrapper));
+            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+
             try
             {
                 var action = _wcfContext.GetFaultedAction(faultContractWrapper.FaultContract.GetType()) ?? fault.Headers.Action;
@@ -297,6 +296,8 @@ namespace vm.Aspects.Wcf.Behaviors
             Guid handlingInstanceId,
             FaultContractWrapperException faultContractWrapper = null)
         {
+            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+
             if (_wcfContext.HasWebOperationContext)
                 BuildHttpResponseMessage(
                     string.Format(
@@ -326,6 +327,8 @@ namespace vm.Aspects.Wcf.Behaviors
 
         static Guid GetHandlingInstanceId(Exception exception)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
             return GetHandlingInstanceId(exception, Guid.NewGuid());
         }
 
@@ -333,6 +336,8 @@ namespace vm.Aspects.Wcf.Behaviors
             Exception exception,
             Guid optionalHandlingInstanceId)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
             var result = optionalHandlingInstanceId;
             var match  = RegularExpression.Guid.Match(exception.Message);
 
@@ -346,6 +351,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static Guid LogServerException(
             Exception exception)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
             // try to get the handling instance from the exception message or get a new one.
             Guid handlingInstanceId = GetHandlingInstanceId(exception);
 
@@ -429,6 +436,8 @@ namespace vm.Aspects.Wcf.Behaviors
             HttpStatusCode httpStatusCode,
             ref Message fault)
         {
+            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+
             var responseMessageProperty               = new HttpResponseMessageProperty();
 
             responseMessageProperty.StatusCode        = httpStatusCode;

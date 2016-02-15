@@ -29,9 +29,9 @@ namespace vm.Aspects
         /// <param name="prerelease">The prerelease version.</param>
         /// <param name="build">The build version.</param>
         /// <exception cref="System.ArgumentException">
-        /// The prerelease version numeric identifiers must not include leading zeroes.
+        /// The prerelease version numeric identifiers must not include leading zeros.
         /// or
-        /// The prerelease version numeric identifiers must not include leading zeroes.
+        /// The prerelease version numeric identifiers must not include leading zeros.
         /// </exception>
         public SemanticVersion(
             int major,
@@ -208,6 +208,7 @@ namespace vm.Aspects
         /// </summary>
         /// <param name="other">The other.</param>
         /// <returns>System.Int32.</returns>
+        [Pure]
         public int CompareTo(SemanticVersion other)
         {
             if (other == null)
@@ -216,24 +217,26 @@ namespace vm.Aspects
             var result = 0;
 
             result = Major - other.Major;
-
             if (result != 0)
                 return result;
 
             result = Minor - other.Minor;
-
             if (result != 0)
                 return result;
 
             result = Patch - other.Patch;
-
             if (result != 0)
                 return result;
 
+            // both do not have prerelease portion
             if (string.IsNullOrWhiteSpace(Prerelease)   &&  string.IsNullOrWhiteSpace(other.Prerelease))
                 return 0;
+
+            // this doesn't have prerelease but the other has it
             if (string.IsNullOrWhiteSpace(Prerelease)   &&  !string.IsNullOrWhiteSpace(other.Prerelease))
                 return 1;
+
+            // this has prerelease but the other doesn't
             if (!string.IsNullOrWhiteSpace(Prerelease)  &&  string.IsNullOrWhiteSpace(other.Prerelease))
                 return -1;
 
@@ -261,10 +264,15 @@ namespace vm.Aspects
 
                 i++;
 
+                // all segments of the prereleases were compared?
                 if (i == thisPrerelease.Length  &&  i == otherPrerelease.Length)
                     return 0;
-                if (i  < thisPrerelease.Length  &&  i >= otherPrerelease.Length)
+
+                // there are more segments in this prerelease and all segments of the other prerelease were compared?
+                if (i <  thisPrerelease.Length  &&  i >= otherPrerelease.Length)
                     return 1;
+
+                // all segments of this prerelease were compared and there are more segments in the other prerelease?
                 if (i >= thisPrerelease.Length  &&  i <  otherPrerelease.Length)
                     return -1;
             }

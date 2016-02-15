@@ -391,7 +391,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>The encrypted data.</returns>
         public static byte[] EncryptNullable<T>(
             this ICipher cipher,
-            Nullable<T> data) where T : struct
+            T? data) where T : struct
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
             Contract.Ensures(Contract.Result<byte[]>() != null);
@@ -406,58 +406,59 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public readonly static IReadOnlyDictionary<Type, Func<ICipher, object, byte[]>> EncryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, object, byte[]>>( new Dictionary<Type, Func<ICipher, object, byte[]>>
-        {
-            #region EncryptTypedData
-            [typeof(bool)]       = (c,d) => c.Encrypt((bool)      d),
-            [typeof(bool[])]     = (c,d) => c.Encrypt((bool[])    d),
-            [typeof(char)]       = (c,d) => c.Encrypt((char)      d),
-            [typeof(char[])]     = (c,d) => c.Encrypt((char[])    d),
-            [typeof(sbyte)]      = (c,d) => c.Encrypt((sbyte)     d),
-            [typeof(sbyte[])]    = (c,d) => c.Encrypt((sbyte[])   d),
-            [typeof(byte)]       = (c,d) => c.Encrypt((byte)      d),
-            [typeof(byte[])]     = (c,d) => c.Encrypt((byte[])    d),
-            [typeof(short)]      = (c,d) => c.Encrypt((short)     d),
-            [typeof(short[])]    = (c,d) => c.Encrypt((short[])   d),
-            [typeof(ushort)]     = (c,d) => c.Encrypt((ushort)    d),
-            [typeof(ushort[])]   = (c,d) => c.Encrypt((ushort[])  d),
-            [typeof(int)]        = (c,d) => c.Encrypt((int)       d),
-            [typeof(int[])]      = (c,d) => c.Encrypt((int[])     d),
-            [typeof(uint)]       = (c,d) => c.Encrypt((uint)      d),
-            [typeof(uint[])]     = (c,d) => c.Encrypt((uint[])    d),
-            [typeof(long)]       = (c,d) => c.Encrypt((long)      d),
-            [typeof(long[])]     = (c,d) => c.Encrypt((long[])    d),
-            [typeof(ulong)]      = (c,d) => c.Encrypt((ulong)     d),
-            [typeof(ulong[])]    = (c,d) => c.Encrypt((ulong[])   d),
-            [typeof(float)]      = (c,d) => c.Encrypt((float)     d),
-            [typeof(float[])]    = (c,d) => c.Encrypt((float[])   d),
-            [typeof(double)]     = (c,d) => c.Encrypt((double)    d),
-            [typeof(double[])]   = (c,d) => c.Encrypt((double[])  d),
-            [typeof(decimal)]    = (c,d) => c.Encrypt((decimal)   d),
-            [typeof(decimal[])]  = (c,d) => c.Encrypt((decimal[]) d),
-            [typeof(DateTime)]   = (c,d) => c.Encrypt((DateTime)  d),
-            [typeof(DateTime[])] = (c,d) => c.Encrypt((DateTime[])d),
-            [typeof(Guid)]       = (c,d) => c.Encrypt((Guid)      d),
-            [typeof(Guid[])]     = (c,d) => c.Encrypt((Guid[])    d),
-            [typeof(string)]     = (c,d) => c.Encrypt((string)    d),
+        public readonly static IReadOnlyDictionary<Type, Func<ICipher, object, byte[]>> EncryptTypedData =
+            new ReadOnlyDictionary<Type, Func<ICipher, object, byte[]>>( new Dictionary<Type, Func<ICipher, object, byte[]>>
+            {
+                #region EncryptTypedData
+                [typeof(bool)]       = (c,d) => c.Encrypt((bool)      d),
+                [typeof(bool[])]     = (c,d) => c.Encrypt((bool[])    d),
+                [typeof(char)]       = (c,d) => c.Encrypt((char)      d),
+                [typeof(char[])]     = (c,d) => c.Encrypt((char[])    d),
+                [typeof(sbyte)]      = (c,d) => c.Encrypt((sbyte)     d),
+                [typeof(sbyte[])]    = (c,d) => c.Encrypt((sbyte[])   d),
+                [typeof(byte)]       = (c,d) => c.Encrypt((byte)      d),
+                [typeof(byte[])]     = (c,d) => c.Encrypt((byte[])    d),
+                [typeof(short)]      = (c,d) => c.Encrypt((short)     d),
+                [typeof(short[])]    = (c,d) => c.Encrypt((short[])   d),
+                [typeof(ushort)]     = (c,d) => c.Encrypt((ushort)    d),
+                [typeof(ushort[])]   = (c,d) => c.Encrypt((ushort[])  d),
+                [typeof(int)]        = (c,d) => c.Encrypt((int)       d),
+                [typeof(int[])]      = (c,d) => c.Encrypt((int[])     d),
+                [typeof(uint)]       = (c,d) => c.Encrypt((uint)      d),
+                [typeof(uint[])]     = (c,d) => c.Encrypt((uint[])    d),
+                [typeof(long)]       = (c,d) => c.Encrypt((long)      d),
+                [typeof(long[])]     = (c,d) => c.Encrypt((long[])    d),
+                [typeof(ulong)]      = (c,d) => c.Encrypt((ulong)     d),
+                [typeof(ulong[])]    = (c,d) => c.Encrypt((ulong[])   d),
+                [typeof(float)]      = (c,d) => c.Encrypt((float)     d),
+                [typeof(float[])]    = (c,d) => c.Encrypt((float[])   d),
+                [typeof(double)]     = (c,d) => c.Encrypt((double)    d),
+                [typeof(double[])]   = (c,d) => c.Encrypt((double[])  d),
+                [typeof(decimal)]    = (c,d) => c.Encrypt((decimal)   d),
+                [typeof(decimal[])]  = (c,d) => c.Encrypt((decimal[]) d),
+                [typeof(DateTime)]   = (c,d) => c.Encrypt((DateTime)  d),
+                [typeof(DateTime[])] = (c,d) => c.Encrypt((DateTime[])d),
+                [typeof(Guid)]       = (c,d) => c.Encrypt((Guid)      d),
+                [typeof(Guid[])]     = (c,d) => c.Encrypt((Guid[])    d),
+                [typeof(string)]     = (c,d) => c.Encrypt((string)    d),
 
-            [typeof(bool?)]      = (c,d) => c.EncryptNullable((bool?)d),
-            [typeof(char?)]      = (c,d) => c.EncryptNullable((char?)d),
-            [typeof(sbyte?)]     = (c,d) => c.EncryptNullable((sbyte?)d),
-            [typeof(byte?)]      = (c,d) => c.EncryptNullable((byte?)d),
-            [typeof(short?)]     = (c,d) => c.EncryptNullable((short?)d),
-            [typeof(ushort?)]    = (c,d) => c.EncryptNullable((ushort?)d),
-            [typeof(int?)]       = (c,d) => c.EncryptNullable((int?)d),
-            [typeof(uint?)]      = (c,d) => c.EncryptNullable((uint?)d),
-            [typeof(long?)]      = (c,d) => c.EncryptNullable((long?)d),
-            [typeof(ulong?)]     = (c,d) => c.EncryptNullable((ulong?)d),
-            [typeof(float?)]     = (c,d) => c.EncryptNullable((float?)d),
-            [typeof(double?)]    = (c,d) => c.EncryptNullable((double?)d),
-            [typeof(decimal?)]   = (c,d) => c.EncryptNullable((decimal?)d),
-            [typeof(DateTime?)]  = (c,d) => c.EncryptNullable((DateTime?)d),
-            [typeof(Guid?)]      = (c,d) => c.EncryptNullable((Guid?)d), 
-            #endregion
-        });
+                [typeof(bool?)]      = (c,d) => c.EncryptNullable((bool?)d),
+                [typeof(char?)]      = (c,d) => c.EncryptNullable((char?)d),
+                [typeof(sbyte?)]     = (c,d) => c.EncryptNullable((sbyte?)d),
+                [typeof(byte?)]      = (c,d) => c.EncryptNullable((byte?)d),
+                [typeof(short?)]     = (c,d) => c.EncryptNullable((short?)d),
+                [typeof(ushort?)]    = (c,d) => c.EncryptNullable((ushort?)d),
+                [typeof(int?)]       = (c,d) => c.EncryptNullable((int?)d),
+                [typeof(uint?)]      = (c,d) => c.EncryptNullable((uint?)d),
+                [typeof(long?)]      = (c,d) => c.EncryptNullable((long?)d),
+                [typeof(ulong?)]     = (c,d) => c.EncryptNullable((ulong?)d),
+                [typeof(float?)]     = (c,d) => c.EncryptNullable((float?)d),
+                [typeof(double?)]    = (c,d) => c.EncryptNullable((double?)d),
+                [typeof(decimal?)]   = (c,d) => c.EncryptNullable((decimal?)d),
+                [typeof(DateTime?)]  = (c,d) => c.EncryptNullable((DateTime?)d),
+                [typeof(Guid?)]      = (c,d) => c.EncryptNullable((Guid?)d),
+                #endregion
+            });
 
         /// <summary>
         /// Encrypts the <paramref name="data"/> with the <paramref name="cipher"/>.

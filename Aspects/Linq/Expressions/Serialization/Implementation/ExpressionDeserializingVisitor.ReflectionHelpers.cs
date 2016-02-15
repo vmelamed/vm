@@ -122,6 +122,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static MethodInfo GetMethodInfo(Type type, XElement element)
         {
+            Contract.Requires<ArgumentException>(element == null || type != null);
+
             return element == null
                         ? null
                         : type.GetMethod(

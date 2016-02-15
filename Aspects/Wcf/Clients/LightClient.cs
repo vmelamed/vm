@@ -201,7 +201,7 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         protected override void DisposeObjectGraph()
         {
-            DisposeCommunicationObject(Proxy as ICommunicationObject);
+            (Proxy as ICommunicationObject)?.DisposeCommunicationObject();
             base.DisposeObjectGraph();
         }
         #endregion

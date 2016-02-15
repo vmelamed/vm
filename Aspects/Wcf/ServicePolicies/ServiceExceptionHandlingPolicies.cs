@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -66,6 +67,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Type faultType,
             int eventId)
         {
+            Contract.Ensures(Contract.Result<ExceptionPolicyEntry>() != null);
+
             return new ExceptionPolicyEntry(
                             exceptionType,
                             PostHandlingAction.ThrowNewException,

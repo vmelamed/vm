@@ -41,9 +41,9 @@ namespace vm.Aspects.Wcf.Behaviors
     {
         #region ExceptionShieldingAttribute Members 
 
-        IServiceBehavior _serviceBehavior;
-        IContractBehavior _contractBehavior;
-        IErrorHandler _errorHandler;
+        readonly IServiceBehavior _serviceBehavior;
+        readonly IContractBehavior _contractBehavior;
+        readonly IErrorHandler _errorHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionShieldingAttribute"/> class.

@@ -393,7 +393,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (!IsHashKeyInitialized)
             {
-                byte[] encryptedKey;
+                byte[] encryptedKey = null;
 
                 try
                 {
@@ -401,7 +401,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (FileNotFoundException)
                 {
-                    encryptedKey = null;
                 }
 
                 if (encryptedKey == null)

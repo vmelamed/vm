@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -30,8 +31,7 @@ namespace vm.Aspects.Wcf.Behaviors
     public class ExceptionShieldingBehavior : IServiceBehavior, IContractBehavior
     {
         #region ExceptionShieldingBehavior Constructors
-
-        private string exceptionPolicyName;
+        readonly string exceptionPolicyName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionShieldingBehavior"/> class.
@@ -164,6 +164,8 @@ namespace vm.Aspects.Wcf.Behaviors
         void AddErrorHandler(
             ChannelDispatcher channelDispatcher)
         {
+            Contract.Requires<ArgumentNullException>(channelDispatcher != null, nameof(channelDispatcher));
+
             if (!channelDispatcher.IncludeExceptionDetailInFaults                              &&
                 !channelDispatcher.ErrorHandlers.Any(h => h is ExceptionShieldingErrorHandler) &&
                 !channelDispatcher.Endpoints.Any(mx => mx.ContractName == nameof(IMetadataExchange)))

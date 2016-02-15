@@ -349,18 +349,15 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Contract.Requires<ArgumentNullException>(element != null, nameof(element));
 
             var methodElement = element.Elements().First();
+            var mi = GetMethodInfo(element);
 
-            Contract.Assume(GetMethodInfo(element) != null);
+            if (mi == null)
+                throw new SerializationException("Expected method info's contents.");
 
             if (methodElement.Name == XNames.Elements.Method)
-                return Expression.Call(
-                            GetMethodInfo(element),
-                            VisitArguments(element));
+                return Expression.Call(mi, VisitArguments(element));
             else
-                return Expression.Call(
-                            Visit(methodElement),
-                            GetMethodInfo(element),
-                            VisitArguments(element));
+                return Expression.Call(Visit(methodElement), mi, VisitArguments(element));
         }
 
         UnaryExpression VisitThrow(XElement element)
@@ -595,11 +592,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         {
             Contract.Requires<ArgumentNullException>(e != null, nameof(e));
 
-            Contract.Assume(GetMethodInfo(e) != null);
+            var mi = GetMethodInfo(e);
 
-            return Expression.ElementInit(
-                        GetMethodInfo(e),
-                        VisitArguments(e));
+            if (mi == null)
+                throw new SerializationException("Expected method info's contents.");
+
+            return Expression.ElementInit(mi, VisitArguments(e));
         }
 
         Expression VisitNewArrayInit(XElement e)

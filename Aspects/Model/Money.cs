@@ -15,7 +15,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Gets the monetary value represented by the instance - the amount of currency.
         /// </summary>
-        public decimal Value { get; }
+        public decimal Value { get; set; }
 
         /// <summary>
         /// Gets the ISO 4217 three letter currency code.
@@ -25,7 +25,7 @@ namespace vm.Aspects.Model
         /// The class verifies only that the currency is 3 alpha characters long and does not check if the characters
         /// represent an actual currency - this is outside the scope of this class.
         /// </remarks>
-        public string Currency { get; }
+        public string Currency { get; set; }
         #endregion
 
         #region Constructors

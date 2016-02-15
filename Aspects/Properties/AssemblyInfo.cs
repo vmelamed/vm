@@ -6,7 +6,6 @@
 [assembly: AssemblyFileVersion("1.0.37")]
 [assembly: AssemblyInformationalVersion("1.0.37")]
 
-
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Test, " +
     "PublicKey=00240000048000009400000006020000002400005253413100040000010001004b151837822bdb" +
