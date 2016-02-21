@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 
 namespace vm.Aspects
@@ -19,19 +15,13 @@ namespace vm.Aspects
         /// <summary>
         /// Gets the key of the object stored in the call context.
         /// </summary>
-        public string Key
-        {
-            get { return _key; }
-        }
+        public string Key => _key;
 
         /// <summary>
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue()
-        {
-            return CallContext.GetData(_key);
-        }
+        public override object GetValue() => CallContext.GetData(_key);
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.

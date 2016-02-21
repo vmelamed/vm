@@ -110,12 +110,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </remarks>
         public Exception InnerException
         {
-            get
-            {
-                Contract.Ensures(Contract.Result<Exception>() == null);
-
-                return null;
-            }
+            get { return null; }
             set
             {
                 if (value != null)
@@ -212,5 +207,14 @@ namespace vm.Aspects.Wcf.FaultContracts
             return _httpStatusDescriptions.TryGetValue(code, out description) ? description : null;
         }
         #endregion
+
+        [ContractInvariantMethod]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(InnerException == null);
+        }
+
+
     }
 }

@@ -37,6 +37,8 @@ namespace vm.Aspects.Model.EFRepository
         #region IStoreUniqueId<int> Members
         int IStoreUniqueId<int>.GetNewId<T>(IRepository repository)
         {
+            Contract.Ensures(Contract.Result<int>() == 0);
+
             // the value should be ignored by SQL Server
             return 0;
         }
@@ -45,6 +47,8 @@ namespace vm.Aspects.Model.EFRepository
         #region IStoreUniqueId<long> Members
         long IStoreUniqueId<long>.GetNewId<T>(IRepository repository)
         {
+            Contract.Ensures(Contract.Result<long>() == 0L);
+
             // the value should be ignored by SQL Server
             return 0L;
         }

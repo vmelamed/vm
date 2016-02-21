@@ -53,9 +53,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         public HiLoIdentityGenerator(
             string entitySetName,
             int maxLowValue = DefaultMaxLowValue,
-            long initialHighValue = 1)
+            long initialHighValue = 1L)
         {
             Contract.Requires<ArgumentException>(entitySetName==null || RegularExpression.CSharpIdentifier.IsMatch(entitySetName));
+            Contract.Requires<ArgumentException>(maxLowValue > 0);
+            Contract.Requires<ArgumentException>(initialHighValue >= 0L);
 
             EntitySetName = entitySetName;
             MaxLowValue   = maxLowValue;

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -168,9 +168,9 @@ namespace vm.Aspects.Policies
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             if (getNext == null)
-                throw new ArgumentNullException("getNext");
+                throw new ArgumentNullException(nameof(getNext));
 
             var callData = GetCallData(input);
 
@@ -236,7 +236,7 @@ namespace vm.Aspects.Policies
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
         /// <returns>Represents the return value from the target.</returns>
-        protected void PreInvoke(
+        protected virtual void PreInvoke(
             IMethodInvocation input,
             CallData callData)
         {
@@ -272,7 +272,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The additional audit data about the call.</param>
         /// <param name="getNext">Delegate to execute to get the next delegate in the handler chain.</param>
         /// <returns>Object representing the return value from the target.</returns>
-        protected IMethodReturn DoInvoke(
+        protected virtual IMethodReturn DoInvoke(
             IMethodInvocation input,
             CallData callData,
             GetNextHandlerDelegate getNext)
@@ -288,12 +288,7 @@ namespace vm.Aspects.Policies
                 return next.Invoke(input, getNext);
 
             callData.CallTimer.Start();
-
-            var methodReturn = next.Invoke(input, getNext);
-
-            callData.CallTimer.Stop();
-
-            return methodReturn;
+            return next.Invoke(input, getNext);
         }
 
         /// <summary>
@@ -303,7 +298,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The additional audit data about the call.</param>
         /// <param name="methodReturn">Object representing the return value from the target.</param>
         /// <returns>Object representing the return value from the target.</returns>
-        protected IMethodReturn PostInvoke(
+        protected virtual IMethodReturn PostInvoke(
             IMethodInvocation input,
             CallData callData,
             IMethodReturn methodReturn)
@@ -313,30 +308,79 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            if (!LogAfterCall)
+            if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
                 return methodReturn;
 
-            if (LogWriter.IsLoggingEnabled())
+            var entry = NewLogEntry();
+            Action logAfterCall = () => Facility.ExceptionManager.Process(
+                                                        () => LogAfterCallData(entry, input, callData, methodReturn),
+                                                        ExceptionPolicyProvider.LogAndSwallow);
+
+            var returnedTask = methodReturn.ReturnValue as Task;
+
+            if (returnedTask == null  ||  returnedTask.IsCompleted)
             {
-                var entry = NewLogEntry();
+                callData.CallTimer.Stop();
 
                 if (!LogWriter.ShouldLog(entry))
                     return methodReturn;
 
-                Action logAfterCall = () => Facility.ExceptionManager.Process(
-                                                () => LogAfterCallData(entry, input, callData, methodReturn),
-                                                ExceptionPolicyProvider.LogAndSwallow);
-
                 if (LogAsynchronously)
-                    Task.Run(logAfterCall)
-                        .ConfigureAwait(false);
+                    Task.Run(logAfterCall).ConfigureAwait(false);
                 else
                     logAfterCall();
+            }
+            else
+            {
+                if (returnedTask.GetType().IsGenericType)
+                {
+                    // call the generic continuation via reflection
+                    var returnedTaskResultValueType = returnedTask
+                                                    .GetType()
+                                                    .GetGenericArguments()[0];
+                    var gmi = _miPostInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
+
+                    return input.CreateMethodReturn(
+                                    gmi.Invoke(this, new object[] { input, returnedTask, callData.CallTimer, logAfterCall }));
+                }
+                else
+                    // call the typeless continuation directly
+                    return input.CreateMethodReturn(PostInvokeAsync(input, returnedTask, callData.CallTimer, logAfterCall));
             }
 
             return methodReturn;
         }
         #endregion
+
+        async Task PostInvokeAsync(
+            IMethodInvocation input,
+            Task returnedTask,
+            Stopwatch callTimer,
+            Action logAfterCall)
+        {
+            await returnedTask;
+            callTimer.Stop();
+            await Task.Run(logAfterCall)
+                      .ConfigureAwait(false);
+        }
+
+        static MethodInfo _miPostInvokeAsyncGeneric = typeof(CallTraceCallHandler)
+                                                            .GetMethod(nameof(PostInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
+
+        async Task<T> PostInvokeAsyncGeneric<T>(
+            IMethodInvocation input,
+            Task<T> returnedTask,
+            Stopwatch callTimer,
+            Action logAfterCall)
+        {
+            var ret = await returnedTask;
+
+            callTimer.Stop();
+            await Task.Run(logAfterCall)
+                      .ConfigureAwait(false);
+
+            return ret;
+        }
 
         /// <summary>
         /// Creates a new log entry.
@@ -624,7 +668,7 @@ namespace vm.Aspects.Policies
                 pi.Name,
                 !pi.IsOut ? " = " : string.Empty);
 
-            value.DumpText(writer, 2, null, pi.GetCustomAttribute<DumpAttribute>(true));
+            value.DumpText(writer, 5, null, pi.GetCustomAttribute<DumpAttribute>(true));
         }
 
         /// <summary>
@@ -722,8 +766,7 @@ namespace vm.Aspects.Policies
                     writer,
                     2,
                     null,
-                    methodInfo.ReturnTypeCustomAttributes
-                              .GetCustomAttribute<DumpAttribute>());
+                    methodInfo.GetCustomAttribute<DumpAttribute>());
             }
         }
     }

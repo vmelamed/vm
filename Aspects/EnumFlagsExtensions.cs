@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Reflection;
 
 namespace vm.Aspects
 {

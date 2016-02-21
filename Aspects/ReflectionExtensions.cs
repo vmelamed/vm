@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Reflection;
 
 namespace vm.Aspects
@@ -11,6 +9,7 @@ namespace vm.Aspects
     /// </summary>
     public static class ReflectionExtensions
     {
+        /*
         /// <summary>
         /// Retrieves a custom attribute of a specified type that is applied to a specified member.
         /// </summary>
@@ -51,6 +50,24 @@ namespace vm.Aspects
                 return new T[0];
 
             return attributeProvider.GetCustomAttributes(typeof(T), inherit).OfType<T>();
+        }
+        */
+
+        /// <summary>
+        /// Determines whether the <paramref name="type"/> inherits the type <paramref name="baseType"/>.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <param name="baseType">The base type to test against.</param>
+        /// <returns><c>true</c> if [is] [the specified base type]; otherwise, <c>false</c>.</returns>
+        [Pure]
+        public static bool Is(
+            this Type type,
+            Type baseType)
+        {
+            while (type != null  &&  type != baseType  &&  type != typeof(object))
+                type = type.BaseType;
+
+            return (type == baseType);
         }
 
         /// <summary>

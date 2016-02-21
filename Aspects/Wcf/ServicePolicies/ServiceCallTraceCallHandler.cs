@@ -3,10 +3,12 @@ using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -101,11 +103,15 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 var endpointMessageProperty = property as RemoteEndpointMessageProperty;
 
                 if (endpointMessageProperty != null)
+                {
                     callData.CallerAddress = string.Format(
                                                         CultureInfo.InvariantCulture,
                                                         "{0}:{1}",
                                                         endpointMessageProperty.Address,
                                                         endpointMessageProperty.Port);
+                    // just in case someone needs it up the stack:
+                    CallContext.SetData("callerIpAddress", endpointMessageProperty.Address);
+                }
             }
 
             return callData;
@@ -190,9 +196,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             var contextValue = wcfCallData.CustomContext;
 
+            writer.Indent(2);
             writer.WriteLine();
             writer.Write("Custom context: ");
-            contextValue.DumpText(writer, 2);
+            contextValue.DumpText(writer, 4);
+            writer.Unindent(2);
         }
     }
 }

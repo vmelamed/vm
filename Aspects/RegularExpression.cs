@@ -666,6 +666,20 @@ namespace vm.Aspects
         public static Regex CSharpIdentifier => _cSharpIdentifier.Value;
         #endregion
 
+        #region Date and time according to ISO 8601:
+        /// <summary>
+        /// Matches date and time value expressed in ISO 8601 standard format:
+        /// </summary>
+        public const string RexDateTimeIso8601 = @"((((\d{4})(-((0[1-9])|(1[012])))(-((0[1-9])|([12]\d)|(3[01]))))(T((([01]\d)|(2[0123]))((:([012345]\d))((:([012345]\d))(\.(\d+))?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))(:([012345]\d))?)))?)|(((\d{4})((0[1-9])|(1[012]))((0[1-9])|([12]\d)|(3[01])))(T((([01]\d)|(2[0123]))(([012345]\d)(([012345]\d)(\d+)?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))([012345]\d)?)))?))";
+
+        readonly static Lazy<Regex> _dateTimeIso8601 = new Lazy<Regex>(() => new Regex(RexDateTimeIso8601, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Matches date and time value expressed in ISO 8601 standard format:
+        /// </summary>
+        public static Regex DateTimeIso8601 => _dateTimeIso8601.Value;
+        #endregion
+
         /// <summary>
         /// Dumps all regular expressions in this class.
         /// </summary>

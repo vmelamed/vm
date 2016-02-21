@@ -1,34 +1,51 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 using Microsoft.Practices.ServiceLocation;
+using System.Diagnostics;
 
 namespace vm.Aspects.Model
 {
     /// <summary>
     /// Class Money represents monetary value.
     /// </summary>
+    [MetadataType(typeof(MoneyMetadata))]
     [Serializable]
-    public sealed class Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
+    [DebuggerDisplay("{GetType().Name, nq} {Value} {Currency,nq}")]
+    public sealed partial class Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
     {
         #region Properties
         /// <summary>
         /// Gets the monetary value represented by the instance - the amount of currency.
+        /// ATTENTION: Although the property has a setter, please treat the class as immutable.
+        /// The setter is there only so that it can be retrieved from a database.
         /// </summary>
         public decimal Value { get; set; }
 
         /// <summary>
-        /// Gets the ISO 4217 three letter currency code.
+        /// Gets the ISO 4217 three letter currency code. In case the value is <see langword="null"/> or empty the
+        /// class will assume the default currency from the currently registered <see cref="IMoneyDefaults.Currency"/>.
         /// </summary>
         /// <remarks>
         /// The value of this property should be a valid three letter currency code from ISO 4217.
         /// The class verifies only that the currency is 3 alpha characters long and does not check if the characters
         /// represent an actual currency - this is outside the scope of this class.
+        /// ATTENTION: Although the property has a setter, please treat the class as immutable.
+        /// The setter is there only so that it can be retrieved from a database.
         /// </remarks>
         public string Currency { get; set; }
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Money"/> class.
+        /// </summary>
+        public Money()
+            : this(0m, null)
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Money" /> class.
         /// </summary>

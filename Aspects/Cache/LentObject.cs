@@ -37,7 +37,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Gets the object pool from which the object was lent.
         /// </summary>
-        internal ObjectPool<T> Pool { get; private set; }
+        internal ObjectPool<T> Pool { get; }
 
         #region IDisposable pattern implementation
         /// <summary>

@@ -44,12 +44,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         long IStoreUniqueId<long>.GetNewId<T>(IRepository repository)
         {
             if (repository == null)
-                throw new ArgumentNullException("repository");
+                throw new ArgumentNullException(nameof(repository));
 
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
-                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", "repository");
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return DoGetNew<T>(efRepository);
         }
@@ -57,12 +57,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         int IStoreUniqueId<int>.GetNewId<T>(IRepository repository)
         {
             if (repository == null)
-                throw new ArgumentNullException("repository");
+                throw new ArgumentNullException(nameof(repository));
 
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
-                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", "repository");
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             var id = DoGetNew<T>(efRepository);
 
@@ -79,9 +79,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         Guid IStoreUniqueId<Guid>.GetNewId<T>(IRepository repository)
         {
             if (repository == null)
-                throw new ArgumentNullException("repository");
+                throw new ArgumentNullException(nameof(repository));
             if (!(repository is EFRepositoryBase))
-                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", "repository");
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return Facility.GuidGenerator.NewGuid();
         }

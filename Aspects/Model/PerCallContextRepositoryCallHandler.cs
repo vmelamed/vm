@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
@@ -49,15 +50,10 @@ namespace vm.Aspects.Model
             if (getNext == null)
                 throw new ArgumentNullException(nameof(getNext));
 
-            var result = getNext().Invoke(input, getNext);
-
-            if (result.Exception != null)
-                return result;
-
-            if (result.ReturnValue is Task)
-                return CommitWorkAsync(input, result);
+            if (((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
+                return InvokeAsync(input, getNext);
             else
-                return CommitWork(input, result);
+                return InvokeSync(input, getNext);
         }
 
         /// <summary>
@@ -68,11 +64,16 @@ namespace vm.Aspects.Model
 
         #endregion
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "It is re-thrown.")]
-        IMethodReturn CommitWork(
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
+        IMethodReturn InvokeSync(
             IMethodInvocation input,
-            IMethodReturn result)
+            GetNextHandlerDelegate getNext)
         {
+            var result = getNext().Invoke(input, getNext);
+
+            if (result.Exception != null)
+                return result;
+
             IDictionary<RegistrationLookup, ContainerRegistration> registrations;
 
             lock (DIContainer.Root)
@@ -85,13 +86,13 @@ namespace vm.Aspects.Model
                 !(registration.LifetimeManager is PerCallContextLifetimeManager))
                 return result;
 
+            var repository = registration.LifetimeManager.GetValue() as IRepository;
+
+            if (repository == null)
+                return result;
+
             try
             {
-                var repository = registration.LifetimeManager.GetValue() as IRepository;
-
-                if (repository == null)
-                    return result;
-
                 repository.CommitChanges();
             }
             catch (Exception x)
@@ -111,67 +112,74 @@ namespace vm.Aspects.Model
             return result;
         }
 
-        class DoCommitWorkAsyncParameters
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
+        IMethodReturn InvokeAsync(
+            IMethodInvocation input,
+            GetNextHandlerDelegate getNext)
         {
-            public IMethodInvocation Input { get; set; }
-            public Task NextTask { get; set; }
-            public Type ReturnType { get; set; }
-            public bool IsVoid { get { return ReturnType == null; } }
+            var result = getNext().Invoke(input, getNext);
+
+            if (result.Exception != null)
+                return result;
+
+            var returnedTask = result.ReturnValue as Task;
+
+            if (returnedTask.IsCompleted)
+                return result;
+
+            try
+            {
+                if (!returnedTask.GetType().IsGenericType)
+                    return input.CreateMethodReturn(
+                                    DoInvokeAsync(returnedTask, input));
+                else
+                {
+                    var returnedTaskResultValueType = returnedTask
+                                                    .GetType()
+                                                    .GetGenericArguments()[0];
+
+                    var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
+
+                    return input.CreateMethodReturn(
+                                    gmi.Invoke(this, new object[] { returnedTask, input }));
+                }
+            }
+            catch (Exception x)
+            {
+                return input.CreateExceptionMethodReturn(x);
+            }
         }
 
-        IMethodReturn CommitWorkAsync(
-            IMethodInvocation input,
-            IMethodReturn result)
+        static MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
+                                                            .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
+
+        async Task DoInvokeAsync(
+            Task returnedTask,
+            IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+            await returnedTask.ConfigureAwait(true);
+            await CommitWorkAsync(input).ConfigureAwait(true);
+        }
 
-            var parameters = new DoCommitWorkAsyncParameters
-            {
-                Input      = input,
-                NextTask   = result.ReturnValue as Task,
-                ReturnType = result.ReturnValue.GetType().IsGenericType ? result.ReturnValue.GetType().GetGenericArguments()[0] : null,
-            };
+        async Task<T> DoInvokeAsyncGeneric<T>(
+            Task<T> returnedTask,
+            IMethodInvocation input)
+        {
+            var t = await returnedTask.ConfigureAwait(true);
+            await CommitWorkAsync(input).ConfigureAwait(true);
 
-            // the return type of the asynchronous method that is wrapped in the task, i.e. the T in Task<T>
-            var returnType = parameters.IsVoid
-                                ? typeof(bool)
-                                : parameters.ReturnType;
-
-            // the type of the method wrapped in the applied aspect is Func<DoCommitWorkAsyncParameters, T>
-            var commitWorkAsyncGeneric = typeof(Func<,>).MakeGenericType(typeof(DoCommitWorkAsyncParameters), returnType);
-
-            // create a delegate out of an instantiated DoCommitWorkAsync<T>
-            var doCommitWorkAsyncDelegate = GetType().GetMethod(nameof(DoCommitWorkAsync))
-                                                     .MakeGenericMethod(returnType)
-                                                     .CreateDelegate(commitWorkAsyncGeneric);
-            // pass the delegate to a Task<T> c-tor
-            var wrappedTask = typeof(Task).MakeGenericType(returnType)
-                                          .GetConstructor(new Type[] { commitWorkAsyncGeneric })
-                                          .Invoke(new object[]
-                                                  {
-                                                      doCommitWorkAsyncDelegate,
-                                                      parameters,
-                                                  }) as Task;
-            wrappedTask.Start();
-            return input.CreateMethodReturn(wrappedTask);
+            return t;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called via reflection.")]
-        async Task<T> DoCommitWorkAsync<T>(
-            DoCommitWorkAsyncParameters parameters)
+        async Task CommitWorkAsync(
+            IMethodInvocation input)
         {
-            T returnValue = default(T);
             // find the corresponding registration
             ContainerRegistration registration = null;
 
             try
             {
-                if (parameters.IsVoid)
-                    await parameters.NextTask;
-                else
-                    returnValue = await ((Task<T>)parameters.NextTask);
-
                 // find the repository type registration
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations;
 
@@ -181,18 +189,18 @@ namespace vm.Aspects.Model
                 if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) &&
                       registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
                     !(registration.LifetimeManager is PerCallContextLifetimeManager))
-                    return returnValue;
+                    return;
 
                 var asyncRepository = registration.LifetimeManager.GetValue() as IRepositoryAsync;
                 var repository = asyncRepository ?? (registration.LifetimeManager.GetValue() as IRepository);
 
-                if (repository == null)
-                    return returnValue;
-
                 if (asyncRepository != null)
                     await asyncRepository.CommitChangesAsync();
                 else
+                if (repository != null)
                     repository.CommitChanges();
+                else
+                    return;
             }
             catch (Exception x)
             {
@@ -204,7 +212,8 @@ namespace vm.Aspects.Model
                 else
                     ex = x;
 
-                ex.Data.Add("ServiceMethod", parameters.Input.Target.GetType().ToString()+'.'+parameters.Input.MethodBase.Name);
+                ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
+                throw ex;
             }
             finally
             {
@@ -212,7 +221,7 @@ namespace vm.Aspects.Model
                     registration.LifetimeManager.RemoveValue();
             }
 
-            return returnValue;
+            return;
         }
     }
 }
