@@ -314,6 +314,8 @@
     <Compile Include="Validation\EnumDomainValidatorAttribute.cs" />
     <Compile Include="Validation\IValidatable.cs" />
     <Compile Include="Validation\IValidatableExtensions.cs" />
+    <Compile Include="Validation\NonemptyGuidValidator.cs" />
+    <Compile Include="Validation\NonemptyGuidValidatorAttribute.cs" />
     <Compile Include="Validation\NonemptyStringValidator.cs" />
     <Compile Include="Validation\NonemptyStringValidatorAttribute.cs" />
     <Compile Include="Validation\NonnegativeValidator.cs" />
