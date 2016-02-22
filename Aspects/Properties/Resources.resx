@@ -165,4 +165,10 @@
   <data name="ExValidXmlString" xml:space="preserve">
     <value>The validated string represents a well-formed and valid XML document; and the name of the document root element matches the specified name.</value>
   </data>
+  <data name="ExEmptyGuid" xml:space="preserve">
+    <value>The target Guid value is equal to the default Guid value of '00000000-0000-0000-0000-000000000000'.</value>
+  </data>
+  <data name="ExNotEmptyGuid" xml:space="preserve">
+    <value>The target Guid value is not equal to the default Guid value of '00000000-0000-0000-0000-000000000000'.</value>
+  </data>
 </root>

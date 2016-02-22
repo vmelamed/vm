@@ -666,7 +666,7 @@ namespace vm.Aspects
         public static Regex CSharpIdentifier => _cSharpIdentifier.Value;
         #endregion
 
-        #region Date and time according to ISO 8601:
+        #region ISO 8601 date and time strings:
         /// <summary>
         /// Matches date and time value expressed in ISO 8601 standard format:
         /// </summary>

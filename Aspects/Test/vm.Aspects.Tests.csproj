@@ -270,6 +270,7 @@
     <Compile Include="Validation\Helper.cs" />
     <Compile Include="Validation\ValidatorBeforeAfterTests.cs" />
     <Compile Include="Validation\ValidatorEnumDomainTests.cs" />
+    <Compile Include="Validation\ValidatorNonemptyGuidTest.cs" />
     <Compile Include="Validation\ValidatorNonemptyStringTest.cs" />
     <Compile Include="Validation\ValidatorOptionalStringLengthTests.cs" />
     <Compile Include="Validation\ValidatorPositivityTests.cs" />

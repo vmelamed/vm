@@ -61,6 +61,15 @@ namespace vm.Aspects.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The target Guid value is equal to the default Guid value of &apos;00000000-0000-0000-0000-000000000000&apos;..
+        /// </summary>
+        internal static string ExEmptyGuid {
+            get {
+                return ResourceManager.GetString("ExEmptyGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The target value is from the specified enumeration&apos;s set of values..
         /// </summary>
         internal static string ExFromEnumDomain {
@@ -93,6 +102,15 @@ namespace vm.Aspects.Properties {
         internal static string ExNotComparable {
             get {
                 return ResourceManager.GetString("ExNotComparable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The target Guid value is not equal to the default Guid value of &apos;00000000-0000-0000-0000-000000000000&apos;..
+        /// </summary>
+        internal static string ExNotEmptyGuid {
+            get {
+                return ResourceManager.GetString("ExNotEmptyGuid", resourceCulture);
             }
         }
         
