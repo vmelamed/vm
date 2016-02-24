@@ -129,9 +129,9 @@ namespace vm.Aspects.Policies
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             if (getNext == null)
-                throw new ArgumentNullException("getNext");
+                throw new ArgumentNullException(nameof(getNext));
 
             // validate the parameters
             for (int index = 0; index < input.Inputs.Count; ++index)

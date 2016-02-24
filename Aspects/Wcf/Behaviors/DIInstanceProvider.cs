@@ -44,7 +44,7 @@ namespace vm.Aspects.Wcf.Behaviors
             Message message)
         {
             if (instanceContext==null)
-                throw new ArgumentNullException("instanceContext");
+                throw new ArgumentNullException(nameof(instanceContext));
             if (instanceContext.Host==null)
                 throw new ArgumentException("The instance context's property Host cannot be null.");
 
@@ -60,10 +60,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="instanceContext">The context of the service. We will get the type of the object from it.</param>
         /// <returns>A service instance which is suitable for injecting policies.</returns>
         public object GetInstance(
-            InstanceContext instanceContext)
-        {
-            return GetInstance(instanceContext, null);
-        }
+            InstanceContext instanceContext) => GetInstance(instanceContext, null);
 
         /// <summary>
         /// Performs any clean-up on the created above instances.
@@ -109,13 +106,13 @@ namespace vm.Aspects.Wcf.Behaviors
             string serviceResolveName)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
 
             // the object must either implement the interface cached in serviceContract or
             // must inherit from MarshalByRefObject. Otherwise we cannot get a transparent proxy!
             if (serviceContract != null && serviceType.GetInterface(serviceContract.Name) == null  ||
                 serviceContract == null && !typeof(MarshalByRefObject).IsAssignableFrom(serviceType))
-                throw new ArgumentException("If no service interface is specified, the service type must be derived from the class MarshalByRefObject.", "serviceType");
+                throw new ArgumentException("If no service interface is specified, the service type must be derived from the class MarshalByRefObject.", nameof(serviceType));
 
             if (serviceResolveName == null)
                 serviceResolveName = string.Empty;

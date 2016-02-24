@@ -18,9 +18,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             MemberInfo y)
         {
             if (x == null)
-                throw new ArgumentNullException("x");
+                throw new ArgumentNullException(nameof(x));
             if (y == null)
-                throw new ArgumentNullException("y");
+                throw new ArgumentNullException(nameof(y));
             if (!(x.DeclaringType.IsAssignableFrom(y.DeclaringType) ||
                   y.DeclaringType.IsAssignableFrom(x.DeclaringType)))
                 throw new InvalidOperationException("Cannot compare the order weights of properties from unrelated classes.");

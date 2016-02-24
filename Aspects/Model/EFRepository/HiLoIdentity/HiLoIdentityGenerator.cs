@@ -94,10 +94,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <summary>
         /// Gets a value indicating whether this instance is already associated with an entity set.
         /// </summary>
-        public override bool HasIdentity
-        {
-            get { return !string.IsNullOrWhiteSpace(EntitySetName); }
-        }
+        public override bool HasIdentity => !string.IsNullOrWhiteSpace(EntitySetName);
 
         #region Methods
         /// <summary>
@@ -238,9 +235,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// The <see cref="Equals(HiLoIdentityGenerator)"/> method and its overloads as well as the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity, 
         /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
         /// </remarks>
-        public override bool Equals(BaseDomainEntity other)
-        {
-            return Equals(other as HiLoIdentityGenerator);
-        }
+        public override bool Equals(BaseDomainEntity other) => Equals(other as HiLoIdentityGenerator);
     }
 }

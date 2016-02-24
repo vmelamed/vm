@@ -168,10 +168,7 @@ namespace vm.Aspects.Model
         /// Clones this instance.
         /// </summary>
         /// <returns>A money instance identical to this.</returns>
-        public object Clone()
-        {
-            return new Money(Value, Currency);
-        }
+        public object Clone() => new Money(Value, Currency);
         #endregion
 
         #region ICompareable<Money>

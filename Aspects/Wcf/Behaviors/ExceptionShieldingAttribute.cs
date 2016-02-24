@@ -196,10 +196,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// true if subsequent <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler"></see> implementations must not be called; otherwise, false. The default is false.
         /// </returns>
         public bool HandleError(
-            Exception error)
-        {
-            return _errorHandler.HandleError(error);
-        }
+            Exception error) => _errorHandler.HandleError(error);
 
         /// <summary>
         /// Enables the creation of a custom <see cref="T:System.ServiceModel.FaultException`1"></see> that is returned from an exception in the course of a service method.

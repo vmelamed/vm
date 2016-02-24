@@ -45,26 +45,26 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public bool KeyLocationExists(string keyLocation)
         {
-            Contract.Requires<ArgumentNullException>(keyLocation != null, "keyLocation");
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument \"keyLocation\" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
 
             throw new NotImplementedException();
         }
 
         public void PutKey(byte[] key, string keyLocation)
         {
-            Contract.Requires<ArgumentNullException>(key != null, "key");
-            Contract.Requires<ArgumentException>(key.Length != 0, "The length of the array in the argument \"key\" cannot be 0.");
-            Contract.Requires<ArgumentNullException>(keyLocation != null, "keyLocation");
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument \"keyLocation\" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
+            Contract.Requires<ArgumentException>(key.Length != 0, "The length of the array in the argument "+nameof(key)+" cannot be 0.");
+            Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
 
             throw new NotImplementedException();
         }
 
         public byte[] GetKey(string keyLocation)
         {
-            Contract.Requires<ArgumentNullException>(keyLocation != null, "keyLocation");
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument \"keyLocation\" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<byte[]>() != null, "The returned key is null.");
             Contract.Ensures(Contract.Result<byte[]>().Length != 0, "The returned key has 0 length.");
 

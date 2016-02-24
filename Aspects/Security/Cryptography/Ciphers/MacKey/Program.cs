@@ -67,7 +67,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool ParseArguments(string[] args)
         {
-            Contract.Requires<ArgumentNullException>(args != null, "args");
+            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
 
             if (args.Length == 0)
                 return true;
@@ -125,7 +125,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetCommand(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, "argument");
+            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
 
             if (CreateCommand.StartsWith(argument, StringComparison.CurrentCultureIgnoreCase))
             {

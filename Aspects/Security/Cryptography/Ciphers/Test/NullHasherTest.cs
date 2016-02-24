@@ -6,15 +6,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class NullHasherTest : GenericHasherTest<NullHasher>
     {
-        public override IHasherAsync GetHasher()
-        {
-            return new NullHasher();
-        }
+        public override IHasherAsync GetHasher() => new NullHasher();
 
-        public override IHasherAsync GetHasher(int saltLength)
-        {
-            return new NullHasher();
-        }
+        public override IHasherAsync GetHasher(int saltLength) => new NullHasher();
 
         #region IsDisposed tests
         [TestMethod]

@@ -165,21 +165,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public Task PublicBeforeWriteEncryptedAsync(
-                    Stream encryptedStream)
-            {
-                return base.BeforeWriteEncryptedAsync(encryptedStream);
-            }
+                    Stream encryptedStream) => base.BeforeWriteEncryptedAsync(encryptedStream);
 
             public Task PublicBeforeReadDecryptedAsync(
-                Stream encryptedStream)
-            {
-                return base.BeforeReadDecryptedAsync(encryptedStream);
-            }
+                Stream encryptedStream) => base.BeforeReadDecryptedAsync(encryptedStream);
 
-            public byte[] PublicEncryptSymmetricKey()
-            {
-                return base.EncryptSymmetricKey();
-            }
+            public byte[] PublicEncryptSymmetricKey() => base.EncryptSymmetricKey();
 
             public void PublicDecryptSymmetricKey(
                 byte[] encryptedKey)

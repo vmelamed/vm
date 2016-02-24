@@ -54,10 +54,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the signer which implements the asymmetric algorithm for encrypting the hash.
         /// </summary>
-        protected AsymmetricAlgorithm Asymmetric
-        {
-            get { return _asymmetric; }
-        }
+        protected AsymmetricAlgorithm Asymmetric => _asymmetric;
         #endregion
 
         #region Constructor
@@ -105,7 +102,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The parameter "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _asymmetric = signCertificate.HasPrivateKey
@@ -182,13 +179,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _signature = new byte[length];
 
             if (encryptedStream.Read(_signature, 0, _signature.Length) != _signature.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", nameof(encryptedStream));
         }
 
         /// <summary>
@@ -242,13 +239,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _signature = new byte[length];
 
             if (await encryptedStream.ReadAsync(_signature, 0, _signature.Length) != _signature.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", nameof(encryptedStream));
         }
         #endregion
 

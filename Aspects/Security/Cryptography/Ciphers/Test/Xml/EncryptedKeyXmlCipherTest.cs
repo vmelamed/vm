@@ -27,20 +27,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static IXmlCipher GetCipherImpl()
-        {
-            return new EncryptedKeyXmlCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
-        }
+        static IXmlCipher GetCipherImpl() => new EncryptedKeyXmlCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
 
-        static IXmlCipher GetPublicCertCipher()
-        {
-            return new EncryptedKeyXmlCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName);
-        }
+        static IXmlCipher GetPublicCertCipher() => new EncryptedKeyXmlCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName);
 
-        public override IXmlCipher GetCipher()
-        {
-            return GetCipherImpl();
-        }
+        public override IXmlCipher GetCipher() => GetCipherImpl();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

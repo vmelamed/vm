@@ -88,7 +88,7 @@ namespace vm.Aspects.Validation
             Contract.Ensures(Contract.Result<Validator>() != null);
 
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             return new OptionalStringLengthValidator(
                 _lowerBound,

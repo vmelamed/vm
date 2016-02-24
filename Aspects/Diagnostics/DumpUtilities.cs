@@ -35,7 +35,7 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, "writer");
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Ensures(Contract.Result<TextWriter>() != null);
 
             var dumpWriter = writer as DumpTextWriter;
@@ -70,7 +70,7 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, "writer");
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Ensures(Contract.Result<TextWriter>() != null);
 
             var dumpWriter = writer as DumpTextWriter;

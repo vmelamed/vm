@@ -26,7 +26,7 @@ namespace vm.Aspects.Wcf.Clients
         /// Gets or sets the channel factory.
         /// </summary>
         /// <value>The channel factory.</value>
-        public ChannelFactory<TContract> ChannelFactory { get; private set; }
+        public ChannelFactory<TContract> ChannelFactory { get; }
 
         #region Constructors
         /// <summary>
@@ -335,12 +335,9 @@ namespace vm.Aspects.Wcf.Clients
             configurator.Configure(binding);
         }
 
-        static EndpointIdentity GetIdentity(bool isUserPrincipalName, string name)
-        {
-            return isUserPrincipalName
-                        ? EndpointIdentity.CreateUpnIdentity(name ?? string.Empty)
-                        : EndpointIdentity.CreateSpnIdentity(name ?? string.Empty);
-        }
+        static EndpointIdentity GetIdentity(bool isUserPrincipalName, string name) => isUserPrincipalName
+                                                                                            ? EndpointIdentity.CreateUpnIdentity(name ?? string.Empty)
+                                                                                            : EndpointIdentity.CreateSpnIdentity(name ?? string.Empty);
 
         #region IDisposable pattern implementation
         /// <summary>
@@ -356,10 +353,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <summary>
         /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

@@ -14,35 +14,17 @@ namespace vm.Aspects.Diagnostics
     {
         #region IServiceLocator Members
 
-        public IEnumerable<TService> GetAllInstances<TService>()
-        {
-            return GetService().GetAllInstances<TService>();
-        }
+        public IEnumerable<TService> GetAllInstances<TService>() => GetService().GetAllInstances<TService>();
 
-        public IEnumerable<object> GetAllInstances(Type serviceType)
-        {
-            return GetService().GetAllInstances(serviceType);
-        }
+        public IEnumerable<object> GetAllInstances(Type serviceType) => GetService().GetAllInstances(serviceType);
 
-        public TService GetInstance<TService>(string key)
-        {
-            return GetService().GetInstance<TService>(key);
-        }
+        public TService GetInstance<TService>(string key) => GetService().GetInstance<TService>(key);
 
-        public TService GetInstance<TService>()
-        {
-            return GetService().GetInstance<TService>();
-        }
+        public TService GetInstance<TService>() => GetService().GetInstance<TService>();
 
-        public object GetInstance(Type serviceType, string key)
-        {
-            return GetService().GetInstance(serviceType, key);
-        }
+        public object GetInstance(Type serviceType, string key) => GetService().GetInstance(serviceType, key);
 
-        public object GetInstance(Type serviceType)
-        {
-            return GetService().GetInstance(serviceType);
-        }
+        public object GetInstance(Type serviceType) => GetService().GetInstance(serviceType);
 
         #endregion
 
@@ -65,9 +47,6 @@ namespace vm.Aspects.Diagnostics
 
         #endregion
 
-        public IServiceLocator GetService()
-        {
-            return (IServiceLocator)GetService(typeof(IServiceLocator));
-        }
+        public IServiceLocator GetService() => (IServiceLocator)GetService(typeof(IServiceLocator));
     }
 }

@@ -43,7 +43,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
             return new byte[8];
         }
 
@@ -60,7 +60,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (data == null)
                 return hash==null;
             if (hash == null)
-                throw new ArgumentNullException("hash");
+                throw new ArgumentNullException(nameof(hash));
             return true;
         }
 
@@ -77,9 +77,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return hash==null;
             if (hash == null)
-                throw new ArgumentNullException("hash");
+                throw new ArgumentNullException(nameof(hash));
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
             return true;
         }
 
@@ -103,7 +103,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
             return await Task.FromResult(new byte[8]);
         }
 
@@ -123,9 +123,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return hash==null;
             if (hash == null)
-                throw new ArgumentNullException("hash");
+                throw new ArgumentNullException(nameof(hash));
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
             return await Task.FromResult(true);
         }
         #endregion

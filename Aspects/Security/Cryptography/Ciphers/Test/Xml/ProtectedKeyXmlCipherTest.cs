@@ -29,15 +29,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static IXmlCipher GetCipherImpl()
-        {
-            return new ProtectedKeyXmlCipher(null, keyFileName);
-        }
+        static IXmlCipher GetCipherImpl() => new ProtectedKeyXmlCipher(null, keyFileName);
 
-        public override IXmlCipher GetCipher()
-        {
-            return GetCipherImpl();
-        }
+        public override IXmlCipher GetCipher() => GetCipherImpl();
         class InheritedXmlCipherTest : ProtectedKeyXmlCipher
         {
             public InheritedXmlCipherTest(
@@ -59,10 +53,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
                 base.DecryptElement(element);
             }
 
-            public string PublicSymmetricXmlNamespace()
-            {
-                return base.SymmetricXmlNamespace();
-            }
+            public string PublicSymmetricXmlNamespace() => SymmetricXmlNamespace();
 
             public void SetLength(int length)
             {

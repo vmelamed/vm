@@ -127,7 +127,7 @@ namespace vm.Aspects.Policies
         /// Gets or sets the log writer.
         /// </summary>
         /// <value>The log writer.</value>
-        LogWriter LogWriter { get; set; }
+        LogWriter LogWriter { get; }
         #endregion
 
         /// <summary>
@@ -194,10 +194,7 @@ namespace vm.Aspects.Policies
         /// Creates the call data.
         /// </summary>
         /// <returns>CallData.</returns>
-        protected virtual CallData CreateCallData()
-        {
-            return new CallData();
-        }
+        protected virtual CallData CreateCallData() => new CallData();
 
         /// <summary>
         /// Creates and fills a new call data object with additional audit data about the call.

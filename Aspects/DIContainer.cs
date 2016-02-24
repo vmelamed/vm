@@ -65,10 +65,7 @@ namespace vm.Aspects
         /// <summary>
         /// Gets a value indicating whether this instance is initialized.
         /// </summary>
-        public static bool IsInitialized
-        {
-            get { return _isInitialized; }
-        }
+        public static bool IsInitialized => _isInitialized;
 
         /// <summary>
         /// Gets the current default container.

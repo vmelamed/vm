@@ -270,7 +270,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlDocument signature = null)
         {
             if (signature == null && SignatureLocation == SignatureLocation.Detached)
-                throw new ArgumentNullException("signature");
+                throw new ArgumentNullException(nameof(signature));
 
             var signedXml = new SignedXmlWithId(document, IdAttributeNames);
 
@@ -440,7 +440,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             ref int id,
             HashSet<string> xmlIds)
         {
-            Contract.Requires<ArgumentNullException>(xmlIds!=null, "xmlIds");
+            Contract.Requires<ArgumentNullException>(xmlIds!=null, nameof(xmlIds));
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()), "Could not generate a valid ID.");
 
             string xmlId;
@@ -470,10 +470,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

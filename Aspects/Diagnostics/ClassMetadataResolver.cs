@@ -23,18 +23,12 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Synchronizes the cache of dump metadata (buddy classes).
         /// </summary>
-        static ReaderWriterLockSlim TypesDumpDataSync
-        {
-            get { return _typesDumpDataSync; }
-        }
+        static ReaderWriterLockSlim TypesDumpDataSync => _typesDumpDataSync;
 
         /// <summary>
         /// Gets or sets the cache of dump metadata (buddy class) defined explicitly either in the initializer above or by calling SetMetadataType.
         /// </summary>
-        static Dictionary<Type, ClassDumpData> TypesDumpData
-        {
-            get { return _typesDumpData; }
-        }
+        static Dictionary<Type, ClassDumpData> TypesDumpData => _typesDumpData;
 
         /// <summary>
         /// Adds buddy type and dump attribute for classes which we do not have access to, e.g. Exception.
@@ -56,7 +50,7 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             bool replace = false)
         {
-            Contract.Requires<ArgumentNullException>(type != null, "type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             if (metadata == null)
             {
@@ -78,7 +72,7 @@ namespace vm.Aspects.Diagnostics
         public static ClassDumpData GetClassDumpData(
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, "type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             // if the class is already in the cache return that
             var dumpData = TryGetClassDumpData(type);

@@ -15,7 +15,7 @@ namespace vm.Aspects.Tests
         class A
         {
             public int PropertyA { get; set; }
-            public int Method() { return 1; }
+            public int Method()  => 1;
             public int Field = 1;
 #pragma warning disable 67
             public event Action Event;

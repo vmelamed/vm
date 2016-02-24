@@ -56,7 +56,7 @@ namespace vm.Aspects.Model.EFRepository
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
-                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", "repository");
+                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             if (efRepository.ObjectContext.Connection.State == ConnectionState.Open &&
                 Transaction.Current != null)
@@ -72,10 +72,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>The POCO type of the reference.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public Type GetEntityType(
-            object reference)
-        {
-            return ObjectContext.GetObjectType(reference.GetType());
-        }
+            object reference) => ObjectContext.GetObjectType(reference.GetType());
 
         /// <summary>
         /// Gets the name of the entity set associated with the specified type.
@@ -85,10 +82,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>System.String.</returns>
         public string GetEntitySetName(
             Type type,
-            IRepository repository)
-        {
-            return (repository as EFRepositoryBase).ObjectContext.GetEntitySetName(type);
-        }
+            IRepository repository) => (repository as EFRepositoryBase).ObjectContext.GetEntitySetName(type);
 
         /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
@@ -144,7 +138,7 @@ namespace vm.Aspects.Model.EFRepository
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
-                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", "repository");
+                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var dbEntry = efRepository
                                     .ChangeTracker
@@ -226,7 +220,7 @@ namespace vm.Aspects.Model.EFRepository
 
             // if there is no DbContext - assume that the object is loaded
             if (efRepository == null)
-                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", "repository");
+                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));
 

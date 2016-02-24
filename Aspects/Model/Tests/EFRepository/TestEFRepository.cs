@@ -13,10 +13,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
 {
     public partial class TestEFRepository : EFRepositoryBase
     {
-        public long GetStoreId<T>() where T : IHasStoreId<long>
-        {
-            return GetStoreId<T, long>();
-        }
+        public long GetStoreId<T>() where T : IHasStoreId<long> => GetStoreId<T, long>();
 
         #region Constructors
         /// <summary>
@@ -85,7 +82,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
             DbModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
-                throw new ArgumentNullException("modelBuilder");
+                throw new ArgumentNullException(nameof(modelBuilder));
 
             base.OnModelCreating(modelBuilder);
 

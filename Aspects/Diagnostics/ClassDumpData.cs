@@ -13,7 +13,7 @@ namespace vm.Aspects.Diagnostics
         public ClassDumpData(Type metadata, DumpAttribute dumpAttribute = null)
         {
             if (metadata == null)
-                throw new ArgumentNullException("metadata");
+                throw new ArgumentNullException(nameof(metadata));
 
             _metadata = metadata;
 
@@ -53,15 +53,12 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect.
         /// </returns>
-        public ShouldDump DumpNullValues(DumpAttribute instanceAttribute)
-        {
-            return instanceAttribute != null  &&
-                   instanceAttribute.DumpNullValues != ShouldDump.Default
-                        ? instanceAttribute.DumpNullValues
-                        : _dumpAttribute.DumpNullValues == ShouldDump.Default
-                            ? Diagnostics.ShouldDump.Dump
-                            : _dumpAttribute.DumpNullValues;
-        }
+        public ShouldDump DumpNullValues(DumpAttribute instanceAttribute) => instanceAttribute != null  &&
+                                                                             instanceAttribute.DumpNullValues != ShouldDump.Default
+                                                                                  ? instanceAttribute.DumpNullValues
+                                                                                  : _dumpAttribute.DumpNullValues == ShouldDump.Default
+                                                                                      ? ShouldDump.Dump
+                                                                                      : _dumpAttribute.DumpNullValues;
 
         /// <summary>
         /// Implements the instance over type priority rule for the <see cref="DumpAttribute.DefaultProperty"/> property.
@@ -70,13 +67,10 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect.
         /// </returns>
-        public string DefaultProperty(DumpAttribute instanceAttribute)
-        {
-            return instanceAttribute != null  &&
-                   !string.IsNullOrWhiteSpace(instanceAttribute.DefaultProperty)
-                        ? instanceAttribute.DefaultProperty
-                        : _dumpAttribute.DefaultProperty;
-        }
+        public string DefaultProperty(DumpAttribute instanceAttribute) => instanceAttribute != null  &&
+                                                                          !string.IsNullOrWhiteSpace(instanceAttribute.DefaultProperty)
+                                                                               ? instanceAttribute.DefaultProperty
+                                                                               : _dumpAttribute.DefaultProperty;
 
         /// <summary>
         /// Implements the instance over type priority rule for the <see cref="DumpAttribute.RecurseDump"/> property.
@@ -85,15 +79,12 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect. Never returns <see cref="ShouldDump.Default"/>.
         /// </returns>
-        public ShouldDump RecurseDump(DumpAttribute instanceAttribute = null)
-        {
-            return instanceAttribute != null  &&
-                   instanceAttribute.RecurseDump != Diagnostics.ShouldDump.Default
-                        ? instanceAttribute.RecurseDump
-                        : _dumpAttribute.RecurseDump != Diagnostics.ShouldDump.Default
-                            ? _dumpAttribute.RecurseDump
-                            : Diagnostics.ShouldDump.Dump;
-        }
+        public ShouldDump RecurseDump(DumpAttribute instanceAttribute = null) => instanceAttribute != null  &&
+                                                                                 instanceAttribute.RecurseDump != Diagnostics.ShouldDump.Default
+                                                                                      ? instanceAttribute.RecurseDump
+                                                                                      : _dumpAttribute.RecurseDump != Diagnostics.ShouldDump.Default
+                                                                                          ? _dumpAttribute.RecurseDump
+                                                                                          : Diagnostics.ShouldDump.Dump;
 
         #region Identity rules
         #region IEquatable<ClassDumpData> Members
@@ -104,10 +95,7 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ClassDumpData other)
-        {
-            return Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
-        }
+        public bool Equals(ClassDumpData other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
         #endregion
 
         /// <summary>
@@ -124,6 +112,7 @@ namespace vm.Aspects.Diagnostics
         {
             if (!(obj is ClassDumpData))
                 return false;
+
             return Equals((ClassDumpData)obj);
         }
 
@@ -150,10 +139,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator==(ClassDumpData left, ClassDumpData right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator==(ClassDumpData left, ClassDumpData right) => left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="ClassDumpData"/> objects.
@@ -164,10 +150,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator!=(ClassDumpData left, ClassDumpData right)
-        {
-            return !(left==right);
-        }
+        public static bool operator!=(ClassDumpData left, ClassDumpData right) => !(left==right);
         #endregion
     }
 }

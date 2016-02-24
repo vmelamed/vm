@@ -65,7 +65,7 @@ namespace vm.Aspects.Validation
             Contract.Ensures(Contract.Result<Validator>() != null);
 
             if (targetType != typeof(string))
-                throw new ArgumentException(Resources.ExNotStringType, "targetType");
+                throw new ArgumentException(Resources.ExNotStringType, nameof(targetType));
 
             return new UrlValidator(GetMessageTemplate(), Tag, Negated, _maxUrlLength);
         }

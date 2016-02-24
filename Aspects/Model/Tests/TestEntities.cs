@@ -11,10 +11,7 @@ namespace vm.Aspects.Model.Tests
     [MetadataType(typeof(TestXEntityMetadata))]
     public partial class TestXEntity : DomainEntity<long, string>
     {
-        public override string Key
-        {
-            get { return Name; }
-        }
+        public override string Key => Name;
 
         public virtual string Name { get; set; }
 
@@ -35,10 +32,7 @@ namespace vm.Aspects.Model.Tests
     [MetadataType(typeof(TestEntityMetadata))]
     public partial class TestEntity : DomainEntity<long, string>, IVisited<TestEntity>
     {
-        public override string Key
-        {
-            get { return Name; }
-        }
+        public override string Key => Name;
 
         public virtual string Name { get; set; }
 
@@ -67,7 +61,7 @@ namespace vm.Aspects.Model.Tests
         public TestEntity Accept(IVisitor<TestEntity> visitor)
         {
             if (visitor == null)
-                throw new ArgumentNullException("visitor");
+                throw new ArgumentNullException(nameof(visitor));
 
             visitor.Visit(this);
             return this;
@@ -84,7 +78,7 @@ namespace vm.Aspects.Model.Tests
         public TestEntity1 Accept(IVisitor<TestEntity1> visitor)
         {
             if (visitor == null)
-                throw new ArgumentNullException("visitor");
+                throw new ArgumentNullException(nameof(visitor));
 
             visitor.Visit(this);
             return this;
@@ -103,7 +97,7 @@ namespace vm.Aspects.Model.Tests
         public TestEntity2 Accept(IVisitor<TestEntity2> visitor)
         {
             if (visitor == null)
-                throw new ArgumentNullException("visitor");
+                throw new ArgumentNullException(nameof(visitor));
 
             visitor.Visit(this);
             return this;
@@ -125,7 +119,7 @@ namespace vm.Aspects.Model.Tests
         public TestValue Accept(IVisitor<TestValue> visitor)
         {
             if (visitor == null)
-                throw new ArgumentNullException("visitor");
+                throw new ArgumentNullException(nameof(visitor));
 
             visitor.Visit(this);
             return this;

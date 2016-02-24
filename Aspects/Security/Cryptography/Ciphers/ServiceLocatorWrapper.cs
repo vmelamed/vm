@@ -15,10 +15,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     {
         static readonly Lazy<ServiceLocatorWrapper> _default = new Lazy<ServiceLocatorWrapper>(() => new ServiceLocatorWrapper());
 
-        public static ServiceLocatorWrapper Default
-        {
-            get { return _default.Value; }
-        }
+        public static ServiceLocatorWrapper Default => _default.Value;
 
         #region IServiceLocator Members
         public IEnumerable<TService> GetAllInstances<TService>()

@@ -12,15 +12,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         const string keyFileName = "releasedCertificateHash.key";
 
-        public override IHasherAsync GetHasher()
-        {
-            return new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate();
-        }
+        public override IHasherAsync GetHasher() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate();
 
-        public override IHasherAsync GetHasher(int saltLength)
-        {
-            return GetHasher();
-        }
+        public override IHasherAsync GetHasher(int saltLength) => GetHasher();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)

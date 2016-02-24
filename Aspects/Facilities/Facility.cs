@@ -39,18 +39,12 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the clock.
         /// </summary>
-        public static IClock Clock
-        {
-            get { return _clock.Value; }
-        }
+        public static IClock Clock => _clock.Value;
 
         /// <summary>
         /// Gets the GUID generator.
         /// </summary>
-        public static IGuidGenerator GuidGenerator
-        {
-            get { return _guidGenerator.Value; }
-        }
+        public static IGuidGenerator GuidGenerator => _guidGenerator.Value;
 
         /// <summary>
         /// Gets the EL log writer.
@@ -67,17 +61,11 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the EL exception manager.
         /// </summary>
-        public static ExceptionManager ExceptionManager
-        {
-            get { return _exceptionManager.Value; }
-        }
+        public static ExceptionManager ExceptionManager => _exceptionManager.Value;
 
         /// <summary>
         /// Gets the EL validator factory.
         /// </summary>
-        public static ValidatorFactory ValidatorFactory
-        {
-            get { return _validatorFactory.Value; }
-        }
+        public static ValidatorFactory ValidatorFactory => _validatorFactory.Value;
     }
 }

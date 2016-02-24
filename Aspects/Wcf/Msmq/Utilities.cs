@@ -196,7 +196,7 @@ namespace vm.Aspects.Wcf.Msmq
             var match = RegularExpression.WcfMsmqService.Match(address);
 
             if (!match.Success)
-                throw new ArgumentException("The string does not represent a valid net.msmq address.", "address");
+                throw new ArgumentException("The string does not represent a valid net.msmq address.", nameof(address));
 
             return match;
         }
@@ -207,10 +207,7 @@ namespace vm.Aspects.Wcf.Msmq
         const string PrivateQueuePrefix    = "\\Private$";
         const string DeadLetterQueueSuffix = ".dlq";
 
-        static string QueuePrefix(bool isPublic)
-        {
-            return isPublic ? PublicQueuePrefix : PrivateQueuePrefix;
-        }
+        static string QueuePrefix(bool isPublic) => isPublic ? PublicQueuePrefix : PrivateQueuePrefix;
 
         static string QueuePath(
             string queueName,
@@ -255,10 +252,7 @@ namespace vm.Aspects.Wcf.Msmq
         }
 
         static bool IsPublic(
-            string scope)
-        {
-            return string.IsNullOrWhiteSpace(scope)  ||
-                   scope.Equals(PublicAddress, StringComparison.OrdinalIgnoreCase);
-        }
+            string scope) => string.IsNullOrWhiteSpace(scope)  ||
+                             scope.Equals(PublicAddress, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -20,17 +20,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <summary>
         /// Gets the synchronization object of the cache/dictionary of property info-dump attributes.
         /// </summary>
-        static ReaderWriterLockSlim SyncPropertiesDumpData
-        {
-            get { return _lockPropertyDumpMap; }
-        }
+        static ReaderWriterLockSlim SyncPropertiesDumpData => _lockPropertyDumpMap;
+
         /// <summary>
         /// Gets the cache/dictionary of property info-dump attributes.
         /// </summary>
-        static Dictionary<Tuple<MemberInfo, Type>, DumpAttribute> PropertiesDumpData
-        {
-            get { return _propertyDumpMap; }
-        }
+        static Dictionary<Tuple<MemberInfo, Type>, DumpAttribute> PropertiesDumpData => _propertyDumpMap;
 
         /// <summary>
         /// Gets the dump attribute applied to a property.
@@ -42,8 +37,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             MemberInfo mi,
             Type metadata = null)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, "pi");
-            Contract.Requires((mi is PropertyInfo) || (mi is FieldInfo), "The parameter can be only \"PropertyInfo\" or \"FieldInfo\" type.");
+            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            Contract.Requires((mi is PropertyInfo) || (mi is FieldInfo), "The parameter can be only "+nameof(PropertyInfo)+" or "+nameof(FieldInfo)+" type.");
 
             var lookup = Tuple.Create(mi, metadata);
             DumpAttribute dumpAttribute;

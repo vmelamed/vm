@@ -37,12 +37,12 @@ namespace vm.Aspects.Diagnostics
             /// <summary>
             /// Gets or sets the currently dumped instance.
             /// </summary>
-            public object Instance { get; private set; }
+            public object Instance { get; }
 
             /// <summary>
             /// Gets or sets the current type (maybe base type) of the instance being dumped.
             /// </summary>
-            public Type Type { get; private set; }
+            public Type Type { get; }
 
             /// <summary>
             /// Gets or sets the dump attribute applied to the instance .
@@ -50,28 +50,22 @@ namespace vm.Aspects.Diagnostics
             /// <value>
             /// The instance dump attribute.
             /// </value>
-            public DumpAttribute InstanceDumpAttribute { get; private set; }
+            public DumpAttribute InstanceDumpAttribute { get; }
 
             /// <summary>
             /// Gets or sets the class dump data pair - the metadata type and the class dump attribute.
             /// </summary>
-            public ClassDumpData ClassDumpData { get; private set; }
+            public ClassDumpData ClassDumpData { get; }
 
             /// <summary>
             /// Gets the current property being dumped.
             /// </summary>
-            public MemberInfo CurrentProperty
-            {
-                get { return Current; }
-            }
+            public MemberInfo CurrentProperty => Current;
 
             /// <summary>
             /// Gets the property dump attribute applied to the current property being dumped.
             /// </summary>
-            public DumpAttribute CurrentPropertyDumpAttribute
-            {
-                get { return _propertyDumpAttribute; }
-            }
+            public DumpAttribute CurrentPropertyDumpAttribute => _propertyDumpAttribute;
 
             /// <summary>
             /// Sets the state to point to the default (representative) property if the type is not to be dumped recursively.
@@ -101,27 +95,18 @@ namespace vm.Aspects.Diagnostics
             /// <summary>
             /// Calculates whether null property values of the current instance should be dumped.
             /// </summary>
-            public ShouldDump DumpNullValues
-            {
-                get { return ClassDumpData.DumpNullValues(InstanceDumpAttribute); }
-            }
+            public ShouldDump DumpNullValues => ClassDumpData.DumpNullValues(InstanceDumpAttribute);
 
             /// <summary>
             /// Calculates whether to dump recursively the current instance.
             /// </summary>
             /// <value>This property never returns <see cref="ShouldDump.Default"/>.</value>
-            public ShouldDump RecurseDump
-            {
-                get { return ClassDumpData.RecurseDump(InstanceDumpAttribute); }
-            }
+            public ShouldDump RecurseDump => ClassDumpData.RecurseDump(InstanceDumpAttribute);
 
             /// <summary>
             /// Gets the representative property of the current type that should not be dumped recursively.
             /// </summary>
-            public string DefaultProperty
-            {
-                get { return ClassDumpData.DefaultProperty(InstanceDumpAttribute); }
-            }
+            public string DefaultProperty => ClassDumpData.DefaultProperty(InstanceDumpAttribute);
             #endregion
 
             #region IEnumerator<MemberInfo> Members
@@ -145,10 +130,7 @@ namespace vm.Aspects.Diagnostics
             /// Gets the element in the collection at the current position of the enumerator.
             /// </summary>
             /// <returns>The element in the collection at the current position of the enumerator.</returns>
-            public MemberInfo Current
-            {
-                get { return _property; }
-            }
+            public MemberInfo Current => _property;
 
             #region IDisposable Members
 
@@ -169,10 +151,7 @@ namespace vm.Aspects.Diagnostics
             /// Gets the element in the collection at the current position of the enumerator.
             /// </summary>
             /// <returns>The element in the collection at the current position of the enumerator.</returns>
-            object System.Collections.IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object System.Collections.IEnumerator.Current => Current;
 
             /// <summary>
             /// Advances the enumerator to the next element of the collection.

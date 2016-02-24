@@ -6,9 +6,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class RsaXmlSignerSha256Test : GenericXmlSignerTest<RsaXmlSigner>
     {
-        public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped)
-        {
-            return new RsaXmlSigner(CertificateFactory.GetSigningSha256Certificate()) { SignatureLocation = signatureLocation };     // SHA1 also works with this cert
-        }
+        public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped) => new RsaXmlSigner(CertificateFactory.GetSigningSha256Certificate())
+                                                                                                                    { SignatureLocation = signatureLocation };     // SHA1 also works with this cert
     }
 }

@@ -140,7 +140,7 @@ namespace vm.Aspects.Wcf.Behaviors
             DispatchRuntime dispatchRuntime)
         {
             if (dispatchRuntime == null)
-                throw new ArgumentNullException("dispatchRuntime");
+                throw new ArgumentNullException(nameof(dispatchRuntime));
 
             AddErrorHandler(dispatchRuntime.ChannelDispatcher);
         }

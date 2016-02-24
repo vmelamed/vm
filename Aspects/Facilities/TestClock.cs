@@ -85,10 +85,7 @@ namespace vm.Aspects.Facilities
         /// <returns>
         ///   <see langword="true"/>.
         /// </returns>
-        public bool Initialize()
-        {
-            return true;
-        }
+        public bool Initialize() => true;
 
         /// <summary>
         /// Gets the start DateTime plus as many intervals as the calls made to this property.

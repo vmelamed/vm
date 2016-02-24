@@ -8,10 +8,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class RsaXmlSignerTest : GenericXmlSignerTest<RsaXmlSigner>
     {
-        public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped)
-        {
-            return new RsaXmlSigner(CertificateFactory.GetSigningCertificate()) { SignatureLocation = signatureLocation };
-        }
+        public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped) => new RsaXmlSigner(CertificateFactory.GetSigningCertificate()) { SignatureLocation = signatureLocation };
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

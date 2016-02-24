@@ -22,9 +22,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             ValidationFaultElement element)
         {
             if (result==null)
-                throw new ArgumentNullException("result");
+                throw new ArgumentNullException(nameof(result));
             if (element==null)
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
 
             element.Message = result.Message;
             element.Key     = result.Key;
@@ -56,9 +56,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             ICollection<ValidationFaultElement> elements)
         {
             if (results==null)
-                throw new ArgumentNullException("results");
+                throw new ArgumentNullException(nameof(results));
             if (elements==null)
-                throw new ArgumentNullException("elements");
+                throw new ArgumentNullException(nameof(elements));
 
             foreach (var r in results)
                 if (r != null)

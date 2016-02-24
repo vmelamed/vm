@@ -21,10 +21,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// <summary>
         /// Gets the human readable messaging pattern identifier.
         /// </summary>
-        public override string MessagingPattern
-        {
-            get { return PatternName; }
-        }
+        public override string MessagingPattern => PatternName;
 
         /// <summary>
         /// Configures the specified binding.
@@ -32,9 +29,6 @@ namespace vm.Aspects.Wcf.Bindings
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
         public override Binding Configure(
-            CustomBinding binding)
-        {
-            return (CustomBinding)ConfigureDefault(binding);
-        }
+            CustomBinding binding) => (CustomBinding)ConfigureDefault(binding);
     }
 }

@@ -99,12 +99,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type constantsType,
             XName elementName)
         {
-            if (serializer == null)
-                throw new ArgumentNullException("serializer");
-            if (constantsType == null)
-                throw new ArgumentNullException("constantsType");
-            if (elementName == null)
-                throw new ArgumentNullException("elementName");
+            Contract.Requires<ArgumentNullException>(serializer != null, nameof(serializer));
+            Contract.Requires<ArgumentNullException>(constantsType != null, nameof(constantsType));
+            Contract.Requires<ArgumentNullException>(elementName != null, nameof(elementName));
 
             _constantSerializers[constantsType] = (c, t, x) => x.Add(serializer.Serialize(c, t));
             _constantDeserializers[elementName] = (x, t) => serializer.Deserialize(x, t);
@@ -140,6 +137,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </returns>
         public static bool CanSerialize(Type type)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             // yes if this is a basic type - perhaps the most common case
             if (type.IsBasicType())
                 return true;

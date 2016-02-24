@@ -17,7 +17,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <summary>
         /// Gets the proxy of the service.
         /// </summary>
-        public TContract Proxy { get; private set; }
+        public TContract Proxy { get; }
 
         #region ICallIntercept
         /// <summary>

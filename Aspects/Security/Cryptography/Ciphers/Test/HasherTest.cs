@@ -9,14 +9,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class HasherTest : GenericHasherTest<Hasher>
     {
-        public override IHasherAsync GetHasher()
-        {
-            return new Hasher(null, Hasher.DefaultSaltLength);
-        }
-        public override IHasherAsync GetHasher(int saltLength)
-        {
-            return new Hasher(null, saltLength);
-        }
+        public override IHasherAsync GetHasher() => new Hasher(null, Hasher.DefaultSaltLength);
+        public override IHasherAsync GetHasher(int saltLength) => new Hasher(null, saltLength);
 
         #region IsDisposed tests
         [TestMethod]
@@ -51,48 +45,30 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             public byte[] PublicWriteSalt(
                 CryptoStream hashStream,
-                byte[] salt)
-            {
-                return base.WriteSalt(hashStream, salt);
-            }
+                byte[] salt) => base.WriteSalt(hashStream, salt);
 
             public async Task<byte[]> PublicWriteSaltAsync(
                     CryptoStream hashStream,
-                    byte[] salt)
-            {
-                return await base.WriteSaltAsync(hashStream, salt);
-            }
+                    byte[] salt) => await base.WriteSaltAsync(hashStream, salt);
 
             public byte[] PublicFinalizeHashing(
                 CryptoStream hashStream,
-                byte[] salt)
-            {
-                return base.FinalizeHashing(hashStream, salt);
-            }
+                byte[] salt) => base.FinalizeHashing(hashStream, salt);
         }
 
-        InheritedHasher GetInheritedHasher()
-        {
-            return new InheritedHasher() { SaltLength = 8, };
-        }
+        InheritedHasher GetInheritedHasher() => new InheritedHasher() { SaltLength = 8, };
 
         CryptoStream GetCryptoStream(
-            InheritedHasher hasher)
-        {
-            return new CryptoStream(
-                            TestUtilities.CreateNonWritableStream(),
-                            HashAlgorithm.Create(Algorithms.Hash.Sha256),
-                            CryptoStreamMode.Read);
-        }
+            InheritedHasher hasher) => new CryptoStream(
+                                                TestUtilities.CreateNonWritableStream(),
+                                                HashAlgorithm.Create(Algorithms.Hash.Sha256),
+                                                CryptoStreamMode.Read);
 
         CryptoStream GetCryptoStream2(
-            InheritedHasher hasher)
-        {
-            return new CryptoStream(
-                            new MemoryStream(new byte[10], true),
-                            HashAlgorithm.Create(Algorithms.Hash.Sha256),
-                            CryptoStreamMode.Write);
-        }
+            InheritedHasher hasher) => new CryptoStream(
+                                                new MemoryStream(new byte[10], true),
+                                                HashAlgorithm.Create(Algorithms.Hash.Sha256),
+                                                CryptoStreamMode.Write);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]

@@ -18,10 +18,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         #region Identity rules implementation
         #region IEquatable<DumpedObject> Members
-        public bool Equals(DumpedObject other)
-        {
-            return Object.Equals(other.Object)  &&  Type.Equals(other.Type);
-        }
+        public bool Equals(DumpedObject other) => Object.Equals(other.Object)  &&  Type.Equals(other.Type);
         #endregion
 
         /// <summary>
@@ -63,10 +60,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <returns>
         /// <c>true</c> if the left operand is equal by value to the right operand; otherwise <c>false</c>.
         /// </returns>
-        public static bool operator==(DumpedObject left, DumpedObject right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator==(DumpedObject left, DumpedObject right) => left.Equals(right);
 
         /// <summary>
         /// Overloads the not equals operator <c>!=</c> to compare two values of this struct by invoking the <see cref="DumpedObject.Equals(object)"/> method.
@@ -76,10 +70,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <returns>
         /// <c>true</c> if the left operand is not equal by value to the right operand; otherwise <c>false</c>.
         /// </returns>
-        public static bool operator!=(DumpedObject left, DumpedObject right)
-        {
-            return !(left==right);
-        }
+        public static bool operator!=(DumpedObject left, DumpedObject right) => !(left==right);
         #endregion
     }
 }

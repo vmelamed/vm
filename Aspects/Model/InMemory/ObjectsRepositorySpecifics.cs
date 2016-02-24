@@ -25,10 +25,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> Fetch<T>(
             IQueryable<T> sequence,
-            string path) where T : BaseDomainEntity
-        {
-            return sequence;
-        }
+            string path) where T : BaseDomainEntity => sequence;
 
         /// <summary>
         /// Suggests eager fetching of related objects when querying the repository.
@@ -40,10 +37,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> Fetch<T, TProperty>(
             IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity
-        {
-            return sequence;
-        }
+            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity => sequence;
 
         /// <summary>
         /// Enlists the repository's back store transaction manager in the ambient transaction.
@@ -52,10 +46,7 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="repository">The repository.</param>
         /// <returns>this</returns>
         public IRepository EnlistInAmbientTransaction(
-            IRepository repository)
-        {
-            return repository;
-        }
+            IRepository repository) => repository;
 
         /// <summary>
         /// Gets the type of the entity.
@@ -64,10 +55,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The POCO type of the reference.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public Type GetEntityType(
-            object reference)
-        {
-            return reference.GetType();
-        }
+            object reference) => reference.GetType();
 
         /// <summary>
         /// Gets the name of the entity set associated with the specified type.

@@ -11,9 +11,6 @@ namespace vm.Aspects.Facilities
         /// Creates a new GUID value.
         /// </summary>
         /// <returns>New GUID.</returns>
-        public Guid NewGuid()
-        {
-            return Guid.NewGuid();
-        }
+        public Guid NewGuid() => Guid.NewGuid();
     }
 }

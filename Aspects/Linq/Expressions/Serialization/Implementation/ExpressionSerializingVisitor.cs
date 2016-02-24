@@ -125,13 +125,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitConstant(ConstantExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitConstant,
-                        (n, e) => DataSerialization.GetSerializer(n.Type)(n.Value, n.Type, e));
-        }
+        protected override Expression VisitConstant(ConstantExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitConstant,
+                                                                                    (n, e) => DataSerialization.GetSerializer(n.Type)(n.Value, n.Type, e));
 
         /// <summary>
         /// Visits the <see cref="T:System.Linq.Expressions.DefaultExpression" /> and generates XML element out of it.
@@ -140,13 +137,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitDefault(DefaultExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitDefault,
-                        (n, e) => e.AddTypeAttribute(n));
-        }
+        protected override Expression VisitDefault(DefaultExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitDefault,
+                                                                                    (n, e) => e.AddTypeAttribute(n));
 
         /// <summary>
         /// Visits the <see cref="T:System.Linq.Expressions.ParameterExpression" /> and generates XML element out of it.
@@ -155,16 +149,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitParameter,
-                        (n, e) => e.AddTypeAttribute(n)
-                                   .Add(
-                                        new XAttribute(XNames.Attributes.Name, n.Name),
-                                        n.IsByRef ? new XAttribute(XNames.Attributes.IsByRef, n.IsByRef) : null));
-        }
+        protected override Expression VisitParameter(ParameterExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitParameter,
+                                                                                    (n, e) => e.AddTypeAttribute(n)
+                                                                                                .Add(
+                                                                                                    new XAttribute(XNames.Attributes.Name, n.Name),
+                                                                                                    n.IsByRef ? new XAttribute(XNames.Attributes.IsByRef, n.IsByRef) : null));
 
         /// <summary>
         /// Visits the children of the Expression{TDelegate} and generates XML element out of it.
@@ -172,32 +163,29 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <typeparam name="T">The type of the delegate.</typeparam>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression. </returns>
-        protected override Expression VisitLambda<T>(Expression<T> node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitLambda,
-                        (n, e) =>
-                        {
-                            // pop the parameters
-                            var parameters = AddParameters(n.Parameters, new XElement(XNames.Elements.Parameters));
+        protected override Expression VisitLambda<T>(Expression<T> node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitLambda,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    // pop the parameters
+                                                                                    var parameters = AddParameters(n.Parameters, new XElement(XNames.Elements.Parameters));
 
-                            // pop the body
-                            var body = new XElement(
-                                                XNames.Elements.Body,
-                                                _elements.Pop());
+                                                                                    // pop the body
+                                                                                    var body = new XElement(
+                                                                                                        XNames.Elements.Body,
+                                                                                                        _elements.Pop());
 
-                            ReplaceParametersWithReferences(parameters, body);
+                                                                                    ReplaceParametersWithReferences(parameters, body);
 
-                            // push the lambda
-                            e.Add(
-                                n.TailCall ? new XAttribute(XNames.Attributes.TailCall, n.TailCall) : null,
-                                !string.IsNullOrWhiteSpace(n.Name) ? new XAttribute(XNames.Attributes.Name, n.Name) : null,
-                                n.ReturnType!=null && n.ReturnType!=n.Body.Type ? new XAttribute(XNames.Attributes.DelegateType, n.Type) : null,
-                                parameters,
-                                body);
-                        });
-        }
+                                                                                    // push the lambda
+                                                                                    e.Add(
+                                                                                        n.TailCall ? new XAttribute(XNames.Attributes.TailCall, n.TailCall) : null,
+                                                                                        !string.IsNullOrWhiteSpace(n.Name) ? new XAttribute(XNames.Attributes.Name, n.Name) : null,
+                                                                                        n.ReturnType!=null && n.ReturnType!=n.Body.Type ? new XAttribute(XNames.Attributes.DelegateType, n.Type) : null,
+                                                                                        parameters,
+                                                                                        body);
+                                                                                });                                                 
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.UnaryExpression" /> and generates XML element out of it.
@@ -206,16 +194,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitUnary(UnaryExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitUnary,
-                        (n, e) => e.Add(
-                                    VisitAsType(n),
-                                    _elements.Pop(),
-                                    VisitMethodInfo(n)));
-        }
+        protected override Expression VisitUnary(UnaryExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitUnary,
+                                                                                (n, e) => e.Add(
+                                                                                            VisitAsType(n),
+                                                                                            _elements.Pop(),
+                                                                                            VisitMethodInfo(n)));
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.BinaryExpression" /> and serializes it to an XML element.
@@ -224,23 +209,20 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitBinary(BinaryExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitBinary,
-                        (n, e) =>
-                        {
-                            var op2 = _elements.Pop();
-                            var op1 = _elements.Pop();
+        protected override Expression VisitBinary(BinaryExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitBinary,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    var op2 = _elements.Pop();
+                                                                                    var op1 = _elements.Pop();
 
-                            e.Add(
-                                n.IsLiftedToNull ? new XAttribute(XNames.Attributes.IsLiftedToNull, true) : null,
-                                op1,
-                                op2,
-                                VisitMethodInfo(n));
-                        });
-        }
+                                                                                    e.Add(
+                                                                                        n.IsLiftedToNull ? new XAttribute(XNames.Attributes.IsLiftedToNull, true) : null,
+                                                                                        op1,
+                                                                                        op2,
+                                                                                        VisitMethodInfo(n));
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.TypeBinaryExpression" /> and serializes it to an XML element.
@@ -249,14 +231,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitTypeBinary(TypeBinaryExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitTypeBinary,
-                        (n, e) => e.AddTypeAttribute(n)
-                                   .Add(_elements.Pop()));
-        }
+        protected override Expression VisitTypeBinary(TypeBinaryExpression node) => GenericVisit(
+                                                                                        node,
+                                                                                        base.VisitTypeBinary,
+                                                                                        (n, e) => e.AddTypeAttribute(n)
+                                                                                                   .Add(_elements.Pop()));
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.BlockExpression" /> and serializes it to an XML element.
@@ -265,30 +244,27 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitBlock(BlockExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitBlock,
-                        (n, e) =>
-                        {
-                            // pop the variables
-                            var variables = n.Variables.Count() > 0
-                                                    ? AddParameters(n.Variables, new XElement(XNames.Elements.Variables))
-                                                    : null;
-                            var expressions = new Stack<XElement>();
+        protected override Expression VisitBlock(BlockExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitBlock,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    // pop the variables
+                                                                                    var variables = n.Variables.Count() > 0
+                                                                                                            ? AddParameters(n.Variables, new XElement(XNames.Elements.Variables))
+                                                                                                            : null;
+                                                                                    var expressions = new Stack<XElement>();
 
-                            // replace the parameters with references and reverse the expressions in the _elements stack
-                            for (var i=0; i<n.Expressions.Count(); i++)
-                                expressions.Push(ReplaceParametersWithReferences(variables, _elements.Pop()));
+                                                                                    // replace the parameters with references and reverse the expressions in the _elements stack
+                                                                                    for (var i=0; i<n.Expressions.Count(); i++)
+                                                                                        expressions.Push(ReplaceParametersWithReferences(variables, _elements.Pop()));
 
-                            Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
-                            e.AddTypeAttribute(n, typeof(void))
-                                .Add(
-                                    variables,
-                                    expressions);
-                        });
-        }
+                                                                                    Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
+                                                                                    e.AddTypeAttribute(n, typeof(void))
+                                                                                        .Add(
+                                                                                            variables,
+                                                                                            expressions);
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.ConditionalExpression" /> and serializes it to an XML element.
@@ -297,63 +273,54 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitConditional(ConditionalExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitConditional,
-                        (n, e) =>
-                        {
-                            var op3 = _elements.Pop();
-                            var op2 = _elements.Pop();
-                            var op1 = _elements.Pop();
+        protected override Expression VisitConditional(ConditionalExpression node) => GenericVisit(
+                                                                                        node,
+                                                                                        base.VisitConditional,
+                                                                                        (n, e) =>
+                                                                                        {
+                                                                                            var op3 = _elements.Pop();
+                                                                                            var op2 = _elements.Pop();
+                                                                                            var op1 = _elements.Pop();
 
-                            Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
-                            e.AddTypeAttribute(n, typeof(void))
-                             .Add(
-                                op1,
-                                op2,
-                                op3);
-                        });
-        }
+                                                                                            Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
+                                                                                            e.AddTypeAttribute(n, typeof(void))
+                                                                                             .Add(
+                                                                                                op1,
+                                                                                                op2,
+                                                                                                op3);
+                                                                                        });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.NewExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitNew(NewExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitNew,
-                        (n, e) => e.Add(
-                            VisitConstructorInfo(node.Constructor),
-                            AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments)),
-                            node.Members != null
-                                ? new XElement(
-                                    XNames.Elements.Members,
-                                    node.Members.Select(x => VisitMemberInfo(x))) 
-                                : null));
-        }
+        protected override Expression VisitNew(NewExpression node) => GenericVisit(
+                                                                        node,
+                                                                        base.VisitNew,
+                                                                        (n, e) => e.Add(
+                                                                            VisitConstructorInfo(node.Constructor),
+                                                                            AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments)),
+                                                                            node.Members != null
+                                                                                ? new XElement(
+                                                                                    XNames.Elements.Members,
+                                                                                    node.Members.Select(x => VisitMemberInfo(x))) 
+                                                                                : null));
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.MemberExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitMember(MemberExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitMember,
-                        (n, e) =>
-                        {
-                            e.Add(
-                                _elements.Pop(),
-                                VisitMemberInfo(node.Member));
-                        });
-        }
+        protected override Expression VisitMember(MemberExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitMember,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    e.Add(
+                                                                                        _elements.Pop(),
+                                                                                        VisitMemberInfo(node.Member));
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.IndexExpression" />.
@@ -362,62 +329,53 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>
         /// The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.
         /// </returns>
-        protected override Expression VisitIndex(IndexExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitIndex,
-                        (n, e) =>
-                        {
-                            var indexes = AddArguments(node.Arguments, new XElement(XNames.Elements.Indexes));
-                            var array = _elements.Pop();
+        protected override Expression VisitIndex(IndexExpression node) => GenericVisit(
+                                                                            node,
+                                                                            base.VisitIndex,
+                                                                            (n, e) =>
+                                                                            {
+                                                                                var indexes = AddArguments(node.Arguments, new XElement(XNames.Elements.Indexes));
+                                                                                var array = _elements.Pop();
 
-                            e.Add(
-                                array,
-                                indexes);
-                        });
-        }
+                                                                                e.Add(
+                                                                                    array,
+                                                                                    indexes);
+                                                                            });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.MethodCallExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitMethodCall(MethodCallExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitMethodCall,
-                        (n, e) =>
-                        {
-                            var arguments = AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments));
-                            var instance = node.Object!=null ? _elements.Pop() : null;
-                            var method = VisitMethodInfo(node.Method);
+        protected override Expression VisitMethodCall(MethodCallExpression node) => GenericVisit(
+                                                                                        node,
+                                                                                        base.VisitMethodCall,
+                                                                                        (n, e) =>
+                                                                                        {
+                                                                                            var arguments = AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments));
+                                                                                            var instance = node.Object!=null ? _elements.Pop() : null;
+                                                                                            var method = VisitMethodInfo(node.Method);
 
-                            if (instance != null)
-                                e.Add(instance, method, arguments);
-                            else
-                                e.Add(method, arguments);
-                        });
-        }
+                                                                                            if (instance != null)
+                                                                                                e.Add(instance, method, arguments);
+                                                                                            else
+                                                                                                e.Add(method, arguments);
+                                                                                        });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.InvocationExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitInvocation(InvocationExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitInvocation,
-                        (n, e) =>
-                        {
-                            e.Add(
-                                _elements.Pop(),
-                                AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments)));
-                        });
-        }
+        protected override Expression VisitInvocation(InvocationExpression node) => GenericVisit(
+                                                                                        node,
+                                                                                        base.VisitInvocation,
+                                                                                        (n, e) =>
+                                                                                        {
+                                                                                            e.Add(
+                                                                                                _elements.Pop(),
+                                                                                                AddArguments(node.Arguments, new XElement(XNames.Elements.Arguments)));
+                                                                                        });
 
         /// <summary>
         /// Visits the children of the extension expression.
@@ -502,49 +460,43 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitLabel(LabelExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitLabel,
-                        (n, e) =>
-                        {
-                            XElement value = node.DefaultValue != null
-                                                    ? _elements.Pop()
-                                                    : null;
+        protected override Expression VisitLabel(LabelExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitLabel,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    XElement value = node.DefaultValue != null
+                                                                                                            ? _elements.Pop()
+                                                                                                            : null;
 
-                            e.Add(
-                                _elements.Pop(),
-                                value);
-                        });
-        }
+                                                                                    e.Add(
+                                                                                        _elements.Pop(),
+                                                                                        value);
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.GotoExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitGoto(GotoExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitGoto,
-                        (n, e) =>
-                        {
-                            var expression = node.Value != null ? _elements.Pop() : null;
-                            var kind       = new StringBuilder(node.Kind.ToString());
+        protected override Expression VisitGoto(GotoExpression node) => GenericVisit(
+                                                                            node,
+                                                                            base.VisitGoto,
+                                                                            (n, e) =>
+                                                                            {
+                                                                                var expression = node.Value != null ? _elements.Pop() : null;
+                                                                                var kind       = new StringBuilder(node.Kind.ToString());
 
-                            kind[0] = char.ToLowerInvariant(kind[0]);
+                                                                                kind[0] = char.ToLowerInvariant(kind[0]);
 
-                            e.AddTypeAttribute(n)
-                             .Add(
-                                new XAttribute(
-                                        XNames.Attributes.Kind,
-                                        kind.ToString()),
-                                PopLabelTargetAndReplaceUidWithUidref(),
-                                expression);
-                        });
-        }
+                                                                                e.AddTypeAttribute(n)
+                                                                                 .Add(
+                                                                                    new XAttribute(
+                                                                                            XNames.Attributes.Kind,
+                                                                                            kind.ToString()),
+                                                                                    PopLabelTargetAndReplaceUidWithUidref(),
+                                                                                    expression);
+                                                                            });
 
         XElement PopLabelTargetAndReplaceUidWithUidref()
         {
@@ -562,61 +514,55 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitLoop(LoopExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitLoop,
-                        (n, e) =>
-                        {
-                            e.Add(_elements.Pop());
+        protected override Expression VisitLoop(LoopExpression node) => GenericVisit(
+                                                                            node,
+                                                                            base.VisitLoop,
+                                                                            (n, e) =>
+                                                                            {
+                                                                                e.Add(_elements.Pop());
 
-                            if (node.BreakLabel != null)
-                                e.Add(
-                                    new XElement(
-                                            XNames.Elements.BreakLabel,
-                                            _elements.Pop()));
+                                                                                if (node.BreakLabel != null)
+                                                                                    e.Add(
+                                                                                        new XElement(
+                                                                                                XNames.Elements.BreakLabel,
+                                                                                                _elements.Pop()));
 
-                            if (node.ContinueLabel != null)
-                                e.Add(
-                                    new XElement(
-                                            XNames.Elements.ContinueLabel,
-                                            _elements.Pop()));
-                        });
-        }
+                                                                                if (node.ContinueLabel != null)
+                                                                                    e.Add(
+                                                                                        new XElement(
+                                                                                                XNames.Elements.ContinueLabel,
+                                                                                                _elements.Pop()));
+                                                                            });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.SwitchExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitSwitch(SwitchExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitSwitch,
-                        (n, e) =>
-                        {
-                            var comparison = node.Comparison != null                // get the non-default comparison method
-                                                    ? VisitMethodInfo(node.Comparison) 
-                                                    : null;
-                            var @default = node.DefaultBody != null                 // the body of the default case
-                                                    ? new XElement(
-                                                            XNames.Elements.DefaultCase,
-                                                            _elements.Pop())
-                                                    : null;
-                            var cases = PopExpressions(node.Cases.Count());         // the cases
-                            var value = _elements.Pop();                            // the value to switch on
+        protected override Expression VisitSwitch(SwitchExpression node) => GenericVisit(
+                                                                                node,
+                                                                                base.VisitSwitch,
+                                                                                (n, e) =>
+                                                                                {
+                                                                                    var comparison = node.Comparison != null                // get the non-default comparison method
+                                                                                                            ? VisitMethodInfo(node.Comparison) 
+                                                                                                            : null;
+                                                                                    var @default = node.DefaultBody != null                 // the body of the default case
+                                                                                                            ? new XElement(
+                                                                                                                    XNames.Elements.DefaultCase,
+                                                                                                                    _elements.Pop())
+                                                                                                            : null;
+                                                                                    var cases = PopExpressions(node.Cases.Count());         // the cases
+                                                                                    var value = _elements.Pop();                            // the value to switch on
 
-                            Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
-                            e.AddTypeAttribute(n, typeof(void))
-                             .Add(
-                                value,
-                                comparison,
-                                cases,
-                                @default);
-                        });
-        }
+                                                                                    Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
+                                                                                    e.AddTypeAttribute(n, typeof(void))
+                                                                                     .Add(
+                                                                                        value,
+                                                                                        comparison,
+                                                                                        cases,
+                                                                                        @default);
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.SwitchCase" />.
@@ -626,7 +572,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override SwitchCase VisitSwitchCase(SwitchCase node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== switchCase");
             Debug.Indent();
@@ -656,43 +602,40 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitTry(TryExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitTry,
-                        (n, e) =>
-                        {
-                            var @finally = n.Finally!=null 
-                                                ? new XElement(
-                                                        XNames.Elements.Finally,
-                                                        _elements.Pop())
-                                                : null;
-                            var @catch = n.Fault!=null 
-                                                ? new XElement(
-                                                        XNames.Elements.Fault,
-                                                        _elements.Pop())
-                                                : null;
-                            IEnumerable<XElement> catches = null;
+        protected override Expression VisitTry(TryExpression node) => GenericVisit(
+                                                                            node,
+                                                                            base.VisitTry,
+                                                                            (n, e) =>
+                                                                            {
+                                                                                var @finally = n.Finally!=null 
+                                                                                                    ? new XElement(
+                                                                                                            XNames.Elements.Finally,
+                                                                                                            _elements.Pop())
+                                                                                                    : null;
+                                                                                var @catch = n.Fault!=null 
+                                                                                                    ? new XElement(
+                                                                                                            XNames.Elements.Fault,
+                                                                                                            _elements.Pop())
+                                                                                                    : null;
+                                                                                IEnumerable<XElement> catches = null;
 
-                            if (n.Handlers != null  &&
-                                n.Handlers.Count() > 0)
-                            {
-                                catches = new Stack<XElement>();
+                                                                                if (n.Handlers != null  &&
+                                                                                    n.Handlers.Count() > 0)
+                                                                                {
+                                                                                    catches = new Stack<XElement>();
 
-                                for (var i=0; i<n.Handlers.Count(); i++)
-                                    ((Stack<XElement>)catches).Push(_elements.Pop());
-                            }
-                            var @try = _elements.Pop();
+                                                                                    for (var i=0; i<n.Handlers.Count(); i++)
+                                                                                        ((Stack<XElement>)catches).Push(_elements.Pop());
+                                                                                }
+                                                                                var @try = _elements.Pop();
 
-                            e.AddTypeAttribute(node)
-                                .Add(
-                                    @try,
-                                    catches,
-                                    @catch,
-                                    @finally);
-                        });
-        }
+                                                                                e.AddTypeAttribute(node)
+                                                                                    .Add(
+                                                                                        @try,
+                                                                                        catches,
+                                                                                        @catch,
+                                                                                        @finally);
+                                                                            });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.CatchBlock" />.
@@ -702,7 +645,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override CatchBlock VisitCatchBlock(CatchBlock node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== catchBlock");
             Debug.Indent();
@@ -748,24 +691,21 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitListInit(ListInitExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitListInit,
-                        (n, e) =>
-                        {
-                            var inits = new Stack<XElement>();
+        protected override Expression VisitListInit(ListInitExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitListInit,
+                                                                                    (n, e) =>
+                                                                                    {
+                                                                                        var inits = new Stack<XElement>();
 
-                            for (var i=0; i<node.Initializers.Count(); i++)
-                                inits.Push(_elements.Pop());
+                                                                                        for (var i=0; i<node.Initializers.Count(); i++)
+                                                                                            inits.Push(_elements.Pop());
 
-                            e.Add(_elements.Pop(),                      // the new node
-                                  new XElement(
-                                        XNames.Elements.ListInit,
-                                        inits));                        // the elementsInit node
-                        });
-        }
+                                                                                        e.Add(_elements.Pop(),                      // the new node
+                                                                                                new XElement(
+                                                                                                    XNames.Elements.ListInit,
+                                                                                                    inits));                        // the elementsInit node
+                                                                                    });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.ElementInit" />.
@@ -775,7 +715,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override ElementInit VisitElementInit(ElementInit node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== elementInit");
             Debug.Indent();
@@ -839,44 +779,38 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitNewArray(NewArrayExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitNewArray,
-                        (n, e) =>
-                        {
-                            if (n.NodeType == ExpressionType.NewArrayInit)
-                                VisitNewArrayInit(n, e);
-                            else
-                                VisitNewArrayBounds(n, e);
-                        });
-        }
+        protected override Expression VisitNewArray(NewArrayExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitNewArray,
+                                                                                    (n, e) =>
+                                                                                    {
+                                                                                        if (n.NodeType == ExpressionType.NewArrayInit)
+                                                                                            VisitNewArrayInit(n, e);
+                                                                                        else
+                                                                                            VisitNewArrayBounds(n, e);
+                                                                                    });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.MemberInitExpression" />.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitMemberInit(MemberInitExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitMemberInit,
-                        (n, e) =>
-                        {
-                            var bindings = new Stack<XElement>();
+        protected override Expression VisitMemberInit(MemberInitExpression node) => GenericVisit(
+                                                                                        node,
+                                                                                        base.VisitMemberInit,
+                                                                                        (n, e) =>
+                                                                                        {
+                                                                                            var bindings = new Stack<XElement>();
 
-                            for (var i=0; i<node.Bindings.Count(); i++)
-                                bindings.Push(_elements.Pop());
+                                                                                            for (var i=0; i<node.Bindings.Count(); i++)
+                                                                                                bindings.Push(_elements.Pop());
 
-                            e.Add(
-                                _elements.Pop(),        // the new expression
-                                new XElement(
-                                        XNames.Elements.Bindings,
-                                        bindings));
-                        });
-        }
+                                                                                            e.Add(
+                                                                                                _elements.Pop(),        // the new expression
+                                                                                                new XElement(
+                                                                                                        XNames.Elements.Bindings,
+                                                                                                        bindings));
+                                                                                        });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.MemberBinding" />.
@@ -886,7 +820,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override MemberBinding VisitMemberBinding(MemberBinding node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== memberBinding");
             Debug.Indent();
@@ -906,10 +840,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override MemberAssignment VisitMemberAssignment(MemberAssignment node)
+        protected override MemberAssignment VisitMemberAssignment(
+            MemberAssignment node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== memberAssignment");
             Debug.Indent();
@@ -934,7 +869,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== memberMemberBinding");
             Debug.Indent();
@@ -965,7 +900,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         protected override MemberListBinding VisitMemberListBinding(MemberListBinding node)
         {
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
             Debug.WriteLine("==== memberListBinding");
             Debug.Indent();
@@ -987,16 +922,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitRuntimeVariables,
-                        (n, e) => e.Add(
-                                    AddParameters(
-                                        n.Variables,
-                                        new XElement(XNames.Elements.Variables))));
-        }
+        protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) => GenericVisit(
+                                                                                                    node,
+                                                                                                    base.VisitRuntimeVariables,
+                                                                                                    (n, e) => e.Add(
+                                                                                                                AddParameters(
+                                                                                                                    n.Variables,
+                                                                                                                    new XElement(XNames.Elements.Variables))));
 
         /////////////////////////////////////////////////////////////////
         // IN PROCESS:
@@ -1011,12 +943,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
-        protected override Expression VisitDynamic(DynamicExpression node)
-        {
-            return GenericVisit(
-                        node,
-                        base.VisitDynamic,
-                        (n, e) => { });
-        }
+        protected override Expression VisitDynamic(DynamicExpression node) => GenericVisit(
+                                                                                    node,
+                                                                                    base.VisitDynamic,
+                                                                                    (n, e) => { });
     }
 }

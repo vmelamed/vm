@@ -7,19 +7,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class EncryptedNewKeySignedXmlCipherTest : GenericXmlCipherTest<EncryptedNewKeySignedXmlCipher>
     {
-        public override IXmlCipher GetCipher()
-        {
-            return new EncryptedNewKeySignedXmlCipher(
-                            CertificateFactory.GetDecryptingCertificate(),
-                            CertificateFactory.GetSigningCertificate()); // default SHA1, SHA256 doesn't work here
-        }
+        public override IXmlCipher GetCipher() => new EncryptedNewKeySignedXmlCipher(
+                                                            CertificateFactory.GetDecryptingCertificate(),
+                                                            CertificateFactory.GetSigningCertificate()); // default SHA1, SHA256 doesn't work here
 
-        public IXmlCipher GetPublicCertCipher()
-        {
-            return new EncryptedNewKeySignedXmlCipher(
-                            CertificateFactory.GetEncryptingCertificate(),
-                            CertificateFactory.GetSignVerifyCertificate()); // default SHA1, SHA256 doesn't work here
-        }
+        public IXmlCipher GetPublicCertCipher() => new EncryptedNewKeySignedXmlCipher(
+                                                            CertificateFactory.GetEncryptingCertificate(),
+                                                            CertificateFactory.GetSignVerifyCertificate()); // default SHA1, SHA256 doesn't work here
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

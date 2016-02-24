@@ -45,9 +45,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string idValue)
         {
             if (document == null)
-                throw new ArgumentNullException("document");
+                throw new ArgumentNullException(nameof(document));
             if (string.IsNullOrWhiteSpace(idValue))
-                throw new ArgumentNullException("idValue");
+                throw new ArgumentNullException(nameof(idValue));
 
             var idElement = base.GetIdElement(document, idValue);
 

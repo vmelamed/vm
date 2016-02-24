@@ -28,10 +28,7 @@ namespace vm.Aspects.Model
         /// The implementation assumes that the entity has identity when the <see cref="P:Key"/> is not equal to the default value of its type.
         /// E.g. if the type of the key is <see cref="string"/> the entity has identity if <c>Key!=null</c>.
         /// </remarks>
-        public override bool HasIdentity
-        {
-            get { return !(ReferenceEquals(Key, null)  || Key.Equals(default(TKey))); }
-        }
+        public override bool HasIdentity => !(ReferenceEquals(Key, null)  || Key.Equals(default(TKey)));
 
         #region IHasStoreId<TId> Members
         /// <summary>
@@ -111,10 +108,7 @@ namespace vm.Aspects.Model
         /// The <see cref="M:Equals(BaseDomainEntity)"/> methods and the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity, 
         /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
         /// </remarks>
-        public override bool Equals(BaseDomainEntity other)
-        {
-            return Equals(other as DomainEntity<TId, TKey>);
-        }
+        public override bool Equals(BaseDomainEntity other) => Equals(other as DomainEntity<TId, TKey>);
 
         /// <summary>
         /// Determines whether this <see cref="DomainEntity{TId, TKey}"/> instance is equal to the specified <see cref="System.Object"/> reference.
@@ -133,19 +127,13 @@ namespace vm.Aspects.Model
         /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
         /// </remarks>
         public override bool Equals(
-            object obj)
-        {
-            return Equals(obj as DomainEntity<TId, TKey>);
-        }
+            object obj) => Equals(obj as DomainEntity<TId, TKey>);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="DomainEntity{TId, TKey}"/> and its derived types.
         /// </summary>
         /// <returns>A hash code for the current <see cref="DomainEntity{TId, TKey}"/> instance.</returns>
-        public override int GetHashCode()
-        {
-            return HasIdentity ? Key.GetHashCode() : 0;
-        }
+        public override int GetHashCode() => HasIdentity ? Key.GetHashCode() : 0;
 
         /// <summary>
         /// Compares two <see cref="DomainEntity{TId, TKey}"/> objects.
@@ -158,12 +146,9 @@ namespace vm.Aspects.Model
         /// </returns>
         public static bool operator ==(
             DomainEntity<TId, TKey> left,
-            DomainEntity<TId, TKey> right)
-        {
-            return ReferenceEquals(left, null)
-                        ? ReferenceEquals(right, null)
-                        : left.Equals(right);
-        }
+            DomainEntity<TId, TKey> right) => ReferenceEquals(left, null)
+                                                ? ReferenceEquals(right, null)
+                                                : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="DomainEntity{TId, TKey}"/> objects.
@@ -176,10 +161,7 @@ namespace vm.Aspects.Model
         /// </returns>
         public static bool operator !=(
             DomainEntity<TId, TKey> left,
-            DomainEntity<TId, TKey> right)
-        {
-            return !(left == right);
-        }
+            DomainEntity<TId, TKey> right) => !(left == right);
         #endregion
     }
 }

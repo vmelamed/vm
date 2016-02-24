@@ -104,10 +104,7 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <returns>Service's lifetime manager</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will dispose it.")]
-        protected virtual LifetimeManager ServiceLifetimeManager
-        {
-            get { return new TransientLifetimeManager(); }
-        }
+        protected virtual LifetimeManager ServiceLifetimeManager => new TransientLifetimeManager();
 
         /// <summary>
         /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
@@ -208,7 +205,7 @@ namespace vm.Aspects.Wcf.Services
             Uri[] baseAddresses)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
 
             RegisterDefaults(serviceType);
 

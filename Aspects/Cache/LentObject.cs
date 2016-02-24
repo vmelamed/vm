@@ -49,10 +49,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

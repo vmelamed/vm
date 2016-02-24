@@ -15,7 +15,7 @@ namespace vm.Aspects.Model.Tests
         public void Visit(TestEntity obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             TestEntityVisitedCount++;
         }
@@ -23,7 +23,7 @@ namespace vm.Aspects.Model.Tests
         public void Visit(TestEntity1 obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             TestEntity1VisitedCount++;
         }
@@ -31,7 +31,7 @@ namespace vm.Aspects.Model.Tests
         public void Visit(TestEntity2 obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             TestEntity2VisitedCount++;
         }

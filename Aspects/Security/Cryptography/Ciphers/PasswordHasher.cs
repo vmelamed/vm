@@ -67,7 +67,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                                 CultureInfo.InvariantCulture,
                                 "The number of iterations should be at least {0} bytes long.",
                                 PasswordDerivationConstants.MinNumberOfIterations),
-                            "numberOfIterations");
+                            nameof(numberOfIterations));
 
             if (hashLength < PasswordDerivationConstants.MinHashLength)
                 throw new ArgumentException(
@@ -75,7 +75,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                                 CultureInfo.InvariantCulture,
                                 "The hash should be at least {0} bytes long.",
                                 PasswordDerivationConstants.MinHashLength),
-                            "hashLength");
+                            nameof(hashLength));
 
             if (saltLength < PasswordDerivationConstants.MinSaltLength)
                 throw new ArgumentException(
@@ -83,7 +83,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                                 CultureInfo.InvariantCulture,
                                 "Password hashes must always be salted with at least {0} bytes.",
                                 PasswordDerivationConstants.MinSaltLength),
-                            "saltLength");
+                            nameof(saltLength));
 
             _saltLength         = saltLength;
             _hashLength         = hashLength;
@@ -237,7 +237,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (data == null)
                 return hash==null;
             if (hash == null)
-                throw new ArgumentNullException("hash");
+                throw new ArgumentNullException(nameof(hash));
 
             using (var stream = new MemoryStream(hash))
             {
@@ -299,10 +299,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// This hasher ignores this property and always salts the hash.
         /// </summary>
         /// <value><c>true</c> if [should salt]; otherwise, <c>false</c>.</value>
-        public bool ShouldSalt
-        {
-            get { return SaltLength > 0; }
-        }
+        public bool ShouldSalt => SaltLength > 0;
 
         static byte[] GetHash(
             byte[] data,
@@ -328,10 +325,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

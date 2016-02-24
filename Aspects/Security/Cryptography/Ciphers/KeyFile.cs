@@ -21,10 +21,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns><see langword="true" /> if the file exists, otherwise <see langword="false" />.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public bool KeyLocationExists(
-            string keyLocation)
-        {
-            return File.Exists(keyLocation);
-        }
+            string keyLocation) => File.Exists(keyLocation);
 
         /// <summary>
         /// Puts the key in the specified file. If the file doesn't exist it creates it, stores the key and sets the appropriate security on the file.

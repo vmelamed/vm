@@ -41,7 +41,12 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         public ValidationResults ValidationResults
         {
-            get { return null; }
+            get
+            {
+                Contract.Ensures(Contract.Result<ValidationResults>() == null);
+
+                return null;
+            }
             set
             {
                 if (ValidationElements == null)

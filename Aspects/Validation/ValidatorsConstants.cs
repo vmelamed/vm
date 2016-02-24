@@ -47,7 +47,7 @@ namespace vm.Aspects.Validation
                 return (sbyte)0;
 
             default:
-                throw new ArgumentException("Don't know the zero value of the specified type.", "type");
+                throw new ArgumentException("Don't know the zero value of the specified type.", nameof(type));
             }
         }
     }

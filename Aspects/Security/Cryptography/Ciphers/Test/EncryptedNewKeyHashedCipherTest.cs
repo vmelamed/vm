@@ -21,12 +21,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             return cipher;
         }
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
-        {
 #pragma warning disable CS0618 // Type or member is obsolete
-            return new EncryptedNewKeyHashedCipher(CertificateFactory.GetEncryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
+        public override ICipherAsync GetPublicCertCipher(bool base64 = false) => new EncryptedNewKeyHashedCipher(CertificateFactory.GetEncryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
 #pragma warning restore CS0618 // Type or member is obsolete
-        }
 
         #region Test disabled IKeyManagement
         [TestMethod]
@@ -147,15 +144,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
             }
 
-            public string PublicHashAlgorithmName
-            {
-                get { return base.HashAlgorithmName; }
-            }
+            public string PublicHashAlgorithmName => base.HashAlgorithmName;
 
-            public HashAlgorithm PublicHasher
-            {
-                get { return base.Hasher; }
-            }
+            public HashAlgorithm PublicHasher => Hasher;
 
             public void PublicInitializeHasher(
                 string hashAlgorithm)
@@ -176,10 +167,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public CryptoStream PublicCreateEncryptingStream(
-                Stream encryptedStream)
-            {
-                return base.CreateEncryptingStream(encryptedStream);
-            }
+                Stream encryptedStream) => base.CreateEncryptingStream(encryptedStream);
 
             public void PublicWriteHashInReservedSpace(
                 Stream encryptedStream,
@@ -189,10 +177,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public CryptoStream PublicCreateDecryptingStream(
-                Stream encryptedStream)
-            {
-                return base.CreateDecryptingStream(encryptedStream);
-            }
+                Stream encryptedStream) => base.CreateDecryptingStream(encryptedStream);
 
             public void PublicBeforeReadDecrypted(
                 Stream encryptedStream)
@@ -233,17 +218,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             public byte[] PublicFinalizeHashAfterWrite(
                 Stream encryptedStream,
-                CryptoStream cryptoStream)
-            {
-                return base.FinalizeHashAfterWrite(encryptedStream, cryptoStream);
-            }
+                CryptoStream cryptoStream) => base.FinalizeHashAfterWrite(encryptedStream, cryptoStream);
 
             public byte[] PublicFinalizeHashAfterRead(
                 Stream encryptedStream,
-                CryptoStream cryptoStream)
-            {
-                return base.FinalizeHashAfterRead(encryptedStream, cryptoStream);
-            }
+                CryptoStream cryptoStream) => FinalizeHashAfterRead(encryptedStream, cryptoStream);
         }
 
         [TestMethod]

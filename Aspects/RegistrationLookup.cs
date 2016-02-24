@@ -33,12 +33,12 @@ namespace vm.Aspects
         /// <summary>
         /// Gets the registered type.
         /// </summary>
-        public Type RegisteredType { get; private set; }
+        public Type RegisteredType { get; }
 
         /// <summary>
         /// Gets the registration name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         #region Identity rules implementation.
         #region IEquatable<RegistrationLookup> Members
@@ -64,10 +64,7 @@ namespace vm.Aspects
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true"/> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <see langword="false"/>.</returns>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as RegistrationLookup);
-        }
+        public override bool Equals(object obj) => Equals(obj as RegistrationLookup);
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -89,12 +86,9 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator==(RegistrationLookup left, RegistrationLookup right)
-        {
-            return ReferenceEquals(left, null) 
-                        ? ReferenceEquals(right, null) 
-                        : left.Equals(right);
-        }
+        public static bool operator==(RegistrationLookup left, RegistrationLookup right) => ReferenceEquals(left, null) 
+                                                                                                ? ReferenceEquals(right, null) 
+                                                                                                : left.Equals(right);
 
         /// <summary>
         /// Implements the != operator.
@@ -102,10 +96,7 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator!=(RegistrationLookup left, RegistrationLookup right)
-        {
-            return !(left==right);
-        }
+        public static bool operator!=(RegistrationLookup left, RegistrationLookup right) => !(left==right);
         #endregion
     }
 }

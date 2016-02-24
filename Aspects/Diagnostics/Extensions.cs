@@ -46,7 +46,7 @@ namespace vm.Aspects
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, "writer");
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
 
             try
             {

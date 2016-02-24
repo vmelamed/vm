@@ -71,14 +71,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
         //
         #endregion
 
-        public static IRepository CreateRepository()
-        {
-            return new TestEFRepository("ModelTests");
-        }
+        public static IRepository CreateRepository() => new TestEFRepository("ModelTests");
 
-        protected override IRepository GetRepository()
-        {
-            return CreateRepository();
-        }
+        protected override IRepository GetRepository() => CreateRepository();
     }
 }

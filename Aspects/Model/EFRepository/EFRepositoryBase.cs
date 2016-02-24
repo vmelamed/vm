@@ -172,7 +172,7 @@ namespace vm.Aspects.Model.EFRepository
             DbModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
-                throw new ArgumentNullException("modelBuilder");
+                throw new ArgumentNullException(nameof(modelBuilder));
 
             base.OnModelCreating(modelBuilder);
 
@@ -252,7 +252,7 @@ namespace vm.Aspects.Model.EFRepository
             Contract.Ensures(Contract.Result<DbEntityValidationResult>() != null);
 
             if (entityEntry == null)
-                throw new ArgumentNullException("entityEntry");
+                throw new ArgumentNullException(nameof(entityEntry));
 
             IValidatable validatable = entityEntry.Entity as IValidatable;
 

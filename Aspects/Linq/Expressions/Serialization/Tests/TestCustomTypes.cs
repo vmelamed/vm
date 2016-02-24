@@ -88,33 +88,30 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 
         public string StringField;
 
-        public static Object1 GetObject1()
-        {
-            return new Object1
-            {
-                ObjectProperty = null,
-                NullIntProperty = null,
-                NullLongProperty = 1L,
-                BoolProperty = true,
-                CharProperty = 'A',
-                ByteProperty = (byte)1,
-                SByteProperty = (sbyte)1,
-                ShortProperty = (short)1,
-                IntProperty = (int)1,
-                LongProperty = (long)1,
-                UShortProperty = (ushort)1,
-                UIntProperty = (uint)1,
-                ULongProperty = (ulong)1,
-                DoubleProperty = 1.0,
-                FloatProperty = (float)1.0,
-                DecimalProperty = 1M,
-                GuidProperty = Guid.Empty,
-                UriProperty = new Uri("http://localhost"),
-                DateTimeProperty = new DateTime(2013, 1, 13),
-                TimeSpanProperty = new TimeSpan(123L),
-                DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-            };
-        }
+        public static Object1 GetObject1() => new Object1
+                                                {
+                                                    ObjectProperty = null,
+                                                    NullIntProperty = null,
+                                                    NullLongProperty = 1L,
+                                                    BoolProperty = true,
+                                                    CharProperty = 'A',
+                                                    ByteProperty = (byte)1,
+                                                    SByteProperty = (sbyte)1,
+                                                    ShortProperty = (short)1,
+                                                    IntProperty = (int)1,
+                                                    LongProperty = (long)1,
+                                                    UShortProperty = (ushort)1,
+                                                    UIntProperty = (uint)1,
+                                                    ULongProperty = (ulong)1,
+                                                    DoubleProperty = 1.0,
+                                                    FloatProperty = (float)1.0,
+                                                    DecimalProperty = 1M,
+                                                    GuidProperty = Guid.Empty,
+                                                    UriProperty = new Uri("http://localhost"),
+                                                    DateTimeProperty = new DateTime(2013, 1, 13),
+                                                    TimeSpanProperty = new TimeSpan(123L),
+                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+                                                };
     }
 
     [DataContract]
@@ -128,10 +125,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     [Serializable]
@@ -142,10 +136,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     public class ClassNonSerializable
@@ -155,10 +146,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     [Serializable]
@@ -169,10 +157,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     [DataContract]
@@ -186,10 +171,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     [DataContract]
@@ -198,15 +180,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         [DataMember]
         public int a;
 
-        public static A operator -(A x)
-        {
-            return new A { a = -x.a };
-        }
+        public static A operator -(A x) => new A { a = -x.a };
 
-        public static A operator +(A x)
-        {
-            return new A { a = x.a };
-        }
+        public static A operator +(A x) => new A { a = x.a };
     }
 
     [DataContract]
@@ -215,30 +191,18 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         [DataMember]
         public bool b;
 
-        public static B operator !(B x)
-        {
-            return new B { b = !x.b };
-        }
+        public static B operator !(B x) => new B { b = !x.b };
     }
 
     class TestMethods
     {
         int a = 3;
 
-        public static int Method1()
-        {
-            return 1;
-        }
+        public static int Method1() => 1;
 
-        public static int Method2(int i, string s)
-        {
-            return i;
-        }
+        public static int Method2(int i, string s) => i;
 
-        public int Method3(int i, double d)
-        {
-            return i+a;
-        }
+        public int Method3(int i, double d) => i+a;
     }
 
     class Inner

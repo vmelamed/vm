@@ -41,7 +41,7 @@ namespace vm.Aspects.Facilities
             Exception outerException)
         {
             if (exceptionToFormat == null)
-                throw new ArgumentNullException("exceptionToFormat");
+                throw new ArgumentNullException(nameof(exceptionToFormat));
 
             exceptionToFormat.DumpText(Writer, 1);
             WriteAdditionalInfo(AdditionalInfo);

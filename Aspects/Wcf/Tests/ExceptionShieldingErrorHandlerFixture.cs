@@ -338,19 +338,13 @@ namespace vm.Aspects.Wcf.Tests
 
         FaultException GetFaultException(
             string faultReason,
-            string faultCode)
-        {
-            return new FaultException(
-                    new FaultReason(faultReason),
-                    FaultCode.CreateReceiverFaultCode(
-                        faultCode,
-                        SoapException.ServerFaultCode.Namespace));
-        }
+            string faultCode) => new FaultException(
+                                        new FaultReason(faultReason),
+                                        FaultCode.CreateReceiverFaultCode(
+                                            faultCode,
+                                            SoapException.ServerFaultCode.Namespace));
 
-        Message GetDefaultMessage()
-        {
-            return Message.CreateMessage(MessageVersion.Default, "testing");
-        }
+        Message GetDefaultMessage() => Message.CreateMessage(MessageVersion.Default, "testing");
 
         MessageFault GetFaultFromMessage(Message message)
         {

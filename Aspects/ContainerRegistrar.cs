@@ -178,8 +178,8 @@ namespace vm.Aspects
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            Contract.Requires<ArgumentNullException>(container != null, "container");
-            Contract.Requires<ArgumentNullException>(registrations != null, "registrations");
+            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
+            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
 
             DoRegister(container, registrations);
         }

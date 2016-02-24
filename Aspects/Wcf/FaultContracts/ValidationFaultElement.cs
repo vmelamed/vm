@@ -80,20 +80,14 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <returns>
         /// A <see cref="System.String"/> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return ToString(0);
-        }
+        public override string ToString() => ToString(0);
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <param name="indentLevel">The indent level.</param>
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-        public string ToString(int indentLevel)
-        {
-            return this.DumpString(indentLevel);
-        }
+        public string ToString(int indentLevel) => this.DumpString(indentLevel);
         #endregion
     }
 }

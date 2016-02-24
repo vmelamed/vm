@@ -195,7 +195,7 @@ namespace vm.Aspects.Validation
             ValidationResults validationResults)
         {
             if (validationResults == null)
-                throw new ArgumentNullException("validationResults");
+                throw new ArgumentNullException(nameof(validationResults));
 
             var isValidXml = ValidateXml(objectToValidate, currentTarget, key, validationResults);
 

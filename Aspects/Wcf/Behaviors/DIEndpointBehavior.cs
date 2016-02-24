@@ -70,11 +70,11 @@ namespace vm.Aspects.Wcf.Behaviors
             EndpointDispatcher endpointDispatcher)
         {
             if (endpoint==null)
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
             if (endpointDispatcher==null)
-                throw new ArgumentNullException("endpointDispatcher");
+                throw new ArgumentNullException(nameof(endpointDispatcher));
             if (endpointDispatcher.DispatchRuntime==null)
-                throw new ArgumentException("The DispatchRuntime property cannot be null.", "endpointDispatcher");
+                throw new ArgumentException("The DispatchRuntime property cannot be null.", nameof(endpointDispatcher));
 
             endpointDispatcher.DispatchRuntime.InstanceProvider = new DIInstanceProvider(endpoint.Contract.ContractType, _resolveName);
         }

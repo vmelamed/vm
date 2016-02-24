@@ -43,15 +43,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
         //
         #endregion
 
-        protected override IRepository GetRepository()
-        {
-            return EFRepositoryTests.CreateRepository();
-        }
+        protected override IRepository GetRepository() => EFRepositoryTests.CreateRepository();
 
-        protected override IOrmSpecifics GetSpecifics()
-        {
-            return new EFSpecifics();
-        }
+        protected override IOrmSpecifics GetSpecifics() => new EFSpecifics();
 
         [TestMethod]
         [TestCategory("IntegrationTest")]

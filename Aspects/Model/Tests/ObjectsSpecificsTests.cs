@@ -9,10 +9,7 @@ namespace vm.Aspects.Model.Tests
     [TestClass]
     public abstract class ObjectsSpecificTests<R> : IOrmSpecificsTests<R> where R : class, IRepository
     {
-        protected override IOrmSpecifics GetSpecifics()
-        {
-            return new ObjectsRepositorySpecifics();
-        }
+        protected override IOrmSpecifics GetSpecifics() => new ObjectsRepositorySpecifics();
 
         [TestMethod]
         public override void EnlistInAmbientTransaction()

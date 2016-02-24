@@ -115,10 +115,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Gets the name of the hash algorithm.
         /// </summary>
         /// <value>The name of the hash algorithm.</value>
-        public string HashAlgorithmName
-        {
-            get { return _hashAlgorithmName; }
-        }
+        public string HashAlgorithmName => _hashAlgorithmName;
         #endregion
     }
 }

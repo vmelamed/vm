@@ -23,20 +23,23 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
     {
         public TestContext TestContext { get; set; }
 
-        PrivateObject GetDumperInstanceAccessor(int indentLevel = 0, int indentLength = 2)
-        {
-            return new PrivateObject(typeof(ObjectTextDumper), new StringWriter(CultureInfo.InvariantCulture), indentLevel, indentLength, DumpTextWriter.DefaultMaxLength, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
-        }
+        PrivateObject GetDumperInstanceAccessor(int indentLevel = 0, int indentLength = 2) => new PrivateObject(
+                                                                                                    typeof(ObjectTextDumper),
+                                                                                                    new StringWriter(CultureInfo.InvariantCulture),
+                                                                                                    indentLevel,
+                                                                                                    indentLength,
+                                                                                                    DumpTextWriter.DefaultMaxLength,
+                                                                                                    BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
 
-        PrivateObject GetDumperInstanceAccessor(StringWriter w, int indentLevel = 0, int indentLength = 2)
-        {
-            return new PrivateObject(typeof(ObjectTextDumper), w, indentLevel, indentLength, DumpTextWriter.DefaultMaxLength, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
-        }
+        PrivateObject GetDumperInstanceAccessor(StringWriter w, int indentLevel = 0, int indentLength = 2) => new PrivateObject(
+                                                                                                                        typeof(ObjectTextDumper),
+                                                                                                                        w,
+                                                                                                                        indentLevel,
+                                                                                                                        indentLength,
+                                                                                                                        DumpTextWriter.DefaultMaxLength,
+                                                                                                                        BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
 
-        PrivateType GetDumperClassAccessor()
-        {
-            return new PrivateType(typeof(ObjectTextDumper));
-        }
+        PrivateType GetDumperClassAccessor() => new PrivateType(typeof(ObjectTextDumper));
 
         enum TestEnum
         {
@@ -550,112 +553,103 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public object DateTimeOffsetProperty { get; set; }
         }
 
-        internal static Object1 GetObject1()
-        {
-            return new Object1
-            {
-                ObjectProperty         = null,
-                NullIntProperty        = null,
-                NullLongProperty       = 1L,
-                BoolProperty           = true,
-                CharProperty           = 'A',
-                ByteProperty           = (byte)1,
-                SByteProperty          = (sbyte)1,
-                ShortProperty          = (short)1,
-                IntProperty            = (int)1,
-                LongProperty           = (long)1,
-                UShortProperty         = (ushort)1,
-                UIntProperty           = (uint)1,
-                ULongProperty          = (ulong)1,
-                DoubleProperty         = 1.0,
-                FloatProperty          = (float)1.0,
-                DecimalProperty        = 1M,
-                GuidProperty           = Guid.Empty,
-                UriProperty            = new Uri("http://localhost"),
-                DateTimeProperty       = new DateTime(2013, 1, 13),
-                TimeSpanProperty       = new TimeSpan(123L),
-                DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        internal static Object1 GetObject1() => new Object1
+                                                {
+                                                    ObjectProperty         = null,
+                                                    NullIntProperty        = null,
+                                                    NullLongProperty       = 1L,
+                                                    BoolProperty           = true,
+                                                    CharProperty           = 'A',
+                                                    ByteProperty           = (byte)1,
+                                                    SByteProperty          = (sbyte)1,
+                                                    ShortProperty          = (short)1,
+                                                    IntProperty            = (int)1,
+                                                    LongProperty           = (long)1,
+                                                    UShortProperty         = (ushort)1,
+                                                    UIntProperty           = (uint)1,
+                                                    ULongProperty          = (ulong)1,
+                                                    DoubleProperty         = 1.0,
+                                                    FloatProperty          = (float)1.0,
+                                                    DecimalProperty        = 1M,
+                                                    GuidProperty           = Guid.Empty,
+                                                    UriProperty            = new Uri("http://localhost"),
+                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
+                                                    TimeSpanProperty       = new TimeSpan(123L),
+                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
 
-                ObjectField            = null,
-                NullIntField           = null,
-                NullLongField          = 1L,
-                BoolField              = true,
-                CharField              = 'A',
-                ByteField              = (byte)1,
-                SByteField             = (sbyte)1,
-                ShortField             = (short)1,
-                IntField               = (int)1,
-                LongField              = (long)1,
-                UShortField            = (ushort)1,
-                UIntField              = (uint)1,
-                ULongField             = (ulong)1,
-                DoubleField            = 1.0,
-                FloatField             = (float)1.0,
-                DecimalField           = 1M,
-                GuidField              = Guid.Empty,
-                UriField               = new Uri("http://localhost"),
-                DateTimeField          = new DateTime(2013, 1, 13),
-                TimeSpanField          = new TimeSpan(123L),
-                DateTimeOffsetField    = new DateTimeOffset(new DateTime(2013, 1, 13)),
-            };
-        }
+                                                    ObjectField            = null,
+                                                    NullIntField           = null,
+                                                    NullLongField          = 1L,
+                                                    BoolField              = true,
+                                                    CharField              = 'A',
+                                                    ByteField              = (byte)1,
+                                                    SByteField             = (sbyte)1,
+                                                    ShortField             = (short)1,
+                                                    IntField               = (int)1,
+                                                    LongField              = (long)1,
+                                                    UShortField            = (ushort)1,
+                                                    UIntField              = (uint)1,
+                                                    ULongField             = (ulong)1,
+                                                    DoubleField            = 1.0,
+                                                    FloatField             = (float)1.0,
+                                                    DecimalField           = 1M,
+                                                    GuidField              = Guid.Empty,
+                                                    UriField               = new Uri("http://localhost"),
+                                                    DateTimeField          = new DateTime(2013, 1, 13),
+                                                    TimeSpanField          = new TimeSpan(123L),
+                                                    DateTimeOffsetField    = new DateTimeOffset(new DateTime(2013, 1, 13)),
+                                                };
 
-        internal static Object2 GetObject2()
-        {
-            return new Object2
-            {
-                ObjectProperty         = null,
-                NullIntProperty        = null,
-                NullLongProperty       = 1L,
-                BoolProperty           = true,
-                CharProperty           = 'A',
-                ByteProperty           = (byte)1,
-                SByteProperty          = (sbyte)1,
-                ShortProperty          = (short)1,
-                IntProperty            = (int)1,
-                LongProperty           = (long)1,
-                UShortProperty         = (ushort)1,
-                UIntProperty           = (uint)1,
-                ULongProperty          = (ulong)1,
-                DoubleProperty         = 1.0,
-                FloatProperty          = (float)1.0,
-                DecimalProperty        = 1M,
-                GuidProperty           = Guid.Empty,
-                UriProperty            = new Uri("http://localhost"),
-                DateTimeProperty       = new DateTime(2013, 1, 13),
-                DateTimeProperty1      = new DateTime(2013, 1, 25, 11, 23, 45),
-                TimeSpanProperty       = new TimeSpan(123L),
-                DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-            };
-        }
+        internal static Object2 GetObject2() => new Object2
+                                                {
+                                                    ObjectProperty         = null,
+                                                    NullIntProperty        = null,
+                                                    NullLongProperty       = 1L,
+                                                    BoolProperty           = true,
+                                                    CharProperty           = 'A',
+                                                    ByteProperty           = (byte)1,
+                                                    SByteProperty          = (sbyte)1,
+                                                    ShortProperty          = (short)1,
+                                                    IntProperty            = (int)1,
+                                                    LongProperty           = (long)1,
+                                                    UShortProperty         = (ushort)1,
+                                                    UIntProperty           = (uint)1,
+                                                    ULongProperty          = (ulong)1,
+                                                    DoubleProperty         = 1.0,
+                                                    FloatProperty          = (float)1.0,
+                                                    DecimalProperty        = 1M,
+                                                    GuidProperty           = Guid.Empty,
+                                                    UriProperty            = new Uri("http://localhost"),
+                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
+                                                    DateTimeProperty1      = new DateTime(2013, 1, 25, 11, 23, 45),
+                                                    TimeSpanProperty       = new TimeSpan(123L),
+                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+                                                };
 
-        internal static Object3 GetObject3()
-        {
-            return new Object3
-            {
-                ObjectProperty         = null,
-                NullIntProperty        = null,
-                NullLongProperty       = 1L,
-                BoolProperty           = true,
-                CharProperty           = 'A',
-                ByteProperty           = (byte)1,
-                SByteProperty          = (sbyte)1,
-                ShortProperty          = (short)1,
-                IntProperty            = (int)1,
-                LongProperty           = (long)1,
-                UShortProperty         = (ushort)1,
-                UIntProperty           = (uint)1,
-                ULongProperty          = (ulong)1,
-                DoubleProperty         = 1.0,
-                FloatProperty          = (float)1.0,
-                DecimalProperty        = 1M,
-                GuidProperty           = Guid.Empty,
-                UriProperty            = new Uri("http://localhost"),
-                DateTimeProperty       = new DateTime(2013, 1, 13),
-                TimeSpanProperty       = new TimeSpan(123L),
-                DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-            };
-        }
+        internal static Object3 GetObject3() => new Object3
+                                                {
+                                                    ObjectProperty         = null,
+                                                    NullIntProperty        = null,
+                                                    NullLongProperty       = 1L,
+                                                    BoolProperty           = true,
+                                                    CharProperty           = 'A',
+                                                    ByteProperty           = (byte)1,
+                                                    SByteProperty          = (sbyte)1,
+                                                    ShortProperty          = (short)1,
+                                                    IntProperty            = (int)1,
+                                                    LongProperty           = (long)1,
+                                                    UShortProperty         = (ushort)1,
+                                                    UIntProperty           = (uint)1,
+                                                    ULongProperty          = (ulong)1,
+                                                    DoubleProperty         = 1.0,
+                                                    FloatProperty          = (float)1.0,
+                                                    DecimalProperty        = 1M,
+                                                    GuidProperty           = Guid.Empty,
+                                                    UriProperty            = new Uri("http://localhost"),
+                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
+                                                    TimeSpanProperty       = new TimeSpan(123L),
+                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+                                                };
 
         [TestMethod]
         public void TestDumpObject1_1()
@@ -1113,10 +1107,7 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
             }
         }
 
-        static bool TestMethod(int a)
-        {
-            return a < 0;
-        }
+        static bool TestMethod(int a) => a < 0;
 
         [TestMethod]
         public void TestDumpDBNull()
@@ -1529,7 +1520,7 @@ Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
             [Dump(-2)]
             public int Prop914 { get; set; }
             [Dump(-3)]
-            public Object90 InheritedObject90 { get { return Object90; } }
+            public Object90 InheritedObject90 => Object90;
         }
 
         [TestMethod]
@@ -1564,8 +1555,8 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
         public class Object10
         {
             public int Offset { get; set; }
-            public static string Static(int param) { return param.ToString(); }
-            public string Instance(int param) { return (Offset+param).ToString(); }
+            public static string Static(int param) => param.ToString();
+            public string Instance(int param) => (Offset+param).ToString();
         }
 
         public class ObjectWithDelegates
@@ -1612,7 +1603,7 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperT
         class MyEnumerable : IEnumerable
         {
             [Dump(true)]
-            List<int> List { get; set; }
+            List<int> List { get; }
 
             public MyEnumerable()
             {
@@ -1622,10 +1613,7 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperT
             public string Property { get; set; }
 
             #region IEnumerable Members
-            public IEnumerator GetEnumerator()
-            {
-                return List.GetEnumerator();
-            }
+            public IEnumerator GetEnumerator() => List.GetEnumerator();
             #endregion
         }
 
@@ -1672,26 +1660,11 @@ ObjectWithMyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDump
             public void Method1()
             {
             }
-            public int Method2(int a)
-            {
-                return a;
-            }
-            public string Method3(int a, int b)
-            {
-                return (a+b).ToString();
-            }
-            public T Method4<T>(int a, int b) where T : new()
-            {
-                return new T();
-            }
-            public T Method5<T, U>(int a, int b) where T : new()
-            {
-                return new T();
-            }
-            public string this[int index]
-            {
-                get { return index.ToString(); }
-            }
+            public int Method2(int a) => a;
+            public string Method3(int a, int b) => (a+b).ToString();
+            public T Method4<T>(int a, int b) where T : new() => new T();
+            public T Method5<T, U>(int a, int b) where T : new() => new T();
+            public string this[int index] => index.ToString();
             public string this[string index, int index1]
             {
                 get { return index+index1; }
@@ -2030,14 +2003,8 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust.Object1, vm.Aspe
 
         static class Object11Dumper
         {
-            public static string DumpObject11(Object11 value)
-            {
-                return string.Format("Dumped by Objec11Dumper.Dump1: {0}", value.StringProperty);
-            }
-            public static string Dump(Object11 value)
-            {
-                return string.Format("Dumped by Objec11Dumper.Dump: {0}", value.StringProperty);
-            }
+            public static string DumpObject11(Object11 value) => string.Format("Dumped by Objec11Dumper.Dump1: {0}", value.StringProperty);
+            public static string Dump(Object11 value) => string.Format("Dumped by Objec11Dumper.Dump: {0}", value.StringProperty);
         }
 
         class Object11
@@ -2049,15 +2016,9 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust.Object1, vm.Aspe
 
             public string StringProperty { get; set; }
 
-            public string DumpMe()
-            {
-                return string.Format("Dumped by Objec11.DumpMe: {0}", StringProperty);
-            }
+            public string DumpMe() => string.Format("Dumped by Objec11.DumpMe: {0}", StringProperty);
 
-            public static string DumpMeStatic(Object11 value)
-            {
-                return string.Format("Dumped by Objec11.DumpMeStatic: {0}", value.StringProperty);
-            }
+            public static string DumpMeStatic(Object11 value) => string.Format("Dumped by Objec11.DumpMeStatic: {0}", value.StringProperty);
         }
 
         class Object11_1 : Object11

@@ -66,10 +66,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the underlying .NET symmetric cipher.
         /// </summary>
-        protected SymmetricAlgorithm Symmetric
-        {
-            get { return _symmetric; }
-        }
+        protected SymmetricAlgorithm Symmetric=> _symmetric;
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance's symmetric key is initialized.
@@ -257,10 +254,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -369,8 +363,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
-            Contract.Requires<ArgumentNullException>(encryptedKey != null, "encryptedKey");
-            Contract.Requires<ArgumentNullException>(encryptedKey.Length > 0, "The argument \"encryptedKey\" cannot be empty.");
+            Contract.Requires<ArgumentNullException>(encryptedKey != null, nameof(encryptedKey));
+            Contract.Requires<ArgumentNullException>(encryptedKey.Length > 0, "The argument "+nameof(encryptedKey)+" cannot be empty.");
 
             throw new NotImplementedException();
         }

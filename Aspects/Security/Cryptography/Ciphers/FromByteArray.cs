@@ -576,10 +576,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         public static T To<T>(
-            byte[] data)
-        {
-            return (T)ToObject(data, typeof(T));
-        }
+            byte[] data) => (T)ToObject(data, typeof(T));
 
         public static Nullable<T> ToNullable<T>(
             byte[] data) where T : struct

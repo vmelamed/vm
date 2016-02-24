@@ -55,10 +55,7 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
 
         /// <summary>
         /// Gets a value indicating whether this instance is valid.
@@ -66,10 +63,7 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <returns><see langword="true" /> if the specified ruleset is valid; otherwise, <see langword="false" />.</returns>
         public bool IsValid(
-            string ruleset = "")
-        {
-            return Validate(ruleset).IsValid;
-        }
+            string ruleset = "") => Validate(ruleset).IsValid;
 
         /// <summary>
         /// Performs the validation logic and if the object is not valid throws <see cref="T:ValidationException" />.

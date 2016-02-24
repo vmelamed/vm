@@ -33,9 +33,6 @@ namespace vm.Aspects.Wcf.Tests
         {
         }
 
-        public override IExceptionHandler BuildExceptionHandler()
-        {
-            return new MockFaultContractExceptionHandler();
-        }
+        public override IExceptionHandler BuildExceptionHandler() => new MockFaultContractExceptionHandler();
     }
 }

@@ -7,10 +7,7 @@ namespace vm.Aspects.Tests.Facilities
     [TestClass]
     public class TestClockTests : GenericIClockTests
     {
-        protected override IClock GetClock()
-        {
-            return new TestClock();
-        }
+        protected override IClock GetClock() => new TestClock();
 
         [TestMethod]
         public void NonDefaultClockTest()

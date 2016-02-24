@@ -50,7 +50,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public static XmlNamespaceManager GetEncryptNamespaceManager(
             XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document!=null, "document");
+            Contract.Requires<ArgumentNullException>(document!=null, nameof(document));
             Contract.Ensures(Contract.Result<XmlNamespaceManager>() != null, "Could not create namespace manager.");
 
             var namespaceManager = new XmlNamespaceManager(document.NameTable);
@@ -63,7 +63,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public static XmlNamespaceManager GetXmlNamespaceManager(
             XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document!=null, "document");
+            Contract.Requires<ArgumentNullException>(document!=null, nameof(document));
             Contract.Ensures(Contract.Result<XmlNamespaceManager>() != null, "Could not create namespace manager.");
 
             var namespaceManager = new XmlNamespaceManager(document.NameTable);

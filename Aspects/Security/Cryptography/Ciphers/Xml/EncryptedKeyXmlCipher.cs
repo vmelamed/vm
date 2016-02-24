@@ -105,7 +105,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"certificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The parameter "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             PublicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
@@ -122,10 +122,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <returns>System.Byte[].</returns>
-        protected override byte[] EncryptSymmetricKey()
-        {
-            return PublicKey.Encrypt(Symmetric.Key, true);
-        }
+        protected override byte[] EncryptSymmetricKey() => PublicKey.Encrypt(Symmetric.Key, true);
 
         /// <summary>
         /// Decrypts the symmetric key using the private key.

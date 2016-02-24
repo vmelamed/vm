@@ -32,6 +32,6 @@ namespace vm.Aspects
         /// <summary>
         /// Gets the resolve name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
     }
 }

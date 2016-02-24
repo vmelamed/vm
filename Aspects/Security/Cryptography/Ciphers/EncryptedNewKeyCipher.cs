@@ -185,14 +185,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedKey = new byte[length];
 
             // read the encrypted key, decrypt it and set it in Symmetric
             if (encryptedStream.Read(encryptedKey, 0, encryptedKey.Length) != encryptedKey.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", nameof(encryptedStream));
 
             DecryptSymmetricKey(encryptedKey);
 
@@ -260,14 +260,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedKey = new byte[length];
 
             // read the encrypted key, decrypt it and set it in Symmetric
             if (await encryptedStream.ReadAsync(encryptedKey, 0, encryptedKey.Length) != encryptedKey.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", nameof(encryptedStream));
 
             DecryptSymmetricKey(encryptedKey);
 

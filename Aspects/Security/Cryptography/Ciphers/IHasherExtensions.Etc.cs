@@ -27,7 +27,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(data != null || hash == null, "Invalid hash.");
 
             if (data != null && !hasher.TryVerifyHash(data, hash))
@@ -48,7 +48,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(dataStream != null || hash == null, "Invalid hash.");
 
             if (dataStream != null && !hasher.TryVerifyHash(dataStream, hash))
@@ -70,7 +70,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this IHasher hasher,
             string text)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
 
             if (text == null)
                 return null;
@@ -93,7 +93,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string text,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(text != null || hash == null, "Invalid hash.");
 
             if (text != null && !hasher.TryVerifyHash(Encoding.UTF8.GetBytes(text), hash))
@@ -115,7 +115,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string text,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(text != null || hash == null, "Invalid hash.");
 
             VerifyHashText(hasher, text, hash);
@@ -135,7 +135,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this IHasher hasher,
             byte[] data)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
 
             var hash = hasher.Hash(data);
 
@@ -160,7 +160,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data,
             string hash64)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(data != null || hash64 == null, "Invalid hash.");
 
             if (data == null)
@@ -187,7 +187,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string text,
             string hash64)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(text != null || hash64 == null, "Invalid hash.");
 
             if (text == null)
@@ -214,7 +214,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             string hash64)
         {
-            Contract.Requires<ArgumentNullException>(hasher != null, "hasher");
+            Contract.Requires<ArgumentNullException>(hasher != null, nameof(hasher));
             Contract.Requires<CryptographicException>(dataStream != null || hash64 == null, "Invalid hash.");
 
             if (dataStream == null)

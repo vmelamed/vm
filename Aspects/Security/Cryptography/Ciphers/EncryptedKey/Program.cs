@@ -68,7 +68,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool ParseArguments(string[] args)
         {
-            Contract.Requires<ArgumentNullException>(args != null, "args");
+            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
 
             if (args.Length == 0)
                 return true;
@@ -126,7 +126,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetCommand(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, "argument");
+            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
 
             if (CreateCommand.StartsWith(argument, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -162,8 +162,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetFile(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, "argument");
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument \"argument\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             var fileInfo = new FileInfo(argument);
 
@@ -191,8 +191,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetThumbprint(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, "argument");
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument \"argument\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             _thumbprint = GetHexValue(argument);
             return _thumbprint != null;
@@ -200,8 +200,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetKey(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, "argument");
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument \"argument\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             _key = ParseHexValue(GetHexValue(argument));
             return _key != null;
@@ -209,8 +209,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static byte[] ParseHexValue(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, "argument");
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument \"argument\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(argument.Length >= 2, "The argument must be longer than 2 characters.");
 
             var hexValue = new byte[(argument.Length+1)/2];
@@ -223,8 +223,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static string GetHexValue(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, "argument");
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument \"argument\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
+            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(argument), "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             if (!Regex.IsMatch(argument, RexByteArray))
             {

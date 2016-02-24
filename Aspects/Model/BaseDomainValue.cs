@@ -64,7 +64,7 @@ namespace vm.Aspects.Model
             IVisitor<BaseDomainValue> visitor)
         {
             if (visitor == null)
-                throw new ArgumentNullException("visitor");
+                throw new ArgumentNullException(nameof(visitor));
 
             throw new NotImplementedException(
                         string.Format(

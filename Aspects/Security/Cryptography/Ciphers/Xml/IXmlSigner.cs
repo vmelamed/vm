@@ -183,7 +183,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlNamespaceManager namespaceManager = null,
             Uri documentLocation = null)
         {
-            Contract.Requires<ArgumentNullException>(document != null, "document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
             throw new NotImplementedException();
         }
 
@@ -191,7 +191,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlDocument document,
             XmlDocument signature = null)
         {
-            Contract.Requires<ArgumentNullException>(document != null, "document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
             throw new NotImplementedException();
         }
 

@@ -311,10 +311,7 @@ namespace vm.Aspects.Diagnostics
         }
 
         #region ICloneable Members
-        object ICloneable.Clone()
-        {
-            return this.Clone();
-        }
+        object ICloneable.Clone() => Clone();
         #endregion
 
         #region Identity rules implementation.
@@ -361,10 +358,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="DumpAttribute"/> and 
         /// properties of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as DumpAttribute);
-        }
+        public override bool Equals(object obj) => Equals(obj as DumpAttribute);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="DumpAttribute"/> and its derived types.
@@ -398,12 +392,9 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator==(DumpAttribute left, DumpAttribute right)
-        {
-            return ReferenceEquals(left, null) 
-                        ? ReferenceEquals(right, null) 
-                        : left.Equals(right);
-        }
+        public static bool operator==(DumpAttribute left, DumpAttribute right) => ReferenceEquals(left, null) 
+                                                                                    ? ReferenceEquals(right, null) 
+                                                                                    : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="DumpAttribute"/> objects.
@@ -414,10 +405,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator!=(DumpAttribute left, DumpAttribute right)
-        {
-            return !(left==right);
-        }
+        public static bool operator!=(DumpAttribute left, DumpAttribute right) => !(left==right);
         #endregion
     }
 }

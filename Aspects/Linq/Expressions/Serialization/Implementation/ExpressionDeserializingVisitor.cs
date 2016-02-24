@@ -151,11 +151,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             return Expression.Constant(value, type);
         }
 
-        static Expression VisitDefault(XElement element)
-        {
-            return Expression.Default(
-                        DataSerialization.GetType(element));
-        }
+        static Expression VisitDefault(XElement element) => Expression.Default(DataSerialization.GetType(element));
 
         ParameterExpression VisitParameter(XElement element)
         {

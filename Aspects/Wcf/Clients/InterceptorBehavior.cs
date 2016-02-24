@@ -67,7 +67,7 @@ namespace vm.Aspects.Wcf.Clients
             ClientRuntime clientRuntime)
         {
             if (clientRuntime == null)
-                throw new ArgumentNullException("clientRuntime");
+                throw new ArgumentNullException(nameof(clientRuntime));
 
             clientRuntime.MessageInspectors.Add(this);
         }

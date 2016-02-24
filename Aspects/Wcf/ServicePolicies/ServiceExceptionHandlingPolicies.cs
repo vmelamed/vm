@@ -41,16 +41,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <summary>
         /// Gets a dictionary of exception policy names and respective lists of policy entries.
         /// </summary>
-        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries
-        {
-            get
-            {
-                return new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
-                {
-                    { WcfExceptionShielding, ServiceExceptionHandlingPolicies.WcfExceptionShieldingPolicyEntries() }
-                };
-            }
-        }
+        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
+                                                                                                {
+                                                                                                    { WcfExceptionShielding, WcfExceptionShieldingPolicyEntries() }
+                                                                                                };
         #endregion
 
         static readonly NameValueCollection _faultMappings = new NameValueCollection {["HandlingInstanceId"] = "{Guid}"};

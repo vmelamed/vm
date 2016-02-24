@@ -44,7 +44,7 @@ namespace vm.Aspects
                   memberExpression.Member is FieldInfo     ||
                   memberExpression.Member is EventInfo))
                 throw new ArgumentException(@"The argument must be a lambda expression with a body of a single property or field or event selection expression, e.g.
-    a => a.Name", "lambda");
+    a => a.Name", nameof(lambda));
 
             return memberExpression.Member.Name;
         }

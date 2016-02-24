@@ -16,21 +16,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             ClassMetadataRegistrar.RegisterMetadata();
         }
 
-        public static Stream CreateNonReadableStream()
-        {
-            return new FileStream("Readme.txt", FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
-        }
+        public static Stream CreateNonReadableStream() => new FileStream("Readme.txt", FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
 
-        public static Stream CreateNonWritableStream()
-        {
-            return new MemoryStream(new byte[10], false);
-        }
+        public static Stream CreateNonWritableStream() => new MemoryStream(new byte[10], false);
 
         public static void AsyncTestWrapper(
             TestContext testContext,
             Action action)
         {
-            Contract.Requires<ArgumentNullException>(action != null, "action");
+            Contract.Requires<ArgumentNullException>(action != null, nameof(action));
 
             try
             {

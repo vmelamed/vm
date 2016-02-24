@@ -92,18 +92,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the name of the hash algorithm.
         /// </summary>
-        protected virtual string HashAlgorithmName
-        {
-            get { return _hashAlgorithmFactory.HashAlgorithmName; }
-        }
+        protected virtual string HashAlgorithmName => _hashAlgorithmFactory.HashAlgorithmName;
 
         /// <summary>
         /// Gets the hasher.
         /// </summary>
-        protected HashAlgorithm Hasher
-        {
-            get { return _hasher; }
-        }
+        protected HashAlgorithm Hasher => _hasher;
 
         /// <summary>
         /// Gets a value indicating whether the cipher should encrypt the hash too.
@@ -217,9 +211,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void ReserveSpaceForHash(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument \"encryptedStream\" cannot be written to.");
-            Contract.Requires<ArgumentException>(encryptedStream.CanSeek, "The argument \"encryptedStream\" cannot be sought.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
+            Contract.Requires<ArgumentException>(encryptedStream.CanSeek, "The argument "+nameof(encryptedStream)+" cannot be sought.");
 
             // reserve space in the encrypted stream for the hash
             var length = ShouldEncryptHash
@@ -283,8 +277,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument \"encryptedStream\" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
 
             try
             {
@@ -361,8 +355,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void LoadHashToValidate(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The input stream \"encryptedStream\" cannot be read.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The input stream "+nameof(encryptedStream)+" cannot be read.");
             Contract.Requires<InvalidOperationException>(!ShouldEncryptHash || PrivateKey != null, "The certificate does not contain a private key for decryption.");
 
             //read the encrypted length and hash
@@ -370,13 +364,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _hash = new byte[length];
 
             if (encryptedStream.Read(_hash, 0, _hash.Length) != _hash.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", nameof(encryptedStream));
 
             // decrypt
             if (ShouldEncryptHash)
@@ -431,10 +425,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument \"encryptedStream\" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, "cryptoStream");
-            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument \"cryptoStream\" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
+            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument "+nameof(cryptoStream)+" cannot be written to.");
 
             Contract.Assume(_hasher != null);
 
@@ -468,10 +462,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument \"encryptedStream\" cannot be read from.");
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, "cryptoStream");
-            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument \"cryptoStream\" cannot be read from.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
+            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
+            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
             Contract.Ensures(Contract.Result<byte[]>() != null);
 
             Contract.Assume(_hasher != null);
@@ -584,8 +578,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual async Task LoadHashToValidateAsync(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument \"encryptedStream\" cannot be read from.");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
+            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
             Contract.Requires<ArgumentException>(!ShouldEncryptHash || PrivateKey != null, "The certificate does not contain a private key for decryption.");
 
             //read the encrypted length and hash
@@ -593,13 +587,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var storedHash = new byte[length];
 
             if (await encryptedStream.ReadAsync(storedHash, 0, storedHash.Length) != storedHash.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", "encryptedStream");
+                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", nameof(encryptedStream));
 
             // decrypt
             _hash = ShouldEncryptHash

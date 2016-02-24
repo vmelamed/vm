@@ -34,7 +34,12 @@ namespace vm.Aspects.Wcf.FaultContracts
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "N/A")]
         public ReadOnlyCollection<Exception> InnerExceptions
         {
-            get { return null; }
+            get
+            {
+                Contract.Ensures(Contract.Result<ReadOnlyCollection<Exception>>() == null);
+
+                return null;
+            }
             set
             {
                 if (value == null)

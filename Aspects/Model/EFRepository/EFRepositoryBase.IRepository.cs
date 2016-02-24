@@ -117,12 +117,9 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>Unique ID value.</returns>
         public TId GetStoreId<T, TId>()
             where T : IHasStoreId<TId>
-            where TId : IEquatable<TId>
-        {
-            return StoreIdProvider
-                        .GetProvider<TId>()
-                        .GetNewId<T>(this);
-        }
+            where TId : IEquatable<TId> => StoreIdProvider
+                                                .GetProvider<TId>()
+                                                .GetNewId<T>(this);
 
         /// <summary>
         /// Creates an entity of type <typeparamref name="T"/>.

@@ -12,8 +12,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             object instance, 
             string property)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, "instance");
-            Contract.Requires<ArgumentNullException>(property != null, "property");
+            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
+            Contract.Requires<ArgumentNullException>(property != null, nameof(property));
             Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(property));
 
             Instance = instance;
@@ -22,11 +22,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         #region Identity rules implementation.
         #region IEquatable<DumpedProperty> Members
-        public bool Equals(DumpedProperty other)
-        {
-            return Instance.Equals(other.Instance) &&
-                   Property.Equals(other.Property, StringComparison.OrdinalIgnoreCase);
-        }
+        public bool Equals(DumpedProperty other) => Instance.Equals(other.Instance) &&
+                                                    Property.Equals(other.Property, StringComparison.OrdinalIgnoreCase);
         #endregion
 
         public override bool Equals(object obj)
@@ -47,15 +44,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             return hash;
         }
 
-        public static bool operator==(DumpedProperty left, DumpedProperty right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator==(DumpedProperty left, DumpedProperty right) => left.Equals(right);
 
-        public static bool operator!=(DumpedProperty left, DumpedProperty right)
-        {
-            return !(left==right);
-        }
+        public static bool operator!=(DumpedProperty left, DumpedProperty right) => !(left==right);
         #endregion
     }
 }

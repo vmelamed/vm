@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace vm.Aspects.Threading
@@ -43,8 +44,7 @@ namespace vm.Aspects.Threading
         public UpgradeableReaderSlimSync(
             ReaderWriterLockSlim readerWriterLock)
         {
-            if (readerWriterLock == null)
-                throw new ArgumentNullException("readerWriterLock");
+            Contract.Requires<ArgumentNullException>(readerWriterLock != null, nameof(readerWriterLock));
 
             readerWriterLock.EnterUpgradeableReadLock();
             _readerWriterLock = readerWriterLock;

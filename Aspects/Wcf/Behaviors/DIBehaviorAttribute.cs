@@ -58,7 +58,7 @@ namespace vm.Aspects.Wcf.Behaviors
             Type targetContract)
         {
             if (targetContract != null && !targetContract.IsInterface)
-                throw new ArgumentException("The target contract must be an interface.", "targetContract");
+                throw new ArgumentException("The target contract must be an interface.", nameof(targetContract));
 
             ResolveName    = resolveName;
             TargetContract = targetContract;
@@ -117,11 +117,11 @@ namespace vm.Aspects.Wcf.Behaviors
             DispatchRuntime dispatchRuntime)
         {
             if (contractDescription==null)
-                throw new ArgumentNullException("contractDescription");
+                throw new ArgumentNullException(nameof(contractDescription));
             if (dispatchRuntime==null)
-                throw new ArgumentNullException("dispatchRuntime");
+                throw new ArgumentNullException(nameof(dispatchRuntime));
             if (contractDescription.ContractType==null)
-                throw new ArgumentException("The ContractType property cannot be null.", "contractDescription");
+                throw new ArgumentException("The ContractType property cannot be null.", nameof(contractDescription));
 
             dispatchRuntime.InstanceProvider = new DIInstanceProvider(contractDescription.ContractType, ResolveName);
         }

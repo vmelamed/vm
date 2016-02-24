@@ -63,10 +63,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// Creates the call data.
         /// </summary>
         /// <returns>CallData.</returns>
-        protected override CallData CreateCallData()
-        {
-            return new ServiceCallData();
-        }
+        protected override CallData CreateCallData() => new ServiceCallData();
 
         /// <summary>
         /// Creates and fills a new call data object with additional audit data about the call.

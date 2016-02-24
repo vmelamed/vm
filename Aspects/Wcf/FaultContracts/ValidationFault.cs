@@ -54,13 +54,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// 
         /// </summary>
-        public bool IsValid
-        {
-            get { return InternalDetails.Count == 0; }
-        }
+        public bool IsValid => InternalDetails.Count == 0;
 
         [DataMember(Name = "internalDetails")]
-        IList<ValidationFaultElement> InternalDetails { get; set; }
+        IList<ValidationFaultElement> InternalDetails { get; }
 
         /// <summary>
         /// Gets the validation details.

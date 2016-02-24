@@ -142,10 +142,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Gets a value indicating whether this instance is initialized.
         /// </summary>
-        public bool IsInitialized
-        {
-            get { return _isInitialized; }
-        }
+        public bool IsInitialized => _isInitialized;
 
         /// <summary>
         /// Gets the number of immediately available instances. Use for testing only.
@@ -263,10 +260,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

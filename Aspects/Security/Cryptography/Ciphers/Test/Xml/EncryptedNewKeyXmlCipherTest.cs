@@ -7,15 +7,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class EncryptedNewKeyXmlCipherTest : GenericXmlCipherTest<EncryptedNewKeyXmlCipher>
     {
-        public override IXmlCipher GetCipher()
-        {
-            return new EncryptedNewKeyXmlCipher(CertificateFactory.GetDecryptingCertificate());
-        }
+        public override IXmlCipher GetCipher() => new EncryptedNewKeyXmlCipher(CertificateFactory.GetDecryptingCertificate());
 
-        public IXmlCipher GetPublicCertCipher()
-        {
-            return new EncryptedNewKeyXmlCipher(CertificateFactory.GetEncryptingCertificate());
-        }
+        public IXmlCipher GetPublicCertCipher() => new EncryptedNewKeyXmlCipher(CertificateFactory.GetEncryptingCertificate());
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

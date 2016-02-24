@@ -118,7 +118,7 @@ namespace vm.Aspects.Visitor
             object visited)
         {
             if (visited == null)
-                throw new ArgumentNullException("visited");
+                throw new ArgumentNullException(nameof(visited));
 
             throw new NotImplementedException(
                 string.Format(

@@ -44,26 +44,17 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets the starting GUID.
         /// </summary>
-        public Guid StartGuid
-        {
-            get { return new Guid(_start, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }); }
-        }
+        public Guid StartGuid => new Guid(_start, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
 
         /// <summary>
         /// Gets the GUID that will be returned by the next call to <see cref="M:NewGuid"/>.
         /// </summary>
-        public Guid NextGuid
-        {
-            get { return new Guid(_variable, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }); }
-        }
+        public Guid NextGuid => new Guid(_variable, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
 
         /// <summary>
         /// Gets the last unique identifier returned by <see cref="M:NewGuid"/>.
         /// </summary>
-        public Guid LastGuid
-        {
-            get { return new Guid(_variable-_increment, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }); }
-        }
+        public Guid LastGuid => new Guid(_variable-_increment, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
 
         /// <summary>
         /// Resets this instance.

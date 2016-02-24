@@ -166,11 +166,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <see langword="true"/> if WCF should not abort the session (if there is one) and instance context if the instance context is not <see cref="InstanceContextMode.Single"/>;
         /// otherwise, <see langword="false"/>. The default is false.
         /// </returns>
-        public bool HandleError(Exception error)
-        {
-            // Since we did all the exception handling and shielding in the ProvideFault method, we should return true.
-            return true;
-        }
+        public bool HandleError(Exception error) => true;
         #endregion
 
         #region Internal Implementation

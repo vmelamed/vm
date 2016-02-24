@@ -18,10 +18,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// <summary>
         /// Gets the human readable messaging pattern identifier.
         /// </summary>
-        public override string MessagingPattern
-        {
-            get { return PatternName; }
-        }
+        public override string MessagingPattern => PatternName;
 
         /// <summary>
         /// Configures the specified binding.

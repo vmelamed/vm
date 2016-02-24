@@ -85,56 +85,50 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Gets a dictionary of exception policy names and respective lists of policy entries.
         /// </summary>
-        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries
-        {
-            get
+        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries =>
+            new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                return new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
                 {
+                    LogAndSwallow,
+                    new List<ExceptionPolicyEntry>
                     {
-                        LogAndSwallow,
-                        new List<ExceptionPolicyEntry>
-                        {
-                            new ExceptionPolicyEntry(
-                                typeof(Exception),
-                                PostHandlingAction.None,
-                                new IExceptionHandler[]
-                                {
-                                    new LoggingExceptionHandler(
-                                            LogWriterFacades.Exception,
-                                            1000,
-                                            TraceEventType.Error,
-                                            "vm.Aspects.Facilities",
-                                            1,
-                                            typeof(DumpExceptionFormatter),
-                                            Facility.LogWriter),
-                                }),
-                        }
-                    },
+                        new ExceptionPolicyEntry(
+                            typeof(Exception),
+                            PostHandlingAction.None,
+                            new IExceptionHandler[]
+                            {
+                                new LoggingExceptionHandler(
+                                        LogWriterFacades.Exception,
+                                        1000,
+                                        TraceEventType.Error,
+                                        "vm.Aspects.Facilities",
+                                        1,
+                                        typeof(DumpExceptionFormatter),
+                                        Facility.LogWriter),
+                            }),
+                    }
+                },
+                {
+                    LogAndRethrow,
+                    new List<ExceptionPolicyEntry>
                     {
-                        LogAndRethrow,
-                        new List<ExceptionPolicyEntry>
-                        {
-                            new ExceptionPolicyEntry(
-                                typeof(Exception),
-                                PostHandlingAction.NotifyRethrow,
-                                new IExceptionHandler[]
-                                {
-                                    new LoggingExceptionHandler(
-                                            LogWriterFacades.Exception,
-                                            2000,
-                                            TraceEventType.Error,
-                                            "vm.Aspects.Facilities",
-                                            1,
-                                            typeof(DumpExceptionFormatter),
-                                            Facility.LogWriter),
-                                }),
-                        }
-                    },
-                };
-            }
-        }
-
+                        new ExceptionPolicyEntry(
+                            typeof(Exception),
+                            PostHandlingAction.NotifyRethrow,
+                            new IExceptionHandler[]
+                            {
+                                new LoggingExceptionHandler(
+                                        LogWriterFacades.Exception,
+                                        2000,
+                                        TraceEventType.Error,
+                                        "vm.Aspects.Facilities",
+                                        1,
+                                        typeof(DumpExceptionFormatter),
+                                        Facility.LogWriter),
+                            }),
+                    }
+                },
+            };
         #endregion
 
         /// <summary>

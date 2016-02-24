@@ -39,37 +39,31 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust
 
     public class Object1Dump : MarshalByRefObject
     {
-        internal static Object1 GetObject1()
-        {
-            return new Object1
-            {
-                ObjectProperty         = null,
-                NullIntProperty        = null,
-                NullLongProperty       = 1L,
-                BoolProperty           = true,
-                CharProperty           = 'A',
-                ByteProperty           = (byte)1,
-                SByteProperty          = (sbyte)1,
-                ShortProperty          = (short)1,
-                IntProperty            = (int)1,
-                LongProperty           = (long)1,
-                UShortProperty         = (ushort)1,
-                UIntProperty           = (uint)1,
-                ULongProperty          = (ulong)1,
-                DoubleProperty         = 1.0,
-                FloatProperty          = (float)1.0,
-                DecimalProperty        = 1M,
-                GuidProperty           = Guid.Empty,
-                UriProperty            = new Uri("http://localhost"),
-                DateTimeProperty       = new DateTime(2013, 1, 13),
-                TimeSpanProperty       = new TimeSpan(123L),
-                DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-            };
-        }
+        internal static Object1 GetObject1() => new Object1
+                                                {
+                                                    ObjectProperty         = null,
+                                                    NullIntProperty        = null,
+                                                    NullLongProperty       = 1L,
+                                                    BoolProperty           = true,
+                                                    CharProperty           = 'A',
+                                                    ByteProperty           = (byte)1,
+                                                    SByteProperty          = (sbyte)1,
+                                                    ShortProperty          = (short)1,
+                                                    IntProperty            = (int)1,
+                                                    LongProperty           = (long)1,
+                                                    UShortProperty         = (ushort)1,
+                                                    UIntProperty           = (uint)1,
+                                                    ULongProperty          = (ulong)1,
+                                                    DoubleProperty         = 1.0,
+                                                    FloatProperty          = (float)1.0,
+                                                    DecimalProperty        = 1M,
+                                                    GuidProperty           = Guid.Empty,
+                                                    UriProperty            = new Uri("http://localhost"),
+                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
+                                                    TimeSpanProperty       = new TimeSpan(123L),
+                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+                                                };                                  
 
-        public virtual string DumpObject1()
-        {
-            return GetObject1().DumpString();
-        }
+        public virtual string DumpObject1() => GetObject1().DumpString();
     }
 }

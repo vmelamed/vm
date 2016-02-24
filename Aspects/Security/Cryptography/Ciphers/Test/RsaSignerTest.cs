@@ -6,15 +6,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class RsaSignerTest : GenericHasherTest<RsaSigner>
     {
-        public override IHasherAsync GetHasher()
-        {
-            return new RsaSigner(CertificateFactory.GetSigningCertificate());
-        }
+        public override IHasherAsync GetHasher() => new RsaSigner(CertificateFactory.GetSigningCertificate());
 
-        public override IHasherAsync GetHasher(int saultLength)
-        {
-            return GetHasher();
-        }
+        public override IHasherAsync GetHasher(int saultLength) => GetHasher();
 
         #region IsDisposed tests
         [TestMethod]

@@ -148,7 +148,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
                                 CultureInfo.InvariantCulture,
                                 "Expected {0} element.",
                                 XNames.Elements.Expression),
-                            "element");
+                            nameof(element));
 
             var visitor = new ExpressionDeserializingVisitor();
 

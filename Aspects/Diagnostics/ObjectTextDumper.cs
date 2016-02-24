@@ -125,7 +125,7 @@ namespace vm.Aspects.Diagnostics
             BindingFlags propertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly,
             BindingFlags fieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, "writer");
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
 
             if (writer.GetType() == typeof(StringWriter))
             {
@@ -939,10 +939,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return !Interlocked.Equals(_disposed, 0); }
-        }
+        public bool IsDisposed => !Interlocked.Equals(_disposed, 0);
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

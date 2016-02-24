@@ -82,20 +82,14 @@ namespace vm.Aspects.Wcf.Behaviors
         /// Gets the web HTTP behavior.
         /// </summary>
         /// <returns>The WebHttpBehavior.</returns>
-        public WebHttpBehavior WebHttpBehavior
-        {
-            get
-            {
-                return OperationContext
-                            .Current
-                            .Host
-                            .Description
-                            .Endpoints
-                            .SelectMany(ep => ep.EndpointBehaviors)
-                            .OfType<WebHttpBehavior>()
-                            .FirstOrDefault();
-            }
-        }
+        public WebHttpBehavior WebHttpBehavior => OperationContext
+                                                    .Current
+                                                    .Host
+                                                    .Description
+                                                    .Endpoints
+                                                    .SelectMany(ep => ep.EndpointBehaviors)
+                                                    .OfType<WebHttpBehavior>()
+                                                    .FirstOrDefault();
 
         /// <summary>
         /// Gets the fault action either from the fault's type or if not specified, from the action in the current <see cref="OperationContext"/>.

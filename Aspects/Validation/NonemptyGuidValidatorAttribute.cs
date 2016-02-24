@@ -30,10 +30,10 @@ namespace vm.Aspects.Validation
             Contract.Ensures(Contract.Result<Validator>() != null);
 
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             if (targetType != typeof(Guid))
-                throw new ArgumentException(Resources.ExNotStringType, "targetType");
+                throw new ArgumentException(Resources.ExNotStringType, nameof(targetType));
 
             return new NonemptyGuidValidator(GetMessageTemplate(), Tag, Negated);
         }

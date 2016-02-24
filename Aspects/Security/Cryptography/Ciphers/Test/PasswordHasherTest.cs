@@ -6,21 +6,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class PasswordHasherTest : GenericHasherTest<PasswordHasher>
     {
-        public override IHasherAsync GetHasher()
-        {
-            return new PasswordHasher(
-                        PasswordDerivationConstants.MinNumberOfIterations,
-                        PasswordDerivationConstants.DefaultHashLength,
-                        PasswordDerivationConstants.DefaultSaltLength);
-        }
+        public override IHasherAsync GetHasher() => new PasswordHasher(
+                                                            PasswordDerivationConstants.MinNumberOfIterations,
+                                                            PasswordDerivationConstants.DefaultHashLength,
+                                                            PasswordDerivationConstants.DefaultSaltLength);
         public override IHasherAsync GetHasher(
-            int saultLength)
-        {
-            return new PasswordHasher(
-                        PasswordDerivationConstants.MinNumberOfIterations,
-                        PasswordDerivationConstants.DefaultHashLength,
-                        saultLength);
-        }
+            int saultLength) => new PasswordHasher(
+                                        PasswordDerivationConstants.MinNumberOfIterations,
+                                        PasswordDerivationConstants.DefaultHashLength,
+                                        saultLength);
 
         #region IsDisposed tests
         [TestMethod]

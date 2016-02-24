@@ -73,7 +73,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public void ImportSymmetricKey(byte[] key)
         {
-            Contract.Requires<ArgumentNullException>(key != null, "key");
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
 
             throw new NotImplementedException();
@@ -81,7 +81,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public Task ImportSymmetricKeyAsync(byte[] key)
         {
-            Contract.Requires<ArgumentNullException>(key != null, "key");
+            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
 
             throw new NotImplementedException();

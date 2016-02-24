@@ -47,10 +47,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         //
         #endregion
 
-        IHasherAsync GetHasher()
-        {
-            return new Hasher();
-        }
+        IHasherAsync GetHasher() => new Hasher();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

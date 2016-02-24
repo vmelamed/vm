@@ -10,20 +10,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         const string keyFileName = "encryptedHashKey.key";
 
-        static IHasherAsync GetHasherImpl()
-        {
-            return new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, "encryptedHashKey.key");
-        }
+        static IHasherAsync GetHasherImpl() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, "encryptedHashKey.key");
 
-        public override IHasherAsync GetHasher()
-        {
-            return GetHasherImpl();
-        }
+        public override IHasherAsync GetHasher() => GetHasherImpl();
 
-        public override IHasherAsync GetHasher(int saltLength)
-        {
-            return GetHasherImpl();
-        }
+        public override IHasherAsync GetHasher(int saltLength) => GetHasherImpl();
 
 
         [ClassInitialize]
@@ -81,33 +72,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public byte[] PublicFinalizeHashing(
-                CryptoStream hashStream)
-            {
-                return base.FinalizeHashing(hashStream);
-            }
+                CryptoStream hashStream) => base.FinalizeHashing(hashStream);
         }
 
-        InheritedHasher GetInheritedHasher()
-        {
-            return new InheritedHasher();
-        }
+        InheritedHasher GetInheritedHasher() => new InheritedHasher();
 
         CryptoStream GetCryptoStream(
-            InheritedHasher hasher)
-        {
-            return new CryptoStream(
-                            TestUtilities.CreateNonWritableStream(),
-                            HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256),
-                            CryptoStreamMode.Read);
-        }
+            InheritedHasher hasher) => new CryptoStream(
+                                                TestUtilities.CreateNonWritableStream(),
+                                                HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256),
+                                                CryptoStreamMode.Read);
 
         CryptoStream GetCryptoStream2(
-            InheritedHasher hasher)
-        {
-            return new CryptoStream(
-                            new MemoryStream(new byte[10], true),
-                            HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256),
-                            CryptoStreamMode.Write);
-        }
+            InheritedHasher hasher) => new CryptoStream(
+                                                new MemoryStream(new byte[10], true),
+                                                HashAlgorithm.Create(Algorithms.KeyedHash.HmacSha256),
+                                                CryptoStreamMode.Write);
     }
 }

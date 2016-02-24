@@ -11,47 +11,29 @@ namespace vm.Aspects.Tests
 
     public class RegisteredTargetTypeInCode
     {
-        public string IdentifySource()
-        {
-            return "type in code";
-        }
+        public string IdentifySource() => "type in code";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     public class RegisteredTargetTypeInAppConfig
     {
-        public string IdentifySource()
-        {
-            return "type in app.config";
-        }
+        public string IdentifySource() => "type in app.config";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     public class RegisteredTargetTypeInTestConfig
     {
-        public string IdentifySource()
-        {
-            return "type in test.config";
-        }
+        public string IdentifySource() => "type in test.config";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -59,17 +41,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromCode : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from code";
-        }
+        public string IdentifySource() => "from code";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -77,17 +53,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromCodeBox : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from code/box";
-        }
+        public string IdentifySource() => "from code/box";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -95,17 +65,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromAppConfig : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from app.config";
-        }
+        public string IdentifySource() => "from app.config";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -113,17 +77,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromAppConfigBox : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from app.config/box";
-        }
+        public string IdentifySource() => "from app.config/box";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -131,17 +89,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromTestConfig : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from test.config";
-        }
+        public string IdentifySource() => "from test.config";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     /// <summary>
@@ -149,17 +101,11 @@ namespace vm.Aspects.Tests
     /// </summary>
     public class TestTargetFromTestConfigBox : ITestTarget
     {
-        public string IdentifySource()
-        {
-            return "from test.config/box";
-        }
+        public string IdentifySource() => "from test.config/box";
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource()
-        {
-            return string.Format("{0} ({1})", IdentifySource(), uniqueId);
-        }
+        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
     }
 
     #endregion

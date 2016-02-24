@@ -30,10 +30,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static ICipherAsync GetCipherImpl()
-        {
-            return new ProtectedKeyCipher(null, keyFileName);
-        }
+        static ICipherAsync GetCipherImpl() => new ProtectedKeyCipher(null, keyFileName);
 
         public override ICipherAsync GetCipher(bool base64 = false)
         {
@@ -233,28 +230,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
 
             public Task PublicBeforeWriteEncryptedAsync(
-                    Stream encryptedStream)
-            {
-                return base.BeforeWriteEncryptedAsync(encryptedStream);
-            }
+                    Stream encryptedStream) => base.BeforeWriteEncryptedAsync(encryptedStream);
 
             public Task PublicBeforeReadDecryptedAsync(
-                Stream encryptedStream)
-            {
-                return base.BeforeReadDecryptedAsync(encryptedStream);
-            }
+                Stream encryptedStream) => base.BeforeReadDecryptedAsync(encryptedStream);
 
             public CryptoStream PublicCreateEncryptingStream(
-                Stream encryptedStream)
-            {
-                return base.CreateEncryptingStream(encryptedStream);
-            }
+                Stream encryptedStream) => base.CreateEncryptingStream(encryptedStream);
 
             public CryptoStream PublicCreateDecryptingStream(
-                Stream encryptedStream)
-            {
-                return base.CreateDecryptingStream(encryptedStream);
-            }
+                Stream encryptedStream) => base.CreateDecryptingStream(encryptedStream);
 
             public void PublicDoEncrypt(
                 Stream dataStream,
@@ -272,17 +257,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             public Task PublicDoEncryptAsync(
                     Stream dataStream,
-                    Stream cryptoStream)
-            {
-                return base.DoEncryptAsync(dataStream, cryptoStream);
-            }
+                    Stream cryptoStream) => base.DoEncryptAsync(dataStream, cryptoStream);
 
             public Task PublicDoDecryptAsync(
                 Stream cryptoStream,
-                Stream dataStream)
-            {
-                return base.DoDecryptAsync(cryptoStream, dataStream);
-            }
+                Stream dataStream) => base.DoDecryptAsync(cryptoStream, dataStream);
         }
 
         [TestMethod]

@@ -15,10 +15,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <returns>
         /// A <see cref="T:System.ServiceModel.Channels.BindingElement"></see> object that is a deep clone of the original.
         /// </returns>
-        public override BindingElement Clone()
-        {
-            return this;
-        }
+        public override BindingElement Clone() => this;
 
         /// <summary>
         /// Gets the property.
@@ -28,7 +25,7 @@ namespace vm.Aspects.Wcf.Behaviors
         public override T GetProperty<T>(BindingContext context)
         {
             if (context == null)
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
 
             return context.GetInnerProperty<T>();
         }

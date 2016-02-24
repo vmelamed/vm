@@ -75,7 +75,7 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             bool replace = false)
         {
-            Contract.Requires<ArgumentNullException>(type != null, "type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
             ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute, replace);

@@ -126,7 +126,7 @@ namespace vm.Aspects.Wcf
         /// </summary>
         [DataMember(Name = "value")]
         [ObjectValidator]
-        public T Value { get; private set; }
+        public T Value { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:vm.Aspects.Wcf.CustomContext{T}"/> class with a <typeparamref name="T"/> value.
@@ -283,16 +283,13 @@ namespace vm.Aspects.Wcf
             }
         }
 
-        static DataContractJsonSerializer GetJsonSerializer()
-        {
-            return new DataContractJsonSerializer(
-                            typeof(T),
-                            new DataContractJsonSerializerSettings
-                            {
-                                DateTimeFormat            = new DateTimeFormat("o", CultureInfo.InvariantCulture),
-                                EmitTypeInformation       = EmitTypeInformation.Never,
-                                UseSimpleDictionaryFormat = true,
-                            });
-        }
+        static DataContractJsonSerializer GetJsonSerializer() => new DataContractJsonSerializer(
+                                                                        typeof(T),
+                                                                        new DataContractJsonSerializerSettings
+                                                                        {
+                                                                            DateTimeFormat            = new DateTimeFormat("o", CultureInfo.InvariantCulture),
+                                                                            EmitTypeInformation       = EmitTypeInformation.Never,
+                                                                            UseSimpleDictionaryFormat = true,
+                                                                        });
     }
 }

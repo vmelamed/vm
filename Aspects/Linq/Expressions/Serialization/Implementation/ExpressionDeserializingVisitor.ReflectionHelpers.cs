@@ -88,8 +88,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static MemberInfo GetMemberInfo(Type type, XElement element)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             if (element == null)
                 return null;
@@ -154,8 +153,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static ConstructorInfo GetConstructorInfo(Type type, XElement element)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
+            Contract.Requires<ArgumentNullException>(type != null, "type");
 
             if (element == null)
                 return null;

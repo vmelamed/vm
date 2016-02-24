@@ -23,12 +23,12 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <summary>
         /// Gets the input validators.
         /// </summary>
-        public IList<Validator> InputValidators { get; private set; }
+        public IList<Validator> InputValidators { get; }
 
         /// <summary>
         /// Gets or sets the input validator parameter names.
         /// </summary>
-        List<string> InputValidatorParameterNames { get; set; }
+        List<string> InputValidatorParameterNames { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidatingParameterInspector"/> class.
@@ -99,7 +99,7 @@ namespace vm.Aspects.Wcf.Behaviors
             Contract.Ensures(Contract.Result<object>() == null);
 
             if (inputs == null)
-                throw new ArgumentNullException("inputs");
+                throw new ArgumentNullException(nameof(inputs));
 
             var results = new ValidationResults();
 

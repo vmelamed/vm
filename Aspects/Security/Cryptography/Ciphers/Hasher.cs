@@ -88,10 +88,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets a value indicating whether the hash should be salted.
         /// </summary>
-        public bool ShouldSalt
-        {
-            get { return SaltLength > 0; }
-        }
+        public bool ShouldSalt => SaltLength > 0;
         #endregion
 
         #region IHasher Members
@@ -120,7 +117,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", "dataStream");
+                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
 
             _hashAlgorithm.Initialize();
             using (var hashStream = CreateHashStream())
@@ -353,10 +350,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns>CryptoStream.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "It will be disposed by the calling code.")]
-        protected virtual CryptoStream CreateHashStream()
-        {
-            return new CryptoStream(new NullStream(), _hashAlgorithm, CryptoStreamMode.Write);
-        }
+        protected virtual CryptoStream CreateHashStream() => new CryptoStream(new NullStream(), _hashAlgorithm, CryptoStreamMode.Write);
 
         /// <summary>
         /// Writes the salt (if any) into the crypto stream.
@@ -369,8 +363,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
+            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
 
             if (!ShouldSalt)
                 return null;
@@ -399,9 +393,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(!ShouldSalt || salt != null, "salt");
+            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
+            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(!ShouldSalt || salt != null, nameof(salt));
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
@@ -429,8 +423,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
+            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
 
             if (!ShouldSalt)
                 return null;
@@ -460,10 +454,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

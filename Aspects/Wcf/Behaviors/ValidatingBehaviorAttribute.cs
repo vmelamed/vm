@@ -23,7 +23,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <summary>
         /// Gets the ruleset.
         /// </summary>
-        public string Ruleset { get; private set; }
+        public string Ruleset { get; }
 
         #region ValidationAttribute Members
         /// <summary>

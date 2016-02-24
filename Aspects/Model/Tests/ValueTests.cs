@@ -15,7 +15,7 @@ namespace vm.Aspects.Model.Tests
         public void Visit(TestValue obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             TestValueVisitedCount++;
         }

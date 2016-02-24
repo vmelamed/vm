@@ -6,19 +6,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class EncryptedNewKeySha256SignedCipherTest : GenericCipherTest<EncryptedNewKeySignedCipher>
     {
-        static ICipherAsync GetCipherImpl()
-        {
-            return new EncryptedNewKeySignedCipher(
-                                CertificateFactory.GetDecryptingSha256Certificate(),
-                                CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
-        }
+        static ICipherAsync GetCipherImpl() => new EncryptedNewKeySignedCipher(
+                                                        CertificateFactory.GetDecryptingSha256Certificate(),
+                                                        CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
 
-        static ICipherAsync GetCipherPublicCertImpl()
-        {
-            return new EncryptedNewKeySignedCipher(
-                                CertificateFactory.GetEncryptingSha256Certificate(),
-                                CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
-        }
+        static ICipherAsync GetCipherPublicCertImpl() => new EncryptedNewKeySignedCipher(
+                                                                CertificateFactory.GetEncryptingSha256Certificate(),
+                                                                CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
 
         public override ICipherAsync GetCipher(bool base64 = false)
         {

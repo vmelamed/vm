@@ -69,6 +69,8 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
         {
+            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
+
             var result = getNext().Invoke(input, getNext);
 
             if (result.Exception != null)
@@ -117,6 +119,8 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
         {
+            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
+
             var result = getNext().Invoke(input, getNext);
 
             if (result.Exception != null)

@@ -14,20 +14,14 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <returns><see langword="true" /> if the initialization was successful, otherwise <see langword="false" />.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public bool Initialize()
-        {
-            return true;
-        }
+        public bool Initialize() => true;
 
         /// <summary>
         /// Gets the DateTime UTC value at the current moment (e.g. DateTime.UtcNow).
         /// </summary>
         /// <value>The now.</value>
         /// <exception cref="System.NotImplementedException"></exception>
-        public DateTime UtcNow
-        {
-            get { return DateTime.UtcNow; }
-        }
+        public DateTime UtcNow => DateTime.UtcNow;
 
         #endregion
     }

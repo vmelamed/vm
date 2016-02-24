@@ -10,10 +10,7 @@ namespace vm.Aspects.Diagnostics
     {
         static Lazy<IServiceLocator> _serviceLocator = new Lazy<IServiceLocator>(() => new ServiceResolver(), true);
 
-        internal static IServiceLocator Default
-        {
-            get { return _serviceLocator.Value; }
-        }
+        internal static IServiceLocator Default => _serviceLocator.Value;
 
         /// <summary>
         /// Does the actual work of resolving all the requested service instances.
@@ -25,7 +22,7 @@ namespace vm.Aspects.Diagnostics
             Type serviceType)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
 
             var list = new List<object>();
 
@@ -49,7 +46,7 @@ namespace vm.Aspects.Diagnostics
             string key)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
 
             if (serviceType != typeof(IMemberInfoComparer))
                 throw new ActivationException(

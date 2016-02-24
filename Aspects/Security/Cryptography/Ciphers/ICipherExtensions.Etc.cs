@@ -221,7 +221,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string text)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(text != null, "text");
+            Contract.Requires<ArgumentNullException>(text != null, nameof(text));
             Contract.Ensures(Contract.Result<string>() != null);
 
             var base64 = cipher.Base64Encoded;
@@ -276,7 +276,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(data != null, "text");
+            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
 
             return cipher.Encrypt(data);
         }
@@ -636,7 +636,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data)
         {
             Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(data != null, "buffer");
+            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
             Contract.Ensures(Contract.Result<string>() != null);
 
             var base64 = cipher.Base64Encoded;

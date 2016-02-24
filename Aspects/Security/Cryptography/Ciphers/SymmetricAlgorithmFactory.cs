@@ -97,10 +97,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>The name of the symmetric algorithm.</value>
         /// <exception cref="System.NotImplementedException"></exception>
-        public string SymmetricAlgorithmName
-        {
-            get { return _symmetricAlgorithmName; }
-        }
+        public string SymmetricAlgorithmName => _symmetricAlgorithmName;
 
         #endregion
     }

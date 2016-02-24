@@ -12,10 +12,7 @@ namespace vm.Aspects.Model.Tests
     [TestClass]
     public class ListObjectsRepositoryTest : IRepositoryTest<ListObjectsRepository>
     {
-        protected override IRepository GetRepository()
-        {
-            return new ListObjectsRepository();
-        }
+        protected override IRepository GetRepository() => new ListObjectsRepository();
 
         #region Additional test attributes
         //

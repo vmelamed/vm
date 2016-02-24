@@ -74,14 +74,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string xmlPath = null,
             XmlNamespaceManager namespaceManager = null)
         {
-            Contract.Requires<ArgumentNullException>(document != null, "document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
             throw new NotImplementedException();
         }
 
         public void Decrypt(
             XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document != null, "document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
             throw new NotImplementedException();
         }
 

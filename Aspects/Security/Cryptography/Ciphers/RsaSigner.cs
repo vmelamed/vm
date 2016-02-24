@@ -62,7 +62,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The parameter "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _asymmetric = signCertificate.HasPrivateKey

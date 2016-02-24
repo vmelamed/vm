@@ -60,10 +60,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             _maxLength   = maxLength <= 0 ? DefaultMaxLength : maxLength;
         }
 
-        public override Encoding Encoding
-        {
-            get { return _writer.Encoding; }
-        }
+        public override Encoding Encoding => _writer.Encoding;
 
         public override string NewLine
         {
@@ -178,10 +175,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             base.Dispose(disposing);
         }
 
-        public override string ToString()
-        {
-            return _writer.ToString();
-        }
+        public override string ToString() => _writer.ToString();
 
         [ContractInvariantMethod]
         void Invariant()

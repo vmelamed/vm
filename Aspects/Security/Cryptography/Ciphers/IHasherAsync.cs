@@ -60,7 +60,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public Task<byte[]> HashAsync(Stream dataStream)
         {
-            Contract.Requires<ArgumentException>(dataStream==null || dataStream.CanRead, "The \"dataStream\" cannot be read from.");
+            Contract.Requires<ArgumentException>(dataStream==null || dataStream.CanRead, "The "+nameof(dataStream)+" cannot be read from.");
             Contract.Ensures(!(dataStream==null ^ Contract.Result<byte[]>()==null), "The returned value is invalid.");
 
             throw new NotImplementedException();
@@ -68,8 +68,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public Task<bool> TryVerifyHashAsync(Stream dataStream, byte[] hash)
         {
-            Contract.Requires<ArgumentException>(dataStream==null || dataStream.CanRead, "The \"dataStream\" cannot be read from.");
-            Contract.Requires<ArgumentNullException>(dataStream==null || hash!=null, "hash");
+            Contract.Requires<ArgumentException>(dataStream==null || dataStream.CanRead, "The "+nameof(dataStream)+" cannot be read from.");
+            Contract.Requires<ArgumentNullException>(dataStream==null || hash!=null, nameof(hash));
             Contract.Ensures(dataStream!=null || Contract.Result<bool>()==(hash==null), "Invalid return value.");
 
             throw new NotImplementedException();

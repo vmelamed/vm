@@ -157,10 +157,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// Creates an object representing the asymmetric XML encryption method.
         /// </summary>
         /// <returns>EncryptionMethod.</returns>
-        protected virtual EncryptionMethod CreateAsymmetricXmlEncryptionMethod()
-        {
-            return new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
-        }
+        protected virtual EncryptionMethod CreateAsymmetricXmlEncryptionMethod() => new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
         #endregion
     }
 }

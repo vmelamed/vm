@@ -31,12 +31,12 @@ namespace vm.Aspects.Validation
             Contract.Ensures(Contract.Result<Validator>() != null);
 
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             if (!targetType.IsEnum  &&  !(targetType.IsGenericType  &&
                                           targetType.GetGenericTypeDefinition()==typeof(Nullable<>)  &&
                                           targetType.GetGenericArguments()[0].IsEnum))
-                throw new ArgumentException("This validator can be applied to enum or nullable enum types only.", "targetType");
+                throw new ArgumentException("This validator can be applied to enum or nullable enum types only.", nameof(targetType));
 
             // create the validator with reflection
             return (Validator)typeof(EnumDomainValidator<>)

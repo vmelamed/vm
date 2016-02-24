@@ -72,10 +72,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <returns>System.Byte[].</returns>
-        protected override byte[] EncryptSymmetricKey()
-        {
-            return ProtectedData.Protect(Symmetric.Key, null, DataProtectionScope.LocalMachine);
-        }
+        protected override byte[] EncryptSymmetricKey() => ProtectedData.Protect(Symmetric.Key, null, DataProtectionScope.LocalMachine);
 
         /// <summary>
         /// Decrypts the symmetric key.

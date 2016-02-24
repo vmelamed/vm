@@ -73,7 +73,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public static string HashAlgorithm(this X509Certificate2 certificate)
         {
             if (certificate == null)
-                throw new ArgumentNullException("certificate");
+                throw new ArgumentNullException(nameof(certificate));
 
             string hashAlgorithmName;
 

@@ -50,7 +50,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
         public XmlNamespaceManager GetNamespaceManager(XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document != null, "document");
+            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
 
             var nsMgr = new XmlNamespaceManager(document.NameTable);
 

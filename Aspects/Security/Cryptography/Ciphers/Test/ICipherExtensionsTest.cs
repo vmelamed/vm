@@ -45,10 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         //
         #endregion
 
-        ICipherAsync GetCipher()
-        {
-            return new DpapiCipher();
-        }
+        ICipherAsync GetCipher() => new DpapiCipher();
 
         #region Encrypt strings
 #pragma warning disable 618

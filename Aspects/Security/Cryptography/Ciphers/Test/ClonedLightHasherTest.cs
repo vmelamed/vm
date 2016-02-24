@@ -26,10 +26,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             }
         }
 
-        public override IHasherAsync GetHasher(int saltLength)
-        {
-            return GetHasher();
-        }
+        public override IHasherAsync GetHasher(int saltLength) => GetHasher();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)

@@ -70,17 +70,17 @@ namespace vm.Aspects.Wcf.Behaviors
         /// Gets or sets a value indicating whether this <see cref="T:ValidatingBehavior"/> is enabled.
         /// </summary>
         /// <value><see langword="true"/> if enabled; otherwise, <see langword="false"/>. The default value is true.</value>
-        public bool Enabled { get; private set; }
+        public bool Enabled { get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the client validation is enabled.
         /// </summary>
-        bool EnableClientValidation { get; set; }
+        bool EnableClientValidation { get; }
 
         /// <summary>
         /// Gets or sets the ruleset.
         /// </summary>
-        string Ruleset { get; set; }
+        string Ruleset { get; }
 
         #endregion
 
@@ -96,7 +96,7 @@ namespace vm.Aspects.Wcf.Behaviors
             BindingParameterCollection bindingParameters)
         {
             if (endpoint == null)
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
 
             AddBindingParameters(endpoint.Contract, endpoint, bindingParameters);
         }
@@ -111,7 +111,7 @@ namespace vm.Aspects.Wcf.Behaviors
             ClientRuntime clientRuntime)
         {
             if (endpoint == null)
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
 
             ApplyClientBehavior(endpoint.Contract, endpoint, clientRuntime);
         }
@@ -126,9 +126,9 @@ namespace vm.Aspects.Wcf.Behaviors
             EndpointDispatcher endpointDispatcher)
         {
             if (endpoint == null)
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
             if (endpointDispatcher == null)
-                throw new ArgumentNullException("endpointDispatcher");
+                throw new ArgumentNullException(nameof(endpointDispatcher));
 
             ApplyDispatchBehavior(endpoint.Contract, endpoint, endpointDispatcher.DispatchRuntime);
         }
@@ -140,7 +140,7 @@ namespace vm.Aspects.Wcf.Behaviors
         public void Validate(ServiceEndpoint endpoint)
         {
             if (endpoint == null)
-                throw new ArgumentNullException("endpoint");
+                throw new ArgumentNullException(nameof(endpoint));
 
             Validate(endpoint.Contract, endpoint);
         }
@@ -174,9 +174,9 @@ namespace vm.Aspects.Wcf.Behaviors
             ClientRuntime clientRuntime)
         {
             if (contractDescription == null)
-                throw new ArgumentNullException("contractDescription");
+                throw new ArgumentNullException(nameof(contractDescription));
             if (clientRuntime == null)
-                throw new ArgumentNullException("clientRuntime");
+                throw new ArgumentNullException(nameof(clientRuntime));
 
             if (!Enabled || !EnableClientValidation)
                 return;
@@ -200,9 +200,9 @@ namespace vm.Aspects.Wcf.Behaviors
             DispatchRuntime dispatchRuntime)
         {
             if (contractDescription == null)
-                throw new ArgumentNullException("contractDescription");
+                throw new ArgumentNullException(nameof(contractDescription));
             if (dispatchRuntime == null)
-                throw new ArgumentNullException("dispatchRuntime");
+                throw new ArgumentNullException(nameof(dispatchRuntime));
 
             if (!Enabled)
                 return;
@@ -225,7 +225,7 @@ namespace vm.Aspects.Wcf.Behaviors
             ServiceEndpoint endpoint)
         {
             if (contractDescription == null)
-                throw new ArgumentNullException("contractDescription");
+                throw new ArgumentNullException(nameof(contractDescription));
 
             // by pass validation if this behavior is disabled
             if (!Enabled)
@@ -266,7 +266,7 @@ namespace vm.Aspects.Wcf.Behaviors
             ClientOperation clientOperation)
         {
             if (clientOperation == null)
-                throw new ArgumentNullException("clientOperation");
+                throw new ArgumentNullException(nameof(clientOperation));
 
             clientOperation.ParameterInspectors.Add(new ValidatingParameterInspector(operationDescription, Ruleset));
         }
@@ -283,9 +283,9 @@ namespace vm.Aspects.Wcf.Behaviors
             DispatchOperation dispatchOperation)
         {
             if (operationDescription == null)
-                throw new ArgumentNullException("operationDescription");
+                throw new ArgumentNullException(nameof(operationDescription));
             if (dispatchOperation == null)
-                throw new ArgumentNullException("dispatchOperation");
+                throw new ArgumentNullException(nameof(dispatchOperation));
 
             dispatchOperation.ParameterInspectors.Add(new ValidatingParameterInspector(operationDescription, Ruleset));
         }
@@ -299,7 +299,7 @@ namespace vm.Aspects.Wcf.Behaviors
             OperationDescription operationDescription)
         {
             if (operationDescription == null)
-                throw new ArgumentNullException("operationDescription");
+                throw new ArgumentNullException(nameof(operationDescription));
 
             if (HasValidationAssertions(operationDescription) &&
                 !IsOneWay(operationDescription) &&

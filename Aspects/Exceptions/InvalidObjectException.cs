@@ -19,7 +19,7 @@ namespace vm.Aspects.Exceptions
         /// <summary>
         /// Gets or sets a <see cref="ValidationResults"/> object, describing all validation problems.
         /// </summary>
-        public ValidationResults ValidationResults { get; private set; }
+        public ValidationResults ValidationResults { get; }
         #endregion
 
         #region Constructors
@@ -113,9 +113,6 @@ namespace vm.Aspects.Exceptions
         /// <PermissionSet>
         ///   <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" PathDiscovery="*AllFiles*"/>
         ///   </PermissionSet>
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 }

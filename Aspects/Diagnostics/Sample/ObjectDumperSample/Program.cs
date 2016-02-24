@@ -23,10 +23,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Sample
         public Uri UriProperty
         { get; set; }
 
-        public override string ToString()
-        {
-            return this.DumpString();
-        }
+        public override string ToString() => this.DumpString();
     }
 
     [Dump(2, MaxDepth = 3)]

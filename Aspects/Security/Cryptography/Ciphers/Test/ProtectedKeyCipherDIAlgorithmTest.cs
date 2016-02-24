@@ -38,10 +38,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static ICipherAsync GetCipherImpl()
-        {
-            return new ProtectedKeyCipher(null, keyFileName);
-        }
+        static ICipherAsync GetCipherImpl() => new ProtectedKeyCipher(null, keyFileName);
 
         public override ICipherAsync GetCipher(bool base64 = false)
         {

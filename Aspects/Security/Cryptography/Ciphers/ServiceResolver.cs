@@ -17,9 +17,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 string name)
             {
                 if (type == null)
-                    throw new ArgumentNullException("type");
+                    throw new ArgumentNullException(nameof(type));
                 if (name == null)
-                    throw new ArgumentNullException("name");
+                    throw new ArgumentNullException(nameof(name));
 
                 if (string.IsNullOrWhiteSpace(name))
                     name = string.Empty;
@@ -73,10 +73,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// The <see cref="M:Equals"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
             /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
             /// </remarks>
-            public override bool Equals(object obj)
-            {
-                return Equals(obj as TypeAndName);
-            }
+            public override bool Equals(object obj) => Equals(obj as TypeAndName);
 
             /// <summary>
             /// Serves as a hash function for the objects of <see cref="TypeAndName"/> and its derived types.
@@ -103,12 +100,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// </returns>
             public static bool operator ==(
                 TypeAndName left,
-                TypeAndName right)
-            {
-                return ReferenceEquals(left, null)
-                        ? ReferenceEquals(right, null)
-                        : left.Equals(right);
-            }
+                TypeAndName right) => ReferenceEquals(left, null)
+                                        ? ReferenceEquals(right, null)
+                                        : left.Equals(right);
 
             /// <summary>
             /// Compares two <see cref="TypeAndName"/> objects.
@@ -121,19 +115,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// </returns>
             public static bool operator !=(
                 TypeAndName left,
-                TypeAndName right)
-            {
-                return !(left==right);
-            }
+                TypeAndName right) => !(left==right);
             #endregion
         }
 
         static Lazy<IServiceLocator> _serviceLocator = new Lazy<IServiceLocator>(() => new ServiceResolver(), true);
 
-        internal static IServiceLocator Current
-        {
-            get { return _serviceLocator.Value; }
-        }
+        internal static IServiceLocator Current => _serviceLocator.Value;
 
         readonly IDictionary<TypeAndName, Lazy<object>> _defaultServices = new Dictionary<TypeAndName, Lazy<object>>
         {
@@ -175,7 +163,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Type serviceType)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
 
             return _defaultServices.Where(kv => kv.Key.Type == serviceType)
                                    .Select(kv => kv.Value.Value)
@@ -202,7 +190,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string key)
         {
             if (serviceType == null)
-                throw new ArgumentNullException("serviceType");
+                throw new ArgumentNullException(nameof(serviceType));
             if (string.IsNullOrWhiteSpace(key))
                 key = string.Empty;
 

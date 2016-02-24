@@ -37,12 +37,12 @@ namespace vm.Aspects.Wcf.Bindings
         /// <summary>
         /// Gets the name of the messaging pattern.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets a value indicating that when the messages are transmitted over HTTP protocol, a REST-ful style of messaging is preferred.
         /// I.e. <see cref="T:WebHttpBinding"/> over <seealso cref="T:WSHttpBinding"/>.
         /// </summary>
-        public bool Restful { get; private set; }
+        public bool Restful { get; }
     }
 }

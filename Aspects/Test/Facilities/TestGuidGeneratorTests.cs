@@ -10,10 +10,7 @@ namespace vm.Aspects.Tests.Facilities
     [TestClass]
     public class TestGuidGeneratorTests : GenericIGuidGeneratorTests
     {
-        protected override IGuidGenerator GetGenerator()
-        {
-            return new TestGuidGenerator();
-        }
+        protected override IGuidGenerator GetGenerator() => new TestGuidGenerator();
 
         [TestMethod]
         public void NonDefaultGeneratorTest()

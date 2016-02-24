@@ -11,10 +11,7 @@ namespace vm.Aspects.Wcf.Tests
 {
     public class MockLoggingExceptionHandler : IExceptionHandler
     {
-        protected virtual string Category
-        {
-            get { return "Default Category"; }
-        }
+        protected virtual string Category => "Default Category";
 
         public MockLoggingExceptionHandler(NameValueCollection attributes) { }
 
@@ -35,10 +32,7 @@ namespace vm.Aspects.Wcf.Tests
     {
         public MockUnhandledLoggingExceptionHandler(NameValueCollection attributes) : base(attributes) { }
 
-        protected override string Category
-        {
-            get { return "UnhandledLogs Category"; }
-        }
+        protected override string Category => "UnhandledLogs Category";
     }
 
     [ConfigurationElementType(typeof(CustomHandlerData))]
@@ -46,9 +40,6 @@ namespace vm.Aspects.Wcf.Tests
     {
         public MockHandledLoggingExceptionHandler(NameValueCollection attributes) : base(attributes) { }
 
-        protected override string Category
-        {
-            get { return "HandledLogs Category"; }
-        }
+        protected override string Category => "HandledLogs Category";
     }
 }

@@ -96,10 +96,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public override int Read(
             byte[] buffer,
             int offset,
-            int count)
-        {
-            return 0;
-        }
+            int count) => 0;
 
         /// <summary>
         /// When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.
@@ -127,10 +124,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] buffer,
             int offset,
             int count,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
+            CancellationToken cancellationToken) => Task.FromResult(0);
 
         /// <summary>
         /// Asynchronously writes a sequence of bytes to the current stream, advances the current position within this stream by the number of bytes written, and monitors cancellation requests.
@@ -144,10 +138,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] buffer,
             int offset,
             int count,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult<object>(null);
-        }
+            CancellationToken cancellationToken) => Task.FromResult<object>(null);
 
         /// <summary>
         /// Asynchronously reads the bytes from the current stream and writes them to another stream, using a specified buffer size and cancellation token.
@@ -159,10 +150,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public override Task CopyToAsync(
             Stream destination,
             int bufferSize,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult<object>(null);
-        }
+            CancellationToken cancellationToken) => Task.FromResult<object>(null);
 
         /// <summary>
         /// When overridden in a derived class, sets the position within the current stream.

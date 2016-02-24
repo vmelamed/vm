@@ -44,7 +44,7 @@ namespace vm.Aspects.Threading
             ReaderWriterLockSlim readerWriterLock)
         {
             if (readerWriterLock == null)
-                throw new ArgumentNullException("readerWriterLock");
+                throw new ArgumentNullException(nameof(readerWriterLock));
 
             readerWriterLock.EnterUpgradeableReadLock();
             _readerWriterLock = readerWriterLock;

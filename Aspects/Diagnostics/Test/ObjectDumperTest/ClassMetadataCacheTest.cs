@@ -13,10 +13,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         static PrivateType ClassMetadataCacheAccessor = new PrivateType(typeof(ClassMetadataResolver));
         static int initialCacheSize = TypesDumpData.Count();
 
-        static Dictionary<Type, ClassDumpData> TypesDumpData
-        {
-            get { return (Dictionary<Type, ClassDumpData>)ClassMetadataCacheAccessor.GetStaticProperty("TypesDumpData", null); }
-        }
+        static Dictionary<Type, ClassDumpData> TypesDumpData => (Dictionary<Type, ClassDumpData>)ClassMetadataCacheAccessor.GetStaticProperty("TypesDumpData", null);
 
         [TestMethod]
         public void TestSetClassDumpData_NullArg2n3()

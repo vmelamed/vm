@@ -10,10 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         public abstract ICipherAsync GetCipher(bool base64 = false);
 
-        public virtual ICipherAsync GetPublicCertCipher(bool base64 = false)
-        {
-            return null;
-        }
+        public virtual ICipherAsync GetPublicCertCipher(bool base64 = false) => null;
 
         public virtual IKeyManagement GetKeyManager()
         {

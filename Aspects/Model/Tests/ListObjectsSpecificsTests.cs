@@ -34,9 +34,6 @@ namespace vm.Aspects.Model.Tests
         //
         #endregion
 
-        protected override IRepository GetRepository()
-        {
-            return new ListObjectsRepository();
-        }
+        protected override IRepository GetRepository() => new ListObjectsRepository();
     }
 }

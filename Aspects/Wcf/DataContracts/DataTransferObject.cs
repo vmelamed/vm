@@ -67,10 +67,7 @@ namespace vm.Aspects.Wcf.DataContracts
         /// </summary>
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <returns><see langword="true" /> if the specified ruleset is valid; otherwise, <see langword="false" />.</returns>
-        public bool IsValid(string ruleset = "")
-        {
-            return Validate(ruleset).IsValid;
-        }
+        public bool IsValid(string ruleset = "") => Validate(ruleset).IsValid;
 
         /// <summary>
         /// Performs the validation logic and if the object is not valid throws <see cref="T:ValidationException" />.

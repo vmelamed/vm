@@ -478,7 +478,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual CryptoStream CreateHashStream(
             HashAlgorithm hashAlgorithm)
         {
-            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, "hashAlgorithm");
+            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, nameof(hashAlgorithm));
 
             return new CryptoStream(new NullStream(), hashAlgorithm, CryptoStreamMode.Write);
         }
@@ -492,8 +492,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual byte[] FinalizeHashing(
             CryptoStream hashStream)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, "hashStream");
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument \"hashStream\" cannot be written to.");
+            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
+            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
@@ -519,10 +519,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed
-        {
-            get { return Volatile.Read(ref _disposed) != 0; }
-        }
+        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

@@ -110,7 +110,12 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </remarks>
         public Exception InnerException
         {
-            get { return null; }
+            get
+            {
+                Contract.Ensures(Contract.Result<Exception>() == null);
+
+                return null;
+            }
             set
             {
                 if (value != null)
@@ -178,10 +183,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <returns>
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public override string ToString()
-        {
-            return ToString(0);
-        }
+        public override string ToString() => ToString(0);
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that display the value(s) of this instance.
@@ -189,10 +191,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <returns>
         /// A <see cref="System.String"/> that display the value(s) of this instance.
         /// </returns>
-        public string ToString(int indentLevel)
-        {
-            return this.DumpString(indentLevel);
-        }
+        public string ToString(int indentLevel) => this.DumpString(indentLevel);
 
         /// <summary>
         /// Gets the HTTP status description corresponding to an HTTP status code.

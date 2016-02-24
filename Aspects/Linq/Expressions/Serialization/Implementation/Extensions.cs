@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,8 +21,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         public static bool IsBasicType(
             this Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             return
                 type.IsEnum ||

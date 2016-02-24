@@ -94,9 +94,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
             GetNextHandlerDelegate getNext)
         {
             if (input == null)
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             if (getNext == null)
-                throw new ArgumentNullException("getNext");
+                throw new ArgumentNullException(nameof(getNext));
 
             // validate the custom context if necessary
             foreach (var attribute in input.MethodBase
