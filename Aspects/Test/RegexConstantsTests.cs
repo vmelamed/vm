@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests
 {
+    /// <summary>
+    /// These tests are most of the time disabled because of some bugs in the data driven tests: sometimes works, sometimes doesn't...?
+    /// </summary>
     [TestClass]
     [DeploymentItem("..\\..\\RegexTestData.csv")]
     public class RegexConstantsTests
@@ -38,7 +41,7 @@ namespace vm.Aspects.Tests
         //
         // Use TestCleanup to run code after each test has run
         [TestCleanup()]
-        public void MyTestCleanup() 
+        public void MyTestCleanup()
         {
             TestContext.WriteLine("After the test.");
         }
@@ -46,9 +49,9 @@ namespace vm.Aspects.Tests
         #endregion
 
         [DataSource(
-            "Microsoft.VisualStudio.TestTools.DataSource.CSV", 
-            ".\\RegexTestData.csv", 
-            "RegexTestData#csv", 
+            "Microsoft.VisualStudio.TestTools.DataSource.CSV",
+            ".\\RegexTestData.csv",
+            "RegexTestData#csv",
             DataAccessMethod.Sequential)]
         [TestMethod]
         public void RegexTest()

@@ -667,10 +667,56 @@ namespace vm.Aspects
         #endregion
 
         #region ISO 8601 date and time strings:
+        #region fragments:
+        const string rexYear     = @"(?<year>\d{4})";
+        const string rexMonth    = @"(?<month>0[1-9]|1[012])";
+        const string rexDay      = @"(?<day>[012]\d|3[01])";
+        const string rexDate     = @"(?<date>(?:"+rexYear+"-"+rexMonth+"(?:-"+rexDay+")?)|(?:"+rexYear+rexMonth+rexDay+"))";
+
+        const string rexHour     = @"(?<hour>[01]\d|2[0-3])";
+        const string rexMinute   = @"(?<minute>[0-5]\d)";
+        const string rexHSecond  = @"(?<second>[0-5]\d)";
+        const string rexFSecond  = @"(?:\.(?<fraction>\d{1,7}))?";
+        const string rexSecond   = rexHSecond+rexFSecond;
+        const string rexLTime    = @"(?<ltime>(?:"+rexHour+"(?::"+rexMinute+"(?::"+rexSecond+")?)?)|(?:"+rexHour+rexMinute+"(?:"+rexSecond+")?))";
+        const string rexZone     = @"(?<zone>Z|(?:[+-](?:[01]\d|2[0-3])(?::?[0-5]\d)?))";
+        const string rexTimeTz   = rexLTime+rexZone;
+        const string rexTime     = rexLTime+rexZone+"?";
+
+        #endregion
+
+        #region ISO 8601 Dates
+        /// <summary>
+        /// The regular expression matches dates in ISO 8601 format. Does not include formats with weeks and days of the year.
+        /// </summary>
+        public const string RexDateIso8601 = @"^"+rexDate+"$";
+
+        static Lazy<Regex> _rexDateIso8601 = new Lazy<Regex>(() => new Regex(RexDateIso8601, RegexOptions.Compiled));
+
+        /// <summary>
+        /// The regular expression object that matches dates in ISO 8601 format. Does not include formats with weeks and days of the year.
+        /// </summary>
+        public static Regex DateIso8601 => _rexDateIso8601.Value;
+        #endregion
+
+        #region ISO 8601 Times
+        /// <summary>
+        /// The regular expression matches times in ISO 8601 format.
+        /// </summary>
+        public const string RexTimeIso8601 = @"^"+rexTime+"$";
+
+        static Lazy<Regex> _rexTimeIso8601 = new Lazy<Regex>(() => new Regex(RexTimeIso8601, RegexOptions.Compiled));
+
+        /// <summary>
+        /// The regular expression object that matches times in ISO 8601 format.
+        /// </summary>
+        public static Regex TimeIso8601 => _rexTimeIso8601.Value;
+        #endregion
+
         /// <summary>
         /// Matches date and time value expressed in ISO 8601 standard format:
         /// </summary>
-        public const string RexDateTimeIso8601 = @"((((\d{4})(-((0[1-9])|(1[012])))(-((0[1-9])|([12]\d)|(3[01]))))(T((([01]\d)|(2[0123]))((:([012345]\d))((:([012345]\d))(\.(\d+))?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))(:([012345]\d))?)))?)|(((\d{4})((0[1-9])|(1[012]))((0[1-9])|([12]\d)|(3[01])))(T((([01]\d)|(2[0123]))(([012345]\d)(([012345]\d)(\d+)?)?)?)(Z|([\+\-](([01]\d)|(2[0123]))([012345]\d)?)))?))";
+        public const string RexDateTimeIso8601 = @"^"+rexDate+"T"+rexTime+"$";
 
         readonly static Lazy<Regex> _dateTimeIso8601 = new Lazy<Regex>(() => new Regex(RexDateTimeIso8601, RegexOptions.Compiled));
 
