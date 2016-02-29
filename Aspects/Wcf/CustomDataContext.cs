@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -12,7 +13,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace vm.Aspects.Wcf
 {
@@ -168,7 +168,7 @@ namespace vm.Aspects.Wcf
                 if (OperationContext.Current == null)
                     return null;
 
-                var identifier = string.Format(CultureInfo.InvariantCulture, "{0}.{1}", CustomDataContext<T>._namespace, CustomDataContext<T>._name);
+                var identifier = string.Format(CultureInfo.InvariantCulture, "{0}.{1}", _namespace, _name);
                 var context = (CustomDataContext<T>)CallContext.GetData(identifier);
 
                 if (context != null)
@@ -219,30 +219,28 @@ namespace vm.Aspects.Wcf
                 Initialize();
 
                 //make sure that there are no multiple CustomContextData<T> objects.
-                if (WebOperationContext.Current != null)
+                if (WebOperationContext.Current == null)
                 {
-                    if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) == null)
-                        value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
-                    else
-                        throw new InvalidOperationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "A header {0} already exists in the message.",
-                                _webHeaderName));
-                }
-                else
-                {
-                    var index = OperationContext.Current.OutgoingMessageHeaders.FindHeader(_name, _namespace);
-
-                    if (index == -1)
-                        value.AddToHeaders(OperationContext.Current.OutgoingMessageHeaders);
-                    else
+                    if (OperationContext.Current.OutgoingMessageHeaders.FindHeader(_name, _namespace) > -1)
                         throw new InvalidOperationException(
                             string.Format(
                                 CultureInfo.InvariantCulture,
                                 "A header {1}/{0} already exists in the message.",
                                 _name,
                                 _namespace));
+
+                    value.AddToHeaders(OperationContext.Current.OutgoingMessageHeaders);
+                }
+                else
+                {
+                    if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) != null)
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "A header {0} already exists in the message.",
+                                _webHeaderName));
+
+                    value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
                 }
             }
         }

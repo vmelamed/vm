@@ -1,6 +1,8 @@
 ﻿<#@ template debug="true" hostSpecific="true" #>
 <#@ output extension=".cs" #>
 <#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Xml" #>
+<#@ Assembly Name="System.Xml.Linq" #>
 <#@ Assembly Name="EnvDTE" #>
 <#@ Assembly Name="EnvDTE80" #>
 <#@ import namespace="EnvDTE" #>
@@ -9,6 +11,8 @@
 <#@ import namespace="System.Globalization" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections" #>
@@ -218,6 +222,9 @@ namespace <#= sourceCodeNamespace.FullName #>
     // copies the XML comment documentation from the source element to the target, commented with '/// '.
     void WriteDoc(string doc)
     {
+        if (string.IsNullOrWhiteSpace(doc))
+            return;
+
         var docElement = XElement.Parse(doc);
         
         PushIndent("/// ");

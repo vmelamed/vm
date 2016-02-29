@@ -85,9 +85,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="input">Inputs to the current call to the target.</param>
         /// <param name="getNext">Delegate to execute to get the next delegate in the handler
         /// chain.</param>
-        /// <returns>
-        /// Return value from the target.
-        /// </returns>
+        /// <returns>Return value from the target.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// </exception>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification="There is no real parameter.")]
         public override IMethodReturn Invoke(
             IMethodInvocation input,

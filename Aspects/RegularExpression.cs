@@ -685,6 +685,20 @@ namespace vm.Aspects
 
         #endregion
 
+        #region ISO 8601 Years
+        /// <summary>
+        /// The regular expression matches years in ISO 8601 format.
+        /// </summary>
+        public const string RexYearIso8601 = @"^"+rexYear+"$";
+
+        static Lazy<Regex> _rexYearIso8601 = new Lazy<Regex>(() => new Regex(RexYearIso8601, RegexOptions.Compiled));
+
+        /// <summary>
+        /// The regular expression object matches years in ISO 8601 format.
+        /// </summary>
+        public static Regex YearIso8601 => _rexYearIso8601.Value;
+        #endregion
+
         #region ISO 8601 Dates
         /// <summary>
         /// The regular expression matches dates in ISO 8601 format. Does not include formats with weeks and days of the year.

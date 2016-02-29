@@ -1,16 +1,16 @@
-﻿using System;
+﻿using EnvDTE;
+using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextTemplating;
+using Microsoft.VisualStudio.TextTemplating.VSHost;
+using System;
 using System.ComponentModel.Design;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TextTemplating;
-using Microsoft.VisualStudio.TextTemplating.VSHost;
 using vm.Aspects.Visix.AddRelatedClasses.Properties;
 using VSLangProj;
 
@@ -287,7 +287,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
 
         void AddClient(object sender, EventArgs e)
         {
-            var cached = new CachedItems("");
+            var cached = new CachedItems(".Client.cs");
 
             if (!cached.HasInterface)
             {
@@ -302,10 +302,6 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             else
                 baseName = cached.SourceInterface.Name;
 
-            string targetPathName = Path.Combine(
-                                        Path.GetDirectoryName(cached.SourcePathName),
-                                        baseName + ".Client.cs");
-
             // fire-up the T4 engine and generate the text
             var t4 = ServiceProvider.GetService(typeof(STextTemplating)) as ITextTemplating;
             if (t4 == null)
@@ -314,9 +310,11 @@ namespace vm.Aspects.Visix.AddRelatedClasses
             var t4SessionHost = t4 as ITextTemplatingSessionHost;
 
             t4SessionHost.Session = t4SessionHost.CreateSession();
-            t4SessionHost.Session["baseName"] = baseName;
+            t4SessionHost.Session["baseName"]       = baseName;
             t4SessionHost.Session["sourcePathName"] = cached.SourcePathName;
-            t4SessionHost.Session["targetPathName"] = targetPathName;
+            t4SessionHost.Session["targetPathName"] = Path.Combine(
+                                                            Path.GetDirectoryName(cached.SourcePathName),
+                                                            baseName + ".Client.cs");
 
             var generatedText = ProcessTemplate(t4, "LightClient.tt");
 
