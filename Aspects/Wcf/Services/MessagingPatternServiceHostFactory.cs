@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -9,10 +13,6 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -110,6 +110,12 @@ namespace vm.Aspects.Wcf.Services
         /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
         /// </summary>
         protected virtual bool AreRegistered { get; set; }
+
+        /// <summary>
+        /// Gets or sets the metadata features.
+        /// </summary>
+        /// <value>The metadata features.</value>
+        protected virtual MetadataFeatures MetadataFeatures { get; set; }
         #endregion
 
         #region Constructors
@@ -129,6 +135,7 @@ namespace vm.Aspects.Wcf.Services
             MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern)
                                     ? typeof(TContract).GetMessagingPattern()
                                     : messagingPattern;
+            MetadataFeatures = MetadataFeatures.All;
         }
 
         /// <summary>
@@ -374,7 +381,7 @@ namespace vm.Aspects.Wcf.Services
             host.ConfigureBindings(typeof(TContract), MessagingPattern)
                 .AddTransactionTimeout()
                 .AddDebugBehaviors()
-                .AddMetadataBehaviors()
+                .AddMetadataBehaviors(MetadataFeatures)
                 .AddSecurityAuditBehavior()
                 ;
 

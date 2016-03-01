@@ -271,6 +271,7 @@
     <Compile Include="Bindings\RequestResponseConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseNoSecurityConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseTxConfigurator.cs" />
+    <Compile Include="Bindings\StreamingNoSecurityConfigurator.cs" />
     <Compile Include="Bindings\StreamingConfigurator.cs" />
     <Compile Include="Bindings\WebContentTypeMapperDefaultJson.cs" />
     <Compile Include="Clients\ICallIntercept.cs" />

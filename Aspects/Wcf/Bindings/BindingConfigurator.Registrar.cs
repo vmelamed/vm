@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Practices.Unity;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -33,6 +33,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseNoSecurityConfigurator>(registrations, RequestResponseNoSecurityConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseTxConfigurator>(registrations, RequestResponseTxConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, StreamingConfigurator>(registrations, StreamingConfigurator.PatternName)
+                    .RegisterTypeIfNot<BindingConfigurator, StreamingNoSecurityConfigurator>(registrations, StreamingNoSecurityConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
 
                     .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, "http", new InjectionConstructor())

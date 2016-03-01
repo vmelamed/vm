@@ -8,12 +8,12 @@ namespace vm.Aspects.Wcf.Bindings
     /// <summary>
     /// Class StreamingConfigurator. Configures the bindings for transferring streams (big amounts of data).
     /// </summary>
-    public class StreamingConfigurator : RequestResponseConfigurator
+    public class StreamingNoSecurityConfigurator : RequestResponseNoSecurityConfigurator
     {
         /// <summary>
         /// The pattern name
         /// </summary>
-        public new const string PatternName = "Streaming";
+        public new const string PatternName = "StreamingNoSecurity";
 
         /// <summary>
         /// Gets the human readable messaging pattern identifier.
