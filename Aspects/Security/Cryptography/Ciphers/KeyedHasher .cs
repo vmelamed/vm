@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -393,20 +393,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (!IsHashKeyInitialized)
             {
-                byte[] encryptedKey = null;
-
-                try
-                {
-                    encryptedKey = _keyStorage.GetKey(KeyLocation);
-                }
-                catch (FileNotFoundException)
-                {
-                }
-
-                if (encryptedKey == null)
-                    ImportSymmetricKey(_hashAlgorithm.Key);
+                if (_keyStorage.KeyLocationExists(KeyLocation))
+                    DecryptHashKey(
+                        _keyStorage.GetKey(KeyLocation));
                 else
-                    DecryptHashKey(encryptedKey);
+                    ImportSymmetricKey(_hashAlgorithm.Key);
 
                 IsHashKeyInitialized = true;
             }
@@ -421,21 +412,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (!IsHashKeyInitialized)
             {
-                byte[] encryptedKey;
-
-                try
-                {
-                    encryptedKey = await _keyStorage.GetKeyAsync(KeyLocation);
-                }
-                catch (FileNotFoundException)
-                {
-                    encryptedKey = null;
-                }
-
-                if (encryptedKey == null)
-                    await ImportSymmetricKeyAsync(_hashAlgorithm.Key);
+                if (_keyStorage.KeyLocationExists(KeyLocation))
+                    DecryptHashKey(
+                        await _keyStorage.GetKeyAsync(KeyLocation));
                 else
-                    DecryptHashKey(encryptedKey);
+                    await ImportSymmetricKeyAsync(_hashAlgorithm.Key);
 
                 IsHashKeyInitialized = true;
             }

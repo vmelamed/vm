@@ -16,14 +16,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="keyLocation">The key location.</param>
-        /// <returns>A <see cref="T:Task"/> object representing the process of putting the encrypted symmetric key in the storage.</returns>
+        /// <returns>A <see cref="Task"/> object representing the process of putting the encrypted symmetric key in the storage.</returns>
         Task PutKeyAsync(byte[] key, string keyLocation);
 
         /// <summary>
         /// Asynchronously gets the key from the storage with the specified location name.
         /// </summary>
         /// <param name="keyLocation">The key location name.</param>
-        /// <returns>A <see cref="T:Task"/> object representing the process of getting the encrypted symmetric key from the storage.</returns>
+        /// <returns>A <see cref="Task"/> object representing the process of getting the encrypted symmetric key from the storage.</returns>
         Task<byte[]> GetKeyAsync(string keyLocation);
     }
 
