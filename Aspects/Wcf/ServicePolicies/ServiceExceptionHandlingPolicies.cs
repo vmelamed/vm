@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
@@ -11,10 +14,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
@@ -112,7 +111,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 GetThrowFaultExceptionPolicyEntry(typeof(ArgumentException), typeof(ArgumentFault), eventId++),
                 GetThrowFaultExceptionPolicyEntry(typeof(ArgumentNullException), typeof(ArgumentNullFault), eventId++),
                 GetThrowFaultExceptionPolicyEntry(typeof(ArgumentValidationException), typeof(ArgumentValidationFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ValidationException), typeof(ValidationResultsFault), eventId++),
                 GetThrowFaultExceptionPolicyEntry(typeof(InvalidOperationException), typeof(InvalidOperationFault), eventId++),
                 GetThrowFaultExceptionPolicyEntry(typeof(NotImplementedException), typeof(NotImplementedFault), eventId++),
                 GetThrowFaultExceptionPolicyEntry(typeof(DataException), typeof(DataFault), eventId++),

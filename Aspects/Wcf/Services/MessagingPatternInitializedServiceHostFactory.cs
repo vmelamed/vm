@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 
@@ -251,6 +251,9 @@ namespace vm.Aspects.Wcf.Services
                     catch (ActivationException)
                     {
                         // swallow it - there is no registered initializer
+                    }
+                    catch (ResolutionFailedException)
+                    {
                     }
 
                 return _serviceInitializer;

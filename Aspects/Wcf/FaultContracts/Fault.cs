@@ -23,23 +23,15 @@ namespace vm.Aspects.Wcf.FaultContracts
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance with some default data in DEBUG mode only.
-        /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Fault()
-            : this(HttpStatusCode.InternalServerError)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Fault"/> class.
         /// </summary>
-        /// <param name="httpStatusCode">The HTTP status code.</param>
-        public Fault(HttpStatusCode httpStatusCode)
+        public Fault()
         {
-            Contract.Requires<ArgumentException>(httpStatusCode >= (HttpStatusCode)400, "The faults describe exceptional fault situations and should have status code equal to or greater than 400 (HTTP 400 Bad request.)");
+            HttpStatusCode code;
 
-            HttpStatusCode = httpStatusCode;
+            HttpStatusCode = FaultToHttpStatusCode.TryGetValue(GetType(), out code)
+                                    ? code
+                                    : HttpStatusCode.InternalServerError;
 
 #if DEBUG
             var process = Process.GetCurrentProcess();
@@ -203,7 +195,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             string description;
 
-            return _httpStatusDescriptions.TryGetValue(code, out description) ? description : null;
+            return HttpStatusDescriptions.TryGetValue(code, out description) ? description : null;
         }
         #endregion
 
@@ -213,7 +205,5 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             Contract.Invariant(InnerException == null);
         }
-
-
     }
 }

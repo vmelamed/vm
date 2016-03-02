@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Net;
 using System.Runtime.Serialization;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
@@ -14,14 +13,6 @@ namespace vm.Aspects.Wcf.FaultContracts
     [MetadataType(typeof(FileNotFoundFaultMetadata))]
     public sealed class FileNotFoundFault : IOFault
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileNotFoundFault"/> class.
-        /// </summary>
-        public FileNotFoundFault()
-            : base(HttpStatusCode.NotFound)
-        {
-        }
-
         /// <summary>
         /// Gets or sets the name of the file that cannot be found.
         /// </summary>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
-using System.Net;
 using System.Runtime.Serialization;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
@@ -21,7 +20,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Initializes a new instance of the <see cref="ValidationFault"/> class.
         /// </summary>
         public ValidationFault()
-            : base(HttpStatusCode.BadRequest)
         {
             InternalDetails = new List<ValidationFaultElement>();
         }
@@ -32,7 +30,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <param name="details">The details.</param>
         public ValidationFault(
             IEnumerable<ValidationFaultElement> details)
-            : base(HttpStatusCode.BadRequest)
         {
             Contract.Requires<ArgumentNullException>(details != null, nameof(details));
 

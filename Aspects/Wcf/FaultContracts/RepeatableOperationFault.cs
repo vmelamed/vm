@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
@@ -9,12 +8,5 @@ namespace vm.Aspects.Wcf.FaultContracts
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     public class RepeatableOperationFault : Fault
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RepeatableOperationFault"/> class.
-        /// </summary>
-        public RepeatableOperationFault()
-            : base(HttpStatusCode.GatewayTimeout)
-        {
-        }
     }
 }

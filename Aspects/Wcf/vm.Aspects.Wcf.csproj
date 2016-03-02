@@ -301,7 +301,7 @@
     <Compile Include="FaultContracts\DataFault.cs" />
     <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
     <Compile Include="FaultContracts\Fault.cs" />
-    <Compile Include="FaultContracts\Fault.HttpStatusDescriptions.cs" />
+    <Compile Include="FaultContracts\Fault.MatchingTables.cs" />
     <Compile Include="FaultContracts\FileNotFoundFault.cs" />
     <Compile Include="FaultContracts\FormatFault.cs" />
     <Compile Include="FaultContracts\InvalidOperationFault.cs" />
@@ -328,7 +328,6 @@
     <Compile Include="FaultContracts\ValidationFault.cs" />
     <Compile Include="FaultContracts\ValidationFaultElement.cs" />
     <Compile Include="FaultContracts\ValidationResultsExtensions.cs" />
-    <Compile Include="FaultContracts\ValidationResultsFault.cs" />
     <Compile Include="FaultContracts\XmlFault.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Msmq\Utilities.cs" />

@@ -21,14 +21,6 @@ namespace vm.Aspects.Wcf.FaultContracts
     public sealed class AggregateFault : Fault
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AggregateFault"/> class.
-        /// </summary>
-        public AggregateFault()
-            : base(HttpStatusCode.InternalServerError)
-        {
-        }
-
-        /// <summary>
         /// Gets or sets the inner exceptions.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "N/A")]
@@ -45,10 +37,18 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (value == null)
                     return;
 
+                HttpStatusCode httpStatusCode = HttpStatusCode.OK;
+
                 using (var w = new StringWriter(CultureInfo.InvariantCulture))
                 {
                     foreach (var ie in value)
+                    {
+                        if (httpStatusCode == HttpStatusCode.OK  &&
+                            ExceptionToHttpStatusCode.TryGetValue(ie.GetType(), out httpStatusCode))
+                            HttpStatusCode = httpStatusCode;
+
                         w.WriteLine(ie.Message);
+                    }
 
                     InnerExceptionsMessages = w.GetStringBuilder().ToString();
                 }
@@ -61,6 +61,5 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             Contract.Invariant(InnerExceptions == null);
         }
-
     }
 }

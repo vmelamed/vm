@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.Runtime.Serialization;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
@@ -13,23 +12,6 @@ namespace vm.Aspects.Wcf.FaultContracts
     [MetadataType(typeof(XmlFaultMetadata))]
     public sealed class XmlFault : Fault
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XmlFault"/> class.
-        /// </summary>
-        public XmlFault()
-            : base(HttpStatusCode.InternalServerError)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XmlFault" /> class.
-        /// </summary>
-        /// <param name="httpStatusCode">The HTTP status code to be used.</param>
-        public XmlFault(HttpStatusCode httpStatusCode)
-            : base(httpStatusCode)
-        {
-        }
-
         /// <summary>
         /// Gets or sets the XML document's source URI.
         /// </summary>

@@ -127,7 +127,7 @@ namespace vm.Aspects.Wcf.Bindings
                 Mode      = WebHttpSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
                 {
-                    ClientCredentialType = HttpClientCredentialType.Windows,
+                    ClientCredentialType = HttpClientCredentialType.None,
                 },
             };
 
