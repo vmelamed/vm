@@ -101,10 +101,14 @@ namespace vm.Aspects.Model.EFRepository
             {
                 try
                 {
-                    StoreIdProvider = ServiceLocator.Current.GetInstance<IStoreIdProvider>();
+                    StoreIdProvider = ServiceLocator.Current?.GetInstance<IStoreIdProvider>();
 
                     if (StoreIdProvider == null)
                         StoreIdProvider = new SqlStoreIdProvider();
+                }
+                catch (InvalidOperationException)
+                {
+                    StoreIdProvider = new SqlStoreIdProvider();
                 }
                 catch (ActivationException)
                 {

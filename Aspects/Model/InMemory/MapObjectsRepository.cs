@@ -259,8 +259,7 @@ namespace vm.Aspects.Model.InMemory
             {
                 var list = GetEntityList<T>();
 
-                var existing = list.Where(e => e.Id == entityWith.Id)
-                                   .FirstOrDefault();
+                var existing = list.FirstOrDefault(e => e.Id == entityWith.Id);
 
                 if (existing == null)
                     throw new InvalidOperationException(
@@ -301,8 +300,7 @@ namespace vm.Aspects.Model.InMemory
             using (_sync.WriterLock())
             {
                 var list = GetEntityList<T>();
-                var existing = list.Where(e => e.Id == entityWith.Id)
-                                   .FirstOrDefault();
+                var existing = list.FirstOrDefault(e => e.Id == entityWith.Id);
 
                 switch (state)
                 {

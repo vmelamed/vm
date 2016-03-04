@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using vm.Aspects.Exceptions;
@@ -128,7 +127,7 @@ namespace vm.Aspects.Model.InMemory
         /// <typeparam name="T">The type of the entity to be added.</typeparam>
         /// <param name="entity">The entity to be added.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Add<T>(
             T entity) where T : BaseDomainEntity
         {
@@ -197,7 +196,7 @@ namespace vm.Aspects.Model.InMemory
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Attach<T>(
             T entity) where T : BaseDomainEntity
         {
@@ -209,8 +208,7 @@ namespace vm.Aspects.Model.InMemory
             using (_sync.UpgradableReaderLock())
             {
                 var existing = _objects.OfType<T>()
-                                       .Where(o => o.Equals(entityWith))
-                                       .FirstOrDefault();
+                                       .FirstOrDefault(o => o.Equals(entityWith));
 
                 if (existing == null)
                     throw new InvalidOperationException(
@@ -240,7 +238,7 @@ namespace vm.Aspects.Model.InMemory
         /// If the array is empty, the entire entity will be marked as modified and updated in the store
         /// otherwise, only the modified properties will be updated in the store.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="0#"), SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification="It is cast only once.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#"), SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "It is cast only once.")]
         public IRepository Attach<T>(
             T entity,
             EntityState state,
@@ -254,8 +252,7 @@ namespace vm.Aspects.Model.InMemory
             using (_sync.UpgradableReaderLock())
             {
                 var existing = _objects.OfType<T>()
-                                       .Where(o => o.Equals(entity))
-                                       .FirstOrDefault();
+                                       .FirstOrDefault(o => o.Equals(entity));
 
                 switch (state)
                 {
@@ -303,7 +300,7 @@ namespace vm.Aspects.Model.InMemory
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId="0#")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Detach<T>(
             T entity) where T : BaseDomainEntity
         {
