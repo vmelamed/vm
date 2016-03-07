@@ -363,7 +363,7 @@ namespace vm.Aspects
         #endregion
         #endregion
 
-        #region Various codes and telephone numbers regular expressions
+        #region Country, currency, telephone code and number regular expressions
         #region Country ISO code - 2 letters
         /// <summary>
         /// Matches a two letter country code, e.g. US
@@ -506,7 +506,7 @@ namespace vm.Aspects
         #endregion
         #endregion
 
-        #region Bank identification codes regular expressions
+        #region Bank numbers and codes regular expressions
         #region AbaRoutingNumber
         /// <summary>
         /// Matches an ABA routing number.
@@ -533,6 +533,57 @@ namespace vm.Aspects
         /// Gets a Regex object which matches SWIFT BIC code.
         /// </summary>
         public static Regex SwiftBankCode => _swiftBankCode.Value;
+        #endregion
+
+        #region Credit Card numbers
+        /// <summary>
+        /// Matches American Express Credit Card numbers.
+        /// </summary>
+        public const string RexAmericanExpress = @"(?<inamex>34|37)\d{12}(?<check>\d)";
+        /// <summary>
+        /// Matches MasterCard Credit Card numbers.
+        /// </summary>
+        public const string RexMasterCard      = @"(?:(?:(?<inmc>222[1-9]|22[3-9]\d|2[3-6]\d\d|271\d|2720)\d{11})|(?:(?<mc>5[1-5])\d{13}))(?<check>\d)";
+        /// <summary>
+        /// Matches Maestro Credit Card numbers.
+        /// </summary>
+        public const string RexMaestro         = @"(?<inmaestro>50|5[6-9]|6[0-9])\d{9,16}(?<check>\d)";
+        /// <summary>
+        /// Matches Visa Credit Card numbers.
+        /// </summary>
+        public const string RexVisa            = @"(?<invisa>4)(?:(?:\d{17})|(?:\d{14})|(?:\d{11}))(?<check>\d)";
+
+        /// <summary>
+        /// Matches American Express or MasterCard or Visa credit card number.
+        /// </summary>
+        public const string RexAmexMcVisa      = @"^(?:(?<amex>"+RexAmericanExpress+")|(?<mc>"+RexMasterCard+")|(?<visa>"+RexVisa+"))$";
+
+        readonly static Lazy<Regex> _americanExpress = new Lazy<Regex>(() => new Regex("^"+RexAmericanExpress+"$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _masterCard      = new Lazy<Regex>(() => new Regex("^"+RexMasterCard+"$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _maestro         = new Lazy<Regex>(() => new Regex("^"+RexMaestro+"$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _visa            = new Lazy<Regex>(() => new Regex("^"+RexVisa+"$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _amexMcVisa      = new Lazy<Regex>(() => new Regex(RexAmexMcVisa, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches American Express card numbers.
+        /// </summary>
+        public static Regex AmericanExpressCardNumber => _americanExpress.Value;
+        /// <summary>
+        /// Gets a Regex object which matches MasterCard card numbers.
+        /// </summary>
+        public static Regex MasterCardCardNumber => _masterCard.Value;
+        /// <summary>
+        /// Gets a Regex object which matches Maestro card numbers.
+        /// </summary>
+        public static Regex MaestroCardNumber => _maestro.Value;
+        /// <summary>
+        /// Gets a Regex object which matches Visa card numbers.
+        /// </summary>
+        public static Regex VisaCardNumber => _visa.Value;
+        /// <summary>
+        /// Gets a Regex object which matches American Express or MasterCard or Visa credit card number.
+        /// </summary>
+        public static Regex AmexMcVisa => _amexMcVisa.Value;
         #endregion
         #endregion
 

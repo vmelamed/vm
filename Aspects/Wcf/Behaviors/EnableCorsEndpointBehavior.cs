@@ -10,6 +10,9 @@ namespace vm.Aspects.Wcf.Behaviors
     /// Behavior which enables CORS for endpoints with <see cref="WebHttpBinding"/>.
     /// </summary>
     /// <seealso cref="IOperationBehavior" />
+    /// <remarks>
+    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+    /// </remarks>
     public class EnableCorsEndpointBehavior : IEndpointBehavior
     {
         /// <summary>

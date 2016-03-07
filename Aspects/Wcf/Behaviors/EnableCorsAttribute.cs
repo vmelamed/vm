@@ -11,7 +11,10 @@ namespace vm.Aspects.Wcf.Behaviors
     /// </summary>
     /// <seealso cref="Attribute" />
     /// <seealso cref="IOperationBehavior" />
-    public class EnableCorsAttribute : Attribute, IOperationBehavior, IContractBehavior
+    /// <remarks>
+    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+    /// </remarks>
+    public class EnableCorsAttribute : Attribute, IOperationBehavior
     {
         #region IOperationBehavior
         /// <remarks/>
@@ -38,39 +41,6 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <remarks/>
         public void Validate(
             OperationDescription operationDescription)
-        {
-        }
-        #endregion
-
-        #region IContractBehavior        
-        /// <remarks/>
-        public void AddBindingParameters(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            BindingParameterCollection bindingParameters)
-        {
-        }
-
-        /// <remarks/>
-        public void ApplyClientBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            ClientRuntime clientRuntime)
-        {
-        }
-
-        /// <remarks/>
-        public void ApplyDispatchBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            DispatchRuntime dispatchRuntime)
-        {
-        }
-
-        /// <remarks/>
-        public void Validate(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint)
         {
         }
         #endregion

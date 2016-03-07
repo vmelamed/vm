@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
+using System.Diagnostics.Contracts;
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation
@@ -33,7 +33,7 @@ namespace vm.Aspects.Validation
                 throw new ArgumentNullException(nameof(targetType));
 
             if (targetType != typeof(Guid))
-                throw new ArgumentException(Resources.ExNotStringType, nameof(targetType));
+                throw new ArgumentException(Resources.ExNotGuidType, nameof(targetType));
 
             return new NonemptyGuidValidator(GetMessageTemplate(), Tag, Negated);
         }

@@ -8,6 +8,9 @@ namespace vm.Aspects.Wcf.EnableCorsService
     /// Class EnableCorsServiceHostFactory.
     /// </summary>
     /// <seealso cref="System.ServiceModel.Activation.ServiceHostFactory" />
+    /// <remarks>
+    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+    /// </remarks>
     public class EnableCorsServiceHostFactory : ServiceHostFactory
     {
         /// <summary>

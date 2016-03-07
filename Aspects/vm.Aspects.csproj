@@ -310,6 +310,10 @@
     <Compile Include="Threading\TaskCombinators.cs" />
     <Compile Include="Threading\UpgradeableReaderSlimSync.cs" />
     <Compile Include="Threading\WriterSlimSync.cs" />
+    <Compile Include="Validation\AbaRoutingNumberValidator.cs" />
+    <Compile Include="Validation\AbaRoutingNumberValidatorAttribute.cs" />
+    <Compile Include="Validation\CreditCardNumberValidator.cs" />
+    <Compile Include="Validation\CreditCardNumberValidatorAttribute.cs" />
     <Compile Include="Validation\EnumDomainValidator.cs" />
     <Compile Include="Validation\EnumDomainValidatorAttribute.cs" />
     <Compile Include="Validation\IValidatable.cs" />

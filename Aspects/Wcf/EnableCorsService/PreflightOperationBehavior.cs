@@ -5,6 +5,9 @@ using System.ServiceModel.Dispatcher;
 
 namespace vm.Aspects.Wcf.EnableCorsService
 {
+    /// <remarks>
+    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+    /// </remarks>
     class PreflightOperationBehavior : IOperationBehavior
     {
         OperationDescription _preflightOperation;

@@ -171,4 +171,19 @@
   <data name="ExNotEmptyGuid" xml:space="preserve">
     <value>The target Guid value is not equal to the default Guid value of '00000000-0000-0000-0000-000000000000'.</value>
   </data>
+  <data name="ExNotValidCcNumber" xml:space="preserve">
+    <value>The target string is not a valid credit card number.</value>
+  </data>
+  <data name="ExValidCcNumber" xml:space="preserve">
+    <value>The target string is a valid credit card number.</value>
+  </data>
+  <data name="ExNotGuidType" xml:space="preserve">
+    <value>The type of the target element is not System.Guid.</value>
+  </data>
+  <data name="ExNotValidAbaRoutingNumber" xml:space="preserve">
+    <value>The target does not represent a valid ABA routing number.</value>
+  </data>
+  <data name="ExValidAbaRoutingNumber" xml:space="preserve">
+    <value>The target does represents a valid ABA routing number.</value>
+  </data>
 </root>

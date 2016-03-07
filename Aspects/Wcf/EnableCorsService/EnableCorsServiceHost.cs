@@ -10,7 +10,10 @@ using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Wcf.EnableCorsService
 {
-    internal class EnableCorsServiceHost : ServiceHost
+    /// <remarks>
+    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+    /// </remarks>
+    public class EnableCorsServiceHost : ServiceHost
     {
         Type _contractType;
 

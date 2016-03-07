@@ -124,6 +124,15 @@ namespace vm.Aspects.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The type of the target element is not System.Guid..
+        /// </summary>
+        internal static string ExNotGuidType {
+            get {
+                return ResourceManager.GetString("ExNotGuidType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The type of the target element is not nullable enumeration type..
         /// </summary>
         internal static string ExNotNullableEnumType {
@@ -156,6 +165,24 @@ namespace vm.Aspects.Properties {
         internal static string ExNotStringType {
             get {
                 return ResourceManager.GetString("ExNotStringType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The target does not represent a valid ABA routing number..
+        /// </summary>
+        internal static string ExNotValidAbaRoutingNumber {
+            get {
+                return ResourceManager.GetString("ExNotValidAbaRoutingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The target string is not a valid credit card number..
+        /// </summary>
+        internal static string ExNotValidCcNumber {
+            get {
+                return ResourceManager.GetString("ExNotValidCcNumber", resourceCulture);
             }
         }
         
@@ -201,6 +228,24 @@ namespace vm.Aspects.Properties {
         internal static string ExRootElementNotMatching {
             get {
                 return ResourceManager.GetString("ExRootElementNotMatching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The target does represents a valid ABA routing number..
+        /// </summary>
+        internal static string ExValidAbaRoutingNumber {
+            get {
+                return ResourceManager.GetString("ExValidAbaRoutingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The target string is a valid credit card number..
+        /// </summary>
+        internal static string ExValidCcNumber {
+            get {
+                return ResourceManager.GetString("ExValidCcNumber", resourceCulture);
             }
         }
         
