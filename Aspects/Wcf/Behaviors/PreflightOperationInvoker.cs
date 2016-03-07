@@ -4,11 +4,8 @@ using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 
-namespace vm.Aspects.Wcf.EnableCorsService
+namespace vm.Aspects.Wcf.Behaviors
 {
-    /// <remarks>
-    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
-    /// </remarks>
     class PreflightOperationInvoker : IOperationInvoker
     {
         string _replyAction;
@@ -22,7 +19,10 @@ namespace vm.Aspects.Wcf.EnableCorsService
             _allowedHttpMethods = allowedHttpMethods;
         }
 
-        public object[] AllocateInputs() => new object[1];
+        public object[] AllocateInputs()
+        {
+            return new object[1];
+        }
 
         public object Invoke(
             object instance,
@@ -31,39 +31,16 @@ namespace vm.Aspects.Wcf.EnableCorsService
         {
             outputs = null;
 
-            return HandlePreflight((Message)inputs[0]);
-        }
+            // get the request headers
+            var input = (Message)inputs[0];
 
-        public IAsyncResult InvokeBegin(
-            object instance,
-            object[] inputs,
-            AsyncCallback callback,
-            object state)
-        {
-            throw new NotSupportedException("Only synchronous invocation are supported.");
-        }
-
-        public object InvokeEnd(
-            object instance,
-            out object[] outputs,
-            IAsyncResult result)
-        {
-            throw new NotSupportedException("Only synchronous invocation are supported.");
-        }
-
-        public bool IsSynchronous => true;
-
-        Message HandlePreflight(Message input)
-        {
-            var httpRequest    = (HttpRequestMessageProperty)input.Properties[HttpRequestMessageProperty.Name];
+            var httpRequest = (HttpRequestMessageProperty)input.Properties[HttpRequestMessageProperty.Name];
             var origin         = httpRequest.Headers[Constants.Origin];
             var requestMethod  = httpRequest.Headers[Constants.AccessControlRequestMethod];
             var requestHeaders = httpRequest.Headers[Constants.AccessControlRequestHeaders];
 
-            var reply        = Message.CreateMessage(MessageVersion.None, _replyAction);
+            // build the appropriate HTTP response
             var httpResponse = new HttpResponseMessageProperty();
-
-            reply.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
 
             httpResponse.SuppressEntityBody = true;
             httpResponse.StatusCode         = HttpStatusCode.OK;
@@ -71,13 +48,40 @@ namespace vm.Aspects.Wcf.EnableCorsService
             if (origin != null)
                 httpResponse.Headers.Add(Constants.AccessControlAllowOrigin, origin);
 
-            if (requestMethod != null && _allowedHttpMethods.Contains(requestMethod))
+            if (requestMethod != null &&
+                _allowedHttpMethods.Contains(requestMethod))
                 httpResponse.Headers.Add(Constants.AccessControlAllowMethods, string.Join(",", _allowedHttpMethods));
 
             if (requestHeaders != null)
                 httpResponse.Headers.Add(Constants.AccessControlAllowHeaders, requestHeaders);
 
+            // build the reply message
+            var reply = Message.CreateMessage(MessageVersion.None, _replyAction);
+
+            reply.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
+
             return reply;
+        }
+
+        public bool IsSynchronous
+        {
+            get { return true; }
+        }
+
+        public IAsyncResult InvokeBegin(
+            object instance,
+            object[] inputs,
+            AsyncCallback callback, object state)
+        {
+            throw new NotSupportedException("Only synchronous invocations are allowed.");
+        }
+
+        public object InvokeEnd(
+            object instance,
+            out object[] outputs,
+            IAsyncResult result)
+        {
+            throw new NotSupportedException("Only synchronous invocations are allowed.");
         }
     }
 }

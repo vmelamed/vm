@@ -3,24 +3,20 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace vm.Aspects.Wcf.EnableCorsService
+namespace vm.Aspects.Wcf.Behaviors
 {
-    /// <remarks>
-    /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
-    /// </remarks>
     class PreflightOperationBehavior : IOperationBehavior
     {
-        OperationDescription _preflightOperation;
         List<string> _allowedMethods;
 
         public PreflightOperationBehavior(
             OperationDescription preflightOperation)
         {
-            _preflightOperation = preflightOperation;
             _allowedMethods = new List<string>();
         }
 
-        public void AddAllowedMethod(string httpMethod)
+        public void AddAllowedMethod(
+            string httpMethod)
         {
             _allowedMethods.Add(httpMethod);
         }
@@ -44,8 +40,7 @@ namespace vm.Aspects.Wcf.EnableCorsService
             dispatchOperation.Invoker = new PreflightOperationInvoker(operationDescription.Messages[1].Action, _allowedMethods);
         }
 
-        public void Validate(
-            OperationDescription operationDescription)
+        public void Validate(OperationDescription operationDescription)
         {
         }
     }

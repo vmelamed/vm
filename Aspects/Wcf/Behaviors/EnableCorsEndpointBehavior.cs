@@ -20,7 +20,9 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="bindingParameters">The binding parameters.</param>
-        public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
+        public void AddBindingParameters(
+            ServiceEndpoint endpoint,
+            BindingParameterCollection bindingParameters)
         {
         }
 
@@ -29,7 +31,9 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="clientRuntime">The client runtime.</param>
-        public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
+        public void ApplyClientBehavior(
+            ServiceEndpoint endpoint,
+            ClientRuntime clientRuntime)
         {
         }
 
@@ -38,21 +42,29 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="endpointDispatcher">The endpoint dispatcher.</param>
-        public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
+        public void ApplyDispatchBehavior(
+            ServiceEndpoint endpoint,
+            EndpointDispatcher endpointDispatcher)
         {
-            var b = endpoint
-                .Contract
-                .ContractBehaviors;
-
-            endpointDispatcher
-                .DispatchRuntime
-                .MessageInspectors
-                .Add(new EnableCorsMessageInspector(
-                                endpoint
+            var operations = endpoint
                                     .Contract
                                     .Operations
-                                    .Where(o => o.Behaviors.Find<EnableCorsAttribute>() != null)
-                                    .ToList()));
+                                    .ToList();
+
+            if (!endpoint
+                    .Contract
+                    .ContractBehaviors
+                    .Any(cb => cb is EnableCorsAttribute))
+                operations = operations
+                                .Where(od => od.OperationBehaviors
+                                               .Any(ob => ob is EnableCorsAttribute))
+                                .ToList();
+
+            if (operations.Any())
+                endpointDispatcher
+                    .DispatchRuntime
+                    .MessageInspectors
+                    .Add(new EnableCorsMessageInspector(operations));
         }
 
         /// <summary>

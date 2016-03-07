@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -6,9 +7,10 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Services
@@ -373,6 +375,151 @@ namespace vm.Aspects.Wcf.Services
                 });
 
             return host;
+        }
+
+        /// <summary>
+        /// Enables the CORS behavior. See https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <returns>ServiceHost.</returns>
+        public static ServiceHost EnableCorsBehavior(
+            this ServiceHost host)
+        {
+            // must have endpoint with WebHttpBinding and either the whole contract or any of the operations have EnableCorsAttribute
+            foreach (var endpoint in host.Description
+                                         .Endpoints
+                                         .Where(ep => ep.Binding is WebHttpBinding))
+            {
+                var operations = endpoint
+                                    .Contract
+                                    .Operations
+                                    .ToList();
+
+                if (!endpoint
+                        .Contract
+                        .ContractBehaviors
+                        .Any(cb => cb is EnableCorsAttribute))
+                    operations = operations
+                                    .Where(od => od.OperationBehaviors
+                                                   .Any(ob => ob is EnableCorsAttribute))
+                                    .ToList();
+
+                if (!operations.Any())
+                    continue;
+
+                AddPreflightOperationSelectors(endpoint, operations);
+
+                endpoint.Behaviors.Add(new EnableCorsEndpointBehavior());
+            }
+
+            return host;
+        }
+
+        static void AddPreflightOperationSelectors(
+            ServiceEndpoint endpoint,
+            List<OperationDescription> operations)
+        {
+            IDictionary<string, PreflightOperationBehavior> uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var operation in operations)
+            {
+                if (operation.Behaviors.Find<WebGetAttribute>() != null)
+                    // no need to add preflight operation for GET requests
+                    continue;
+
+                if (operation.IsOneWay)
+                    // no support for 1-way messages
+                    continue;
+
+                var originalWebInvokeAttribute = operation.Behaviors.Find<WebInvokeAttribute>();
+
+                var originalUriTemplate = originalWebInvokeAttribute != null &&
+                                          originalWebInvokeAttribute.UriTemplate != null
+                                            ? NormalizeTemplate(originalWebInvokeAttribute.UriTemplate)
+                                            : operation.Name;
+
+                var originalMethod = originalWebInvokeAttribute != null &&
+                                     originalWebInvokeAttribute.Method != null
+                                            ? originalWebInvokeAttribute.Method
+                                            : "POST";
+
+                if (uriTemplates.ContainsKey(originalUriTemplate))
+                {
+                    // there is already an OPTIONS operation for this URI, we can reuse it
+                    PreflightOperationBehavior operationBehavior = uriTemplates[originalUriTemplate];
+                    operationBehavior.AddAllowedMethod(originalMethod);
+                    continue;
+                }
+
+                var contract = operation.DeclaringContract;
+
+                var inputMessage = new MessageDescription(operation.Messages[0].Action + Constants.PreflightSuffix, MessageDirection.Input);
+
+                inputMessage
+                    .Body
+                    .Parts
+                    .Add(
+                        new MessagePartDescription("input", contract.Namespace)
+                        {
+                            Index = 0,
+                            Type = typeof(Message),
+                        });
+
+                var outputMessage = new MessageDescription(operation.Messages[1].Action + Constants.PreflightSuffix, MessageDirection.Output);
+
+                outputMessage
+                    .Body
+                    .ReturnValue = new MessagePartDescription(operation.Name + Constants.PreflightSuffix + "Return", contract.Namespace)
+                                    {
+                                        Type = typeof(Message),
+                                    };
+
+                var WebInvokeAttribute = new WebInvokeAttribute();
+
+                WebInvokeAttribute.UriTemplate = originalUriTemplate;
+                WebInvokeAttribute.Method      = "OPTIONS";
+
+
+                var preflightOperation = new OperationDescription(operation.Name + Constants.PreflightSuffix, contract);
+
+                preflightOperation.Messages.Add(inputMessage);
+                preflightOperation.Messages.Add(outputMessage);
+
+                preflightOperation.Behaviors.Add(WebInvokeAttribute);
+                preflightOperation.Behaviors.Add(new DataContractSerializerOperationBehavior(preflightOperation));
+
+                var preflightOperationBehavior = new PreflightOperationBehavior(preflightOperation);
+
+                preflightOperationBehavior.AddAllowedMethod(originalMethod);
+
+                preflightOperation.Behaviors.Add(preflightOperationBehavior);
+
+                contract.Operations.Add(preflightOperation);
+
+                uriTemplates.Add(originalUriTemplate, preflightOperationBehavior);
+            }
+        }
+
+        static string NormalizeTemplate(string uriTemplate)
+        {
+            int queryIndex = uriTemplate.IndexOf('?');
+
+            if (queryIndex >= 0)
+                // no query string used for this
+                uriTemplate = uriTemplate.Substring(0, queryIndex);
+            
+            int paramIndex;
+
+            while ((paramIndex = uriTemplate.IndexOf('{')) >= 0)
+            {
+                // Replace all named parameters with wild-cards
+                int endParamIndex = uriTemplate.IndexOf('}', paramIndex);
+
+                if (endParamIndex >= 0)
+                    uriTemplate = uriTemplate.Substring(0, paramIndex) + '*' + uriTemplate.Substring(endParamIndex + 1);
+            }
+
+            return uriTemplate;
         }
     }
 }

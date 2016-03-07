@@ -263,6 +263,8 @@
     <Compile Include="Behaviors\EnableCorsEndpointBehavior.cs" />
     <Compile Include="Behaviors\EnableCorsMessageInspector.cs" />
     <Compile Include="Behaviors\IWcfContextUtilities.cs" />
+    <Compile Include="Behaviors\PreflightOperationBehavior.cs" />
+    <Compile Include="Behaviors\PreflightOperationInvoker.cs" />
     <Compile Include="Behaviors\WcfContextUtilities.cs" />
     <Compile Include="Bindings\BindingConfigurator.cs" />
     <Compile Include="Bindings\BindingConfigurator.Registrar.cs" />
@@ -292,10 +294,6 @@
     <Compile Include="Behaviors\DIBehaviorExtensionElement.cs" />
     <Compile Include="Behaviors\DIEndpointBehavior.cs" />
     <Compile Include="Behaviors\DIInstanceProvider.cs" />
-    <Compile Include="EnableCorsService\EnableCorsServiceHost.cs" />
-    <Compile Include="EnableCorsService\EnableCorsServiceHostFactory.cs" />
-    <Compile Include="EnableCorsService\PreflightOperationBehavior.cs" />
-    <Compile Include="EnableCorsService\PreflightOperationInvoker.cs" />
     <Compile Include="EndpointIdentityFactory.cs" />
     <Compile Include="Behaviors\ExceptionShieldingAttribute.cs" />
     <Compile Include="Behaviors\ExceptionShieldingBehavior.cs" />
