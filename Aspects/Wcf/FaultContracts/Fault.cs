@@ -25,6 +25,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Initializes a new instance of the <see cref="Fault"/> class.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Fault()
         {
             HttpStatusCode code;

@@ -24,6 +24,7 @@ namespace vm.Aspects.Wcf.Behaviors
             return new object[1];
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public object Invoke(
             object instance,
             object[] inputs,

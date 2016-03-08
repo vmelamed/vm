@@ -556,13 +556,13 @@ namespace vm.Aspects
         /// <summary>
         /// Matches American Express or MasterCard or Visa credit card number.
         /// </summary>
-        public const string RexAmexMcVisa      = @"^(?:(?<amex>"+RexAmericanExpress+")|(?<mc>"+RexMasterCard+")|(?<visa>"+RexVisa+"))$";
+        public const string RexAmexMCVisa      = @"^(?:(?<amex>"+RexAmericanExpress+")|(?<mc>"+RexMasterCard+")|(?<visa>"+RexVisa+"))$";
 
         readonly static Lazy<Regex> _americanExpress = new Lazy<Regex>(() => new Regex("^"+RexAmericanExpress+"$", RegexOptions.Compiled));
         readonly static Lazy<Regex> _masterCard      = new Lazy<Regex>(() => new Regex("^"+RexMasterCard+"$", RegexOptions.Compiled));
         readonly static Lazy<Regex> _maestro         = new Lazy<Regex>(() => new Regex("^"+RexMaestro+"$", RegexOptions.Compiled));
         readonly static Lazy<Regex> _visa            = new Lazy<Regex>(() => new Regex("^"+RexVisa+"$", RegexOptions.Compiled));
-        readonly static Lazy<Regex> _amexMcVisa      = new Lazy<Regex>(() => new Regex(RexAmexMcVisa, RegexOptions.Compiled));
+        readonly static Lazy<Regex> _amexMCVisa      = new Lazy<Regex>(() => new Regex(RexAmexMCVisa, RegexOptions.Compiled));
 
         /// <summary>
         /// Gets a Regex object which matches American Express card numbers.
@@ -583,7 +583,7 @@ namespace vm.Aspects
         /// <summary>
         /// Gets a Regex object which matches American Express or MasterCard or Visa credit card number.
         /// </summary>
-        public static Regex AmexMcVisa => _amexMcVisa.Value;
+        public static Regex AmexMCVisa => _amexMCVisa.Value;
         #endregion
         #endregion
 

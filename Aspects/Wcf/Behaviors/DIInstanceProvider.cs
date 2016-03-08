@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.ServiceLocation;
+using System.Diagnostics.Contracts;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -105,21 +106,19 @@ namespace vm.Aspects.Wcf.Behaviors
             Type serviceContract,
             string serviceResolveName)
         {
-            if (serviceType == null)
-                throw new ArgumentNullException(nameof(serviceType));
+            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
+            Contract.Requires<ArgumentException>((serviceContract == null || serviceType.GetInterface(serviceContract.Name) != null)  &&
+                                                 (serviceContract != null || typeof(MarshalByRefObject).IsAssignableFrom(serviceType)), "If no service interface is specified, the service type must be derived from System.MarshalByRefObject.");
 
             // the object must either implement the interface cached in serviceContract or
             // must inherit from MarshalByRefObject. Otherwise we cannot get a transparent proxy!
             if (serviceContract != null && serviceType.GetInterface(serviceContract.Name) == null  ||
                 serviceContract == null && !typeof(MarshalByRefObject).IsAssignableFrom(serviceType))
-                throw new ArgumentException("If no service interface is specified, the service type must be derived from the class MarshalByRefObject.", nameof(serviceType));
-
-            if (serviceResolveName == null)
-                serviceResolveName = string.Empty;
+                throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.", nameof(serviceType));
 
             return serviceContract!=null
-                                    ? ServiceLocator.Current.GetInstance(serviceContract, serviceResolveName)
-                                    : ServiceLocator.Current.GetInstance(serviceType, serviceResolveName);
+                        ? DIContainer.Root.Resolve(serviceContract, serviceResolveName)
+                        : DIContainer.Root.Resolve(serviceType, serviceResolveName);
         }
     }
 }

@@ -14,7 +14,13 @@ namespace vm.Aspects.Wcf.Behaviors
     /// <remarks>
     /// Based on: https://blogs.msdn.microsoft.com/carlosfigueira/2012/05/14/implementing-cors-support-in-wcf/
     /// </remarks>
-    public class EnableCorsAttribute : Attribute, IOperationBehavior, IContractBehavior
+    [AttributeUsage(
+        AttributeTargets.Class |
+        AttributeTargets.Interface |
+        AttributeTargets.Method,
+        AllowMultiple = false,
+        Inherited = false)]
+    public sealed class EnableCorsAttribute : Attribute, IOperationBehavior, IContractBehavior
     {
         #region IOperationBehavior
         /// <remarks/>

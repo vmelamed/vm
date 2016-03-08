@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -17,6 +18,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Maps exception types to fault types
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
         public static readonly IReadOnlyDictionary<Type, Type> ExceptionToFault = new ReadOnlyDictionary<Type, Type>(
             new Dictionary<Type, Type>
             {
@@ -45,6 +47,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Maps fault types to exception types
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
         public static readonly IReadOnlyDictionary<Type, Type> FaultToException = new ReadOnlyDictionary<Type, Type>(
             new Dictionary<Type, Type>
             {
@@ -73,6 +76,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Maps fault type to HTTP status code
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
         public static readonly IReadOnlyDictionary<Type, HttpStatusCode> FaultToHttpStatusCode = new ReadOnlyDictionary<Type, HttpStatusCode>(
             new Dictionary<Type, HttpStatusCode>
             {
@@ -101,6 +105,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Maps exception type to HTTP status code
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
         public static readonly IReadOnlyDictionary<Type, HttpStatusCode> ExceptionToHttpStatusCode = new ReadOnlyDictionary<Type, HttpStatusCode>(
             new Dictionary<Type, HttpStatusCode>
             {
@@ -130,6 +135,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Maps HTTP status codes to a string descriptions.
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
         public static readonly IReadOnlyDictionary<HttpStatusCode, string> HttpStatusDescriptions = new ReadOnlyDictionary<HttpStatusCode, string>(
             new Dictionary<HttpStatusCode, string>
             {

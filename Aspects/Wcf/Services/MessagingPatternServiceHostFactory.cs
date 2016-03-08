@@ -129,6 +129,7 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected MessagingPatternServiceHostFactory(
             string messagingPattern = null)
         {
@@ -156,6 +157,7 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             string identity = null,
@@ -183,6 +185,7 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             X509Certificate2 certificate,

@@ -20,6 +20,7 @@ namespace vm.Aspects.Validation
         Inherited = false)]
     public sealed class CreditCardNumberValidatorAttribute : ValueValidatorAttribute
     {
+        string _rexCreditCard;
         Regex _regex;
 
         /// <summary>
@@ -27,13 +28,19 @@ namespace vm.Aspects.Validation
         /// </summary>
         /// <param name="rexCreditCard">The credit card regular expression.</param>
         public CreditCardNumberValidatorAttribute(
-            string rexCreditCard = RegularExpression.RexAmexMcVisa)
+            string rexCreditCard = RegularExpression.RexAmexMCVisa)
         {
             Contract.Requires<ArgumentNullException>(rexCreditCard!=null, nameof(rexCreditCard));
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(rexCreditCard), "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
 
-            _regex = new Regex(rexCreditCard, RegexOptions.Compiled);
+            _rexCreditCard = rexCreditCard;
+            _regex = new Regex(_rexCreditCard, RegexOptions.Compiled);
         }
+
+        /// <summary>
+        /// Gets the credit card regular expression.
+        /// </summary>
+        public string RexCreditCard => _rexCreditCard;
 
         /// <summary>
         /// Creates the validator.

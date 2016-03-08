@@ -9,8 +9,7 @@ namespace vm.Aspects.Wcf.Behaviors
     {
         List<string> _allowedMethods;
 
-        public PreflightOperationBehavior(
-            OperationDescription preflightOperation)
+        public PreflightOperationBehavior()
         {
             _allowedMethods = new List<string>();
         }

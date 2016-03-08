@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
@@ -168,12 +167,6 @@ namespace vm.Aspects.Wcf
                 if (OperationContext.Current == null)
                     return null;
 
-                var identifier = string.Format(CultureInfo.InvariantCulture, "{0}.{1}", _namespace, _name);
-                var context = (CustomDataContext<T>)CallContext.GetData(identifier);
-
-                if (context != null)
-                    return context;
-
                 // find the header by namespace and name
                 if (WebOperationContext.Current != null)
                 {
@@ -183,26 +176,14 @@ namespace vm.Aspects.Wcf
                         return null;
 
                     using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(serialized)))
-                    {
-                        var serializer = GetJsonSerializer();
-
-                        context = new CustomDataContext<T>((T)serializer.ReadObject(stream));
-                        CallContext.SetData(identifier, context);
-
-                        return context;
-                    }
+                        return new CustomDataContext<T>((T)GetJsonSerializer().ReadObject(stream));
                 }
                 else
                 {
                     var index = OperationContext.Current.IncomingMessageHeaders.FindHeader(_name, _namespace);
 
                     if (index != -1)
-                    {
-                        context = OperationContext.Current.IncomingMessageHeaders.GetHeader<CustomDataContext<T>>(index);
-                        CallContext.SetData(identifier, context);
-
-                        return context;
-                    }
+                        return OperationContext.Current.IncomingMessageHeaders.GetHeader<CustomDataContext<T>>(index);
                     else
                         return null;
                 }

@@ -407,7 +407,7 @@ namespace vm.Aspects.Wcf.Services
                 if (!operations.Any())
                     continue;
 
-                AddPreflightOperationSelectors(endpoint, operations);
+                AddPreflightOperationSelectors(operations);
 
                 endpoint.Behaviors.Add(new EnableCorsEndpointBehavior());
             }
@@ -416,32 +416,50 @@ namespace vm.Aspects.Wcf.Services
         }
 
         static void AddPreflightOperationSelectors(
-            ServiceEndpoint endpoint,
             List<OperationDescription> operations)
         {
             IDictionary<string, PreflightOperationBehavior> uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var operation in operations)
             {
-                if (operation.Behaviors.Find<WebGetAttribute>() != null)
-                    // no need to add preflight operation for GET requests
-                    continue;
-
                 if (operation.IsOneWay)
                     // no support for 1-way messages
                     continue;
 
-                var originalWebInvokeAttribute = operation.Behaviors.Find<WebInvokeAttribute>();
+                string originalUriTemplate;
+                string originalMethod;
 
-                var originalUriTemplate = originalWebInvokeAttribute != null &&
-                                          originalWebInvokeAttribute.UriTemplate != null
-                                            ? NormalizeTemplate(originalWebInvokeAttribute.UriTemplate)
+                var webInvoke = operation.Behaviors.Find<WebInvokeAttribute>();
+
+                if (webInvoke != null)
+                {
+                    originalUriTemplate = webInvoke != null &&
+                                          webInvoke.UriTemplate != null
+                                            ? NormalizeTemplate(webInvoke.UriTemplate)
                                             : operation.Name;
 
-                var originalMethod = originalWebInvokeAttribute != null &&
-                                     originalWebInvokeAttribute.Method != null
-                                            ? originalWebInvokeAttribute.Method
+                    originalMethod = webInvoke != null &&
+                                     webInvoke.Method != null
+                                            ? webInvoke.Method
                                             : "POST";
+                }
+                else
+                {
+                    var webGet = operation.Behaviors.Find<WebGetAttribute>();
+
+                    if (webGet != null)
+                    {
+                        originalUriTemplate = webGet != null &&
+                                              webGet.UriTemplate != null
+                                                    ? NormalizeTemplate(webGet.UriTemplate)
+                                                    : operation.Name;
+
+                        originalMethod = "GET";
+                    }
+                    else
+                        continue;
+                }
+
 
                 if (uriTemplates.ContainsKey(originalUriTemplate))
                 {
@@ -470,29 +488,27 @@ namespace vm.Aspects.Wcf.Services
                 outputMessage
                     .Body
                     .ReturnValue = new MessagePartDescription(operation.Name + Constants.PreflightSuffix + "Return", contract.Namespace)
-                                    {
-                                        Type = typeof(Message),
-                                    };
+                    {
+                        Type = typeof(Message),
+                    };
 
-                var WebInvokeAttribute = new WebInvokeAttribute();
+                var webInvokeAttribute = new WebInvokeAttribute();
 
-                WebInvokeAttribute.UriTemplate = originalUriTemplate;
-                WebInvokeAttribute.Method      = "OPTIONS";
-
+                webInvokeAttribute.UriTemplate = originalUriTemplate;
+                webInvokeAttribute.Method      = "OPTIONS";
 
                 var preflightOperation = new OperationDescription(operation.Name + Constants.PreflightSuffix, contract);
 
                 preflightOperation.Messages.Add(inputMessage);
                 preflightOperation.Messages.Add(outputMessage);
 
-                preflightOperation.Behaviors.Add(WebInvokeAttribute);
-                preflightOperation.Behaviors.Add(new DataContractSerializerOperationBehavior(preflightOperation));
-
-                var preflightOperationBehavior = new PreflightOperationBehavior(preflightOperation);
+                var preflightOperationBehavior = new PreflightOperationBehavior();
 
                 preflightOperationBehavior.AddAllowedMethod(originalMethod);
 
                 preflightOperation.Behaviors.Add(preflightOperationBehavior);
+                preflightOperation.Behaviors.Add(webInvokeAttribute);
+                preflightOperation.Behaviors.Add(new DataContractSerializerOperationBehavior(preflightOperation));
 
                 contract.Operations.Add(preflightOperation);
 
@@ -507,7 +523,7 @@ namespace vm.Aspects.Wcf.Services
             if (queryIndex >= 0)
                 // no query string used for this
                 uriTemplate = uriTemplate.Substring(0, queryIndex);
-            
+
             int paramIndex;
 
             while ((paramIndex = uriTemplate.IndexOf('{')) >= 0)
