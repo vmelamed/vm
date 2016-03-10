@@ -43,6 +43,12 @@ namespace vm.Aspects.Wcf.FaultContracts
         public string Tag { get; set; }
 
         /// <summary>
+        /// Gets or sets the type of the validator which generated this element.
+        /// </summary>
+        [DataMember(Name = "validatorType")]
+        public string ValidatorType { get; set; }
+
+        /// <summary>
         /// Gets or sets the nested validation results for a composite failed validation.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]

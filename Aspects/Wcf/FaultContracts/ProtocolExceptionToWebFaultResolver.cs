@@ -18,7 +18,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// </summary>
     public static class ProtocolExceptionToWebFaultResolver
     {
-        const string _rexFaultType = @",\s*""FaultType""\s*:\s*""(?<type>[^""]+)"",";
+        const string _rexFaultType = @",\s*""faultType""\s*:\s*""(?<type>[^""]+)"",";
 
         static Lazy<Regex> _faultType = new Lazy<Regex>(() => new Regex(_rexFaultType, RegexOptions.Compiled));
 

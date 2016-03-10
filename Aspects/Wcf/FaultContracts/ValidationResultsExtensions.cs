@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
@@ -26,16 +26,17 @@ namespace vm.Aspects.Wcf.FaultContracts
             if (element==null)
                 throw new ArgumentNullException(nameof(element));
 
-            element.Message = result.Message;
-            element.Key     = result.Key;
-            element.Tag     = result.Tag;
+            element.Message       = result.Message;
+            element.Key           = result.Key;
+            element.Tag           = result.Tag;
+            element.ValidatorType = result.Validator?.GetType().Name;
 
             if (result.Target != null)
             {
                 Type targetType = result.Target as Type;
 
-                element.TargetTypeName = targetType!=null 
-                                            ? targetType.Name 
+                element.TargetTypeName = targetType!=null
+                                            ? targetType.Name
                                             : result.Target.GetType().Name;
             }
 

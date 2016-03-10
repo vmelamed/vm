@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +15,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Web.Services.Protocols;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.FaultContracts;
@@ -87,6 +87,14 @@ namespace vm.Aspects.Wcf.Behaviors
             // thrown by the code and will be handled properly by WCF behaviors downstream in SOAP context.
             if (!_wcfContext.HasWebOperationContext  &&  _wcfContext.HasOperationContext  &&  error is FaultException)
                 return;
+
+            // in case the exception is AggregateException and there is only 1 inner exception,
+            // process the inner exception instead.
+            var aggregateException = error as AggregateException;
+
+            if (aggregateException != null  &&
+                aggregateException.InnerExceptions.Count == 1)
+                error = aggregateException.InnerExceptions[0];
 
             // Create a default fault in case it is null
             if (fault == null)
