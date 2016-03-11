@@ -217,10 +217,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// Creates the encrypted key.
         /// </summary>
         /// <returns>EncryptedKey.</returns>
-        protected virtual EncryptedKey CreateEncryptedKey()
-        {
-            return null;
-        }
+        protected virtual EncryptedKey CreateEncryptedKey() => null;
 
         /// <summary>
         /// Determines the symmetric XML encryption method from the symmetric algorithm.

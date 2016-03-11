@@ -246,7 +246,7 @@ namespace vm.Aspects.Model.InMemory
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Attach<T>(
             T entity) where T : BaseDomainEntity
         {
@@ -286,7 +286,7 @@ namespace vm.Aspects.Model.InMemory
         /// If the array is empty, the entire entity will be marked as modified and updated in the store
         /// otherwise, only the modified properties will be updated in the store.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Attach<T>(
             T entity,
             EntityState state,
@@ -342,7 +342,7 @@ namespace vm.Aspects.Model.InMemory
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Detach<T>(
             T entity) where T : BaseDomainEntity
         {
@@ -356,7 +356,7 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="instance">The instance to be deleted.</param>
         /// <returns><c>this</c></returns>
         /// <remarks>Consider if <paramref name="instance" /> is <see langword="null" /> or not found in the repository, the method to silently succeed.</remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository Delete<T>(
             T instance) where T : BaseDomainEntity
         {

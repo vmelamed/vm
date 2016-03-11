@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -8,23 +11,22 @@ namespace vm.Aspects.Wcf.Behaviors
 {
     class PreflightOperationInvoker : IOperationInvoker
     {
-        string _replyAction;
-        List<string> _allowedHttpMethods;
+        readonly string _replyAction;
+        readonly List<string> _allowedHttpMethods;
 
         public PreflightOperationInvoker(
             string replyAction,
-            List<string> allowedHttpMethods)
+            IEnumerable<string> allowedHttpMethods)
         {
+            Contract.Requires<ArgumentNullException>(allowedHttpMethods != null, nameof(allowedHttpMethods));
+
             _replyAction        = replyAction;
-            _allowedHttpMethods = allowedHttpMethods;
+            _allowedHttpMethods = allowedHttpMethods.ToList();
         }
 
-        public object[] AllocateInputs()
-        {
-            return new object[1];
-        }
+        public object[] AllocateInputs() => new object[1];
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public object Invoke(
             object instance,
             object[] inputs,
@@ -47,7 +49,14 @@ namespace vm.Aspects.Wcf.Behaviors
             httpResponse.StatusCode         = HttpStatusCode.OK;
 
             if (origin != null)
-                httpResponse.Headers.Add(Constants.AccessControlAllowOrigin, origin);
+            {
+                var origins = httpResponse.Headers.Get(Constants.AccessControlAllowOrigin);
+
+                if (origins == null  ||
+                    !origins.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Contains(origin, StringComparer.OrdinalIgnoreCase))
+                    httpResponse.Headers.Add(Constants.AccessControlAllowOrigin, origin);
+            }
 
             if (requestMethod != null &&
                 _allowedHttpMethods.Contains(requestMethod))
@@ -64,10 +73,7 @@ namespace vm.Aspects.Wcf.Behaviors
             return reply;
         }
 
-        public bool IsSynchronous
-        {
-            get { return true; }
-        }
+        public bool IsSynchronous => true;
 
         public IAsyncResult InvokeBegin(
             object instance,

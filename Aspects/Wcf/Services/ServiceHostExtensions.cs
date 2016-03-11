@@ -418,6 +418,8 @@ namespace vm.Aspects.Wcf.Services
         static void AddPreflightOperationSelectors(
             List<OperationDescription> operations)
         {
+            Contract.Requires<ArgumentNullException>(operations != null, nameof(operations));
+
             IDictionary<string, PreflightOperationBehavior> uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var operation in operations)
@@ -518,6 +520,8 @@ namespace vm.Aspects.Wcf.Services
 
         static string NormalizeTemplate(string uriTemplate)
         {
+            Contract.Requires<ArgumentNullException>(uriTemplate != null, nameof(uriTemplate));
+
             int queryIndex = uriTemplate.IndexOf('?');
 
             if (queryIndex >= 0)

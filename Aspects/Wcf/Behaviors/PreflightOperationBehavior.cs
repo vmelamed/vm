@@ -7,12 +7,7 @@ namespace vm.Aspects.Wcf.Behaviors
 {
     class PreflightOperationBehavior : IOperationBehavior
     {
-        List<string> _allowedMethods;
-
-        public PreflightOperationBehavior()
-        {
-            _allowedMethods = new List<string>();
-        }
+        readonly ISet<string> _allowedMethods = new SortedSet<string>();
 
         public void AddAllowedMethod(
             string httpMethod)

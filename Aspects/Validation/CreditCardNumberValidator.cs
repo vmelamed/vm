@@ -15,7 +15,7 @@ namespace vm.Aspects.Validation
     [ConfigurationElementType(typeof(CustomValidatorData))]
     public class CreditCardNumberValidator : ValueValidator<string>
     {
-        Regex _creditCardRegularExpression;
+        readonly Regex _creditCardRegularExpression;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreditCardNumberValidator" /> class.

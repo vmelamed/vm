@@ -20,8 +20,8 @@ namespace vm.Aspects.Validation
         Inherited = false)]
     public sealed class CreditCardNumberValidatorAttribute : ValueValidatorAttribute
     {
-        string _rexCreditCard;
-        Regex _regex;
+        readonly string _rexCreditCard;
+        readonly Regex _regex;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreditCardNumberValidatorAttribute"/> class.
