@@ -159,7 +159,8 @@ namespace vm.Aspects.Model
                             string.Format(
                                 CultureInfo.InvariantCulture,
                                 "The property {0} is not specified in a "+nameof(DecryptedAttribute)+"."+nameof(DecryptedAttribute.EncryptedIn)+" property.",
-                                encryptedIn));
+                                encryptedIn),
+                            nameof(encryptedIn));
 
             Encrypt(g);
         }
@@ -232,7 +233,8 @@ namespace vm.Aspects.Model
                             string.Format(
                                 CultureInfo.InvariantCulture,
                                 "The property {0} is not specified in a "+nameof(DecryptedAttribute)+"."+nameof(DecryptedAttribute.EncryptedIn)+" property.",
-                                encryptedIn));
+                                encryptedIn),
+                            nameof(encryptedIn));
 
             Decrypt(g);
         }

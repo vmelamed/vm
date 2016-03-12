@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Wcf.FaultContracts;
 using vm.Aspects.Wcf.Properties;
 
@@ -321,7 +321,7 @@ namespace vm.Aspects.Wcf.Behaviors
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
             if (methodInfo == null)
-                throw new ArgumentException("There is no method in the operation?");
+                throw new ArgumentException("There is no method in the operation.", nameof(operation));
 
             return methodInfo.GetCustomAttributes(typeof(ValidatorAttribute), false).Length > 0 ||
                    HasParametersWithValidationAssertions(methodInfo.GetParameters());
@@ -343,7 +343,7 @@ namespace vm.Aspects.Wcf.Behaviors
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
             if (methodInfo == null)
-                throw new ArgumentException("There is no method in the operation?");
+                throw new ArgumentException("There is no method in the operation.", nameof(operation));
 
             var operationContractAttribute = methodInfo.GetCustomAttribute<OperationContractAttribute>(false);
 

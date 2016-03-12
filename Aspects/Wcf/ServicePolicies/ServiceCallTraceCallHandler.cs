@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
@@ -6,8 +8,6 @@ using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
@@ -189,7 +189,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             var wcfCallData = callData as ServiceCallData;
 
             if (wcfCallData == null)
-                throw new ArgumentException("callData must be of type ServiceCallData");
+                throw new ArgumentException("callData must be of type ServiceCallData", nameof(callData));
 
             var contextValue = wcfCallData.CustomContext;
 

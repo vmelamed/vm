@@ -25,7 +25,7 @@ namespace vm.Aspects
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
-                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
             var tested = ((IConvertible)value).ToUInt64(CultureInfo.InvariantCulture);
 
@@ -49,7 +49,7 @@ namespace vm.Aspects
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
-                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
             var tested = ((IConvertible)value).ToUInt64(CultureInfo.InvariantCulture);
             var testFor = ((IConvertible)flags).ToUInt64(CultureInfo.InvariantCulture);
@@ -74,7 +74,7 @@ namespace vm.Aspects
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
-                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
             var tested = ((IConvertible)value).ToUInt64(CultureInfo.InvariantCulture);
             var testFor = ((IConvertible)flags).ToUInt64(CultureInfo.InvariantCulture);
@@ -99,7 +99,7 @@ namespace vm.Aspects
             Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
 
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
-                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
             var tested = ((IConvertible)value).ToUInt64(CultureInfo.InvariantCulture);
             var testFor = ((IConvertible)flags).ToUInt64(CultureInfo.InvariantCulture);

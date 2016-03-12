@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -7,8 +9,6 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
 
@@ -45,7 +45,7 @@ namespace vm.Aspects.Wcf.Behaviors
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
             if (methodInfo == null)
-                throw new ArgumentException("There is no method in the operation?");
+                throw new ArgumentException("There is no method in the operation.", nameof(operation));
 
             InputValidators = new List<Validator>();
             InputValidatorParameterNames = new List<string>();

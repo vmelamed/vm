@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
-using Microsoft.Practices.ServiceLocation;
-using System.Diagnostics.Contracts;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -44,10 +43,10 @@ namespace vm.Aspects.Wcf.Behaviors
             InstanceContext instanceContext,
             Message message)
         {
-            if (instanceContext==null)
+            if (instanceContext == null)
                 throw new ArgumentNullException(nameof(instanceContext));
-            if (instanceContext.Host==null)
-                throw new ArgumentException("The instance context's property Host cannot be null.");
+            if (instanceContext.Host == null)
+                throw new ArgumentException("The instance context's property Host cannot be null.", nameof(instanceContext));
 
             return CreateInstance(
                         instanceContext.Host.Description.ServiceType,
