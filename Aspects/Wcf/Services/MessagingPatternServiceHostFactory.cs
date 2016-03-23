@@ -382,11 +382,11 @@ namespace vm.Aspects.Wcf.Services
                 host.SetServiceIdentity(_identityType, _identifyingCertificate);
 
             host.ConfigureBindings(typeof(TContract), MessagingPattern)
-                .EnableCorsBehavior()
                 .AddTransactionTimeout()
                 .AddDebugBehaviors()
                 .AddMetadataBehaviors(MetadataFeatures)
                 .AddSecurityAuditBehavior()
+                .EnableCorsBehavior()
                 ;
 
             host.Opening += InitializeHost;

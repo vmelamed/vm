@@ -7,24 +7,26 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
     {
         public HiLoIdentityGeneratorConfiguration()
         {
+            var i = 0;
+
             ToTable("_HiLoIdentityGenerator", "HiLoIdentity");
 
             HasKey(g => g.EntitySetName);
 
             Property(g => g.EntitySetName)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
-                .HasColumnOrder(0)
+                .HasColumnOrder(i++)
                 .HasMaxLength(HiLoIdentityGenerator.EntitySetNameMaxLength)
                 ;
 
             Property(g => g.HighValue)
                 .IsRequired()
-                .HasColumnOrder(1)
+                .HasColumnOrder(i++)
                 ;
 
             Property(g => g.MaxLowValue)
                 .IsRequired()
-                .HasColumnOrder(2)
+                .HasColumnOrder(i++)
                 ;
 
             Ignore(g => g.LowValue);

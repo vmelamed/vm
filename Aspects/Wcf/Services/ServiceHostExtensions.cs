@@ -385,6 +385,9 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost EnableCorsBehavior(
             this ServiceHost host)
         {
+            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Ensures(Contract.Result<ServiceHost>() != null);
+
             // must have endpoint with WebHttpBinding and either the whole contract or any of the operations have EnableCorsAttribute
             foreach (var endpoint in host.Description
                                          .Endpoints
@@ -420,7 +423,7 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Requires<ArgumentNullException>(operations != null, nameof(operations));
 
-            IDictionary<string, PreflightOperationBehavior> uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
+            var uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var operation in operations)
             {
@@ -435,13 +438,11 @@ namespace vm.Aspects.Wcf.Services
 
                 if (webInvoke != null)
                 {
-                    originalUriTemplate = webInvoke != null &&
-                                          webInvoke.UriTemplate != null
+                    originalUriTemplate = webInvoke.UriTemplate != null
                                             ? NormalizeTemplate(webInvoke.UriTemplate)
                                             : operation.Name;
 
-                    originalMethod = webInvoke != null &&
-                                     webInvoke.Method != null
+                    originalMethod = webInvoke.Method != null
                                             ? webInvoke.Method
                                             : "POST";
                 }
@@ -451,8 +452,7 @@ namespace vm.Aspects.Wcf.Services
 
                     if (webGet != null)
                     {
-                        originalUriTemplate = webGet != null &&
-                                              webGet.UriTemplate != null
+                        originalUriTemplate = webGet.UriTemplate != null
                                                     ? NormalizeTemplate(webGet.UriTemplate)
                                                     : operation.Name;
 
@@ -462,12 +462,12 @@ namespace vm.Aspects.Wcf.Services
                         continue;
                 }
 
+                PreflightOperationBehavior preflightOperationBehavior;
 
-                if (uriTemplates.ContainsKey(originalUriTemplate))
+                if (uriTemplates.TryGetValue(originalUriTemplate, out preflightOperationBehavior))
                 {
                     // there is already an OPTIONS operation for this URI, we can reuse it
-                    PreflightOperationBehavior operationBehavior = uriTemplates[originalUriTemplate];
-                    operationBehavior.AddAllowedMethod(originalMethod);
+                    preflightOperationBehavior.AddAllowedMethod(originalMethod);
                     continue;
                 }
 
@@ -494,23 +494,22 @@ namespace vm.Aspects.Wcf.Services
                         Type = typeof(Message),
                     };
 
-                var webInvokeAttribute = new WebInvokeAttribute();
-
-                webInvokeAttribute.UriTemplate = originalUriTemplate;
-                webInvokeAttribute.Method      = "OPTIONS";
-
                 var preflightOperation = new OperationDescription(operation.Name + Constants.PreflightSuffix, contract);
 
                 preflightOperation.Messages.Add(inputMessage);
                 preflightOperation.Messages.Add(outputMessage);
 
-                var preflightOperationBehavior = new PreflightOperationBehavior();
+                preflightOperationBehavior = new PreflightOperationBehavior();
 
                 preflightOperationBehavior.AddAllowedMethod(originalMethod);
 
-                preflightOperation.Behaviors.Add(preflightOperationBehavior);
-                preflightOperation.Behaviors.Add(webInvokeAttribute);
+                preflightOperation.Behaviors.Add(new WebInvokeAttribute
+                {
+                    Method      = "OPTIONS",
+                    UriTemplate = originalUriTemplate,
+                });
                 preflightOperation.Behaviors.Add(new DataContractSerializerOperationBehavior(preflightOperation));
+                preflightOperation.Behaviors.Add(preflightOperationBehavior);
 
                 contract.Operations.Add(preflightOperation);
 
