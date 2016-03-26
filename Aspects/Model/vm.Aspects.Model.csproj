@@ -260,9 +260,11 @@
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
     <None Include="EncryptedParts.cs" />
+    <Compile Include="EFRepository\NonUnicodeAttribute.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHasBusinessKey.cs" />
     <Compile Include="IHasStoreId.cs" />
+    <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="IMoneyDefaults.cs" />
     <Compile Include="InMemory\ListObjectsRepository.cs" />
     <Compile Include="InMemory\ListObjectsRepository.Registrar.cs" />

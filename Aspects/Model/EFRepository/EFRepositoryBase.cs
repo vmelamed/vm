@@ -183,6 +183,11 @@ namespace vm.Aspects.Model.EFRepository
             modelBuilder
                 .Conventions
                 .Remove<PluralizingTableNameConvention>();
+            modelBuilder
+                .Conventions
+                .Add(
+                    new NonUnicodeAttributeConvention(),
+                    new IndexAttributeConvention());
 
             if (StoreIdProvider is HiLoStoreIdProvider)
                 // Add the configuration of the HiLo PK generator generators

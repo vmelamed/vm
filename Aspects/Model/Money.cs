@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Practices.ServiceLocation;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
-using Microsoft.Practices.ServiceLocation;
-using System.Diagnostics;
 
 namespace vm.Aspects.Model
 {
@@ -34,6 +34,7 @@ namespace vm.Aspects.Model
         /// ATTENTION: Although the property has a setter, please treat the class as immutable.
         /// The setter is there only so that it can be retrieved from a database.
         /// </remarks>
+        [Editable(false, AllowInitialValue = true)]
         public string Currency { get; set; }
         #endregion
 
