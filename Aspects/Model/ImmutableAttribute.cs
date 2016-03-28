@@ -11,7 +11,7 @@ namespace vm.Aspects.Model
         AttributeTargets.Class |
         AttributeTargets.Struct,
         AllowMultiple = false,
-        Inherited = false)]
+        Inherited = true)]
     public sealed class ImmutableAttribute : Attribute
     {
     }

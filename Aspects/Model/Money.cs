@@ -12,16 +12,16 @@ namespace vm.Aspects.Model
     /// </summary>
     [MetadataType(typeof(MoneyMetadata))]
     [Serializable]
-    [DebuggerDisplay("{GetType().Name, nq} {Value} {Currency,nq}")]
+    [DebuggerDisplay("{GetType().Name, nq} {Amount} {Currency,nq}")]
     public sealed partial class Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
     {
         #region Properties
         /// <summary>
         /// Gets the monetary value represented by the instance - the amount of currency.
         /// ATTENTION: Although the property has a setter, please treat the class as immutable.
-        /// The setter is there only so that it can be retrieved from a database.
+        /// The setter is there only so that it can be retrieved with an ORM.
         /// </summary>
-        public decimal Value { get; set; }
+        public decimal Amount { get; set; }
 
         /// <summary>
         /// Gets the ISO 4217 three letter currency code. In case the value is <see langword="null"/> or empty the
@@ -32,7 +32,7 @@ namespace vm.Aspects.Model
         /// The class verifies only that the currency is 3 alpha characters long and does not check if the characters
         /// represent an actual currency - this is outside the scope of this class.
         /// ATTENTION: Although the property has a setter, please treat the class as immutable.
-        /// The setter is there only so that it can be retrieved from a database.
+        /// The setter is there only so that it can be retrieved with an ORM.
         /// </remarks>
         [Editable(false, AllowInitialValue = true)]
         public string Currency { get; set; }
@@ -52,18 +52,21 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="value">The monetary value represented by the instance - the amount of currency.</param>
         /// <param name="currency">The ISO 4217 three letter currency code.</param>
+        /// <param name="defaults">The interface supplying certain money defaults.</param>
         public Money(
             decimal value,
-            string currency = null)
+            string currency = null,
+            IMoneyDefaults defaults = null)
         {
-            Contract.Requires<ArgumentException>(string.IsNullOrWhiteSpace(currency) || RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
+            Contract.Requires<ArgumentException>(string.IsNullOrWhiteSpace(currency) ||
+                                                 RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
 
-            IMoneyDefaults defaults = ServiceLocator.Current.GetInstance<IMoneyDefaults>();
+            defaults = defaults ?? ServiceLocator.Current.GetInstance<IMoneyDefaults>();
 
             if (string.IsNullOrWhiteSpace(currency))
                 currency = defaults.Currency;
 
-            Value = decimal.Round(value, defaults.Decimals(currency), defaults.Rounding(currency));
+            Amount   = decimal.Round(value, defaults.Decimals(currency), defaults.Rounding(currency));
             Currency = currency;
         }
 
@@ -78,8 +81,8 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(info != null, nameof(info));
 
-            Value = (decimal)info.GetValue("Value", typeof(decimal));
-            Currency = (string)info.GetValue("Currency", typeof(string));
+            Amount   = (decimal)info.GetValue(nameof(Amount), typeof(decimal));
+            Currency = (string)info.GetValue(nameof(Currency), typeof(string));
         }
         #endregion
 
@@ -90,7 +93,7 @@ namespace vm.Aspects.Model
         /// <param name="other">A reference to another object of type <see cref="Money"/> to compare with the current object.</param>
         /// <returns>
         /// <see langword="true"/> if the current object and the <paramref name="other"/> have equal values 
-        /// of their properties <see cref="Value"/> and <see cref="Currency"/>; otherwise <see langword="false"/>.
+        /// of their properties <see cref="Amount"/> and <see cref="Currency"/>; otherwise <see langword="false"/>.
         /// </returns>
         /// <remarks>
         /// The <see cref="Equals(Money)"/>, <see cref="Equals(object)"/> methods, the overloaded <c>operator==</c> and 
@@ -104,7 +107,7 @@ namespace vm.Aspects.Model
             if (ReferenceEquals(this, other))
                 return true;
 
-            return Value == other.Value &&
+            return Amount   == other.Amount &&
                    Currency == other.Currency;
         }
         #endregion
@@ -115,7 +118,7 @@ namespace vm.Aspects.Model
         /// <param name="obj">The <see cref="object"/> reference to compare with this <see cref="Money"/> object.</param>
         /// <returns>
         /// <see langword="true"/> if the current object and the <paramref name="obj"/> have equal values 
-        /// of their properties <see cref="Value"/> and <see cref="Currency"/>; otherwise <see langword="false"/>.
+        /// of their properties <see cref="Amount"/> and <see cref="Currency"/>; otherwise <see langword="false"/>.
         /// </returns>
         /// <remarks>
         /// The <see cref="Equals(Money)"/>, <see cref="Equals(object)"/> methods, the overloaded <c>operator==</c> and 
@@ -131,7 +134,7 @@ namespace vm.Aspects.Model
             var hashCode = Constants.HashInitializer;
 
             hashCode = Constants.HashMultiplier * hashCode + Currency.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Value.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + Amount.GetHashCode();
 
             return hashCode;
         }
@@ -169,7 +172,7 @@ namespace vm.Aspects.Model
         /// Clones this instance.
         /// </summary>
         /// <returns>A money instance identical to this.</returns>
-        public object Clone() => new Money(Value, Currency);
+        public object Clone() => new Money(Amount, Currency);
         #endregion
 
         #region ICompareable<Money>
@@ -191,11 +194,11 @@ namespace vm.Aspects.Model
             if (!string.Equals(Currency, other.Currency, StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("The currencies are different.", nameof(other));
 
-            if (Value == other.Value)
+            if (Amount == other.Amount)
                 return 0;
             else
             {
-                if (Value > other.Value)
+                if (Amount > other.Amount)
                     return 1;
                 else
                     return -1;
@@ -254,8 +257,8 @@ namespace vm.Aspects.Model
             SerializationInfo info,
             StreamingContext context)
         {
-            info.AddValue("Value", Value);
-            info.AddValue("Currency", Currency);
+            info.AddValue(nameof(Amount), Amount);
+            info.AddValue(nameof(Currency), Currency);
         }
         #endregion
 
@@ -276,7 +279,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        operand.Value,
+                        operand.Amount,
                         operand.Currency);
         }
 
@@ -286,7 +289,7 @@ namespace vm.Aspects.Model
         /// <param name="operand">The operand.</param>
         /// <returns>The result of the operator.</returns>
         /// <remarks>
-        /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/> and rounded.
+        /// The operation returns a new instance with <see cref="Amount"/> equal to the negated this' <see cref="Amount"/> and rounded.
         /// </remarks>
         public static Money Negate(
             Money operand)
@@ -295,7 +298,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        -operand.Value,
+                        -operand.Amount,
                         operand.Currency);
         }
 
@@ -307,7 +310,7 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the sum of the <see cref="Value"/>-s of the operands; 
+        /// The result object will have <see cref="Amount"/> equal to the sum of the <see cref="Amount"/>-s of the operands; 
         /// will have the same currency as the operands; 
         /// the result value will be rounded.
         /// </remarks>
@@ -321,7 +324,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        left.Value + right.Value,
+                        left.Amount + right.Amount,
                         left.Currency);
         }
 
@@ -333,7 +336,7 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; the result value will be rounded.
+        /// The result object will have <see cref="Amount"/> equal to the difference between the <see cref="Amount"/>-s of the operands; the result value will be rounded.
         /// </remarks>
         public static Money Subtract(
             Money left,
@@ -345,7 +348,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        left.Value - right.Value,
+                        left.Amount - right.Amount,
                         left.Currency);
         }
 
@@ -365,10 +368,10 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
+            Contract.Requires<DivideByZeroException>(right.Amount != 0M, "The divisor is 0.");
             Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
 
-            return left.Value / right.Value;
+            return left.Amount / right.Amount;
         }
 
         /// <summary>
@@ -390,7 +393,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        left.Value / right,
+                        left.Amount / right,
                         left.Currency);
         }
 
@@ -413,7 +416,7 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Money>() != null);
 
             return new Money(
-                        left.Value % right,
+                        left.Amount % right,
                         left.Currency);
         }
         #endregion
@@ -502,7 +505,7 @@ namespace vm.Aspects.Model
         /// <param name="operand">The operand.</param>
         /// <returns>The result of the operator.</returns>
         /// <remarks>
-        /// The operation returns a new instance with <see cref="Value"/> equal to the negated this' <see cref="Value"/> and rounded.
+        /// The operation returns a new instance with <see cref="Amount"/> equal to the negated this' <see cref="Amount"/> and rounded.
         /// </remarks>
         public static Money operator -(Money operand)
         {
@@ -520,7 +523,7 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the sum of the <see cref="Value"/>-s of the operands; 
+        /// The result object will have <see cref="Amount"/> equal to the sum of the <see cref="Amount"/>-s of the operands; 
         /// will have the same currency as the operands; 
         /// the result value will be rounded.
         /// </remarks>
@@ -542,7 +545,7 @@ namespace vm.Aspects.Model
         /// <returns>The result of the operator.</returns>
         /// <exception cref="InvalidOperationException">If the operands are of different currencies.</exception>
         /// <remarks>
-        /// The result object will have <see cref="Value"/> equal to the difference between the <see cref="Value"/>-s of the operands; the result value will be rounded.
+        /// The result object will have <see cref="Amount"/> equal to the difference between the <see cref="Amount"/>-s of the operands; the result value will be rounded.
         /// </remarks>
         public static Money operator -(Money left, Money right)
         {
@@ -568,7 +571,7 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(left != null, nameof(left));
             Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
+            Contract.Requires<DivideByZeroException>(right.Amount != 0M, "The divisor is 0.");
             Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
 
             return Divide(left, right);
