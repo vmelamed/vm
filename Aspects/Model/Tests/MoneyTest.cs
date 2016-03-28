@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Model.Tests
 {
@@ -54,7 +54,7 @@ namespace vm.Aspects.Model.Tests
         {
             var target = new Money(123.45M, "USD");
 
-            Assert.AreEqual(123.45M, target.Value);
+            Assert.AreEqual(123.45M, target.Amount);
             Assert.AreEqual("USD", target.Currency);
         }
 
@@ -63,7 +63,7 @@ namespace vm.Aspects.Model.Tests
         {
             var target = new Money(123.456M, "USD");
 
-            Assert.AreEqual(123.46M, target.Value);
+            Assert.AreEqual(123.46M, target.Amount);
             Assert.AreEqual("USD", target.Currency);
         }
 
@@ -72,7 +72,7 @@ namespace vm.Aspects.Model.Tests
         {
             var target = new Money(123.45M);
 
-            Assert.AreEqual(123.45M, target.Value);
+            Assert.AreEqual(123.45M, target.Amount);
             Assert.AreEqual("USD", target.Currency);
         }
 
@@ -292,7 +292,7 @@ namespace vm.Aspects.Model.Tests
             var actual = Money.Negate(target);
 
             Assert.IsFalse(ReferenceEquals(target, actual));
-            Assert.IsTrue(target.Value == -actual.Value);
+            Assert.IsTrue(target.Amount == -actual.Amount);
             Assert.IsTrue(target.Currency == actual.Currency);
         }
 
@@ -305,7 +305,7 @@ namespace vm.Aspects.Model.Tests
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
             Assert.IsFalse(ReferenceEquals(target2, actual));
-            Assert.AreEqual(246.91M, actual.Value);
+            Assert.AreEqual(246.91M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -318,7 +318,7 @@ namespace vm.Aspects.Model.Tests
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
             Assert.IsFalse(ReferenceEquals(target2, actual));
-            Assert.AreEqual(-0.01M, actual.Value);
+            Assert.AreEqual(-0.01M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -341,7 +341,7 @@ namespace vm.Aspects.Model.Tests
             var actual = Money.Divide(target1, 2);
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
-            Assert.AreEqual(61.72M, actual.Value);
+            Assert.AreEqual(61.72M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -352,7 +352,7 @@ namespace vm.Aspects.Model.Tests
             var actual = Money.Mod(target1, 2);
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
-            Assert.AreEqual(1.45M, actual.Value);
+            Assert.AreEqual(1.45M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
         // ---------------------------------
@@ -374,7 +374,7 @@ namespace vm.Aspects.Model.Tests
             var actual = -target;
 
             Assert.IsFalse(ReferenceEquals(target, actual));
-            Assert.IsTrue(target.Value == -actual.Value);
+            Assert.IsTrue(target.Amount == -actual.Amount);
             Assert.IsTrue(target.Currency == actual.Currency);
         }
 
@@ -387,7 +387,7 @@ namespace vm.Aspects.Model.Tests
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
             Assert.IsFalse(ReferenceEquals(target2, actual));
-            Assert.AreEqual(246.91M, actual.Value);
+            Assert.AreEqual(246.91M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -400,7 +400,7 @@ namespace vm.Aspects.Model.Tests
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
             Assert.IsFalse(ReferenceEquals(target2, actual));
-            Assert.AreEqual(-0.01M, actual.Value);
+            Assert.AreEqual(-0.01M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -423,7 +423,7 @@ namespace vm.Aspects.Model.Tests
             var actual = target1 / 2;
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
-            Assert.AreEqual(61.72M, actual.Value);
+            Assert.AreEqual(61.72M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
 
@@ -434,7 +434,7 @@ namespace vm.Aspects.Model.Tests
             var actual = target1 % 2;
 
             Assert.IsFalse(ReferenceEquals(target1, actual));
-            Assert.AreEqual(1.45M, actual.Value);
+            Assert.AreEqual(1.45M, actual.Amount);
             Assert.AreEqual("USD", actual.Currency);
         }
     }
