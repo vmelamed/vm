@@ -1,5 +1,4 @@
 ﻿using vm.Aspects.Diagnostics;
-using vm.Aspects.Validation;
 
 namespace vm.Aspects.Model
 {
@@ -9,10 +8,9 @@ namespace vm.Aspects.Model
         public object HasIdentity { get; set; }
 
         [Dump(1)]
-        [NonnegativeValidator]
-        public object Id { get; set; }
+        public object Key { get; set; }
 
         [Dump(2)]
-        public object Key { get; set; }
+        public object Id { get; set; }
     }
 }

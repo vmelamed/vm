@@ -244,8 +244,11 @@
     <Compile Include="BaseDomainEntity.cs" />
     <Compile Include="BaseDomainValue.cs" />
     <Compile Include="DomainEntity.cs" />
-    <Compile Include="DomainEntityMetadata.cs" />
+    <Compile Include="DomainEntity.Metadata.cs">
+      <DependentUpon>DomainEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="DomainValue.cs" />
+    <Compile Include="EFRepository\DateTimeSqlTypeConvention.cs" />
     <Compile Include="EFRepository\EFRepositoryBase.cs" />
     <Compile Include="EFRepository\EFRepositoryBase.IRepository.cs" />
     <Compile Include="EFRepository\EFRepositoryBase.Registrar.cs" />
@@ -255,12 +258,12 @@
     <Compile Include="EFRepository\HiLoIdentity\HiLoIdentityGeneratorConfiguration.cs" />
     <Compile Include="EFRepository\HiLoIdentity\HiLoStoreIdProvider.cs" />
     <Compile Include="EFRepository\IStoreIdProviders.cs" />
+    <Compile Include="EFRepository\NumericAttribute.cs" />
     <Compile Include="EFRepository\ObjectContextExtensions.cs" />
-    <Compile Include="EFRepository\SqlDBTypes.cs" />
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
     <None Include="EncryptedParts.cs" />
-    <Compile Include="EFRepository\NonUnicodeAttribute.cs" />
+    <Compile Include="EFRepository\StringAttribute.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHasBusinessKey.cs" />
     <Compile Include="IHasStoreId.cs" />

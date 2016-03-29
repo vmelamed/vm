@@ -6,7 +6,7 @@ namespace vm.Aspects.Model
     abstract class MoneyMetadata
     {
         [Dump(0)]
-        public object Amount { get; set; }
+        public object Value { get; set; }
 
         [IgnoreNulls]
         [RegexValidator(RegularExpression.RexCurrencyIsoCode)]

@@ -182,12 +182,14 @@ namespace vm.Aspects.Model.EFRepository
 
             modelBuilder
                 .Conventions
-                .Remove<PluralizingTableNameConvention>();
+                .Add(
+                    new StringAttributeConvention(),
+                    new NumericAttributeConvention(),
+                    new DateTimeSqlTypeConvention());
+
             modelBuilder
                 .Conventions
-                .Add(
-                    new NonUnicodeAttributeConvention(),
-                    new IndexAttributeConvention());
+                .Remove<PluralizingTableNameConvention>();
 
             if (StoreIdProvider is HiLoStoreIdProvider)
                 // Add the configuration of the HiLo PK generator generators
@@ -230,15 +232,6 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         protected virtual void PreprocessEntries()
         {
-            //Lazy<DateTime> now = new Lazy<DateTime>(() => Facility.Clock.UtcNow);
-
-            //ObjectContext.ObjectStateManager
-            //             .GetObjectStateEntries(System.Data.Entity.EntityState.Modified |
-            //                                    System.Data.Entity.EntityState.Unchanged)
-            //             .Where(e => e.Entity is BaseDomainEntity &&
-            //                         (e.State == System.Data.Entity.EntityState.Modified || e.GetModifiedProperties().Any()))
-            //             .Select(e => (e.Entity as BaseDomainEntity).SetUpdated(now.Value))
-            //             .Count();
         }
 
         /// <summary>
