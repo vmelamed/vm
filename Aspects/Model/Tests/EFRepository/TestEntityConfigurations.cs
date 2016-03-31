@@ -35,11 +35,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
                 ;
 
             Property(e => e.Created)
-                .HasColumnType(SqlDBTypes.DateTime)
                 ;
 
             Property(e => e.Updated)
-                .HasColumnType(SqlDBTypes.DateTime)
                 .IsConcurrencyToken()
                 ;
         }
@@ -76,11 +74,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
                 ;
 
             Property(e => e.Created)
-                .HasColumnType(SqlDBTypes.DateTime)
                 ;
 
             Property(e => e.Updated)
-                .HasColumnType(SqlDBTypes.DateTime)
                 .IsConcurrencyToken()
                 ;
 

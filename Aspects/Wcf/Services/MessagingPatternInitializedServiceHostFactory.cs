@@ -1,12 +1,13 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 
@@ -79,6 +80,8 @@ namespace vm.Aspects.Wcf.Services
         where TContract : class
         where TInitializer : IInitializeService, new()
     {
+        IInitializeService _serviceInitializer;
+
         /// <summary>
         /// Gets or sets the resolve name of the initializer.
         /// </summary>
@@ -234,8 +237,6 @@ namespace vm.Aspects.Wcf.Services
             return InitializerResolveName;
         }
 
-        IInitializeService _serviceInitializer;
-
         /// <summary>
         /// Gets the service initializer.
         /// </summary>
@@ -246,7 +247,7 @@ namespace vm.Aspects.Wcf.Services
                 if (_serviceInitializer == null)
                     try
                     {
-                        _serviceInitializer = ServiceLocator.Current.GetInstance<IInitializeService>();
+                        _serviceInitializer = ServiceLocator.Current.GetInstance<IInitializeService>(InitializerResolveName);
                     }
                     catch (ActivationException)
                     {
@@ -267,6 +268,11 @@ namespace vm.Aspects.Wcf.Services
         /// <returns>Service's lifetime manager</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will dispose it.")]
         protected virtual LifetimeManager ServiceInitializerLifetimeManager => new TransientLifetimeManager();
+
+        /// <summary>
+        /// Gets a value indicating whether the created host is initialized yet.
+        /// </summary>
+        public Task<bool> IsHostInitializedTask { get; private set; }
 
         /// <summary>
         /// Initializes the host.
@@ -295,7 +301,16 @@ namespace vm.Aspects.Wcf.Services
 
             if (ServiceInitializer != null)
                 // start initialization on another thread and return immediately
-                ServiceInitializer.InitializeAsync(host, 0).ConfigureAwait(false);
+                IsHostInitializedTask = ServiceInitializer
+                                            .InitializeAsync(host, 0)
+                                            .ContinueWith(
+                                                t =>
+                                                {
+                                                    if (t.IsCompleted  &&  t.Result)
+                                                        HostInitialized(host, serviceType);
+
+                                                    return t.Result;
+                                                });
             else
                 Facility.LogWriter
                         .EventLogError(

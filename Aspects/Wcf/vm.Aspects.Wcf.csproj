@@ -259,6 +259,7 @@
     <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="Behaviors\AsyncServiceSynchronizationContext.cs" />
     <Compile Include="Behaviors\EnableCorsAttribute.cs" />
     <Compile Include="Behaviors\EnableCorsEndpointBehavior.cs" />
     <Compile Include="Behaviors\EnableCorsMessageInspector.cs" />

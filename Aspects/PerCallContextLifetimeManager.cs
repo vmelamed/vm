@@ -21,7 +21,7 @@ namespace vm.Aspects
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue() => CallContext.GetData(_key);
+        public override object GetValue() => CallContext.LogicalGetData(_key);
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.
@@ -32,7 +32,7 @@ namespace vm.Aspects
             if (newValue == null)
                 RemoveValue();
             else
-                CallContext.SetData(_key, newValue);
+                CallContext.LogicalSetData(_key, newValue);
         }
 
         /// <summary>

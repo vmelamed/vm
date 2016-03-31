@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
@@ -8,6 +6,8 @@ using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
@@ -107,7 +107,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                                         endpointMessageProperty.Address,
                                                         endpointMessageProperty.Port);
                     // just in case someone needs it up the stack:
-                    CallContext.SetData("callerIpAddress", endpointMessageProperty.Address);
+                    CallContext.LogicalSetData("callerIpAddress", endpointMessageProperty.Address);
                 }
             }
 
