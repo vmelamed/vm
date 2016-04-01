@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
@@ -13,7 +12,6 @@ namespace vm.Aspects
     public class PerCallContextLifetimeManager : LifetimeManager
     {
         readonly string _key = Facility.GuidGenerator.NewGuid().ToString("N");
-        readonly object _sync = new object();
 
         /// <summary>
         /// Gets the key of the object stored in the call context.
@@ -26,12 +24,7 @@ namespace vm.Aspects
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
         public override object GetValue()
         {
-            object obj;
-
-            lock (_sync)
-                obj = CallContext.LogicalGetData(_key);
-
-            Debug.WriteLine("{0} -> {1}", _key, obj?.GetType()?.Name ?? "<null>");
+            var obj = CallContext.LogicalGetData(_key);
 
             return obj;
         }
@@ -45,12 +38,7 @@ namespace vm.Aspects
             if (newValue == null)
                 RemoveValue();
             else
-                lock (_sync)
-                {
-                    Debug.WriteLine("{0} <- {1}", _key, newValue?.GetType()?.Name);
-
-                    CallContext.LogicalSetData(_key, newValue);
-                }
+                CallContext.LogicalSetData(_key, newValue);
         }
 
         /// <summary>
@@ -58,21 +46,14 @@ namespace vm.Aspects
         /// </summary>
         public override void RemoveValue()
         {
-            object obj;
+            var obj = CallContext.LogicalGetData(_key);
 
-            lock (_sync)
-            {
-                obj = CallContext.LogicalGetData(_key);
-
-                CallContext.FreeNamedDataSlot(_key);
-            }
+            CallContext.FreeNamedDataSlot(_key);
 
             var disposable = obj as IDisposable;
 
             if (disposable != null)
                 disposable.Dispose();
-
-            Debug.WriteLine("{0} -> free", _key);
         }
     }
 }

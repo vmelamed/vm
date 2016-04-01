@@ -121,7 +121,7 @@ namespace vm.Aspects.Policies
         /// <returns>
         /// Represents the returned value from the target.
         /// </returns>
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification="There is no real parameter here.")]
+        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "There is no real parameter here.")]
         public virtual IMethodReturn Invoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
@@ -176,7 +176,7 @@ namespace vm.Aspects.Policies
 
             Validator typeValidator = null;
             var parameterType = parameterValue != null
-                                    ? parameterValue.GetType() 
+                                    ? parameterValue.GetType()
                                     : null;
 
             // get the parameters defined on the parameter's type
@@ -224,8 +224,8 @@ namespace vm.Aspects.Policies
                 // get the type of the parameter either from the parameter value or from the parameter info if the value is null
                 compositeBuilder.AddValueValidator(
                     descriptor.CreateValidator(
-                        parameterValue!=null 
-                            ? parameterValue.GetType() 
+                        parameterValue!=null
+                            ? parameterValue.GetType()
                             : parameterInfo.ParameterType,
                         null,
                         null,
@@ -256,13 +256,13 @@ namespace vm.Aspects.Policies
         static bool IsBasicType(Type type)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            
+
             return
                 type.IsEnum                    ||
                 type.IsPrimitive               ||
                 type == typeof(string)         ||
                 type == typeof(decimal)        ||
-                type == typeof(Guid)           || 
+                type == typeof(Guid)           ||
                 type == typeof(Uri)            ||
                 type == typeof(DateTime)       ||
                 type == typeof(TimeSpan)       ||

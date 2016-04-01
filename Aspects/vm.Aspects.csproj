@@ -261,6 +261,7 @@
     <Compile Include="DIContainer.ExtensionsRegister.cs" />
     <Compile Include="DIContainer.GenericExtensions.cs" />
     <Compile Include="DIContainer.GenericExtensions2.cs" />
+    <Compile Include="DisposableExtensions.cs" />
     <Compile Include="EnumFlagsExtensions.cs" />
     <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Exceptions\InvalidObjectException.cs" />
