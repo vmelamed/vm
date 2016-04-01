@@ -58,6 +58,11 @@ namespace vm.Aspects.Model.EFRepository
             }
         }
 
+        /// <summary>
+        /// Gets the repository instance identifier.
+        /// </summary>
+        public Guid InstanceId { get; } = Guid.NewGuid();
+
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="EFRepository" /> class.

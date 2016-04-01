@@ -93,7 +93,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             object property;
 
-            if (IncludeCallerAddress &&
+            if (IncludeCallerAddress  &&
                 OperationContext.Current != null &&
                 OperationContext.Current.IncomingMessageProperties.TryGetValue(RemoteEndpointMessageProperty.Name, out property))
             {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using Microsoft.Practices.Unity;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects
 {
@@ -10,7 +12,8 @@ namespace vm.Aspects
     /// </summary>
     public class PerCallContextLifetimeManager : LifetimeManager
     {
-        readonly string _key = Guid.NewGuid().ToString("N");
+        readonly string _key = Facility.GuidGenerator.NewGuid().ToString("N");
+        readonly object _sync = new object();
 
         /// <summary>
         /// Gets the key of the object stored in the call context.
@@ -21,7 +24,17 @@ namespace vm.Aspects
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue() => CallContext.LogicalGetData(_key);
+        public override object GetValue()
+        {
+            object obj;
+
+            lock (_sync)
+                obj = CallContext.LogicalGetData(_key);
+
+            Debug.WriteLine("{0} -> {1}", _key, obj?.GetType()?.Name ?? "<null>");
+
+            return obj;
+        }
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.
@@ -32,7 +45,12 @@ namespace vm.Aspects
             if (newValue == null)
                 RemoveValue();
             else
-                CallContext.LogicalSetData(_key, newValue);
+                lock (_sync)
+                {
+                    Debug.WriteLine("{0} <- {1}", _key, newValue?.GetType()?.Name);
+
+                    CallContext.LogicalSetData(_key, newValue);
+                }
         }
 
         /// <summary>
@@ -40,12 +58,21 @@ namespace vm.Aspects
         /// </summary>
         public override void RemoveValue()
         {
-            var disposable = GetValue() as IDisposable;
+            object obj;
 
-            if (disposable!=null)
+            lock (_sync)
+            {
+                obj = CallContext.LogicalGetData(_key);
+
+                CallContext.FreeNamedDataSlot(_key);
+            }
+
+            var disposable = obj as IDisposable;
+
+            if (disposable != null)
                 disposable.Dispose();
 
-            CallContext.FreeNamedDataSlot(_key);
+            Debug.WriteLine("{0} -> free", _key);
         }
     }
 }

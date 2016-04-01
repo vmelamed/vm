@@ -123,29 +123,42 @@ namespace vm.Aspects.Model
 
             var result = getNext().Invoke(input, getNext);
 
+            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
+
+            lock (DIContainer.Root)
+                registrations = DIContainer.Root.GetRegistrationsSnapshot();
+
+            // the repository registration
+            ContainerRegistration registration = null;
+
+            if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) ||
+                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
+                !(registration.LifetimeManager is PerCallContextLifetimeManager))
+                return result;
+
             if (result.Exception != null)
+            {
+                registration.LifetimeManager.RemoveValue();
                 return result;
-
-            var returnedTask = result.ReturnValue as Task;
-
-            if (returnedTask.IsCompleted)
-                return result;
+            }
 
             try
             {
+                var returnedTask = result.ReturnValue as Task;
+
                 if (!returnedTask.GetType().IsGenericType)
                     return input.CreateMethodReturn(
-                                    DoInvokeAsync(returnedTask, input));
+                                    DoInvokeAsync(returnedTask, input, registration));
                 else
                 {
                     var returnedTaskResultValueType = returnedTask
-                                                    .GetType()
-                                                    .GetGenericArguments()[0];
+                                                        .GetType()
+                                                        .GetGenericArguments()[0];
 
                     var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
 
                     return input.CreateMethodReturn(
-                                    gmi.Invoke(this, new object[] { returnedTask, input }));
+                                    gmi.Invoke(this, new object[] { returnedTask, input, registration }));
                 }
             }
             catch (Exception x)
@@ -159,52 +172,42 @@ namespace vm.Aspects.Model
 
         async Task DoInvokeAsync(
             Task returnedTask,
-            IMethodInvocation input)
+            IMethodInvocation input,
+            ContainerRegistration registration)
         {
-            await returnedTask.ConfigureAwait(true);
-            await CommitWorkAsync(input).ConfigureAwait(true);
+            await returnedTask;
+            await CommitWorkAsync(input, registration);
         }
 
         async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
-            IMethodInvocation input)
+            IMethodInvocation input,
+            ContainerRegistration registration)
         {
-            var t = await returnedTask.ConfigureAwait(true);
-            await CommitWorkAsync(input).ConfigureAwait(true);
+            var t = await returnedTask;
+            await CommitWorkAsync(input, registration);
 
             return t;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called via reflection.")]
         async Task CommitWorkAsync(
-            IMethodInvocation input)
+            IMethodInvocation input,
+            ContainerRegistration registration)
         {
-            // find the corresponding registration
-            ContainerRegistration registration = null;
-
             try
             {
-                // find the repository type registration
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations;
-
-                lock (DIContainer.Root)
-                    registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-                if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) &&
-                      registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
-                    !(registration.LifetimeManager is PerCallContextLifetimeManager))
-                    return;
-
                 var asyncRepository = registration.LifetimeManager.GetValue() as IRepositoryAsync;
-                var repository = asyncRepository ?? (registration.LifetimeManager.GetValue() as IRepository);
 
                 if (asyncRepository != null)
                     await asyncRepository.CommitChangesAsync();
                 else
-                if (repository != null)
-                    repository.CommitChanges();
-                else
-                    return;
+                {
+                    var repository = asyncRepository ?? (registration.LifetimeManager.GetValue() as IRepository);
+
+                    if (repository != null)
+                        repository.CommitChanges();
+                }
             }
             catch (Exception x)
             {
@@ -221,11 +224,8 @@ namespace vm.Aspects.Model
             }
             finally
             {
-                if (registration != null && (registration.LifetimeManager is PerCallContextLifetimeManager))
-                    registration.LifetimeManager.RemoveValue();
+                registration.LifetimeManager.RemoveValue();
             }
-
-            return;
         }
     }
 }

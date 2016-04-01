@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Reflection;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -255,8 +255,7 @@ namespace vm.Aspects.Policies
                                                     ExceptionPolicyProvider.LogAndSwallow);
 
                 if (LogAsynchronously)
-                    Task.Run(logBeforeCall)
-                        .ConfigureAwait(false);
+                    Task.Run(logBeforeCall);
                 else
                     logBeforeCall();
             }
@@ -323,7 +322,7 @@ namespace vm.Aspects.Policies
                     return methodReturn;
 
                 if (LogAsynchronously)
-                    Task.Run(logAfterCall).ConfigureAwait(false);
+                    Task.Run(logAfterCall);
                 else
                     logAfterCall();
             }
@@ -357,8 +356,7 @@ namespace vm.Aspects.Policies
         {
             await returnedTask;
             callTimer.Stop();
-            await Task.Run(logAfterCall)
-                      .ConfigureAwait(false);
+            await Task.Run(logAfterCall);
         }
 
         static MethodInfo _miPostInvokeAsyncGeneric = typeof(CallTraceCallHandler)
@@ -373,8 +371,7 @@ namespace vm.Aspects.Policies
             var ret = await returnedTask;
 
             callTimer.Stop();
-            await Task.Run(logAfterCall)
-                      .ConfigureAwait(false);
+            await Task.Run(logAfterCall);
 
             return ret;
         }

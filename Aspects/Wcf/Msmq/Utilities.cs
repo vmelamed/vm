@@ -125,7 +125,7 @@ namespace vm.Aspects.Wcf.Msmq
             if (MessageQueue.Exists(queuePath))
             {
                 MessageQueue.Delete(queuePath);
-                Facilities.Facility.LogWriter.TraceInfo("Deleted queue: {0}", queuePath);
+                Facility.LogWriter.TraceInfo("Deleted queue: {0}", queuePath);
             }
 
             return true;
@@ -169,7 +169,7 @@ namespace vm.Aspects.Wcf.Msmq
                             users.AppendFormat(CultureInfo.InvariantCulture, ", {0}", u);
                         }
 
-                    Facilities.Facility.LogWriter.TraceInfo(
+                    Facility.LogWriter.TraceInfo(
                         "Created queue {0} and granted full permissions to the Administrators and to {1} {2}.",
                         queuePath,
                         user,
