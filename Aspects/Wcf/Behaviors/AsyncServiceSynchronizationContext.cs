@@ -21,9 +21,10 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         public AsyncServiceSynchronizationContext()
         {
-            _operationContext    = OperationContext.Current;
+            _operationContext = OperationContext.Current;
 
-            CallContext.LogicalSetData(nameof(WebOperationContext), WebOperationContext.Current);
+            if (WebOperationContext.Current != null)
+                CallContext.LogicalSetData(nameof(WebOperationContext), WebOperationContext.Current);
         }
 
         /// <summary>

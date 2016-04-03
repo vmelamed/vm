@@ -12,6 +12,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Runtime.Remoting.Messaging;
 
 namespace vm.Aspects.Wcf
 {
@@ -167,10 +168,14 @@ namespace vm.Aspects.Wcf
                 if (OperationContext.Current == null)
                     return null;
 
+                WebOperationContext _webContext =  WebOperationContext.Current ?? 
+                                                        CallContext.LogicalGetData(nameof(WebOperationContext)) as WebOperationContext;
+                                                        // in case AsyncServiceSynchronizationContext is installed
+
                 // find the header by namespace and name
-                if (WebOperationContext.Current != null)
+                if (_webContext != null)
                 {
-                    var serialized = WebOperationContext.Current.IncomingRequest.Headers.Get(_webHeaderName);
+                    var serialized = _webContext.IncomingRequest.Headers.Get(_webHeaderName);
 
                     if (string.IsNullOrWhiteSpace(serialized))
                         return null;
