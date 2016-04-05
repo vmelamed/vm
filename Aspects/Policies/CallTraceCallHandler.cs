@@ -308,13 +308,15 @@ namespace vm.Aspects.Policies
                 return methodReturn;
 
             var entry = NewLogEntry();
-            Action logAfterCall = () => Facility.ExceptionManager.Process(
-                                                        () => LogAfterCallData(entry, input, callData, methodReturn),
-                                                        ExceptionPolicyProvider.LogAndSwallow);
+            Action logAfterCall = () => Facility.ExceptionManager
+                                                .Process(
+                                                    () => LogAfterCallData(entry, input, callData, methodReturn),
+                                                    ExceptionPolicyProvider.LogAndSwallow);
 
             var returnedTask = methodReturn.ReturnValue as Task;
 
-            if (returnedTask == null  ||  returnedTask.IsCompleted)
+            if (returnedTask == null  ||
+                returnedTask.IsCompleted)
             {
                 callData.CallTimer.Stop();
 
@@ -356,7 +358,9 @@ namespace vm.Aspects.Policies
         {
             await returnedTask;
             callTimer.Stop();
-            await Task.Run(logAfterCall);
+#pragma warning disable 4014
+            Task.Run(logAfterCall);
+#pragma warning restore 4014
         }
 
         static MethodInfo _miPostInvokeAsyncGeneric = typeof(CallTraceCallHandler)
@@ -371,7 +375,9 @@ namespace vm.Aspects.Policies
             var ret = await returnedTask;
 
             callTimer.Stop();
-            await Task.Run(logAfterCall);
+#pragma warning disable 4014
+            Task.Run(logAfterCall);
+#pragma warning restore 4014
 
             return ret;
         }
