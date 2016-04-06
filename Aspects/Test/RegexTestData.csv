@@ -104,39 +104,6 @@ EmailAddress,"""xyz""@abc.com",true
 EmailAddress,"""""@abc.com",true
 EmailAddress,"""xy z!""@abc.com",true
 EmailAddress,"""xy@z!""@abc.com",true
-EmailAddress,xyz@[1.2.3.4],true
-EmailAddress,xyz@[1:2:3:4:5:6:7:8],true
-EmailAddress,xyz@[1::],true
-EmailAddress,xyz@[1::8],true
-EmailAddress,xyz@[1::7:8],true
-EmailAddress,xyz@[1::6:7:8],true
-EmailAddress,xyz@[1::5:6:7:8],true
-EmailAddress,xyz@[1::4:5:6:7:8],true
-EmailAddress,xyz@[1::3:4:5:6:7:8],true
-EmailAddress,xyz@[::2:3:4:5:6:7:8],true
-EmailAddress,xyz@[1:2:3:4:5:6::8],true
-EmailAddress,xyz@[1:2:3:4:5::7:8],true
-EmailAddress,xyz@[1:2:3:4::6:7:8],true
-EmailAddress,xyz@[1:2:3::5:6:7:8],true
-EmailAddress,xyz@[1:2::4:5:6:7:8],true
-EmailAddress,xyz@[1::3:4:5:6:7:8],true
-EmailAddress,xyz@[::2:3:4:5:6:7:8],true
-EmailAddress,xyz@[1:2:3:4:5:6:7::],true
-EmailAddress,xyz@[1:2:3:4:5:6::8],true
-EmailAddress,xyz@[1:2:3:4:5::8],true
-EmailAddress,xyz@[1:2:3:4::8],true
-EmailAddress,xyz@[1:2:3::8],true
-EmailAddress,xyz@[1:2::8],true
-EmailAddress,xyz@[1::8],true
-EmailAddress,xyz@[::8],true
-EmailAddress,xyz@[::],true
-EmailAddress,xyz@[fe80::7:8%eth0],true
-EmailAddress,xyz@[fe80::7:8%1],true
-EmailAddress,xyz@[::255.255.255.255],true
-EmailAddress,xyz@[::ffff:255.255.255.255],true
-EmailAddress,xyz@[2001:db8:3:4::192.0.2.33],true
-EmailAddress,xyz@[64:ff9b::192.0.2.33],true
-EmailAddress,xyz@localhost,true
 #valids from wikipedia.org
 EmailAddress,niceandsimple@example.com,true
 EmailAddress,very.common@example.com,true
@@ -146,8 +113,6 @@ EmailAddress,other.email-with-dash@example.com,true
 EmailAddress,"""much.more unusual""@example.com",true
 EmailAddress,"""very.unusual.@.unusual.com""@example.com",true
 EmailAddress,"""very.(),:;<>[]\"".VERY.\""very@\\ \""very\"".unusual""@strange.example.com",true
-EmailAddress,postbox@com,true
-EmailAddress,admin@mailserver1,true
 EmailAddress,"!#$%&'*+-/=?^_`{}|~@example.org",true
 EmailAddress,"""()<>[]:,;@\\\""!#$%&'*+-/=?^_`{}| ~.a""@example.org",true
 EmailAddress,""" ""@example.org",true
@@ -160,6 +125,42 @@ EmailAddress,"a""b(c)d,e:f;g<h>i[j\k]l@example.com",false
 EmailAddress,"just""not""right@example.com",false
 EmailAddress,"this is""not\allowed@example.com",false
 EmailAddress,"this\ still\""not\\allowed@example.com",false
+#
+EmailIpAddress,admin@mailserver1,true
+EmailIpAddress,postbox@com,true
+EmailIpAddress,xyz@localhost,true
+EmailIpAddress,xyz@[1.2.3.4],true
+EmailIpAddress,xyz@[1:2:3:4:5:6:7:8],true
+EmailIpAddress,xyz@[1::],true
+EmailIpAddress,xyz@[1::8],true
+EmailIpAddress,xyz@[1::7:8],true
+EmailIpAddress,xyz@[1::6:7:8],true
+EmailIpAddress,xyz@[1::5:6:7:8],true
+EmailIpAddress,xyz@[1::4:5:6:7:8],true
+EmailIpAddress,xyz@[1::3:4:5:6:7:8],true
+EmailIpAddress,xyz@[::2:3:4:5:6:7:8],true
+EmailIpAddress,xyz@[1:2:3:4:5:6::8],true
+EmailIpAddress,xyz@[1:2:3:4:5::7:8],true
+EmailIpAddress,xyz@[1:2:3:4::6:7:8],true
+EmailIpAddress,xyz@[1:2:3::5:6:7:8],true
+EmailIpAddress,xyz@[1:2::4:5:6:7:8],true
+EmailIpAddress,xyz@[1::3:4:5:6:7:8],true
+EmailIpAddress,xyz@[::2:3:4:5:6:7:8],true
+EmailIpAddress,xyz@[1:2:3:4:5:6:7::],true
+EmailIpAddress,xyz@[1:2:3:4:5:6::8],true
+EmailIpAddress,xyz@[1:2:3:4:5::8],true
+EmailIpAddress,xyz@[1:2:3:4::8],true
+EmailIpAddress,xyz@[1:2:3::8],true
+EmailIpAddress,xyz@[1:2::8],true
+EmailIpAddress,xyz@[1::8],true
+EmailIpAddress,xyz@[::8],true
+EmailIpAddress,xyz@[::],true
+EmailIpAddress,xyz@[fe80::7:8%eth0],true
+EmailIpAddress,xyz@[fe80::7:8%1],true
+EmailIpAddress,xyz@[::255.255.255.255],true
+EmailIpAddress,xyz@[::ffff:255.255.255.255],true
+EmailIpAddress,xyz@[2001:db8:3:4::192.0.2.33],true
+EmailIpAddress,xyz@[64:ff9b::192.0.2.33],true
 #
 WcfMsmqService,,false
 WcfMsmqService,net.msmq://abc.com/private/test,true

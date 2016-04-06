@@ -265,7 +265,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches an e-mail address with required DNS domain name
         /// </summary>
-        public const string RexEmailAddress = "(?i)^" + rexEmailId + "@(?<domainName>" + rexEmailIpAdr + @")$";
+        public const string RexEmailAddress = "(?i)^" + rexEmailId + "@(?<domainName>" + rexSubDomainOrHostDnsIpAdr + @")$";
 
         readonly static Lazy<Regex> _emailAddress = new Lazy<Regex>(() => new Regex(RexEmailAddress, RegexOptions.Compiled));
 
@@ -495,7 +495,7 @@ namespace vm.Aspects
         /// <summary>
         /// Tests the commonly formatted social security number for Individual Taxpayer Identification Number (ITIN) - issued to foreigners.
         /// </summary>
-        public const string RexIndividualTaxpayerIdentificationNumber = @"9\d\d-[7-9]\d-\d\d\d\d|";
+        public const string RexIndividualTaxpayerIdentificationNumber = @"9\d\d-[7-9]\d-\d\d\d\d";
 
         readonly static Lazy<Regex> _itin = new Lazy<Regex>(() => new Regex(RexIndividualTaxpayerIdentificationNumber, RegexOptions.Compiled));
 
@@ -802,7 +802,7 @@ namespace vm.Aspects
                 .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
                 .Where(fi => fi.Name.StartsWith("rex", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(fi => fi.Name, StringComparer.Ordinal)
-                .Select(fi => { Console.WriteLine("{0} : {1}", fi.Name, fi.GetValue(null)); return 1; })
+                .Select(fi => { Debug.WriteLine("{0} : {1}", fi.Name, fi.GetValue(null)); return 1; })
                 .Count();
         }
     }

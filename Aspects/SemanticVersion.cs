@@ -59,7 +59,7 @@ namespace vm.Aspects
         /// <param name="prereleaseOrBuildVersionParts">The prerelease or build version parts.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         [Pure]
-        public static bool ValidateParts(string prereleaseOrBuildVersionParts)
+        static bool ValidateParts(string prereleaseOrBuildVersionParts)
         {
             if (prereleaseOrBuildVersionParts == null)
                 return true;
