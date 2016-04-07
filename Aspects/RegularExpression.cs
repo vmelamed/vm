@@ -632,7 +632,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches GUID somewhere in the input string.
         /// </summary>
-        public const string RexGuid = @"(?i:)"+rexGuid;
+        public const string RexGuid = @"(?i:"+rexGuid+")";
 
         readonly static Lazy<Regex> _rexGuid = new Lazy<Regex>(() => new Regex(RexGuid, RegexOptions.Compiled));
 
@@ -646,7 +646,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches exactly GUID against the input string.
         /// </summary>
-        public const string RexExactGuid = @"(?i:)^"+rexGuid+@"$";
+        public const string RexExactGuid = @"(?i:^"+rexGuid+@"$)";
 
         readonly static Lazy<Regex> _rexExactGuid = new Lazy<Regex>(() => new Regex(RexExactGuid, RegexOptions.Compiled));
 

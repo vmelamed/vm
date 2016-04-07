@@ -43,23 +43,73 @@ namespace vm.Aspects
             Contract.Requires<ArgumentException>(major >= 0, "The major version cannot be negative.");
             Contract.Requires<ArgumentException>(minor >= 0, "The minor version cannot be negative.");
             Contract.Requires<ArgumentException>(patch >= 0, "The patch version cannot be negative.");
-            Contract.Requires<ArgumentException>(prerelease == null || RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease) && ValidateParts(prerelease), "The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
-            Contract.Requires<ArgumentException>(build == null || RegularExpression.SemanticVersionPrerelease.IsMatch(build) && ValidateParts(build), "The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
+            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(prerelease) || RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease) && ValidateParts(prerelease), "The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
+            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(build)      || RegularExpression.SemanticVersionPrerelease.IsMatch(build) && ValidateParts(build), "The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
 
             Major      = major;
             Minor      = minor;
             Patch      = patch;
-            Prerelease = prerelease;
-            Build      = build;
+            Prerelease = string.IsNullOrEmpty(prerelease) ? null : prerelease;
+            Build      = string.IsNullOrEmpty(build) ? null : build;
         }
 
         /// <summary>
-        /// Validates the parts.
+        /// Tries to parse a string into a <see cref="SemanticVersion"/> object.
+        /// </summary>
+        /// <param name="version">The version.</param>
+        /// <param name="semanticVersion">The created semantic version object.</param>
+        /// <returns><see langword="true"/> if the parsing was successful; otherwise <see langword="false"/>.</returns>
+        public static bool TryParse(
+            string version,
+            out SemanticVersion semanticVersion)
+        {
+            Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(version), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+
+            semanticVersion = null;
+
+            var match = RegularExpression.SemanticVersion.Match(version);
+
+            if (!match.Success)
+                return false;
+
+            var ver = new SemanticVersion(
+                                int.Parse(match.Groups["major"].Value, CultureInfo.InvariantCulture),
+                                int.Parse(match.Groups["minor"].Value, CultureInfo.InvariantCulture),
+                                int.Parse(match.Groups["patch"].Value, CultureInfo.InvariantCulture));
+
+            var prerelease = match.Groups["prerelease"];
+
+            if (prerelease.Success)
+            {
+                if (!ValidateParts(prerelease.Value))
+                    return false;
+
+                ver.Prerelease = prerelease.Value;
+            }
+
+            var build = match.Groups["build"];
+
+            if (build.Success)
+            {
+                if (!ValidateParts(build.Value))
+                    return false;
+
+                ver.Build = build.Value;
+            }
+
+            semanticVersion = ver;
+            return true;
+        }
+
+        /// <summary>
+        /// Validates the parts of the prerelease and build parts of the version.
+        /// These components have parts separated by dots. The parts can be either plain strings or all numeric which does not start with '0'.
         /// </summary>
         /// <param name="prereleaseOrBuildVersionParts">The prerelease or build version parts.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the build or the prerelease are valid strings, otherwise <c>false</c>.</returns>
         [Pure]
-        static bool ValidateParts(string prereleaseOrBuildVersionParts)
+        public static bool ValidateParts(string prereleaseOrBuildVersionParts)
         {
             if (prereleaseOrBuildVersionParts == null)
                 return true;
@@ -355,55 +405,6 @@ namespace vm.Aspects
                 !preIsBlank ? Prerelease : "",
                 !buildIsBlank ? "+" : "",
                 !buildIsBlank ? Build : "");
-        }
-
-        /// <summary>
-        /// Tries to parse a string into a <see cref="SemanticVersion"/> object.
-        /// </summary>
-        /// <param name="version">The version.</param>
-        /// <param name="semanticVersion">The created semantic version object.</param>
-        /// <returns><see langword="true"/> if the parsing was successful; otherwise <see langword="false"/>.</returns>
-        public static bool TryParse(
-            string version,
-            out SemanticVersion semanticVersion)
-        {
-            Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(version), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
-
-            semanticVersion = null;
-
-            var match = RegularExpression.SemanticVersion.Match(version);
-
-            if (!match.Success)
-                return false;
-
-            var ver = new SemanticVersion(
-                                int.Parse(match.Groups["major"].Value, CultureInfo.InvariantCulture),
-                                int.Parse(match.Groups["minor"].Value, CultureInfo.InvariantCulture),
-                                int.Parse(match.Groups["patch"].Value, CultureInfo.InvariantCulture));
-
-            var prerelease = match.Groups["prerelease"];
-
-            if (prerelease.Success)
-            {
-                if (!ValidateParts(prerelease.Value))
-                    return false;
-
-                ver.Prerelease = prerelease.Value;
-            }
-
-            var build = match.Groups["build"];
-
-            if (build.Success)
-            {
-                if (!ValidateParts(build.Value))
-                    return false;
-
-                ver.Build = build.Value;
-            }
-
-            semanticVersion = ver;
-            return true;
         }
 
 
