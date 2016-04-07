@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.37-beta</version>
+        <version>1.0.39-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,8 +12,17 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Grouped all behaviors in the vm.Aspects.Wcf.Behaviors namespace.
-            * Fixed a bug in the ExceptionShieldingBehavior where the ExceptionManager was not instantiated.
+            * Camelcased the names of the properties in the fault messages.
+            * Added setters to the Money class' properties for work with DB-s. Added metadata.
+            * Added NonemptyGuidValidator.
+            * Added Regex-es: ISO 8601 dates and times, credit card validators, routing number validators, bug fixes.
+            * Added conventions for Numeric and String data annotation attributes and a convention for DateTime properties to map to SQL type datetime2.
+            * Added HttpStatusCode mapping tables and Exception to/from Fault mapping tables.
+            * Changed all CallContext.Set/GetData to Get/SetLogicalData.
+            * Added DisposeExtensions.
+            * CORS behavior for WebHttpBinding (WCF REST).
+            * Number of bug fixes.
+            * ImmutableAttribute.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>

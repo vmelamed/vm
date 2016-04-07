@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +9,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
+using System.Text.RegularExpressions;
+using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 
@@ -517,6 +518,8 @@ namespace vm.Aspects.Wcf.Services
             }
         }
 
+        static Regex _rexNamedParams = new Regex(@"{[^}]+}(?:/{[^}]+})*", RegexOptions.Compiled);
+
         static string NormalizeTemplate(string uriTemplate)
         {
             Contract.Requires<ArgumentNullException>(uriTemplate != null, nameof(uriTemplate));
@@ -527,18 +530,7 @@ namespace vm.Aspects.Wcf.Services
                 // no query string used for this
                 uriTemplate = uriTemplate.Substring(0, queryIndex);
 
-            int paramIndex;
-
-            while ((paramIndex = uriTemplate.IndexOf('{')) >= 0)
-            {
-                // Replace all named parameters with wild-cards
-                int endParamIndex = uriTemplate.IndexOf('}', paramIndex);
-
-                if (endParamIndex >= 0)
-                    uriTemplate = uriTemplate.Substring(0, paramIndex) + '*' + uriTemplate.Substring(endParamIndex + 1);
-            }
-
-            return uriTemplate;
+            return _rexNamedParams.Replace(uriTemplate, "*");
         }
     }
 }
