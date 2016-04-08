@@ -3,9 +3,9 @@
 [assembly: AssemblyTitle("Wcf")]
 [assembly: AssemblyDescription("A set of classes and generics simplifying the initial configuration work of creating WCF services.")]
 
-[assembly: AssemblyVersion("1.0.39")]
-[assembly: AssemblyFileVersion("1.0.39")]
-[assembly: AssemblyInformationalVersion("1.0.39")]
+[assembly: AssemblyVersion("1.0.41")]
+[assembly: AssemblyFileVersion("1.0.41")]
+[assembly: AssemblyInformationalVersion("1.0.41")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Wcf.Test, " +
