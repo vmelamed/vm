@@ -32,7 +32,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Gets the lent object.
         /// </summary>
-        public T Instance { get; internal set; }
+        public T Instance { get; }
 
         /// <summary>
         /// Gets the object pool from which the object was lent.
@@ -55,7 +55,7 @@ namespace vm.Aspects.Cache
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

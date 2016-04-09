@@ -278,6 +278,20 @@ namespace vm.Aspects.Model.EFRepository
         public IQueryable<T> Entities<T>() where T : BaseDomainEntity => Set<T>();
 
         /// <summary>
+        /// Gets a collection of all values of type <typeparamref name="T" /> from the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns>
+        ///   <see cref="IEnumerable{E}" /> sequence.
+        /// </returns>
+        /// <remarks>
+        /// This returns the DDD's aggregate source for the given type. If you modify any of the returned values
+        /// their state will most likely be saved in the underlying storage.
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </remarks>
+        public IQueryable<T> Values<T>() where T : BaseDomainValue => Set<T>();
+
+        /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T" /> from the repository and detaches them from the context/session.
         /// </summary>
         /// <typeparam name="T">The type of the entities to be returned.</typeparam>

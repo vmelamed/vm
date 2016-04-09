@@ -168,6 +168,11 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public IQueryable<T> Values<T>() where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
         public IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity
         {
             throw new NotImplementedException();

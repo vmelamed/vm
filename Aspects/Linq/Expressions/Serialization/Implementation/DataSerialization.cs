@@ -171,6 +171,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (type2.IsArray)
                 type2 = type.GetElementType();
 
+            Contract.Assume(type2 != null);
+
             // if the type is generic collection - continue the test for the element type
             if (type2.IsGenericType &&
                 type2.Namespace.StartsWith("System.Collections", StringComparison.Ordinal))
@@ -182,6 +184,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 if (enumerable != null)
                 {
                     type2 = enumerable.GetGenericArguments()[0];
+
+                    Contract.Assume(type2 != null);
 
                     // if the collection is a dictionary - continue the test for both the key and the value types
                     if (type2.IsGenericType &&
