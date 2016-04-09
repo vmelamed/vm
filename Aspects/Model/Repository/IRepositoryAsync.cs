@@ -178,6 +178,11 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
         public IRepository CommitChanges()
         {
             throw new NotImplementedException();

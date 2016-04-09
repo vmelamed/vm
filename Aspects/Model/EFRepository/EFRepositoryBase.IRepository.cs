@@ -307,6 +307,21 @@ namespace vm.Aspects.Model.EFRepository
         public IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity => Set<T>().AsNoTracking();
 
         /// <summary>
+        /// Gets a collection of all values of type <typeparamref name="T" /> from the repository and detaches them from the context/session.
+        /// </summary>
+        /// <typeparam name="T">The type of the entities to be returned.</typeparam>
+        /// <returns>
+        ///   <see cref="IEnumerable{T}" /> sequence.
+        /// </returns>
+        /// <remarks>
+        /// This method returns the DDD's aggregate source for the given type. The objects however are supposed to be "detached" from the repository's
+        /// context and any modifications on them will not be saved unless they are re-attached. This method gives a chance for performance optimization for some ORM-s in
+        /// fetching read-only objects from the repository.
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </remarks>
+        public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue => Set<T>().AsNoTracking();
+
+        /// <summary>
         /// Saves the changes buffered in the repository's context.
         /// </summary>
         /// <returns>

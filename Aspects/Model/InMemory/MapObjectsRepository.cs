@@ -423,6 +423,21 @@ namespace vm.Aspects.Model.InMemory
         public IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity => Entities<T>();
 
         /// <summary>
+        /// Gets from the repository a collection of detached from the current context/session values of type <typeparamref name="T" />.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns><see cref="IQueryable{T}" /> sequence.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        /// <remarks>This method returns the DDD's aggregate source for the given type. The objects however are supposed to be "detached"
+        /// from the repository's context and any modifications on them will not be saved unless they are re-attached.
+        /// This method gives a chance for performance optimization for some ORM-s in fetching read-only objects from the repository.
+        /// The implementing class may however delegate this implementation to <see cref="Entities&lt;T&gt;" />.
+        /// <para>
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </para></remarks>
+        public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue => Values<T>();
+
+        /// <summary>
         /// Saves the changes buffered in the repository's context.
         /// </summary>
         /// <returns><c>this</c></returns>
