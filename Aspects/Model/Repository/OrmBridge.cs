@@ -65,16 +65,16 @@ namespace vm.Aspects.Model.Repository
         /// <param name="sequence">The source.</param>
         /// <param name="path">The path.</param>
         /// <returns>IQueryable&lt;T&gt;.</returns>
-        public static IQueryable<T> Fetch<T>(
+        public static IQueryable<T> FetchAlso<T>(
             this IQueryable<T> sequence,
-            string path) where T : BaseDomainEntity
+            string path) where T : class
         {
             Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(path != null, nameof(path));
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(path), "path");
             Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
 
-            return OrmSpecifics.Fetch(sequence, path);
+            return OrmSpecifics.FetchAlso(sequence, path);
         }
 
         /// <summary>
@@ -85,15 +85,15 @@ namespace vm.Aspects.Model.Repository
         /// <param name="sequence">The source.</param>
         /// <param name="path">The path.</param>
         /// <returns>IQueryable&lt;T&gt;.</returns>
-        public static IQueryable<T> Fetch<T, TProperty>(
+        public static IQueryable<T> FetchAlso<T, TProperty>(
             this IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity
+            Expression<Func<T, TProperty>> path) where T : class
         {
             Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(path != null, nameof(path));
             Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
 
-            return OrmSpecifics.Fetch(sequence, path);
+            return OrmSpecifics.FetchAlso(sequence, path);
         }
 
         /// <summary>

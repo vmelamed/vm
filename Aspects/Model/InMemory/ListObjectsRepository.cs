@@ -346,6 +346,22 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Gets a collection of all values of type <typeparamref name="T" /> from the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns><see cref="IQueryable{T}" /> sequence.</returns>
+        /// <remarks>This returns the DDD's values represented by the given type. If you modify any of the returned values
+        /// their state will most likely be saved in the underlying storage.
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.</remarks>
+        public IQueryable<T> Values<T>() where T : BaseDomainValue
+        {
+            using (_sync.ReaderLock())
+                return _objects.OfType<T>()
+                               .ToArray()
+                               .AsQueryable<T>();
+        }
+
+        /// <summary>
         /// Gets from the repository a collection of detached from the current context/session entities of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type of the entities to be returned.</typeparam>
@@ -359,6 +375,21 @@ namespace vm.Aspects.Model.InMemory
         /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
         /// </para></remarks>
         public IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity => Entities<T>();
+
+        /// <summary>
+        /// Gets from the repository a collection of detached from the current context/session values of type <typeparamref name="T" />.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns><see cref="IQueryable{T}" /> sequence.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        /// <remarks>This method returns the DDD's aggregate source for the given type. The objects however are supposed to be "detached"
+        /// from the repository's context and any modifications on them will not be saved unless they are re-attached.
+        /// This method gives a chance for performance optimization for some ORM-s in fetching read-only objects from the repository.
+        /// The implementing class may however delegate this implementation to <see cref="Entities&lt;T&gt;" />.
+        /// <para>
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </para></remarks>
+        public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue => Values<T>();
 
         /// <summary>
         /// Saves the changes buffered in the repository's context.

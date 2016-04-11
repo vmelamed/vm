@@ -18,8 +18,6 @@ using vm.Aspects.Validation;
 
 namespace vm.Aspects.Model.EFRepository
 {
-
-
     /// <summary>
     /// Class EFRepositoryBase. Implements <see cref="T:IRepository"/> with Entity Framework <see cref="T:DbContext"/>.
     /// </summary>

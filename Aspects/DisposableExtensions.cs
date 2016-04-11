@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace vm.Aspects
 {
@@ -14,6 +15,8 @@ namespace vm.Aspects
         /// <param name="lazy">The lazy instantiated object.</param>
         public static void Dispose<T>(this Lazy<T> lazy)
         {
+            Contract.Requires<ArgumentNullException>(lazy != null, "lazy");
+
             if (!lazy.IsValueCreated)
                 return;
 
@@ -24,12 +27,13 @@ namespace vm.Aspects
         }
 
         /// <summary>
-        /// Disposes the specified object if it supports <see cref="IDisposable"/>.
+        /// Disposes the specified object instance if it supports <see cref="IDisposable"/>.
         /// </summary>
-        /// <param name="obj">The object.</param>
-        public static void Dispose(this object obj)
+        /// <param name="instance">The object.</param>
+        public static void Dispose(this object instance)
         {
-            var disposable = obj as IDisposable;
+            Contract.Requires<ArgumentNullException>(instance != null, "obj");
+            var disposable = instance as IDisposable;
 
             if (disposable != null)
                 disposable.Dispose();

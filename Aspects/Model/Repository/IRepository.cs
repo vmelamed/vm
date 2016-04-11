@@ -124,19 +124,31 @@ namespace vm.Aspects.Model.Repository
         IRepository Delete<T>(T entity) where T : BaseDomainEntity;
 
         /// <summary>
-        /// Gets a collection of all instances of type <typeparamref name="T"/> from the repository.
+        /// Gets a collection of all entities of type <typeparamref name="T"/> from the repository.
         /// </summary>
-        /// <typeparam name="T">The type of the instances to be returned.</typeparam>
+        /// <typeparam name="T">The type of the entities to be returned.</typeparam>
         /// <returns><see cref="IQueryable{T}"/> sequence.</returns>
         /// <remarks>
-        /// This returns the DDD's aggregate source for the given type. If you modify any of the returned instances 
+        /// This returns the DDD's aggregate source for the given type. If you modify any of the returned entities 
         /// their state will most likely be saved in the underlying storage.
         /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
         /// </remarks>
         IQueryable<T> Entities<T>() where T : BaseDomainEntity;
 
         /// <summary>
-        /// Gets a collection of all instances of type <typeparamref name="T"/> from the repository and detaches them from the context/session.
+        /// Gets a collection of all values of type <typeparamref name="T"/> from the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns><see cref="IQueryable{T}"/> sequence.</returns>
+        /// <remarks>
+        /// This returns the DDD's value objects represented by the given type. If you modify any of the returned values 
+        /// their state will most likely be saved in the underlying storage.
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </remarks>
+        IQueryable<T> Values<T>() where T : BaseDomainValue;
+
+        /// <summary>
+        /// Gets a collection of all entities of type <typeparamref name="T"/> from the repository and detaches them from the context/session.
         /// </summary>
         /// <typeparam name="T">The type of the instances to be returned.</typeparam>
         /// <returns><see cref="IQueryable{T}"/> sequence.</returns>
@@ -150,6 +162,22 @@ namespace vm.Aspects.Model.Repository
         /// </para>
         /// </remarks>
         IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity;
+
+        /// <summary>
+        /// Gets a collection of all values of type <typeparamref name="T"/> from the repository and detaches them from the context/session.
+        /// </summary>
+        /// <typeparam name="T">The type of the values to be returned.</typeparam>
+        /// <returns><see cref="IQueryable{T}"/> sequence.</returns>
+        /// <remarks>
+        /// This method returns the DDD's values represented by the given type. The objects however are supposed to be &quot;detached&quot; 
+        /// from the repository's context and any modifications on them will not be saved unless they are re-attached. 
+        /// This method gives a chance for performance optimization for some ORM-s in fetching read-only objects from the repository. 
+        /// The implementing class may however delegate this implementation to <see cref="Entities&lt;T&gt;"/>.
+        /// <para>
+        /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
+        /// </para>
+        /// </remarks>
+        IQueryable<T> DetachedValues<T>() where T : BaseDomainValue;
 
         /// <summary>
         /// Saves the changes buffered in the repository's context.

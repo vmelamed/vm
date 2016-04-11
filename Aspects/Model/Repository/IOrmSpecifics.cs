@@ -19,7 +19,7 @@ namespace vm.Aspects.Model.Repository
         /// <param name="sequence">The queryable sequence.</param>
         /// <param name="path">Specifies the navigation method/property to the property that should be eagerly loaded as a string.</param>
         /// <returns>The queryable sequence.</returns>
-        IQueryable<T> Fetch<T>(IQueryable<T> sequence, string path) where T : BaseDomainEntity;
+        IQueryable<T> FetchAlso<T>(IQueryable<T> sequence, string path) where T : class;
 
         /// <summary>
         /// Suggests eager fetching of related objects when querying the repository.
@@ -29,7 +29,7 @@ namespace vm.Aspects.Model.Repository
         /// <param name="sequence">The queryable sequence.</param>
         /// <param name="path">Specifies the navigation method/property to the property(s) that should be eagerly loaded as a lambda expression.</param>
         /// <returns>The queryable sequence.</returns>
-        IQueryable<T> Fetch<T, TProperty>(IQueryable<T> sequence, Expression<Func<T, TProperty>> path) where T : BaseDomainEntity;
+        IQueryable<T> FetchAlso<T, TProperty>(IQueryable<T> sequence, Expression<Func<T, TProperty>> path) where T : class;
 
         /// <summary>
         /// Enlists the repository's back store transaction manager in the ambient transaction.
@@ -131,9 +131,9 @@ namespace vm.Aspects.Model.Repository
     {
         #region IOrmSpecifics Members
 
-        public IQueryable<T> Fetch<T>(
+        public IQueryable<T> FetchAlso<T>(
             IQueryable<T> sequence,
-            string path) where T : BaseDomainEntity
+            string path) where T : class
         {
             Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(path != null, nameof(path));
@@ -143,9 +143,9 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IQueryable<T> Fetch<T, TProperty>(
+        public IQueryable<T> FetchAlso<T, TProperty>(
             IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity
+            Expression<Func<T, TProperty>> path) where T : class
         {
             Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(path != null, nameof(path));

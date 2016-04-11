@@ -80,7 +80,7 @@ namespace vm.Aspects.Model.Tests
                                 .Where(o => o.Name == name1);
 
                 entity21 = GetSpecifics()
-                                .Fetch(seq, t => t.InternalValues)
+                                .FetchAlso(seq, t => t.InternalValues)
                                 .FirstOrDefault();
 
                 Assert.AreEqual(entity2, entity21);

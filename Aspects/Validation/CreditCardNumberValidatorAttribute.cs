@@ -40,7 +40,15 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the credit card regular expression.
         /// </summary>
-        public string RexCreditCard => _rexCreditCard;
+        public string RexCreditCard
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<string>() != null);
+
+                return _rexCreditCard;
+            }
+        }
 
         /// <summary>
         /// Creates the validator.
