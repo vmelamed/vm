@@ -90,7 +90,7 @@ namespace vm.Aspects.Model.Tests
 
                 var seq = target.Entities<TestEntity>()
                                 .Where(e => e.Id==id);
-                principal = GetSpecifics().Fetch(seq, e => e.XEntity)
+                principal = GetSpecifics().FetchAlso(seq, e => e.XEntity)
                                           .FirstOrDefault();
                 associated = principal.XEntity;
 

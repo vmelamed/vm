@@ -17,7 +17,7 @@ NuGet Pack NuGet\vm.Aspects.nuspec -symbols -Prop Configuration=Release
 if errorlevel 1 goto exit
 @echo Press any key to push to NuGet... > con:
 @pause > nul:
-NuGet Push vm.Aspects.1.0.43-beta.nupkg
+NuGet Push vm.Aspects.1.0.46-beta.nupkg
 :exit
 popd
 pause

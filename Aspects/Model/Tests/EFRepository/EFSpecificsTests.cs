@@ -241,7 +241,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
                 var seq = target.Entities<TestEntity>()
                                 .Where(e => e.Id==id);
-                principal = specifics.Fetch(seq, e => e.XEntity)
+                principal = specifics.FetchAlso(seq, e => e.XEntity)
                                      .FirstOrDefault();
                 associated = principal.XEntity;
 

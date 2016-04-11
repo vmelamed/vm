@@ -23,9 +23,9 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="sequence">The queryable sequence.</param>
         /// <param name="path">Specifies the navigation method/property to the property that should be eagerly loaded.</param>
         /// <returns>The queryable sequence.</returns>
-        public IQueryable<T> Fetch<T>(
+        public IQueryable<T> FetchAlso<T>(
             IQueryable<T> sequence,
-            string path) where T : BaseDomainEntity => sequence;
+            string path) where T : class => sequence;
 
         /// <summary>
         /// Suggests eager fetching of related objects when querying the repository.
@@ -35,9 +35,9 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="sequence">The queryable sequence.</param>
         /// <param name="path">Specifies the navigation method/property to the property(s) that should be eagerly loaded as a lambda expression.</param>
         /// <returns>The queryable sequence.</returns>
-        public IQueryable<T> Fetch<T, TProperty>(
+        public IQueryable<T> FetchAlso<T, TProperty>(
             IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : BaseDomainEntity => sequence;
+            Expression<Func<T, TProperty>> path) where T : class => sequence;
 
         /// <summary>
         /// Enlists the repository's back store transaction manager in the ambient transaction.
