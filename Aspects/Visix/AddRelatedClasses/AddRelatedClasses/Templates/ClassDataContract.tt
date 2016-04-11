@@ -44,6 +44,7 @@
 
         // generate the metadata class from scratch using plain T4
 #>
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.DataContracts;
@@ -55,6 +56,7 @@ namespace <#= targetNameSpace.Name #>
     WriteDoc(sourceClass.DocComment);
 #>
 [DataContract(Namespace="<Enter here the data contract namespace>")]
+[DebuggerDisplay("{GetType().Name, nq}")]
 public class <#= sourceClass.Name #>Dto : DataTransferObject
 {
 <# 
@@ -65,7 +67,7 @@ public class <#= sourceClass.Name #>Dto : DataTransferObject
                 WriteLine(""); 
             WriteDoc(property.DocComment);
 #>
-[DataMember]
+[DataMember(Name = "<#= char.ToLower(property.Name[0]).ToString() + property.Name.Substring(1) #>")]
 public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
 <#      
             i++;
@@ -126,7 +128,7 @@ public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
             WriteLine(""); 
             WriteDoc(property.DocComment);
 #>
-[DataMember]
+[DataMember(Name = "<#= char.ToLower(propertyName[0]).ToString() + propertyName.Substring(1) #>")]
 public <#= property.Type.AsString #> <#= property.Name #> { get; set; }<#
         }
     
