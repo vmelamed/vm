@@ -439,13 +439,14 @@ namespace vm.Aspects.Wcf.Services
 
                 if (webInvoke != null)
                 {
-                    originalUriTemplate = webInvoke.UriTemplate != null
-                                            ? NormalizeTemplate(webInvoke.UriTemplate)
-                                            : operation.Name;
-
                     originalMethod = webInvoke.Method != null
                                             ? webInvoke.Method
                                             : "POST";
+                    if (originalMethod == "OPTIONS")
+                        continue;
+                    originalUriTemplate = webInvoke.UriTemplate != null
+                                            ? NormalizeTemplate(webInvoke.UriTemplate)
+                                            : operation.Name;
                 }
                 else
                 {
@@ -453,11 +454,10 @@ namespace vm.Aspects.Wcf.Services
 
                     if (webGet != null)
                     {
+                        originalMethod = "GET";
                         originalUriTemplate = webGet.UriTemplate != null
                                                     ? NormalizeTemplate(webGet.UriTemplate)
                                                     : operation.Name;
-
-                        originalMethod = "GET";
                     }
                     else
                         continue;
