@@ -84,7 +84,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The default binding flags determining which properties to be dumped
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Flags")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public static BindingFlags DefaultPropertiesBindingFlags
         {
             get { return defaultPropertiesBindingFlags; }
@@ -96,7 +96,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The default binding flags determining which fields to be dumped
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Flags")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public static BindingFlags DefaultFieldsBindingFlags
         {
             get { return defaultFieldsBindingFlags; }
@@ -115,8 +115,8 @@ namespace vm.Aspects.Diagnostics
         /// <param name="propertiesBindingFlags">The binding flags of the properties.</param>
         /// <param name="fieldsBindingFlags">The binding flags of the fields.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="writer" /> is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Flags")]
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public ObjectTextDumper(
             TextWriter writer,
             int indentLevel = 0,
@@ -471,7 +471,7 @@ namespace vm.Aspects.Diagnostics
             Contract.Requires(state!=null);
 
             // should we dump it at all?
-            if (!state.CurrentProperty.CanRead()  ||  
+            if (!state.CurrentProperty.CanRead()  ||
                 state.CurrentPropertyDumpAttribute.Skip == ShouldDump.Skip)
                 return;
 
@@ -504,7 +504,7 @@ namespace vm.Aspects.Diagnostics
 
             try
             {
-                value = pi != null 
+                value = pi != null
                             ? pi.GetValue(state.Instance, null)
                             : fi.GetValue(state.Instance);
             }
@@ -515,7 +515,7 @@ namespace vm.Aspects.Diagnostics
             }
 
             // should we dump a null value of the current property
-            if (value == null  &&  
+            if (value == null  &&
                 (state.CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
                  state.CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && state.DumpNullValues==ShouldDump.Skip))
                 return;
@@ -554,12 +554,12 @@ namespace vm.Aspects.Diagnostics
             DumpObjectOfNonBasicValue(
                 value,
                 null,
-                state.CurrentPropertyDumpAttribute.IsDefaultAttribute() 
+                state.CurrentPropertyDumpAttribute.IsDefaultAttribute()
                     ? null
                     : state.CurrentPropertyDumpAttribute);
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification="It's OK.")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "It's OK.")]
         bool DumpedPropertyCustom(
             DumpState state,
             object value,
@@ -585,17 +585,17 @@ namespace vm.Aspects.Diagnostics
                 return false;
 
             if (string.IsNullOrWhiteSpace(dumpMethodName))
-                dumpMethodName = nameof(Dump);
+                dumpMethodName = "Dump";
 
             MethodInfo dumpMethod = null;   // best match
             MethodInfo dumpMethod2 = null;  // second best
 
-            // try external class if specified
+            // try the external class if specified
             if (dumpClass != null)
             {
                 foreach (var mi in dumpClass.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                            .Where(mi => mi.Name == dumpMethodName  &&  
-                                                            mi.ReturnType == typeof(string)  &&  
+                                            .Where(mi => mi.Name == dumpMethodName  &&
+                                                            mi.ReturnType == typeof(string)  &&
                                                             mi.GetParameters().Count() == 1))
                 {
                     if (mi.GetParameters()[0].ParameterType == type)
@@ -622,14 +622,18 @@ namespace vm.Aspects.Diagnostics
                 return true;
             }
 
-            // try the property's class or base class
+            // try the property's class or base class, or metadata class
             foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-                                    .Where(mi => mi.Name == dumpMethodName  &&  
+                                   .Where(mi => mi.Name == dumpMethodName  &&
                                                 mi.ReturnType == typeof(string))
-                                    .Union(type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                                .Where(mi => mi.Name == dumpMethodName  &&  
-                                                            mi.ReturnType == typeof(string)  &&  
-                                                            mi.GetParameters().Count() == 1)))
+                                   .Union(type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                                .Where(mi => mi.Name == dumpMethodName  &&
+                                                             mi.ReturnType == typeof(string)  &&
+                                                             mi.GetParameters().Count() == 1))
+                                   .Union(state.ClassDumpData.Metadata.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                                                        .Where(mi => mi.Name == dumpMethodName  &&
+                                                                                     mi.ReturnType == typeof(string)  &&
+                                                                                     mi.GetParameters().Count() == 1)))
             {
                 // found an instance method
                 if (!mi.IsStatic && mi.GetParameters().Count() == 0)
@@ -644,7 +648,7 @@ namespace vm.Aspects.Diagnostics
                         dumpMethod = mi;
                     else
                         if (mi.GetParameters()[0].ParameterType.IsAssignableFrom(type))
-                            dumpMethod2 = mi;
+                        dumpMethod2 = mi;
                 }
             }
 
@@ -746,8 +750,8 @@ namespace vm.Aspects.Diagnostics
                 d.Method.DeclaringType!=null ? d.Method.DeclaringType.Namespace : string.Empty,
                 d.Method.DeclaringType!=null ? d.Method.DeclaringType.AssemblyQualifiedName : string.Empty,
                 d.Method.Name,
-                d.Target==null 
-                    ? Resources.ClassMethodDesignator 
+                d.Target==null
+                    ? Resources.ClassMethodDesignator
                     : Resources.InstanceMethodDesignator);
 
             return true;
@@ -810,7 +814,7 @@ namespace vm.Aspects.Diagnostics
                 max = int.MaxValue;
             else
                 if (max == 0)        // limit sequences of primitive types (can be very big)
-                    max = DumpAttribute.DefaultMaxElements;
+                max = DumpAttribute.DefaultMaxElements;
 
             if (sequenceType == typeof(byte[]))
             {
@@ -895,7 +899,7 @@ namespace vm.Aspects.Diagnostics
 
             string typeName = type.Name;
 
-            if (typeName.Length > 65 && 
+            if (typeName.Length > 65 &&
                 _hexadecimalSuffix.IsMatch(typeName.Substring(typeName.Length - 65-1)))
                 typeName = type.BaseType.Name.Substring(0, typeName.Length-65);
 
@@ -945,7 +949,7 @@ namespace vm.Aspects.Diagnostics
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

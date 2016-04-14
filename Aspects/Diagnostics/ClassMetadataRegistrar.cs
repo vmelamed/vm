@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 //using System.Data;
 //using System.Data.Metadata.Edm;
 //using System.Data.SqlClient;
+//using System.Net;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Security;
@@ -50,6 +51,7 @@ namespace vm.Aspects.Diagnostics
                 //.Register<ValidationResult, ValidationResultDumpMetadata>()
                 //.Register<ValidationResults, ValidationResultsDumpMetadata>()
                 //.Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
+                //.Register<WebException, WebExceptionDumpMetadata>()
                 ;
         }
 

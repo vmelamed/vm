@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -424,6 +426,11 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Requires<ArgumentNullException>(operations != null, nameof(operations));
 
+            if (!operations.Any())
+                return;
+
+            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "Generating OPTIONS handlers for {0}.", operations.First().DeclaringContract.ContractType.FullName));
+
             var uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var operation in operations)
@@ -434,16 +441,15 @@ namespace vm.Aspects.Wcf.Services
 
                 string originalUriTemplate;
                 string originalMethod;
+                MethodInfo method = operation.SyncMethod ?? operation.TaskMethod ?? operation.BeginMethod;
 
                 var webInvoke = operation.Behaviors.Find<WebInvokeAttribute>();
 
                 if (webInvoke != null)
                 {
-                    originalMethod = webInvoke.Method != null
-                                            ? webInvoke.Method
-                                            : "POST";
-                    if (originalMethod == "OPTIONS")
+                    if (webInvoke.Method == "OPTIONS")
                         continue;
+                    originalMethod = webInvoke.Method != null ? webInvoke.Method : "POST";
                     originalUriTemplate = webInvoke.UriTemplate != null
                                             ? NormalizeTemplate(webInvoke.UriTemplate)
                                             : operation.Name;
@@ -463,11 +469,14 @@ namespace vm.Aspects.Wcf.Services
                         continue;
                 }
 
+                if (string.IsNullOrWhiteSpace(originalUriTemplate))
+                    originalUriTemplate = "/";
+
                 PreflightOperationBehavior preflightOperationBehavior;
 
                 if (uriTemplates.TryGetValue(originalUriTemplate, out preflightOperationBehavior))
                 {
-                    // there is already an OPTIONS operation for this URI, we can reuse it
+                    // there is already an OPTIONS operation for this URI, we can reuse it, just add the method
                     preflightOperationBehavior.AddAllowedMethod(originalMethod);
                     continue;
                 }

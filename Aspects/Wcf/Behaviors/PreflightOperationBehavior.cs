@@ -37,5 +37,7 @@ namespace vm.Aspects.Wcf.Behaviors
         public void Validate(OperationDescription operationDescription)
         {
         }
+
+        internal string AllowedMethods => string.Join(", ", _allowedMethods);
     }
 }

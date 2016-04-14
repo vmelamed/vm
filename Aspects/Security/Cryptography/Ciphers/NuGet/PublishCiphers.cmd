@@ -14,7 +14,8 @@ msbuild MacKey\MacKey.csproj /t:Rebuild /p:Configuration=Release /p:TargetFramew
 if errorlevel 1 goto exit
 NuGet Pack NuGet\Ciphers.nuspec -Prop Configuration=Release -symbols
 if errorlevel 1 goto exit
-@echo Press any key to push to NuGet... > con:
+if exist c:\NuGet copy /y *.nupkg c:\NuGet
+@echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 NuGet Push Ciphers.1.11.8.nupkg
 :exit

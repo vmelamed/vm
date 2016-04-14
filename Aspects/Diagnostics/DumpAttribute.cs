@@ -35,12 +35,12 @@ namespace vm.Aspects.Diagnostics
     /// instance itself - e.g. from a property containing the instance or explicitly passed to the <see cref="ObjectTextDumper.Dump"/>. In these 
     /// cases not <c>null</c> class applicable properties from the instance attribute take precedence over the class attribute properties.
     /// </remarks>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification="The display positional parameter is equal to Skip named parameter.")]
+    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification = "The display positional parameter is equal to Skip named parameter.")]
     [AttributeUsage(
         AttributeTargets.Struct|
         AttributeTargets.Class |
         AttributeTargets.Field |
-        AttributeTargets.Property, AllowMultiple=false, Inherited=false)]
+        AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class DumpAttribute : Attribute, IEquatable<DumpAttribute>, ICloneable
     {
         #region Constant instances.
@@ -267,7 +267,7 @@ namespace vm.Aspects.Diagnostics
         /// Gets or sets the name of the dump method in the class specified by <see cref="DumpClass"/>. The dump method implements custom formatting of the property's value. 
         /// The method must be static, public, have a return type of <see cref="T:String"/> and must take a single parameter of type or a base type of the property. 
         /// If the <see cref="DumpClass"/> is not specified then the <see cref="ObjectTextDumper"/> will look for a parameterless instance method by the same name in the
-        /// property's class or a static method with parameter the type or a base type of the property.
+        /// property's class or a static method with parameter the type or a base type of the property in the property's class, base class or the metadata class.
         /// </summary>
         /// <remarks>
         /// Applicable to properties only.
@@ -392,8 +392,8 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator==(DumpAttribute left, DumpAttribute right) => ReferenceEquals(left, null) 
-                                                                                    ? ReferenceEquals(right, null) 
+        public static bool operator ==(DumpAttribute left, DumpAttribute right) => ReferenceEquals(left, null)
+                                                                                    ? ReferenceEquals(right, null)
                                                                                     : left.Equals(right);
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator!=(DumpAttribute left, DumpAttribute right) => !(left==right);
+        public static bool operator !=(DumpAttribute left, DumpAttribute right) => !(left==right);
         #endregion
     }
 }

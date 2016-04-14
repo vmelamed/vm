@@ -229,6 +229,7 @@
     <Compile Include="ExternalMetadata\UpdateExceptionDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\ValidationResultDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\ValidationResultsDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\WebExceptionDumpMetadata.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IMemberInfoComparer.cs" />
     <Compile Include="ObjectTextDumper.BasicTypes.cs" />
