@@ -8,7 +8,8 @@ msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj /t:Rebuild /p:Configuration=R
 if errorlevel 1 goto exit
 NuGet Pack NuGet\ObjectDumper.nuspec -Prop Configuration=Release -symbols
 if errorlevel 1 goto exit
-if exist c:\NuGet copy /y *.nupkg c:\NuGet
+if not exist c:\NuGet md c:\NuGet
+copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 NuGet Push AspectObjectDumper.1.5.4.nupkg
