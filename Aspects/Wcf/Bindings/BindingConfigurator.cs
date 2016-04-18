@@ -95,11 +95,9 @@ namespace vm.Aspects.Wcf.Bindings
                                     binding.GetType().Name,
                                     MessagingPattern);
 
-#if DEBUG
             // in DEBUG mode increase the timeouts, so that one can debug without timing out.
             binding.SendTimeout    = Constants.DefaultSendTimeout;
             binding.ReceiveTimeout = Constants.DefaultReceiveTimeout;
-#endif
 
             // the default implementation is to not change the binding
             return binding;

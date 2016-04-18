@@ -122,6 +122,8 @@ namespace vm.Aspects.Wcf.Bindings
         public override Binding Configure(
             WebHttpBinding binding)
         {
+            base.Configure(binding);
+
             binding.Security           = new WebHttpSecurity
             {
                 Mode      = WebHttpSecurityMode.Transport,
@@ -131,7 +133,7 @@ namespace vm.Aspects.Wcf.Bindings
                 },
             };
 
-            return base.Configure(binding);
+            return binding;
         }
 
         /// <summary>

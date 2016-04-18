@@ -3,7 +3,7 @@ NuGet Update -self
 call "%VS140COMNTOOLS%vsvars32.bat"
 if not .%1.==.. NuGet SetApiKey %1
 cd %~dp0..
-del ..\*.nupkg
+del *.nupkg
 msbuild vm.Aspects.csproj /t:Rebuild /p:Configuration=Release /m
 cd Model
 msbuild vm.Aspects.Model.csproj /t:Rebuild /p:Configuration=Release /m
@@ -19,7 +19,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push vm.Aspects.1.0.48-beta.nupkg
+NuGet Push vm.Aspects.1.0.49-beta.nupkg
 :exit
 popd
 pause

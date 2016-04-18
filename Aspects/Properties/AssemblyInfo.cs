@@ -2,9 +2,9 @@
 
 [assembly: AssemblyTitle("vm.Aspects")]
 [assembly: AssemblyDescription("A set of classes addressing various common cross-cutting concerns.")]
-[assembly: AssemblyVersion("1.0.48")]
-[assembly: AssemblyFileVersion("1.0.48")]
-[assembly: AssemblyInformationalVersion("1.0.48")]
+[assembly: AssemblyVersion("1.0.49")]
+[assembly: AssemblyFileVersion("1.0.49")]
+[assembly: AssemblyInformationalVersion("1.0.49")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Test, " +

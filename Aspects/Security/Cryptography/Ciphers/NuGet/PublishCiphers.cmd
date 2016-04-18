@@ -1,6 +1,6 @@
 pushd
 cd %~dp0..
-del ..\*.nupkg
+del *.nupkg
 NuGet Update -self
 call "%VS140COMNTOOLS%vsvars32.bat"
 if not .%1.==.. NuGet SetApiKey %1
