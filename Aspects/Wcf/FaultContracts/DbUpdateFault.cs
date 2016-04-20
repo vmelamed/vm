@@ -6,7 +6,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// Class DataFault. This class cannot be inherited.
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
-    public class DataFault : Fault
+    public sealed class DbUpdateFault : DataFault
     {
     }
 }

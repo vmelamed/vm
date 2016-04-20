@@ -307,16 +307,15 @@ namespace vm.Aspects.Policies
             if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
                 return methodReturn;
 
-            var entry = NewLogEntry();
-            Action logAfterCall = () => Facility.ExceptionManager
-                                                .Process(
-                                                    () => LogAfterCallData(entry, input, callData, methodReturn),
-                                                    ExceptionPolicyProvider.LogAndSwallow);
+            Action<LogEntry> logAfterCall = e => Facility.ExceptionManager
+                                                         .Process(
+                                                            () => LogAfterCallData(e, input, callData, methodReturn),
+                                                            ExceptionPolicyProvider.LogAndSwallow);
 
             var returnedTask = methodReturn.ReturnValue as Task;
+            var entry = NewLogEntry();
 
-            if (returnedTask == null  ||
-                returnedTask.IsCompleted)
+            if (returnedTask == null  ||  returnedTask.IsCompleted)
             {
                 callData.CallTimer.Stop();
 
@@ -324,73 +323,54 @@ namespace vm.Aspects.Policies
                     return methodReturn;
 
                 if (LogAsynchronously)
-                    Task.Run(logAfterCall);
+                    Task.Run(() => logAfterCall(entry));
                 else
-                    logAfterCall();
+                    logAfterCall(entry);
             }
             else
             {
-                if (returnedTask.GetType().IsGenericType)
-                {
-                    // call the generic continuation via reflection
-                    var returnedTaskResultValueType = returnedTask
-                                                    .GetType()
-                                                    .GetGenericArguments()[0];
-                    var gmi = _miPostInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
+                if (!returnedTask.GetType().IsGenericType)
+                    returnedTask = returnedTask.ContinueWith(t => true);
 
-                    return input.CreateMethodReturn(
-                                    gmi.Invoke(this, new object[] { input, returnedTask, callData.CallTimer, logAfterCall }));
-                }
-                else
-                    // call the typeless continuation directly
-                    return input.CreateMethodReturn(PostInvokeAsync(input, returnedTask, callData.CallTimer, logAfterCall));
+                // call the generic continuation via reflection
+                var returnedTaskResultValueType = returnedTask.GetType().GetGenericArguments()[0];
+                var gmi = _miPostInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
+
+                return input.CreateMethodReturn(
+                                gmi.Invoke(this, new object[] { returnedTask, callData.CallTimer, logAfterCall, entry }));
             }
 
             return methodReturn;
         }
         #endregion
 
-        async Task PostInvokeAsync(
-            IMethodInvocation input,
-            Task returnedTask,
-            Stopwatch callTimer,
-            Action logAfterCall)
-        {
-            await returnedTask;
-            callTimer.Stop();
-#pragma warning disable 4014
-            Task.Run(logAfterCall);
-#pragma warning restore 4014
-        }
-
         static MethodInfo _miPostInvokeAsyncGeneric = typeof(CallTraceCallHandler)
                                                             .GetMethod(nameof(PostInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
 
-        async Task<T> PostInvokeAsyncGeneric<T>(
-            IMethodInvocation input,
+        Task<T> PostInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
             Stopwatch callTimer,
-            Action logAfterCall)
-        {
-            var ret = await returnedTask;
+            Action<LogEntry> logAfterCall,
+            LogEntry entry) => returnedTask
+                                    .ContinueWith(
+                                        t =>
+                                        {
+                                            callTimer.Stop();
+                                            if (LogWriter.ShouldLog(entry))
+                                                Task.Run(() => logAfterCall(entry));
 
-            callTimer.Stop();
-#pragma warning disable 4014
-            Task.Run(logAfterCall);
-#pragma warning restore 4014
+                                            if (t.IsFaulted)
+                                                throw t.Exception;
 
-            return ret;
-        }
+                                            return t.Result;
+                                        });
 
         /// <summary>
         /// Creates a new log entry.
         /// </summary>
         /// <returns>LogEntry.</returns>
-        LogEntry NewLogEntry()
-        {
-            Contract.Ensures(Contract.Result<LogEntry>() != null);
-
-            return new LogEntry
+        LogEntry NewLogEntry() =>
+            new LogEntry
             {
                 Categories = new[] { Category },
                 Severity   = Severity,
@@ -398,7 +378,6 @@ namespace vm.Aspects.Policies
                 Priority   = Priority,
                 Title      = Title,
             };
-        }
 
         /// <summary>
         /// Logs the before call data.

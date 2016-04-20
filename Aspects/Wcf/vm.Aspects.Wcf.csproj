@@ -305,6 +305,7 @@
     <Compile Include="FaultContracts\ArgumentNullFault.cs" />
     <Compile Include="FaultContracts\ArgumentValidationFault.cs" />
     <Compile Include="FaultContracts\BusinessFault.cs" />
+    <Compile Include="FaultContracts\DbUpdateFault.cs" />
     <Compile Include="FaultContracts\DataFault.cs" />
     <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
     <Compile Include="FaultContracts\Fault.cs" />

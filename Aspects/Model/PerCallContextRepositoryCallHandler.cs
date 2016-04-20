@@ -73,9 +73,6 @@ namespace vm.Aspects.Model
 
             var result = getNext().Invoke(input, getNext);
 
-            if (result.Exception != null)
-                return result;
-
             IDictionary<RegistrationLookup, ContainerRegistration> registrations;
 
             lock (DIContainer.Root)
@@ -95,7 +92,8 @@ namespace vm.Aspects.Model
 
             try
             {
-                repository.CommitChanges();
+                if (result.Exception == null)
+                    repository.CommitChanges();
             }
             catch (Exception x)
             {
@@ -145,21 +143,14 @@ namespace vm.Aspects.Model
             try
             {
                 var returnedTask = result.ReturnValue as Task;
+                var returnedTaskResultType = returnedTask.GetType().IsGenericType
+                                                    ? returnedTask.GetType().GetGenericArguments()[0]
+                                                    : typeof(bool);
 
-                if (!returnedTask.GetType().IsGenericType)
-                    return input.CreateMethodReturn(
-                                    DoInvokeAsync(returnedTask, input, registration));
-                else
-                {
-                    var returnedTaskResultValueType = returnedTask
-                                                        .GetType()
-                                                        .GetGenericArguments()[0];
+                var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultType);
 
-                    var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
-
-                    return input.CreateMethodReturn(
-                                    gmi.Invoke(this, new object[] { returnedTask, input, registration }));
-                }
+                return input.CreateMethodReturn(
+                                gmi.Invoke(null, new object[] { returnedTask, input, registration }));
             }
             catch (Exception x)
             {
@@ -168,50 +159,33 @@ namespace vm.Aspects.Model
         }
 
         static MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
-                                                            .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
+                                                            .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Static);
 
-        async Task DoInvokeAsync(
-            Task returnedTask,
-            IMethodInvocation input,
-            ContainerRegistration registration)
-        {
-            await returnedTask;
-            await CommitWorkAsync(input, registration);
-        }
-
-        async Task<T> DoInvokeAsyncGeneric<T>(
+        static async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
-            IMethodInvocation input,
-            ContainerRegistration registration)
-        {
-            var t = await returnedTask;
-            await CommitWorkAsync(input, registration);
-
-            return t;
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called via reflection.")]
-        async Task CommitWorkAsync(
             IMethodInvocation input,
             ContainerRegistration registration)
         {
             try
             {
+                var result = await returnedTask;
                 var asyncRepository = registration.LifetimeManager.GetValue() as IRepositoryAsync;
 
                 if (asyncRepository != null)
                     await asyncRepository.CommitChangesAsync();
                 else
                 {
-                    var repository = asyncRepository ?? (registration.LifetimeManager.GetValue() as IRepository);
+                    var repository = registration.LifetimeManager.GetValue() as IRepository;
 
                     if (repository != null)
                         repository.CommitChanges();
                 }
+
+                return result;
             }
             catch (Exception x)
             {
-                var ex = x;
+                Exception ex;
 
                 if (x.IsTransient())
                     // wrap and rethrow

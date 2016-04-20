@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Threading;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
@@ -111,8 +112,19 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
             set
             {
-                if (value != null)
-                    InnerExceptionsMessages = value.Message;
+                if (value == null)
+                    return;
+
+                var builder = new StringBuilder(value.Message);
+                var x = value.InnerException;
+
+                while (x != null)
+                {
+                    builder.AppendFormat("\n{0}", x.Message);
+                    x = x.InnerException;
+                }
+
+                InnerExceptionsMessages = builder.ToString();
             }
         }
 
