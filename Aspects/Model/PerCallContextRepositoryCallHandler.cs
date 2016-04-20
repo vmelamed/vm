@@ -158,8 +158,8 @@ namespace vm.Aspects.Model
             }
         }
 
-        static MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
-                                                            .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Static);
+        static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
+                                                                .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Static);
 
         static async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
