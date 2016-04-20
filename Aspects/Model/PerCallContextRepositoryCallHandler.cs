@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Exceptions;
@@ -25,6 +27,11 @@ namespace vm.Aspects.Model
         /// Gets or sets the resolve name of the repository registered in the current call context.
         /// </summary>
         public string RepositoryResolveName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to create transactionn scope for task asynchronous method.
+        /// </summary>
+        public bool CreateTransactionnScopeForTasks { get; set; } = true;
 
         #region ICallHandler Members
 
@@ -50,10 +57,11 @@ namespace vm.Aspects.Model
             if (getNext == null)
                 throw new ArgumentNullException(nameof(getNext));
 
-            if (((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
-                return InvokeAsync(input, getNext);
-            else
-                return InvokeSync(input, getNext);
+            PreInvoke(input);
+
+            var result = DoInvoke(input, getNext);
+
+            return PostInvoke(input, result);
         }
 
         /// <summary>
@@ -64,36 +72,64 @@ namespace vm.Aspects.Model
 
         #endregion
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
-        IMethodReturn InvokeSync(
-            IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+        void PreInvoke(IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
+            if (!CreateTransactionnScopeForTasks  ||
+                !((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
+                return;
 
-            var result = getNext().Invoke(input, getNext);
+            if (Transaction.Current != null)
+            {
+                Debug.WriteLine(
+                    "WARNING: Did not create transaction scope. The method {0} is called from within an existing transaction {1}/{2}. Is this intended!",
+                    input.MethodBase.Name,
+                    Transaction.Current.TransactionInformation.LocalIdentifier,
+                    Transaction.Current.TransactionInformation.DistributedIdentifier);
+                return;
+            }
 
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
+            var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            lock (DIContainer.Root)
-                registrations = DIContainer.Root.GetRegistrationsSnapshot();
+            input.InvocationContext["transactionScope"] = scope;
+        }
 
-            // find the corresponding registration
-            ContainerRegistration registration;
+        IMethodReturn DoInvoke(
+            IMethodInvocation input,
+            GetNextHandlerDelegate getNext) => getNext().Invoke(input, getNext);
 
-            if (!registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration) ||
-                !(registration.LifetimeManager is PerCallContextLifetimeManager))
-                return result;
+        IMethodReturn PostInvoke(
+            IMethodInvocation input,
+            IMethodReturn result)
+        {
+            if (result.ReturnValue is Task)
+                return PostInvokeAsync(input, result);
+            else
+                return PostInvokeSync(input, result);
+        }
 
-            var repository = registration.LifetimeManager.GetValue() as IRepository;
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
+        IMethodReturn PostInvokeSync(
+            IMethodInvocation input,
+            IMethodReturn result)
+        {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            if (repository == null)
-                return result;
+            var scope = GetTransactionScope(input);
+            var registration = GetRepositoryRegistration();
 
             try
             {
+                var repository = registration?.LifetimeManager?.GetValue() as IRepository;
+
+                if (repository == null)
+                    return result;
+
                 if (result.Exception == null)
                     repository.CommitChanges();
+
+                scope?.Complete();
             }
             catch (Exception x)
             {
@@ -106,37 +142,35 @@ namespace vm.Aspects.Model
             }
             finally
             {
-                registration.LifetimeManager.RemoveValue();
+                registration?.LifetimeManager?.RemoveValue();
+                scope?.Dispose();
             }
 
             return result;
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
-        IMethodReturn InvokeAsync(
+        IMethodReturn PostInvokeAsync(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+            IMethodReturn result)
         {
-            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            var result = getNext().Invoke(input, getNext);
+            var scope = GetTransactionScope(input);
+            var registration = GetRepositoryRegistration();
 
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
-
-            lock (DIContainer.Root)
-                registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-            // the repository registration
-            ContainerRegistration registration = null;
-
-            if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) ||
-                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
-                !(registration.LifetimeManager is PerCallContextLifetimeManager))
+            if (registration == null)
+            {
+                scope?.Dispose();
                 return result;
+            }
 
             if (result.Exception != null)
             {
                 registration.LifetimeManager.RemoveValue();
+                scope?.Dispose();
                 return result;
             }
 
@@ -150,7 +184,7 @@ namespace vm.Aspects.Model
                 var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultType);
 
                 return input.CreateMethodReturn(
-                                gmi.Invoke(null, new object[] { returnedTask, input, registration }));
+                                gmi.Invoke(null, new object[] { returnedTask, input, registration, scope }));
             }
             catch (Exception x)
             {
@@ -164,23 +198,27 @@ namespace vm.Aspects.Model
         static async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
             IMethodInvocation input,
-            ContainerRegistration registration)
+            ContainerRegistration registration,
+            TransactionScope scope)
         {
+            Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
+            Contract.Ensures(Contract.Result<Task<T>>() != null);
+
+            var repo = registration.LifetimeManager.GetValue();
+
             try
             {
                 var result = await returnedTask;
-                var asyncRepository = registration.LifetimeManager.GetValue() as IRepositoryAsync;
+                var asyncRepository = repo as IRepositoryAsync;
 
                 if (asyncRepository != null)
                     await asyncRepository.CommitChangesAsync();
                 else
-                {
-                    var repository = registration.LifetimeManager.GetValue() as IRepository;
+                    (repo as IRepository)?.CommitChanges();
 
-                    if (repository != null)
-                        repository.CommitChanges();
-                }
-
+                scope?.Complete();
                 return result;
             }
             catch (Exception x)
@@ -199,7 +237,35 @@ namespace vm.Aspects.Model
             finally
             {
                 registration.LifetimeManager.RemoveValue();
+                scope?.Dispose();
             }
+        }
+
+        ContainerRegistration GetRepositoryRegistration()
+        {
+            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
+
+            lock (DIContainer.Root)
+                registrations = DIContainer.Root.GetRegistrationsSnapshot();
+
+            // the repository registration
+            ContainerRegistration registration = null;
+
+            if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) ||
+                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
+                !(registration.LifetimeManager is PerCallContextLifetimeManager))
+                return null;
+
+            return registration;
+        }
+
+        static TransactionScope GetTransactionScope(IMethodInvocation input)
+        {
+            object obj;
+
+            input.InvocationContext.TryGetValue("transactionScope", out obj);
+
+            return obj as TransactionScope;
         }
     }
 }
