@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.Remoting.Messaging;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
@@ -25,6 +26,7 @@ namespace vm.Aspects
         public override object GetValue()
         {
             var obj = CallContext.LogicalGetData(_key);
+            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Get  object {0} from {1}", GetId(obj), _key));
 
             return obj;
         }
@@ -38,7 +40,10 @@ namespace vm.Aspects
             if (newValue == null)
                 RemoveValue();
             else
+            {
                 CallContext.LogicalSetData(_key, newValue);
+                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Set  object {0} to   {1}", GetId(newValue), _key));
+            }
         }
 
         /// <summary>
@@ -48,12 +53,16 @@ namespace vm.Aspects
         {
             var obj = CallContext.LogicalGetData(_key);
 
+            CallContext.LogicalSetData(_key, null);
             CallContext.FreeNamedDataSlot(_key);
+            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Free object {0} from {1}", GetId(obj), _key));
 
-            var disposable = obj as IDisposable;
+            obj.Dispose();
+        }
 
-            if (disposable != null)
-                disposable.Dispose();
+        string GetId(object obj)
+        {
+            return obj?.GetType()?.GetProperty("InstanceId")?.GetValue(obj)?.ToString();
         }
     }
 }

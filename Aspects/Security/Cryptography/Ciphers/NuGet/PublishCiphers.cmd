@@ -2,7 +2,7 @@ pushd
 cd %~dp0..
 del *.nupkg
 NuGet Update -self
-call "%VS140COMNTOOLS%vsvars32.bat"
+if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 if not .%1.==.. NuGet SetApiKey %1
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj /t:Rebuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.6
 if errorlevel 1 goto exit

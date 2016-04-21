@@ -29,9 +29,9 @@ namespace vm.Aspects.Model
         public string RepositoryResolveName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to create transactionn scope for task asynchronous method.
+        /// Gets or sets a value indicating whether to create transaction scope for task asynchronous method.
         /// </summary>
-        public bool CreateTransactionnScopeForTasks { get; set; } = true;
+        public bool CreateTransactionScopeForTasks { get; set; } = true;
 
         #region ICallHandler Members
 
@@ -74,7 +74,7 @@ namespace vm.Aspects.Model
 
         void PreInvoke(IMethodInvocation input)
         {
-            if (!CreateTransactionnScopeForTasks  ||
+            if (!CreateTransactionScopeForTasks  ||
                 !((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
                 return;
 
@@ -101,7 +101,7 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             IMethodReturn result)
         {
-            if (result.ReturnValue is Task)
+            if (((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
                 return PostInvokeAsync(input, result);
             else
                 return PostInvokeSync(input, result);
@@ -124,7 +124,10 @@ namespace vm.Aspects.Model
                 var repository = registration?.LifetimeManager?.GetValue() as IRepository;
 
                 if (repository == null)
+                {
+                    scope?.Dispose();
                     return result;
+                }
 
                 if (result.Exception == null)
                     repository.CommitChanges();
@@ -140,11 +143,9 @@ namespace vm.Aspects.Model
                 ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
                 result = input.CreateExceptionMethodReturn(ex);
             }
-            finally
-            {
-                registration?.LifetimeManager?.RemoveValue();
-                scope?.Dispose();
-            }
+
+            registration?.LifetimeManager?.RemoveValue();
+            scope?.Dispose();
 
             return result;
         }
@@ -204,9 +205,12 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
             Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
+            Contract.Requires<ArgumentNullException>(scope != null, nameof(scope));
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
             var repo = registration.LifetimeManager.GetValue();
+
+            Contract.Assume(repo != null, "The object (repository) in the registration is null?");
 
             try
             {
@@ -216,9 +220,15 @@ namespace vm.Aspects.Model
                 if (asyncRepository != null)
                     await asyncRepository.CommitChangesAsync();
                 else
-                    (repo as IRepository)?.CommitChanges();
+                {
+                    var syncRepository = repo as IRepository;
 
-                scope?.Complete();
+                    Contract.Assume(syncRepository != null, "The object in the registration is not repository?");
+
+                    syncRepository.CommitChanges();
+                }
+
+                scope.Complete();
                 return result;
             }
             catch (Exception x)
@@ -237,7 +247,7 @@ namespace vm.Aspects.Model
             finally
             {
                 registration.LifetimeManager.RemoveValue();
-                scope?.Dispose();
+                scope.Dispose();
             }
         }
 
@@ -261,9 +271,13 @@ namespace vm.Aspects.Model
 
         static TransactionScope GetTransactionScope(IMethodInvocation input)
         {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
             object obj;
 
             input.InvocationContext.TryGetValue("transactionScope", out obj);
+
+            Contract.Assume((obj as TransactionScope) != null, "Could not find transaction scope?");
 
             return obj as TransactionScope;
         }

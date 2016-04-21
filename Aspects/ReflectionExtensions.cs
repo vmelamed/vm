@@ -64,10 +64,12 @@ namespace vm.Aspects
             this Type type,
             Type baseType)
         {
-            while (type != null  &&  type != baseType  &&  type != typeof(object))
-                type = type.BaseType;
+            var t = type;
 
-            return (type == baseType);
+            while (t != null  &&  t != baseType  &&  t != typeof(object))
+                t = t.BaseType;
+
+            return (t == baseType);
         }
 
         /// <summary>
