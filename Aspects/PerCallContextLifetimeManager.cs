@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects
 {
@@ -12,6 +15,7 @@ namespace vm.Aspects
     /// </summary>
     public class PerCallContextLifetimeManager : LifetimeManager
     {
+        ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         readonly string _key = Facility.GuidGenerator.NewGuid().ToString("N");
 
         /// <summary>
@@ -25,10 +29,15 @@ namespace vm.Aspects
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
         public override object GetValue()
         {
-            var obj = CallContext.LogicalGetData(_key);
-            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Get  object {0} from {1}", GetId(obj), _key));
+            object value;
 
-            return obj;
+            using (_lock.ReaderLock())
+            {
+                value = CallContext.LogicalGetData(_key);
+                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Get  object {0} from {1}", GetId(value), _key));
+            }
+
+            return value;
         }
 
         /// <summary>
@@ -40,10 +49,11 @@ namespace vm.Aspects
             if (newValue == null)
                 RemoveValue();
             else
-            {
-                CallContext.LogicalSetData(_key, newValue);
-                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Set  object {0} to   {1}", GetId(newValue), _key));
-            }
+                using (_lock.WriterLock())
+                {
+                    CallContext.LogicalSetData(_key, newValue);
+                    Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Set  object {0} to   {1}", GetId(newValue), _key));
+                }
         }
 
         /// <summary>
@@ -51,18 +61,21 @@ namespace vm.Aspects
         /// </summary>
         public override void RemoveValue()
         {
-            var obj = CallContext.LogicalGetData(_key);
+            object value;
 
-            CallContext.LogicalSetData(_key, null);
-            CallContext.FreeNamedDataSlot(_key);
-            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Free object {0} from {1}", GetId(obj), _key));
+            using (_lock.WriterLock())
+            {
+                value = CallContext.LogicalGetData(_key);
 
-            obj.Dispose();
+                CallContext.LogicalSetData(_key, null);
+                CallContext.FreeNamedDataSlot(_key);
+                Contract.Assume(CallContext.LogicalGetData(_key) == null);
+                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Free object {0} from {1}", GetId(value), _key));
+            }
+
+            value.Dispose();
         }
 
-        string GetId(object obj)
-        {
-            return obj?.GetType()?.GetProperty("InstanceId")?.GetValue(obj)?.ToString();
-        }
+        string GetId(object obj) => obj?.GetType()?.GetProperty("InstanceId")?.GetValue(obj)?.ToString();
     }
 }
