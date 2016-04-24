@@ -8,7 +8,7 @@ namespace vm.Aspects.Model.Repository
     /// The interface of the object model's abstract store repository (DB, XML, in-memory, etc.)
     /// </summary>
     [ContractClass(typeof(IRepositoryContracts))]
-    public interface IRepository : IDisposable
+    public interface IRepository : IDisposable, IIsDisposed
     {
         /// <summary>
         /// Initializes the repository.

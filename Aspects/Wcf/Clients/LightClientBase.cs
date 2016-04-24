@@ -9,7 +9,6 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
 using Microsoft.Practices.ServiceLocation;
-using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
@@ -20,7 +19,7 @@ namespace vm.Aspects.Wcf.Clients
     /// when the channel is faulted by aborting the channel instead of closing it.
     /// </summary>
     /// <typeparam name="TContract">The service interface.</typeparam>
-    public abstract class LightClientBase<TContract> : IDisposable where TContract : class
+    public abstract class LightClientBase<TContract> : IDisposable, IIsDisposed where TContract : class
     {
         /// <summary>
         /// Gets or sets the channel factory.
@@ -353,7 +352,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <summary>
         /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
         /// </summary>
-        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

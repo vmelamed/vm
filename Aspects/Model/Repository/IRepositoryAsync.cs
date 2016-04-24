@@ -197,5 +197,15 @@ namespace vm.Aspects.Model.Repository
         }
 
         #endregion
+
+        #region  IIsDisposed
+        public bool IsDisposed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+        #endregion
     }
 }

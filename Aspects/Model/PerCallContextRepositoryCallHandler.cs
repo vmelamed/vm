@@ -161,8 +161,9 @@ namespace vm.Aspects.Model
 
             var scope = GetTransactionScope(input);
             var registration = GetRepositoryRegistration();
+            var repository = registration?.LifetimeManager?.GetValue() as IRepository;
 
-            if (registration == null)
+            if (repository == null)
             {
                 scope?.Dispose();
                 return result;
@@ -225,10 +226,11 @@ namespace vm.Aspects.Model
 
                     Contract.Assume(syncRepository != null, "The object in the registration is not repository?");
 
-                    syncRepository.CommitChanges();
+                    if (syncRepository != null)
+                        syncRepository.CommitChanges();
                 }
 
-                scope.Complete();
+                scope?.Complete();
                 return result;
             }
             catch (Exception x)
@@ -247,7 +249,7 @@ namespace vm.Aspects.Model
             finally
             {
                 registration.LifetimeManager.RemoveValue();
-                scope.Dispose();
+                scope?.Dispose();
             }
         }
 

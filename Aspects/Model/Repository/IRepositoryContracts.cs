@@ -141,5 +141,15 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
         #endregion
+
+        #region IIsDisposed Members
+        public bool IsDisposed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+        #endregion
     }
 }

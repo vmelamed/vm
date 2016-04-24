@@ -56,7 +56,7 @@ namespace vm.Aspects.Cache
     /// ]]>
     /// </code>
     /// </example>
-    public class ObjectPool<T> : IDisposable where T : class
+    public class ObjectPool<T> : IDisposable, IIsDisposed where T : class
     {
         object _sync = new object();
         int _poolSize;
@@ -131,7 +131,7 @@ namespace vm.Aspects.Cache
                 _lentObjects   = new HashSet<T>();
 
                 if (!lazy)
-                    for (var i=0; i<poolSize; i++)
+                    for (var i = 0; i<poolSize; i++)
                         _freeObjects.Push(objectFactory());
 
                 _isInitialized = true;
@@ -186,8 +186,8 @@ namespace vm.Aspects.Cache
 
             lock (_sync)
             {
-                T instance = _freeObjects.Any() 
-                                    ? _freeObjects.Pop() 
+                T instance = _freeObjects.Any()
+                                    ? _freeObjects.Pop()
                                     : _objectFactory();
 
                 _lentObjects.Add(instance);
@@ -214,7 +214,7 @@ namespace vm.Aspects.Cache
 
             lock (_sync)
             {
-                T instance = _freeObjects.Any() 
+                T instance = _freeObjects.Any()
                                     ? _freeObjects.Pop()
                                     : _objectFactory();
 
@@ -260,13 +260,13 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.

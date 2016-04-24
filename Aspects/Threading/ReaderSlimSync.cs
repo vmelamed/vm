@@ -25,7 +25,7 @@ namespace vm.Aspects.Threading
     /// </code>
     /// </example>
     /// <seealso cref="T:System.Threading.WriterSlimSync"/>, <seealso cref="T:UpgradeableReaderSlimSync"/>, <seealso cref="T:WriterSlimSync"/>.
-    public sealed class ReaderSlimSync : IDisposable
+    public sealed class ReaderSlimSync : IDisposable, IIsDisposed
     {
         readonly ReaderWriterLockSlim _readerWriterLock;
 
@@ -55,7 +55,7 @@ namespace vm.Aspects.Threading
         /// <summary>
         /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
         /// </summary>
-        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

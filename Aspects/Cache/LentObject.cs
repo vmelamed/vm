@@ -11,7 +11,7 @@ namespace vm.Aspects.Cache
     /// is to dispose the instance of <c>LentObject</c>.
     /// </summary>
     /// <typeparam name="T">The type of the objects in the object pool.</typeparam>
-    public class LentObject<T> : IDisposable where T : class
+    public class LentObject<T> : IDisposable, IIsDisposed where T : class
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="LentObject{T}"/> class.
@@ -49,7 +49,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
         /// </summary>
-        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

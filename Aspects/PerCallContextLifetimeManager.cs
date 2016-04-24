@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.Remoting.Messaging;
@@ -34,7 +35,7 @@ namespace vm.Aspects
             using (_lock.ReaderLock())
             {
                 value = CallContext.LogicalGetData(_key);
-                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Get  object {0} from {1}", GetId(value), _key));
+                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Get  object {0}\n{1}", GetId(value), Environment.StackTrace));
             }
 
             return value;
@@ -52,7 +53,7 @@ namespace vm.Aspects
                 using (_lock.WriterLock())
                 {
                     CallContext.LogicalSetData(_key, newValue);
-                    Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Set  object {0} to   {1}", GetId(newValue), _key));
+                    Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Set  object {0}\n{1}", GetId(newValue), Environment.StackTrace));
                 }
         }
 
@@ -70,12 +71,18 @@ namespace vm.Aspects
                 CallContext.LogicalSetData(_key, null);
                 CallContext.FreeNamedDataSlot(_key);
                 Contract.Assume(CallContext.LogicalGetData(_key) == null);
-                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Free object {0} from {1}", GetId(value), _key));
+                Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "*** Free object {0}", GetId(value), _key));
             }
 
             value.Dispose();
         }
 
-        string GetId(object obj) => obj?.GetType()?.GetProperty("InstanceId")?.GetValue(obj)?.ToString();
+        string GetId(object obj) => obj == null
+                                        ? "<null>"
+                                        : string.Format(
+                                                    CultureInfo.InvariantCulture,
+                                                    "{0} - {1}",
+                                                    obj.GetType().Name,
+                                                    obj.GetHashCode().ToString());
     }
 }

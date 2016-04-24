@@ -13,7 +13,7 @@ namespace vm.Aspects
     /// Class ContainerRegistrar. Base class for registrars which register types and instances in the Unity DI container with code.
     /// </summary>
     [ContractClass(typeof(ContainerRegistrarContract))]
-    public abstract class ContainerRegistrar : IDisposable
+    public abstract class ContainerRegistrar : IDisposable, IIsDisposed
     {
         readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         readonly ISet<int> _containerHashes = new SortedSet<int>();
@@ -198,13 +198,13 @@ namespace vm.Aspects
         /// <summary>
         /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
         /// </summary>
-        public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification="It is correct.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
             // if it is disposed or in a process of disposing - return.
@@ -253,9 +253,9 @@ namespace vm.Aspects
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            Contract.Requires<ArgumentNullException>(container     != null, nameof(container)); 
+            Contract.Requires<ArgumentNullException>(container     != null, nameof(container));
             Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            
+
             throw new NotImplementedException();
         }
     }
