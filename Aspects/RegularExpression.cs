@@ -794,7 +794,6 @@ namespace vm.Aspects
         /// <summary>
         /// Dumps all regular expressions in this class.
         /// </summary>
-        [Conditional("DEBUG")]
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)")]
         public static void DumpAllRegularExpressions()
         {

@@ -264,6 +264,33 @@ namespace vm.Aspects.Model.EFRepository
         }
 
         /// <summary>
+        /// Deletes an instance from a repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to be deleted.</typeparam>
+        /// <param name="value">The instance to be deleted.</param>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">instance</exception>
+        /// <remarks>
+        /// Consider if <paramref name="value" /> is <see langword="null"/> or not found in the repository, the method to silently succeed.
+        /// </remarks>
+        public IRepository DeleteValue<T>(
+            T value) where T : BaseDomainValue
+        {
+            try
+            {
+                Set<T>().Remove(value);
+            }
+            catch (InvalidOperationException)
+            {
+                // ignore the exception when the object is not in the repository - silently succeed  
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T" /> from the repository.
         /// </summary>
         /// <typeparam name="T">The type of the entities to be returned.</typeparam>

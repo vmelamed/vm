@@ -15,7 +15,7 @@ namespace vm.Aspects.Model
 {
     /// <summary>
     /// The class PerCallContextRepositoryCallHandler is meant to be used as a policy (AOP aspect) in the call context of a WCF call.
-    /// It is assumed that the repository is resolved from the DI container and has <see cref="PerCallContextLifetimeManager"/>, i.e. all
+    /// It is assumed that the repository is resolved from the DI container and has <see cref="T:PerCallContextLifetimeManager"/>, i.e. all
     /// resolutions for <see cref="IRepository"/> with the same resolve name in the same WCF call context will return one and the same repository object.
     /// This handler implements two post-call actions: if there are no exceptions, it commits the unit of work, otherwise rolls back the current transaction
     /// and then removes the repository's lifetime manager from the container. In other words the application developer does not need to worry about 
@@ -74,8 +74,7 @@ namespace vm.Aspects.Model
 
         void PreInvoke(IMethodInvocation input)
         {
-            if (!CreateTransactionScopeForTasks  ||
-                !((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
+            if (!CreateTransactionScopeForTasks)
                 return;
 
             if (Transaction.Current != null)
@@ -146,6 +145,7 @@ namespace vm.Aspects.Model
 
             registration?.LifetimeManager?.RemoveValue();
             scope?.Dispose();
+            Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
 
             return result;
         }
@@ -219,7 +219,9 @@ namespace vm.Aspects.Model
                 var asyncRepository = repo as IRepositoryAsync;
 
                 if (asyncRepository != null)
+                {
                     await asyncRepository.CommitChangesAsync();
+                }
                 else
                 {
                     var syncRepository = repo as IRepository;
@@ -227,7 +229,9 @@ namespace vm.Aspects.Model
                     Contract.Assume(syncRepository != null, "The object in the registration is not repository?");
 
                     if (syncRepository != null)
+                    {
                         syncRepository.CommitChanges();
+                    }
                 }
 
                 scope?.Complete();
@@ -264,8 +268,7 @@ namespace vm.Aspects.Model
             ContainerRegistration registration = null;
 
             if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) ||
-                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)) ||
-                !(registration.LifetimeManager is PerCallContextLifetimeManager))
+                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)))
                 return null;
 
             return registration;

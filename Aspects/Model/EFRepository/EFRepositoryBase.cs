@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.ServiceLocation;
@@ -21,7 +22,7 @@ namespace vm.Aspects.Model.EFRepository
     /// <summary>
     /// Class EFRepositoryBase. Implements <see cref="T:IRepository"/> with Entity Framework <see cref="T:DbContext"/>.
     /// </summary>
-    public abstract partial class EFRepositoryBase : DbContext
+    public abstract partial class EFRepositoryBase : DbContext, IIsDisposed
     {
 #if EFProfiler
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
@@ -296,6 +297,22 @@ namespace vm.Aspects.Model.EFRepository
             return errors;
         }
 
+        #region IDisposable Members
+        /// <summary>
+        /// The flag will be set just before the object is disposed.
+        /// </summary>
+        /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
+        /// <remarks>
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose"/>.
+        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
+        /// </remarks>
+        int _disposed;
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
+        /// </summary>
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
+
         /// <summary>
         /// Disposes the context. The underlying <see cref="T:System.Data.Entity.Core.Objects.ObjectContext" /> is also disposed if it was created
         /// is by this context or ownership was passed to this context when this context was created.
@@ -306,6 +323,10 @@ namespace vm.Aspects.Model.EFRepository
         protected override void Dispose(
             bool disposing)
         {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
             if (disposing)
             {
                 var disposable = StoreIdProvider as IDisposable;
@@ -315,6 +336,7 @@ namespace vm.Aspects.Model.EFRepository
             }
             base.Dispose(disposing);
         }
+        #endregion
 
         [ContractInvariantMethod]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
@@ -322,6 +344,5 @@ namespace vm.Aspects.Model.EFRepository
         {
             Contract.Invariant(StoreIdProvider != null);
         }
-
     }
 }

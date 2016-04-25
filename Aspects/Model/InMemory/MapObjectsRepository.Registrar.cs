@@ -44,7 +44,6 @@ namespace vm.Aspects.Model.InMemory
             {
                 container
                     .RegisterInstanceIfNot<IOrmSpecifics>(registrations, new ObjectsRepositorySpecifics())
-                    .RegisterTypeIfNot<IRepository, MapObjectsRepository>(registrations, "callContext", new PerCallContextLifetimeManager())
                     .RegisterTypeIfNot<IRepository, MapObjectsRepository>(registrations)
                     ;
             }

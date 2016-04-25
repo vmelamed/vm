@@ -289,7 +289,6 @@
     <Compile Include="Repository\IOrmSpecifics.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\IRepositoryAsync.cs" />
-    <Compile Include="Repository\IRepositoryContracts.cs" />
     <Compile Include="Repository\IRepositoryExtensions.cs" />
     <Compile Include="Repository\IStoreUniqueId.cs" />
     <Compile Include="Repository\OrmBridge.cs" />

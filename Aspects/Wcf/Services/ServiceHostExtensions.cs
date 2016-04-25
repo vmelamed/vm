@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -428,8 +427,6 @@ namespace vm.Aspects.Wcf.Services
 
             if (!operations.Any())
                 return;
-
-            Trace.WriteLine(string.Format(CultureInfo.InvariantCulture, "Generating OPTIONS handlers for {0}.", operations.First().DeclaringContract.ContractType.FullName));
 
             var uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
 

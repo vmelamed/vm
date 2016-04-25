@@ -163,6 +163,12 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public IRepository DeleteValue<T>(
+            T value) where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
         public IQueryable<T> Entities<T>() where T : BaseDomainEntity
         {
             throw new NotImplementedException();

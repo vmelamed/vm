@@ -259,6 +259,9 @@
     <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="AsyncCallContext.cs" />
+    <Compile Include="Behaviors\AsyncCallContextBehaviorAttribute.cs" />
+    <Compile Include="Behaviors\AsyncCallContextMessageInspector.cs" />
     <Compile Include="Behaviors\AsyncServiceSynchronizationContext.cs" />
     <Compile Include="Behaviors\AsyncSynchronizationContextServiceBehaviorAttribute.cs" />
     <Compile Include="Behaviors\EnableCorsAttribute.cs" />
@@ -339,6 +342,8 @@
     <Compile Include="FaultContracts\XmlFault.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Msmq\Utilities.cs" />
+    <Compile Include="PerAsyncCallContextLifetimeManager.cs" />
+    <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

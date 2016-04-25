@@ -287,7 +287,6 @@
     <Compile Include="IDisposed.cs" />
     <Compile Include="IListExtensions.cs" />
     <Compile Include="LambdaExpressionExtensions.cs" />
-    <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Policies\CallTraceCallHandler.cs" />
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
     <Compile Include="Policies\ParameterValidatingCallHandler.cs" />

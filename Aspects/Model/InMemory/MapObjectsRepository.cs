@@ -372,6 +372,20 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Deletes an instance from the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to be deleted.</typeparam>
+        /// <param name="instance">The instance to be deleted.</param>
+        /// <returns><c>this</c></returns>
+        /// <remarks>Consider if <paramref name="instance" /> is <see langword="null" /> or not found in the repository, the method to silently succeed.</remarks>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        public IRepository DeleteValue<T>(
+            T instance) where T : BaseDomainValue
+        {
+            return this;
+        }
+
+        /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T" /> from the repository.
         /// </summary>
         /// <typeparam name="T">The type of the entities to be returned.</typeparam>
@@ -446,9 +460,31 @@ namespace vm.Aspects.Model.InMemory
 
         #region IDisposable Members
         /// <summary>
+        /// The flag will be set just before the object is disposed.
+        /// </summary>
+        /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
+        /// <remarks>
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
+        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
+        /// </remarks>
+        int _disposed;
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
+        /// </summary>
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose() => GC.SuppressFinalize(this);
+        public void Dispose()
+        {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
+            GC.SuppressFinalize(this);
+        }
         #endregion
 
         #region IRepositoryAsync Members

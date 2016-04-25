@@ -124,6 +124,17 @@ namespace vm.Aspects.Model.Repository
         IRepository Delete<T>(T entity) where T : BaseDomainEntity;
 
         /// <summary>
+        /// Deletes an instance from the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance to be deleted.</typeparam>
+        /// <param name="value">The instance to be deleted.</param>
+        /// <returns><c>this</c></returns>
+        /// <remarks>
+        /// Consider if <paramref name="value"/> is <see langword="null"/> or not found in the repository, the method to silently succeed.
+        /// </remarks>
+        IRepository DeleteValue<T>(T value) where T : BaseDomainValue;
+
+        /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T"/> from the repository.
         /// </summary>
         /// <typeparam name="T">The type of the entities to be returned.</typeparam>
@@ -172,7 +183,7 @@ namespace vm.Aspects.Model.Repository
         /// This method returns the DDD's values represented by the given type. The objects however are supposed to be &quot;detached&quot; 
         /// from the repository's context and any modifications on them will not be saved unless they are re-attached. 
         /// This method gives a chance for performance optimization for some ORM-s in fetching read-only objects from the repository. 
-        /// The implementing class may however delegate this implementation to <see cref="Entities&lt;T&gt;"/>.
+        /// The implementing class may however delegate this implementation to <see cref="Entities{T}"/>.
         /// <para>
         /// Hint: The result of this method can participate in the <c>from</c> clause of a LINQ expression.
         /// </para>
@@ -184,5 +195,162 @@ namespace vm.Aspects.Model.Repository
         /// </summary>
         /// <returns><c>this</c></returns>
         IRepository CommitChanges();
+    }
+
+    [ContractClassFor(typeof(IRepository))]
+    abstract class IRepositoryContracts : IRepository
+    {
+        #region IRepository Members
+        public IRepository Initialize()
+        {
+            Contract.Ensures(IsInitialized, "The repository was not initialized successfully.");
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsInitialized
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public TId GetStoreId<T, TId>()
+            where T : IHasStoreId<TId>
+            where TId : IEquatable<TId>
+        {
+            Contract.Ensures(!Contract.Result<TId>().Equals(default(TId)), "The store ID provider returned default(T)");
+
+            throw new NotImplementedException();
+        }
+
+        public T CreateEntity<T>() where T : BaseDomainEntity, new()
+        {
+            Contract.Ensures(Contract.Result<T>() != null, "Could not create an entity object.");
+
+            throw new NotImplementedException();
+        }
+
+        public T CreateValue<T>() where T : BaseDomainValue, new()
+        {
+            Contract.Ensures(Contract.Result<T>() != null, "Could not create a value object.");
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository Add<T>(
+            T entity) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+            Contract.Requires<InvalidOperationException>(entity.HasIdentity, "The entity must have identity before it is added to the repository.");
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository Attach<T>(
+            T entity) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+            Contract.Requires<InvalidOperationException>(entity.HasIdentity, "The entity must have identity before it is attached to the repository.");
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository Attach<T>(
+            T entity,
+            EntityState state,
+            params string[] modifiedProperties) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+            Contract.Requires<InvalidOperationException>(entity.HasIdentity, "The entity must have identity before it is attached to the repository.");
+            Contract.Requires<ArgumentNullException>(modifiedProperties != null, nameof(modifiedProperties));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository Detach<T>(
+            T entity) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+
+            throw new NotImplementedException();
+        }
+
+        public T GetByStoreId<T, TId>(
+            TId id)
+            where T : BaseDomainEntity, IHasStoreId<TId>
+            where TId : IEquatable<TId>
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetByKey<T, TKey>(
+            TKey key)
+            where T : BaseDomainEntity, IHasBusinessKey<TKey>
+            where TKey : IEquatable<TKey>
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRepository Delete<T>(
+            T entity) where T : BaseDomainEntity
+        {
+            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository DeleteValue<T>(T value) where T : BaseDomainValue
+        {
+            Contract.Requires<ArgumentNullException>(value != null, nameof(value));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<T> Entities<T>() where T : BaseDomainEntity
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<T> Values<T>() where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<T> DetachedEntities<T>() where T : BaseDomainEntity
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRepository CommitChanges()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region IIsDisposed Members
+        public bool IsDisposed
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+        #endregion
     }
 }
