@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.Remoting.Messaging;
+﻿using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -29,9 +27,6 @@ namespace vm.Aspects.Wcf.Behaviors
 
             CallContext.LogicalSetData(CallContextSlotName, context);
 
-            Trace.WriteLine(
-                string.Format(CultureInfo.InvariantCulture, "### Installed async context: {0}", context.GetHashCode().ToString()));
-
             return null;
         }
 
@@ -44,12 +39,10 @@ namespace vm.Aspects.Wcf.Behaviors
             ref Message reply,
             object correlationState)
         {
-            if (!ClearCallContext())
-                Trace.WriteLine(
-                    string.Format(CultureInfo.InvariantCulture, "*** ASYNC CONTEXT WAS NOT FOUND!"));
+            ClearCallContext();
         }
 
-        bool ClearCallContext()
+        static bool ClearCallContext()
         {
             var context = CallContext.LogicalGetData(CallContextSlotName) as AsyncCallContext;
 
@@ -58,8 +51,6 @@ namespace vm.Aspects.Wcf.Behaviors
 
             context.Clear();
             CallContext.FreeNamedDataSlot(CallContextSlotName);
-            Trace.WriteLine(
-                string.Format(CultureInfo.InvariantCulture, "### Cleared async context: {0}", context.GetHashCode().ToString()));
             return true;
         }
     }

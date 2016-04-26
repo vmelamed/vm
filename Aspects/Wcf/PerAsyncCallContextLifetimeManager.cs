@@ -40,7 +40,7 @@ namespace vm.Aspects.Wcf
             AsyncCallContext.FreeDataSlot(Key);
         }
 
-        AsyncCallContext AsyncCallContext
+        static AsyncCallContext AsyncCallContext
         {
             get
             {

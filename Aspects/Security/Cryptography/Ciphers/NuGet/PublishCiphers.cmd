@@ -18,7 +18,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push Ciphers.1.11.9.nupkg -source https://www.nuget.org/api/v2/
+NuGet Push Ciphers.1.11.9.nupkg -source https://www.nuget.org
 :exit
 popd
 pause

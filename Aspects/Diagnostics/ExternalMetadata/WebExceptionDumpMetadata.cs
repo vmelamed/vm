@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net;
 
@@ -9,16 +11,19 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     {
         /// <remarks/>
         [Dump(0)]
-        public object Status;
+        public object Status { get; set; }
 
         /// <remarks/>
         [Dump(1, DumpClass = typeof(WebExceptionDumpMetadata), DumpMethod = nameof(DumpResponse))]
-        public object Response;
+        public object Response { get; set; }
 
         /// <remarks/>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public static string DumpResponse(
             WebResponse response)
         {
+            Contract.Ensures(Contract.Result<string>() != null);
+
             var stream = response?.GetResponseStream();
 
             if (stream == null)

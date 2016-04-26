@@ -72,6 +72,7 @@ namespace vm.Aspects.Model
 
         #endregion
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The scope will be disposed in PostInvoke.")]
         void PreInvoke(IMethodInvocation input)
         {
             if (!CreateTransactionScopeForTasks)
@@ -92,7 +93,7 @@ namespace vm.Aspects.Model
             input.InvocationContext["transactionScope"] = scope;
         }
 
-        IMethodReturn DoInvoke(
+        static IMethodReturn DoInvoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext) => getNext().Invoke(input, getNext);
 

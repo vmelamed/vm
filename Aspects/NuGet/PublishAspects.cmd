@@ -19,7 +19,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push vm.Aspects.1.0.50-beta.nupkg
+NuGet Push vm.Aspects.1.0.51-beta.nupkg -source https://www.nuget.org 
 :exit
 popd
 pause

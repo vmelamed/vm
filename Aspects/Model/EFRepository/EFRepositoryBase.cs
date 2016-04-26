@@ -320,6 +320,7 @@ namespace vm.Aspects.Model.EFRepository
         /// is by this context or ownership was passed to this context when this context was created.
         /// </summary>
         /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2215:Dispose methods should call base class dispose")]
         protected override void Dispose(
             bool disposing)
         {
