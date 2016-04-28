@@ -93,8 +93,8 @@ namespace vm.Aspects.Wcf.Behaviors
             var origins = httpProp.Headers.Get(Constants.AccessControlAllowOrigin);
 
             if (origins == null  ||
-                !origins.Split(new char[] { ',', ' '}, StringSplitOptions.RemoveEmptyEntries)
-                        .Contains(origin, StringComparer.OrdinalIgnoreCase))          
+                !origins.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Contains(origin, StringComparer.OrdinalIgnoreCase))
                 httpProp.Headers.Add(Constants.AccessControlAllowOrigin, origin);
         }
     }
