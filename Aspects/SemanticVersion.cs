@@ -64,7 +64,10 @@ namespace vm.Aspects
             out SemanticVersion semanticVersion)
         {
             Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(version), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
+            Contract.Requires<ArgumentException>(version.Length > 0, "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+
 
             semanticVersion = null;
 

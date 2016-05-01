@@ -206,6 +206,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return true;
 
             // continue the test for the underlying type
+            Contract.Assume(type2 != null);
             return CanSerialize(type2);
         }
 

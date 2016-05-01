@@ -1,10 +1,10 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
-using System.Diagnostics.Contracts;
-using System.Text.RegularExpressions;
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation

@@ -298,12 +298,26 @@ namespace <#= sourceCodeNamespace.FullName #>
         Write("public {0}{1} {2}", isAsync ? "async " : "", type, method.Name);
         WriteLine("(");
 
-        // write parameters
         PushIndent("    ");
+
+        // write parameters
         SeparatedList(
             method.Parameters.OfType<CodeParameter>(),
             p => Write("{0} {1}", GetType(p.Type), p.Name),
             () => WriteLine(","));
+        Write(") => {0}Proxy.{1}", isAsync ? "await " : "", method.Name);
+
+        // write arguments
+        SeparatedList(
+            method.Parameters.OfType<CodeParameter>(),
+            p => Write("{0}", p.Name),
+            () => Write(", ")
+            () => Write("(")
+            () => WriteLine(");"));
+
+        PopIndent();
+
+        /*
         PopIndent();
         WriteLine(")");
         WriteLine("{");
@@ -319,5 +333,6 @@ namespace <#= sourceCodeNamespace.FullName #>
         WriteLine(");");
         PopIndent();
         WriteLine("}");
+        */
     }
 #>

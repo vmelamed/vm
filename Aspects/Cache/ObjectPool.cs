@@ -207,7 +207,6 @@ namespace vm.Aspects.Cache
         {
             Contract.Requires<ArgumentException>(waitMilliseconds >= -1, "The timeout must be greater or equal to -1 (infinite).");
             Contract.Requires<InvalidOperationException>(IsInitialized, "The object pool is not initialized.");
-            Contract.Ensures(Contract.Result<Task<LentObject<T>>>() != null);
 
             if (!await _semaphore.WaitAsync(waitMilliseconds, cancellationToken))
                 return null;
@@ -302,21 +301,23 @@ namespace vm.Aspects.Cache
         /// </remarks>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-                lock (_sync)
-                {
-                    if (_semaphore != null)
-                        _semaphore.Dispose();
+            if (!disposing)
+                return;
 
-                    if (_freeObjects != null)
-                        foreach (var i in _freeObjects)
-                        {
-                            var disposable = i as IDisposable;
+            lock (_sync)
+            {
+                if (_semaphore != null)
+                    _semaphore.Dispose();
 
-                            if (disposable != null)
-                                disposable.Dispose();
-                        }
-                }
+                if (_freeObjects != null)
+                    foreach (var i in _freeObjects)
+                    {
+                        var disposable = i as IDisposable;
+
+                        if (disposable != null)
+                            disposable.Dispose();
+                    }
+            }
         }
         #endregion
     }

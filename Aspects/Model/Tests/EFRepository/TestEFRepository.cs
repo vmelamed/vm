@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Facilities;
-using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;
 
@@ -26,8 +25,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
             string connectionString)
             : base(connectionString)
         {
-            Contract.Requires<ArgumentNullException>(connectionString != null, nameof(connectionString));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Requires<ArgumentNullException>(connectionString!=null, nameof(connectionString));
+            Contract.Requires<ArgumentException>(connectionString.Length > 0, "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
         }
 
         /// <summary>
@@ -41,8 +41,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
             IStoreIdProvider storeIdProvider = null)
             : base(connectionString, storeIdProvider)
         {
-            Contract.Requires<ArgumentNullException>(connectionString != null, nameof(connectionString));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Requires<ArgumentNullException>(connectionString!=null, nameof(connectionString));
+            Contract.Requires<ArgumentException>(connectionString.Length > 0, "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
         }
         #endregion
 

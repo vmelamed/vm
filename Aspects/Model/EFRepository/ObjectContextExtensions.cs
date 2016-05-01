@@ -23,7 +23,9 @@ namespace vm.Aspects.Model.EFRepository
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             for (var t = type; t != typeof(object); t = t.BaseType)
             {
@@ -34,7 +36,7 @@ namespace vm.Aspects.Model.EFRepository
                                            .Select(m => m.Name)
                                            .FirstOrDefault();
 
-                if (!string.IsNullOrWhiteSpace(entitySetName))
+                if (string.IsNullOrWhiteSpace(entitySetName))
                     return entitySetName;
             }
 
@@ -51,7 +53,9 @@ namespace vm.Aspects.Model.EFRepository
             this ObjectContext context)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             for (var t = typeof(T); t != typeof(object); t = t.BaseType)
             {
@@ -62,7 +66,7 @@ namespace vm.Aspects.Model.EFRepository
                                            .Select(m => m.Name)
                                            .FirstOrDefault();
 
-                if (!string.IsNullOrWhiteSpace(entitySetName))
+                if (string.IsNullOrWhiteSpace(entitySetName))
                     return entitySetName;
             }
 

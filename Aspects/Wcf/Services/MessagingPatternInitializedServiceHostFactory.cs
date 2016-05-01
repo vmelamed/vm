@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -156,10 +157,8 @@ namespace vm.Aspects.Wcf.Services
             string initializerResolveName = null)
             : base(identityType, identity, messagingPattern)
         {
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None  ||
-                identityType != ServiceIdentity.Certificate && !string.IsNullOrWhiteSpace(identity),
-                "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
 
             InitializerResolveName = initializerResolveName;
         }
@@ -185,11 +184,9 @@ namespace vm.Aspects.Wcf.Services
             : base(identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None  ||
-                certificate!=null && (identityType == ServiceIdentity.Certificate ||
-                                      identityType == ServiceIdentity.Dns         ||
-                                      identityType == ServiceIdentity.Rsa),
-                "Invalid combination of identity parameters.");
+                identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                           identityType == ServiceIdentity.Rsa  ||
+                                                           identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
 
             InitializerResolveName = initializerResolveName;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 
@@ -27,14 +28,13 @@ namespace vm.Aspects.Wcf
             X509Certificate2 identifyingCertificate)
         {
             Contract.Requires<ArgumentException>(
-                !string.IsNullOrWhiteSpace(identity) || 
-                identifyingCertificate!=null,
+                (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))) || identifyingCertificate!=null,
                 "Both parameters - identity and identifyingCertificate - cannot be null at the same time.");
 
-            if (string.IsNullOrWhiteSpace(identity))
-                return CreateEndpointIdentity(identityType, identifyingCertificate);
-            else
+            if (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c)))
                 return CreateEndpointIdentity(identityType, identity);
+            else
+                return CreateEndpointIdentity(identityType, identifyingCertificate);
         }
 
         /// <summary>
@@ -53,16 +53,15 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             string identity)
         {
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                           ||
-                identityType == ServiceIdentity.Dns  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Rsa  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Upn  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Spn  &&  !string.IsNullOrWhiteSpace(identity),
-                "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType != ServiceIdentity.Certificate);
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
 
             switch (identityType)
             {
+            case ServiceIdentity.None:
+                return null;
+
             case ServiceIdentity.Dns:
                 return EndpointIdentity.CreateDnsIdentity(identity);
 
@@ -74,14 +73,10 @@ namespace vm.Aspects.Wcf
 
             case ServiceIdentity.Rsa:
                 return EndpointIdentity.CreateRsaIdentity(identity);
-
-            case ServiceIdentity.None:
-                return null;
-
-            default:
-                throw new NotSupportedException(
-                    string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
             }
+
+            throw new NotSupportedException(
+                string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
         }
 
         /// <summary>
@@ -99,15 +94,15 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             X509Certificate2 identifyingCertificate)
         {
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                          ||
-                identityType == ServiceIdentity.Certificate &&  identifyingCertificate!=null  ||
-                identityType == ServiceIdentity.Dns         &&  identifyingCertificate!=null  ||
-                identityType == ServiceIdentity.Rsa         &&  identifyingCertificate!=null,
-                "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                                                            identityType == ServiceIdentity.Rsa  ||
+                                                                                            identityType == ServiceIdentity.Certificate) && identifyingCertificate!=null, "Invalid combination of identity parameters.");
 
             switch (identityType)
             {
+            case ServiceIdentity.None:
+                return null;
+
             case ServiceIdentity.Certificate:
                 return EndpointIdentity.CreateX509CertificateIdentity(identifyingCertificate);
 
@@ -116,14 +111,10 @@ namespace vm.Aspects.Wcf
 
             case ServiceIdentity.Rsa:
                 return EndpointIdentity.CreateRsaIdentity(identifyingCertificate);
-
-            case ServiceIdentity.None:
-                return null;
-
-            default:
-                throw new NotSupportedException(
-                    string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
             }
+
+            throw new NotSupportedException(
+                string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
         }
     }
 }

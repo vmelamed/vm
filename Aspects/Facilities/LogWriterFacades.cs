@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities
@@ -60,8 +61,12 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(category != null, nameof(category));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(category), "The argument \"category\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(category!=null, nameof(category));
+            Contract.Requires<ArgumentException>(category.Length > 0, "The argument "+nameof(category)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -124,11 +129,13 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(category != null, nameof(category));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(category), "The argument \"category\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(category!=null, nameof(category));
+            Contract.Requires<ArgumentException>(category.Length > 0, "The argument "+nameof(category)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(formatMessage != null, nameof(formatMessage));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -259,8 +266,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -281,8 +289,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -303,8 +312,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -325,8 +335,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -347,8 +358,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -382,8 +394,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -404,8 +417,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -426,8 +440,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -448,8 +463,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -470,8 +486,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -496,8 +513,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -518,8 +536,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -540,8 +559,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -562,8 +582,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -588,8 +609,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -610,8 +632,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -631,8 +654,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -652,8 +676,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -673,8 +698,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -699,8 +725,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -721,8 +748,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -743,8 +771,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -765,8 +794,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
@@ -787,8 +817,9 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentNullException>(format != null, nameof(format));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(format), "The argument \"format\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(format!=null, nameof(format));
+            Contract.Requires<ArgumentException>(format.Length > 0, "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 

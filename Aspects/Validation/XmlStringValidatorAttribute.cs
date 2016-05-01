@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Xml.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
@@ -81,8 +80,6 @@ namespace vm.Aspects.Validation
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-
                 return string.IsNullOrWhiteSpace(_rootElementLocalName)
                             ? null
                             : ((string.IsNullOrWhiteSpace(_rootElementNamespace)

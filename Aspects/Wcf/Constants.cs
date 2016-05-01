@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace vm.Aspects.Wcf
 {
@@ -162,8 +163,9 @@ namespace vm.Aspects.Wcf
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                Contract.Ensures(Contract.Result<string>()!=null);
+                Contract.Ensures(Contract.Result<string>().Length > 0);
+                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 if (_defaultTransactionTimeout == null)
                 {

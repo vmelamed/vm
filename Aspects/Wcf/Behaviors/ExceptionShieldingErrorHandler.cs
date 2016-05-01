@@ -1,10 +1,10 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using System.Reflection;
@@ -15,6 +15,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Web.Services.Protocols;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.FaultContracts;
@@ -53,7 +54,9 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             Contract.Requires<ArgumentNullException>(wcfContext != null, nameof(wcfContext));
             Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(exceptionPolicyName), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
+            Contract.Requires<ArgumentException>(exceptionPolicyName.Length > 0, "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
 
             _wcfContext         = wcfContext;
             ExceptionPolicyName = exceptionPolicyName;
@@ -99,6 +102,8 @@ namespace vm.Aspects.Wcf.Behaviors
             // Create a default fault in case it is null
             if (fault == null)
                 fault = Message.CreateMessage(version ?? MessageVersion.Default, "");
+
+            Contract.Assume(fault != null);
 
             try
             {

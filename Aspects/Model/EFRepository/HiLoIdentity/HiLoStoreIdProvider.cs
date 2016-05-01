@@ -157,7 +157,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             string entitySetName)
         {
             Contract.Requires<ArgumentNullException>(entitySetName!=null, nameof(entitySetName));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(entitySetName), "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(entitySetName!=null, nameof(entitySetName));
+            Contract.Requires<ArgumentException>(entitySetName.Length > 0, "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
 
             HiLoIdentityGenerator generator;

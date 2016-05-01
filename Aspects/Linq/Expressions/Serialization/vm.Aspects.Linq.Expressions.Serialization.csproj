@@ -130,7 +130,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOTNET45</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunCodeAnalysis>true</RunCodeAnalysis>

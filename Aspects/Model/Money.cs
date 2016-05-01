@@ -1,9 +1,9 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Model
 {
@@ -58,12 +58,12 @@ namespace vm.Aspects.Model
             string currency = null,
             IMoneyDefaults defaults = null)
         {
-            Contract.Requires<ArgumentException>(string.IsNullOrWhiteSpace(currency) ||
+            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(currency) ||
                                                  RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
 
             defaults = defaults ?? ServiceLocator.Current.GetInstance<IMoneyDefaults>();
 
-            if (string.IsNullOrWhiteSpace(currency))
+            if (string.IsNullOrEmpty(currency))
                 currency = defaults.Currency;
 
             Value    = decimal.Round(value, defaults.Decimals(currency), defaults.Rounding(currency));

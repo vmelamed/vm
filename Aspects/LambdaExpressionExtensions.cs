@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -27,7 +28,10 @@ namespace vm.Aspects
         {
             Contract.Requires<ArgumentNullException>(lambda != null, nameof(lambda));
             Contract.Ensures(Contract.Result<string>() != null, "Could not determine the property name from the given lambda.");
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()), "Could not determine the property name from the given lambda.");
+            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+
 
             var memberExpression = lambda.Body as MemberExpression;
 

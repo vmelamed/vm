@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -33,15 +34,17 @@ namespace vm.Aspects.Validation
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if <paramref name="schemaUrn"/> or <paramref name="filePath"/> are null, empty or whitespace only.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId="0#")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
         public static void AddSchema(
             string schemaUrn,
             string filePath)
         {
-            Contract.Requires<ArgumentNullException>(schemaUrn != null, nameof(schemaUrn));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(schemaUrn), "The argument \"schemaUrn\" cannot be null, empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(filePath != null, nameof(filePath));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(filePath), "The argument \"filePath\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(schemaUrn!=null, nameof(schemaUrn));
+            Contract.Requires<ArgumentException>(schemaUrn.Length > 0, "The argument "+nameof(schemaUrn)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(schemaUrn.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(schemaUrn)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(filePath!=null, nameof(filePath));
+            Contract.Requires<ArgumentException>(filePath.Length > 0, "The argument "+nameof(filePath)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(filePath.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(filePath)+" cannot be empty or consist of whitespace characters only.");
 
             using (var schemaStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 _schemas.Add(

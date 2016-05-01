@@ -1,8 +1,9 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation
@@ -31,7 +32,9 @@ namespace vm.Aspects.Validation
             string rexCreditCard = RegularExpression.RexAmexMCVisa)
         {
             Contract.Requires<ArgumentNullException>(rexCreditCard!=null, nameof(rexCreditCard));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(rexCreditCard), "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(rexCreditCard!=null, nameof(rexCreditCard));
+            Contract.Requires<ArgumentException>(rexCreditCard.Length > 0, "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(rexCreditCard.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
 
             _rexCreditCard = rexCreditCard;
             _regex = new Regex(_rexCreditCard, RegexOptions.Compiled);

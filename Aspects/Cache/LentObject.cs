@@ -23,7 +23,7 @@ namespace vm.Aspects.Cache
             ObjectPool<T> pool)
         {
             Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(pool != null, nameof(pool));
+            Contract.Requires<ArgumentNullException>(pool     != null, nameof(pool));
 
             Instance = instance;
             Pool     = pool;
@@ -101,7 +101,7 @@ namespace vm.Aspects.Cache
         void Invariant()
         {
             Contract.Invariant(Instance != null, "The lent object is null.");
-            Contract.Invariant(Pool != null, "The reference to the object pool is null.");
+            Contract.Invariant(Pool     != null, "The reference to the object pool is null.");
         }
     }
 }

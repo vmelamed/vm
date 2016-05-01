@@ -15,6 +15,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -61,7 +62,8 @@ namespace vm.Aspects.Wcf.Behaviors
             string exceptionPolicyName)
         {
             Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(exceptionPolicyName), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(exceptionPolicyName.Length > 0, "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
 
             ExceptionPolicyName = exceptionPolicyName;
 
@@ -218,7 +220,7 @@ namespace vm.Aspects.Wcf.Behaviors
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         void ObjectInvariant()
         {
-            Contract.Invariant(!string.IsNullOrWhiteSpace(ExceptionPolicyName));
+            Contract.Invariant(ExceptionPolicyName!=null && ExceptionPolicyName.Length > 0 && ExceptionPolicyName.Any(c => !char.IsWhiteSpace(c)));
             Contract.Invariant(_errorHandler != null);
             Contract.Invariant(_contractBehavior != null);
             Contract.Invariant(_serviceBehavior != null);

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using vm.Aspects.Properties;
@@ -70,7 +69,7 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the default negated message template.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate => Resources.ExValidUrl;      
+        protected override string DefaultNegatedMessageTemplate => Resources.ExValidUrl;
 
         /// <summary>
         /// Gets the default non negated message template.

@@ -1,6 +1,6 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+﻿using System.Diagnostics.Contracts;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation

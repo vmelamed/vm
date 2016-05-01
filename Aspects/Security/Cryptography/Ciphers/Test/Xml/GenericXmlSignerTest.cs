@@ -276,7 +276,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
                 document.Load("TestOrder.xml");
 
-                var signed = target.Sign(document, null, null, new Uri("file://"+Path.GetFullPath("TestOrder.xml")));
+
+                var signed = target.Sign(document, null, null, new Uri(Path.GetFullPath("TestOrder.xml")));
 
                 DumpXml(signed);
 

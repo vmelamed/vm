@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
@@ -120,7 +121,7 @@ namespace vm.Aspects.Wcf.FaultContracts
 
                 while (x != null)
                 {
-                    builder.AppendFormat("\n{0}", x.Message);
+                    builder.AppendFormat(CultureInfo.InvariantCulture, "\n{0}", x.Message);
                     x = x.InnerException;
                 }
 

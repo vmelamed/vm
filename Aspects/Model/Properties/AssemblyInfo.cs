@@ -3,9 +3,9 @@
 [assembly: AssemblyTitle("vm.Aspect.Model")]
 [assembly: AssemblyDescription("Defines the IRepository and related base classes and utilities - a framework of building domain object model.")]
 
-[assembly: AssemblyVersion("1.0.52")]
-[assembly: AssemblyFileVersion("1.0.52")]
-[assembly: AssemblyInformationalVersion("1.0.52")]
+[assembly: AssemblyVersion("1.0.53")]
+[assembly: AssemblyFileVersion("1.0.53")]
+[assembly: AssemblyInformationalVersion("1.0.53")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Model.Tests, " +

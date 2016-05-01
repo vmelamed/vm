@@ -72,8 +72,13 @@ namespace vm.Aspects.Model
 
         #endregion
 
+        /// <summary>
+        /// Actions that take place before invoking the next handler or the target in the chain.
+        /// Here it creates a transaction scope.
+        /// </summary>
+        /// <param name="input">The input.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The scope will be disposed in PostInvoke.")]
-        void PreInvoke(IMethodInvocation input)
+        protected virtual void PreInvoke(IMethodInvocation input)
         {
             if (!CreateTransactionScopeForTasks)
                 return;
@@ -88,19 +93,41 @@ namespace vm.Aspects.Model
                 return;
             }
 
+#if DOTNET45
+            var scope = new TransactionScope();
+#else
             var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+#endif
 
             input.InvocationContext["transactionScope"] = scope;
         }
 
-        static IMethodReturn DoInvoke(
+        /// <summary>
+        /// Invokes the next handler or the target in the chain.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="getNext">The get next.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected virtual IMethodReturn DoInvoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext) => getNext().Invoke(input, getNext);
 
-        IMethodReturn PostInvoke(
+        /// <summary>
+        /// Actions that take place after invoking the next handler or the target in the chain.
+        /// Here it saves all changes in the IRepository instance which lifetime is managed per call context;
+        /// commits the transaction scope if there are no exceptions;
+        /// and disposes the IRepository instance.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="result">The result.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected virtual IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn result)
         {
+            if (!CreateTransactionScopeForTasks)
+                return result;
+
             if (((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
                 return PostInvokeAsync(input, result);
             else
@@ -166,16 +193,21 @@ namespace vm.Aspects.Model
 
             if (repository == null)
             {
-                scope?.Dispose();
+                // if there were no exceptions - commit the transactions and we're done.
+                if (result.Exception == null)
+                    scope.Complete();
+                scope.Dispose();
                 return result;
             }
 
             if (result.Exception != null)
             {
-                registration.LifetimeManager.RemoveValue();
-                scope?.Dispose();
+                registration?.LifetimeManager?.RemoveValue();   // dispose the repository
+                scope.Dispose();
                 return result;
             }
+
+            // at this point we have a repository, we have a transaction scope, and we do not have exceptions.
 
             try
             {
@@ -210,43 +242,43 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(scope != null, nameof(scope));
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
-            var repo = registration.LifetimeManager.GetValue();
+            var repository = registration.LifetimeManager.GetValue();
 
-            Contract.Assume(repo != null, "The object (repository) in the registration is null?");
+            Contract.Assume(repository != null, "The object (repository) in the registration is null?");
 
             try
             {
+                // await the actions in the handlers in the handlers pipeline after this to finish their tasks
                 var result = await returnedTask;
-                var asyncRepository = repo as IRepositoryAsync;
+
+                // find the repository and commit the changes
+                var asyncRepository = repository as IRepositoryAsync;
 
                 if (asyncRepository != null)
-                {
                     await asyncRepository.CommitChangesAsync();
-                }
                 else
                 {
-                    var syncRepository = repo as IRepository;
-
-                    Contract.Assume(syncRepository != null, "The object in the registration is not repository?");
+                    var syncRepository = repository as IRepository;
 
                     if (syncRepository != null)
-                    {
                         syncRepository.CommitChanges();
-                    }
                 }
 
-                scope?.Complete();
+                scope.Complete();
                 return result;
             }
             catch (Exception x)
             {
-                Exception ex;
+                Exception ex = x;
 
-                if (x.IsTransient())
-                    // wrap and rethrow
-                    ex = new RepeatableOperationException(x);
-                else
-                    ex = x;
+                // flatten the aggregate exceptions if we can
+                var aggregateException = ex as AggregateException;
+
+                if (aggregateException != null  &&  aggregateException.InnerExceptions.Count == 1)
+                    ex = aggregateException.InnerExceptions[0];
+
+                if (ex.IsTransient())
+                    ex = new RepeatableOperationException(ex);
 
                 ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
                 throw ex;
@@ -254,7 +286,7 @@ namespace vm.Aspects.Model
             finally
             {
                 registration.LifetimeManager.RemoveValue();
-                scope?.Dispose();
+                scope.Dispose();
             }
         }
 
@@ -278,12 +310,13 @@ namespace vm.Aspects.Model
         static TransactionScope GetTransactionScope(IMethodInvocation input)
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Ensures(Contract.Result<TransactionScope>() != null);
 
             object obj;
 
             input.InvocationContext.TryGetValue("transactionScope", out obj);
 
-            Contract.Assume((obj as TransactionScope) != null, "Could not find transaction scope?");
+            Contract.Assume((obj as TransactionScope) != null, "Could not find the transaction scope?");
 
             return obj as TransactionScope;
         }

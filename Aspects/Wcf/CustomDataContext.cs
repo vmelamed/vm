@@ -1,18 +1,19 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
-using System.Runtime.Remoting.Messaging;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace vm.Aspects.Wcf
 {
@@ -168,9 +169,9 @@ namespace vm.Aspects.Wcf
                 if (OperationContext.Current == null)
                     return null;
 
-                WebOperationContext _webContext =  WebOperationContext.Current ?? 
+                WebOperationContext _webContext =  WebOperationContext.Current ??
                                                         CallContext.LogicalGetData(nameof(WebOperationContext)) as WebOperationContext;
-                                                        // in case AsyncServiceSynchronizationContext is installed
+                // in case AsyncServiceSynchronizationContext is installed
 
                 // find the header by namespace and name
                 if (_webContext != null)
@@ -198,7 +199,9 @@ namespace vm.Aspects.Wcf
             {
                 // put the custom header into the outgoing message which is in the current operation context (called by the clients)
                 Contract.Requires<ArgumentNullException>(value != null, nameof(value));
-                Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(value.Name));
+                Contract.Requires<ArgumentNullException>(value.Name!=null, nameof(value.Name));
+                Contract.Requires<ArgumentException>(value.Name.Length > 0, "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
+                Contract.Requires<ArgumentException>(value.Name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
                 Contract.Requires<InvalidOperationException>(OperationContext.Current != null, "The current thread does not have operation context.");
 
                 // make sure the header is initialized.
@@ -240,7 +243,9 @@ namespace vm.Aspects.Wcf
             MessageHeaders headers)
         {
             Contract.Requires<ArgumentNullException>(headers != null, nameof(headers));
-            Contract.Requires<InvalidOperationException>(!string.IsNullOrWhiteSpace(Name), "Property Name");
+            Contract.Requires<ArgumentNullException>(Name!=null, nameof(Name));
+            Contract.Requires<ArgumentException>(Name.Length > 0, "The argument "+nameof(Name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(Name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(Name)+" cannot be empty or consist of whitespace characters only.");
 
             headers.Add(
                 new MessageHeader<CustomDataContext<T>>(this)
@@ -256,7 +261,9 @@ namespace vm.Aspects.Wcf
             WebHeaderCollection headers)
         {
             Contract.Requires<ArgumentNullException>(headers != null, nameof(headers));
-            Contract.Requires<InvalidOperationException>(!string.IsNullOrWhiteSpace(Name), "Property Name");
+            Contract.Requires<ArgumentNullException>(Name!=null, nameof(Name));
+            Contract.Requires<ArgumentException>(Name.Length > 0, "The argument "+nameof(Name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(Name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(Name)+" cannot be empty or consist of whitespace characters only.");
 
             using (var stream = new MemoryStream())
             {

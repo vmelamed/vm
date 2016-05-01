@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -66,13 +65,8 @@ namespace vm.Aspects.Wcf.Services
             string identity)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                           ||
-                identityType == ServiceIdentity.Dns  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Rsa  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Upn  &&  !string.IsNullOrWhiteSpace(identity)  ||
-                identityType == ServiceIdentity.Spn  &&  !string.IsNullOrWhiteSpace(identity),
-                "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
             if (identityType == ServiceIdentity.None)
@@ -106,10 +100,9 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None                                                  ||
-                identityType == ServiceIdentity.Certificate &&  identifyingCertificate!=null          ||
-                identityType == ServiceIdentity.Rsa         &&  identifyingCertificate!=null,
-                "Invalid combination of identity parameters.");
+                identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                           identityType == ServiceIdentity.Rsa  ||
+                                                           identityType == ServiceIdentity.Certificate) && identifyingCertificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
             if (identityType == ServiceIdentity.None)
@@ -438,7 +431,6 @@ namespace vm.Aspects.Wcf.Services
 
                 string originalUriTemplate;
                 string originalMethod;
-                MethodInfo method = operation.SyncMethod ?? operation.TaskMethod ?? operation.BeginMethod;
 
                 var webInvoke = operation.Behaviors.Find<WebInvokeAttribute>();
 

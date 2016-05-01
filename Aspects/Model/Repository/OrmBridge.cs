@@ -70,8 +70,9 @@ namespace vm.Aspects.Model.Repository
             string path) where T : class
         {
             Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(path), "path");
+            Contract.Requires<ArgumentNullException>(path!=null, nameof(path));
+            Contract.Requires<ArgumentException>(path.Length > 0, "The argument "+nameof(path)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(path.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(path)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
 
             return OrmSpecifics.FetchAlso(sequence, path);
@@ -160,8 +161,9 @@ namespace vm.Aspects.Model.Repository
         {
             Contract.Requires<ArgumentNullException>(associated != null, nameof(associated));
             Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
-            Contract.Requires<ArgumentNullException>(propertyName != null, nameof(propertyName));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(propertyName), "The argument \"propertyName\" cannot be null, empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(propertyName!=null, nameof(propertyName));
+            Contract.Requires<ArgumentException>(propertyName.Length > 0, "The argument "+nameof(propertyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(propertyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(propertyName)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
 
             return OrmSpecifics.IsLoaded(associated, principal, propertyName, repository);

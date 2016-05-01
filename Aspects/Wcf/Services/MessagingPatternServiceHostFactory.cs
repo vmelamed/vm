@@ -1,8 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -10,9 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -164,10 +165,8 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern = null)
             : this(messagingPattern)
         {
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None ||
-                identityType != ServiceIdentity.Certificate && !string.IsNullOrWhiteSpace(identity),
-                "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
 
             _identityType = identityType;
             _identity     = identity;
@@ -193,11 +192,9 @@ namespace vm.Aspects.Wcf.Services
             : this(messagingPattern)
         {
             Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None  ||
-                certificate!=null && (identityType == ServiceIdentity.Certificate ||
-                                      identityType == ServiceIdentity.Dns         ||
-                                      identityType == ServiceIdentity.Rsa),
-                "Invalid combination of identity parameters.");
+                identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                           identityType == ServiceIdentity.Rsa  ||
+                                                           identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
 
             _identityType           = identityType;
             _identifyingCertificate = certificate;
@@ -447,7 +444,7 @@ namespace vm.Aspects.Wcf.Services
             ServiceHostBase host,
             Type serviceType)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(host        != null, nameof(host));
             Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
@@ -490,7 +487,7 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Invariant(
                 _identityType == ServiceIdentity.None  ||
-                (_identityType != ServiceIdentity.None  && _identityType != ServiceIdentity.Certificate) && !string.IsNullOrWhiteSpace(_identity)  ||
+                (_identityType != ServiceIdentity.None  && _identityType != ServiceIdentity.Certificate) && (_identity!=null && _identity.Length > 0 && _identity.Any(c => !char.IsWhiteSpace(c)))  ||
                 (_identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Dns || _identityType == ServiceIdentity.Rsa) && _identifyingCertificate!=null);
         }
     }

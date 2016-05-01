@@ -14,7 +14,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
             Contract.Requires<ArgumentNullException>(property != null, nameof(property));
-            Contract.Requires<ArgumentException>(!String.IsNullOrWhiteSpace(property));
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(property));
 
             Instance = instance;
             Property = property;
