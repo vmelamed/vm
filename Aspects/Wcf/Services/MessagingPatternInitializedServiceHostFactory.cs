@@ -79,7 +79,7 @@ namespace vm.Aspects.Wcf.Services
     /// </remarks>
     public class MessagingPatternInitializedServiceHostFactory<TContract, TInitializer> : MessagingPatternServiceHostFactory<TContract>
         where TContract : class
-        where TInitializer : IInitializeService, new()
+        where TInitializer : IInitializeService
     {
         IInitializeService _serviceInitializer;
 
@@ -269,7 +269,7 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Gets a value indicating whether the created host is initialized yet.
         /// </summary>
-        public Task<bool> IsHostInitializedTask { get; private set; }
+        public Task<bool> InitializeHostTask { get; private set; }
 
         /// <summary>
         /// Initializes the host.
@@ -298,7 +298,7 @@ namespace vm.Aspects.Wcf.Services
 
             if (ServiceInitializer != null)
                 // start initialization on another thread and return immediately
-                IsHostInitializedTask = ServiceInitializer
+                InitializeHostTask = ServiceInitializer
                                             .InitializeAsync(host, 0)
                                             .ContinueWith(
                                                 t =>

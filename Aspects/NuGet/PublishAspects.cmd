@@ -1,5 +1,5 @@
 if not .%vmAspectsVersion%.==.. goto afterSets
-set vmAspectsVersion=1.0.53-beta
+set vmAspectsVersion=1.0.54-beta
 set FrameworkVersion=4.6.1
 set FrameworkVersionConst=DOTNET461
 set Configuration=Release

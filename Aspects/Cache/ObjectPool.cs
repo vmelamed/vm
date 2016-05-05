@@ -311,12 +311,7 @@ namespace vm.Aspects.Cache
 
                 if (_freeObjects != null)
                     foreach (var i in _freeObjects)
-                    {
-                        var disposable = i as IDisposable;
-
-                        if (disposable != null)
-                            disposable.Dispose();
-                    }
+                        i.Dispose();
             }
         }
         #endregion
