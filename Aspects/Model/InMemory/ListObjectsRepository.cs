@@ -338,10 +338,7 @@ namespace vm.Aspects.Model.InMemory
         /// <remarks>Consider if <paramref name="instance" /> is <see langword="null" /> or not found in the repository, the method to silently succeed.</remarks>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository DeleteValue<T>(
-            T instance) where T : BaseDomainValue
-        {
-            return this;
-        }
+            T instance) where T : BaseDomainValue => this;
 
         /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T" /> from the repository.

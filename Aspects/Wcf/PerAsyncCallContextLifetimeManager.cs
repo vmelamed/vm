@@ -15,10 +15,7 @@ namespace vm.Aspects.Wcf
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue()
-        {
-            return AsyncCallContext.GetData(Key);
-        }
+        public override object GetValue() => AsyncCallContext.GetData(Key);
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.

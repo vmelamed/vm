@@ -262,8 +262,6 @@
     <Compile Include="AsyncCallContext.cs" />
     <Compile Include="Behaviors\AsyncCallContextBehaviorAttribute.cs" />
     <Compile Include="Behaviors\AsyncCallContextMessageInspector.cs" />
-    <Compile Include="Behaviors\AsyncServiceSynchronizationContext.cs" />
-    <Compile Include="Behaviors\AsyncSynchronizationContextServiceBehaviorAttribute.cs" />
     <Compile Include="Behaviors\EnableCorsAttribute.cs" />
     <Compile Include="Behaviors\EnableCorsEndpointBehavior.cs" />
     <Compile Include="Behaviors\EnableCorsMessageInspector.cs" />

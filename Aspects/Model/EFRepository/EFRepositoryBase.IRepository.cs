@@ -365,10 +365,7 @@ namespace vm.Aspects.Model.EFRepository
         /// Initializes the repository asynchronously.
         /// </summary>
         /// <returns>this</returns>
-        public virtual Task<IRepository> InitializeAsync()
-        {
-            return Task.Run(() => Initialize());
-        }
+        public virtual Task<IRepository> InitializeAsync() => Task.Run(() => Initialize());
 
         /// <summary>
         /// Gets asynchronously an entity of type <typeparamref name="T" /> from the repository where the entity is referred to by repository ID.

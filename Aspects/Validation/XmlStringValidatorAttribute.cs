@@ -76,17 +76,11 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the expanded name of the document in the form <c>{namespace}element</c>.
         /// </summary>
-        public string ExpandedName
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(_rootElementLocalName)
-                            ? null
-                            : ((string.IsNullOrWhiteSpace(_rootElementNamespace)
-                                    ? XNamespace.None
-                                    : XNamespace.Get(_rootElementNamespace)) + _rootElementLocalName).ToString();
-            }
-        }
+        public string ExpandedName => string.IsNullOrWhiteSpace(_rootElementLocalName)
+                                                ? null
+                                                : ((string.IsNullOrWhiteSpace(_rootElementNamespace)
+                                                        ? XNamespace.None
+                                                        : XNamespace.Get(_rootElementNamespace)) + _rootElementLocalName).ToString();
 
         /// <summary>
         /// Gets the local name of the root element.

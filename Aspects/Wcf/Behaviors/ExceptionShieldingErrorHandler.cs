@@ -53,8 +53,7 @@ namespace vm.Aspects.Wcf.Behaviors
             string exceptionPolicyName)
         {
             Contract.Requires<ArgumentNullException>(wcfContext != null, nameof(wcfContext));
-            Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
-            Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
+            Contract.Requires<ArgumentNullException>(exceptionPolicyName != null, nameof(exceptionPolicyName));
             Contract.Requires<ArgumentException>(exceptionPolicyName.Length > 0, "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
 

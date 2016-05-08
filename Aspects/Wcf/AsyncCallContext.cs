@@ -16,7 +16,7 @@ namespace vm.Aspects.Wcf
     public class AsyncCallContext : IDisposable, IIsDisposed
     {
         readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        IDictionary<string, object> _contextSlots = new Dictionary<string, object>();
+        readonly IDictionary<string, object> _contextSlots = new Dictionary<string, object>();
 
         /// <summary>
         /// Gets the current asynchronous call context.
