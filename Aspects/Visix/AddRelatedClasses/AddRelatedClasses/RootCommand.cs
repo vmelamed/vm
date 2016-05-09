@@ -85,7 +85,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
         /// Gets the DTE.
         /// </summary>
         /// <value>The DTE2.</value>
-        internal static DTE2 Dte { get { return Package.GetGlobalService(typeof(DTE)) as DTE2; } }
+        internal static DTE2 Dte => Package.GetGlobalService(typeof(DTE)) as DTE2;
 
         /// <summary>
         /// Gets the service provider from the owner package.
@@ -100,7 +100,7 @@ namespace vm.Aspects.Visix.AddRelatedClasses
         RootCommand(Package package)
         {
             if (package == null)
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
 
             ServiceProvider = package;
 

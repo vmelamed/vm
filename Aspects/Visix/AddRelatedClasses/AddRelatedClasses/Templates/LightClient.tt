@@ -311,8 +311,8 @@ namespace <#= sourceCodeNamespace.FullName #>
         SeparatedList(
             method.Parameters.OfType<CodeParameter>(),
             p => Write("{0}", p.Name),
-            () => Write(", ")
-            () => Write("(")
+            () => Write(", "),
+            () => Write("("),
             () => WriteLine(");"));
 
         PopIndent();

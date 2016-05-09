@@ -81,14 +81,8 @@ namespace vm.Aspects.Visix.AddRelatedClasses
 
         public string TargetPathName { get; set; }
 
-        public bool HasClass
-        {
-            get { return SourceClass != null; }
-        }
+        public bool HasClass => SourceClass != null;
 
-        public bool HasInterface
-        {
-            get { return SourceInterface != null; }
-        }
+        public bool HasInterface => SourceInterface != null;
     }
 }

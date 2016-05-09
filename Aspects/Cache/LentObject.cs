@@ -13,6 +13,9 @@ namespace vm.Aspects.Cache
     /// <typeparam name="T">The type of the objects in the object pool.</typeparam>
     public class LentObject<T> : IDisposable, IIsDisposed where T : class
     {
+        T _instance;
+        ObjectPool<T> _pool;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LentObject{T}"/> class.
         /// </summary>
@@ -25,19 +28,35 @@ namespace vm.Aspects.Cache
             Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
             Contract.Requires<ArgumentNullException>(pool     != null, nameof(pool));
 
-            Instance = instance;
-            Pool     = pool;
+            _instance = instance;
+            _pool     = pool;
         }
 
         /// <summary>
         /// Gets the lent object.
         /// </summary>
-        public T Instance { get; }
+        public T Instance
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<T>() != null);
+
+                return _instance;
+            }
+        }
 
         /// <summary>
         /// Gets the object pool from which the object was lent.
         /// </summary>
-        internal ObjectPool<T> Pool { get; }
+        internal ObjectPool<T> Pool
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ObjectPool<T>>() != null);
+
+                return _pool;
+            }
+        }
 
         #region IDisposable pattern implementation
         /// <summary>
@@ -93,15 +112,15 @@ namespace vm.Aspects.Cache
             bool disposing)
         {
             if (disposing)
-                Pool.ReturnObject(this);
+                _pool.ReturnObject(this);
         }
         #endregion
 
         [ContractInvariantMethod]
         void Invariant()
         {
-            Contract.Invariant(Instance != null, "The lent object is null.");
-            Contract.Invariant(Pool     != null, "The reference to the object pool is null.");
+            Contract.Invariant(_instance != null, "The lent object is null.");
+            Contract.Invariant(_pool     != null, "The reference to the object pool is null.");
         }
     }
 }
