@@ -271,20 +271,19 @@ namespace <#= sourceCodeNamespace.FullName #>
     {
         bool isFirst = true;
 
+        if (beforeFirstElement != null)
+            beforeFirstElement();
+
         foreach (var t in sequence)
         {
             if (isFirst)
-            {
                 isFirst = false;
-                if (beforeFirstElement != null)
-                    beforeFirstElement();
-            }
             else
                 elementSeparation();
             elementAction(t);
         }
 
-        if (!isFirst  &&  afterLastElement != null)
+        if (afterLastElement != null)
             afterLastElement();
     }
 
@@ -305,6 +304,7 @@ namespace <#= sourceCodeNamespace.FullName #>
             method.Parameters.OfType<CodeParameter>(),
             p => Write("{0} {1}", GetType(p.Type), p.Name),
             () => WriteLine(","));
+
         Write(") => {0}Proxy.{1}", isAsync ? "await " : "", method.Name);
 
         // write arguments
