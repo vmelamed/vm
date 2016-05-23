@@ -49,12 +49,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected SymmetricKeyCipherBase(
             string symmetricAlgorithmName)
         {
+            CreateSymmetricKey(symmetricAlgorithmName);
+        }
+        #endregion
+
+        /// <summary>
+        /// Creates the symmetric key.
+        /// </summary>
+        /// <param name="symmetricAlgorithmName">Name of the symmetric algorithm.</param>
+        protected void CreateSymmetricKey(
+            string symmetricAlgorithmName)
+        {
             var factory = ServiceLocatorWrapper.Default.GetInstance<ISymmetricAlgorithmFactory>();
 
             factory.Initialize(symmetricAlgorithmName);
             _symmetric = factory.Create();
         }
-        #endregion
 
         #region Properties
         /// <summary>

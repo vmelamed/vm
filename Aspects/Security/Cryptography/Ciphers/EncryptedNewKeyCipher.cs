@@ -138,6 +138,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Symmetric.GenerateKey();
             IsSymmetricKeyInitialized = true;
         }
+
+        /// <summary>
+        /// Initializes asynchronously the symmetric key by either reading it from the storage with the specified key location name or by
+        /// generating a new key and saving it in it.
+        /// </summary>
+        /// <remarks>The method is called by the GoF template-methods.</remarks>
+        protected override Task InitializeSymmetricKeyAsync()
+        {
+            InitializeSymmetricKey();
+            return Task.FromResult<object>(null);
+        }
         #endregion
 
         #region Encrypting primitives
@@ -199,17 +210,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             base.BeforeReadDecrypted(encryptedStream);
         }
         #endregion
-
-        /// <summary>
-        /// Initializes asynchronously the symmetric key by either reading it from the storage with the specified key location name or by
-        /// generating a new key and saving it in it.
-        /// </summary>
-        /// <remarks>The method is called by the GoF template-methods.</remarks>
-        protected override Task InitializeSymmetricKeyAsync()
-        {
-            InitializeSymmetricKey();
-            return Task.FromResult<object>(null);
-        }
 
         #region Async encrypting primitives
         /// <summary>

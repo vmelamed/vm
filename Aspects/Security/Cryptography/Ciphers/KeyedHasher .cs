@@ -87,8 +87,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             InitializeAsymmetricKeys(certificate);
         }
 
-        private KeyedHasher()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyedHasher"/> class.
+        /// </summary>
+        protected KeyedHasher(
+            string hashAlgorithmName = null)
         {
+            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>(Algorithms.KeyedHash.ResolveName);
+
+            hashAlgorithmFactory.Initialize(hashAlgorithmName);
+            _hashAlgorithm = (KeyedHashAlgorithm)hashAlgorithmFactory.Create();
         }
         #endregion
 
@@ -276,13 +284,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the physical storage location name of a symmetric key, e.g. the path and filename of a file.
         /// </summary>
-        public string KeyLocation { get; protected set; }
+        public virtual string KeyLocation { get; protected set; }
 
         /// <summary>
         /// Imports the symmetric key as a clear text.
         /// </summary>
         /// <param name="key">The key.</param>
-        public void ImportSymmetricKey(
+        public virtual void ImportSymmetricKey(
             byte[] key)
         {
             _hashAlgorithm.Key = key;
@@ -294,7 +302,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Exports the symmetric key as a clear text.
         /// </summary>
         /// <returns>Array of bytes of the symmetric key or <see langword="null"/> if the cipher does not have a symmetric key.</returns>
-        public byte[] ExportSymmetricKey()
+        public virtual byte[] ExportSymmetricKey()
         {
             InitializeHashKey();
             return _hashAlgorithm.Key;
@@ -307,7 +315,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>
         /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
-        public async Task ImportSymmetricKeyAsync(
+        public virtual async Task ImportSymmetricKeyAsync(
             byte[] key)
         {
             _hashAlgorithm.Key = key;
@@ -321,7 +329,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// A <see cref="T:Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
         /// array of bytes of the symmetric key or <see langword="null"/> if the cipher does not have a symmetric key.
         /// </returns>
-        public async Task<byte[]> ExportSymmetricKeyAsync()
+        public virtual async Task<byte[]> ExportSymmetricKeyAsync()
         {
             await InitializeHashKeyAsync();
             return _hashAlgorithm.Key;
@@ -387,6 +395,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
+        /// Gets the keyed hash algorithm implementation.
+        /// </summary>
+        /// <value>The keyed hash.</value>
+        protected virtual KeyedHashAlgorithm KeyedHash => _hashAlgorithm;
+
+        /// <summary>
         /// Initializes the asymmetric key.
         /// </summary>
         void InitializeHashKey()
@@ -397,7 +411,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     DecryptHashKey(
                         _keyStorage.GetKey(KeyLocation));
                 else
-                    ImportSymmetricKey(_hashAlgorithm.Key);
+                    _keyStorage.PutKey(EncryptHashKey(), KeyLocation);
 
                 IsHashKeyInitialized = true;
             }
@@ -416,7 +430,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     DecryptHashKey(
                         await _keyStorage.GetKeyAsync(KeyLocation));
                 else
-                    await ImportSymmetricKeyAsync(_hashAlgorithm.Key);
+                    await _keyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
 
                 IsHashKeyInitialized = true;
             }
@@ -428,7 +442,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Encrypts the hash key using the public key.
         /// </summary>
         /// <returns>The key bytes.</returns>
-        byte[] EncryptHashKey()
+        protected virtual byte[] EncryptHashKey()
         {
             if (_publicKey == null)
                 throw new InvalidOperationException("The method is not available on light clones.");
@@ -440,7 +454,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Decrypts the hash key using the private key.
         /// </summary>
         /// <param name="encryptedKey">The encrypted key.</param>
-        void DecryptHashKey(
+        protected virtual void DecryptHashKey(
             byte[] encryptedKey)
         {
             if (_privateKey == null)
@@ -556,7 +570,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="InvalidOperationException">
         /// If the underlying hash instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption as well, e.g. signing.
         /// </exception>
-        public IHasherAsync ReleaseCertificate()
+        public virtual IHasherAsync ReleaseCertificate()
         {
             if (_publicKey == null)
                 return this;
@@ -582,7 +596,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying hashing algorithm instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption, e.g. signing.
         /// </exception>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller owns it.")]
-        public IHasherAsync CloneLightHasher()
+        public virtual IHasherAsync CloneLightHasher()
         {
             InitializeHashKey();
 
