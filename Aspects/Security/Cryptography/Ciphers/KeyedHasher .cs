@@ -33,15 +33,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         RSACryptoServiceProvider _privateKey;
         /// <summary>
-        /// The object which is responsible for storing and retrieving the encrypted hash key 
-        /// to and from the store with the determined store location name (e.g file I/O).
-        /// </summary>
-        IKeyStorageAsync _keyStorage;
-        /// <summary>
         /// The underlying hash algorithm.
         /// </summary>
         KeyedHashAlgorithm _hashAlgorithm;
         #endregion
+
+        /// <summary>
+        /// The object which is responsible for storing and retrieving the encrypted hash key 
+        /// to and from the store with the determined store location name (e.g file I/O).
+        /// </summary>
+        protected IKeyStorageAsync KeyStorage { get; set; }
 
         bool IsHashKeyInitialized { get; set; }
 
@@ -295,7 +296,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             _hashAlgorithm.Key = key;
             IsHashKeyInitialized = true;
-            _keyStorage?.PutKey(EncryptHashKey(), KeyLocation);
+            KeyStorage?.PutKey(EncryptHashKey(), KeyLocation);
         }
 
         /// <summary>
@@ -319,7 +320,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key)
         {
             _hashAlgorithm.Key = key;
-            await _keyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
+            await KeyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
         }
 
         /// <summary>
@@ -348,7 +349,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IKeyStorageAsync keyStorage)
         {
             Contract.Ensures(KeyLocation != null, "Could not determine the key's physical location.");
-            Contract.Ensures(_keyStorage != null, "Could not resolve the IKeyStorageAsync object.");
+            Contract.Ensures(KeyStorage != null, "Could not resolve the IKeyStorageAsync object.");
 
             try
             {
@@ -372,7 +373,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 keyStorage = new KeyFile();
             }
 
-            _keyStorage = keyStorage;
+            KeyStorage = keyStorage;
         }
 
         void InitializeAsymmetricKeys(
@@ -403,15 +404,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes the asymmetric key.
         /// </summary>
-        void InitializeHashKey()
+        protected void InitializeHashKey()
         {
             if (!IsHashKeyInitialized)
             {
-                if (_keyStorage.KeyLocationExists(KeyLocation))
+                if (KeyStorage.KeyLocationExists(KeyLocation))
                     DecryptHashKey(
-                        _keyStorage.GetKey(KeyLocation));
+                        KeyStorage.GetKey(KeyLocation));
                 else
-                    _keyStorage.PutKey(EncryptHashKey(), KeyLocation);
+                    KeyStorage.PutKey(EncryptHashKey(), KeyLocation);
 
                 IsHashKeyInitialized = true;
             }
@@ -422,15 +423,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Asynchronously initializes the asymmetric key.
         /// </summary>
-        async Task InitializeHashKeyAsync()
+        protected async Task InitializeHashKeyAsync()
         {
             if (!IsHashKeyInitialized)
             {
-                if (_keyStorage.KeyLocationExists(KeyLocation))
+                if (KeyStorage.KeyLocationExists(KeyLocation))
                     DecryptHashKey(
-                        await _keyStorage.GetKeyAsync(KeyLocation));
+                        await KeyStorage.GetKeyAsync(KeyLocation));
                 else
-                    await _keyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
+                    await KeyStorage.PutKeyAsync(EncryptHashKey(), KeyLocation);
 
                 IsHashKeyInitialized = true;
             }
@@ -583,7 +584,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             _privateKey?.Dispose();
             _privateKey = null;
 
-            _keyStorage = null;
+            KeyStorage = null;
 
             return this;
         }
@@ -605,6 +606,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             hasher._hashAlgorithm       = KeyedHashAlgorithm.Create(_hashAlgorithm.GetType().FullName);
             hasher._hashAlgorithm.Key   = (byte[])_hashAlgorithm.Key.Clone();
             hasher.IsHashKeyInitialized = true;
+            hasher.KeyStorage          = null;
 
             return hasher;
         }
