@@ -184,7 +184,16 @@ namespace vm.Aspects.Wcf
                         return null;
 
                     using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(serialized)))
-                        return new CustomDataContext<T>((T)GetJsonSerializer().ReadObject(stream));
+                    {
+                        var context = new CustomDataContext<T>((T)GetJsonSerializer().ReadObject(stream));
+
+                        var onSerializedAttribute = typeof(T)
+                                                        .GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                                                        .FirstOrDefault(mi => mi.GetCustomAttribute<OnSerializedAttribute>() != null);
+
+                        onSerializedAttribute?.Invoke(context.Value, new object[] { new StreamingContext() });
+                        return context;
+                    }
                 }
                 else
                 {
