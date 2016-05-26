@@ -554,102 +554,102 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         }
 
         internal static Object1 GetObject1() => new Object1
-                                                {
-                                                    ObjectProperty         = null,
-                                                    NullIntProperty        = null,
-                                                    NullLongProperty       = 1L,
-                                                    BoolProperty           = true,
-                                                    CharProperty           = 'A',
-                                                    ByteProperty           = (byte)1,
-                                                    SByteProperty          = (sbyte)1,
-                                                    ShortProperty          = (short)1,
-                                                    IntProperty            = (int)1,
-                                                    LongProperty           = (long)1,
-                                                    UShortProperty         = (ushort)1,
-                                                    UIntProperty           = (uint)1,
-                                                    ULongProperty          = (ulong)1,
-                                                    DoubleProperty         = 1.0,
-                                                    FloatProperty          = (float)1.0,
-                                                    DecimalProperty        = 1M,
-                                                    GuidProperty           = Guid.Empty,
-                                                    UriProperty            = new Uri("http://localhost"),
-                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
-                                                    TimeSpanProperty       = new TimeSpan(123L),
-                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        {
+            ObjectProperty         = null,
+            NullIntProperty        = null,
+            NullLongProperty       = 1L,
+            BoolProperty           = true,
+            CharProperty           = 'A',
+            ByteProperty           = (byte)1,
+            SByteProperty          = (sbyte)1,
+            ShortProperty          = (short)1,
+            IntProperty            = (int)1,
+            LongProperty           = (long)1,
+            UShortProperty         = (ushort)1,
+            UIntProperty           = (uint)1,
+            ULongProperty          = (ulong)1,
+            DoubleProperty         = 1.0,
+            FloatProperty          = (float)1.0,
+            DecimalProperty        = 1M,
+            GuidProperty           = Guid.Empty,
+            UriProperty            = new Uri("http://localhost"),
+            DateTimeProperty       = new DateTime(2013, 1, 13),
+            TimeSpanProperty       = new TimeSpan(123L),
+            DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
 
-                                                    ObjectField            = null,
-                                                    NullIntField           = null,
-                                                    NullLongField          = 1L,
-                                                    BoolField              = true,
-                                                    CharField              = 'A',
-                                                    ByteField              = (byte)1,
-                                                    SByteField             = (sbyte)1,
-                                                    ShortField             = (short)1,
-                                                    IntField               = (int)1,
-                                                    LongField              = (long)1,
-                                                    UShortField            = (ushort)1,
-                                                    UIntField              = (uint)1,
-                                                    ULongField             = (ulong)1,
-                                                    DoubleField            = 1.0,
-                                                    FloatField             = (float)1.0,
-                                                    DecimalField           = 1M,
-                                                    GuidField              = Guid.Empty,
-                                                    UriField               = new Uri("http://localhost"),
-                                                    DateTimeField          = new DateTime(2013, 1, 13),
-                                                    TimeSpanField          = new TimeSpan(123L),
-                                                    DateTimeOffsetField    = new DateTimeOffset(new DateTime(2013, 1, 13)),
-                                                };
+            ObjectField            = null,
+            NullIntField           = null,
+            NullLongField          = 1L,
+            BoolField              = true,
+            CharField              = 'A',
+            ByteField              = (byte)1,
+            SByteField             = (sbyte)1,
+            ShortField             = (short)1,
+            IntField               = (int)1,
+            LongField              = (long)1,
+            UShortField            = (ushort)1,
+            UIntField              = (uint)1,
+            ULongField             = (ulong)1,
+            DoubleField            = 1.0,
+            FloatField             = (float)1.0,
+            DecimalField           = 1M,
+            GuidField              = Guid.Empty,
+            UriField               = new Uri("http://localhost"),
+            DateTimeField          = new DateTime(2013, 1, 13),
+            TimeSpanField          = new TimeSpan(123L),
+            DateTimeOffsetField    = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        };
 
         internal static Object2 GetObject2() => new Object2
-                                                {
-                                                    ObjectProperty         = null,
-                                                    NullIntProperty        = null,
-                                                    NullLongProperty       = 1L,
-                                                    BoolProperty           = true,
-                                                    CharProperty           = 'A',
-                                                    ByteProperty           = (byte)1,
-                                                    SByteProperty          = (sbyte)1,
-                                                    ShortProperty          = (short)1,
-                                                    IntProperty            = (int)1,
-                                                    LongProperty           = (long)1,
-                                                    UShortProperty         = (ushort)1,
-                                                    UIntProperty           = (uint)1,
-                                                    ULongProperty          = (ulong)1,
-                                                    DoubleProperty         = 1.0,
-                                                    FloatProperty          = (float)1.0,
-                                                    DecimalProperty        = 1M,
-                                                    GuidProperty           = Guid.Empty,
-                                                    UriProperty            = new Uri("http://localhost"),
-                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
-                                                    DateTimeProperty1      = new DateTime(2013, 1, 25, 11, 23, 45),
-                                                    TimeSpanProperty       = new TimeSpan(123L),
-                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-                                                };
+        {
+            ObjectProperty         = null,
+            NullIntProperty        = null,
+            NullLongProperty       = 1L,
+            BoolProperty           = true,
+            CharProperty           = 'A',
+            ByteProperty           = (byte)1,
+            SByteProperty          = (sbyte)1,
+            ShortProperty          = (short)1,
+            IntProperty            = (int)1,
+            LongProperty           = (long)1,
+            UShortProperty         = (ushort)1,
+            UIntProperty           = (uint)1,
+            ULongProperty          = (ulong)1,
+            DoubleProperty         = 1.0,
+            FloatProperty          = (float)1.0,
+            DecimalProperty        = 1M,
+            GuidProperty           = Guid.Empty,
+            UriProperty            = new Uri("http://localhost"),
+            DateTimeProperty       = new DateTime(2013, 1, 13),
+            DateTimeProperty1      = new DateTime(2013, 1, 25, 11, 23, 45),
+            TimeSpanProperty       = new TimeSpan(123L),
+            DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        };
 
         internal static Object3 GetObject3() => new Object3
-                                                {
-                                                    ObjectProperty         = null,
-                                                    NullIntProperty        = null,
-                                                    NullLongProperty       = 1L,
-                                                    BoolProperty           = true,
-                                                    CharProperty           = 'A',
-                                                    ByteProperty           = (byte)1,
-                                                    SByteProperty          = (sbyte)1,
-                                                    ShortProperty          = (short)1,
-                                                    IntProperty            = (int)1,
-                                                    LongProperty           = (long)1,
-                                                    UShortProperty         = (ushort)1,
-                                                    UIntProperty           = (uint)1,
-                                                    ULongProperty          = (ulong)1,
-                                                    DoubleProperty         = 1.0,
-                                                    FloatProperty          = (float)1.0,
-                                                    DecimalProperty        = 1M,
-                                                    GuidProperty           = Guid.Empty,
-                                                    UriProperty            = new Uri("http://localhost"),
-                                                    DateTimeProperty       = new DateTime(2013, 1, 13),
-                                                    TimeSpanProperty       = new TimeSpan(123L),
-                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-                                                };
+        {
+            ObjectProperty         = null,
+            NullIntProperty        = null,
+            NullLongProperty       = 1L,
+            BoolProperty           = true,
+            CharProperty           = 'A',
+            ByteProperty           = (byte)1,
+            SByteProperty          = (sbyte)1,
+            ShortProperty          = (short)1,
+            IntProperty            = (int)1,
+            LongProperty           = (long)1,
+            UShortProperty         = (ushort)1,
+            UIntProperty           = (uint)1,
+            ULongProperty          = (ulong)1,
+            DoubleProperty         = 1.0,
+            FloatProperty          = (float)1.0,
+            DecimalProperty        = 1M,
+            GuidProperty           = Guid.Empty,
+            UriProperty            = new Uri("http://localhost"),
+            DateTimeProperty       = new DateTime(2013, 1, 13),
+            TimeSpanProperty       = new TimeSpan(123L),
+            DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        };
 
         [TestMethod]
         public void TestDumpObject1_1()
@@ -2101,6 +2101,47 @@ Object12 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
                 Debug.WriteLine("{0}", actual, null);
                 Assert.AreEqual(expected, actual);
             }
+        }
+
+        class Object13
+        {
+            public string Prop1 { get; set; }
+
+            [Dump(true)]
+            public string Prop2 { get; set; }
+
+            [Dump(Skip = ShouldDump.Dump)]
+            public string Prop3 { get; set; }
+
+            [Dump(Skip = ShouldDump.Skip)]
+            public string Prop4 { get; set; }
+        }
+
+        [TestMethod]
+        public void TestOptInDump()
+        {
+            var expected = @"
+Object13 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object13, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Prop2                    = <null>
+  Prop3                    = <null>";
+            var test = new Object13();
+
+            DumpAttribute.Default.Skip = ShouldDump.Skip;
+
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var target = new ObjectTextDumper(w);
+
+                target.Dump(test);
+
+                var actual = w.GetStringBuilder().ToString();
+
+                TestContext.WriteLine("{0}", actual);
+                Debug.WriteLine("{0}", actual, null);
+                Assert.AreEqual(expected, actual);
+            }
+
+            DumpAttribute.Default.Skip = ShouldDump.Dump;
         }
     }
 }
