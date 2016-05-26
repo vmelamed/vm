@@ -12,7 +12,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push AspectObjectDumper.1.5.5.nupkg -source https://www.nuget.org
+NuGet Push AspectObjectDumper.1.6.0.nupkg -source https://www.nuget.org
 :exit
 popd
 pause

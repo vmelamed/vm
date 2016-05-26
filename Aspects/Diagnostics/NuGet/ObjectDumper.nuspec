@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.5.5</version>
+        <version>1.6.0-alpha</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,7 +28,9 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            Minor improvements.
+            Exposed the static property DumpAttribute.Default, which controls the dump of all classes and properties that do not have associated DumpAttribute.
+            Now you can customize the general behavior of the dump. E.g. DumpAttribute.Default.Skip - ShouldDump.Skip; will make the dumping an opt-in process,
+            i.e. by default will be dumped only properties that have [Dump(Skip = ShouldDump.Dump,...)] or just [Dump(true)].
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
