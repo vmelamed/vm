@@ -4,12 +4,12 @@ set FrameworkVersion=4.6.1
 set FrameworkVersionConst=DOTNET461
 set Configuration=Release
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /m
+if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 :afterSets
 pushd
 cd %~dp0..
 del *.nupkg
-rem NuGet Update -self
-if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+NuGet Update -self
 if not .%1.==.. NuGet SetApiKey %1
 msbuild vm.Aspects.csproj %commonBuildOptions%
 cd Model
@@ -26,7 +26,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org 
+if .%1.==.. (NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org) else (NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org -ApiKey %1)
 :exit
 popd
 pause
