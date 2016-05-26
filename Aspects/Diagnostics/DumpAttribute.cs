@@ -47,7 +47,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The default dump attribute applied to instances and properties with no <c>DumpAttribute</c> specified.
         /// </summary>
-        internal static DumpAttribute Default = new DumpAttribute { _isDefault = true };
+        public static DumpAttribute Default = new DumpAttribute { _isDefault = true };
         #endregion
 
         string _maskValue;
@@ -180,7 +180,7 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to properties only.
         /// </remarks>
-        public ShouldDump Skip { get; private set; }
+        public ShouldDump Skip { get; set; }
 
         /// <summary>
         /// Gets or sets a flag whether the actual value should be masked. Use it for properties whose values should not be logged, e.g. passwords 

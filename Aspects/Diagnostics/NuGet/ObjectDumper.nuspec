@@ -30,8 +30,8 @@
         <releaseNotes>
             Minor improvements.
         </releaseNotes>
-        <licenseUrl>https://aspectobjectdumper.codeplex.com/license</licenseUrl>
-        <projectUrl>https://aspectobjectdumper.codeplex.com/</projectUrl>
+        <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
