@@ -28,8 +28,8 @@ namespace vm.Aspects.Wcf
         /// </summary>
         /// <param name="slotName">Name of the slot.</param>
         /// <returns>The object in the slot or <see langword="null"/>.</returns>
-        [Pure]
-        public object GetData(string slotName)
+        public object GetData(
+            string slotName)
         {
             Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
             Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
@@ -37,9 +37,20 @@ namespace vm.Aspects.Wcf
 
             object entry;
 
-            using (_lock.ReaderLock())
+            using (_lock.UpgradableReaderLock())
+            {
                 if (!_contextSlots.TryGetValue(slotName, out entry))
                     return null;
+
+                var disposed = entry as IIsDisposed;
+
+                if (disposed != null  &&  disposed.IsDisposed)
+                {
+                    using (_lock.WriterLock())
+                        _contextSlots.Remove(slotName);
+                    return null;
+                }
+            }
 
             return entry;
         }
@@ -51,7 +62,9 @@ namespace vm.Aspects.Wcf
         /// </summary>
         /// <param name="slotName">The name of the slot.</param>
         /// <param name="entry">The entry.</param>
-        public void SetData(string slotName, object entry)
+        public void SetData(
+            string slotName,
+            object entry)
         {
             Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
             Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
@@ -72,19 +85,20 @@ namespace vm.Aspects.Wcf
         /// Frees the data slot, if it exists. If the slot contains a disposable object - it will be disposed.
         /// </summary>
         /// <param name="slotName">Name of the slot.</param>
-        public void FreeDataSlot(string slotName)
+        public void FreeDataSlot(
+            string slotName)
         {
             Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
             Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
 
-            using (_lock.WriterLock())
-            {
-                object entry;
+            object entry;
 
+            using (_lock.WriterLock())
                 if (_contextSlots.TryGetValue(slotName, out entry))
-                    entry.Dispose();
-            }
+                    _contextSlots.Remove(slotName);
+
+            entry.Dispose();
         }
 
         /// <summary>
