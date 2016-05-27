@@ -148,21 +148,21 @@ namespace vm.Aspects.Diagnostics
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         static void ObjectInvariant()
         {
-            Contract.Invariant(!string.IsNullOrWhiteSpace(CyclicalReference));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(Delegate));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(Enum));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(GenericParam));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(IndexerIndexType));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(MemberInfoMemberType));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(MethodInfo));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(MethodParameter));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(DefaultPropertyLabel));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceDumpTruncated));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceType));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(SequenceTypeName));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(Type));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(TypeInfo));
-            Contract.Invariant(!string.IsNullOrWhiteSpace(Value));
+            Contract.Invariant(!string.IsNullOrEmpty(CyclicalReference));
+            Contract.Invariant(!string.IsNullOrEmpty(Delegate));
+            Contract.Invariant(!string.IsNullOrEmpty(Enum));
+            Contract.Invariant(!string.IsNullOrEmpty(GenericParam));
+            Contract.Invariant(!string.IsNullOrEmpty(IndexerIndexType));
+            Contract.Invariant(!string.IsNullOrEmpty(MemberInfoMemberType));
+            Contract.Invariant(!string.IsNullOrEmpty(MethodInfo));
+            Contract.Invariant(!string.IsNullOrEmpty(MethodParameter));
+            Contract.Invariant(!string.IsNullOrEmpty(DefaultPropertyLabel));
+            Contract.Invariant(!string.IsNullOrEmpty(SequenceDumpTruncated));
+            Contract.Invariant(!string.IsNullOrEmpty(SequenceType));
+            Contract.Invariant(!string.IsNullOrEmpty(SequenceTypeName));
+            Contract.Invariant(!string.IsNullOrEmpty(Type));
+            Contract.Invariant(!string.IsNullOrEmpty(TypeInfo));
+            Contract.Invariant(!string.IsNullOrEmpty(Value));
         }
 
     }

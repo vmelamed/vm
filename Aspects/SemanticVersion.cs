@@ -11,6 +11,7 @@ namespace vm.Aspects
     /// Class SemanticVersion as defined at http://semver.org/.
     /// </summary>
     [MetadataType(typeof(SemanticVersionMetadata))]
+    [Serializable]
     public sealed partial class SemanticVersion : IEquatable<SemanticVersion>, IComparable<SemanticVersion>
     {
         /// <summary>

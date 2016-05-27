@@ -242,8 +242,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.5.5.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\AspectObjectDumper.1.5.5\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.1.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectObjectDumper.1.6.1\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -251,6 +251,7 @@
     <Compile Include="..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
+    <Compile Include="ApiVersionAttribute.cs" />
     <Compile Include="Cache\LentObject.cs" />
     <Compile Include="Cache\ObjectPool.cs" />
     <Compile Include="Constants.cs" />

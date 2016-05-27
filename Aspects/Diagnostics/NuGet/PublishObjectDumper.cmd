@@ -1,7 +1,7 @@
 if not .%vmDumperVersion%.==.. goto afterSets
-set vmDumperVersion=1.6.1
-set FrameworkVersion=4.6.1
-set FrameworkVersionConst=DOTNET461
+set vmDumperVersion=1.6.2
+set FrameworkVersion=4.0
+set FrameworkVersionConst=DOTNET40
 set Configuration=Release
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /m
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
@@ -19,7 +19,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-if .%1.==.. (NuGet Push vm.Aspects.%vmDumperVersion%.nupkg -source https://www.nuget.org) else (NuGet Push vm.Aspects.%vmDumperVersion%.nupkg -source https://www.nuget.org -ApiKey %1)
+if .%1.==.. (NuGet Push AspectObjectDumper.%vmDumperVersion%.nupkg -source https://www.nuget.org) else (NuGet Push AspectObjectDumper.%vmDumperVersion%.nupkg -source https://www.nuget.org -ApiKey %1)
 :exit
 popd
 pause
