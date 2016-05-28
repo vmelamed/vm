@@ -1,10 +1,9 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
-using vm.Aspects.Exceptions;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Properties;
 using vm.Aspects.Validation;
@@ -26,7 +25,7 @@ namespace vm.Aspects.Model
     /// the comparand. Following the rules of .NET's for equality, the return value of the method <see cref="M:GetHashCode"/> should also be immutable.
     /// </para><para>
     /// Another tenet of the domain entity is that once ready to be used in business logic or ready to be persisted, the entity must have a <bold>valid</bold>
-    /// state, which is verified by the methods from the inherited interface <see cref="T:IValidatable"/>.
+    /// state, which is verified by the methods from the inherited interface <see cref="IValidatable"/>.
     /// </para><para>
     /// A feature of the domain entities, which I find to be very useful, is to be able to participate in the visitor pattern (see G4 patterns) as the
     /// visited element. It can be used in many situations like: assigning values to the entity's properties from various factories: database primary keys, 
@@ -73,6 +72,7 @@ namespace vm.Aspects.Model
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">An existing results collection to which the current validation results should be appended to.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
+        [Pure]
         public virtual ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)

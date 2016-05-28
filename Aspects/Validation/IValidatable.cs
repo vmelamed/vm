@@ -18,6 +18,7 @@ namespace vm.Aspects.Validation
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">An existing results collection to which the current validation results should be appended to.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
+        [Pure]
         ValidationResults Validate(string ruleset = "", ValidationResults results = null);
     }
 

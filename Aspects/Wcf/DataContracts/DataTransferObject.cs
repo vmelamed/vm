@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.Serialization;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Diagnostics;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
 
@@ -37,6 +35,7 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">The results.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
+        [Pure]
         public ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
@@ -61,33 +60,6 @@ namespace vm.Aspects.Wcf.DataContracts
             return results;
         }
         #endregion
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is valid.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns><see langword="true" /> if the specified ruleset is valid; otherwise, <see langword="false" />.</returns>
-        public bool IsValid(string ruleset = "") => Validate(ruleset).IsValid;
-
-        /// <summary>
-        /// Performs the validation logic and if the object is not valid throws <see cref="T:ValidationException" />.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns>IValidatable.</returns>
-        /// <exception cref="T:vm.Aspects.Exceptions.ValidationException">Thrown when []</exception>
-        public IValidatable ConfirmValid(
-            string ruleset = "")
-        {
-            Contract.Ensures(Contract.Result<IValidatable>() != null);
-
-            var results = Validate(ruleset);
-
-            if (!results.IsValid)
-                throw new InvalidObjectException(results);
-
-            return this;
-        }
-
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

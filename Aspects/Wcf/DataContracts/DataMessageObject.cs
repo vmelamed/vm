@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
 
@@ -14,8 +12,8 @@ namespace vm.Aspects.Wcf.DataContracts
     /// Messages (contracts) base class. Standardizes on <see cref="T:vm.Aspects.Validation.IValidatable"/>.
     /// This is just another type of DTO. Prefer <see cref="T:DataTransferObject"/> where possible.
     /// </summary>
-    [MessageContract(WrapperNamespace="urn:service:vm.Aspects.Wcf.DataContracts")]
-    public abstract class Message : IValidatable
+    [MessageContract(WrapperNamespace = "urn:service:vm.Aspects.Wcf.DataContracts")]
+    public abstract class DataMessageObject : IValidatable
     {
         #region IValidatable Members
         /// <summary>
@@ -24,12 +22,13 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">The results.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
+        [Pure]
         public ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {
             Contract.Ensures(Contract.Result<ValidationResults>() != null);
-            
+
             var validator = Facility.ValidatorFactory.CreateValidator(GetType(), ruleset);
 
             if (results == null)
@@ -56,33 +55,6 @@ namespace vm.Aspects.Wcf.DataContracts
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString() => this.DumpString();
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is valid.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns><see langword="true" /> if the specified ruleset is valid; otherwise, <see langword="false" />.</returns>
-        public bool IsValid(
-            string ruleset = "") => Validate(ruleset).IsValid;
-
-        /// <summary>
-        /// Performs the validation logic and if the object is not valid throws <see cref="T:ValidationException" />.
-        /// </summary>
-        /// <param name="ruleset">The ruleset to test validity against.</param>
-        /// <returns>IValidatable.</returns>
-        /// <exception cref="T:vm.Aspects.Exceptions.ValidationException">Thrown when []</exception>
-        public IValidatable ConfirmValid(
-            string ruleset = "")
-        {
-            Contract.Ensures(Contract.Result<IValidatable>() != null);
-
-            var results = Validate(ruleset);
-
-            if (!results.IsValid)
-                throw new InvalidObjectException(results);
-
-            return this;
-        }
 
         /// <summary>
         /// Accepts the visitor which implements the <see cref="T:IDataTransferObjectVisitor"/> interface. See the G4 visitor pattern.

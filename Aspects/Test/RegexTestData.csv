@@ -1,4 +1,5 @@
 regexIdentifier,testValue,expectedResult
+#always save in PC 1252 ANSI Latin I
 ByteArray,,false
 ByteArray," ",false
 ByteArray,"0",false
@@ -352,3 +353,24 @@ DateTimeIso8601,201602T112233.44+05:30,false
 DateTimeIso8601,201602T11:22:33.44+05:30,false
 DateTimeIso8601,201602T112233.44+05:30,false
 DateTimeIso8601,201602T112233.44+0530,false
+#
+CSharpIdentifier,_,true
+CSharpIdentifier,_üסמחרני,true
+CSharpIdentifier,üסמחרני,true
+CSharpIdentifier,üסמחרני_,true
+CSharpIdentifier,a,true
+CSharpIdentifier,A,true
+CSharpIdentifier,abc_ABC,true
+CSharpIdentifier,_0,true
+CSharpIdentifier,a0,true
+CSharpIdentifier,A_0,true
+CSharpIdentifier,0,false
+CSharpIdentifier,0a,false
+CSharpIdentifier,_0-a,false
+CSharpIdentifier,_0_a,true
+CSharpIdentifier,@if,true
+CSharpIdentifier,@if@,false
+#
+CSharpFqnIdentifier,abc,true
+CSharpFqnIdentifier,abc.xyz,true
+CSharpFqnIdentifier,abc.xyz._123,true

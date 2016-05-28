@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics.Contracts;
 using vm.Aspects.Exceptions;
 
@@ -21,6 +17,7 @@ namespace vm.Aspects.Validation
         /// <returns>This instance.</returns>
         /// <exception cref="InvalidObjectException"></exception>
         /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
+        [Pure]
         public static IValidatable ConfirmValid(
             this IValidatable validatable,
             string ruleset = "")

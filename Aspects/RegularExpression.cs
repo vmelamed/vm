@@ -258,6 +258,11 @@ namespace vm.Aspects
         /// Note: in internet scenario these addresses may fail to connect to the resource, as they may be missing the top and domain level parts of the addresses, e.g. missing vm.com.
         /// </summary>
         const string rexWcfUrlRootAndPath = rexWcfUrlRoot + rexUrlPath;
+
+        /// <summary>
+        /// Matches a C# identifier.
+        /// </summary>
+        const string rexCSharpIdentifier = @"[_@\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Mc}\p{Cf}\p{Pc}\p{Lm}][_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]*";
         #endregion
 
         #region Internet addresses, URL, etc. regular expressions
@@ -703,11 +708,11 @@ namespace vm.Aspects
         public static Regex ConnectionString => _connectionString.Value;
         #endregion
 
-        #region C# identifier
+        #region C# identifiers
         /// <summary>
         /// Matches a C# identifier.
         /// </summary>
-        public const string RexCSharpIdentifier = @"^[_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Mc}\p{Cf}\p{Pc}\p{Lm}][_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]*$";
+        public const string RexCSharpIdentifier = @"^"+rexCSharpIdentifier+"$";
 
         readonly static Lazy<Regex> _cSharpIdentifier = new Lazy<Regex>(() => new Regex(RexCSharpIdentifier, RegexOptions.Compiled));
 
@@ -715,6 +720,20 @@ namespace vm.Aspects
         /// Matches a C# identifier.
         /// </summary>
         public static Regex CSharpIdentifier => _cSharpIdentifier.Value;
+        #endregion
+
+        #region CSharpFqnIdentifier
+        /// <summary>
+        /// Regular expression pattern which matches C# fully qualified name identifier (namespace and identifier).
+        /// </summary>
+        public const string RexCSharpFqnIdentifier = @"^(?<ns>(?:" + rexCSharpIdentifier + @"\.)*(?<identifier>" + rexCSharpIdentifier + @"))$";
+
+        readonly static Lazy<Regex> _rexCSharpFqnIdentifier = new Lazy<Regex>(() => new Regex(RexCSharpFqnIdentifier, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex CSharpFqnIdentifier => _rexCSharpFqnIdentifier.Value;
         #endregion
 
         #region ISO 8601 date and time strings:
