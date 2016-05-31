@@ -210,7 +210,6 @@ namespace vm.Aspects.Wcf
             {
                 // put the custom header into the outgoing message which is in the current operation context (called by the clients)
                 Contract.Requires<ArgumentNullException>(value != null, nameof(value));
-                Contract.Requires<ArgumentNullException>(value.Name != null, nameof(value.Name));
                 Contract.Requires<ArgumentException>(value.Name.Length > 0, "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
                 Contract.Requires<ArgumentException>(value.Name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
                 Contract.Requires<InvalidOperationException>(OperationContext.Current != null, "The current thread does not have operation context.");

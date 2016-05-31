@@ -32,7 +32,6 @@ namespace vm.Aspects.Validation
             string rexCreditCard = RegularExpression.RexAmexMCVisa)
         {
             Contract.Requires<ArgumentNullException>(rexCreditCard!=null, nameof(rexCreditCard));
-            Contract.Requires<ArgumentNullException>(rexCreditCard!=null, nameof(rexCreditCard));
             Contract.Requires<ArgumentException>(rexCreditCard.Length > 0, "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(rexCreditCard.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(rexCreditCard)+" cannot be empty or consist of whitespace characters only.");
 

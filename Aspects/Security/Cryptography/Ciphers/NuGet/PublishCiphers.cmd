@@ -30,3 +30,4 @@ if .%1.==.. (NuGet Push vm.Aspects.%vmCiphersVersion%.nupkg -source https://www.
 :exit
 popd
 pause
+ 

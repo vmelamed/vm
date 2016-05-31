@@ -88,6 +88,7 @@ namespace vm.Aspects.Facilities
                                                         () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
                     .RegisterInstanceIfNot<Lazy<ExceptionManager>>(registrations, new Lazy<ExceptionManager>(
                                                         () => ExceptionPolicyProvider.CreateExceptionManager()))
+                    .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
                     ;
             }
 

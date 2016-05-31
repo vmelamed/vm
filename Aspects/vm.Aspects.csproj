@@ -236,14 +236,15 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.1.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\AspectObjectDumper.1.6.1\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.2.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectObjectDumper.1.6.2\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -270,6 +271,7 @@
     <Compile Include="Exceptions\ObjectIdentifierNotUniqueException.cs" />
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="Exceptions\RepeatableOperationException.cs" />
+    <Compile Include="Facilities\AppConfigProvider.cs" />
     <Compile Include="Facilities\Clock.cs" />
     <Compile Include="Facilities\DumpExceptionFormatter.cs" />
     <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
@@ -277,6 +279,7 @@
     <Compile Include="Facilities\Facility.FacilitiesRegistrar.cs" />
     <Compile Include="Facilities\GuidGenerator.cs" />
     <Compile Include="Facilities\IClock.cs" />
+    <Compile Include="Facilities\IConfigurationProvider.cs" />
     <Compile Include="Facilities\IExceptionPolicyProvider.cs" />
     <Compile Include="Facilities\IGuidGenerator.cs" />
     <Compile Include="Facilities\LogConfigProvider.cs" />
@@ -284,6 +287,7 @@
     <Compile Include="Facilities\TestClock.cs" />
     <Compile Include="Facilities\TestGuidGenerator.cs" />
     <Compile Include="Facilities\TestTraceListener.cs" />
+    <Compile Include="Facilities\WebConfigProvider.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDisposed.cs" />
     <Compile Include="IListExtensions.cs" />

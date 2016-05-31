@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
@@ -26,19 +27,21 @@ namespace vm.Aspects.Wcf.Services
         /// If initialization fails the method should throw an exception.
         /// </summary>
         /// <param name="host">The service host to be initialized.</param>
+        /// <param name="messagingPattern">The messaging pattern.</param>
         /// <param name="maxWaitTime">The maximum time to wait for the initialization to finish.
         /// If 0 - the method will return immediately and if -1 - the method will wait indefinitely or until completion.</param>
         /// <returns><see langword="true" /> if the service was initialized successfully, <see langword="false" /> otherwise.</returns>
-        bool Initialize(ServiceHost host, int maxWaitTime);
+        bool Initialize(ServiceHost host, string messagingPattern, int maxWaitTime);
 
         /// <summary>
         /// Asynchronous (and await-able) version of <see cref="M:IInitializeService.Initialize" />
         /// </summary>
         /// <param name="host">The service host to be initialized.</param>
+        /// <param name="messagingPattern">The messaging pattern.</param>
         /// <param name="maxWaitTime">The maximum time to wait for the initialization to finish.
         /// If 0 - the method will return immediately and if -1 - the method will wait indefinitely or until completion.</param>
-        /// <returns>A <see cref="T:Task{bool}"/> object representing the service initialization.</returns>
-        Task<bool> InitializeAsync(ServiceHost host, int maxWaitTime);
+        /// <returns>A <see cref="T:Task{bool}" /> object representing the service initialization.</returns>
+        Task<bool> InitializeAsync(ServiceHost host, string messagingPattern, int maxWaitTime);
     }
 
     [ContractClassFor(typeof(IInitializeService))]
@@ -53,9 +56,13 @@ namespace vm.Aspects.Wcf.Services
 
         public bool Initialize(
             ServiceHost host,
+            string messagingPattern,
             int maxWaitTime)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(messagingPattern!=null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Length > 0, "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<bool>() && IsInitialized);
 
             throw new System.NotImplementedException();
@@ -63,9 +70,13 @@ namespace vm.Aspects.Wcf.Services
 
         public Task<bool> InitializeAsync(
             ServiceHost host,
+            string messagingPattern,
             int maxWaitTime)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(messagingPattern!=null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Length > 0, "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
             Contract.Ensures(Contract.Result<Task<bool>>().Result && IsInitialized);
 

@@ -299,7 +299,7 @@ namespace vm.Aspects.Wcf.Services
             if (ServiceInitializer != null)
                 // start initialization on another thread and return immediately
                 InitializeHostTask = ServiceInitializer
-                                            .InitializeAsync(host, 0)
+                                            .InitializeAsync(host, MessagingPattern, 0)
                                             .ContinueWith(
                                                 t =>
                                                 {

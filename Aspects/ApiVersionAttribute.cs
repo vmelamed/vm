@@ -12,7 +12,7 @@ namespace vm.Aspects
     [AttributeUsage(AttributeTargets.Interface)]
     public sealed class ApiVersionAttribute : Attribute
     {
-        SemanticVersion _version;
+        readonly SemanticVersion _version;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiVersionAttribute"/> class with a semantic version string. See http://semver.org.
@@ -21,8 +21,19 @@ namespace vm.Aspects
         public ApiVersionAttribute(
             string version)
         {
+            Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
+            Contract.Requires<ArgumentException>(version.Length > 0, "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+
             if (!SemanticVersion.TryParse(version, out _version))
                 throw new ArgumentException("Invalid semantic version specified. See http://semver.org.", nameof(version));
+        }
+
+        [ContractInvariantMethod]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(_version != null);
         }
 
         /// <summary>

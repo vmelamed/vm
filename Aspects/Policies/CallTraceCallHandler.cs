@@ -351,7 +351,11 @@ namespace vm.Aspects.Policies
             Task<T> returnedTask,
             Stopwatch callTimer,
             Action<LogEntry> logAfterCall,
-            LogEntry entry) => returnedTask
+            LogEntry entry)
+        {
+            Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
+
+            return returnedTask
                                     .ContinueWith(
                                         t =>
                                         {
@@ -364,6 +368,7 @@ namespace vm.Aspects.Policies
 
                                             return t.Result;
                                         });
+        }
 
         /// <summary>
         /// Creates a new log entry.
