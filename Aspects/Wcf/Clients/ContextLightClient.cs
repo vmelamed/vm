@@ -201,7 +201,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <param name="request">The request.</param>
         public override void PreInvoke(ref Message request)
         {
-            _operationContextScope = new OperationContextScope(((IClientChannel)Proxy));
+            //_operationContextScope = new OperationContextScope(((IClientChannel)Proxy));
 
             if (ChannelFactory.Endpoint.Binding is WebHttpBinding)
             {
@@ -222,7 +222,7 @@ namespace vm.Aspects.Wcf.Clients
         public override void PostInvoke(ref Message reply)
         {
             base.PostInvoke(ref reply);
-            _operationContextScope.Dispose();
+            _operationContextScope?.Dispose();
         }
 
         /// <summary>

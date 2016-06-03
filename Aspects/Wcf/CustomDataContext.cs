@@ -129,7 +129,7 @@ namespace vm.Aspects.Wcf
         /// </summary>
         [DataMember(Name = "value")]
         [ObjectValidator]
-        public T Value { get; }
+        public T Value { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:vm.Aspects.Wcf.CustomContext{T}"/> class with a <typeparamref name="T"/> value.

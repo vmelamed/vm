@@ -34,17 +34,17 @@ namespace vm.Aspects.Wcf.Behaviors
                     return WebOperationContext
                                     .Current
                                     .IncomingRequest
-                                    .UriTemplateMatch
-                                    .Data
-                                    .ToString();
+                                    ?.UriTemplateMatch
+                                    ?.Data
+                                    ?.ToString();
                 else
                 if (HasOperationContext)
                     return OperationContext
                                     .Current
                                     .RequestContext
-                                    .RequestMessage
-                                    .Headers
-                                    .Action;
+                                    ?.RequestMessage
+                                    ?.Headers
+                                    ?.Action;
                 else
                     return null;
             }

@@ -84,25 +84,26 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(ChannelFactory != null);
 
             var remoteEndpoint = !string.IsNullOrWhiteSpace(remoteAddress) ? new EndpointAddress(remoteAddress) : null;
+            var messaging      = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
 
             Binding binding;
 
             if (!string.IsNullOrWhiteSpace(endpointConfigurationName))
-            {
                 ChannelFactory = remoteEndpoint != null
                                         ? new ChannelFactory<TContract>(endpointConfigurationName, remoteEndpoint)
                                         : new ChannelFactory<TContract>(endpointConfigurationName);
-                binding        = ChannelFactory.Endpoint.Binding;
-            }
             else
             {
                 Contract.Assert(remoteEndpoint != null);
 
-                binding        = ServiceLocator.Current.GetInstance<Binding>(remoteEndpoint.Uri.Scheme);
+                var remoteUri = new Uri(remoteAddress);
+                var scheme    = remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty);
+
+                binding        = ServiceLocator.Current.GetInstance<Binding>(scheme);
                 ChannelFactory = new ChannelFactory<TContract>(binding, remoteEndpoint);
             }
 
-            ConfigureBinding(binding, messagingPattern);
+            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
         }
 
         /// <summary>
@@ -137,14 +138,9 @@ namespace vm.Aspects.Wcf.Clients
                                                  (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
             var remoteUri = new Uri(remoteAddress);
-            var scheme    = remoteUri.Scheme;
-
-            if (messaging!=null && messaging.Restful)
-                scheme += ".rest";
-
-            var binding   = ServiceLocator.Current.GetInstance<Binding>(scheme);
+            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var binding   = ServiceLocator.Current.GetInstance<Binding>(remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty));
 
             if (binding is WebHttpBinding)
             {
@@ -156,7 +152,7 @@ namespace vm.Aspects.Wcf.Clients
                                     binding,
                                     new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
+            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
         }
 
         /// <summary>
@@ -188,10 +184,9 @@ namespace vm.Aspects.Wcf.Clients
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
             var remoteUri = new Uri(remoteAddress);
-            var scheme    = remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty);
-            var binding   = ServiceLocator.Current.GetInstance<Binding>(scheme);
+            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var binding   = ServiceLocator.Current.GetInstance<Binding>(remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty));
 
             if (binding is WebHttpBinding)
             {
@@ -203,7 +198,7 @@ namespace vm.Aspects.Wcf.Clients
                                     binding,
                                     new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
+            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
         }
 
         /// <summary>
@@ -253,7 +248,9 @@ namespace vm.Aspects.Wcf.Clients
                                     binding,
                                     new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
+            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
         }
 
         /// <summary>
@@ -300,7 +297,9 @@ namespace vm.Aspects.Wcf.Clients
                                     binding,
                                     new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
+            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
         }
         #endregion
 
