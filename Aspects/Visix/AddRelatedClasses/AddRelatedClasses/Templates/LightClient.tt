@@ -142,7 +142,6 @@ namespace <#= sourceCodeNamespace.FullName #>
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityClaim">The identity claim.</param>
-        /// <param name="certificate">The identifying certificate.</param>
         /// <param name="messagingPattern">
         /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
@@ -232,7 +231,6 @@ namespace <#= sourceCodeNamespace.FullName #>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityClaim">The identity claim.</param>
-        /// <param name="certificate">The identifying certificate.</param>
         /// <param name="messagingPattern">
         /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
