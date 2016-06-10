@@ -34,6 +34,7 @@
 
     WriteUsings(
         sourceCodeModel.CodeElements,
+        "System",
         "System.Diagnostics.Contracts",
         "System.IdentityModel.Claims",
         "System.Linq",
@@ -45,6 +46,11 @@
 
 namespace <#= sourceCodeNamespace.FullName #>
 {
+    /// <summary>
+    /// WCF channel factory based client (proxy) for services implementing <#= sourceCodeInterface.Name #>.
+    /// </summary>
+    /// <seealso cref="LightClient{<#= sourceCodeInterface.Name #>}" />
+    /// <seealso cref="<#= sourceCodeInterface.Name #>" />
     public class <#= baseName #>Client : LightClient<<#= sourceCodeInterface.Name #>>, <#= sourceCodeInterface.Name #>
     {
         #region Constructors
@@ -146,7 +152,7 @@ namespace <#= sourceCodeNamespace.FullName #>
             string remoteAddress,
             Claim identityClaim,
             string messagingPattern = null)
-            : base(remoteAddress, identityClaim, certificate, messagingPattern)
+            : base(remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
@@ -237,15 +243,13 @@ namespace <#= sourceCodeNamespace.FullName #>
             string remoteAddress,
             Claim identityClaim,
             string messagingPattern = null)
-            : base(binding, remoteAddress, identityType, certificate, messagingPattern)
+            : base(binding, remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
         }
         #endregion
 

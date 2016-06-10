@@ -4,7 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
         <Identity Id="vm.Aspects.AddRelatedClasses"
-                  Version="0.93"
+                  Version="0.96"
                   Language="en-US"
                   Publisher="Val Melamed" />
         <DisplayName>Add Related Classes</DisplayName>
