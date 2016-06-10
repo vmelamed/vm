@@ -405,6 +405,7 @@
             var hasArgs   = false;
             var hasAction = false;
             var hasReply  = false;
+            var isOneWay  = false;
 
             SeparatedList(
                 a.Children.OfType<CodeAttributeArgument>(),
@@ -415,6 +416,7 @@
                            {
                                Write("{0}={1}", arg.Name, arg.Value);
                                if (a.Name == "OperationContract")
+                               {
                                    if (arg.Name == "Name")
                                    {
                                        name = GetQuotedValue(arg.Value);
@@ -424,7 +426,9 @@
                                    {
                                        hasAction = arg.Name == "Action";
                                        hasReply  = arg.Name == "ReplyAction";
+                                       isOneWay  = arg.Name == "IsOneWay"  &&  arg.Value=="true";
                                    }
+                               }
                            }
                        },
                 () => Write(", "),
@@ -461,7 +465,7 @@
                         Write("/\"+{0}", name);
                 }
                 
-                if (!hasReply)
+                if (!hasReply  &&  !isOneWay)
                 {
                     if (!hasArgs)
                     {
