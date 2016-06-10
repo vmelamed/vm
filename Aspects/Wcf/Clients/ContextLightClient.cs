@@ -23,8 +23,6 @@ namespace vm.Aspects.Wcf.Clients
     /// <seealso cref="vm.Aspects.Wcf.Clients.InterceptorLightClient{TContract}" />
     public abstract class ContextLightClient<TContract, THeader> : InterceptorLightClient<TContract> where TContract : class
     {
-        OperationContextScope _operationContextScope;
-
         /// <summary>
         /// Gets the name of the HTTP header that should contain the custom context value.
         /// </summary>
@@ -257,8 +255,6 @@ namespace vm.Aspects.Wcf.Clients
         /// <param name="request">The request.</param>
         public override void PreInvoke(ref Message request)
         {
-            //_operationContextScope = new OperationContextScope(((IClientChannel)Proxy));
-
             if (ChannelFactory.Endpoint.Binding is WebHttpBinding)
             {
                 (request.Properties["httpRequest"] as HttpRequestMessageProperty)
@@ -278,7 +274,6 @@ namespace vm.Aspects.Wcf.Clients
         public override void PostInvoke(ref Message reply)
         {
             base.PostInvoke(ref reply);
-            _operationContextScope?.Dispose();
         }
 
         /// <summary>
@@ -306,22 +301,6 @@ namespace vm.Aspects.Wcf.Clients
 
                 return Encoding.Default.GetString(stream.ToArray());
             }
-        }
-
-        /// <summary>
-        /// Performs the actual job of disposing the object.
-        /// </summary>
-        /// <param name="disposing">Passes the information whether this method is called by <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" /> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement).</param>
-        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" />, it will try to release all managed resources
-        /// (usually aggregated objects which implement <see cref="T:System.IDisposable" /> as well) and then it will release all unmanaged resources if any.
-        /// If the parameter is <see langword="false" /> then the method will only try to release the unmanaged resources.</remarks>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                _operationContextScope?.Dispose();
-
-            base.Dispose(disposing);
         }
     }
 }
