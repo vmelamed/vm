@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.IdentityModel.Claims;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -114,6 +115,29 @@ namespace vm.Aspects.Wcf.Clients
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public LightClient(
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+            : base(remoteAddress, identityClaim, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
+
+            Proxy = ChannelFactory.CreateChannel();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="binding">A binding instance.</param>
@@ -182,6 +206,32 @@ namespace vm.Aspects.Wcf.Clients
                 identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                            identityType == ServiceIdentity.Rsa  ||
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+
+            Proxy = ChannelFactory.CreateChannel();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// </summary>
+        /// <param name="binding">A binding instance.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public LightClient(
+            Binding binding,
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+            : base(binding, remoteAddress, identityClaim, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
 
             Proxy = ChannelFactory.CreateChannel();
         }

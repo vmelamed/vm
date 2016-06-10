@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.IdentityModel.Claims;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
@@ -26,33 +27,9 @@ namespace vm.Aspects.Wcf.Clients
         /// Gets or sets the channel factory.
         /// </summary>
         /// <value>The channel factory.</value>
-        public ChannelFactory<TContract> ChannelFactory { get; }
+        public ChannelFactory<TContract> ChannelFactory { get; private set; }
 
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:LightClientBase{TContract}" /> class (creates the channel factory)
-        /// from a remote address. The constructor will try to resolve the binding from the schema in the given remote address from the current DI container.
-        /// </summary>
-        /// <param name="remoteAddress">
-        /// The remote address of the service.
-        /// </param>
-        /// <param name="messagingPattern">
-        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
-        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
-        /// otherwise will apply the default messaging pattern fro the transport.
-        /// </param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected LightClientBase(
-            string remoteAddress,
-            string messagingPattern = null)
-            : this(null, remoteAddress, messagingPattern)
-        {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(ChannelFactory != null);
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LightClientBase{TContract}"/> class (creates the channel factory)
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName"/> and a remote address.
@@ -79,31 +56,50 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
         {
             Contract.Requires<ArgumentException>(
-                (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
-                (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
+                                (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
+                                (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
-            var remoteEndpoint = !string.IsNullOrWhiteSpace(remoteAddress) ? new EndpointAddress(remoteAddress) : null;
-            var messaging      = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
-
-            Binding binding;
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
 
             if (!string.IsNullOrWhiteSpace(endpointConfigurationName))
-                ChannelFactory = remoteEndpoint != null
-                                        ? new ChannelFactory<TContract>(endpointConfigurationName, remoteEndpoint)
+            {
+                ChannelFactory = !string.IsNullOrWhiteSpace(remoteAddress)
+                                        ? new ChannelFactory<TContract>(endpointConfigurationName, new EndpointAddress(remoteAddress))
                                         : new ChannelFactory<TContract>(endpointConfigurationName);
+                ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messagingAttribute?.Name);
+            }
             else
             {
-                Contract.Assert(remoteEndpoint != null);
+                var binding = BuildChannelFactoryOrBinding(remoteAddress, messagingPattern, messagingAttribute);
 
-                var remoteUri = new Uri(remoteAddress);
-                var scheme    = remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty);
-
-                binding        = ServiceLocator.Current.GetInstance<Binding>(scheme);
-                ChannelFactory = new ChannelFactory<TContract>(binding, remoteEndpoint);
+                if (binding != null)
+                    ChannelFactory = new ChannelFactory<TContract>(binding, new EndpointAddress(remoteAddress));
             }
+        }
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LightClientBase{TContract}" /> class (creates the channel factory)
+        /// from a remote address. The constructor will try to resolve the binding from the schema in the given remote address from the current DI container.
+        /// </summary>
+        /// <param name="remoteAddress">
+        /// The remote address of the service.
+        /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected LightClientBase(
+            string remoteAddress,
+            string messagingPattern = null)
+            : this(null, remoteAddress, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
         }
 
         /// <summary>
@@ -138,21 +134,14 @@ namespace vm.Aspects.Wcf.Clients
                                                  (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            var remoteUri = new Uri(remoteAddress);
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
-            var binding   = ServiceLocator.Current.GetInstance<Binding>(remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty));
+            var binding = BuildChannelFactoryOrBinding(remoteAddress, messagingPattern, typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false));
 
-            if (binding is WebHttpBinding)
-            {
-                ChannelFactory = new WebChannelFactory<TContract>(binding, remoteUri);
-                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
-            }
-            else
+            if (binding != null)
                 ChannelFactory = new ChannelFactory<TContract>(
-                                    binding,
-                                    new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
-
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
         }
 
         /// <summary>
@@ -184,21 +173,46 @@ namespace vm.Aspects.Wcf.Clients
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            var remoteUri = new Uri(remoteAddress);
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
-            var binding   = ServiceLocator.Current.GetInstance<Binding>(remoteUri.Scheme + (messaging!=null && messaging.Restful ? ".rest" : string.Empty));
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var binding            = BuildChannelFactoryOrBinding(remoteAddress, messagingPattern, messagingAttribute);
 
-            if (binding is WebHttpBinding)
-            {
-                ChannelFactory = new WebChannelFactory<TContract>(binding, remoteUri);
-                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
-            }
-            else
+            if (binding != null)
                 ChannelFactory = new ChannelFactory<TContract>(
-                                    binding,
-                                    new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
+        }
 
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LightClientBase{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected LightClientBase(
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
+
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var binding            = BuildChannelFactoryOrBinding(remoteAddress, messagingPattern, messagingAttribute);
+
+            if (binding != null)
+                ChannelFactory = new ChannelFactory<TContract>(
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityClaim)));
         }
 
         /// <summary>
@@ -236,21 +250,21 @@ namespace vm.Aspects.Wcf.Clients
                                                  (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            var remoteUri = new Uri(remoteAddress);
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            ConfigureBinding(binding, messagingPattern ?? messagingAttribute?.Name);
 
             if (binding is WebHttpBinding)
             {
-                ChannelFactory = new WebChannelFactory<TContract>(binding, remoteUri);
+                ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
                 ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
             }
             else
                 ChannelFactory = new ChannelFactory<TContract>(
-                                    binding,
-                                    new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
-
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
-
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity)));
         }
 
         /// <summary>
@@ -285,23 +299,101 @@ namespace vm.Aspects.Wcf.Clients
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            ConfigureBinding(binding, messagingPattern ?? messagingAttribute?.Name);
+
+            if (binding is WebHttpBinding)
+            {
+                ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+            }
+            else
+                ChannelFactory = new ChannelFactory<TContract>(
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LightClientBase{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="binding">A binding instance.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected LightClientBase(
+            Binding binding,
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+        {
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
+
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            ConfigureBinding(binding, messagingPattern ?? messagingAttribute?.Name);
+
+            if (binding is WebHttpBinding)
+            {
+                ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+            }
+            else
+                ChannelFactory = new ChannelFactory<TContract>(
+                                        binding,
+                                        new EndpointAddress(
+                                                new Uri(remoteAddress),
+                                                EndpointIdentityFactory.CreateEndpointIdentity(identityClaim)));
+        }
+        #endregion
+
+        /// <summary>
+        /// Builds a restful channel factory or at least builds and configures the binding derived from the address's scheme.
+        /// </summary>
+        /// <param name="remoteAddress">The remote address.</param>
+        /// <param name="messagingPattern">The messaging pattern.</param>
+        /// <param name="messagingAttribute">The messaging attribute.</param>
+        /// <returns>The built and configured binding, if the channel was not created, otherwise <see langword="null"/>.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by Dispose().")]
+        protected Binding BuildChannelFactoryOrBinding(
+            string remoteAddress,
+            string messagingPattern,
+            MessagingPatternAttribute messagingAttribute)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(Contract.Result<Binding>() != null  && !(Contract.Result<Binding>() is WebHttpBinding));
+
             var remoteUri = new Uri(remoteAddress);
+            var scheme    = remoteUri.Scheme;
+
+            if ((scheme == "http"  ||  scheme == "https") &&
+                ((messagingAttribute?.Restful).GetValueOrDefault()  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase)))   // only rest-ful endpoints do not need .svc page
+                scheme = string.Concat(remoteUri.Scheme, ".rest");
+
+            var binding = ServiceLocator.Current.GetInstance<Binding>(scheme);
+
+            ConfigureBinding(binding, messagingPattern ?? messagingAttribute?.Name);
 
             if (binding is WebHttpBinding)
             {
                 ChannelFactory = new WebChannelFactory<TContract>(binding, remoteUri);
                 ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+                return null;
             }
             else
-                ChannelFactory = new ChannelFactory<TContract>(
-                                    binding,
-                                    new EndpointAddress(remoteUri, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate)));
-
-            var messaging = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
-
-            ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern ?? messaging?.Name);
+                return binding;
         }
-        #endregion
 
         void ConfigureBinding(
             Binding binding,

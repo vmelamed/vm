@@ -84,10 +84,6 @@ namespace vm.Aspects.Wcf.Services
     /// </remarks>
     public abstract class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory where TContract : class
     {
-        readonly ServiceIdentity _identityType;
-        readonly X509Certificate2 _identifyingCertificate;
-        readonly string _identity;
-
         #region Properties
         /// <summary>
         /// Gets the binding pattern.
@@ -117,6 +113,11 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <value>The metadata features.</value>
         protected virtual MetadataFeatures MetadataFeatures { get; set; }
+
+        /// <summary>
+        /// Gets the service identity type.
+        /// </summary>
+        public EndpointIdentity EndpointIdentity { get; }
         #endregion
 
         #region Constructors
@@ -168,8 +169,8 @@ namespace vm.Aspects.Wcf.Services
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
                                                  (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
 
-            _identityType = identityType;
-            _identity     = identity;
+            if (identityType != ServiceIdentity.None)
+                EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity);
         }
 
         /// <summary>
@@ -196,8 +197,29 @@ namespace vm.Aspects.Wcf.Services
                                                            identityType == ServiceIdentity.Rsa  ||
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
 
-            _identityType           = identityType;
-            _identifyingCertificate = certificate;
+            if (identityType != ServiceIdentity.None)
+                EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessagingPatternServiceHostFactory&lt;TContract&gt;" /> class.
+        /// </summary>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The binding pattern to be applied to all descriptions of end points in the service host.
+        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern" /> registered values,
+        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null" /> the host will try to resolve the messaging
+        /// pattern from the <see cref="MessagingPatternAttribute" /> applied to the contract (the interface).
+        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        protected MessagingPatternServiceHostFactory(
+            System.IdentityModel.Claims.Claim identityClaim,
+            string messagingPattern)
+            : this(messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
+
+            if (identityClaim != null)
+                EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityClaim);
         }
         #endregion
 
@@ -369,22 +391,16 @@ namespace vm.Aspects.Wcf.Services
 
             var host = base.CreateServiceHost(serviceType, baseAddresses);
 
-            // Add the endpoints:
-            host = AddEndpoints(host);
-
-            // Add some common behaviors:
-            if (_identity != null)
-                host.SetServiceIdentity(_identityType, _identity);
-            else
-                host.SetServiceIdentity(_identityType, _identifyingCertificate);
-
-            host.ConfigureBindings(typeof(TContract), MessagingPattern)
-                .AddTransactionTimeout()
-                .AddDebugBehaviors()
-                .AddMetadataBehaviors(MetadataFeatures)
-                .AddSecurityAuditBehavior()
-                .EnableCorsBehavior()
-                ;
+            // Add the endpoints, identity and other common properties and behaviors:
+            host = AddEndpoints(host)
+                    .ConfigureBindings(typeof(TContract), MessagingPattern)
+                    .SetServiceIdentity(EndpointIdentity)
+                    .AddTransactionTimeout()
+                    .AddDebugBehaviors()
+                    .AddMetadataBehaviors(MetadataFeatures)
+                    .AddSecurityAuditBehavior()
+                    .EnableCorsBehavior()
+                    ;
 
             host.Opening += InitializeHost;
             host.Closing += CleanupHost;
@@ -480,15 +496,5 @@ namespace vm.Aspects.Wcf.Services
                         serviceType.Name);
         }
         #endregion
-
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(
-                _identityType == ServiceIdentity.None  ||
-                (_identityType != ServiceIdentity.None  && _identityType != ServiceIdentity.Certificate) && (_identity!=null && _identity.Length > 0 && _identity.Any(c => !char.IsWhiteSpace(c)))  ||
-                (_identityType == ServiceIdentity.Certificate || _identityType == ServiceIdentity.Dns || _identityType == ServiceIdentity.Rsa) && _identifyingCertificate!=null);
-        }
     }
 }

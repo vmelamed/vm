@@ -15,12 +15,12 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <summary>
         /// Gets a value indicating whether the execution context is also a web operation context.
         /// </summary>
-        public bool HasOperationContext => OperationContext.Current != null;
+        public bool HasOperationContext => OperationContext.Current!=null  &&  !HasWebOperationContext;
 
         /// <summary>
         /// Gets a value indicating whether the current code runs in a web operation context.
         /// </summary>
-        public bool HasWebOperationContext => WebOperationContext.Current != null;
+        public bool HasWebOperationContext => WebOperationContext.Current!=null  &&  OperationContext.Current.EndpointDispatcher.ChannelDispatcher.BindingName.ToUpperInvariant().Contains(nameof(WebHttpBinding).ToUpperInvariant());
 
         /// <summary>
         /// Gets the action.

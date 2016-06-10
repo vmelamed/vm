@@ -95,6 +95,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ExceptionShieldingErrorHandlerFixture.cs" />
+    <Compile Include="MockExceptionHandlingPolicies.cs" />
     <Compile Include="MockFaultContract.cs" />
     <Compile Include="MockFaultContractExceptionHandler.cs" />
     <Compile Include="MockLoggingExceptionHandler.cs" />

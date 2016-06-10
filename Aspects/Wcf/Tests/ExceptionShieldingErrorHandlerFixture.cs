@@ -35,6 +35,7 @@ namespace vm.Aspects.Wcf.Tests
             DIContainer
                 .Initialize()
                 .Register(Facility.Registrar)
+                .Register(MockExceptionHandlingPolicies.Registrar)
                 ;
         }
 

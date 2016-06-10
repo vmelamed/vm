@@ -47,6 +47,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The default dump attribute applied to instances and properties with no <c>DumpAttribute</c> specified.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible", Justification = "We want it visible so the users can redefine its default property values.")]
         public static DumpAttribute Default = new DumpAttribute { _isDefault = true };
         #endregion
 

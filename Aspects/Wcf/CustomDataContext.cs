@@ -14,6 +14,8 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Wcf
 {
@@ -32,6 +34,7 @@ namespace vm.Aspects.Wcf
         static string _namespace;
         static string _webHeaderName;
         static object _syncInitialize = new object();
+        static IWcfContextUtilities _contextUtilities = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
 
         /// <summary>
         /// Gets the name of the custom context. The namespace and the name uniquely identify the header.
@@ -108,19 +111,19 @@ namespace vm.Aspects.Wcf
 
                 // if the namespace and the name of the context are not specified explicitly in the attribute,
                 // assume the namespace and the name of the context type.
-                _name = dataContractAttribute!=null &&
-                        !string.IsNullOrWhiteSpace(dataContractAttribute.Name)
-                                ? dataContractAttribute.Name
-                                : typeof(T).Name;
+                _name           = dataContractAttribute!=null &&
+                                  !string.IsNullOrWhiteSpace(dataContractAttribute.Name)
+                                          ? dataContractAttribute.Name
+                                          : typeof(T).Name;
 
-                _namespace = dataContractAttribute!=null &&
-                             !string.IsNullOrWhiteSpace(dataContractAttribute.Namespace)
-                                ? dataContractAttribute.Namespace
-                                : typeof(T).Namespace;
+                _namespace      = dataContractAttribute!=null &&
+                                  !string.IsNullOrWhiteSpace(dataContractAttribute.Namespace)
+                                     ? dataContractAttribute.Namespace
+                                     : typeof(T).Namespace;
 
-                _webHeaderName = string.IsNullOrWhiteSpace(_namespace)
-                                    ? _name
-                                    : string.Format(CultureInfo.InvariantCulture, "{0}-{1}", _namespace, _name);
+                _webHeaderName  = string.IsNullOrWhiteSpace(_namespace)
+                                     ? _name
+                                     : string.Format(CultureInfo.InvariantCulture, "{0}-{1}", _namespace, _name);
             }
         }
 
@@ -171,14 +174,11 @@ namespace vm.Aspects.Wcf
                 if (OperationContext.Current == null)
                     return null;
 
-                WebOperationContext _webContext =  WebOperationContext.Current ??
-                                                        CallContext.LogicalGetData(nameof(WebOperationContext)) as WebOperationContext;
-                // in case AsyncServiceSynchronizationContext is installed
-
                 // find the header by namespace and name
-                if (_webContext != null)
+                if (_contextUtilities.HasWebOperationContext)
                 {
-                    var serialized = _webContext.IncomingRequest.Headers.Get(_webHeaderName);
+                    var webContext = WebOperationContext.Current  ??  CallContext.LogicalGetData(nameof(WebOperationContext)) as WebOperationContext;
+                    var serialized = webContext.IncomingRequest.Headers.Get(_webHeaderName);
 
                     if (string.IsNullOrWhiteSpace(serialized))
                         return null;
@@ -218,7 +218,18 @@ namespace vm.Aspects.Wcf
                 Initialize();
 
                 //make sure that there are no multiple CustomContextData<T> objects.
-                if (WebOperationContext.Current == null)
+                if (_contextUtilities.HasWebOperationContext)
+                {
+                    if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) != null)
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "A header {0} already exists in the message.",
+                                _webHeaderName));
+
+                    value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
+                }
+                else
                 {
                     if (OperationContext.Current.OutgoingMessageHeaders.FindHeader(_name, _namespace) > -1)
                         throw new InvalidOperationException(
@@ -229,17 +240,6 @@ namespace vm.Aspects.Wcf
                                 _namespace));
 
                     value.AddToHeaders(OperationContext.Current.OutgoingMessageHeaders);
-                }
-                else
-                {
-                    if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) != null)
-                        throw new InvalidOperationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "A header {0} already exists in the message.",
-                                _webHeaderName));
-
-                    value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
                 }
             }
         }

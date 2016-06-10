@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -53,69 +52,24 @@ namespace vm.Aspects.Wcf.Services
         /// Sets the service identity.
         /// </summary>
         /// <param name="host">The host.</param>
-        /// <param name="identityType">
-        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
-        /// <see cref="ServiceIdentity.Rsa" />.
-        /// </param>
-        /// <param name="identity">The identity.</param>
+        /// <param name="identity">The endpoint identity.</param>
         /// <returns>ServiceHost.</returns>
         public static ServiceHost SetServiceIdentity(
             this ServiceHost host,
-            ServiceIdentity identityType,
-            string identity)
+            EndpointIdentity identity)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
-            if (identityType == ServiceIdentity.None)
-                return host;
-
             // for each endpoint configure the binding according to the messaging pattern.
-            foreach (var ep in host.Description.Endpoints)
-                ep.Address = new EndpointAddress(
-                                    ep.Address.Uri,
-                                    EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity),
-                                    ep.Address.Headers,
-                                    ep.Address.GetReaderAtMetadata(),
-                                    ep.Address.GetReaderAtExtensions());
-
-            return host;
-        }
-
-        /// <summary>
-        /// Sets the service identity.
-        /// </summary>
-        /// <param name="host">The host.</param>
-        /// <param name="identityType">
-        /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
-        /// </param>
-        /// <param name="identifyingCertificate">The identifying certificate.</param>
-        /// <returns>ServiceHost.</returns>
-        public static ServiceHost SetServiceIdentity(
-            this ServiceHost host,
-            ServiceIdentity identityType,
-            X509Certificate2 identifyingCertificate)
-        {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                           identityType == ServiceIdentity.Rsa  ||
-                                                           identityType == ServiceIdentity.Certificate) && identifyingCertificate!=null, "Invalid combination of identity parameters.");
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
-            if (identityType == ServiceIdentity.None)
-                return host;
-
-            // for each endpoint configure the binding according to the messaging pattern.
-            foreach (var ep in host.Description.Endpoints)
-                ep.Address = new EndpointAddress(
-                                    ep.Address.Uri,
-                                    EndpointIdentityFactory.CreateEndpointIdentity(identityType, identifyingCertificate),
-                                    ep.Address.Headers,
-                                    ep.Address.GetReaderAtMetadata(),
-                                    ep.Address.GetReaderAtExtensions());
+            if (identity != null)
+                foreach (var ep in host.Description.Endpoints)
+                    ep.Address = new EndpointAddress(
+                                        ep.Address.Uri,
+                                        identity,
+                                        ep.Address.Headers,
+                                        ep.Address.GetReaderAtMetadata(),
+                                        ep.Address.GetReaderAtExtensions());
 
             return host;
         }

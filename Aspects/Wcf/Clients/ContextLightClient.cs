@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IdentityModel.Claims;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -52,7 +53,7 @@ namespace vm.Aspects.Wcf.Clients
         protected ContextLightClient(
             THeader context,
             string endpointConfigurationName,
-            string remoteAddress,
+            string remoteAddress = null,
             string messagingPattern = null)
             : base(endpointConfigurationName, remoteAddress, messagingPattern)
         {
@@ -130,6 +131,32 @@ namespace vm.Aspects.Wcf.Clients
         /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="context">The context/header.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected ContextLightClient(
+            THeader context,
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+            : base(remoteAddress, identityClaim, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
+
+            Context = context;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="context">The context/header.</param>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or
@@ -193,6 +220,35 @@ namespace vm.Aspects.Wcf.Clients
 
             Context = context;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="context">The context/header.</param>
+        /// <param name="binding">A binding instance.</param>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityClaim">The identity claim.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected ContextLightClient(
+            THeader context,
+            Binding binding,
+            string remoteAddress,
+            Claim identityClaim,
+            string messagingPattern = null)
+            : base(binding, remoteAddress, identityClaim, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
+
+            Context = context;
+        }
         #endregion
 
         /// <summary>
@@ -226,22 +282,6 @@ namespace vm.Aspects.Wcf.Clients
         }
 
         /// <summary>
-        /// Performs the actual job of disposing the object.
-        /// </summary>
-        /// <param name="disposing">Passes the information whether this method is called by <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" /> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement).</param>
-        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" />, it will try to release all managed resources
-        /// (usually aggregated objects which implement <see cref="T:System.IDisposable" /> as well) and then it will release all unmanaged resources if any.
-        /// If the parameter is <see langword="false" /> then the method will only try to release the unmanaged resources.</remarks>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                _operationContextScope?.Dispose();
-
-            base.Dispose(disposing);
-        }
-
-        /// <summary>
         /// Creates the HTTP header value by serializing the context to a string which will become the header's value.
         /// </summary>
         /// <returns>System.String.</returns>
@@ -266,6 +306,22 @@ namespace vm.Aspects.Wcf.Clients
 
                 return Encoding.Default.GetString(stream.ToArray());
             }
+        }
+
+        /// <summary>
+        /// Performs the actual job of disposing the object.
+        /// </summary>
+        /// <param name="disposing">Passes the information whether this method is called by <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" /> (explicitly or
+        /// implicitly at the end of a <c>using</c> statement).</param>
+        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="M:vm.Aspects.Wcf.Clients.LightClientBase`1.Dispose" />, it will try to release all managed resources
+        /// (usually aggregated objects which implement <see cref="T:System.IDisposable" /> as well) and then it will release all unmanaged resources if any.
+        /// If the parameter is <see langword="false" /> then the method will only try to release the unmanaged resources.</remarks>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _operationContextScope?.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }

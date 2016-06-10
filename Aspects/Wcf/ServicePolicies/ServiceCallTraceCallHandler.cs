@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Web;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
@@ -43,6 +44,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// Gets or sets a value indicating whether to include the custom context if any. Default: true.
         /// </summary>
         public bool IncludeCustomContext { get; set; }
+
+        bool HasWebOperationContext => WebOperationContext.Current!=null  &&  OperationContext.Current.EndpointDispatcher.ChannelDispatcher.BindingName.ToUpperInvariant().Contains(nameof(WebHttpBinding).ToUpperInvariant());
         #endregion
 
         /// <summary>
@@ -94,7 +97,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             object property;
 
             if (IncludeCallerAddress  &&
-                OperationContext.Current != null &&
+                OperationContext.Current?.IncomingMessageProperties != null &&
                 OperationContext.Current.IncomingMessageProperties.TryGetValue(RemoteEndpointMessageProperty.Name, out property))
             {
                 var endpointMessageProperty = property as RemoteEndpointMessageProperty;

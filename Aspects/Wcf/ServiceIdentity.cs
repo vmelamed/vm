@@ -51,5 +51,10 @@
         /// This ensures that the SPN and the specific Windows account associated with the SPN identify the service.
         /// </summary>
         Spn,
+
+        /// <summary>
+        /// Used when the identity is presented by an identity claim.
+        /// </summary>
+        Claim,
     }
 }

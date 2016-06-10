@@ -1,8 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
@@ -14,6 +10,10 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Xml;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
@@ -40,30 +40,26 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <summary>
         /// Gets a dictionary of exception policy names and respective lists of policy entries.
         /// </summary>
-        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
-                                                                                                {
-                                                                                                    { WcfExceptionShielding, WcfExceptionShieldingPolicyEntries() }
-                                                                                                };
+        public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries
+            => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
+            {
+                [WcfExceptionShielding] = WcfExceptionShieldingPolicyEntries(),
+            };
         #endregion
-
-        static readonly NameValueCollection _faultMappings = new NameValueCollection {["HandlingInstanceId"] = "{Guid}"};
 
         /// <summary>
         /// Creates an exception policy entry that logs the exception and throws a new fault exception created out of the original exception.
         /// </summary>
-        /// <param name="exceptionType">Type of the exception.</param>
-        /// <param name="faultType">Type of the fault.</param>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <typeparam name="TFault">The type of the fault contract.</typeparam>
         /// <param name="eventId">The event identifier.</param>
-        /// <returns>An <see cref="ExceptionPolicyEntry"/> instance.</returns>
-        public static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry(
-            Type exceptionType,
-            Type faultType,
-            int eventId)
+        /// <returns>An <see cref="ExceptionPolicyEntry" /> instance.</returns>
+        public static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry<TException, TFault>(int eventId)
         {
             Contract.Ensures(Contract.Result<ExceptionPolicyEntry>() != null);
 
             return new ExceptionPolicyEntry(
-                            exceptionType,
+                            typeof(TException),
                             PostHandlingAction.ThrowNewException,
                             new IExceptionHandler[]
                             {
@@ -77,8 +73,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                         Facility.LogWriter),
 
                                 new FaultContractExceptionHandler(
-                                        faultType,
-                                        _faultMappings),
+                                        typeof(TFault),
+                                        new NameValueCollection {["Id"] = "{Guid}"}),
                            });
         }
 
@@ -106,30 +102,30 @@ namespace vm.Aspects.Wcf.ServicePolicies
                            }),
 
                 // The catch all policy:
-                GetThrowFaultExceptionPolicyEntry(typeof(Exception), typeof(Fault), eventId++),
+                GetThrowFaultExceptionPolicyEntry<Exception, Fault>(eventId++),
 
-                GetThrowFaultExceptionPolicyEntry(typeof(ArgumentException), typeof(ArgumentFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ArgumentNullException), typeof(ArgumentNullFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ArgumentValidationException), typeof(ArgumentValidationFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(InvalidOperationException), typeof(InvalidOperationFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(NotImplementedException), typeof(NotImplementedFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(DataException), typeof(DataFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(DbException), typeof(DataFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(IOException), typeof(IOFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(DirectoryNotFoundException), typeof(DirectoryNotFoundFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(PathTooLongException), typeof(PathTooLongFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(FileNotFoundException), typeof(FileNotFoundFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ObjectException), typeof(ObjectFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ObjectNotFoundException), typeof(ObjectNotFoundFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(ObjectIdentifierNotUniqueException), typeof(ObjectIdentifierNotUniqueFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(BusinessException), typeof(BusinessFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(UnauthorizedAccessException), typeof(UnauthorizedAccessFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(FormatException), typeof(FormatFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(SerializationException), typeof(SerializationFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(XmlException), typeof(XmlFault), eventId++),
-                GetThrowFaultExceptionPolicyEntry(typeof(AggregateException), typeof(AggregateFault), eventId++),
+                GetThrowFaultExceptionPolicyEntry<ArgumentException, ArgumentFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ArgumentNullException, ArgumentNullFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ArgumentValidationException, ArgumentValidationFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<InvalidOperationException, InvalidOperationFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<NotImplementedException, NotImplementedFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<DataException, DataFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<DbException, DataFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<IOException, IOFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<DirectoryNotFoundException, DirectoryNotFoundFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<PathTooLongException, PathTooLongFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<FileNotFoundException, FileNotFoundFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ObjectException, ObjectFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ObjectNotFoundException, ObjectNotFoundFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ObjectIdentifierNotUniqueException, ObjectIdentifierNotUniqueFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<BusinessException, BusinessFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<UnauthorizedAccessException, UnauthorizedAccessFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<FormatException, FormatFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<SerializationException, SerializationFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<XmlException, XmlFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<AggregateException, AggregateFault>(eventId++),
                 
-                // to keep the event ID-s consistent, only append to the list here:
+                // to keep the event ID-s consistent, only append to the list above
             };
         }
     }

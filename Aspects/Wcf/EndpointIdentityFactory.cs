@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IdentityModel.Claims;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -116,5 +117,13 @@ namespace vm.Aspects.Wcf
             throw new NotSupportedException(
                 string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
         }
+
+        /// <summary>
+        /// Creates an endpoint identity based on claim.
+        /// </summary>
+        /// <param name="identity">The identity.</param>
+        /// <returns>EndpointIdentity.</returns>
+        public static EndpointIdentity CreateEndpointIdentity(
+            System.IdentityModel.Claims.Claim identity) => EndpointIdentity.CreateIdentity(identity);
     }
 }

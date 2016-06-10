@@ -738,7 +738,7 @@ namespace vm.Aspects.Policies
                 methodReturn.Exception.DumpText(writer, 2);
             }
             else
-                if (IncludeReturnValue && methodReturn.ReturnValue!=null)
+            if (IncludeReturnValue && methodReturn.ReturnValue!=null)
             {
                 var methodInfo = input.MethodBase as MethodInfo;
 

@@ -15,6 +15,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Web.Services.Protocols;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
@@ -111,8 +112,8 @@ namespace vm.Aspects.Wcf.Behaviors
                 // Execute the exception handlers
                 if (Facility.ExceptionManager.HandleException(error, ExceptionPolicyName, out exceptionToThrow))
                 {
-                    if (exceptionToThrow == null)
-                        exceptionToThrow = error;
+                    if (exceptionToThrow == null  ||  exceptionToThrow is ExceptionHandlingException)
+                        exceptionToThrow = error;   // the policy ignored it or didn't handle it - treat the original exception as unhandled
 
                     var faultContractWrapper = exceptionToThrow as FaultContractWrapperException;
 
@@ -451,7 +452,7 @@ namespace vm.Aspects.Wcf.Behaviors
             responseMessageProperty.StatusCode        = httpStatusCode;
             responseMessageProperty.StatusDescription = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);
 
-            var webFormat    = GetWebContentFormat();
+            var webFormat = GetWebContentFormat();
 
             if (webFormat == WebContentFormat.Json)
             {

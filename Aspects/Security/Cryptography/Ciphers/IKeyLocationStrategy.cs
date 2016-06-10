@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -43,7 +44,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         #region IKeyLocationStrategy Members
         public string GetKeyLocation(string keyLocation)
         {
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()), "The key location cannot be null, empty or consist of whitespace characters only.");
+            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             throw new NotImplementedException();
         }
