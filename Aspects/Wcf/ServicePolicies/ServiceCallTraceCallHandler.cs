@@ -45,7 +45,15 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// </summary>
         public bool IncludeCustomContext { get; set; }
 
-        bool HasWebOperationContext => WebOperationContext.Current!=null  &&  OperationContext.Current.EndpointDispatcher.ChannelDispatcher.BindingName.ToUpperInvariant().Contains(nameof(WebHttpBinding).ToUpperInvariant());
+        bool HasWebOperationContext => WebOperationContext.Current!=null  &&
+                                       OperationContext
+                                            .Current
+                                            .EndpointDispatcher
+                                            .ChannelDispatcher
+                                            .BindingName
+                                            .ToUpperInvariant()
+                                            .Contains(nameof(WebHttpBinding)
+                                            .ToUpperInvariant());
         #endregion
 
         /// <summary>

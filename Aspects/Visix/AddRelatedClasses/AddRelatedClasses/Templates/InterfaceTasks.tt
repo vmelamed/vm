@@ -305,10 +305,12 @@
         soapName              = sourceInterface.Name;
         soapNameIsQuoted      = true;
 
-        var ns         = "http://tempuri.org";
-        var nm         = sourceInterface.Name;
-        var nsIsQuoted = true;
-        var nmIsQuoted = true;
+        var ns          = "http://tempuri.org";
+        var nm          = sourceInterface.Name;
+        var nsIsQuoted  = true;
+        var nmIsQuoted  = true;
+        var nameWritten = false;
+        var hasArgs     = false;
 
         foreach (CodeAttribute a in sourceInterface.Attributes)
         {
@@ -318,6 +320,7 @@
             SeparatedList(
                 a.Children.OfType<CodeAttributeArgument>(),
                 arg => {
+                            hasArgs = true;
                             if (string.IsNullOrWhiteSpace(arg.Name))
                                 Write(arg.Value);
                             else
@@ -334,15 +337,24 @@
                                     {
                                         nm = GetQuotedValue(arg.Value);
                                         nmIsQuoted = arg.Value.StartsWith("\"") || arg.Value.StartsWith("@\"");
+                                        nameWritten = true;
                                     }
                                 }
                             }
                        },
                 () => Write(", "),
                 () => Write("("),
-                () => Write(")"));
+                () =>   {
+                            if (nameWritten)
+                                Write(")");
+                            else
+                                Write(", Name={0})", sourceInterface.Name);
+                        });
 
-            WriteLine("]");
+            if (hasArgs)
+                WriteLine("]");
+            else
+                WriteLine("(Name={0})]", sourceInterface.Name);
         }
 
         soapNamespace         = ns;
@@ -494,7 +506,7 @@
                 
                 PopIndent();
             }
-
+             
             if (hasArgs)
                 Write(")");
             WriteLine("]");

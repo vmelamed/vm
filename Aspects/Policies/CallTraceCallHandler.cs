@@ -669,6 +669,9 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
 
+            if (pi.ParameterType == typeof(Task))
+                return;
+
             writer.WriteLine();
             writer.Write(
                 "{0}{1} {2} = ",
@@ -742,7 +745,7 @@ namespace vm.Aspects.Policies
             {
                 var methodInfo = input.MethodBase as MethodInfo;
 
-                if (methodInfo == null || methodInfo.ReturnType == typeof(void))
+                if (methodInfo == null || methodInfo.ReturnType == typeof(void)  ||  methodInfo.ReturnType == typeof(Task))
                     return;
 
                 writer.Write("RETURN VALUE: ");

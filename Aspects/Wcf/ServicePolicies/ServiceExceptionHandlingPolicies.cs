@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization;
-using System.ServiceModel;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
@@ -74,7 +73,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
                                 new FaultContractExceptionHandler(
                                         typeof(TFault),
-                                        new NameValueCollection {["Id"] = "{Guid}"}),
+                                        new NameValueCollection
+                                        {
+                                            ["Id"]                 = "{Guid}",
+                                            ["HandlingInstanceId"] = "{Guid}",
+                                        }),
                            });
         }
 
@@ -85,22 +88,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             return new List<ExceptionPolicyEntry>
             {
-                // pass-through the fault exceptions
-                new ExceptionPolicyEntry(
-                            typeof(FaultException),
-                            PostHandlingAction.NotifyRethrow,
-                            new IExceptionHandler[]
-                            {
-                                new LoggingExceptionHandler(
-                                        "Fault",
-                                        eventId++,
-                                        TraceEventType.Error,
-                                        LogExceptionTitle,
-                                        1,
-                                        typeof(DumpExceptionFormatter),
-                                        Facility.LogWriter),
-                           }),
-
                 // The catch all policy:
                 GetThrowFaultExceptionPolicyEntry<Exception, Fault>(eventId++),
 
