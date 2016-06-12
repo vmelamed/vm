@@ -47,7 +47,7 @@
 namespace <#= sourceCodeNamespace.FullName #>
 {
     /// <summary>
-    /// WCF channel factory based client (proxy) for services implementing <#= sourceCodeInterface.Name #>.
+    /// WCF channel factory based client (proxy) for services implementing the contract <#= sourceCodeInterface.Name #>.
     /// </summary>
     /// <seealso cref="LightClient{<#= sourceCodeInterface.Name #>}" />
     /// <seealso cref="<#= sourceCodeInterface.Name #>" />
@@ -55,7 +55,7 @@ namespace <#= sourceCodeNamespace.FullName #>
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory)
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class (creates the channel factory)
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and service address.
         /// </summary>
         /// <param name="endpointConfigurationName">Name of the endpoint configuration.</param>
@@ -78,7 +78,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory).
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class (creates the channel factory).
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">
@@ -110,7 +110,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class.
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">
@@ -138,7 +138,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class.
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityClaim">The identity claim.</param>
@@ -160,7 +160,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class (creates the channel factory).
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class (creates the channel factory).
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -226,7 +226,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:<#= baseName #>Client{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="<#= baseName #>Client" /> class.
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
