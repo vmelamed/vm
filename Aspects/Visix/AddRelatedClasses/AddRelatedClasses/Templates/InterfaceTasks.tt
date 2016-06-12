@@ -310,29 +310,32 @@
         var nsIsQuoted  = true;
         var nmIsQuoted  = true;
         var nameWritten = false;
-        var hasArgs     = false;
 
         foreach (CodeAttribute a in sourceInterface.Attributes)
         {
             Write("[");
             Write(a.Name);
 
+            var isServiceContract = a.Name == "ServiceContract";
+            var hasArgs           = false;
+
             SeparatedList(
                 a.Children.OfType<CodeAttributeArgument>(),
-                arg => {
+                arg =>  {
                             hasArgs = true;
                             if (string.IsNullOrWhiteSpace(arg.Name))
                                 Write(arg.Value);
                             else
                             {
                                 Write("{0}={1}", arg.Name, arg.Value);
-                                if (a.Name == "ServiceContract")
+                                if (isServiceContract)
                                 {
                                     if (arg.Name == "Namespace")
                                     {
                                         ns = GetQuotedValue(arg.Value);
                                         nsIsQuoted = arg.Value.StartsWith("\"") || arg.Value.StartsWith("@\"");
                                     }
+
                                     if (arg.Name == "Name")
                                     {
                                         nm = GetQuotedValue(arg.Value);
@@ -341,20 +344,26 @@
                                     }
                                 }
                             }
-                       },
+                        },
                 () => Write(", "),
                 () => Write("("),
-                () =>   {
-                            if (nameWritten)
-                                Write(")");
+                () =>   {                            
+                            if (isServiceContract  &&  !nameWritten)
+                                Write(", Name={0}{1}{2})",
+                                      nmIsQuoted ? "\"" : "",
+                                      sourceInterface.Name,
+                                      nmIsQuoted ? "\"" : "");
                             else
-                                Write(", Name={0})", sourceInterface.Name);
+                                Write(")");
                         });
-
-            if (hasArgs)
-                WriteLine("]");
+            
+            if (isServiceContract  &&  !hasArgs)
+                Write("(Name={0}{1}{2})]",
+                      nmIsQuoted ? "\"" : "",
+                      sourceInterface.Name,
+                      nmIsQuoted ? "\"" : "");
             else
-                WriteLine("(Name={0})]", sourceInterface.Name);
+                WriteLine("]");
         }
 
         soapNamespace         = ns;
