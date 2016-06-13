@@ -41,7 +41,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             int maxLength = DefaultMaxLength)
             : base(writer.FormatProvider)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, "writer");
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
 
             _writer    = writer;
             _maxLength = maxLength;
@@ -53,7 +53,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             int maxLength = 0)
             : base(CultureInfo.InvariantCulture)
         {
-            Contract.Requires<ArgumentNullException>(existing != null, "existing");
+            Contract.Requires<ArgumentNullException>(existing != null, nameof(existing));
 
             _writer      = new StringWriter(existing, CultureInfo.InvariantCulture) { NewLine = EndOfLine };
             _isOwnWriter = true;

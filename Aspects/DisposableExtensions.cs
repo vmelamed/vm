@@ -15,7 +15,7 @@ namespace vm.Aspects
         /// <param name="lazy">The lazy instantiated object.</param>
         public static void Dispose<T>(this Lazy<T> lazy)
         {
-            Contract.Requires<ArgumentNullException>(lazy != null, "lazy");
+            Contract.Requires<ArgumentNullException>(lazy != null, nameof(lazy));
 
             if (!lazy.IsValueCreated)
                 return;
@@ -32,7 +32,8 @@ namespace vm.Aspects
         /// <param name="instance">The object.</param>
         public static void Dispose(this object instance)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, "obj");
+            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
+
             var disposable = instance as IDisposable;
 
             if (disposable != null)

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -6,8 +8,6 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Transactions;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 
@@ -139,7 +139,7 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             IMethodReturn result)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
@@ -157,9 +157,13 @@ namespace vm.Aspects.Model
                 }
 
                 if (result.Exception == null)
+                {
                     repository.CommitChanges();
-
-                scope?.Complete();
+                    scope?.Complete();
+                }
+                registration.LifetimeManager.RemoveValue();
+                scope?.Dispose();
+                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
             }
             catch (Exception x)
             {
@@ -171,10 +175,6 @@ namespace vm.Aspects.Model
                 result = input.CreateExceptionMethodReturn(ex);
             }
 
-            registration?.LifetimeManager?.RemoveValue();
-            scope?.Dispose();
-            Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
-
             return result;
         }
 
@@ -183,13 +183,13 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             IMethodReturn result)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            var scope = GetTransactionScope(input);
+            var scope        = GetTransactionScope(input);
             var registration = GetRepositoryRegistration();
-            var repository = registration?.LifetimeManager?.GetValue() as IRepository;
+            var repository   = registration?.LifetimeManager?.GetValue() as IRepository;
 
             if (repository == null)
             {
@@ -202,7 +202,7 @@ namespace vm.Aspects.Model
 
             if (result.Exception != null)
             {
-                registration?.LifetimeManager?.RemoveValue();   // dispose the repository
+                registration.LifetimeManager.RemoveValue(); // dispose the repository
                 scope.Dispose();
                 return result;
             }
@@ -215,7 +215,6 @@ namespace vm.Aspects.Model
                 var returnedTaskResultType = returnedTask.GetType().IsGenericType
                                                     ? returnedTask.GetType().GetGenericArguments()[0]
                                                     : typeof(bool);
-
                 var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultType);
 
                 return input.CreateMethodReturn(
@@ -237,12 +236,15 @@ namespace vm.Aspects.Model
             TransactionScope scope)
         {
             Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
             Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
-            Contract.Requires<ArgumentNullException>(scope != null, nameof(scope));
+            Contract.Requires<ArgumentNullException>(scope        != null, nameof(scope));
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
-            var repository = registration.LifetimeManager.GetValue();
+            // find the repository and commit the changes
+            var repository      = registration.LifetimeManager.GetValue();
+            var isDisposed      = ((repository as IIsDisposed)?.IsDisposed).GetValueOrDefault();
+            var asyncRepository = repository as IRepositoryAsync;
 
             Contract.Assume(repository != null, "The object (repository) in the registration is null?");
 
@@ -251,18 +253,16 @@ namespace vm.Aspects.Model
                 // await the actions in the handlers in the handlers pipeline after this to finish their tasks
                 var result = await returnedTask;
 
-                // find the repository and commit the changes
-                var asyncRepository = repository as IRepositoryAsync;
+                if (!isDisposed)
+                    if (asyncRepository != null)
+                        await asyncRepository.CommitChangesAsync();
+                    else
+                    {
+                        var syncRepository = repository as IRepository;
 
-                if (asyncRepository != null)
-                    await asyncRepository.CommitChangesAsync();
-                else
-                {
-                    var syncRepository = repository as IRepository;
-
-                    if (syncRepository != null)
-                        syncRepository.CommitChanges();
-                }
+                        if (syncRepository != null)
+                            syncRepository.CommitChanges();
+                    }
 
                 scope.Complete();
                 return result;

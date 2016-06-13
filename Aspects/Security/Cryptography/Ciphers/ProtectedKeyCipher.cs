@@ -562,7 +562,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void BeforeReadDecrypted(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
             Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
             Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
 
@@ -672,7 +672,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
             Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
 
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, "cryptoStream");
+            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
             Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
         }
         #endregion
@@ -695,7 +695,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, "encryptedStream");
+            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
             Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument \"encryptedStream\" cannot be written to.");
             Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
 
@@ -729,10 +729,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(dataStream != null, "dataStream");
+            Contract.Requires<ArgumentNullException>(dataStream != null, nameof(dataStream));
             Contract.Requires<ArgumentException>(dataStream.CanRead, "The argument \"dataStream\" cannot be read from.");
 
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, "cryptoStream");
+            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
             Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument \"cryptoStream\" cannot be written to.");
 
             await dataStream.CopyToAsync(cryptoStream);

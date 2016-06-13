@@ -153,7 +153,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static ConstructorInfo GetConstructorInfo(Type type, XElement element)
         {
-            Contract.Requires<ArgumentNullException>(type != null, "type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             if (element == null)
                 return null;

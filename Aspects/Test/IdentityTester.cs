@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests
 {
@@ -42,10 +42,10 @@ namespace vm.Aspects.Tests
             T obj4,
             params Action<T>[] modifyingMethods)
         {
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj1, null), "obj1");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj2, null), "obj2");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), "obj3");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), "obj4");
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj1, null), nameof(obj1));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj2, null), nameof(obj2));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), nameof(obj3));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), nameof(obj4));
             Contract.Requires<ArgumentNullException>(modifyingMethods != null, nameof(modifyingMethods));
             Contract.Requires<ArgumentException>(modifyingMethods.Length!=0, "modifyingMethods must not be empty.");
             Contract.Requires<ArgumentException>(modifyingMethods.All(m => m!=null), "modifyingMethods cannot contain null delegates.");
@@ -104,11 +104,11 @@ namespace vm.Aspects.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(_obj1.Equals(_obj2) && 
-                          _obj2.Equals(_obj3) && 
+            Assert.IsTrue(_obj1.Equals(_obj2) &&
+                          _obj2.Equals(_obj3) &&
                           _obj1.Equals(_obj3), "The method Equals must be transitive, i.e. (a==b && b==c) -> (a==c).");
-            Assert.IsTrue(!_obj1.Equals(_obj4) && 
-                          !_obj2.Equals(_obj4) && 
+            Assert.IsTrue(!_obj1.Equals(_obj4) &&
+                          !_obj2.Equals(_obj4) &&
                           !_obj3.Equals(_obj4), "The not-equals is not consistent with the method equals' transitivity, i.e. (a==b && b==c && a!=d) -> (b!=d && c!=d).");
         }
         #endregion
@@ -152,12 +152,12 @@ namespace vm.Aspects.Tests
         {
             AssertIsInitialized();
 
-            Assert.IsTrue(_obj1.Equals((object)_obj2) && 
-                          _obj2.Equals((object)_obj3) && 
+            Assert.IsTrue(_obj1.Equals((object)_obj2) &&
+                          _obj2.Equals((object)_obj3) &&
                           _obj1.Equals((object)_obj3),
                           "The method Equals must be transitive, i.e. (obj1.Equals(obj2) && obj2.Equals(obj3) -> obj1.Equals(obj3).");
-            Assert.IsTrue(!_obj1.Equals((object)_obj4) && 
-                          !_obj2.Equals((object)_obj4) && 
+            Assert.IsTrue(!_obj1.Equals((object)_obj4) &&
+                          !_obj2.Equals((object)_obj4) &&
                           !_obj3.Equals((object)_obj4),
                           "The not-equals is not consistent with the method equals' transitivity, i.e. (obj1.Equals(obj2) && obj2.Equals(obj3) && !obj1.Equals(obj4) && !obj2.Equals(obj4) -> !obj3.Equals(obj3).");
         }

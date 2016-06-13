@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -374,7 +374,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encryptedKey)
         {
             Contract.Requires<ArgumentNullException>(encryptedKey != null, nameof(encryptedKey));
-            Contract.Requires<ArgumentNullException>(encryptedKey.Length > 0, "The argument "+nameof(encryptedKey)+" cannot be empty.");
+            Contract.Requires<ArgumentException>(encryptedKey.Length > 0, "The argument "+nameof(encryptedKey)+" cannot be empty.");
 
             throw new NotImplementedException();
         }

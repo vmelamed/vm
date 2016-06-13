@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Model.Tests
 {
@@ -41,10 +41,10 @@ namespace vm.Aspects.Model.Tests
             T obj4,
             params Action<T>[] modifyingMethods)
         {
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj1, null), "obj1");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj2, null), "obj2");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), "obj3");
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), "obj4");
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj1, null), nameof(obj1));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj2, null), nameof(obj2));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), nameof(obj3));
+            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), nameof(obj4));
             Contract.Requires<ArgumentNullException>(modifyingMethods != null, nameof(modifyingMethods));
             Contract.Requires<ArgumentException>(modifyingMethods.Length != 0, "modifyingMethods must not be empty.");
             Contract.Requires<ArgumentException>(modifyingMethods.All(m => m != null), "modifyingMethods cannot contain null delegates.");
