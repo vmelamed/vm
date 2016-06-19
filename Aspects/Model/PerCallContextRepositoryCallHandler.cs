@@ -143,27 +143,20 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            var scope = GetTransactionScope(input);
+            var scope        = GetTransactionScope(input);
             var registration = GetRepositoryRegistration();
 
             try
             {
+                if (result.Exception != null)
+                    return result;
+
                 var repository = registration?.LifetimeManager?.GetValue() as IRepository;
 
-                if (repository == null)
-                {
-                    scope?.Dispose();
-                    return result;
-                }
-
-                if (result.Exception == null)
-                {
+                if (repository != null)
                     repository.CommitChanges();
-                    scope?.Complete();
-                }
-                registration.LifetimeManager.RemoveValue();
-                scope?.Dispose();
-                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
+
+                scope.Complete();
             }
             catch (Exception x)
             {
@@ -173,6 +166,13 @@ namespace vm.Aspects.Model
 
                 ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
                 result = input.CreateExceptionMethodReturn(ex);
+            }
+            finally
+            {
+                registration?.LifetimeManager?.RemoveValue();
+                scope.Dispose();
+
+                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
             }
 
             return result;
@@ -191,26 +191,19 @@ namespace vm.Aspects.Model
             var registration = GetRepositoryRegistration();
             var repository   = registration?.LifetimeManager?.GetValue() as IRepository;
 
-            if (repository == null)
-            {
-                // if there were no exceptions - commit the transactions and we're done.
-                if (result.Exception == null)
-                    scope?.Complete();
-                scope?.Dispose();
-                return result;
-            }
-
-            if (result.Exception != null)
-            {
-                registration.LifetimeManager.RemoveValue(); // dispose the repository
-                scope?.Dispose();
-                return result;
-            }
-
-            // at this point we have a repository, we have a transaction scope, and we do not have exceptions.
-
             try
             {
+                if (result.Exception != null)
+                    return result;
+
+                if (repository == null)
+                {
+                    scope.Complete();
+                    return result;
+                }
+
+                // at this point we have a repository, we have a transaction scope, and we do not have exceptions.
+
                 var returnedTask = result.ReturnValue as Task;
                 var returnedTaskResultType = returnedTask.GetType().IsGenericType
                                                     ? returnedTask.GetType().GetGenericArguments()[0]
@@ -270,8 +263,10 @@ namespace vm.Aspects.Model
             }
             finally
             {
-                registration.LifetimeManager.RemoveValue();
+                registration?.LifetimeManager?.RemoveValue();
                 scope.Dispose();
+
+                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeAsync disposed the repository and the transaction scope");
             }
         }
 

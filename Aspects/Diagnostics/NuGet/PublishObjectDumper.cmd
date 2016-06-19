@@ -1,5 +1,5 @@
 if not .%vmDumperVersion%.==.. goto afterSets
-set vmDumperVersion=1.6.3
+set vmDumperVersion=1.6.4
 set FrameworkVersion=4.0
 set FrameworkVersionConst=DOTNET40
 set Configuration=Release

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.6.3</version>
+        <version>1.6.4</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,7 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            DumpAttribute can target now parameters too.
+            DumpAttribute can target now parameters and return values too.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
