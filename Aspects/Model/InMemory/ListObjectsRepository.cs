@@ -475,7 +475,7 @@ namespace vm.Aspects.Model.InMemory
         /// Asynchronously saves the changes buffered in the repository's context/session.
         /// </summary>
         /// <returns><c>this</c></returns>
-        public Task<IRepository> CommitChangesAsync() => Task.FromResult(CommitChanges());
+        public Task<IRepositoryAsync> CommitChangesAsync() => Task.FromResult(CommitChanges() as IRepositoryAsync);
         #endregion
     }
 }

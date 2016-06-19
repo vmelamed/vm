@@ -45,7 +45,7 @@ namespace vm.Aspects.Model.Repository
         /// Asynchronously saves the changes buffered in the repository's context.
         /// </summary>
         /// <returns><c>this</c></returns>
-        Task<IRepository> CommitChangesAsync();
+        Task<IRepositoryAsync> CommitChangesAsync();
     }
 
     [ContractClassFor(typeof(IRepositoryAsync))]
@@ -79,9 +79,9 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IRepository> CommitChangesAsync()
+        public Task<IRepositoryAsync> CommitChangesAsync()
         {
-            Contract.Ensures(Contract.Result<Task<IRepository>>() != null);
+            Contract.Ensures(Contract.Result<Task<IRepositoryAsync>>() != null);
 
             throw new NotImplementedException();
         }

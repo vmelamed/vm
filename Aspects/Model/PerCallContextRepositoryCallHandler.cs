@@ -195,15 +195,15 @@ namespace vm.Aspects.Model
             {
                 // if there were no exceptions - commit the transactions and we're done.
                 if (result.Exception == null)
-                    scope.Complete();
-                scope.Dispose();
+                    scope?.Complete();
+                scope?.Dispose();
                 return result;
             }
 
             if (result.Exception != null)
             {
                 registration.LifetimeManager.RemoveValue(); // dispose the repository
-                scope.Dispose();
+                scope?.Dispose();
                 return result;
             }
 
@@ -242,29 +242,14 @@ namespace vm.Aspects.Model
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
             // find the repository and commit the changes
-            var repository      = registration.LifetimeManager.GetValue();
-            var isDisposed      = ((repository as IIsDisposed)?.IsDisposed).GetValueOrDefault();
-            var asyncRepository = repository as IRepositoryAsync;
-
-            Contract.Assume(repository != null, "The object (repository) in the registration is null?");
-
             try
             {
                 // await the actions in the handlers in the handlers pipeline after this to finish their tasks
                 var result = await returnedTask;
 
-                if (!isDisposed)
-                    if (asyncRepository != null)
-                        await asyncRepository.CommitChangesAsync();
-                    else
-                    {
-                        var syncRepository = repository as IRepository;
+                if (await CommitChangesAsync(registration, scope) == null)
+                    CommitChanges(registration, scope);
 
-                        if (syncRepository != null)
-                            syncRepository.CommitChanges();
-                    }
-
-                scope.Complete();
                 return result;
             }
             catch (Exception x)
@@ -288,6 +273,44 @@ namespace vm.Aspects.Model
                 registration.LifetimeManager.RemoveValue();
                 scope.Dispose();
             }
+        }
+
+        static IRepository CommitChanges(
+            ContainerRegistration registration,
+            TransactionScope scope)
+        {
+            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
+
+            var value      = registration.LifetimeManager.GetValue();
+            var repository = value as IRepository;
+
+            if (repository != null  &&
+                !(repository?.IsDisposed).GetValueOrDefault())
+            {
+                repository.CommitChanges();
+                scope.Complete();
+            }
+
+            return repository;
+        }
+
+        static async Task<IRepositoryAsync> CommitChangesAsync(
+            ContainerRegistration registration,
+            TransactionScope scope)
+        {
+            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
+
+            var value      = registration.LifetimeManager.GetValue();
+            var repository = value as IRepositoryAsync;
+
+            if (repository != null  &&
+                !(repository?.IsDisposed).GetValueOrDefault())
+            {
+                await repository.CommitChangesAsync();
+                scope.Complete();
+            }
+
+            return repository;
         }
 
         ContainerRegistration GetRepositoryRegistration()

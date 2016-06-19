@@ -32,8 +32,6 @@ namespace vm.Aspects
         /// <param name="instance">The object.</param>
         public static void Dispose(this object instance)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-
             var disposable = instance as IDisposable;
 
             if (disposable != null)

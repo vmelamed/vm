@@ -98,7 +98,8 @@ namespace vm.Aspects.Wcf
                 if (_contextSlots.TryGetValue(slotName, out entry))
                     _contextSlots.Remove(slotName);
 
-            entry.Dispose();
+            if (entry != null)
+                entry.Dispose();
         }
 
         /// <summary>

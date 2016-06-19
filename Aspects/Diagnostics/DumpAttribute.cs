@@ -40,7 +40,8 @@ namespace vm.Aspects.Diagnostics
         AttributeTargets.Struct|
         AttributeTargets.Class |
         AttributeTargets.Field |
-        AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+        AttributeTargets.Property |
+        AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
     public sealed class DumpAttribute : Attribute, IEquatable<DumpAttribute>, ICloneable
     {
         #region Constant instances.
