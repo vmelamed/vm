@@ -54,7 +54,7 @@ namespace vm.Aspects
         */
 
         /// <summary>
-        /// Determines whether the <paramref name="type"/> inherits the type <paramref name="baseType"/>.
+        /// Determines whether the <paramref name="type"/> is or inherits from the type <paramref name="baseType"/>.
         /// </summary>
         /// <param name="type">The type to test.</param>
         /// <param name="baseType">The base type to test against.</param>
@@ -71,6 +71,16 @@ namespace vm.Aspects
 
             return (t == baseType);
         }
+
+        /// <summary>
+        /// Determines whether the <paramref name="type" /> is or inherits from the type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">The base type to test against.</typeparam>
+        /// <param name="type">The type to test.</param>
+        /// <returns><c>true</c> if [is] [the specified base type]; otherwise, <c>false</c>.</returns>
+        [Pure]
+        public static bool Is<T>(
+            this Type type) => type.Is(typeof(T));
 
         /// <summary>
         /// Determines whether the specified <see cref="PropertyInfo"/> object represents a virtual property.

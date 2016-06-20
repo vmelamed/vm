@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 
@@ -294,17 +295,23 @@ namespace vm.Aspects.Wcf.Services
                 ObtainInitializerResolveName(serviceType);
             }
 
-            HostInitialized(host, serviceType);
+            var initializer = ServiceInitializer;
 
-            if (ServiceInitializer != null)
+            if (initializer != null)
                 // start initialization on another thread and return immediately
-                InitializeHostTask = ServiceInitializer
+                InitializeHostTask = initializer
                                             .InitializeAsync(host, MessagingPattern, 0)
                                             .ContinueWith(
                                                 t =>
                                                 {
                                                     if (t.IsCompleted  &&  t.Result)
                                                         HostInitialized(host, serviceType);
+                                                    else
+                                                        throw new InvalidOperationException(
+                                                                    string.Format(
+                                                                            CultureInfo.InvariantCulture,
+                                                                            "{0} could not initialize the host.",
+                                                                            GetType().Name));
 
                                                     return t.Result;
                                                 });

@@ -94,12 +94,10 @@ namespace vm.Aspects.Model
             }
 
 #if DOTNET45
-            var scope = new TransactionScope();
+            SetTransactionScope(input, new TransactionScope());
 #else
-            var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            SetTransactionScope(input, new TransactionScope(TransactionScopeAsyncFlowOption.Enabled));
 #endif
-
-            input.InvocationContext["transactionScope"] = scope;
         }
 
         /// <summary>
@@ -128,7 +126,7 @@ namespace vm.Aspects.Model
             if (!CreateTransactionScopeForTasks)
                 return result;
 
-            if (((MethodInfo)input.MethodBase).ReturnType.Is(typeof(Task)))
+            if (((MethodInfo)input.MethodBase).ReturnType.Is<Task>())
                 return PostInvokeAsync(input, result);
             else
                 return PostInvokeSync(input, result);
@@ -154,9 +152,7 @@ namespace vm.Aspects.Model
                 var repository = registration?.LifetimeManager?.GetValue() as IRepository;
 
                 if (repository != null)
-                    repository.CommitChanges();
-
-                scope.Complete();
+                    CommitChanges(registration, scope);
             }
             catch (Exception x)
             {
@@ -170,9 +166,8 @@ namespace vm.Aspects.Model
             finally
             {
                 registration?.LifetimeManager?.RemoveValue();
-                scope.Dispose();
-
-                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeSync disposed the repository and the transaction scope");
+                scope?.Dispose();
+                SetTransactionScope(input, null);
             }
 
             return result;
@@ -198,7 +193,9 @@ namespace vm.Aspects.Model
 
                 if (repository == null)
                 {
-                    scope.Complete();
+                    scope?.Complete();
+                    scope?.Dispose();
+                    SetTransactionScope(input, null);
                     return result;
                 }
 
@@ -265,8 +262,7 @@ namespace vm.Aspects.Model
             {
                 registration?.LifetimeManager?.RemoveValue();
                 scope.Dispose();
-
-                Debug.WriteLine("### PerCallContextRepositoryCallHandler PostInvokeAsync disposed the repository and the transaction scope");
+                SetTransactionScope(input, null);
             }
         }
 
@@ -325,18 +321,30 @@ namespace vm.Aspects.Model
             return registration;
         }
 
-        static TransactionScope GetTransactionScope(IMethodInvocation input)
+        const string TransactionScopeKey = "transactionScope";
+
+        static TransactionScope GetTransactionScope(
+            IMethodInvocation input)
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Ensures(Contract.Result<TransactionScope>() != null);
 
             object obj;
 
-            input.InvocationContext.TryGetValue("transactionScope", out obj);
-
-            Contract.Assume((obj as TransactionScope) != null, "Could not find the transaction scope?");
+            input.InvocationContext.TryGetValue(TransactionScopeKey, out obj);
 
             return obj as TransactionScope;
+        }
+
+        static void SetTransactionScope(
+            IMethodInvocation input,
+            TransactionScope scope)
+        {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
+            if (scope != null)
+                input.InvocationContext.Add(TransactionScopeKey, scope);
+            else
+                input.InvocationContext.Remove(TransactionScopeKey);
         }
     }
 }
