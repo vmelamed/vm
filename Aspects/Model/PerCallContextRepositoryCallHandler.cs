@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 using System.Transactions;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
+using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model
 {
     /// <summary>
     /// The class PerCallContextRepositoryCallHandler is meant to be used as a policy (AOP aspect) in the call context of a WCF call.
-    /// It is assumed that the repository is resolved from the DI container and has <see cref="T:PerCallContextLifetimeManager"/>, i.e. all
+    /// It is assumed that the repository is resolved from the DI container and has <see cref="PerCallContextLifetimeManager"/>, i.e. all
     /// resolutions for <see cref="IRepository"/> with the same resolve name in the same WCF call context will return one and the same repository object.
     /// This handler implements two post-call actions: if there are no exceptions, it commits the unit of work, otherwise rolls back the current transaction
     /// and then removes the repository's lifetime manager from the container. In other words the application developer does not need to worry about 

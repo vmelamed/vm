@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace vm.Aspects.Diagnostics.DumpImplementation
 {
@@ -9,12 +10,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         public readonly string Property;
 
         public DumpedProperty(
-            object instance, 
+            object instance,
             string property)
         {
             Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(property != null, nameof(property));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(property));
+            Contract.Requires<ArgumentNullException>(property!=null, nameof(property));
+            Contract.Requires<ArgumentException>(property.Length > 0, "The argument "+nameof(property)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(property.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(property)+" cannot be empty or consist of whitespace characters only.");
 
             Instance = instance;
             Property = property;
@@ -44,9 +46,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             return hash;
         }
 
-        public static bool operator==(DumpedProperty left, DumpedProperty right) => left.Equals(right);
+        public static bool operator ==(DumpedProperty left, DumpedProperty right) => left.Equals(right);
 
-        public static bool operator!=(DumpedProperty left, DumpedProperty right) => !(left==right);
+        public static bool operator !=(DumpedProperty left, DumpedProperty right) => !(left==right);
         #endregion
     }
 }

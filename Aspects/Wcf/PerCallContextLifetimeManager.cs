@@ -54,7 +54,8 @@ namespace vm.Aspects.Wcf
             CallContext.FreeNamedDataSlot(Key);
             Contract.Assume(CallContext.LogicalGetData(Key) == null);
 
-            value.Dispose();
+            if (value != null)
+                value.Dispose();
         }
     }
 }
