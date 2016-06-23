@@ -194,8 +194,6 @@ namespace vm.Aspects.Model
 
                 if (repository == null)
                 {
-                    scope?.Complete();
-                    scope?.Dispose();
                     SetTransactionScope(input, null);
                     return result;
                 }
