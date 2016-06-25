@@ -1,7 +1,7 @@
 if not .%vmDumperVersion%.==.. goto afterSets
-set vmDumperVersion=1.6.5
-set FrameworkVersion=4.6.1
-set FrameworkVersionConst=DOTNET461
+set vmDumperVersion=1.6.6
+set FrameworkVersion=4.0
+set FrameworkVersionConst=DOTNET40
 set Configuration=Release
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /m
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
