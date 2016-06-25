@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +10,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 
@@ -30,17 +30,21 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         HelpPage = 1,
         /// <summary>
+        /// Generate a help page for WebHttpBinding endpoints.
+        /// </summary>
+        WebHttpHelpPage = 2,
+        /// <summary>
         /// GET WSDL behavior
         /// </summary>
-        Wsdl = 2,
+        Wsdl = 4,
         /// <summary>
         /// IMetadataBehavior
         /// </summary>
-        Mex = 4,
+        Mex = 8,
         /// <summary>
         /// All of the above
         /// </summary>
-        All = 7,
+        All = 15,
     }
 
     /// <summary>
@@ -134,7 +138,6 @@ namespace vm.Aspects.Wcf.Services
                             AutomaticFormatSelectionEnabled = true,
                             DefaultOutgoingResponseFormat   = WebMessageFormat.Json,
                             HelpEnabled                     = true,
-                            // ? FaultExceptionEnabled           = false,
                         });
             }
 
@@ -214,6 +217,30 @@ namespace vm.Aspects.Wcf.Services
                 if (serviceDebugBehavior != null)
                     serviceDebugBehavior.HttpHelpPageEnabled =
                     serviceDebugBehavior.HttpsHelpPageEnabled = false;
+
+                var ep = host.Description.Endpoints.Where(e => e.Binding is WebHttpBinding).FirstOrDefault();
+
+                if (ep != null)
+                {
+                    var epb = ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() as WebHttpBehavior;
+
+                    if (epb != null)
+                        epb.HelpEnabled = false;
+                }
+            }
+
+            // disable the Web HTTP (REST) help page
+            if (!features.HasFlag(MetadataFeatures.WebHttpHelpPage))
+            {
+                var ep = host.Description.Endpoints.Where(e => e.Binding is WebHttpBinding).FirstOrDefault();
+
+                if (ep != null)
+                {
+                    var epb = ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() as WebHttpBehavior;
+
+                    if (epb != null)
+                        epb.HelpEnabled = false;
+                }
             }
 
             // add the GET WSDL behavior if requested
