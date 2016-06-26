@@ -232,10 +232,16 @@
     <Compile Include="ExternalMetadata\WebExceptionDumpMetadata.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IMemberInfoComparer.cs" />
-    <Compile Include="ObjectTextDumper.BasicTypes.cs" />
+    <Compile Include="ObjectTextDumper.BasicTypes.cs">
+      <DependentUpon>ObjectTextDumper.cs</DependentUpon>
+    </Compile>
     <Compile Include="ObjectTextDumper.cs" />
-    <Compile Include="ObjectTextDumper.DumpState.cs" />
-    <Compile Include="ObjectTextDumper.MemberInfo.cs" />
+    <Compile Include="ObjectTextDumper.DumpState.cs">
+      <DependentUpon>ObjectTextDumper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectTextDumper.MemberInfo.cs">
+      <DependentUpon>ObjectTextDumper.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

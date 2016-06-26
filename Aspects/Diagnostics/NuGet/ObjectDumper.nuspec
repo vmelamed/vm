@@ -29,6 +29,7 @@
         </description>
         <releaseNotes>
             DumpAttribute can target now parameters and return values too.
+            Targets .NET 4.0.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>

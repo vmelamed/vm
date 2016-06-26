@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -33,7 +33,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
-
 
         #region IsDisposed tests
         [TestMethod]

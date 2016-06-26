@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -82,9 +82,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var target = GetHasher();
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
             var hash = target.Hash(input);
-            var output =  target.TryVerifyHash(input, hash);
+            var target1 = GetHasher();
+            var output =  target1.TryVerifyHash(input, hash);
 
             Assert.IsTrue(output);
+        }
+
+        [TestMethod]
+        public void CompareHashesTest()
+        {
+            var target = GetHasher();
+            var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+            var hash = target.Hash(input);
+            var target1 = GetHasher();
+            var hash1 =  target1.Hash(input);
+
+            Assert.IsTrue(hash.SequenceEqual(hash1));
         }
 
         [TestMethod]
@@ -99,9 +112,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
             var hash = target.Hash(input);
-            var output =  target.TryVerifyHash(input, hash);
+            var target1 = GetHasher();
+            var output =  target1.TryVerifyHash(input, hash);
 
             Assert.IsTrue(output);
+        }
+
+        [TestMethod]
+        public void CompareHashesSaltLength0Test()
+        {
+            var target = GetHasher();
+            if (target is PasswordHasher)
+                return;
+
+            target.SaltLength = 0;
+            var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+            var hash = target.Hash(input);
+            var target1 = GetHasher();
+            target1.SaltLength = 0;
+            var hash1 =  target1.Hash(input);
+
+            Assert.IsTrue(hash.SequenceEqual(hash1));
         }
 
         [TestMethod]
@@ -113,7 +144,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             hash = hash.Take(hash.Length/2).ToArray();
 
-            var output =  target.TryVerifyHash(input, hash);
+            var target1 = GetHasher();
+            var output =  target1.TryVerifyHash(input, hash);
 
             if (target is NullHasher)
                 Assert.IsTrue(output);
@@ -130,7 +162,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             hash[hash.Length-1] = unchecked((byte)~hash[hash.Length-1]);
 
-            var output = target.TryVerifyHash(input, hash);
+            var target1 = GetHasher();
+            var output = target1.TryVerifyHash(input, hash);
 
             if (target is NullHasher)
                 Assert.IsTrue(output);
@@ -176,7 +209,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var target = GetHasher();
             var input = (Stream)null;
             var output = new MemoryStream();
-            var verifiedTask = target.TryVerifyHashAsync(input, null);
+            var target1 = GetHasher();
+            var verifiedTask = target1.TryVerifyHashAsync(input, null);
 
             Assert.IsTrue(verifiedTask.Result);
         }
@@ -187,7 +221,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var target = GetHasher();
             var input = (Stream)null;
             var output = new MemoryStream();
-            var verified = target.TryVerifyHash(input, null);
+            var target1 = GetHasher();
+            var verified = target1.TryVerifyHash(input, null);
 
             Assert.IsTrue(verified);
         }
@@ -218,19 +253,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     Assert.IsFalse(target.TryVerifyHash(input, hash));
         }
 
-        void StreamParameterizedHashTest(int length, int saltLength = 8)
-        {
-            using (var target = GetHasher(saltLength))
-            {
-                var inputData = new byte[length].FillRandom();
-                var input = new MemoryStream(inputData);
-                var hash = target.Hash(input);
-
-                Assert.IsNotNull(hash);
-                Assert.IsTrue(hash.Length > 0);
-            }
-        }
-
         [TestMethod]
         public void RoundTripWrongLengthAsyncHashTest()
         {
@@ -255,6 +277,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     Assert.IsTrue(target.TryVerifyHashAsync(input, hash).Result);
                 else
                     Assert.IsFalse(target.TryVerifyHashAsync(input, hash).Result);
+        }
+
+        void StreamParameterizedHashTest(int length, int saltLength = 8)
+        {
+            using (var target = GetHasher(saltLength))
+            {
+                var inputData = new byte[length].FillRandom();
+                var input = new MemoryStream(inputData);
+                var hash = target.Hash(input);
+
+                Assert.IsNotNull(hash);
+                Assert.IsTrue(hash.Length > 0);
+            }
         }
 
         void StreamParameterizedAsyncHashTest(int length, int saltLength = 8)
@@ -297,6 +332,30 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     Assert.IsTrue(actual);
                 else
                     Assert.AreEqual(actual, !failed);
+            }
+        }
+
+        void CompareHashesParameterizedHashTest(int length, int saltLength = 8)
+        {
+            var clearData = new byte[length].FillRandom();
+            var input = new MemoryStream(clearData);
+            byte[] hash;
+
+            using (var target = GetHasher(saltLength))
+            {
+                hash = target.Hash(input);
+
+                Assert.IsNotNull(hash);
+                Assert.IsTrue(hash.Length > 0);
+            }
+
+            input.Seek(0, SeekOrigin.Begin);
+
+            using (var target = GetHasher(saltLength))
+            {
+                var actual = target.TryVerifyHash(input, hash);
+
+                Assert.IsTrue(actual);
             }
         }
 
@@ -343,6 +402,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void CompareHashesStream0HashTest()
+        {
+            CompareHashesParameterizedHashTest(0);
+        }
+
+        [TestMethod]
         public void StreamLessThan4kHashTest()
         {
             StreamParameterizedHashTest(1024);
@@ -361,11 +426,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void CompareHashesStreamLessThan4kHashTest()
+        {
+            CompareHashesParameterizedHashTest(1024);
+        }
+
+        [TestMethod]
         public void RoundTripStreamLessThan4kSaltLength0HashTest()
         {
             if (GetHasher() is PasswordHasher)
                 return;
             RoundTripParameterizedHashTest(1024, 0);
+        }
+
+        [TestMethod]
+        public void CompareHashesStreamLessThan4kSaltLength0HashTest()
+        {
+            if (GetHasher() is PasswordHasher)
+                return;
+            CompareHashesParameterizedHashTest(1024, 0);
         }
 
         [TestMethod]
@@ -405,6 +484,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void CompareHashesStream4kHashTest()
+        {
+            CompareHashesParameterizedHashTest(4096);
+        }
+
+        [TestMethod]
         public void StreamNx4kHashTest()
         {
             StreamParameterizedHashTest(3*4096);
@@ -417,6 +502,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
+        public void CompareHashesStreamNx4kHashTest()
+        {
+            CompareHashesParameterizedHashTest(3*4096);
+        }
+
+        [TestMethod]
         public void StreamMoreThanNx4kHashTest()
         {
             StreamParameterizedHashTest(3*4096+734);
@@ -426,6 +517,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void RoundTripStreamMoreThanNx4kTest()
         {
             RoundTripParameterizedHashTest(3*4096+734);
+        }
+
+        [TestMethod]
+        public void CompareHashesStreamMoreThanNx4kTest()
+        {
+            CompareHashesParameterizedHashTest(3*4096+734);
         }
 
         // --------------------------------------------
