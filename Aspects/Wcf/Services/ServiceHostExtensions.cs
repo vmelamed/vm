@@ -181,7 +181,8 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="host">The host.</param>
         /// <param name="features">The features.</param>
         /// <returns>ServiceHost.</returns>
-        /// <exception cref="System.ArgumentNullException">host</exception>
+        /// <exception cref="ArgumentNullException">host</exception>
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static ServiceHost AddMetadataBehaviors(
             this ServiceHost host,
             MetadataFeatures features = MetadataFeatures.All)

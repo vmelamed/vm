@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -45,8 +46,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public bool KeyLocationExists(string keyLocation)
         {
-            Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(keyLocation!=null, nameof(keyLocation));
+            Contract.Requires<ArgumentException>(keyLocation.Length > 0, "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(keyLocation.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
 
             throw new NotImplementedException();
         }
@@ -63,8 +65,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public byte[] GetKey(string keyLocation)
         {
-            Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(keyLocation), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(keyLocation!=null, nameof(keyLocation));
+            Contract.Requires<ArgumentException>(keyLocation.Length > 0, "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(keyLocation.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<byte[]>() != null, "The returned key is null.");
             Contract.Ensures(Contract.Result<byte[]>().Length != 0, "The returned key has 0 length.");
 

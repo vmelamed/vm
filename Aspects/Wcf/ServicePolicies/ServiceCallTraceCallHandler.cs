@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
@@ -7,8 +9,6 @@ using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
@@ -44,16 +44,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// Gets or sets a value indicating whether to include the custom context if any. Default: true.
         /// </summary>
         public bool IncludeCustomContext { get; set; }
-
-        bool HasWebOperationContext => WebOperationContext.Current!=null  &&
-                                       OperationContext
-                                            .Current
-                                            .EndpointDispatcher
-                                            .ChannelDispatcher
-                                            .BindingName
-                                            .ToUpperInvariant()
-                                            .Contains(nameof(WebHttpBinding)
-                                            .ToUpperInvariant());
         #endregion
 
         /// <summary>
@@ -171,7 +161,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            //Contract.Requires<ArgumentException>(callData is ServiceCallData, "callData must be of type ServiceCallData");
 
             var wcfCallData = callData as ServiceCallData;
 

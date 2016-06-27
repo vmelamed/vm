@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -30,7 +31,7 @@ namespace vm.Aspects
         }
 
         [ContractInvariantMethod]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         private void ObjectInvariant()
         {
             Contract.Invariant(_version != null);
@@ -39,7 +40,15 @@ namespace vm.Aspects
         /// <summary>
         /// Gets the semantic version as a <see cref="SemanticVersion"/> object.
         /// </summary>
-        public SemanticVersion SemanticVersion => _version;
+        public SemanticVersion SemanticVersion
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<SemanticVersion>() != null);
+
+                return _version;
+            }
+        }
 
         /// <summary>
         /// Gets the version as a string.

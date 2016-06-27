@@ -25,7 +25,7 @@
             <Word>dto</Word>
             <Word>validator</Word>
             <Word>validators</Word>
-            <Word>validateable</Word>
+            <Word>validatable</Word>
             <Word>configurator</Word>
             <Word>configurators</Word>
             <Word>cloneable</Word>
@@ -35,8 +35,8 @@
             <Word>quot</Word>
             <Word>eof</Word>
             <Word>msmq</Word>
-            <Word>tx</Word>
             <!-- transaction -->
+            <Word>tx</Word>
             <Word>wshttpbinding</Word>
             <Word>nettcpbinding</Word>
             <Word>netmsmqbinding</Word>
@@ -46,7 +46,6 @@
             <Word>ser</Word>
             <Word>xxp</Word>
             <Word>dcs</Word>
-            <Word>validatable</Word>
             <Word>combinator</Word>
             <Word>combinators</Word>
             <Word>subquery</Word>
