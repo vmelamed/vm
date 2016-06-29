@@ -232,8 +232,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.6.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AspectObjectDumper.1.6.6\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.7.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AspectObjectDumper.1.6.7\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
