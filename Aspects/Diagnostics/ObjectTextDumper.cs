@@ -497,10 +497,10 @@ namespace vm.Aspects.Diagnostics
                 pi.GetIndexParameters().Length > 0)
                 return;
 
+            object value = null;
             Type type = pi != null
                             ? pi.PropertyType
                             : fi.FieldType;
-            object value = null;
 
             try
             {
@@ -508,10 +508,10 @@ namespace vm.Aspects.Diagnostics
                             ? pi.GetValue(state.Instance, null)
                             : fi.GetValue(state.Instance);
             }
-            catch (TargetInvocationException)
+            catch (Exception x)
             {
                 // this should not happen but...
-                value = null;
+                value = string.Format(CultureInfo.InvariantCulture, "<{0}>", x.Message);
             }
 
             // should we dump a null value of the current property
@@ -579,7 +579,7 @@ namespace vm.Aspects.Diagnostics
 
             // did they specify DumpAttribute.DumpMethod?
             var dumpMethodName = state.CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass = state.CurrentPropertyDumpAttribute.DumpClass;
+            var dumpClass      = state.CurrentPropertyDumpAttribute.DumpClass;
 
             if (dumpClass==null  &&  string.IsNullOrWhiteSpace(dumpMethodName))
                 return false;
