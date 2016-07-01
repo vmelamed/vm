@@ -202,6 +202,10 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.8.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\AspectObjectDumper.1.6.8\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -274,10 +278,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
-      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
-    </ProjectReference>
     <ProjectReference Include="..\vm.Aspects.Security.Cryptography.Ciphers.csproj">
       <Project>{65e08f3e-21ac-4bb0-a7a3-6eacbadae9dd}</Project>
       <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
