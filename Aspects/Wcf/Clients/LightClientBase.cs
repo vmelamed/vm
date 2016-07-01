@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
@@ -10,7 +11,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
@@ -28,6 +28,12 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         /// <value>The channel factory.</value>
         public ChannelFactory<TContract> ChannelFactory { get; private set; }
+
+        /// <summary>
+        /// Gets the proxy of the service.
+        /// </summary>
+        public TContract Proxy { get; protected set; }
+
 
         #region Constructors
         /// <summary>

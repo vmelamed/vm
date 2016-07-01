@@ -21,7 +21,7 @@ namespace vm.Aspects.Diagnostics
     public class ClassMetadataRegistrar
     {
         /// <summary>
-        /// Registers the metadata defined in <see cref="N:Experian.Ems.Asap.Aspects.Diagnostics.ExternalMetadata"/>. 
+        /// Registers the metadata defined in <see cref="ExternalMetadata"/>. 
         /// Allows for chaining further registering more dump metadata.
         /// </summary>
         /// <returns>ClassMetadataRegistrar.</returns>

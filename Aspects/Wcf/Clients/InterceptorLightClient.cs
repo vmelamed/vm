@@ -16,11 +16,6 @@ namespace vm.Aspects.Wcf.Clients
     /// <typeparam name="TContract">The service interface.</typeparam>
     public abstract class InterceptorLightClient<TContract> : LightClientBase<TContract>, ICallIntercept where TContract : class
     {
-        /// <summary>
-        /// Gets the proxy of the service.
-        /// </summary>
-        public TContract Proxy { get; }
-
         #region ICallIntercept
         /// <summary>
         /// Invoked before the call.

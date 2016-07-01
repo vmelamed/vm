@@ -5,7 +5,7 @@ using vm.Aspects.Diagnostics.Properties;
 namespace vm.Aspects.Diagnostics
 {
     /// <summary>
-    /// Class DumpFormat exposes most of the format strings used by the dumper so that they can be changed programmaticly.
+    /// Class DumpFormat exposes most of the format strings used by the dumper so that they can be changed programmatically.
     /// </summary>
     public static class DumpFormat
     {

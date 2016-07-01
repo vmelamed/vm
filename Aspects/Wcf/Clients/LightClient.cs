@@ -16,11 +16,6 @@ namespace vm.Aspects.Wcf.Clients
     /// <typeparam name="TContract">The service interface.</typeparam>
     public class LightClient<TContract> : LightClientBase<TContract> where TContract : class
     {
-        /// <summary>
-        /// Gets the proxy of the service.
-        /// </summary>
-        public TContract Proxy { get; }
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory)

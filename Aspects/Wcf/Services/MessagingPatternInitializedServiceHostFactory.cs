@@ -45,7 +45,7 @@ namespace vm.Aspects.Wcf.Services
     /// 	AddEndpoints
     /// 		(
     /// 			does nothing, relies on the configuration to add endpoints
-    /// 			*** good method to override in order to add programmaticly endpoints ***
+    /// 			*** good method to override in order to add programmatically endpoints ***
     /// 		)
     /// 	(
     /// 		configures the bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,

@@ -498,12 +498,13 @@ namespace vm.Aspects.Diagnostics
                 return;
 
             object value = null;
-            Type type = pi != null
-                            ? pi.PropertyType
-                            : fi.FieldType;
+            Type type = null;
 
             try
             {
+                type = pi != null
+                            ? pi.PropertyType
+                            : fi.FieldType;
                 value = pi != null
                             ? pi.GetValue(state.Instance, null)
                             : fi.GetValue(state.Instance);

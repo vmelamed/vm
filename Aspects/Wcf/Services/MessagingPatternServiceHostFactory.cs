@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -10,10 +14,6 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -50,7 +50,7 @@ namespace vm.Aspects.Wcf.Services
     /// 	AddEndpoints
     /// 		(
     /// 			does nothing, relies on the configuration to add endpoints
-    /// 			*** good method to override in order to add programmaticly endpoints ***
+    /// 			*** good method to override in order to add programmatically endpoints ***
     /// 		)
     /// 	(
     /// 		configures the bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,
@@ -409,7 +409,7 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
-        /// Gives opportunity to the service host factory to add programmaticly endpoints before configuring them all.
+        /// Gives opportunity to the service host factory to add programmatically endpoints before configuring them all.
         /// </summary>
         /// <param name="host">The host.</param>
         /// <returns>ServiceHost.</returns>
