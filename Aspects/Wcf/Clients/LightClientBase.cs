@@ -77,6 +77,8 @@ namespace vm.Aspects.Wcf.Clients
             }
             else
             {
+                Contract.Assume(remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c)));
+
                 var binding = BuildChannelFactoryOrBinding(remoteAddress, messagingPattern, messagingAttribute);
 
                 if (binding != null)

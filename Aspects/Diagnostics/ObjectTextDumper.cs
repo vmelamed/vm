@@ -465,6 +465,7 @@ namespace vm.Aspects.Diagnostics
                         enumerateCustom);
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "It's OK in the dumper")]
         void DumpProperty(
             DumpState state)
         {

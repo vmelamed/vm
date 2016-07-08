@@ -10,8 +10,9 @@ namespace vm.Aspects.Model
     /// Class DomainValue inherits <see cref="BaseDomainValue"/> and implements <see cref="IHasStoreId{TId}"/>.
     /// </summary>
     /// <typeparam name="TId">The type of the t identifier.</typeparam>
+    [MetadataType(typeof(DomainValueMetadata))]
     [DebuggerDisplay("{GetType().Name, nq}[{Id,nq}]")]
-    public abstract class DomainValue<TId> : BaseDomainValue,
+    public abstract partial class DomainValue<TId> : BaseDomainValue,
         IHasStoreId<TId>
         where TId : IEquatable<TId>
     {
@@ -27,8 +28,6 @@ namespace vm.Aspects.Model
         /// Gets or sets the store identifier.
         /// The property is applied the attributes <see cref="KeyAttribute"/> and <see cref="ColumnAttribute"/> with parameter <c>Order = 0</c>.
         /// </summary>
-        [Key]
-        [Column(Order = 0)]
         public virtual TId Id
         {
             get { return _id; }

@@ -1,4 +1,6 @@
-﻿using vm.Aspects.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Model
 {
@@ -10,6 +12,8 @@ namespace vm.Aspects.Model
         [Dump(1)]
         public object Key { get; set; }
 
+        [Key]
+        [Column(Order = 0)]
         [Dump(2)]
         public object Id { get; set; }
     }
