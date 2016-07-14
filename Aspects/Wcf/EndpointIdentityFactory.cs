@@ -124,6 +124,6 @@ namespace vm.Aspects.Wcf
         /// <param name="identity">The identity.</param>
         /// <returns>EndpointIdentity.</returns>
         public static EndpointIdentity CreateEndpointIdentity(
-            System.IdentityModel.Claims.Claim identity) => EndpointIdentity.CreateIdentity(identity);
+            Claim identity) => identity!=null ? EndpointIdentity.CreateIdentity(identity) : null;
     }
 }

@@ -226,6 +226,15 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
         /// </summary>
+        /// <typeparam name="TService">The type of the service.</typeparam>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        protected ServiceHost CreateServiceHost<TService>(
+            Uri[] baseAddresses) => CreateServiceHost(typeof(TService), baseAddresses);
+
+        /// <summary>
+        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
+        /// </summary>
         /// <param name="serviceType">Specifies the type of service to host.</param>
         /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
         /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
