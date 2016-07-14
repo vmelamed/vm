@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IdentityModel.Claims;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -212,12 +213,10 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected MessagingPatternServiceHostFactory(
-            System.IdentityModel.Claims.Claim identityClaim,
+            Claim identityClaim,
             string messagingPattern)
             : this(messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(identityClaim != null, nameof(identityClaim));
-
             if (identityClaim != null)
                 EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityClaim);
         }
@@ -251,6 +250,19 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
+        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
+        /// </summary>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        protected ServiceHost CreateServiceHost<TService>(
+            Uri[] baseAddresses)
+        {
+            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
+
+            return CreateServiceHost(typeof(TService), baseAddresses);
+        }
+
+        /// <summary>
         /// Creates a service host outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
         /// Here it does the following:
         /// <list type="number">
@@ -278,6 +290,28 @@ namespace vm.Aspects.Wcf.Services
             Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
 
             return CreateServiceHost(serviceType, baseAddresses);
+        }
+
+        /// <summary>
+        /// Creates a service host outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
+        /// Here it does the following:
+        /// <list type="number"><item><description>
+        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
+        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
+        /// </description></item><item><description>
+        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
+        /// if there is a registered pattern binding factory in the current container.
+        /// </description></item></list>
+        /// </summary>
+        /// <typeparam name="TService">Specifies the type of service to host.</typeparam>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        public ServiceHost CreateHost<TService>(
+            params Uri[] baseAddresses)
+        {
+            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
+
+            return CreateServiceHost<TService>(baseAddresses);
         }
 
         #region Overridables

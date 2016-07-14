@@ -35,6 +35,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, StreamingConfigurator>(registrations, StreamingConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, StreamingNoSecurityConfigurator>(registrations, StreamingNoSecurityConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
+                    .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
 
                     .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, "http", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
@@ -43,9 +44,9 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
                     ;
             }
 
@@ -60,6 +61,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, StreamingConfigurator>(registrations, StreamingConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, StreamingNoSecurityConfigurator>(registrations, StreamingNoSecurityConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
+                    .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
 
                     .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, "http", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
@@ -68,9 +70,9 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
+                    //.RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
                     ;
             }
         }

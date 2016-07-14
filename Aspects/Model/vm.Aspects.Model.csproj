@@ -249,6 +249,9 @@
       <DependentUpon>DomainEntity.cs</DependentUpon>
     </Compile>
     <Compile Include="DomainValue.cs" />
+    <Compile Include="DomainValue.Metadata.cs">
+      <DependentUpon>DomainValue.cs</DependentUpon>
+    </Compile>
     <Compile Include="EFRepository\DateTimeSqlTypeConvention.cs" />
     <Compile Include="EFRepository\EFRepositoryBase.cs" />
     <Compile Include="EFRepository\EFRepositoryBase.IRepository.cs" />
