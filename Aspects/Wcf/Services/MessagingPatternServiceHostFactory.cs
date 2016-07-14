@@ -250,19 +250,6 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
-        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
-        /// </summary>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        protected ServiceHost CreateServiceHost<TService>(
-            Uri[] baseAddresses)
-        {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-
-            return CreateServiceHost(typeof(TService), baseAddresses);
-        }
-
-        /// <summary>
         /// Creates a service host outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
         /// Here it does the following:
         /// <list type="number">
