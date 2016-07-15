@@ -91,11 +91,10 @@ public <#= property.Type.AsString #> <#= property.Name #> { get; set; }
         targetProjectItem.Open(Constants.vsViewKindPrimary);
         
         var targetDocument = targetProjectItem.Document;
+        var selection      = targetDocument.Selection as TextSelection;
         var endPoint       = targetClass
                                 .GetEndPoint(vsCMPart.vsCMPartBody)
                                 .CreateEditPoint();
-
-        var selection      = targetDocument.Selection as TextSelection;
         
         selection.MoveToAbsoluteOffset(1, false);
         selection.MoveToPoint(endPoint, true);

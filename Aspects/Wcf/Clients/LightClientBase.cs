@@ -422,10 +422,6 @@ namespace vm.Aspects.Wcf.Clients
             configurator.Configure(binding);
         }
 
-        static EndpointIdentity GetIdentity(bool isUserPrincipalName, string name) => isUserPrincipalName
-                                                                                            ? EndpointIdentity.CreateUpnIdentity(name ?? string.Empty)
-                                                                                            : EndpointIdentity.CreateSpnIdentity(name ?? string.Empty);
-
         #region IDisposable pattern implementation
         /// <summary>
         /// The flag is being set when the object gets disposed.
