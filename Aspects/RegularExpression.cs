@@ -266,6 +266,34 @@ namespace vm.Aspects
         #endregion
 
         #region Internet addresses, URL, etc. regular expressions
+        #region NumericIpAddress
+        /// <summary>
+        /// Regular expression pattern which matches numeric IP (either v4 or v6) addresses for URL-s, e.g. 123.45.67.89 or 1:2ab3:3:4:5::8%9
+        /// </summary>
+        public const string RexNumericIpAddress = "(?i)^(?<ipNumIp>" + rexNumIpV4Adr + "|" + rexNumIpV6Adr + ")";
+
+        readonly static Lazy<Regex> _rexNumericIpAddress = new Lazy<Regex>(() => new Regex(RexNumericIpAddress, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex NumericIpAddress => _rexNumericIpAddress.Value;
+        #endregion
+
+        #region IpAddress
+        /// <summary>
+        /// Regular expression pattern which matches URL IP address in either numeric, FQDN (required domain) or "localhost"
+        /// </summary>
+        public const string RexIpAddress = "(?i)^" + rexUrlFullIpAdr;
+
+        readonly static Lazy<Regex> _rexIpAddress = new Lazy<Regex>(() => new Regex(RexIpAddress, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches URL IP address in either numeric, FQDN (required domain) or "localhost" (should be case insensitive!)
+        /// </summary>
+        public static Regex IpAddress => _rexIpAddress.Value;
+        #endregion
+
         #region Email address
         /// <summary>
         /// Matches an e-mail address with required DNS domain name
