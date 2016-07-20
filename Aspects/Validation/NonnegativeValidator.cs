@@ -46,8 +46,8 @@ namespace vm.Aspects.Validation
             ValidationResults validationResults)
         {
             var comparable = objectToValidate as IComparable;
-            var valid = comparable!=null &&                         
-                        comparable.CompareTo(_zero)>=0;
+            var valid = comparable != null &&
+                        comparable.CompareTo(_zero) >= 0;
 
             if (Negated)
                 valid = !valid;
