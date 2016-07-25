@@ -1,8 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -15,6 +11,10 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -35,7 +35,7 @@ namespace vm.Aspects.Wcf.Services
     /// 		registers some Dump metadata, 
     /// 		initializes the DIContainer, 
     /// 		gets the registrations, 
-    /// 		registers Facility-s, SEH-s, BindingConfigurator-s
+    /// 		registers Facility-s, ExceptionHandler-s, BindingConfigurator-s
     /// 	)
     /// 	DoRegisterDefaults
     /// 		(

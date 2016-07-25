@@ -35,18 +35,19 @@ namespace vm.Aspects.Wcf.Behaviors
             outputs = null;
 
             // get the request headers
-            var input = (Message)inputs[0];
+            var input          = (Message)inputs[0];
 
-            var httpRequest = (HttpRequestMessageProperty)input.Properties[HttpRequestMessageProperty.Name];
+            var httpRequest    = (HttpRequestMessageProperty)input.Properties[HttpRequestMessageProperty.Name];
             var origin         = httpRequest.Headers[Constants.Origin];
             var requestMethod  = httpRequest.Headers[Constants.AccessControlRequestMethod];
             var requestHeaders = httpRequest.Headers[Constants.AccessControlRequestHeaders];
 
             // build the appropriate HTTP response
-            var httpResponse = new HttpResponseMessageProperty();
-
-            httpResponse.SuppressEntityBody = true;
-            httpResponse.StatusCode         = HttpStatusCode.OK;
+            var httpResponse = new HttpResponseMessageProperty
+            {
+                SuppressEntityBody = true,
+                StatusCode         = HttpStatusCode.OK,
+            };
 
             if (origin != null)
             {
