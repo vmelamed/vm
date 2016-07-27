@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Diagnostics.DumpImplementation;
 
@@ -50,18 +49,11 @@ namespace vm.Aspects.Diagnostics
 
             if (serviceType != typeof(IMemberInfoComparer))
                 throw new ActivationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Service type {0} is not registered in the internal service locator.",
-                                serviceType.FullName));
+                            $"Service type {serviceType.FullName} is not registered in the internal service locator.");
 
             if (!string.IsNullOrWhiteSpace(key))
                 throw new ActivationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Named instance '{0}' of the service {1} is not registered in the internal service locator.",
-                                key,
-                                serviceType.FullName));
+                            $"Named instance '{key}' of the service {serviceType.FullName} is not registered in the internal service locator.");
 
             return new MemberDumpOrder();
         }

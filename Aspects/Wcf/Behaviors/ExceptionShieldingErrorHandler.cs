@@ -299,6 +299,8 @@ namespace vm.Aspects.Wcf.Behaviors
             HandleFault(unhandledException, ref fault, handlingInstanceId);
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.ServiceModel.FaultReasonText.#ctor(System.String)")]
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.ServiceModel.FaultReasonText.#ctor(System.String,System.Globalization.CultureInfo)")]
         void HandleFault(
             Exception error,
             ref Message fault,
@@ -309,10 +311,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
             if (_wcfContext.HasWebOperationContext)
                 BuildHttpResponseMessage(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {0}",
-                        GetHandlingInstanceId(error, handlingInstanceId)),
+                    $"An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {GetHandlingInstanceId(error, handlingInstanceId)}",
                     fault.Headers.Action,
                     HttpStatusCode.InternalServerError,
                     ref fault);
@@ -321,12 +320,7 @@ namespace vm.Aspects.Wcf.Behaviors
                                     fault.Version,
                                     new FaultException(
                                             new FaultReason(
-                                                new FaultReasonText(
-                                                        string.Format(
-                                                            CultureInfo.InvariantCulture,
-                                                            "An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {0}",
-                                                            GetHandlingInstanceId(error, handlingInstanceId)),
-                                                        CultureInfo.InvariantCulture)),
+                                                new FaultReasonText($"An error has occurred while consuming this service. Please contact your administrator for more information. Error ID: {GetHandlingInstanceId(error, handlingInstanceId)}")),
                                             FaultCode.CreateReceiverFaultCode(
                                                     SoapException.ServerFaultCode.Name,
                                                     SoapException.ServerFaultCode.Namespace))

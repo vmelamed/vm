@@ -27,13 +27,13 @@ namespace vm.Aspects.Diagnostics
             { typeof(Single),            (v, w, max) => w.Write((float)v) },
             { typeof(Double),            (v, w, max) => w.Write((double)v) },
             { typeof(Decimal),           (v, w, max) => w.Write((decimal)v) },
-            { typeof(DateTime),          (v, w, max) => w.Write("{0:o}", v) },
-            { typeof(DateTimeOffset),    (v, w, max) => w.Write("{0:o}", v) },
+            { typeof(DateTime),          (v, w, max) => w.Write($"{v:o}") },
+            { typeof(DateTimeOffset),    (v, w, max) => w.Write($"{v:o}") },
             { typeof(TimeSpan),          (v, w, max) => w.Write(v.ToString()) },
             { typeof(Uri),               (v, w, max) => w.Write(v.ToString()) },
             { typeof(Guid),              (v, w, max) => w.Write(v.ToString()) },
-            { typeof(IntPtr),            (v, w, max) => w.Write("0x{0:x16}", v) },
-            { typeof(UIntPtr),           (v, w, max) => w.Write("0x{0:x16}", v) },
+            { typeof(IntPtr),            (v, w, max) => w.Write($"0x{v:x16}") },
+            { typeof(UIntPtr),           (v, w, max) => w.Write($"0x{v:x16}") },
             { typeof(string),            DumpStringValue },
         };
         #endregion
@@ -131,7 +131,7 @@ namespace vm.Aspects.Diagnostics
                 if (type.IsEnum)
                     dump = DumpEnumValue;
                 else
-                    dump = (v, w, max) => _writer.Write("[{0} value]", type.Name);
+                    dump = (v, w, max) => _writer.Write($"[{type.Name} value]");
 
             dump(value, _writer, dumpMaxLength);
             return true;

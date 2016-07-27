@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security;
 using System.Security.Policy;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust;
 
@@ -2003,8 +2003,8 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust.Object1, vm.Aspe
 
         static class Object11Dumper
         {
-            public static string DumpObject11(Object11 value) => string.Format("Dumped by Objec11Dumper.Dump1: {0}", value.StringProperty);
-            public static string Dump(Object11 value) => string.Format("Dumped by Objec11Dumper.Dump: {0}", value.StringProperty);
+            public static string DumpObject11(Object11 value) => $"Dumped by Objec11Dumper.Dump1: {value.StringProperty}";
+            public static string Dump(Object11 value) => $"Dumped by Objec11Dumper.Dump: {value.StringProperty}";
         }
 
         class Object11
@@ -2016,9 +2016,9 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust.Object1, vm.Aspe
 
             public string StringProperty { get; set; }
 
-            public string DumpMe() => string.Format("Dumped by Objec11.DumpMe: {0}", StringProperty);
+            public string DumpMe() => $"Dumped by Objec11.DumpMe: {StringProperty}";
 
-            public static string DumpMeStatic(Object11 value) => string.Format("Dumped by Objec11.DumpMeStatic: {0}", value.StringProperty);
+            public static string DumpMeStatic(Object11 value) => $"Dumped by Objec11.DumpMeStatic: {value.StringProperty}";
         }
 
         class Object11_1 : Object11

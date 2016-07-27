@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
@@ -89,10 +88,7 @@ namespace vm.Aspects.Model
 
 #if DEBUG
             if (!results.IsValid)
-                Debug.WriteLine(
-                        "{0}\n{1}",
-                        ToString(),
-                        results.DumpString());
+                Debug.WriteLine($"{ToString()}\n{results.DumpString()}");
 #endif
 
             return results;
@@ -132,11 +128,7 @@ namespace vm.Aspects.Model
                 throw new ArgumentNullException(nameof(visitor));
 
             throw new NotImplementedException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Entities of type {0} do not accept visitors of type {1}.",
-                            GetType().Name,
-                            visitor.GetType().Name));
+                        $"Entities of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");
         }
         #endregion
 

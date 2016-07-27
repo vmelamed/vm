@@ -185,7 +185,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                         n.ReturnType!=null && n.ReturnType!=n.Body.Type ? new XAttribute(XNames.Attributes.DelegateType, n.Type) : null,
                                                                                         parameters,
                                                                                         body);
-                                                                                });                                                 
+                                                                                });
 
         /// <summary>
         /// Visits the children of the <see cref="T:System.Linq.Expressions.UnaryExpression" /> and generates XML element out of it.
@@ -256,7 +256,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                     var expressions = new Stack<XElement>();
 
                                                                                     // replace the parameters with references and reverse the expressions in the _elements stack
-                                                                                    for (var i=0; i<n.Expressions.Count(); i++)
+                                                                                    for (var i = 0; i<n.Expressions.Count(); i++)
                                                                                         expressions.Push(ReplaceParametersWithReferences(variables, _elements.Pop()));
 
                                                                                     Debug.Assert(n.Type != null, "The expression node's type is null - remove the default type value of typeof(void) below.");
@@ -304,7 +304,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                             node.Members != null
                                                                                 ? new XElement(
                                                                                     XNames.Elements.Members,
-                                                                                    node.Members.Select(x => VisitMemberInfo(x))) 
+                                                                                    node.Members.Select(x => VisitMemberInfo(x)))
                                                                                 : null));
 
         /// <summary>
@@ -393,7 +393,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                         {
                             var extensionElement = new XElement(XNames.Elements.Extension).AddTypeAttribute(n);
 
-                            for (int i=_elements.Count(); i>basePointer; i--)
+                            for (int i = _elements.Count(); i>basePointer; i--)
                                 extensionElement.Add(_elements.Pop());
                         });
         }
@@ -412,7 +412,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             if (!_labelTargetsUid.TryGetValue(target, out uid))
             {
-                uid = string.Format(CultureInfo.InvariantCulture, "L{0}", ++lastLabelUid);
+                uid = $"L{++lastLabelUid}";
                 _labelTargetsUid[target] = uid;
             }
 
@@ -435,7 +435,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             var element = new XElement(
                                 XNames.Elements.LabelTarget,
-                                node.Type != null && 
+                                node.Type != null &&
                                 node.Type != typeof(void)
                                     ? new XAttribute(
                                             XNames.Attributes.Type,
@@ -545,7 +545,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                 (n, e) =>
                                                                                 {
                                                                                     var comparison = node.Comparison != null                // get the non-default comparison method
-                                                                                                            ? VisitMethodInfo(node.Comparison) 
+                                                                                                            ? VisitMethodInfo(node.Comparison)
                                                                                                             : null;
                                                                                     var @default = node.DefaultBody != null                 // the body of the default case
                                                                                                             ? new XElement(
@@ -582,7 +582,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var caseExpression = _elements.Pop();
             var testValues     = new Stack<XElement>();
 
-            for (int i=0; i<node.TestValues.Count(); i++)
+            for (int i = 0; i<node.TestValues.Count(); i++)
                 testValues.Push(
                     new XElement(
                             XNames.Elements.Value,
@@ -607,12 +607,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                             base.VisitTry,
                                                                             (n, e) =>
                                                                             {
-                                                                                var @finally = n.Finally!=null 
+                                                                                var @finally = n.Finally!=null
                                                                                                     ? new XElement(
                                                                                                             XNames.Elements.Finally,
                                                                                                             _elements.Pop())
                                                                                                     : null;
-                                                                                var @catch = n.Fault!=null 
+                                                                                var @catch = n.Fault!=null
                                                                                                     ? new XElement(
                                                                                                             XNames.Elements.Fault,
                                                                                                             _elements.Pop())
@@ -624,7 +624,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                 {
                                                                                     catches = new Stack<XElement>();
 
-                                                                                    for (var i=0; i<n.Handlers.Count(); i++)
+                                                                                    for (var i = 0; i<n.Handlers.Count(); i++)
                                                                                         ((Stack<XElement>)catches).Push(_elements.Pop());
                                                                                 }
                                                                                 var @try = _elements.Pop();
@@ -653,10 +653,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var catchBlock = base.VisitCatchBlock(node);
 
             var body     = _elements.Pop();
-            var filter   = node.Filter!=null 
+            var filter   = node.Filter!=null
                                 ? new XElement(
                                         XNames.Elements.Filter,
-                                        _elements.Pop()) 
+                                        _elements.Pop())
                                 : null;
             var variable = node.Variable!=null ? _elements.Pop() : null;
 
@@ -698,7 +698,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                     {
                                                                                         var inits = new Stack<XElement>();
 
-                                                                                        for (var i=0; i<node.Initializers.Count(); i++)
+                                                                                        for (var i = 0; i<node.Initializers.Count(); i++)
                                                                                             inits.Push(_elements.Pop());
 
                                                                                         e.Add(_elements.Pop(),                      // the new node
@@ -723,7 +723,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var elementInit = base.VisitElementInit(node);
             var arguments = new Stack<XElement>();
 
-            for (var i=0; i<node.Arguments.Count(); i++)
+            for (var i = 0; i<node.Arguments.Count(); i++)
                 arguments.Push(_elements.Pop());
 
             _elements.Push(
@@ -744,7 +744,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             var inits = new Stack<XElement>();
 
-            for (var i=0; i<node.Expressions.Count(); i++)
+            for (var i = 0; i<node.Expressions.Count(); i++)
                 inits.Push(_elements.Pop());
 
             element.Add(
@@ -762,7 +762,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             var bounds = new Stack<XElement>();
 
-            for (var i=0; i<node.Expressions.Count(); i++)
+            for (var i = 0; i<node.Expressions.Count(); i++)
                 bounds.Push(_elements.Pop());
 
             element.Add(
@@ -802,7 +802,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                                         {
                                                                                             var bindings = new Stack<XElement>();
 
-                                                                                            for (var i=0; i<node.Bindings.Count(); i++)
+                                                                                            for (var i = 0; i<node.Bindings.Count(); i++)
                                                                                                 bindings.Push(_elements.Pop());
 
                                                                                             e.Add(
@@ -877,7 +877,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var binding = base.VisitMemberMemberBinding(node);
             var bindings = new Stack<XElement>();
 
-            for (var i=0; i<node.Bindings.Count(); i++)
+            for (var i = 0; i<node.Bindings.Count(); i++)
                 bindings.Push(_elements.Pop());
 
             _elements.Push(

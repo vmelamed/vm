@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -179,11 +178,7 @@ namespace vm.Aspects.Parsers
 
             if (repeatedIndex >= 0)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "The character-set definitions cannot have common characters."+
-                                "The character '{0}' appears in more than one of the parameters.",
-                                target[repeatedIndex]));
+                            $"The character-set definitions cannot have common characters. The character '{target[repeatedIndex]}' appears in more than one of the parameters.");
 
             return target + newClass;
         }
@@ -294,13 +289,7 @@ namespace vm.Aspects.Parsers
 
             if (!IsEndOfRecordOrFile(c))
                 throw new InvalidDataException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Expected records separating character at line {0}, column {1}. Got '{2}'->{3}",
-                                    _line.ToString(CultureInfo.InvariantCulture),
-                                    _column.ToString(CultureInfo.InvariantCulture),
-                                    c,
-                                    char.GetNumericValue(c)));
+                                $"Expected records separating character at line {_line}, column {_column}. Got '{c}'->{char.GetNumericValue(c)}");
 
             while (!IsFileSeparator(c) && c!=LF)
                 c = ReadNextChar();
@@ -320,13 +309,7 @@ namespace vm.Aspects.Parsers
 
             if (!IsFieldSeparator(c))
                 throw new InvalidDataException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Expected fields separating character at line {0}, column {1}. Got '{2}'->{3}",
-                                    _line.ToString(CultureInfo.InvariantCulture),
-                                    _column.ToString(CultureInfo.InvariantCulture),
-                                    c,
-                                    char.GetNumericValue(c)));
+                                $"Expected records separating character at line {_line}, column {_column}. Got '{c}'->{char.GetNumericValue(c)}");
 
             return PeekNextChar();
         }
@@ -360,13 +343,7 @@ namespace vm.Aspects.Parsers
 
             if (!IsFieldMark(c))
                 throw new InvalidDataException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Expected field marking character at line {0}, column {1}. Got '{2}'->{3}",
-                                    _line.ToString(CultureInfo.InvariantCulture),
-                                    _column.ToString(CultureInfo.InvariantCulture),
-                                    c,
-                                    char.GetNumericValue(c)));
+                                $"Expected records separating character at line {_line}, column {_column}. Got '{c}'->{char.GetNumericValue(c)}");
 
             return PeekNextChar();
         }

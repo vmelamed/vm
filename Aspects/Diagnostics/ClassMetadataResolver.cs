@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading;
 
 namespace vm.Aspects.Diagnostics
@@ -153,11 +152,7 @@ namespace vm.Aspects.Diagnostics
                         return;
 
                     throw new InvalidOperationException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "The type {0} is already associated with metadata type {1} and a DumpAttribute instance.",
-                            type.FullName,
-                            TypesDumpData[type].Metadata.FullName));
+                                $"The type {type.FullName} is already associated with metadata type {TypesDumpData[type].Metadata.FullName} and a DumpAttribute instance.");
                 }
 
                 TypesDumpData[type] = classDumpData;

@@ -129,7 +129,7 @@ namespace vm.Aspects
             return configuration.GetSection(configSection) as UnityConfigurationSection;
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification="It is called by the rewritten code.")]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "It is called by the rewritten code.")]
         [ContractAbbreviator]
         static void EnsuresContainerInitialized()
         {
@@ -164,11 +164,11 @@ namespace vm.Aspects
         /// </param>
         /// <returns>The created and configured container.</returns>
         /// <exception cref="System.InvalidOperationException">If the configuration section cannot be found in the configuration file.</exception>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="n/a")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "n/a")]
         public static IUnityContainer Initialize(
             string configFileName = DefaultConfigurationFileName,
-            string configSection  = DefaultConfigurationSectionName,
-            string containerName  = DefaultContainerName,
+            string configSection = DefaultConfigurationSectionName,
+            string containerName = DefaultContainerName,
             Func<string, string, UnityConfigurationSection> getConfigFileSection = null)
         {
             EnsuresContainerInitialized();
@@ -183,8 +183,8 @@ namespace vm.Aspects
 
                 try
                 {
-                    var unityConfigSection = getConfigFileSection!=null 
-                                                ? getConfigFileSection(configFileName, configSection) 
+                    var unityConfigSection = getConfigFileSection!=null
+                                                ? getConfigFileSection(configFileName, configSection)
                                                 : GetUnityConfigurationSection(configFileName, configSection);
 
                     // file was not specified or does not exist - try loading from web/app.config then
@@ -224,7 +224,7 @@ namespace vm.Aspects
         /// Useful when all registrations will be made in code or for tests.
         /// </summary>
         /// <returns>IUnityContainer.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="n/a")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "n/a")]
         public static IUnityContainer InitializeEmpty()
         {
             EnsuresContainerInitialized();
@@ -249,7 +249,7 @@ namespace vm.Aspects
         /// <summary>
         /// Resets the container. Used for tests only. Only in DEBUG builds.
         /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="n/a")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "n/a")]
         [Conditional("TEST")]
         public static void Reset()
         {
@@ -280,7 +280,7 @@ namespace vm.Aspects
 
             Contract.Assume(registrations != null);
 
-            writer.WriteLine("Container has {0} Registrations:", registrations.Count());
+            writer.WriteLine($"Container has {registrations.Count()} Registrations:");
 
             foreach (var item in registrations
                                     .OrderBy(i => i.RegisteredType.Name)
@@ -289,14 +289,12 @@ namespace vm.Aspects
             {
                 string regType = item.RegisteredType.IsGenericType
                                         ? string.Format(
-                                                CultureInfo.InvariantCulture,
                                                 "{0}<{1}>",
                                                 item.RegisteredType.Name.Split('`')[0],
                                                 string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
                                         : item.RegisteredType.Name;
                 string mapTo    = item.MappedToType.IsGenericType
                                         ? string.Format(
-                                                CultureInfo.InvariantCulture,
                                                 "{0}<{1}>",
                                                 item.MappedToType.Name.Split('`')[0],
                                                 string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
@@ -312,7 +310,7 @@ namespace vm.Aspects
                     mapTo = string.Empty;
                 lifetime = lifetime.Substring(0, lifetime.Length - "LifetimeManager".Length);
 
-                writer.WriteLine("+ {0}{1}  '{2}'  {3}", regType, mapTo, regName, lifetime);
+                writer.WriteLine($"+ {regType}{mapTo}  '{regName}'  {lifetime}");
             }
         }
 
@@ -332,13 +330,12 @@ namespace vm.Aspects
             {
                 container.Dump(writer);
                 Debug.Print(
-@"===============================
+$@"===============================
 
-{0}
+{writer.GetStringBuilder()}
 
 ===============================
-",
-                    writer.GetStringBuilder());
+");
             }
         }
     }

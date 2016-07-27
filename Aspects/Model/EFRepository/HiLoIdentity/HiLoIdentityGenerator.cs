@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 
 namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 {
@@ -107,10 +106,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             {
                 if (HighValue+1 >= MaxHighValue)
                     throw new InvalidOperationException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "FATAL ERROR: the HighValue of the ID generator for entity set {0} has reached the maximum value.",
-                            EntitySetName));
+                        $"FATAL ERROR: the HighValue of the ID generator for entity set {EntitySetName} has reached the maximum value.");
 
                 HighValue++;
                 LowValue = 0;

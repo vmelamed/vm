@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.IdentityModel.Claims;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -76,8 +75,7 @@ namespace vm.Aspects.Wcf
                 return EndpointIdentity.CreateRsaIdentity(identity);
             }
 
-            throw new NotSupportedException(
-                string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
+            throw new NotSupportedException($"Identity type {identityType} is not supported.");
         }
 
         /// <summary>
@@ -114,8 +112,7 @@ namespace vm.Aspects.Wcf
                 return EndpointIdentity.CreateRsaIdentity(identifyingCertificate);
             }
 
-            throw new NotSupportedException(
-                string.Format(CultureInfo.InvariantCulture, "Identity type {0} is not supported.", identityType));
+            throw new NotSupportedException($"Identity type {identityType} is not supported.");
         }
 
         /// <summary>

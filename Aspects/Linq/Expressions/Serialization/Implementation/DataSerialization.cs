@@ -225,10 +225,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             if (!CanSerialize(type))
                 throw new SerializationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Don't know how to serialize type \"{0}\".",
-                                type.AssemblyQualifiedName));
+                            $"Don't know how to serialize type \"{type.AssemblyQualifiedName}\".");
 
             Action<object, Type, XElement> serializer;
 
@@ -306,10 +303,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             if (enumType == null)
                 throw new SerializationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Don't know how to de-serialize {0}",
-                                element.ToString()));
+                            $"Don't know how to de-serialize {element.ToString()}");
 
             try
             {
@@ -318,22 +312,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             catch (ArgumentException ex)
             {
                 throw new SerializationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Cannot de-serialize {0} to {1} value.",
-                                element.Value,
-                                enumType.FullName),
-                            ex);
+                            $"Cannot de-serialize {element.Value} to {enumType.FullName} value.", ex);
             }
             catch (OverflowException ex)
             {
                 throw new SerializationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Cannot de-serialize {0} to {1} value.",
-                                element.Value,
-                                enumType.FullName),
-                            ex);
+                            $"Cannot de-serialize {element.Value} to {enumType.FullName} value.", ex);
             }
         }
         #endregion

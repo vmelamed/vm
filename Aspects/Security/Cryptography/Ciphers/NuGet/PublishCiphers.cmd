@@ -1,5 +1,5 @@
 if not .%vmCiphersVersion%.==.. goto afterSets
-set vmCiphersVersion=1.11.12
+set vmCiphersVersion=1.11.13
 set FrameworkVersion=4.6.1
 set FrameworkVersionConst=DOTNET461
 set Configuration=Release
@@ -25,8 +25,7 @@ if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-NuGet Push Ciphers.%vmCiphersVersion%.nupkg -source https://www.nuget.org
-if .%1.==.. (NuGet Push vm.Aspects.%vmCiphersVersion%.nupkg -source https://www.nuget.org) else (NuGet Push vm.Aspects.%vmCiphersVersion%.nupkg -source https://www.nuget.org -ApiKey %1)
+if .%1.==.. (NuGet Push Ciphers.%vmCiphersVersion%.nupkg -source https://www.nuget.org) else (NuGet Push Ciphers.%vmCiphersVersion%.nupkg -source https://www.nuget.org -ApiKey %1)
 :exit
 popd
 pause

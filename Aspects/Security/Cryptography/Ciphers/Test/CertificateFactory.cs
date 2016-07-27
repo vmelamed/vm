@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -81,11 +80,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 if (cert == null)
                     throw new InvalidOperationException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Could not find the certificate with the given thumb-print {0}. "+
-                                        "Change it to another value specifying certificate with any hash algorithm but MD5 or SHA, e.g. MD2.",
-                                    thumbprint));
+                                $"Could not find the certificate with the given thumb-print {thumbprint}. "+
+                                 "Change it to another value specifying certificate with any hash algorithm but MD5 or SHA, e.g. MD2.");
 
                 return cert;
             }

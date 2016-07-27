@@ -92,12 +92,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void CompareHashesTest()
         {
             var target = GetHasher();
+
             var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
             var hash = target.Hash(input);
             var target1 = GetHasher();
             var hash1 =  target1.Hash(input);
 
-            Assert.IsTrue(hash.SequenceEqual(hash1));
+            Assert.IsTrue(hash.SequenceEqual(hash1) == (target.SaltLength == 0));
         }
 
         [TestMethod]

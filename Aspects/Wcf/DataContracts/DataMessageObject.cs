@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
@@ -39,10 +38,7 @@ namespace vm.Aspects.Wcf.DataContracts
 
 #if DEBUG
             if (!results.IsValid)
-                Debug.WriteLine(
-                        "{0}\n{1}",
-                        ToString(),
-                        results.DumpString());
+                Debug.WriteLine($"{ToString()}\n{results.DumpString()}");
 #endif
 
             return results;
@@ -68,11 +64,7 @@ namespace vm.Aspects.Wcf.DataContracts
             Contract.Requires<ArgumentNullException>(visitor != null, nameof(visitor));
 
             throw new NotImplementedException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "The message of type {0} do not accept visitors of type {1}.",
-                            GetType().Name,
-                            visitor.GetType().Name));
+                        $"The message of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");
         }
     }
 }

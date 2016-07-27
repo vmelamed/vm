@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security;
@@ -80,11 +79,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
             return new XDocument(
                             new XDeclaration(XmlVersion, XmlEncoding, XmlStandalone),
                             AddComment
-                                ? new XComment(
-                                        string.Format(
-                                            CultureInfo.InvariantCulture,
-                                            " {0} ",
-                                            expression.ToString()))
+                                ? new XComment($" {expression.ToString()} ")
                                 : null,
                             ToXmlElement(expression));
         }
@@ -100,7 +95,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         {
             Contract.Requires<ArgumentNullException>(expression != null, nameof(expression));
             Contract.Ensures(Contract.Result<XElement>() != null);
-            
+
             var visitor = new ExpressionSerializingVisitor();
 
             visitor.Visit(expression);
@@ -144,10 +139,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
 
             if (element.Name != XNames.Elements.Expression)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Expected {0} element.",
-                                XNames.Elements.Expression),
+                            $"Expected {XNames.Elements.Expression} element.",
                             nameof(element));
 
             var visitor = new ExpressionDeserializingVisitor();

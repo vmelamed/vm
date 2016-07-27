@@ -52,13 +52,7 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="utcNow">The current time.</param>
         protected override void WriteDateTime(
-            DateTime utcNow)
-        {
-            Writer.WriteLine(
-                    "{0} ({1:o})",
-                    utcNow.ToLocalTime(),
-                    utcNow);
-        }
+            DateTime utcNow) => Writer.WriteLine($"{utcNow.ToLocalTime()} ({utcNow:o})");
 
         /// <summary>
         /// Writes the additional properties to the <see cref="T:System.IO.TextWriter"/>.

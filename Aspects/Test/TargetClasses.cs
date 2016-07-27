@@ -15,7 +15,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     public class RegisteredTargetTypeInAppConfig
@@ -24,7 +24,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     public class RegisteredTargetTypeInTestConfig
@@ -33,7 +33,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace vm.Aspects.Tests
 
         Guid uniqueId = Guid.NewGuid();
 
-        public string IdentifyUniqueSource() => string.Format("{0} ({1})", IdentifySource(), uniqueId);
+        public string IdentifyUniqueSource() => $"{IdentifySource()} ({uniqueId})";
     }
 
     #endregion

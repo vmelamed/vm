@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Security.Cryptography;
-using System.Threading;
 using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -92,10 +89,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 if (hashAlgorithm == null)
                     // if unsuccessful - throw an exception.
                     throw new ActivationException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "The name \"{0}\" was not recognized as a valid keyed hash algorithm.",
-                                    _hashAlgorithmName));
+                                $"The name \"{_hashAlgorithmName}\" was not recognized as a valid keyed hash algorithm.");
         }
 
         /// <summary>

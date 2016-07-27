@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Runtime.Serialization;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Diagnostics;
@@ -52,10 +51,7 @@ namespace vm.Aspects.Wcf.DataContracts
 
 #if DEBUG
             if (!results.IsValid)
-                Debug.WriteLine(
-                        "{0}\n{1}",
-                        ToString(),
-                        results.DumpString());
+                Debug.WriteLine($"{ToString()}\n{results.DumpString()}");
 #endif
 
             return results;
@@ -89,11 +85,7 @@ namespace vm.Aspects.Wcf.DataContracts
             Contract.Requires<ArgumentNullException>(visitor != null, nameof(visitor));
 
             throw new NotImplementedException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Either entities of type {0} do not accept visitors of type {1} or the visitors do not have a concrete overload for {0}.",
-                            GetType().Name,
-                            visitor.GetType().Name));
+                        $"Either entities of type {GetType().Name} do not accept visitors of type {1} or the visitors do not have a concrete overload for {visitor.GetType().Name}.");
         }
     }
 }

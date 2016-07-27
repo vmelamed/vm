@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
@@ -77,7 +78,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             : base(symmetricAlgorithmName)
         {
             Contract.Requires<ArgumentNullException>(password != null, nameof(password));
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(password), "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(password!=null, nameof(password));
+            Contract.Requires<ArgumentException>(password.Length > 0, "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(password.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(numberOfIterations >= PasswordDerivationConstants.MinNumberOfIterations, "The "+nameof(numberOfIterations)+" cannot be at less than \"PasswordDerivationConstants.MinNumberOfIterations\" bytes long.");
             Contract.Requires<ArgumentException>(saltLength >= PasswordDerivationConstants.MinSaltLength, "The "+nameof(saltLength)+" cannot be at less than \"PasswordDerivationConstants.MinSaltLength\" bytes long.");
             Contract.Ensures(_password != null && _password.Length==password.Length);

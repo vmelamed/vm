@@ -513,7 +513,7 @@ namespace vm.Aspects.Diagnostics
             catch (Exception x)
             {
                 // this should not happen but...
-                value = string.Format(CultureInfo.InvariantCulture, "<{0}>", x.Message);
+                value = $"<{x.Message}>";
             }
 
             // should we dump a null value of the current property
@@ -575,7 +575,7 @@ namespace vm.Aspects.Diagnostics
             // did they specify DumpAttribute.ValueFormat="ToString"?
             if (state.CurrentPropertyDumpAttribute.ValueFormat == Resources.ValueFormatToString)
             {
-                _writer.Write("{0}", value.ToString());
+                _writer.Write(value.ToString());
                 return true;
             }
 
@@ -613,13 +613,9 @@ namespace vm.Aspects.Diagnostics
                 }
 
                 if (dumpMethod != null)
-                    _writer.Write("{0}", (string)dumpMethod.Invoke(null, new object[] { value }));
+                    _writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
                 else
-                    _writer.Write("*** Could not find a public, static, method {0}, with return type of System.String, "+
-                                    "with a single parameter of type {1} in the class {2}.",
-                                    dumpMethodName,
-                                    type.FullName,
-                                    dumpClass.FullName);
+                    _writer.Write($"*** Could not find a public, static, method {dumpMethodName}, with return type of System.String, with a single parameter of type {type.FullName} in the class {dumpClass.FullName}.");
 
                 return true;
             }
@@ -657,9 +653,9 @@ namespace vm.Aspects.Diagnostics
             if (dumpMethod != null)
             {
                 if (dumpMethod.IsStatic)
-                    _writer.Write("{0}", (string)dumpMethod.Invoke(null, new object[] { value }));
+                    _writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
                 else
-                    _writer.Write("{0}", (string)dumpMethod.Invoke(value, null));
+                    _writer.Write((string)dumpMethod.Invoke(value, null));
 
                 return true;
             }
@@ -667,18 +663,14 @@ namespace vm.Aspects.Diagnostics
             if (dumpMethod2 != null)
             {
                 if (dumpMethod2.IsStatic)
-                    _writer.Write("{0}", (string)dumpMethod2.Invoke(null, new object[] { value }));
+                    _writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
                 else
-                    _writer.Write("{0}", (string)dumpMethod2.Invoke(value, null));
+                    _writer.Write((string)dumpMethod2.Invoke(value, null));
 
                 return true;
             }
 
-            _writer.Write("*** Could not find a public instance method with name {0} and no parameters or "+
-                          "static method with a single parameter of type {1}, "+
-                          "with return type of System.String in the class {1}.",
-                          dumpMethodName,
-                          type.FullName);
+            _writer.Write($"*** Could not find a public instance method with name {dumpMethodName} and no parameters or static method with a single parameter of type {type.FullName}, with return type of System.String in the class {type.FullName}.");
 
             return true;
         }
@@ -912,11 +904,7 @@ namespace vm.Aspects.Diagnostics
                 if (tickIndex > -1)
                     typeName = typeName.Substring(0, tickIndex);
 
-                typeName = string.Format(
-                                CultureInfo.InvariantCulture,
-                                "{0}<{1}>",
-                                typeName,
-                                string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t))));
+                typeName = $"{typeName}<{string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t)))}>";
             }
 
             if (type.IsArray)

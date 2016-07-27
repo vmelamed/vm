@@ -123,7 +123,7 @@ namespace vm.Aspects.Wcf
 
                 _webHeaderName  = string.IsNullOrWhiteSpace(_namespace)
                                      ? _name
-                                     : string.Format(CultureInfo.InvariantCulture, "{0}-{1}", _namespace, _name);
+                                     : $"{_namespace}-{_name}";
             }
         }
 
@@ -222,10 +222,7 @@ namespace vm.Aspects.Wcf
                 {
                     if (WebOperationContext.Current.OutgoingRequest.Headers.Get(_webHeaderName) != null)
                         throw new InvalidOperationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "A header {0} already exists in the message.",
-                                _webHeaderName));
+                            $"A header {_webHeaderName} already exists in the message.");
 
                     value.AddToHeaders(WebOperationContext.Current.OutgoingRequest.Headers);
                 }
@@ -233,11 +230,7 @@ namespace vm.Aspects.Wcf
                 {
                     if (OperationContext.Current.OutgoingMessageHeaders.FindHeader(_name, _namespace) > -1)
                         throw new InvalidOperationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "A header {1}/{0} already exists in the message.",
-                                _name,
-                                _namespace));
+                            $"A header {_name}/{_namespace} already exists in the message.");
 
                     value.AddToHeaders(OperationContext.Current.OutgoingMessageHeaders);
                 }

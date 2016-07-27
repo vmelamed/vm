@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.ServiceLocation;
 
@@ -198,11 +197,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             if (v.Key == null)
                 throw new ActivationException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Service type {0} with key {1} is not registered in the internal service locator.",
-                                serviceType.FullName,
-                                key));
+                            $"Service type {serviceType.FullName} with key {key} is not registered in the internal service locator.");
 
             return v.Value.Value;
         }

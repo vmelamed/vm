@@ -72,6 +72,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
         /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KeyedHasher(
             X509Certificate2 certificate,
             string hashAlgorithmName = null,

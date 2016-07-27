@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -81,11 +80,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return hashAlgorithmName;
 
             throw new NotSupportedException(
-                        string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Could not recognize or unsupported OID {0} ({1})",
-                                certificate.SignatureAlgorithm.Value,
-                                certificate.SignatureAlgorithm.FriendlyName));
+                        $"Could not recognize or unsupported OID {certificate.SignatureAlgorithm.Value} ({certificate.SignatureAlgorithm.FriendlyName})");
         }
     }
 }

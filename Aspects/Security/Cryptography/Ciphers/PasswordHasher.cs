@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -63,26 +62,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (numberOfIterations < PasswordDerivationConstants.MinNumberOfIterations)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "The number of iterations should be at least {0} bytes long.",
-                                PasswordDerivationConstants.MinNumberOfIterations),
+                            $"The number of iterations should be at least {PasswordDerivationConstants.MinNumberOfIterations} bytes long.",
                             nameof(numberOfIterations));
 
             if (hashLength < PasswordDerivationConstants.MinHashLength)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "The hash should be at least {0} bytes long.",
-                                PasswordDerivationConstants.MinHashLength),
+                            $"The hash should be at least {PasswordDerivationConstants.MinHashLength} bytes long.",
                             nameof(hashLength));
 
             if (saltLength < PasswordDerivationConstants.MinSaltLength)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Password hashes must always be salted with at least {0} bytes.",
-                                PasswordDerivationConstants.MinSaltLength),
+                            $"Password hashes must always be salted with at least {PasswordDerivationConstants.MinSaltLength} bytes.",
                             nameof(saltLength));
 
             _saltLength         = saltLength;
@@ -284,10 +274,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             {
                 if (value < PasswordDerivationConstants.MinSaltLength)
                     throw new ArgumentException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Password hashes must always be salted with at least {0} bytes.",
-                                    PasswordDerivationConstants.MinSaltLength),
+                                $"Password hashes must always be salted with at least {PasswordDerivationConstants.MinSaltLength} bytes.",
                                 "value");
                 _saltLength = value;
             }

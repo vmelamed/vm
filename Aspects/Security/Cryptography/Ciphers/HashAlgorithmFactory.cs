@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Security.Cryptography;
 using Microsoft.Practices.ServiceLocation;
 
@@ -90,10 +89,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 if (hashAlgorithm == null)
                     // if unsuccessful - throw an exception.
                     throw new ActivationException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "The name \"{0}\" was not recognized as a valid hash algorithm.",
-                                    _hashAlgorithmName));
+                                $"The name \"{_hashAlgorithmName}\" was not recognized as a valid hash algorithm.");
         }
 
         /// <summary>

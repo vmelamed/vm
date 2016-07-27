@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
 using vm.Aspects.Visitor;
@@ -43,10 +41,7 @@ namespace vm.Aspects.Model
 
 #if DEBUG
             if (!results.IsValid)
-                Debug.WriteLine(
-                        "{0}\n{1}",
-                        ToString(),
-                        results.DumpString());
+                Debug.WriteLine($"{ToString()}\n{results.DumpString()}");
 #endif
 
             return results;
@@ -66,12 +61,7 @@ namespace vm.Aspects.Model
             if (visitor == null)
                 throw new ArgumentNullException(nameof(visitor));
 
-            throw new NotImplementedException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Either values of type {0} do not accept visitors of type {1} or the visitors do not have a concrete overload for {0}.",
-                            GetType().Name,
-                            visitor.GetType().Name));
+            throw new NotImplementedException($"Either values of type {GetType().Name} do not accept visitors of type {1} or the visitors do not have a concrete overload for {visitor.GetType().Name}.");
         }
         #endregion
 

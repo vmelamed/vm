@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Security.Cryptography;
 using Microsoft.Practices.ServiceLocation;
 
@@ -73,10 +72,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 if (symmetricAlgorithm == null)
                     // if unsuccessful - throw an exception.
                     throw new ActivationException(
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "The name \"{0}\" was not recognized as a valid symmetric algorithm.",
-                                    _symmetricAlgorithmName));
+                                $"The name \"{_symmetricAlgorithmName}\" was not recognized as a valid symmetric algorithm.");
         }
 
         /// <summary>

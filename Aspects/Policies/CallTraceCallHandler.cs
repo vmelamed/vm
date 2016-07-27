@@ -520,9 +520,7 @@ namespace vm.Aspects.Policies
                 return;
 
             writer.WriteLine();
-            writer.Write(
-                @"Call duration: {0:d\.hh\.mm\.ss\.fffffff}",
-                callData.CallTimer.Elapsed);
+            writer.Write($@"Call duration: {callData.CallTimer.Elapsed:d\.hh\.mm\.ss\.fffffff}");
         }
 
         /// <summary>
@@ -541,9 +539,7 @@ namespace vm.Aspects.Policies
                 return;
 
             writer.WriteLine();
-            writer.Write(
-                "Caller Identity: {0}",
-                callData.IdentityName);
+            writer.Write($"Caller Identity: {callData.IdentityName}");
         }
 
         /// <summary>
@@ -560,10 +556,7 @@ namespace vm.Aspects.Policies
 
             // dump the method on a single line in a simple format
             writer.WriteLine();
-            writer.Write(
-                "{0}.{1}",
-                input.Target.GetType().Name,
-                input.MethodBase.Name);
+            writer.Write($"{input.Target.GetType().Name}.{input.MethodBase.Name}");
         }
 
         /// <summary>

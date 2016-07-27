@@ -235,11 +235,7 @@ namespace vm.Aspects.Wcf.Msmq
             if (isDlq)
                 queueName = queueName + DeadLetterQueueSuffix;
 
-            return string.Format(
-                            CultureInfo.InvariantCulture,
-                            ".{0}\\{1}",
-                            QueuePrefix(isPublic),
-                            queueName);
+            return $".{QueuePrefix(isPublic)}\\{queueName}";
         }
 
         static string QueueUrl(
@@ -262,7 +258,6 @@ namespace vm.Aspects.Wcf.Msmq
                 queueName = queueName + DeadLetterQueueSuffix;
 
             return string.Format(
-                            CultureInfo.InvariantCulture,
                             "net.msmq://{0}{1}/{2}",
                             isDlq ? "localhost" : machine,
                             isPublic ? PublicAddress : PrivateAddress,

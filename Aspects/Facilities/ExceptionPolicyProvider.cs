@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
@@ -156,11 +155,7 @@ namespace vm.Aspects.Facilities
                         if (duplicates.Any())
                         {
                             var message = new StringBuilder(
-                                                string.Format(
-                                                    CultureInfo.InvariantCulture,
-                                                    "One of the exception policy providers brings duplicate exception entries to policy {0}:\n{1}",
-                                                    d.Key,
-                                                    string.Join("\n  ", duplicates.Select(x => x.ExceptionType.FullName))));
+                                                $"One of the exception policy providers brings duplicate exception entries to policy {d.Key}:\n{string.Join("\n  ", duplicates.Select(x => x.ExceptionType.FullName))}");
 
                             throw new InvalidOperationException(message.ToString());
                         }

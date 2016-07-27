@@ -35,9 +35,9 @@ namespace vm.Aspects
         /// <returns>
         /// The object.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="1")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
         [SuppressMessage("Microsoft.Security", "CA2136:TransparencyAnnotationsShouldNotConflictFxCopRule")]
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="Any exceptions here are most likely bugs which should not kill the process.")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Any exceptions here are most likely bugs which should not kill the process.")]
         [SecuritySafeCritical]
         public static object DumpText(
             this object value,
@@ -55,9 +55,7 @@ namespace vm.Aspects
             }
             catch (Exception x)
             {
-                writer.WriteLine(
-                    "\n\nATTENTION:\nThe TextDumper threw an exception:\n{0}",
-                    x.ToString());
+                writer.WriteLine($"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}");
             }
 
             return value;
@@ -87,7 +85,7 @@ namespace vm.Aspects
             DumpAttribute dumpAttribute = null)
         {
             Contract.Ensures(Contract.Result<string>() != null);
-            
+
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
                 value.DumpText(writer, indentLevel, dumpMetadata, dumpAttribute);

@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests
 {
@@ -79,7 +79,7 @@ namespace vm.Aspects.Tests
                                                           BindingFlags.IgnoreCase)
                             .GetValue(null) as Regex;
 
-            Assert.IsNotNull(regex, string.Format("The name of the Regex property {0} is either misspelled in the test file or does not exist.", regexIdentifier));
+            Assert.IsNotNull(regex, $"The name of the Regex property {regexIdentifier} is either misspelled in the test file or does not exist.");
 
             Assert.AreEqual(
                 expected,

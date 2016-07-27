@@ -1,15 +1,14 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 
@@ -196,7 +195,9 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes the DI container with all necessary registrations. The overloads should always call this method last.
         /// </summary>
-        /// <param name="serviceType">Type of the service.</param>
+        /// <param name="serviceType">Type of the service.
+        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in an override of <see cref="DoRegisterDefaults"/>.
+        /// </param>
         /// <param name="container">The container.</param>
         /// <param name="registrations">The registrations.</param>
         /// <returns>The current IUnityContainer.</returns>
@@ -224,7 +225,9 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Determines the resolve name of the initializer.
         /// </summary>
-        /// <param name="serviceType">Type of the service.</param>
+        /// <param name="serviceType">Type of the service.
+        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
+        /// </param>
         /// <returns>the resolve name of the initializer</returns>
         protected virtual string ObtainInitializerResolveName(
             Type serviceType)
@@ -288,7 +291,9 @@ namespace vm.Aspects.Wcf.Services
             {
 #if DEBUG
                 // this IF is probably not needed but let's see if we ever get here
-                Contract.Assume(DIContainer.IsInitialized, "Oh well, we DO need to load the container configuration for a second time. Obviously these are different app.domains.");
+                Facility.LogWriter
+                        .EventLogError("The DI container was not properly initialized. Retrying.");
+
                 Debugger.Break();
 #endif
                 RegisterDefaults(serviceType);
@@ -308,19 +313,14 @@ namespace vm.Aspects.Wcf.Services
                                                         HostInitialized(host, serviceType);
                                                     else
                                                         throw new InvalidOperationException(
-                                                                    string.Format(
-                                                                            CultureInfo.InvariantCulture,
-                                                                            "{0} could not initialize the host.",
-                                                                            GetType().Name));
+                                                                    $"{GetType().Name} could not initialize the host.");
 
                                                     return t.Result;
                                                 });
             else
                 Facility.LogWriter
                         .EventLogError(
-                            "The service host factory for service {0} was not initialized: could not find an initializer in the container. "+
-                            "If you do not need one - use BindingPatternServiceHostFactory instead.",
-                            serviceType.Name);
+                            $"The service host factory for service {serviceType.Name} was not initialized: could not find an initializer in the container. If you do not need one - use BindingPatternServiceHostFactory instead.");
         }
     }
 }

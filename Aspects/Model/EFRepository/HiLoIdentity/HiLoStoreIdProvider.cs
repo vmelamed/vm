@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
@@ -68,10 +67,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
             if (id > 0x7FFFFFFF0)
                 throw new InvalidOperationException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "FATAL ERROR: the ID generator for type {0} has reached the maximum value.",
-                        typeof(T).FullName));
+                    $"FATAL ERROR: the ID generator for type {typeof(T).FullName} has reached the maximum value.");
 
             return unchecked((int)id);
         }

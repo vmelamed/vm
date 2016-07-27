@@ -50,7 +50,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                Contract.Ensures(Contract.Result<string>()!=null);
+                Contract.Ensures(Contract.Result<string>().Length > 0);
+                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 return _hashAlgorithmName;
             }
@@ -328,7 +330,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 if (SignatureLocation == SignatureLocation.Enveloped)
                     reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
 
-                if (SignatureLocation == SignatureLocation.Detached  &&  documentLocation!=null)
+                if (SignatureLocation == SignatureLocation.Detached  &&  documentLocation!=null  &&  !documentLocation.IsFile)
                     reference.Uri = documentLocation.ToString();
                 else
                     reference.Uri = "";
@@ -441,7 +443,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             HashSet<string> xmlIds)
         {
             Contract.Requires<ArgumentNullException>(xmlIds!=null, nameof(xmlIds));
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()), "Could not generate a valid ID.");
+            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             string xmlId;
 
@@ -521,7 +525,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         void Invariant()
         {
             Contract.Invariant(_asymmetric != null, "The signing/signature verification object cannot be null.");
-            Contract.Invariant(IdAttributeNames == null || IdAttributeNames.All(id => !string.IsNullOrWhiteSpace(id)),
+            Contract.Invariant(IdAttributeNames == null || IdAttributeNames.All(id => id!=null && id.Any(c => !char.IsWhiteSpace(c))),
                                     "The \"IdAttributeNames\" contains invalid attribute names.");
         }
     }

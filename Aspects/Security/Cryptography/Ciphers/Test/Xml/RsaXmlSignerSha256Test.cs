@@ -4,6 +4,7 @@ using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 {
     [TestClass]
+    [DeploymentItem("..\\..\\Xml\\TestOrder.xml")]
     public class RsaXmlSignerSha256Test : GenericXmlSignerTest<RsaXmlSigner>
     {
         public override IXmlSigner GetSigner(SignatureLocation signatureLocation = SignatureLocation.Enveloped) => new RsaXmlSigner(CertificateFactory.GetSigningSha256Certificate())

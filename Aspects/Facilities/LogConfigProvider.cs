@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
@@ -174,11 +173,7 @@ namespace vm.Aspects.Facilities
                 {
                     // wrap and throw
                     throw new ConfigurationErrorsException(
-                                string.Format(
-                                        CultureInfo.InvariantCulture,
-                                        "Cannot find a logging configuration with resolve name \"{0}\".",
-                                        logConfigurationResolveName),
-                                x);
+                                $"Cannot find a logging configuration with resolve name \"{logConfigurationResolveName}\".", x);
                 }
         }
 
@@ -244,7 +239,6 @@ namespace vm.Aspects.Facilities
                 // wrap and throw
                 throw new ConfigurationErrorsException(
                             string.Format(
-                                    CultureInfo.InvariantCulture,
                                     "There was an error loading the configuration from {0}.",
                                     string.IsNullOrWhiteSpace(configFileName) ? "the system configuration file" : configFileName),
                             x);

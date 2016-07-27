@@ -6,6 +6,7 @@ using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 {
     [TestClass]
+    [DeploymentItem("..\\..\\Xml\\TestOrder.xml")]
     public class RsaXmlSignerSha256_1Test : GenericXmlSignerTest<RsaXmlSigner>
     {
 #pragma warning disable CS0618 // Type or member is obsolete

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.MsmqIntegration;
@@ -65,10 +64,7 @@ namespace vm.Aspects.Wcf.Bindings
 
             if (!_configurators.TryGetValue(binding.GetType(), out configure))
                 throw new NotSupportedException(
-                            string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Configuration of {0} binding is not supported.",
-                                    binding.GetType().Name));
+                            $"Configuration of {binding.GetType().Name} binding is not supported.");
 
             return configure(this, binding);
         }
@@ -89,11 +85,7 @@ namespace vm.Aspects.Wcf.Bindings
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
 
             if (string.IsNullOrWhiteSpace(binding.Name))
-                binding.Name = string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "{0}_{1}",
-                                    binding.GetType().Name,
-                                    MessagingPattern);
+                binding.Name = $"{binding.GetType().Name}_{MessagingPattern}";
 
             // in DEBUG mode increase the timeouts, so that one can debug without timing out.
             binding.SendTimeout    = Constants.DefaultSendTimeout;
@@ -118,11 +110,7 @@ namespace vm.Aspects.Wcf.Bindings
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
 
             throw new NotSupportedException(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "A {0} binding is incompatible with messaging pattern {1}.",
-                            binding.GetType().Name,
-                            MessagingPattern));
+                        $"A {binding.GetType().Name} binding is incompatible with messaging pattern {MessagingPattern}.");
         }
 
         /// <summary>

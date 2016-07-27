@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace vm.Aspects.Visitor
 {
@@ -120,12 +119,7 @@ namespace vm.Aspects.Visitor
             if (visited == null)
                 throw new ArgumentNullException(nameof(visited));
 
-            throw new NotImplementedException(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "The visitor {0} does not implement IVisitor<{1}>.",
-                    GetType().Name,
-                    visited.GetType().Name));
+            throw new NotImplementedException($"The visitor {GetType().Name} does not implement IVisitor<{visited.GetType().Name}>.");
         }
     }
 }

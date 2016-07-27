@@ -156,11 +156,7 @@ namespace vm.Aspects.Model
 
             if (g == null)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "The property {0} is not specified in a "+nameof(DecryptedAttribute)+"."+nameof(DecryptedAttribute.EncryptedIn)+" property.",
-                                encryptedIn),
-                            nameof(encryptedIn));
+                            $"The property {encryptedIn} is not specified in a {nameof(DecryptedAttribute)}.{nameof(DecryptedAttribute.EncryptedIn)} property.");
 
             Encrypt(g);
         }
@@ -230,11 +226,7 @@ namespace vm.Aspects.Model
 
             if (g == null)
                 throw new ArgumentException(
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "The property {0} is not specified in a "+nameof(DecryptedAttribute)+"."+nameof(DecryptedAttribute.EncryptedIn)+" property.",
-                                encryptedIn),
-                            nameof(encryptedIn));
+                            $"The property {nameof(encryptedIn)} is not specified in a {nameof(DecryptedAttribute)}.{nameof(DecryptedAttribute.EncryptedIn)} property.");
 
             Decrypt(g);
         }

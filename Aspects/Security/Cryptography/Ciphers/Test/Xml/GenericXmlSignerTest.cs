@@ -267,17 +267,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         }
 
         [TestMethod]
-        [DeploymentItem("..\\..\\Xml\\TestOrder.xml")]
+        [DeploymentItem("TestOrder.xml")]
         public void SignOrderDetachedFileTest()
         {
             using (var target = GetSigner(SignatureLocation.Detached))
             {
+                var fullPath = Path.GetFullPath("TestOrder.xml");
                 var document = new XmlDocument();
 
-                document.Load("TestOrder.xml");
+                document.Load(fullPath);
 
-
-                var signed = target.Sign(document, null, null, new Uri(Path.GetFullPath("TestOrder.xml")));
+                var signed = target.Sign(document, null, null, new Uri(fullPath));
 
                 DumpXml(signed);
 
