@@ -273,7 +273,9 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Gets a value indicating whether the created host is initialized yet.
         /// </summary>
-        public Task<bool> InitializeHostTask { get; private set; }
+        public override Task<bool> InitializeHostTask => _initializeHostTask;
+
+        Task<bool> _initializeHostTask = Task.FromResult(false);
 
         /// <summary>
         /// Initializes the host.
@@ -304,7 +306,7 @@ namespace vm.Aspects.Wcf.Services
 
             if (initializer != null)
                 // start initialization on another thread and return immediately
-                InitializeHostTask = initializer
+                _initializeHostTask = initializer
                                             .InitializeAsync(host, MessagingPattern, 0)
                                             .ContinueWith(
                                                 t =>

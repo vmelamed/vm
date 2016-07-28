@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
@@ -97,6 +98,17 @@ namespace vm.Aspects.Wcf.Services
         public string ServiceResolveName { get; private set; }
 
         /// <summary>
+        /// Gets or sets the metadata features.
+        /// </summary>
+        /// <value>The metadata features.</value>
+        public virtual MetadataFeatures MetadataFeatures { get; set; }
+
+        /// <summary>
+        /// Gets the service identity type.
+        /// </summary>
+        public EndpointIdentity EndpointIdentity { get; }
+
+        /// <summary>
         /// Gets a registration lifetime manager for a service.
         /// If not set explicitly in the inheriting classes, defaults to <see cref="TransientLifetimeManager"/> (per-call).
         /// </summary>
@@ -108,17 +120,6 @@ namespace vm.Aspects.Wcf.Services
         /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
         /// </summary>
         protected virtual bool AreRegistered { get; set; }
-
-        /// <summary>
-        /// Gets or sets the metadata features.
-        /// </summary>
-        /// <value>The metadata features.</value>
-        protected virtual MetadataFeatures MetadataFeatures { get; set; }
-
-        /// <summary>
-        /// Gets the service identity type.
-        /// </summary>
-        public EndpointIdentity EndpointIdentity { get; }
         #endregion
 
         #region Constructors
@@ -248,6 +249,7 @@ namespace vm.Aspects.Wcf.Services
             Type serviceType,
             params Uri[] baseAddresses)
         {
+            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
             Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
 
             return CreateServiceHost(serviceType, baseAddresses);
@@ -276,36 +278,6 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
-        /// Creates a <see cref="ServiceHost" /> for the type of service mapped in the DI container to the contract type <typeparamref name="TContract"/>, with the specified base address(es).
-        /// The service host is created outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
-        /// Here it does the following:
-        /// <list type="number"><item><description>
-        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
-        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
-        /// </description></item><item><description>
-        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
-        /// if there is a registered pattern binding factory in the current container.
-        /// </description></item></list>
-        /// </summary>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        public ServiceHost CreateHost(
-            params Uri[] baseAddresses)
-        {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-
-            return CreateServiceHost(baseAddresses);
-        }
-
-        /// <summary>
-        /// Creates a <see cref="ServiceHost" /> for the type of service mapped in the DI container to the contract type <typeparamref name="TContract"/>, with the specified base address(es).
-        /// </summary>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        protected ServiceHost CreateServiceHost(
-            Uri[] baseAddresses) => CreateServiceHost(null, baseAddresses);
-
-        /// <summary>
         /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
         /// </summary>
         /// <typeparam name="TService">The type of the service.</typeparam>
@@ -326,15 +298,10 @@ namespace vm.Aspects.Wcf.Services
             Type serviceType,
             Uri[] baseAddresses)
         {
-            RegisterDefaults(serviceType);
-
             if (serviceType == null)
-            {
-                serviceType = ResolveServiceType();
+                throw new ArgumentNullException(nameof(serviceType));
 
-                if (serviceType == null)
-                    throw new ArgumentNullException(nameof(serviceType), $"The service type implementing {typeof(TContract).FullName} was not specified and was not registered in the DI container.");
-            }
+            RegisterDefaults(serviceType);
 
             return DoCreateServiceHost(serviceType, baseAddresses);
         }
@@ -351,6 +318,8 @@ namespace vm.Aspects.Wcf.Services
         protected virtual IUnityContainer RegisterDefaults(
             Type serviceType)
         {
+            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
+
             if (AreRegistered)
                 return DIContainer.Root;
 
@@ -381,17 +350,9 @@ namespace vm.Aspects.Wcf.Services
                 // register the defaults of the super classes
                 DoRegisterDefaults(serviceType, DIContainer.Root, registrations);
 
-                if (serviceType == null)
-                {
-                    serviceType = ResolveServiceType();
-
-                    if (serviceType == null)
-                        throw new ArgumentNullException(nameof(serviceType), "The service type was not specified and was not registered in the DI container.");
-                }
-
                 ServiceResolveName = ObtainServiceResolveName(serviceType);
 
-                // (re)register properly the service with the interceptor and the policy injection behavior, etc. wisles and blows,
+                // (re)register properly the service with the interceptor and the policy injection behavior, etc. whistles and blows,
                 // unless it was already registered before getting the registrations above.
                 DIContainer.Root
                     .RegisterTypeIfNot(
@@ -431,7 +392,8 @@ namespace vm.Aspects.Wcf.Services
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
+            Contract.Requires<ArgumentNullException>(serviceType   != null, nameof(serviceType));
+            Contract.Requires<ArgumentNullException>(container     != null, nameof(container));
             Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
             Contract.Ensures(Contract.Result<IUnityContainer>() != null);
             Contract.Ensures(Contract.Result<IUnityContainer>() == container);
@@ -450,7 +412,7 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="serviceType">Type of the service. Can be <see langword="null"/>.</param>
         /// <returns></returns>
         protected virtual string ObtainServiceResolveName(
-            Type serviceType) => serviceType?.GetServiceResolveName();
+            Type serviceType) => serviceType.GetServiceResolveName();
 
         /// <summary>
         /// Creates the service host.
@@ -527,6 +489,11 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
+        /// Gets a value indicating whether the created host is initialized yet.
+        /// </summary>
+        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
+
+        /// <summary>
         /// Signals that the host has been successfully initialized. Here it simply writes a message to the event log.
         /// </summary>
         /// <param name="host">The host.</param>
@@ -567,23 +534,5 @@ namespace vm.Aspects.Wcf.Services
                     .EventLogInfo($"The service host for service {serviceType.Name} has been closed.");
         }
         #endregion
-
-        /// <summary>
-        /// Resolves the type of the service from the DI container using the <see cref="ServiceResolveName"/>.
-        /// </summary>
-        /// <returns>The type of the service registered in the DI container to map to <typeparamref name="TContract"/>.</returns>
-        protected Type ResolveServiceType()
-        {
-            ContainerRegistration registration;
-            var registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-            if (registrations.TryGetValue(new RegistrationLookup(typeof(TContract), ServiceResolveName), out registration))
-                return registration.MappedToType;
-
-            return registrations
-                        .FirstOrDefault(kv => kv.Key.RegisteredType == typeof(TContract))
-                        .Value
-                        ?.MappedToType;
-        }
     }
 }
