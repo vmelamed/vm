@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +9,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 
@@ -53,6 +53,28 @@ namespace vm.Aspects.Wcf.Services
     public static class ServiceHostExtensions
     {
         /// <summary>
+        /// Gets the existing or add a new service behavior.
+        /// </summary>
+        /// <typeparam name="T">The type of the behavior.</typeparam>
+        /// <param name="host">The host.</param>
+        /// <returns>The behavior.</returns>
+        public static T GetOrAddServiceBehavior<T>(
+            this ServiceHost host) where T : IServiceBehavior, new()
+        {
+            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+
+            var behavior = host.Description.Behaviors.Find<T>();
+
+            if (behavior == null)
+            {
+                behavior = new T();
+                host.Description.Behaviors.Add(behavior);
+            }
+
+            return behavior;
+        }
+
+        /// <summary>
         /// Sets the service identity.
         /// </summary>
         /// <param name="host">The host.</param>
@@ -65,7 +87,6 @@ namespace vm.Aspects.Wcf.Services
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
-            // for each endpoint configure the binding according to the messaging pattern.
             if (identity != null)
                 foreach (var ep in host.Description.Endpoints)
                     ep.Address = new EndpointAddress(
@@ -216,7 +237,7 @@ namespace vm.Aspects.Wcf.Services
                 var serviceDebugBehavior = host.Description.Behaviors.Find<ServiceDebugBehavior>();
 
                 if (serviceDebugBehavior != null)
-                    serviceDebugBehavior.HttpHelpPageEnabled =
+                    serviceDebugBehavior.HttpHelpPageEnabled  =
                     serviceDebugBehavior.HttpsHelpPageEnabled = false;
 
                 var ep = host.Description.Endpoints.Where(e => e.Binding is WebHttpBinding).FirstOrDefault();
@@ -286,10 +307,7 @@ namespace vm.Aspects.Wcf.Services
 
 #if DEBUG
             // add include exception details:
-            var serviceDebugBehavior = host.Description.Behaviors.Find<ServiceDebugBehavior>();
-
-            if (serviceDebugBehavior == null)
-                host.Description.Behaviors.Add(serviceDebugBehavior = new ServiceDebugBehavior());
+            var serviceDebugBehavior = host.GetOrAddServiceBehavior<ServiceDebugBehavior>();
 
             serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
             //serviceDebugBehavior.HttpHelpPageEnabled = false;
@@ -315,14 +333,7 @@ namespace vm.Aspects.Wcf.Services
                         ep => ep.Contract.Operations.SelectMany(
                             o => o.Behaviors.OfType<OperationBehaviorAttribute>()))
                                     .Any(ob => ob.TransactionScopeRequired))
-            {
-                ServiceBehaviorAttribute serviceBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
-
-                if (serviceBehavior == null)
-                    host.Description.Behaviors.Add(serviceBehavior = new ServiceBehaviorAttribute());
-
-                serviceBehavior.TransactionTimeout = Constants.DefaultTransactionTimeout;
-            }
+                host.GetOrAddServiceBehavior<ServiceBehaviorAttribute>().TransactionTimeout = Constants.DefaultTransactionTimeout;
 
             return host;
         }

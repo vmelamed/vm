@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
@@ -201,10 +202,10 @@ namespace vm.Aspects.Wcf
                 catch (CommunicationException ex)
                 {
                     co.Abort();
-                    // abort, would be nice to log and swallow this exception but 
-                    // do not re-throw as most likely there is another exception - 
-                    // the root cause of this one - and we want that one handled properly.
 
+                    // it would be would be nice to log and swallow this exception but 
+                    // do not re-throw it as most likely there is another exception - 
+                    // the root cause of this one - and we want that one handled properly.
                     Facility.LogWriter.ExceptionError(ex);
                 }
                 break;
@@ -217,6 +218,48 @@ namespace vm.Aspects.Wcf
             case CommunicationState.Closed:
                 break;
             }
+        }
+
+        /// <summary>
+        /// Disposes correctly any communication object.
+        /// </summary>
+        /// <param name="co">The co.</param>
+        public static Task DisposeCommunicationObjectAsync(
+            this ICommunicationObject co)
+        {
+            if (co == null)
+                return Task.CompletedTask;
+
+            switch (co.State)
+            {
+            case CommunicationState.Opening:
+            case CommunicationState.Opened:
+            case CommunicationState.Created:
+                try
+                {
+                    return Task.Factory.FromAsync(co.BeginClose, co.EndClose, null);
+                }
+                catch (CommunicationException ex)
+                {
+                    co.Abort();
+
+                    // it would be would be nice to log and swallow this exception but 
+                    // do not re-throw it as most likely there is another exception - 
+                    // the root cause of this one - and we want that one handled properly.
+                    Facility.LogWriter.ExceptionError(ex);
+                }
+                break;
+
+            case CommunicationState.Closing:
+            case CommunicationState.Faulted:
+                co.Abort();
+                break;
+
+            case CommunicationState.Closed:
+                break;
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
