@@ -274,6 +274,7 @@
     <Compile Include="Facilities\AppConfigProvider.cs" />
     <Compile Include="Facilities\Clock.cs" />
     <Compile Include="Facilities\DumpExceptionFormatter.cs" />
+    <Compile Include="Facilities\EtwTraceListener.cs" />
     <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
     <Compile Include="Facilities\Facility.cs" />
     <Compile Include="Facilities\Facility.FacilitiesRegistrar.cs" />

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -10,9 +14,9 @@ namespace vm.Aspects.Wcf.Behaviors
     /// Class DIBehaviorAttribute. This class cannot be inherited. Should be applied to WCF service classes definitions that should not be created
     /// by WCF by using the <see cref="T:System.Activator"/> class but rather resolved from a DI container using the DI endpoint behavior.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited=false, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     [DebuggerDisplay("{GetType().Name, nq} {TargetContract!=null ? TargetContract.Name : string.Empty, nq}, resolve name: {ResolveName}")]
-    public sealed class DIBehaviorAttribute : Attribute, IContractBehavior, IContractBehaviorAttribute
+    public sealed class DIBehaviorAttribute : Attribute, IServiceBehavior
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DIBehaviorAttribute"/> class.
@@ -69,72 +73,61 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         public string ResolveName { get; }
 
-        #region IContractBehaviorAttribute Members
         /// <summary>
         /// Gets the type of the contract to which the contract behavior is applicable.
         /// </summary>
         /// <value></value>
         /// <returns>The contract to which the contract behavior is applicable.</returns>
         public Type TargetContract { get; }
-        #endregion
 
-        #region IContractBehavior Members
-        /// <summary>
-        /// Configures any binding elements to support the contract behavior.
-        /// </summary>
-        /// <param name="contractDescription">The contract description to modify.</param>
-        /// <param name="endpoint">The endpoint to modify.</param>
-        /// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
-        public void AddBindingParameters(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
+        #region IServiceBehavior
+        void IServiceBehavior.AddBindingParameters(
+            ServiceDescription serviceDescription,
+            ServiceHostBase serviceHostBase,
+            Collection<ServiceEndpoint> endpoints,
             BindingParameterCollection bindingParameters)
         {
         }
 
-        /// <summary>
-        /// Implements a modification or extension of the client across a contract.
-        /// </summary>
-        /// <param name="contractDescription">The contract description for which the extension is intended.</param>
-        /// <param name="endpoint">The endpoint.</param>
-        /// <param name="clientRuntime">The client runtime.</param>
-        public void ApplyClientBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            ClientRuntime clientRuntime)
+        void IServiceBehavior.ApplyDispatchBehavior(
+            ServiceDescription serviceDescription,
+            ServiceHostBase serviceHostBase)
         {
+            if (serviceDescription==null)
+                throw new ArgumentNullException(nameof(serviceDescription));
+            if (serviceHostBase==null)
+                throw new ArgumentNullException(nameof(serviceHostBase));
+
+            var interfaces = serviceDescription.ServiceType.GetInterfaces().Where(i => i.GetCustomAttribute<ServiceContractAttribute>() != null).ToList();
+
+            if (serviceDescription.ServiceType.GetCustomAttribute<ServiceContractAttribute>() != null)
+                interfaces.Add(serviceDescription.ServiceType);
+
+            foreach (var cd in serviceHostBase.ChannelDispatchers.OfType<ChannelDispatcher>().Where(d => d != null))
+                foreach (var ep in cd.Endpoints)
+                {
+                    var contract = TargetContract;
+
+                    if (contract == null)
+                        contract = interfaces.First(
+                                    i =>
+                                    {
+                                        var a = i.GetCustomAttribute<ServiceContractAttribute>();
+
+                                        return (a.Name      == ep.ContractName       ||  a.Name      == null && ep.ContractName      == i.Name)  &&
+                                               (a.Namespace == ep.ContractNamespace  ||  a.Namespace == null && ep.ContractNamespace == "http://tempuri.org/");
+                                    });
+
+                    if (contract != null)
+                        ep.DispatchRuntime.InstanceProvider = new DIInstanceProvider(contract, ResolveName);
+                }
         }
 
-        /// <summary>
-        /// Implements a modification or extension of the client across a contract.
-        /// </summary>
-        /// <param name="contractDescription">The contract description to be modified.</param>
-        /// <param name="endpoint">The endpoint that exposes the contract.</param>
-        /// <param name="dispatchRuntime">The dispatch runtime that controls service execution.</param>
-        public void ApplyDispatchBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            DispatchRuntime dispatchRuntime)
+        void IServiceBehavior.Validate(
+            ServiceDescription serviceDescription,
+            ServiceHostBase serviceHostBase)
         {
-            if (contractDescription==null)
-                throw new ArgumentNullException(nameof(contractDescription));
-            if (dispatchRuntime==null)
-                throw new ArgumentNullException(nameof(dispatchRuntime));
-            if (contractDescription.ContractType==null)
-                throw new ArgumentException("The ContractType property cannot be null.", nameof(contractDescription));
-
-            dispatchRuntime.InstanceProvider = new DIInstanceProvider(contractDescription.ContractType, ResolveName);
-        }
-
-        /// <summary>
-        /// Implement to confirm that the contract and endpoint can support the contract behavior.
-        /// </summary>
-        /// <param name="contractDescription">The contract to validate.</param>
-        /// <param name="endpoint">The endpoint to validate.</param>
-        public void Validate(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint)
-        {
+            // TODO: verify the behavior - see above.
         }
         #endregion
     }
