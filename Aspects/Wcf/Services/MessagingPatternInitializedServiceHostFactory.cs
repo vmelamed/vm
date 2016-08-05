@@ -90,33 +90,6 @@ namespace vm.Aspects.Wcf.Services
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessagingPatternInitializedServiceHostFactory{TContract, TInitializeer}"/> class
-        /// with a messaging pattern set on the interface with <see cref="MessagingPatternAttribute"/> or the default configured in the configuration file
-        /// and the default initializer resolve name (<see langword="null"/>).
-        /// </summary>
-        public MessagingPatternInitializedServiceHostFactory()
-            : this(null, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;"/> class
-        /// with default initializer resolve name.
-        /// </summary>
-        /// <param name="messagingPattern">
-        /// The binding pattern to be applied to all descriptions of end points in the service host.
-        /// Must be one of the <see cref="BindingConfigurator.MessagingPattern"/> registered values, 
-        /// e.g. <c>RequestResponseConfigurator.MessagingPattern</c>. If <see langword="null"/> the host will try to resolve the messaging 
-        /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
-        /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
-        /// </param>
-        public MessagingPatternInitializedServiceHostFactory(
-            string messagingPattern)
-            : this(messagingPattern, null)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
         /// </summary>
         /// <param name="messagingPattern">
@@ -128,8 +101,8 @@ namespace vm.Aspects.Wcf.Services
         /// </param>
         /// <param name="initializerResolveName">The resolve name of the initializer.</param>
         public MessagingPatternInitializedServiceHostFactory(
-            string messagingPattern,
-            string initializerResolveName)
+            string messagingPattern = null,
+            string initializerResolveName = null)
             : base(messagingPattern)
         {
             InitializerResolveName = initializerResolveName;

@@ -6,6 +6,10 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace vm.Aspects.Facilities
 {
+    /// <summary>
+    /// Class EtwTraceListener...
+    /// </summary>
+    /// <seealso cref="System.Diagnostics.TraceListener" />
     [ConfigurationElementType(typeof(CustomTraceListenerData))]
     public class EtwTraceListener : TraceListener
     {

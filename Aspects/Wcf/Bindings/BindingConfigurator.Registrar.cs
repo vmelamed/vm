@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.Unity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -50,7 +50,9 @@ namespace vm.Aspects.Wcf.Bindings
                     ;
             }
 
-            protected override void DoTestRegister(IUnityContainer container, IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            protected override void DoTestRegister(
+                IUnityContainer container,
+                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
                 container
                     // the default messaging pattern is the ConfiguredBindingConfigurator - assumes that the binding is fully configured already.

@@ -74,7 +74,7 @@ namespace vm.Aspects.Facilities
                 container
                     .RegisterInstanceIfNot<IExceptionPolicyProvider>(
                             registrations,
-                            "vm.Aspects.Facilities",
+                            RegistrationName,
                             new ExceptionPolicyProvider());
             }
         }

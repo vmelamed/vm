@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
+using System.ServiceModel.Description;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
@@ -84,8 +85,11 @@ namespace vm.Aspects.Wcf.Services
     /// 	)
     /// </code>
     /// </remarks>
-    public abstract class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory where TContract : class
+    public class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory where TContract : class
     {
+        Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
+        Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
+
         #region Properties
         /// <summary>
         /// Gets the binding pattern.
@@ -134,7 +138,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        protected MessagingPatternServiceHostFactory(
+        public MessagingPatternServiceHostFactory(
             string messagingPattern = null)
         {
             MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern)
@@ -162,7 +166,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        protected MessagingPatternServiceHostFactory(
+        public MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             string identity = null,
             string messagingPattern = null)
@@ -188,7 +192,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        protected MessagingPatternServiceHostFactory(
+        public MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             X509Certificate2 certificate,
             string messagingPattern)
@@ -213,7 +217,7 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute" /> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        protected MessagingPatternServiceHostFactory(
+        public MessagingPatternServiceHostFactory(
             Claim identityClaim,
             string messagingPattern)
             : this(messagingPattern)
@@ -308,6 +312,37 @@ namespace vm.Aspects.Wcf.Services
 
         #region Overridables
         /// <summary>
+        /// Sets the endpoint provider method.
+        /// </summary>
+        /// <param name="provideEndpoints">The provide endpoints.</param>
+        public MessagingPatternServiceHostFactory<TContract> SetEndpointProvider(
+            Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
+        {
+            Contract.Requires<ArgumentNullException>(provideEndpoints != null, nameof(provideEndpoints));
+
+            _provideEndpoints = provideEndpoints;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the service registrar which registers injection types specific to the service associated with this factory.
+        /// </summary>
+        /// <param name="registrar">The registration method.</param>
+        public MessagingPatternServiceHostFactory<TContract> SetServiceRegistrar(
+            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
+        {
+            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
+
+            _serviceRegistrar = registrar;
+            return this;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the created host is initialized yet.
+        /// </summary>
+        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
+
+        /// <summary>
         /// Registers the service's contract and implementation types in the DI container 
         /// as well as all the facilities needed for the normal work of the services from this framework.
         /// </summary>
@@ -398,6 +433,8 @@ namespace vm.Aspects.Wcf.Services
             Contract.Ensures(Contract.Result<IUnityContainer>() != null);
             Contract.Ensures(Contract.Result<IUnityContainer>() == container);
 
+            _serviceRegistrar?.Invoke(container, serviceType, registrations);
+
             return container;
         }
 
@@ -412,7 +449,12 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="serviceType">Type of the service. Can be <see langword="null"/>.</param>
         /// <returns></returns>
         protected virtual string ObtainServiceResolveName(
-            Type serviceType) => serviceType.GetServiceResolveName();
+            Type serviceType)
+        {
+            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
+
+            return serviceType.GetServiceResolveName();
+        }
 
         /// <summary>
         /// Creates the service host.
@@ -447,6 +489,7 @@ namespace vm.Aspects.Wcf.Services
 
         /// <summary>
         /// Gives opportunity to the service host factory to add programmatically endpoints before configuring them all.
+        /// The default implementation adds the endpoints provided by <see cref="_provideEndpoints"/> set in <see cref="SetEndpointProvider"/>.
         /// </summary>
         /// <param name="host">The host.</param>
         /// <returns>ServiceHost.</returns>
@@ -455,6 +498,18 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
+
+            if (_provideEndpoints != null)
+                foreach (var ep in _provideEndpoints())
+                {
+                    if (ep.ListenUri.Port == 0)
+                    {
+                        ep.ListenUriMode = ListenUriMode.Unique;
+                        host.GetOrAddServiceBehavior<ServiceBehaviorAttribute>().AddressFilterMode = AddressFilterMode.Any;
+                    }
+
+                    host.AddServiceEndpoint(ep);
+                }
 
             return host;
         }
@@ -487,11 +542,6 @@ namespace vm.Aspects.Wcf.Services
 
             HostInitialized(host, serviceType);
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the created host is initialized yet.
-        /// </summary>
-        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
 
         /// <summary>
         /// Signals that the host has been successfully initialized. Here it simply writes a message to the event log.

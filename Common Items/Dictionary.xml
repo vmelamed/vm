@@ -58,6 +58,7 @@
             <Word>cors</Word>
             <Word>api</Word>
             <Word>fqn</Word>
+            <Word>etw</Word>
         </Recognized>
         <Unrecognized>
             <!-- 

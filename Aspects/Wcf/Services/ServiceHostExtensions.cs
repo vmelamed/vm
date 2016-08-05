@@ -58,6 +58,7 @@ namespace vm.Aspects.Wcf.Services
         /// <typeparam name="T">The type of the behavior.</typeparam>
         /// <param name="host">The host.</param>
         /// <returns>The behavior.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static T GetOrAddServiceBehavior<T>(
             this ServiceHost host) where T : IServiceBehavior, new()
         {
