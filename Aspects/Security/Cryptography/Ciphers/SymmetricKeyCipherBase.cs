@@ -1,10 +1,10 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -275,22 +275,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             Contract.Ensures(_disposed!=0, "The object was not disposed successfully.");
 
-            // if it is disposed or in a process of disposing - return.
-            if (Interlocked.Exchange(ref _disposed, 1) != 0)
-                return;
-
             // these will be called only if the instance is not disposed and is not in a process of disposing.
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Allows the object to attempt to free resources and perform other cleanup operations before it is reclaimed by garbage collection. 
-        /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="M:Dispose(false)"/>.</remarks>
-        ~SymmetricKeyCipherBase()
-        {
-            Dispose(false);
         }
 
         /// <summary>
@@ -309,6 +296,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void Dispose(
             bool disposing)
         {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
             if (disposing)
             {
                 Symmetric.Dispose();

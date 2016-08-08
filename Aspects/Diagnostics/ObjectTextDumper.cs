@@ -942,22 +942,9 @@ namespace vm.Aspects.Diagnostics
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
-            // if it is disposed or in a process of disposing - return.
-            if (Interlocked.Exchange(ref _disposed, 1) != 0)
-                return;
-
             // these will be called only if the instance is not disposed and is not in a process of disposing.
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Allows the object to attempt to free resources and perform other cleanup operations before the Object is reclaimed by garbage collection. 
-        /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
-        ~ObjectTextDumper()
-        {
-            Dispose(false);
         }
 
         /// <summary>
@@ -974,6 +961,10 @@ namespace vm.Aspects.Diagnostics
         /// </remarks>
         void Dispose(bool disposing)
         {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
             if (disposing && _isDumpWriter)
                 // if the writer wraps foreign StringWriter, it is smart enough not to dispose it
                 _writer.Dispose();

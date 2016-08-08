@@ -207,22 +207,9 @@ namespace vm.Aspects
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
-            // if it is disposed or in a process of disposing - return.
-            if (Interlocked.Exchange(ref _disposed, 1) != 0)
-                return;
-
             // these will be called only if the instance is not disposed and is not in a process of disposing.
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Allows the object to attempt to free resources and perform other cleanup operations before it is reclaimed by garbage collection. 
-        /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
-        ~ContainerRegistrar()
-        {
-            Dispose(false);
         }
 
         /// <summary>
@@ -240,6 +227,10 @@ namespace vm.Aspects
         /// </remarks>
         protected virtual void Dispose(bool disposing)
         {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
             if (disposing)
                 _sync.Dispose();
         }
