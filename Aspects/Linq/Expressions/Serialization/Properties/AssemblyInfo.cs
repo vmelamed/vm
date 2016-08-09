@@ -4,9 +4,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("vm.Aspects.Linq.Expressions.Serialization")]
 [assembly: AssemblyDescription("Serializes and deserializes LINQ expression trees to and from XML documents.")]
 
-[assembly: AssemblyVersion("1.0.64")]
-[assembly: AssemblyFileVersion("1.0.64")]
-[assembly: AssemblyInformationalVersion("1.0.64")]
+[assembly: AssemblyVersion("1.0.65")]
+[assembly: AssemblyFileVersion("1.0.65")]
+[assembly: AssemblyInformationalVersion("1.0.65")]
 
 [assembly: InternalsVisibleTo(
     "vm.Aspects.Linq.Expressions.Serialization.Test, " +

@@ -228,7 +228,7 @@ namespace vm.Aspects.Wcf
             this ICommunicationObject co)
         {
             if (co == null)
-                return Task.CompletedTask;
+                return Task.FromResult(true);
 
             switch (co.State)
             {
@@ -259,7 +259,7 @@ namespace vm.Aspects.Wcf
                 break;
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 }
