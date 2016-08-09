@@ -12,7 +12,7 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Allows the MessagingPatternServiceHostFactory and its decendants to not specify the implementing service type but to resolve it from the DIContainer.
+            * Targeting the .NET 4.5.2
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
