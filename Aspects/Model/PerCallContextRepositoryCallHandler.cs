@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -8,6 +6,8 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Wcf;
@@ -94,11 +94,7 @@ namespace vm.Aspects.Model
                 return;
             }
 
-#if DOTNET45
-            SetTransactionScope(input, new TransactionScope());
-#else
             SetTransactionScope(input, new TransactionScope(TransactionScopeAsyncFlowOption.Enabled));
-#endif
         }
 
         /// <summary>

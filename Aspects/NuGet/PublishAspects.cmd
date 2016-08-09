@@ -26,25 +26,25 @@ msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 cd ..
 
-rem ------- .NET 4.6.1 -------
-set FrameworkVersion=4.6.1
-set FrameworkVersionConst=DOTNET461
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
-
-msbuild vm.Aspects.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-cd Model
-msbuild vm.Aspects.Model.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-cd ..\Parsers
-msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-cd ..\Wcf
-msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
+:rem ------- .NET 4.6.1 -------
+:set FrameworkVersion=4.6.1
+:set FrameworkVersionConst=DOTNET461
+:set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
+:
+:msbuild vm.Aspects.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:cd Model
+:msbuild vm.Aspects.Model.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:cd ..\Parsers
+:msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:cd ..\Wcf
+:msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:cd ..
 
 rem ------- Package -------
-cd ..
 NuGet Pack NuGet\vm.Aspects.nuspec -symbols -Prop Configuration=%Configuration%
 if errorlevel 1 goto exit
 if not exist c:\NuGet md c:\NuGet

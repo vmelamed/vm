@@ -8,20 +8,6 @@ del *.nupkg
 NuGet Update -self
 if not .%1.==.. NuGet SetApiKey %1
 
-rem ------- .NET 4.6.1 -------
-set FrameworkVersion=4.6.1
-set FrameworkVersionConst=DOTNET461
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
-
-msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-msbuild MacKey\MacKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
 rem ------- .NET 4.5.2 -------
 set FrameworkVersion=4.5.2
 set FrameworkVersionConst=DOTNET452
@@ -35,6 +21,20 @@ msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
+:rem ------- .NET 4.6.1 -------
+:set FrameworkVersion=4.6.1
+:set FrameworkVersionConst=DOTNET461
+:set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
+:
+:msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:msbuild MacKey\MacKey.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
 
 rem ------- Package -------
 NuGet Pack NuGet\Ciphers.nuspec -Prop Configuration=%Configuration% -symbols
