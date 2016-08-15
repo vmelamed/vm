@@ -35,35 +35,6 @@ namespace vm.Aspects.Wcf.Clients
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="InterceptorLightClient{T}" /> class
-        /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and a remote address.
-        /// If <paramref name="endpointConfigurationName" /> is <see langword="null" />, empty or consist of whitespace characters
-        /// the constructor will try to resolve the binding from the schema in the given remote address from the <see cref="DIContainer" />.
-        /// </summary>
-        /// <param name="context">The context/header.</param>
-        /// <param name="endpointConfigurationName">Name of the endpoint section of the configuration files.</param>
-        /// <param name="remoteAddress">The remote address. If the remote address is <see langword="null" /> or empty
-        /// the constructor will try to use the address in the endpoint configuration.</param>
-        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
-        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
-        /// otherwise will apply the default messaging pattern fro the transport.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected ContextLightClient(
-            THeader context,
-            string endpointConfigurationName,
-            string remoteAddress = null,
-            string messagingPattern = null)
-            : base(endpointConfigurationName, remoteAddress, messagingPattern)
-        {
-            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentException>(
-                (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
-                (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
-
-            Context = context;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="context">The context/header.</param>
@@ -80,8 +51,8 @@ namespace vm.Aspects.Wcf.Clients
         protected ContextLightClient(
             THeader context,
             string remoteAddress,
-            ServiceIdentity identityType,
-            string identity,
+            ServiceIdentity identityType = ServiceIdentity.None,
+            string identity = null,
             string messagingPattern = null)
             : base(remoteAddress, identityType, identity, messagingPattern)
         {
@@ -91,6 +62,35 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
                                                  (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+
+            Context = context;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InterceptorLightClient{T}" /> class
+        /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and a remote address.
+        /// If <paramref name="endpointConfigurationName" /> is <see langword="null" />, empty or consist of whitespace characters
+        /// the constructor will try to resolve the binding from the schema in the given remote address from the <see cref="DIContainer" />.
+        /// </summary>
+        /// <param name="context">The context/header.</param>
+        /// <param name="endpointConfigurationName">Name of the endpoint section of the configuration files.</param>
+        /// <param name="remoteAddress">The remote address. If the remote address is <see langword="null" /> or empty
+        /// the constructor will try to use the address in the endpoint configuration.</param>
+        /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected ContextLightClient(
+            THeader context,
+            string endpointConfigurationName,
+            string remoteAddress,
+            string messagingPattern = null)
+            : base(endpointConfigurationName, remoteAddress, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
+            Contract.Requires<ArgumentException>(
+                (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
+                (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
 
             Context = context;
         }

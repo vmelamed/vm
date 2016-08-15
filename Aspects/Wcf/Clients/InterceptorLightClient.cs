@@ -36,6 +36,42 @@ namespace vm.Aspects.Wcf.Clients
 
         #region Constructors
         /// <summary>
+        /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
+        /// <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="identity">
+        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
+        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
+        /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected InterceptorLightClient(
+            string remoteAddress,
+            ServiceIdentity identityType = ServiceIdentity.None,
+            string identity = null,
+            string messagingPattern = null)
+            : base(remoteAddress, identityType, identity, messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+
+            ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
+            Proxy = ChannelFactory.CreateChannel();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="InterceptorLightClient{T}"/> class
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName"/> and a remote address.
         /// If <paramref name="endpointConfigurationName"/> is <see langword="null" />, empty or consist of whitespace characters
@@ -61,42 +97,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(
                 (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
                 (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
-
-            ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InterceptorLightClient{TContract}" /> class (creates the channel factory).
-        /// </summary>
-        /// <param name="remoteAddress">The remote address of the service.</param>
-        /// <param name="identityType">
-        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
-        /// <see cref="ServiceIdentity.Rsa" />.
-        /// </param>
-        /// <param name="identity">
-        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
-        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
-        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
-        /// </param>
-        /// <param name="messagingPattern">
-        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
-        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
-        /// otherwise will apply the default messaging pattern fro the transport.
-        /// </param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected InterceptorLightClient(
-            string remoteAddress,
-            ServiceIdentity identityType,
-            string identity,
-            string messagingPattern = null)
-            : base(remoteAddress, identityType, identity, messagingPattern)
-        {
-            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
             Proxy = ChannelFactory.CreateChannel();

@@ -36,6 +36,41 @@ namespace vm.Aspects.Wcf.Clients
 
         #region Constructors
         /// <summary>
+        /// Initializes a new instance of the <see cref="LightClientBase{TContract}" /> class (creates the channel factory).
+        /// </summary>
+        /// <param name="remoteAddress">The remote address of the service.</param>
+        /// <param name="identityType">
+        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
+        /// <see cref="ServiceIdentity.Rsa" />.
+        /// </param>
+        /// <param name="identity">
+        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
+        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
+        /// </param>
+        /// <param name="messagingPattern">
+        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
+        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
+        /// otherwise will apply the default messaging pattern fro the transport.
+        /// </param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        protected LightClientBase(
+            string remoteAddress,
+            ServiceIdentity identityType = ServiceIdentity.None,
+            string identity = null,
+            string messagingPattern = null)
+        {
+            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
+                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+            Contract.Ensures(ChannelFactory != null);
+
+            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:LightClientBase{TContract}"/> class (creates the channel factory)
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName"/> and a remote address.
         /// If <paramref name="endpointConfigurationName"/> is <see langword="null" />, empty or consist of whitespace characters only,
@@ -78,65 +113,6 @@ namespace vm.Aspects.Wcf.Clients
 
                 BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(ServiceIdentity.None, ""));
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:LightClientBase{TContract}" /> class (creates the channel factory)
-        /// from a remote address. The constructor will try to resolve the binding from the schema in the given remote address from the current DI container.
-        /// </summary>
-        /// <param name="remoteAddress">
-        /// The remote address of the service.
-        /// </param>
-        /// <param name="messagingPattern">
-        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
-        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
-        /// otherwise will apply the default messaging pattern fro the transport.
-        /// </param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected LightClientBase(
-            string remoteAddress,
-            string messagingPattern = null)
-            : this(null, remoteAddress, messagingPattern)
-        {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(ChannelFactory != null);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LightClientBase{TContract}" /> class (creates the channel factory).
-        /// </summary>
-        /// <param name="remoteAddress">The remote address of the service.</param>
-        /// <param name="identityType">
-        /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
-        /// <see cref="ServiceIdentity.Rsa" />.
-        /// </param>
-        /// <param name="identity">
-        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
-        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
-        /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
-        /// </param>
-        /// <param name="messagingPattern">
-        /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
-        /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
-        /// otherwise will apply the default messaging pattern fro the transport.
-        /// </param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        protected LightClientBase(
-            string remoteAddress,
-            ServiceIdentity identityType,
-            string identity,
-            string messagingPattern = null)
-        {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
-            Contract.Ensures(ChannelFactory != null);
-
-            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
         /// <summary>
