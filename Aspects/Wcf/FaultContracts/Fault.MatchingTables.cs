@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Xml;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Exceptions;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -87,6 +87,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                 [typeof(ArgumentValidationFault)]               = HttpStatusCode.BadRequest,
                 [typeof(BusinessFault)]                         = HttpStatusCode.BadRequest,
                 [typeof(DataFault)]                             = HttpStatusCode.InternalServerError,
+                [typeof(DbUpdateFault)]                         = HttpStatusCode.InternalServerError,
                 [typeof(DirectoryNotFoundFault)]                = HttpStatusCode.NotFound,
                 [typeof(FileNotFoundFault)]                     = HttpStatusCode.NotFound,
                 [typeof(FormatFault)]                           = HttpStatusCode.InternalServerError,

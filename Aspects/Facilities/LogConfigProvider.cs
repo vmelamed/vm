@@ -111,7 +111,8 @@ namespace vm.Aspects.Facilities
             logConfig.AddLogSource(LogWriterFacades.Email, SourceLevels.All, true, traceListener);
             logConfig.AddLogSource(LogWriterFacades.EventLog, SourceLevels.All, true, traceListener);
             logConfig.AddLogSource(LogWriterFacades.Trace, SourceLevels.All, true, traceListener);
-            logConfig.AddLogSource(LogWriterFacades.CallTrace, SourceLevels.All, true, traceListener);
+            logConfig.AddLogSource(LogWriterFacades.StartCallTrace, SourceLevels.All, true, traceListener);
+            logConfig.AddLogSource(LogWriterFacades.EndCallTrace, SourceLevels.All, true, traceListener);
 
             logConfig.Filters
                      .Add(new LogEnabledFilter("All", true));
@@ -137,7 +138,8 @@ namespace vm.Aspects.Facilities
             logConfig.AddLogSource(LogWriterFacades.Email, SourceLevels.All, true, traceListener);
             logConfig.AddLogSource(LogWriterFacades.EventLog, SourceLevels.All, true, traceListener);
             logConfig.AddLogSource(LogWriterFacades.Trace, SourceLevels.All, true, traceListener);
-            logConfig.AddLogSource(LogWriterFacades.CallTrace, SourceLevels.All, true, traceListener);
+            logConfig.AddLogSource(LogWriterFacades.StartCallTrace, SourceLevels.All, true, traceListener);
+            logConfig.AddLogSource(LogWriterFacades.EndCallTrace, SourceLevels.All, true, traceListener);
 
             logConfig.Filters
                      .Add(new LogEnabledFilter("All", true));

@@ -17,32 +17,36 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// The general log category - can be defined to be anything... - "General"
         /// </summary>
-        public const string General   = "General";
+        public const string General        = "General";
 
         /// <summary>
         /// The alert log category - can be defined to go to all usual places as well as to some specific e-mail addresses, e.g. operations team - "Alert"
         /// </summary>
-        public const string Alert     = "Alert";
+        public const string Alert          = "Alert";
         /// <summary>
         /// The exception - the category for logging program exceptions to file, MSMQ, DB, etc. for later analysis - "Exception"
         /// </summary>
-        public const string Exception = "Exception";
+        public const string Exception      = "Exception";
         /// <summary>
         /// The trace - the category for tracing events/messages - probably a file+ VS output pane, should be disabled in production - "Trace"
         /// </summary>
-        public const string Trace     = "Trace";
+        public const string Trace          = "Trace";
         /// <summary>
-        /// The call trace - the category specifically for call tracing. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "Call Trace"
+        /// The start call trace - the category specific for tracing starting calls. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "Start Call Trace"
         /// </summary>
-        public const string CallTrace = "Call Trace";
+        public const string StartCallTrace = "Start Call Trace";
+        /// <summary>
+        /// The end call trace - the category specific for tracing ending call. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "End Call Trace"
+        /// </summary>
+        public const string EndCallTrace   = "End Call Trace";
         /// <summary>
         /// The event log - the category that specifically sends messages to the Windows event log, e.g. "Service xyz started." - "Event Log"
         /// </summary>
-        public const string EventLog  = "Event Log";
+        public const string EventLog       = "Event Log";
         /// <summary>
         /// The email log - the category sending messages to some specific e-mail addresses.
         /// </summary>
-        public const string Email     = "Email";
+        public const string Email          = "Email";
 
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer.

@@ -68,6 +68,7 @@
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -120,6 +121,7 @@
     <CodeContractsRuntimeCheckingLevel>ReleaseRequires</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -180,6 +182,7 @@
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -274,13 +277,16 @@
     <Compile Include="Facilities\AppConfigProvider.cs" />
     <Compile Include="Facilities\Clock.cs" />
     <Compile Include="Facilities\DumpExceptionFormatter.cs" />
-    <Compile Include="Facilities\EtwTraceListener.cs" />
+    <Compile Include="Facilities\EtwLogEntryBaseEventSource.cs" />
+    <Compile Include="Facilities\ElLogEntrySource.cs" />
+    <Compile Include="Facilities\EtwLogEntryEventSource.cs" />
     <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
     <Compile Include="Facilities\Facility.cs" />
     <Compile Include="Facilities\Facility.FacilitiesRegistrar.cs" />
     <Compile Include="Facilities\GuidGenerator.cs" />
     <Compile Include="Facilities\IClock.cs" />
     <Compile Include="Facilities\IConfigurationProvider.cs" />
+    <Compile Include="Facilities\IEtwLogEntryHandler.cs" />
     <Compile Include="Facilities\IExceptionPolicyProvider.cs" />
     <Compile Include="Facilities\IGuidGenerator.cs" />
     <Compile Include="Facilities\LogConfigProvider.cs" />

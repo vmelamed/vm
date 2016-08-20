@@ -99,9 +99,14 @@ namespace vm.Aspects.Policies
         public bool IncludeException { get; set; }
 
         /// <summary>
-        /// Gets or sets the category to which the log events will be sent. Default: &quot;Call Trace&quot;.
+        /// Gets or sets the category to which the start call log events will be sent. Default: &quot;Start Call Trace&quot;.
         /// </summary>
-        public string Category { get; set; }
+        public string StartCategory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the category to which the end log events will be sent. Default: &quot;Event Call Trace&quot;.
+        /// </summary>
+        public string EndCategory { get; set; }
 
         /// <summary>
         /// Gets or sets the priority of the logged call trace events. Default: -1
@@ -148,7 +153,8 @@ namespace vm.Aspects.Policies
             IncludeReturnValue = true;
             IncludeException   = true;
             Priority           = -1;
-            Category           = LogWriterFacades.CallTrace;
+            StartCategory      = LogWriterFacades.StartCallTrace;
+            EndCategory        = LogWriterFacades.EndCallTrace;
             Severity           = TraceEventType.Information;
             LogWriter          = logWriter;
         }
@@ -245,7 +251,7 @@ namespace vm.Aspects.Policies
 
             if (LogWriter.IsLoggingEnabled())
             {
-                var entry = NewLogEntry();
+                var entry = NewLogEntry(StartCategory);
 
                 if (!LogWriter.ShouldLog(entry))
                     return;
@@ -313,7 +319,7 @@ namespace vm.Aspects.Policies
                                                             ExceptionPolicyProvider.LogAndSwallow);
 
             var returnedTask = methodReturn.ReturnValue as Task;
-            var entry = NewLogEntry();
+            var entry = NewLogEntry(EndCategory);
 
             if (returnedTask == null  ||  returnedTask.IsCompleted)
             {
@@ -374,10 +380,10 @@ namespace vm.Aspects.Policies
         /// Creates a new log entry.
         /// </summary>
         /// <returns>LogEntry.</returns>
-        LogEntry NewLogEntry() =>
+        LogEntry NewLogEntry(string category) =>
             new LogEntry
             {
-                Categories = new[] { Category },
+                Categories = new[] { category },
                 Severity   = Severity,
                 EventId    = EventId,
                 Priority   = Priority,

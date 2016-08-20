@@ -19,6 +19,9 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
+            <dependency id="System.Diagnostics.Tracing"
+                        version="4.1.0" />
+            
             <dependency id="CommonServiceLocator"
                         version="1.3" />
             
