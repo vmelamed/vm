@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace vm.Aspects.Parsers
@@ -117,15 +116,11 @@ namespace vm.Aspects.Parsers
         {
             Contract.Requires<ArgumentNullException>(fieldSeparators!=null, nameof(fieldSeparators));
             Contract.Requires<ArgumentException>(fieldSeparators.Length > 0, "The argument "+nameof(fieldSeparators)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(fieldSeparators.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(fieldSeparators)+" cannot be empty or consist of whitespace characters only.");
 
             Contract.Requires<ArgumentNullException>(recordSeparators!=null, nameof(recordSeparators));
             Contract.Requires<ArgumentException>(recordSeparators.Length > 0, "The argument "+nameof(recordSeparators)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(recordSeparators.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(recordSeparators)+" cannot be empty or consist of whitespace characters only.");
 
             Contract.Requires<ArgumentNullException>(fieldMark!=null, nameof(fieldMark));
-            Contract.Requires<ArgumentException>(fieldMark.Length > 0, "The argument "+nameof(fieldMark)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(fieldMark.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(fieldMark)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(fieldMark.Length == 1, "The "+nameof(fieldMark)+" parameter must specify a single, non-whitespace character.");
 
             // the record separators always include CR/LF

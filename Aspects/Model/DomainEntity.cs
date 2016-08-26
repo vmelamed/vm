@@ -28,7 +28,7 @@ namespace vm.Aspects.Model
         /// The implementation assumes that the entity has identity when the <see cref="P:Key"/> is not equal to the default value of its type.
         /// E.g. if the type of the key is <see cref="string"/> the entity has identity if <c>Key!=null</c>.
         /// </remarks>
-        public override bool HasIdentity => !(ReferenceEquals(Key, null)  || Key.Equals(default(TKey)));
+        public override bool HasIdentity => !ReferenceEquals(Key, null)  &&  !Key.Equals(default(TKey));
 
         #region IHasStoreId<TId> Members
         /// <summary>

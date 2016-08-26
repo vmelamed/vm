@@ -1,6 +1,6 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 set Configuration=Release
-set vmAspectsVersion=1.0.66-beta
+set vmAspectsVersion=1.0.67-beta
 pushd
 
 cd %~dp0..

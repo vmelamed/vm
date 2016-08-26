@@ -139,35 +139,35 @@ namespace vm.Aspects.Facilities
         static readonly IReadOnlyDictionary<TraceProperties, Action<IEtwLogEntryHandler, int, TraceEventCache, object>> _etwWriters = new ReadOnlyDictionary<TraceProperties, Action<IEtwLogEntryHandler, int, TraceEventCache, object>>(
             new Dictionary<TraceProperties, Action<IEtwLogEntryHandler, int, TraceEventCache, object>>
             {
-                [new TraceProperties(TraceEventType.Verbose,     typeof(Exception), null)]                           = (i,id,c,d) => i.WriteExceptionVerboseEntry(id, c, (Exception)d),
-                [new TraceProperties(TraceEventType.Information, typeof(Exception), null)]                           = (i,id,c,d) => i.WriteExceptionVerboseEntry(id, c, (Exception)d),
-                [new TraceProperties(TraceEventType.Warning,     typeof(Exception), null)]                           = (i,id,c,d) => i.WriteExceptionVerboseEntry(id, c, (Exception)d),
-                [new TraceProperties(TraceEventType.Error,       typeof(Exception), null)]                           = (i,id,c,d) => i.WriteExceptionVerboseEntry(id, c, (Exception)d),
-                [new TraceProperties(TraceEventType.Critical,    typeof(Exception), null)]                           = (i,id,c,d) => i.WriteExceptionVerboseEntry(id, c, (Exception)d),
+                [new TraceProperties(TraceEventType.Verbose,     typeof(Exception), null)]                           = (i,id,c,o) => i.WriteExceptionVerboseEntry (id, c, (Exception)o),
+                [new TraceProperties(TraceEventType.Information, typeof(Exception), null)]                           = (i,id,c,o) => i.WriteExceptionInfoEntry    (id, c, (Exception)o),
+                [new TraceProperties(TraceEventType.Warning,     typeof(Exception), null)]                           = (i,id,c,o) => i.WriteExceptionWarningEntry (id, c, (Exception)o),
+                [new TraceProperties(TraceEventType.Error,       typeof(Exception), null)]                           = (i,id,c,o) => i.WriteExceptionErrorEntry   (id, c, (Exception)o),
+                [new TraceProperties(TraceEventType.Critical,    typeof(Exception), null)]                           = (i,id,c,o) => i.WriteExceptionCriticalEntry(id, c, (Exception)o),
 
-                [new TraceProperties(TraceEventType.Verbose,     typeof(string), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Information, typeof(string), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Warning,     typeof(string), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Error,       typeof(string), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Critical,    typeof(string), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, (string)d),
+                [new TraceProperties(TraceEventType.Verbose,     typeof(string), null)]                              = (i,id,c,o) => i.WriteTraceVerboseEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Information, typeof(string), null)]                              = (i,id,c,o) => i.WriteTraceInfoEntry    (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Warning,     typeof(string), null)]                              = (i,id,c,o) => i.WriteTraceWarningEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Error,       typeof(string), null)]                              = (i,id,c,o) => i.WriteTraceErrorEntry   (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Critical,    typeof(string), null)]                              = (i,id,c,o) => i.WriteTraceCriticalEntry(id, c, (string)o),
 
-                [new TraceProperties(TraceEventType.Verbose,     typeof(object), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, d.DumpString()),
-                [new TraceProperties(TraceEventType.Information, typeof(object), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, d.DumpString()),
-                [new TraceProperties(TraceEventType.Warning,     typeof(object), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, d.DumpString()),
-                [new TraceProperties(TraceEventType.Error,       typeof(object), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, d.DumpString()),
-                [new TraceProperties(TraceEventType.Critical,    typeof(object), null)]                              = (i,id,c,d) => i.WriteTraceVerboseEntry(id, c, d.DumpString()),
+                [new TraceProperties(TraceEventType.Verbose,     typeof(object), null)]                              = (i,id,c,o) => i.WriteTraceVerboseEntry (id, c, o.DumpString()),
+                [new TraceProperties(TraceEventType.Information, typeof(object), null)]                              = (i,id,c,o) => i.WriteTraceInfoEntry    (id, c, o.DumpString()),
+                [new TraceProperties(TraceEventType.Warning,     typeof(object), null)]                              = (i,id,c,o) => i.WriteTraceWarningEntry (id, c, o.DumpString()),
+                [new TraceProperties(TraceEventType.Error,       typeof(object), null)]                              = (i,id,c,o) => i.WriteTraceErrorEntry   (id, c, o.DumpString()),
+                [new TraceProperties(TraceEventType.Critical,    typeof(object), null)]                              = (i,id,c,o) => i.WriteTraceCriticalEntry(id, c, o.DumpString()),
 
-                [new TraceProperties(TraceEventType.Verbose,     typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,d) => i.WriteStartCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Information, typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,d) => i.WriteStartCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Warning,     typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,d) => i.WriteStartCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Error,       typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,d) => i.WriteStartCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Critical,    typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,d) => i.WriteStartCallTraceVerboseEntry(id, c, (string)d),
+                [new TraceProperties(TraceEventType.Verbose,     typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,o) => i.WriteStartCallTraceVerboseEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Information, typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,o) => i.WriteStartCallTraceInfoEntry    (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Warning,     typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,o) => i.WriteStartCallTraceWarningEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Error,       typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,o) => i.WriteStartCallTraceErrorEntry   (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Critical,    typeof(string), LogWriterFacades.StartCallTrace)]   = (i,id,c,o) => i.WriteStartCallTraceCriticalEntry(id, c, (string)o),
 
-                [new TraceProperties(TraceEventType.Verbose,     typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,d) => i.WriteEndCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Information, typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,d) => i.WriteEndCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Warning,     typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,d) => i.WriteEndCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Error,       typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,d) => i.WriteEndCallTraceVerboseEntry(id, c, (string)d),
-                [new TraceProperties(TraceEventType.Critical,    typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,d) => i.WriteEndCallTraceVerboseEntry(id, c, (string)d),
+                [new TraceProperties(TraceEventType.Verbose,     typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,o) => i.WriteEndCallTraceVerboseEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Information, typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,o) => i.WriteEndCallTraceInfoEntry    (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Warning,     typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,o) => i.WriteEndCallTraceWarningEntry (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Error,       typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,o) => i.WriteEndCallTraceErrorEntry   (id, c, (string)o),
+                [new TraceProperties(TraceEventType.Critical,    typeof(string), LogWriterFacades.EndCallTrace)]     = (i,id,c,o) => i.WriteEndCallTraceCriticalEntry(id, c, (string)o),
 
             });
 
@@ -177,19 +177,21 @@ namespace vm.Aspects.Facilities
         /// <param name="eventCache">A <see cref="TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
         /// <param name="source">A name used to identify the output, typically the name of the application that generated the trace event.</param>
         /// <param name="eventType">One of the <see cref="TraceEventType" /> values specifying the type of event that has caused the trace.</param>
-        /// <param name="eventId">A numeric identifier for the EL-LAB event.</param>
+        /// <param name="id">A numeric identifier for the EL-LAB event.</param>
         /// <param name="data">The trace data to emit.</param>
         public override void TraceData(
             TraceEventCache eventCache,
             string source,
             TraceEventType eventType,
-            int eventId,
+            int id,
             object data)
         {
-            Contract.Requires<ArgumentNullException>(eventCache != null, "eventCache");
-            Contract.Requires<ArgumentNullException>(data != null, "data");
+            if (eventCache == null)
+                throw new ArgumentNullException(nameof(eventCache));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
 
-            if (Filter != null  &&  !Filter.ShouldTrace(eventCache, source, eventType, eventId, null, null, data, null))
+            if (Filter != null  &&  !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
                 return;
 
             var logEntry = data as LogEntry;
@@ -197,9 +199,9 @@ namespace vm.Aspects.Facilities
             if (_etwLogEntryHandler != null)
             {
                 if (logEntry != null)
-                    _etwLogEntryHandler.WriteLogEntry(eventCache, eventType, logEntry);
+                    _etwLogEntryHandler.WriteLogEntry(id, eventCache, logEntry);
                 else
-                    _etwLogEntryHandler.WriteLogData(eventCache, eventType, data);
+                    _etwLogEntryHandler.WriteLogData(id, eventCache, data);
 
                 return;
             }
@@ -232,10 +234,12 @@ namespace vm.Aspects.Facilities
                 else
                     parameters[kv.Value] = kv.Key.GetValue(eventCache);
 
+#if DOTNET461
             _etwSource.Write(
                 EventName,
                 GetEventSourceOptions(eventType),
                 parameters);
+#endif
         }
 
         void TraceNonLogEntry(
@@ -243,18 +247,22 @@ namespace vm.Aspects.Facilities
             TraceEventType eventType,
             object data)
         {
-            Contract.Requires<ArgumentNullException>(eventCache != null, "eventCache");
-            Contract.Requires<ArgumentNullException>(data != null, "data");
+            if (eventCache == null)
+                throw new ArgumentNullException(nameof(eventCache));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
 
             var stringData = data as string;
 
             if (stringData == null)
                 stringData = data.DumpString();
 
+#if DOTNET461
             _etwSource.Write(
                 EventName,
                 GetEventSourceOptions(eventType),
                 stringData);
+#endif
         }
 
         static readonly IReadOnlyDictionary<TraceEventType, EventLevel> _traceEventType2eventLevel = new ReadOnlyDictionary<TraceEventType, EventLevel>(
@@ -287,6 +295,7 @@ namespace vm.Aspects.Facilities
                 [TraceEventType.Stop]        = EventOpcode.Stop,
             });
 
+#if DOTNET461
         static EventSourceOptions GetEventSourceOptions(
             TraceEventType eventType)
             => new EventSourceOptions
@@ -295,6 +304,7 @@ namespace vm.Aspects.Facilities
                 Level           = _traceEventType2eventLevel[eventType],
                 Opcode          = _traceEventType2eventOpcode[eventType],
             };
+#endif
 
         /// <summary>
         /// When overridden in a derived class, writes the specified message to the listener you create in the derived class.
@@ -302,10 +312,12 @@ namespace vm.Aspects.Facilities
         /// <param name="message">A message to write.</param>
         public override void Write(string message)
         {
+#if DOTNET461
             if (string.IsNullOrEmpty(message))
                 return;
 
             _etwSource.Write(EventName, message);
+#endif
         }
 
         /// <summary>

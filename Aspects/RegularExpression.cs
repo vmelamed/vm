@@ -481,6 +481,20 @@ namespace vm.Aspects
         public static Regex TelephoneNumber => _telephoneNumber.Value;
         #endregion
 
+        #region UsZipCode
+        /// <summary>
+        /// Regular expression pattern which matches US postal codes
+        /// </summary>
+        public const string RexUsZipCode = @"(?<zip>\d{5})(-(?<ext>\d{4}))?";
+
+        readonly static Lazy<Regex> _rexUsZipCode = new Lazy<Regex>(() => new Regex(RexUsZipCode, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches US postal codes
+        /// </summary>
+        public static Regex UsZipCode => _rexUsZipCode.Value;
+        #endregion
+
         #region Social Security Number
         /// <summary>
         /// Matches a social security number, allowing any number of spaces, dashes and dots but requires 9 digits.

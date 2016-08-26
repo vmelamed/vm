@@ -12,10 +12,12 @@ namespace vm.Aspects.Facilities
     [EventSource(Name = "vm-Aspects-LogEntryEventSource")]
     public sealed class EtwLogEntryEventSource : EtwLogEntryBaseEventSource, IEtwLogEntryHandler
     {
+        static EtwLogEntryEventSource _log = new EtwLogEntryEventSource();
+
         /// <summary>
         /// The log singleton instance.
         /// </summary>
-        public static EtwLogEntryEventSource Log = new EtwLogEntryEventSource();
+        public static EtwLogEntryEventSource Log => _log;
 
         const int WriteLogEntryId                    = 1;
         const int WriteLogTextId                     = 2;

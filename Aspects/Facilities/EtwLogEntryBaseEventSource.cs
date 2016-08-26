@@ -148,7 +148,7 @@ namespace vm.Aspects.Facilities
         /// <param name="extendedProperties">The extended properties.</param>
         /// <returns>System.String.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        protected string DumpExtendedProperties(
+        protected static string DumpExtendedProperties(
             IDictionary<string, object> extendedProperties)
         {
             if (extendedProperties == null  ||  extendedProperties.Count == 0)
