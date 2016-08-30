@@ -142,6 +142,15 @@ namespace FileCrypt.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FileCrypt encrypts and decrypts files using a certificate from the user&apos;s 
         ///certificate store.
         ///
@@ -151,13 +160,12 @@ namespace FileCrypt.Properties {
         ////t  The next argument must be the thumbprint of the certificate to be used.
         ////e  Perform encryption. This is the default action and can be omitted.
         ////d  Perform decryption.
+        ////6 Encode or decode the result with Base64
         ///
         ///Note that the options can be specified with dashes too, e.g. instead of /d
         ///you can use -d instead.
         ///
-        ///Parameters:
-        ///
-        ///&lt;certificate subject&gt; - specifies  [rest of string was truncated]&quot;;.
+        ///Param [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Usage {
             get {

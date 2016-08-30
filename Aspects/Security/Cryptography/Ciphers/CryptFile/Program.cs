@@ -17,6 +17,7 @@ namespace FileCrypt
         static string _decryptedText;
         static bool _encrypt;
         static bool _decrypt;
+        static bool _base64;
 
         static void Main(string[] args)
         {
@@ -27,6 +28,9 @@ namespace FileCrypt
 
                     using (var cipher = new EncryptedNewKeyCipher(cert))
                     {
+                        if (_base64)
+                            cipher.Base64Encoded = true;
+
                         if (_encrypt)
                             using (var decryptedStream = new FileStream(_clearText, FileMode.Open, FileAccess.Read, FileShare.None))
                             using (var encryptedStream = new FileStream(_encryptedText, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -106,17 +110,10 @@ namespace FileCrypt
                     continue;
                 }
 
-                if (arg.StartsWith("/s", StringComparison.OrdinalIgnoreCase) ||
-                    arg.StartsWith("-s", StringComparison.OrdinalIgnoreCase))
+                if (arg.StartsWith("/6", StringComparison.OrdinalIgnoreCase) ||
+                    arg.StartsWith("-6", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (args.Length <= i+1)
-                    {
-                        Console.WriteLine(Resources.MissingSubject);
-                        Usage();
-                        return false;
-                    }
-
-                    _certSubject = args[++i];
+                    _base64 = true;
                     continue;
                 }
 
@@ -193,7 +190,9 @@ namespace FileCrypt
             string subject,
             string thumbprint)
         {
-            using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+
+            try
             {
                 store.Open(OpenFlags.ReadOnly);
                 var certs = subject != null
@@ -206,6 +205,10 @@ namespace FileCrypt
                     throw new InvalidOperationException(Resources.CertNotFound);
 
                 return cert;
+            }
+            finally
+            {
+                store.Close();
             }
         }
 
