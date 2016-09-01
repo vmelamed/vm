@@ -1,8 +1,9 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -282,6 +283,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// See also <seealso cref="CloneLightCipher"/>.
         public virtual ICipherAsync ReleaseCertificate()
         {
+            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
+
             if (ShouldEncryptIV)
                 throw new InvalidOperationException("This object cannot reset its asymmetric keys because the property"+nameof(ShouldEncryptIV)+" is true.");
 
@@ -314,6 +317,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller must dispose it.")]
         public virtual ICipherAsync CloneLightCipher()
         {
+            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
+
             if (ShouldEncryptIV)
                 throw new InvalidOperationException("This object cannot create light clones because the property "+nameof(ShouldEncryptIV)+" is true.");
 

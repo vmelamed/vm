@@ -565,6 +565,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </exception>
         public virtual IHasherAsync ReleaseCertificate()
         {
+            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
+
             if (_publicKey == null)
                 return this;
 
@@ -591,6 +593,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller owns it.")]
         public virtual IHasherAsync CloneLightHasher()
         {
+            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
+
             InitializeHashKey();
 
             var hasher = new KeyedHasher();

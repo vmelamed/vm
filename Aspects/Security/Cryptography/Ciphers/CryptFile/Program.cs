@@ -193,9 +193,12 @@ namespace FileCrypt
             string subject,
             string thumbprint)
         {
-            using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+
+            try
             {
                 store.Open(OpenFlags.ReadOnly);
+
                 var certs = subject != null
                                 ? store.Certificates.Find(X509FindType.FindBySubjectName, subject, false)
                                 : store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
@@ -206,6 +209,10 @@ namespace FileCrypt
                     throw new InvalidOperationException(Resources.CertNotFound);
 
                 return cert;
+            }
+            finally
+            {
+                store.Close();
             }
         }
 
