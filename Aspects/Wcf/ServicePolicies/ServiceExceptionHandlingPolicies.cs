@@ -26,10 +26,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
     public partial class ServiceExceptionHandlingPolicies : IExceptionPolicyProvider
     {
         /// <summary>
-        /// The name of the exception handling policy.
-        /// </summary>
-        public const string WcfExceptionShielding = "WCF Exception Shielding";
-        /// <summary>
         /// The title of the logged exceptions.
         /// </summary>
         public const string LogExceptionTitle = "vm.Aspects.Wcf";
@@ -42,7 +38,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries
             => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                [WcfExceptionShielding] = WcfExceptionShieldingPolicyEntries(),
+                [ExceptionShielding.DefaultExceptionPolicy] = WcfExceptionShieldingPolicyEntries(),
             };
         #endregion
 
@@ -52,8 +48,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <typeparam name="TFault">The type of the fault contract.</typeparam>
         /// <param name="eventId">The event identifier.</param>
+        /// <param name="logExceptionTitle">The log exception title.</param>
         /// <returns>An <see cref="ExceptionPolicyEntry" /> instance.</returns>
-        public static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry<TException, TFault>(int eventId)
+        public static ExceptionPolicyEntry GetThrowFaultExceptionPolicyEntry<TException, TFault>(
+            int eventId,
+            string logExceptionTitle = LogExceptionTitle)
         {
             Contract.Ensures(Contract.Result<ExceptionPolicyEntry>() != null);
 
@@ -66,7 +65,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                         LogWriterFacades.Exception,
                                         eventId,
                                         TraceEventType.Error,
-                                        LogExceptionTitle,
+                                        logExceptionTitle,
                                         1,
                                         typeof(DumpExceptionFormatter),
                                         Facility.LogWriter),
@@ -82,35 +81,36 @@ namespace vm.Aspects.Wcf.ServicePolicies
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Refers to many exceptions that can be thrown.")]
-        static List<ExceptionPolicyEntry> WcfExceptionShieldingPolicyEntries()
+        static List<ExceptionPolicyEntry> WcfExceptionShieldingPolicyEntries(
+            string logExceptionTitle = LogExceptionTitle)
         {
             int eventId = 3000;
 
             return new List<ExceptionPolicyEntry>
             {
                 // The catch all policy:
-                GetThrowFaultExceptionPolicyEntry<Exception, Fault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<Exception, Fault>(eventId++, logExceptionTitle),
 
-                GetThrowFaultExceptionPolicyEntry<ArgumentException, ArgumentFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<ArgumentNullException, ArgumentNullFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<ArgumentValidationException, ArgumentValidationFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<InvalidOperationException, InvalidOperationFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<NotImplementedException, NotImplementedFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<DataException, DataFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<DbException, DataFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<IOException, IOFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<DirectoryNotFoundException, DirectoryNotFoundFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<PathTooLongException, PathTooLongFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<FileNotFoundException, FileNotFoundFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<ObjectException, ObjectFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<ObjectNotFoundException, ObjectNotFoundFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<ObjectIdentifierNotUniqueException, ObjectIdentifierNotUniqueFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<BusinessException, BusinessFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<UnauthorizedAccessException, UnauthorizedAccessFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<FormatException, FormatFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<SerializationException, SerializationFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<XmlException, XmlFault>(eventId++),
-                GetThrowFaultExceptionPolicyEntry<AggregateException, AggregateFault>(eventId++),
+                GetThrowFaultExceptionPolicyEntry<ArgumentException, ArgumentFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<ArgumentNullException, ArgumentNullFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<ArgumentValidationException, ArgumentValidationFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<InvalidOperationException, InvalidOperationFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<NotImplementedException, NotImplementedFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<DataException, DataFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<DbException, DataFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<IOException, IOFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<DirectoryNotFoundException, DirectoryNotFoundFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<PathTooLongException, PathTooLongFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<FileNotFoundException, FileNotFoundFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<ObjectException, ObjectFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<ObjectNotFoundException, ObjectNotFoundFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<ObjectIdentifierNotUniqueException, ObjectIdentifierNotUniqueFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<BusinessException, BusinessFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<UnauthorizedAccessException, UnauthorizedAccessFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<FormatException, FormatFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<SerializationException, SerializationFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<XmlException, XmlFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<AggregateException, AggregateFault>(eventId++, logExceptionTitle),
                 
                 // to keep the event ID-s consistent, only append to the list above
             };

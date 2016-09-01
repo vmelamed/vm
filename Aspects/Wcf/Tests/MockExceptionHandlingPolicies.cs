@@ -19,7 +19,7 @@ namespace vm.Aspects.Wcf.Tests
         static IDictionary<string, IEnumerable<ExceptionPolicyEntry>> _exceptionPolicyEntries
             => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                ["WCF Exception Shielding"]  = WcfExceptionShieldingPolicyEntries(),
+                [ExceptionShielding.DefaultExceptionPolicy]  = WcfExceptionShieldingPolicyEntries(),
                 ["CustomPolicy"]             = CustomPolicyEntries(),
                 ["UnhandledLoggedException"] = UnhandledLoggedExceptionPolicyEntries(),
                 ["HandledLoggedException"]   = HandledLoggedExceptionPolicyEntries(),
