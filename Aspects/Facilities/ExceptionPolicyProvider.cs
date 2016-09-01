@@ -120,7 +120,7 @@ namespace vm.Aspects.Facilities
                                         LogWriterFacades.Exception,
                                         2000,
                                         TraceEventType.Error,
-                                        RegistrationName,
+                                        "vm.Aspects.Facilities",
                                         1,
                                         typeof(DumpExceptionFormatter),
                                         Facility.LogWriter),
