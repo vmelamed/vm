@@ -311,6 +311,7 @@
     <Compile Include="FaultContracts\DbUpdateFault.cs" />
     <Compile Include="FaultContracts\DataFault.cs" />
     <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
+    <Compile Include="FaultContracts\ExceptionExtensions.cs" />
     <Compile Include="FaultContracts\Fault.cs" />
     <Compile Include="FaultContracts\Fault.MatchingTables.cs" />
     <Compile Include="FaultContracts\FileNotFoundFault.cs" />
@@ -351,7 +352,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ServiceIdentity.cs" />
+    <Compile Include="ServicePolicies\ExceptionToFaultExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\RestCallExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />

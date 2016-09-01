@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -36,6 +36,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                                     ? code
                                     : HttpStatusCode.InternalServerError;
 
+            Data = new SortedDictionary<string, string>();
 #if DEBUG
             var process = Process.GetCurrentProcess();
 
@@ -129,6 +130,13 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
         }
 
+        /// <summary>
+        /// Gets or sets a collection of key-value pairs that provide additional, user-defined information about the exception.
+        /// </summary>
+        [DataMember(Name = "data")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
+        public IDictionary<string, string> Data { get; set; }
+
 #if DEBUG
         /// <summary>
         /// Gets or sets the user who experienced the fault.
@@ -160,13 +168,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         [DataMember(Name = "threadId")]
         public int ThreadId { get; set; }
-
-        /// <summary>
-        /// Gets or sets a collection of key-value pairs that provide additional, user-defined information about the exception.
-        /// </summary>
-        [DataMember(Name = "data")]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
-        public IDictionary Data { get; set; }
 
         /// <summary>
         /// String representation of the frames on the call stack at the time the current exception was thrown.

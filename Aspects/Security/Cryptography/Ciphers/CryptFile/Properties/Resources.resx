@@ -144,6 +144,9 @@
   <data name="PressAnyKey" xml:space="preserve">
     <value>Press any key to finish...</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
   <data name="Usage" xml:space="preserve">
     <value>FileCrypt encrypts and decrypts files using a certificate from the user's 
 certificate store.
@@ -154,6 +157,7 @@ Options:
 /t  The next argument must be the thumbprint of the certificate to be used.
 /e  Perform encryption. This is the default action and can be omitted.
 /d  Perform decryption.
+/6 Encode or decode the result with Base64
 
 Note that the options can be specified with dashes too, e.g. instead of /d
 you can use -d instead.
