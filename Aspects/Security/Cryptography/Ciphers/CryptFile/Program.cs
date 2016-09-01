@@ -195,6 +195,7 @@ namespace FileCrypt
             try
             {
                 store.Open(OpenFlags.ReadOnly);
+
                 var certs = subject != null
                                 ? store.Certificates.Find(X509FindType.FindBySubjectName, subject, false)
                                 : store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
