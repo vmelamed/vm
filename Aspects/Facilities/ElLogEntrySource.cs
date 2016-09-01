@@ -242,7 +242,7 @@ namespace vm.Aspects.Facilities
 #endif
         }
 
-        void TraceNonLogEntry(
+        static void TraceNonLogEntry(
             TraceEventCache eventCache,
             TraceEventType eventType,
             object data)

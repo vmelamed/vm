@@ -18,6 +18,7 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// Note that the fields StackTrace and Source are transferred in 
     /// DEBUG mode only.
     /// </summary>
+    [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}")]
     [MetadataType(typeof(FaultMetadata))]

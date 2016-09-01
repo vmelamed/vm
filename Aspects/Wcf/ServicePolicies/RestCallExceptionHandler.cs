@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
@@ -18,7 +19,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
     public class RestCallExceptionHandler : IExceptionHandler
     {
         static readonly IReadOnlyDictionary<Type, Func<Exception, Exception>> _exceptionDispatcher = new ReadOnlyDictionary<Type, Func<Exception, Exception>>(
-            new SortedDictionary<Type, Func<Exception, Exception>>
+            new Dictionary<Type, Func<Exception, Exception>>
             {
                 [typeof(WebException)]       = ProcessWebException,
                 [typeof(ProtocolException)]  = ProcessProtocolException,
@@ -41,7 +42,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
             return ex;
         }
 
-        static Exception DoHandleException(
+        /// <summary>
+        /// Does the handling of the exception.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <returns>Exception.</returns>
+        public static Exception DoHandleException(
             Exception exception)
         {
             Func<Exception, Exception> handler;
@@ -52,6 +58,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 return exception;
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static Exception ProcessProtocolException(
             Exception x)
         {
@@ -66,6 +73,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             return GetFaultException(fault, faultJson);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static Exception ProcessWebException(
             Exception x)
         {
@@ -80,6 +88,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             return GetFaultException(fault, faultJson);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static Exception ProcessAggregateException(
             Exception x)
         {
@@ -95,6 +104,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             return new AggregateException(exception.InnerExceptions.Select(ex => DoHandleException(ex)));
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.ServiceModel.FaultReasonText.#ctor(System.String)", Justification = "It is OK in a fault.")]
         static Exception GetFaultException(
             Fault fault,
             string faultJson)

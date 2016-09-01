@@ -21,7 +21,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// policy will throe plain <see cref="FaultException"/> with elaborate message text.
     /// </summary>
     /// <seealso cref="ICallHandler" />
-    public class ServiceExceptionHandlingCallHandler : ICallHandler
+    public sealed class ServiceExceptionHandlingCallHandler : ICallHandler
     {
         readonly string _exceptionHandlingPolicy;
 
@@ -82,7 +82,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                             .Invoke(new object[] { fault, fault.HttpStatusCode }));
             }
 
-            if (_contextUtilities.HasWebOperationContext)
+            if (ContextUtilities.HasWebOperationContext)
                 return input.CreateExceptionMethodReturn(
                                 new FaultException(
                                         $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}"));
@@ -93,7 +93,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
 
-        bool IsFaultSupported(
+        static bool IsFaultSupported(
             IMethodInvocation input,
             Type faultType)
         {

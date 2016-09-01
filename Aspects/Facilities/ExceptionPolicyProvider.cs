@@ -87,46 +87,41 @@ namespace vm.Aspects.Facilities
         public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries =>
             new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                {
-                    LogAndSwallow,
-                    new List<ExceptionPolicyEntry>
-                    {
-                        new ExceptionPolicyEntry(
-                            typeof(Exception),
-                            PostHandlingAction.None,
-                            new IExceptionHandler[]
-                            {
-                                new LoggingExceptionHandler(
-                                        LogWriterFacades.Exception,
-                                        1000,
-                                        TraceEventType.Error,
-                                        RegistrationName,
-                                        1,
-                                        typeof(DumpExceptionFormatter),
-                                        Facility.LogWriter),
-                            }),
-                    }
-                },
-                {
-                    LogAndRethrow,
-                    new List<ExceptionPolicyEntry>
-                    {
-                        new ExceptionPolicyEntry(
-                            typeof(Exception),
-                            PostHandlingAction.NotifyRethrow,
-                            new IExceptionHandler[]
-                            {
-                                new LoggingExceptionHandler(
-                                        LogWriterFacades.Exception,
-                                        2000,
-                                        TraceEventType.Error,
-                                        "vm.Aspects.Facilities",
-                                        1,
-                                        typeof(DumpExceptionFormatter),
-                                        Facility.LogWriter),
-                            }),
-                    }
-                },
+                [LogAndSwallow] =   new List<ExceptionPolicyEntry>
+                                    {
+                                        new ExceptionPolicyEntry(
+                                            typeof(Exception),
+                                            PostHandlingAction.None,
+                                            new IExceptionHandler[]
+                                            {
+                                                new LoggingExceptionHandler(
+                                                        LogWriterFacades.Exception,
+                                                        1000,
+                                                        TraceEventType.Error,
+                                                        RegistrationName,
+                                                        1,
+                                                        typeof(DumpExceptionFormatter),
+                                                        Facility.LogWriter),
+                                            }),
+                                    },
+
+                [LogAndRethrow] =   new List<ExceptionPolicyEntry>
+                                    {
+                                        new ExceptionPolicyEntry(
+                                            typeof(Exception),
+                                            PostHandlingAction.NotifyRethrow,
+                                            new IExceptionHandler[]
+                                            {
+                                                new LoggingExceptionHandler(
+                                                        LogWriterFacades.Exception,
+                                                        2000,
+                                                        TraceEventType.Error,
+                                                        "vm.Aspects.Facilities",
+                                                        1,
+                                                        typeof(DumpExceptionFormatter),
+                                                        Facility.LogWriter),
+                                            }),
+                                    },
             };
         #endregion
 
