@@ -99,7 +99,7 @@ namespace vm.Aspects.FtpTransfer
         /// The default implementation here allows for self-signed certificate within the intranet and 
         /// the local computer otherwise it fails if the server certificate is not kosher.
         /// </remarks>
-        protected bool ServerCertificateValidation(
+        bool ServerCertificateValidation(
             object sender,
             X509Certificate certificate,
             X509Chain chain,
@@ -129,8 +129,9 @@ namespace vm.Aspects.FtpTransfer
         public Stream ListFiles()
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
+            var response = request.GetResponse();
 
-            return request.GetRequestStream();
+            return response.GetResponseStream();
         }
 
         /// <summary>
@@ -141,8 +142,9 @@ namespace vm.Aspects.FtpTransfer
         public Stream DownloadFile(string name)
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
+            var response = request.GetResponse();
 
-            return request.GetRequestStream();
+            return response.GetResponseStream();
         }
 
         /// <summary>
@@ -154,11 +156,12 @@ namespace vm.Aspects.FtpTransfer
         public void UploadFile(Stream stream, string name)
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.UploadFile, name);
-
             var targetStream = request.GetRequestStream();
 
             stream.CopyTo(targetStream);
         }
+
+        // ---------------------------------------------------------------------------
 
         /// <summary>
         /// Asynchronously lists the files available for receiving at the target (something like dir).
@@ -167,8 +170,9 @@ namespace vm.Aspects.FtpTransfer
         public async Task<Stream> ListFilesAsync()
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
+            var response = await request.GetResponseAsync();
 
-            return await request.GetRequestStreamAsync();
+            return response.GetResponseStream();
         }
 
         /// <summary>
@@ -179,8 +183,9 @@ namespace vm.Aspects.FtpTransfer
         public async Task<Stream> DownloadFileAsync(string name)
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
+            var response = await request.GetResponseAsync();
 
-            return await request.GetRequestStreamAsync();
+            return response.GetResponseStream();
         }
 
         /// <summary>
@@ -192,7 +197,6 @@ namespace vm.Aspects.FtpTransfer
         public async Task UploadFileAsync(Stream stream, string name)
         {
             var request = PrepareFileRequest(WebRequestMethods.Ftp.UploadFile, name);
-
             var targetStream = await request.GetRequestStreamAsync();
 
             await stream.CopyToAsync(targetStream);
