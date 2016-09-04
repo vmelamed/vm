@@ -10,14 +10,7 @@
         /// </summary>
         /// <remarks>Needed in case the remote site requires user credentials.</remarks>
         /// <value>The user name</value>
-        public virtual string UserName { get; set; }
-
-        /// <summary>
-        /// The encrypted password part of the credentials if required by the remote site.
-        /// </summary>
-        /// <remarks>Needed in case the remote site requires user credentials.</remarks>
-        /// <value>The encrypted password.</value>
-        public virtual string Password64 { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Gets the password.

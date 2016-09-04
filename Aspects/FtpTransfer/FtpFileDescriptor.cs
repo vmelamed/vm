@@ -6,7 +6,7 @@ namespace vm.Aspects.FtpTransfer
     /// Represents a file list entry in the list of file (Unix or DOS style) coming from the FTP site.
     /// </summary>
     /// <seealso cref="IEquatable{FileListEntry}" />
-    public class FileListEntry : IEquatable<FileListEntry>
+    public class FtpFileListEntry : IEquatable<FtpFileListEntry>
     {
         /// <summary>
         /// Gets or sets a value indicating whether this instance is folder or a file.
@@ -48,13 +48,13 @@ namespace vm.Aspects.FtpTransfer
         /// </summary>
         public string Name { get; set; }
 
-        #region IEquatable<StreamDescriptor> Members
+        #region IEquatable<FtpFileListEntry> Members
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public virtual bool Equals(FileListEntry other)
+        public virtual bool Equals(FtpFileListEntry other)
         {
             if (ReferenceEquals(other, null))
                 return false;
@@ -78,7 +78,7 @@ namespace vm.Aspects.FtpTransfer
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <see langword="false" />.</returns>
         public override bool Equals(object obj)
-            => Equals(obj as FileListEntry);
+            => Equals(obj as FtpFileListEntry);
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -89,45 +89,45 @@ namespace vm.Aspects.FtpTransfer
             var hashCode = Constants.HashInitializer;
 
             hashCode = Constants.HashMultiplier * hashCode + IsFolder.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + AccessRights.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + (AccessRights!=null ? AccessRights.GetHashCode() : 0);
             hashCode = Constants.HashMultiplier * hashCode + Number.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Owner.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Group.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + (Owner!=null ? Owner.GetHashCode() : 0);
+            hashCode = Constants.HashMultiplier * hashCode + (Group!=null ? Group.GetHashCode() : 0);
             hashCode = Constants.HashMultiplier * hashCode + FileSize.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + Created.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Name.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + (Name!=null ? Name.GetHashCode() : 0);
 
             return hashCode;
         }
 
         /// <summary>
-        /// Compares two <see cref="FileListEntry"/> objects.
+        /// Compares two <see cref="FtpFileListEntry"/> objects.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>
-        /// <c>true</c> if the objects are considered to be equal (<see cref="Equals{FileListEntry}"/>);
+        /// <c>true</c> if the objects are considered to be equal (<see cref="Equals(FtpFileListEntry)"/>);
         /// otherwise <c>false</c>.
         /// </returns>
         public static bool operator ==(
-            FileListEntry left,
-            FileListEntry right)
+            FtpFileListEntry left,
+            FtpFileListEntry right)
             => ReferenceEquals(left, null)
                         ? ReferenceEquals(right, null)
                         : left.Equals(right);
 
         /// <summary>
-        /// Compares two <see cref="FileListEntry"/> objects.
+        /// Compares two <see cref="FtpFileListEntry"/> objects.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>
-        /// <c>true</c> if the objects are not considered to be equal (<see cref="Equals{FileListEntry}"/>);
+        /// <c>true</c> if the objects are not considered to be equal (<see cref="Equals(FtpFileListEntry)"/>);
         /// otherwise <c>false</c>.
         /// </returns>
         public static bool operator !=(
-            FileListEntry left,
-            FileListEntry right)
+            FtpFileListEntry left,
+            FtpFileListEntry right)
             => !(left==right);
     }
 }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.67-beta</version>
+        <version>1.0.68-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -12,7 +12,7 @@
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.            
         </description>
         <releaseNotes>
-            * Targeting the .NET 4.5.2
+            * Added a project with a few classes for FTP transfer.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -67,6 +67,10 @@
         <file src="..\Parsers\bin\ReleaseDOTNET452\vm.Aspects.Parsers.dll"
               target="lib\net452"/>
         <file src="..\Parsers\bin\ReleaseDOTNET452\vm.Aspects.Parsers.xml"
+              target="lib\net452"/>
+        <file src="..\FtpTransfer\bin\ReleaseDOTNET452\vm.Aspects.FtpTransfer.dll"
+              target="lib\net452"/>
+        <file src="..\FtpTransfer\bin\ReleaseDOTNET452\vm.Aspects.FtpTransfer.xml"
               target="lib\net452"/>
         <file src="..\bin\ReleaseDOTNET452\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
               target="lib\net452"/>

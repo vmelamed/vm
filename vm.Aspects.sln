@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Common Items\AssemblyInfo.global.cs = Common Items\AssemblyInfo.global.cs
 		Common Items\Dictionary.xml = Common Items\Dictionary.xml
+		Aspects\FtpTransfer\vm.Aspects.FtpTransfer.csproj = Aspects\FtpTransfer\vm.Aspects.FtpTransfer.csproj
 		Common Items\vm.snk = Common Items\vm.snk
 		Common Items\vm.Test.snk = Common Items\vm.Test.snk
 		Common Items\vmAllRules.ruleset = Common Items\vmAllRules.ruleset
@@ -66,9 +67,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileCrypt", "Aspects\Securi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Wcf.Tests", "Aspects\Wcf\Tests\vm.Aspects.Wcf.Tests.csproj", "{9F87B835-8270-42F9-9567-26B2C7489C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.FtpTransfer", "Aspects\vm.Aspects.FtpTransfer\vm.Aspects.FtpTransfer.csproj", "{113CE397-4859-4B92-8F10-E5BA2D6F1A35}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFtpClient", "Aspects\Test\TestFtpClient\TestFtpClient.csproj", "{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.FtpTransfer", "Aspects\FtpTransfer\vm.Aspects.FtpTransfer.csproj", "{113CE397-4859-4B92-8F10-E5BA2D6F1A35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,18 +192,18 @@ Global
 		{9F87B835-8270-42F9-9567-26B2C7489C2B}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
 		{9F87B835-8270-42F9-9567-26B2C7489C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F87B835-8270-42F9-9567-26B2C7489C2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{113CE397-4859-4B92-8F10-E5BA2D6F1A35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,7 +224,7 @@ Global
 		{73B4C51D-31EE-4DBC-B7E9-FA13FF817F1D} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.WCF.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.Integration.WCF.6.0.1304.0\lib\NET45
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Logging.5.0.505.1\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.PolicyInjection.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.WCF.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.Integration.WCF.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal

@@ -9,10 +9,9 @@ namespace vm.Aspects.FtpTransfer
     /// <summary>
     /// Abstracts a object that can list download and upload files (e.g. from an FTP site).
     /// </summary>
-    [ContractClass(typeof(ITransferFileContract))]
-    public interface ITransferFile
+    [ContractClass(typeof(ITransferFilesContract))]
+    public interface ITransferFiles
     {
-
         /// <summary>
         /// Lists the files available for receiving at the target (something like dir or ls).
         /// </summary>
@@ -34,7 +33,6 @@ namespace vm.Aspects.FtpTransfer
         void UploadFile(Stream stream, string name);
 
         // -----------------------------------------
-
 
         /// <summary>
         /// Asynchronously lists the files available for receiving at the target (something like dir or ls).
@@ -59,8 +57,8 @@ namespace vm.Aspects.FtpTransfer
     }
 
     #region ITransferFile contract binding
-    [ContractClassFor(typeof(ITransferFile))]
-    abstract class ITransferFileContract : ITransferFile
+    [ContractClassFor(typeof(ITransferFiles))]
+    abstract class ITransferFilesContract : ITransferFiles
     {
         public Stream DownloadFile(string name)
         {

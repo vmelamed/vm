@@ -27,11 +27,11 @@ namespace vm.Aspects.FtpTransfer
 
         /// <summary>
         /// Parses the specified stream returned by the FTP site to the command ls or dir
-        /// and produces a sequence of <see cref="FileListEntry" />-s.
+        /// and produces a sequence of <see cref="FtpFileListEntry" />-s.
         /// </summary>
         /// <param name="fileListStream">The stream whose contents will be parsed to produce the list of entries.</param>
-        /// <returns>A sequence of <see cref="FileListEntry" />-s</returns>
-        public IEnumerable<FileListEntry> Parse(
+        /// <returns>A sequence of <see cref="FtpFileListEntry" />-s</returns>
+        public IEnumerable<FtpFileListEntry> Parse(
             Stream fileListStream)
         {
             var reader = new StreamReader(fileListStream, Encoding.ASCII);
@@ -48,12 +48,12 @@ namespace vm.Aspects.FtpTransfer
             }
         }
 
-        static FileListEntry StreamDescriptorFactory(Match match)
+        static FtpFileListEntry StreamDescriptorFactory(Match match)
         {
             int num;
             DateTime dt;
 
-            return new FileListEntry
+            return new FtpFileListEntry
             {
                 IsFolder     = string.Compare(match.Groups["dir"].Value, "d", StringComparison.OrdinalIgnoreCase) == 0,
                 AccessRights = match.Groups["access"].Value,

@@ -119,6 +119,7 @@
     <CodeContractsRuntimeCheckingLevel>ReleaseRequires</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <DocumentationFile>bin\Release\vm.Aspects.FtpTransfer.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -140,16 +141,16 @@
     <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
-    <Compile Include="CertificateData.cs" />
-    <Compile Include="FileDescriptor.cs" />
+    <Compile Include="FtpFileDescriptor.cs" />
     <Compile Include="FtpParseMSDosListStreams.cs" />
     <Compile Include="FtpParseUnixListStreams.cs" />
     <Compile Include="FtpUserCredentials.cs" />
     <Compile Include="IFileListParser.cs" />
-    <Compile Include="ITransferFile.cs" />
+    <Compile Include="ITransferFiles.cs" />
+    <Compile Include="ITransferClientConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransferSite.cs" />
-    <Compile Include="TransmissionDirection.cs" />
+    <Compile Include="TransferClient.cs" />
+    <Compile Include="TransferClientConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">

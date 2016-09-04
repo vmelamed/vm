@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TestFtpClient</RootNamespace>
     <AssemblyName>TestFtpClient</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,7 +55,7 @@
       <Project>{372A2FEF-C004-498C-B57F-CF0ACA66C37B}</Project>
       <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\vm.Aspects.FtpTransfer\vm.Aspects.FtpTransfer.csproj">
+    <ProjectReference Include="..\..\FtpTransfer\vm.Aspects.FtpTransfer.csproj">
       <Project>{113ce397-4859-4b92-8f10-e5ba2d6f1a35}</Project>
       <Name>vm.Aspects.FtpTransfer</Name>
     </ProjectReference>

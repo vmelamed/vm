@@ -32,10 +32,10 @@ namespace vm.Aspects.FtpTransfer
         /// </summary>
         /// <param name="fileListStream">The list streams.</param>
         /// <returns>Sequence FileListEntry.</returns>
-        public IEnumerable<FileListEntry> Parse(
+        public IEnumerable<FtpFileListEntry> Parse(
             Stream fileListStream)
         {
-            var reader = new StreamReader(fileListStream, Encoding.Unicode);
+            var reader = new StreamReader(fileListStream, Encoding.ASCII);
 
             while (!reader.EndOfStream)
             {
@@ -50,12 +50,12 @@ namespace vm.Aspects.FtpTransfer
         }
         #endregion
 
-        static FileListEntry StreamDescriptorFactory(Match match)
+        static FtpFileListEntry StreamDescriptorFactory(Match match)
         {
             int num;
             DateTime dt;
 
-            return new FileListEntry
+            return new FtpFileListEntry
             {
                 IsFolder = !string.IsNullOrWhiteSpace(match.Groups["isDir"].Value),
                 Name     = match.Groups["name"].Value,
