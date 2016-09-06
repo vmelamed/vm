@@ -144,7 +144,6 @@
     <Compile Include="FtpFileDescriptor.cs" />
     <Compile Include="FtpParseMSDosListStreams.cs" />
     <Compile Include="FtpParseUnixListStreams.cs" />
-    <Compile Include="FtpUserCredentials.cs" />
     <Compile Include="IFileListParser.cs" />
     <Compile Include="ITransferFiles.cs" />
     <Compile Include="ITransferClientConfiguration.cs" />
