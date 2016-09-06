@@ -1,6 +1,6 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 set Configuration=Release
-set vmAspectsVersion=1.0.68-beta
+set vmAspectsVersion=1.0.69-beta
 pushd
 
 cd %~dp0..
@@ -41,6 +41,9 @@ cd ..
 :if errorlevel 1 goto exit
 :cd ..\Parsers
 :msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
+:if errorlevel 1 goto exit
+:cd ..\FtpTransfer
+:msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 :if errorlevel 1 goto exit
 :cd ..\Wcf
 :msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%

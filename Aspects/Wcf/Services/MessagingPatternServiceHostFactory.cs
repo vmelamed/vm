@@ -282,6 +282,25 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
+        /// Creates a host for a known service type outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
+        /// Here it does the following:
+        /// <list type="number"><item><description>
+        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
+        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
+        /// </description></item><item><description>
+        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
+        /// if there is a registered pattern binding factory in the current container. The implementing descendants must use concrete service type here.
+        /// </description></item></list>
+        /// </summary>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        public virtual ServiceHost CreateHost(
+            params Uri[] baseAddresses)
+        {
+            throw new NotImplementedException("The descendant host must implement this method if you need it.");
+        }
+
+        /// <summary>
         /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
         /// </summary>
         /// <typeparam name="TService">The type of the service.</typeparam>
