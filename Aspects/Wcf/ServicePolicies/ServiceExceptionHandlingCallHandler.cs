@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
@@ -23,24 +22,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// <seealso cref="ICallHandler" />
     public sealed class ServiceExceptionHandlingCallHandler : ICallHandler
     {
-        readonly string _exceptionHandlingPolicy;
-
         /// <summary>
         /// Gets or sets the context utilities.
         /// </summary>
         [Dependency]
         public IWcfContextUtilities ContextUtilities { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceExceptionHandlingCallHandler"/> class.
-        /// </summary>
-        public ServiceExceptionHandlingCallHandler(
-            string exceptionHandlingPolicy)
-        {
-            _exceptionHandlingPolicy = string.IsNullOrWhiteSpace(exceptionHandlingPolicy)
-                                            ? ExceptionShielding.DefaultExceptionPolicy
-                                            : exceptionHandlingPolicy;
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceExceptionHandlingCallHandler"/> class.

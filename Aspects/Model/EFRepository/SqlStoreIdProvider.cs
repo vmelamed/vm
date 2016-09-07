@@ -24,6 +24,7 @@ namespace vm.Aspects.Model.EFRepository
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
             Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
+            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
 
             var uniqueId = this as IStoreUniqueId<TId>;
 

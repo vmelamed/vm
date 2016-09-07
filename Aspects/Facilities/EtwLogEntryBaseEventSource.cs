@@ -166,10 +166,10 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// Computes the sizes the in bytes of a string.
         /// </summary>
-        /// <param name="s">The string.</param>
+        /// <param name="text">The string.</param>
         /// <returns>System.Int32.</returns>
-        protected static int SizeInBytes(string s)
-            => s == null ? 0 : (s.Length + 1) * sizeof(char);
+        protected static int SizeInBytes(string text)
+            => text == null ? 0 : (text.Length + 1) * sizeof(char);
 
     }
 }

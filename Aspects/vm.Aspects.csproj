@@ -213,9 +213,8 @@
       <HintPath>..\packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection, Version=6.1.0.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection">
+      <HintPath>..\Externals\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
@@ -258,28 +257,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects, Version=1.0.69.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\vm.Aspects.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.8.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
       <HintPath>..\packages\AspectObjectDumper.1.6.8\lib\net40\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="vm.Aspects.FtpTransfer, Version=1.0.69.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\vm.Aspects.FtpTransfer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="vm.Aspects.Model, Version=1.0.69.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\vm.Aspects.Model.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="vm.Aspects.Parsers, Version=1.0.69.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\vm.Aspects.Parsers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="vm.Aspects.Wcf, Version=1.0.69.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\vm.Aspects.1.0.69-beta\lib\net452\vm.Aspects.Wcf.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

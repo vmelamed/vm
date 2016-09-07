@@ -30,6 +30,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
             Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
+            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
 
             var provider = this as IStoreUniqueId<TId>;
 

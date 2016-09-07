@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
@@ -17,7 +18,15 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// The log singleton instance.
         /// </summary>
-        public static EtwLogEntryEventSource Log => _log;
+        public static EtwLogEntryEventSource Log
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<EtwLogEntryEventSource>() != null);
+
+                return _log;
+            }
+        }
 
         const int WriteLogEntryId                    = 1;
         const int WriteLogTextId                     = 2;

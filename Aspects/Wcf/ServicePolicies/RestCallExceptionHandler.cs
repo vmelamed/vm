@@ -50,6 +50,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
         public static Exception DoHandleException(
             Exception exception)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            Contract.Ensures(Contract.Result<Exception>() != null);
+
             Func<Exception, Exception> handler;
 
             if (_exceptionDispatcher.TryGetValue(exception.GetType(), out handler))

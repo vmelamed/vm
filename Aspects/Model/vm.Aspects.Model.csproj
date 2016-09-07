@@ -331,7 +331,7 @@
       <Name>vm.Aspects</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wcf\vm.Aspects.Wcf.csproj">
-      <Project>{165DED1C-2F5B-4941-854C-EC928ADA3F32}</Project>
+      <Project>{165ded1c-2f5b-4941-854c-ec928ada3f32}</Project>
       <Name>vm.Aspects.Wcf</Name>
     </ProjectReference>
   </ItemGroup>

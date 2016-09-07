@@ -105,7 +105,15 @@ namespace vm.Aspects.Model
         /// <returns>IMethodReturn.</returns>
         protected virtual IMethodReturn DoInvoke(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext) => getNext().Invoke(input, getNext);
+            GetNextHandlerDelegate getNext)
+        {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
+
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+
+            return getNext().Invoke(input, getNext);
+        }
 
         /// <summary>
         /// Actions that take place after invoking the next handler or the target in the chain.

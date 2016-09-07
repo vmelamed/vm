@@ -338,6 +338,7 @@ namespace vm.Aspects.Wcf.Services
             Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
         {
             Contract.Requires<ArgumentNullException>(provideEndpoints != null, nameof(provideEndpoints));
+            Contract.Ensures(Contract.Result<MessagingPatternServiceHostFactory<TContract>>() != null);
 
             _provideEndpoints = provideEndpoints;
             return this;
@@ -351,6 +352,7 @@ namespace vm.Aspects.Wcf.Services
             Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
         {
             Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
+            Contract.Ensures(Contract.Result<MessagingPatternServiceHostFactory<TContract>>() != null);
 
             _serviceRegistrar = registrar;
             return this;

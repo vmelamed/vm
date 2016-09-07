@@ -69,7 +69,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// A factory delegate which should produce a fault object from an exception object.
         /// If <see langword="null"/> this method will assume a default factory which will create the fault object and 
         /// will attempt to copy all exception's properties to the fault's properties with the same and type.
-        /// Properties that do not have a counterpart, will be added to the <see cref="Fault.Data"/> dictionary 
+        /// Properties that do not have a counterpart, will be added to the <see cref="Data"/> dictionary 
         /// with values converted to string (invoking <see cref="object.ToString()"/>)
         /// </param>
         /// <param name="force">if set to <see langword="true" /> the mapping will be implemented even if the types participate in existing mappings,
@@ -77,6 +77,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <exception cref="InvalidOperationException">The type {exceptionType.Name} is already mapped to {faultType.Name}.
         /// or
         /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
+        [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "By design.")]
         public static void AddMappingFaultToException(
             Type exceptionType,
             Type faultType,

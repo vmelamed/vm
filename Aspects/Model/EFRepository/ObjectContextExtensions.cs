@@ -22,8 +22,8 @@ namespace vm.Aspects.Model.EFRepository
             Type type)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Requires<ArgumentNullException>(type    != null, nameof(type));
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Length > 0);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
@@ -53,7 +53,7 @@ namespace vm.Aspects.Model.EFRepository
             this ObjectContext context)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Ensures(Contract.Result<string>()!=null);
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Length > 0);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 

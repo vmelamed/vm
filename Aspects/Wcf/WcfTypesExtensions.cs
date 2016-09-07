@@ -227,6 +227,8 @@ namespace vm.Aspects.Wcf
         public static Task DisposeCommunicationObjectAsync(
             this ICommunicationObject co)
         {
+            Contract.Ensures(Contract.Result<Task>() != null);
+
             if (co == null)
                 return Task.FromResult(true);
 

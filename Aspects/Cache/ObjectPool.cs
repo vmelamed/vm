@@ -207,6 +207,7 @@ namespace vm.Aspects.Cache
         {
             Contract.Requires<ArgumentException>(waitMilliseconds >= -1, "The timeout must be greater or equal to -1 (infinite).");
             Contract.Requires<InvalidOperationException>(IsInitialized, "The object pool is not initialized.");
+            Contract.Ensures(Contract.Result<Task<LentObject<T>>>() != null);
 
             if (!await _semaphore.WaitAsync(waitMilliseconds, cancellationToken))
                 return null;

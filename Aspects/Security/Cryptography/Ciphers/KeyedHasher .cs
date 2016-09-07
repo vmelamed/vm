@@ -426,6 +426,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         protected async Task InitializeHashKeyAsync()
         {
+            Contract.Ensures(Contract.Result<Task>() != null);
+
             if (!IsHashKeyInitialized)
             {
                 if (KeyStorage.KeyLocationExists(KeyLocation))
