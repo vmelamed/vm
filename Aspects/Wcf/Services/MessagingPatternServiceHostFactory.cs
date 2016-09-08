@@ -297,6 +297,8 @@ namespace vm.Aspects.Wcf.Services
         public virtual ServiceHost CreateHost(
             params Uri[] baseAddresses)
         {
+            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
+
             throw new NotImplementedException("The descendant host must implement this method if you need it.");
         }
 
