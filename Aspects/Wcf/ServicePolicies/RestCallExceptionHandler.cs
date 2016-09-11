@@ -18,8 +18,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// <seealso cref="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.IExceptionHandler" />
     public class RestCallExceptionHandler : IExceptionHandler
     {
-        static readonly IReadOnlyDictionary<Type, Func<Exception, Exception>> _exceptionDispatcher = new ReadOnlyDictionary<Type, Func<Exception, Exception>>(
-            new Dictionary<Type, Func<Exception, Exception>>
+        static readonly IReadOnlyDictionary<Type, Func<Exception, Type[], Exception>> _exceptionDispatcher = new ReadOnlyDictionary<Type, Func<Exception, Type[], Exception>>(
+            new Dictionary<Type, Func<Exception, Type[], Exception>>
             {
                 [typeof(WebException)]       = ProcessWebException,
                 [typeof(ProtocolException)]  = ProcessProtocolException,
@@ -46,54 +46,28 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// Does the handling of the exception.
         /// </summary>
         /// <param name="exception">The exception.</param>
+        /// <param name="expectedFaults">Expected fault types to check for. Can be <see langword="null"/></param>
         /// <returns>Exception.</returns>
         public static Exception DoHandleException(
-            Exception exception)
+            Exception exception,
+            params Type[] expectedFaults)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            Contract.Requires<ArgumentNullException>(exception      != null, nameof(exception));
+            Contract.Requires<ArgumentNullException>(expectedFaults != null, nameof(expectedFaults));
             Contract.Ensures(Contract.Result<Exception>() != null);
 
-            Func<Exception, Exception> handler;
+            Func<Exception, Type[], Exception> handler;
 
             if (_exceptionDispatcher.TryGetValue(exception.GetType(), out handler))
-                return handler(exception);
+                return handler(exception, expectedFaults);
             else
                 return exception;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
-        static Exception ProcessProtocolException(
-            Exception x)
-        {
-            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
-            Contract.Requires<ArgumentException>(x is ProtocolException, "The argument must be a ProtocolException.");
-            Contract.Ensures(Contract.Result<Exception>() != null);
-
-            string faultJson;
-
-            var fault = ProtocolExceptionToWebFaultResolver.Resolve((ProtocolException)x, out faultJson);
-
-            return GetFaultException(fault, faultJson);
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
-        static Exception ProcessWebException(
-            Exception x)
-        {
-            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
-            Contract.Requires<ArgumentException>(x is WebException, "The argument must be a WebException.");
-            Contract.Ensures(Contract.Result<Exception>() != null);
-
-            string faultJson;
-
-            var fault = ProtocolExceptionToWebFaultResolver.Resolve((WebException)x, out faultJson);
-
-            return GetFaultException(fault, faultJson);
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static Exception ProcessAggregateException(
-            Exception x)
+            Exception x,
+            params Type[] expectedFaults)
         {
             Contract.Requires<ArgumentNullException>(x != null, nameof(x));
             Contract.Requires<ArgumentException>(x is AggregateException, "The argument must be an AggregateException.");
@@ -102,36 +76,66 @@ namespace vm.Aspects.Wcf.ServicePolicies
             var exception = (AggregateException)x;
 
             if (exception.InnerExceptions.Count == 1)
-                return DoHandleException(exception.InnerExceptions[0]);
+                return DoHandleException(exception.InnerExceptions[0], expectedFaults);
+            else
+                return new AggregateException(exception.InnerExceptions.Select(ex => DoHandleException(ex, expectedFaults)));
+        }
 
-            return new AggregateException(exception.InnerExceptions.Select(ex => DoHandleException(ex)));
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        static Exception ProcessProtocolException(
+            Exception x,
+            params Type[] expectedFaults)
+        {
+            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
+            Contract.Requires<ArgumentException>(x is ProtocolException, "The argument must be a ProtocolException.");
+            Contract.Ensures(Contract.Result<Exception>() != null);
+
+            string responseText;
+
+            var fault = ProtocolExceptionToWebFaultResolver.Resolve((ProtocolException)x, expectedFaults, out responseText);
+
+            return GetFaultException(fault, responseText);
+        }
+
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
+        static Exception ProcessWebException(
+            Exception x,
+            params Type[] expectedFaults)
+        {
+            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
+            Contract.Requires<ArgumentException>(x is WebException, "The argument must be a WebException.");
+            Contract.Ensures(Contract.Result<Exception>() != null);
+
+            string responseText;
+
+            var fault = ProtocolExceptionToWebFaultResolver.Resolve((WebException)x, expectedFaults, out responseText);
+
+            return GetFaultException(fault, responseText);
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.ServiceModel.FaultReasonText.#ctor(System.String)", Justification = "It is OK in a fault.")]
         static Exception GetFaultException(
             Fault fault,
-            string faultJson)
+            string responseText)
         {
+            Exception ex;
+
             if (fault == null)
-                return new FaultException(
+                ex = new FaultException(
                             new FaultReason(
                                     new[]
                                     {
                                         new FaultReasonText("Unresolved ProtocolException."),
-                                        new FaultReasonText(faultJson),
+                                        new FaultReasonText(responseText),
                                     }));
+            else
+                ex = (FaultException)typeof(FaultException<>)
+                                    .MakeGenericType(fault.GetType())
+                                    .GetConstructor(new Type[] { fault.GetType() })
+                                    .Invoke(new object[] { fault })
+                                    ;
 
-            // TODO: should we convert the fault to an exception?
-            //var exception = ExceptionFactory.CreateException(fault);
-
-            //if (exception != null)
-            //    return exception;
-
-            return (FaultException)typeof(FaultException<>)
-                                .MakeGenericType(fault.GetType())
-                                .GetConstructor(new Type[] { fault.GetType() })
-                                .Invoke(new object[] { fault })
-                                ;
+            return ex;
         }
     }
 }
