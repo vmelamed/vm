@@ -141,8 +141,13 @@ namespace vm.Aspects.Wcf.Bindings
             };
             binding.Security           = new WSHttpSecurity
             {
-                Mode        = SecurityMode.None,
+                Mode        = SecurityMode.Transport,
+                Transport   = new HttpTransportSecurity
+                {
+                    ClientCredentialType = HttpClientCredentialType.None,
+                },
             };
+
 
             return binding;
         }

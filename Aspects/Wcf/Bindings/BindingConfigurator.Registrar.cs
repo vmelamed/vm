@@ -37,7 +37,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
 
-                    .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, "http", new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "http", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "https", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "https.rest", new InjectionConstructor())
@@ -65,7 +65,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
 
-                    .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, "http", new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "http", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "https", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "https.rest", new InjectionConstructor())
