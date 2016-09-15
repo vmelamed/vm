@@ -481,6 +481,21 @@ namespace vm.Aspects
         public static Regex TelephoneNumber => _telephoneNumber.Value;
         #endregion
 
+        #region UsStateCode
+        /// <summary>
+        /// Regular expression pattern which matches ...
+        /// </summary>
+        public const string RexUsStateCode = "(?i:^[a-z][a-z]$)";
+
+        readonly static Lazy<Regex> _rexUsStateCode = new Lazy<Regex>(() => new Regex(RexUsStateCode, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex UsStateCode => _rexUsStateCode.Value;
+        #endregion
+
+
         #region UsZipCode
         /// <summary>
         /// Regular expression pattern which matches US postal codes

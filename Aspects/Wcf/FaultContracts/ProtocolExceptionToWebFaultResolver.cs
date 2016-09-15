@@ -83,10 +83,11 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (string.IsNullOrWhiteSpace(responseText))
                     return null;
 
-                foreach (var type in expectedFaults)
-                    try
-                    {
-                        var s = new DataContractJsonSerializer(
+                if (expectedFaults != null)
+                    foreach (var type in expectedFaults)
+                        try
+                        {
+                            var s = new DataContractJsonSerializer(
                                             type,
                                             new DataContractJsonSerializerSettings
                                             {
@@ -95,15 +96,15 @@ namespace vm.Aspects.Wcf.FaultContracts
                                                 UseSimpleDictionaryFormat = true,
                                             });
 
-                        return s.ReadObject(stream) as Fault;
-                    }
-                    catch (SerializationException)
-                    {
-                    }
-                    finally
-                    {
-                        stream.Seek(0, SeekOrigin.Begin);
-                    }
+                            return s.ReadObject(stream) as Fault;
+                        }
+                        catch (SerializationException)
+                        {
+                        }
+                        finally
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                        }
 
                 // try the vm.Aspects.Wcf known faults:
                 var matchType = RexFaultType.Match(responseText);
