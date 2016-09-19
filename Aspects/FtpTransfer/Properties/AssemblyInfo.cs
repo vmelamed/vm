@@ -2,9 +2,9 @@
 
 [assembly: AssemblyTitle("vm.Aspects.FtpTransfer")]
 [assembly: AssemblyDescription("A set of classes for FTP file transfer.")]
-[assembly: AssemblyVersion("1.0.74")]
-[assembly: AssemblyFileVersion("1.0.74")]
-[assembly: AssemblyInformationalVersion("1.0.74")]
+[assembly: AssemblyVersion("1.0.75")]
+[assembly: AssemblyFileVersion("1.0.75")]
+[assembly: AssemblyInformationalVersion("1.0.75")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.FtpTransfer.Test, " +

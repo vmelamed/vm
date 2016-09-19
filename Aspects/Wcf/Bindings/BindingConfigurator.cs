@@ -189,7 +189,10 @@ namespace vm.Aspects.Wcf.Bindings
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
 
-            return ConfigureDefault(binding);
+            binding = ConfigureDefault(binding) as WebHttpBinding;
+            binding.ContentTypeMapper = new WebContentTypeMapperDefaultJson();
+
+            return binding;
         }
 
         /// <summary>

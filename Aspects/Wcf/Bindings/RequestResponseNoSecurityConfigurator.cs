@@ -113,7 +113,6 @@ namespace vm.Aspects.Wcf.Bindings
             if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
                 binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
 
-            binding.ContentTypeMapper  = new WebContentTypeMapperDefaultJson();
             binding.BypassProxyOnLocal = true;
 
             return binding;
