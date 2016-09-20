@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmCiphersVersion=1.11.15
+set vmCiphersVersion=1.11.16
 set Configuration=Release
 pushd
 

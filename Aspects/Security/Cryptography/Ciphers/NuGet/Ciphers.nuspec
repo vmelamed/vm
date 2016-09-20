@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.11.15</version>
+        <version>1.11.16</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
