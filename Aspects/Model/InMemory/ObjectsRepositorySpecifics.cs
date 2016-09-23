@@ -204,6 +204,19 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Creates an entity with the specified type.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <returns>System.Object.</returns>
+        public static object CreateEntity(Type entityType)
+        {
+            Contract.Requires<InvalidOperationException>(typeof(DomainEntity<long, string>).IsAssignableFrom(entityType), "The repository does not support this type.");
+            Contract.Ensures(Contract.Result<object>() != null);
+
+            return CreateCollections(Activator.CreateInstance(entityType));
+        }
+
+        /// <summary>
         /// Creates a <see cref="T:Value" /> derived object of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
@@ -213,6 +226,34 @@ namespace vm.Aspects.Model.InMemory
             Contract.Ensures(Contract.Result<T>() != null);
 
             return CreateCollections(new T());
+        }
+
+        /// <summary>
+        /// Creates the value.
+        /// </summary>
+        /// <param name="valueType">Type of the value.</param>
+        /// <returns>System.Object.</returns>
+        public static object CreateValue(Type valueType)
+        {
+            Contract.Ensures(Contract.Result<object>() != null);
+
+            return CreateCollections(Activator.CreateInstance(valueType));
+        }
+
+        static object CreateCollections(object instance)
+        {
+            foreach (var pi in instance
+                                    .GetType()
+                                    .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                                    .Where(pi => pi.PropertyType.IsGenericType &&
+                                                 pi.PropertyType.GetGenericTypeDefinition() == typeof(ICollection<>)))
+            {
+                var collectionType = typeof(List<>).MakeGenericType(pi.PropertyType.GetGenericArguments()[0]);
+
+                pi.SetValue(instance, collectionType.GetConstructor(Type.EmptyTypes).Invoke(null));
+            }
+
+            return instance;
         }
 
         static T CreateCollections<T>(T instance)

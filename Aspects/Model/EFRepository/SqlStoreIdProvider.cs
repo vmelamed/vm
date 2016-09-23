@@ -36,7 +36,18 @@ namespace vm.Aspects.Model.EFRepository
         #endregion
 
         #region IStoreUniqueId<int> Members
-        int IStoreUniqueId<int>.GetNewId<T>(IRepository repository)
+        int IStoreUniqueId<int>.GetNewId<T>(
+            IRepository repository)
+        {
+            Contract.Ensures(Contract.Result<int>() == 0);
+
+            // the value should be ignored by SQL Server
+            return 0;
+        }
+
+        int IStoreUniqueId<int>.GetNewId(
+            Type objectsType,
+            IRepository repository)
         {
             Contract.Ensures(Contract.Result<int>() == 0);
 
@@ -46,7 +57,18 @@ namespace vm.Aspects.Model.EFRepository
         #endregion
 
         #region IStoreUniqueId<long> Members
-        long IStoreUniqueId<long>.GetNewId<T>(IRepository repository)
+        long IStoreUniqueId<long>.GetNewId<T>(
+            IRepository repository)
+        {
+            Contract.Ensures(Contract.Result<long>() == 0L);
+
+            // the value should be ignored by SQL Server
+            return 0L;
+        }
+
+        long IStoreUniqueId<long>.GetNewId(
+            Type objectsType,
+            IRepository repository)
         {
             Contract.Ensures(Contract.Result<long>() == 0L);
 
@@ -60,10 +82,17 @@ namespace vm.Aspects.Model.EFRepository
 
         // the value should be ignored by SQL Server
         DateTime IStoreUniqueId<DateTime>.GetNewId<T>(IRepository repository) => _0date;
+
+        // the value should be ignored by SQL Server
+        DateTime IStoreUniqueId<DateTime>.GetNewId(
+            Type objectsType,
+            IRepository repository) => _0date;
         #endregion
 
         #region IStoreUniqueId<Guid> Members
         Guid IStoreUniqueId<Guid>.GetNewId<T>(IRepository repository) => new Guid("0123456789ABCDEF0123456789ABCDEF");
+
+        Guid IStoreUniqueId<Guid>.GetNewId(Type objectsType, IRepository repository) => new Guid("0123456789ABCDEF0123456789ABCDEF");
         #endregion
     }
 }

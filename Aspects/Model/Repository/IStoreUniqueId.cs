@@ -16,5 +16,13 @@ namespace vm.Aspects.Model.Repository
         /// <param name="repository">The repository representing the store.</param>
         /// <returns>A new unused value for unique store identifier in the store sequence.</returns>
         TId GetNewId<T>(IRepository repository) where T : IHasStoreId<TId>;
+
+        /// <summary>
+        /// Gets a new store ID which must be guaranteed to be unique.
+        /// </summary>
+        /// <param name="objectsType">Type of the objects.</param>
+        /// <param name="repository">The repository representing the store.</param>
+        /// <returns>A new unused value for unique store identifier in the store sequence.</returns>
+        TId GetNewId(Type objectsType, IRepository repository);
     }
 }

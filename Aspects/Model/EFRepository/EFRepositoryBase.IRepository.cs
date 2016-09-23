@@ -7,10 +7,10 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
-    using Microsoft.Practices.ServiceLocation;
-    using Microsoft.Practices.Unity;
     using System.Reflection;
     using System.Security;
+    using Microsoft.Practices.ServiceLocation;
+    using Microsoft.Practices.Unity;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = vm.Aspects.Model.Repository.EntityState;
 
@@ -122,18 +122,49 @@ namespace vm.Aspects.Model.EFRepository
                                                 .GetNewId<T>(this);
 
         /// <summary>
+        /// Gets a unique store id for the specified type of objects.
+        /// </summary>
+        /// <typeparam name="TId">The type of the store identifier.</typeparam>
+        /// <param name="objectsType">Type of the objects.</param>
+        /// <returns>Unique ID value.</returns>
+        public TId GetStoreId<TId>(
+            Type objectsType)
+            where TId : IEquatable<TId> => StoreIdProvider
+                                                .GetProvider<TId>()
+                                                .GetNewId(objectsType, this);
+
+        /// <summary>
         /// Creates an entity of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
         /// <returns>The created object.</returns>
-        public T CreateEntity<T>() where T : BaseDomainEntity, new() => Set<T>().Create();
+        public T CreateEntity<T>() where T : BaseDomainEntity, new()
+            => Set<T>().Create();
+
+        /// <summary>
+        /// Creates a <see cref="BaseDomainEntity" />-derived object of type <paramref name="entityType" />
+        /// Also extends the object with repository/ORM specific qualities like proxy, properties change tracking, etc.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <returns>The created entity.</returns>
+        public BaseDomainEntity CreateEntity(Type entityType)
+            => Set(entityType).Create() as BaseDomainEntity;
 
         /// <summary>
         /// Creates a value object of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
         /// <returns>The created object.</returns>
-        public T CreateValue<T>() where T : BaseDomainValue, new() => Set<T>().Create();
+        public T CreateValue<T>() where T : BaseDomainValue, new()
+            => Set<T>().Create();
+
+        /// <summary>
+        /// Creates a <see cref="BaseDomainValue" /> derived object of type <paramref name="valueType" />.
+        /// </summary>
+        /// <param name="valueType">Type of the value.</param>
+        /// <returns>The created value.</returns>
+        public BaseDomainValue CreateValue(Type valueType)
+            => Set(valueType).Create() as BaseDomainValue;
 
         /// <summary>
         /// Adds a new entity of <typeparamref name="T" /> to the repository.

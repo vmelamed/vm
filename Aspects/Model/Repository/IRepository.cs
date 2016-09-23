@@ -34,6 +34,23 @@ namespace vm.Aspects.Model.Repository
             where TId : IEquatable<TId>;
 
         /// <summary>
+        /// Gets a unique store id for the specified type of objects.
+        /// </summary>
+        /// <typeparam name="TId">The type of the store identifier.</typeparam>
+        /// <param name="objectsType">The object types.</param>
+        /// <returns>Unique ID value.</returns>
+        TId GetStoreId<TId>(Type objectsType)
+            where TId : IEquatable<TId>;
+
+        /// <summary>
+        /// Creates a <see cref="BaseDomainEntity" />-derived object of type <paramref name="entityType" />
+        /// Also extends the object with repository/ORM specific qualities like proxy, properties change tracking, etc.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <returns>The created entity.</returns>
+        BaseDomainEntity CreateEntity(Type entityType);
+
+        /// <summary>
         /// Creates an <see cref="BaseDomainEntity"/>-derived object of type <typeparamref name="T"/>.
         /// Also extends the object with repository/ORM specific qualities like proxy, properties change tracking, etc.
         /// </summary>
@@ -42,13 +59,20 @@ namespace vm.Aspects.Model.Repository
         T CreateEntity<T>() where T : BaseDomainEntity, new();
 
         /// <summary>
+        /// Creates a <see cref="BaseDomainValue" /> derived object of type <paramref name="valueType" />.
+        /// </summary>
+        /// <param name="valueType">Type of the value.</param>
+        /// <returns>The created value.</returns>
+        BaseDomainValue CreateValue(Type valueType);
+
+        /// <summary>
         /// Creates a <see cref="T:Value"/> derived object of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">
         /// The type of the object to be created.
         /// </typeparam>
         /// <returns>
-        /// The created entity.
+        /// The created value.
         /// </returns>
         T CreateValue<T>() where T : BaseDomainValue, new();
 
@@ -222,6 +246,15 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public TId GetStoreId<TId>(Type objectsType)
+            where TId : IEquatable<TId>
+        {
+            Contract.Requires<ArgumentNullException>(objectsType != null, nameof(objectsType));
+            Contract.Ensures(!Contract.Result<TId>().Equals(default(TId)), "The store ID provider returned default(T)");
+
+            throw new NotImplementedException();
+        }
+
         public T CreateEntity<T>() where T : BaseDomainEntity, new()
         {
             Contract.Ensures(Contract.Result<T>() != null, "Could not create an entity object.");
@@ -229,9 +262,25 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public BaseDomainEntity CreateEntity(Type entityType)
+        {
+            Contract.Requires<ArgumentNullException>(entityType != null, nameof(entityType));
+            Contract.Ensures(Contract.Result<BaseDomainEntity>() != null, "Could not create an entity object.");
+
+            throw new NotImplementedException();
+        }
+
         public T CreateValue<T>() where T : BaseDomainValue, new()
         {
             Contract.Ensures(Contract.Result<T>() != null, "Could not create a value object.");
+
+            throw new NotImplementedException();
+        }
+
+        public BaseDomainValue CreateValue(Type valueType)
+        {
+            Contract.Requires<ArgumentNullException>(valueType != null, nameof(valueType));
+            Contract.Ensures(Contract.Result<BaseDomainValue>() != null, "Could not create a value object.");
 
             throw new NotImplementedException();
         }

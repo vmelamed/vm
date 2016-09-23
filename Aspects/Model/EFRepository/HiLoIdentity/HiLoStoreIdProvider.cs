@@ -41,7 +41,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         }
         #endregion
 
-        long IStoreUniqueId<long>.GetNewId<T>(IRepository repository)
+        long IStoreUniqueId<long>.GetNewId<T>(
+            IRepository repository)
         {
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
@@ -54,7 +55,23 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             return DoGetNew<T>(efRepository);
         }
 
-        int IStoreUniqueId<int>.GetNewId<T>(IRepository repository)
+        long IStoreUniqueId<long>.GetNewId(
+            Type objectsType,
+            IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            var efRepository = repository as EFRepositoryBase;
+
+            if (efRepository == null)
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
+
+            return DoGetNew(objectsType, efRepository);
+        }
+
+        int IStoreUniqueId<int>.GetNewId<T>(
+            IRepository repository)
         {
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
@@ -73,7 +90,41 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             return unchecked((int)id);
         }
 
-        Guid IStoreUniqueId<Guid>.GetNewId<T>(IRepository repository)
+        int IStoreUniqueId<int>.GetNewId(
+            Type objectsType,
+            IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            var efRepository = repository as EFRepositoryBase;
+
+            if (efRepository == null)
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
+
+            var id = DoGetNew(objectsType, efRepository);
+
+            if (id > 0x7FFFFFFF0)
+                throw new InvalidOperationException(
+                    $"FATAL ERROR: the ID generator for type {objectsType.FullName} has reached the maximum value.");
+
+            return unchecked((int)id);
+        }
+
+        Guid IStoreUniqueId<Guid>.GetNewId<T>(
+            IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+            if (!(repository is EFRepositoryBase))
+                throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
+
+            return Facility.GuidGenerator.NewGuid();
+        }
+
+        Guid IStoreUniqueId<Guid>.GetNewId(
+            Type objectsType,
+            IRepository repository)
         {
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
@@ -209,6 +260,33 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             long id = -1L;
             HiLoIdentityGenerator generator;
             var entitySetName = efRepository.ObjectContext.GetEntitySetName<T>() ?? DefaultEntitySetName;
+
+            // make sure that the _generators hash table is accessible from this thread only
+            lock (_sync)
+            {
+                if (_generators.TryGetValue(entitySetName, out generator))
+                    id = generator.GetId();
+                // if GetId returns -1, we'll need a fresh generator from the database with its own new HighValue.
+
+                if (id == -1L)
+                {
+                    generator = CreateOrGetFreshGenerator(entitySetName);
+                    id = generator.GetId();
+                }
+            }
+
+            return id;
+        }
+
+        long DoGetNew(
+            Type objectsType,
+            EFRepositoryBase efRepository)
+        {
+            Contract.Requires<ArgumentNullException>(efRepository != null, nameof(efRepository));
+
+            long id = -1L;
+            HiLoIdentityGenerator generator;
+            var entitySetName = efRepository.ObjectContext.GetEntitySetName(objectsType) ?? DefaultEntitySetName;
 
             // make sure that the _generators hash table is accessible from this thread only
             lock (_sync)

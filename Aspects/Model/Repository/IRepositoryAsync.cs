@@ -105,12 +105,29 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
+        public TId GetStoreId<TId>(
+            Type objectsType)
+            where TId : IEquatable<TId>
+        {
+            throw new NotImplementedException();
+        }
+
         public T CreateEntity<T>() where T : BaseDomainEntity, new()
         {
             throw new NotImplementedException();
         }
 
+        public BaseDomainEntity CreateEntity(Type entityType)
+        {
+            throw new NotImplementedException();
+        }
+
         public T CreateValue<T>() where T : BaseDomainValue, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public BaseDomainValue CreateValue(Type valueType)
         {
             throw new NotImplementedException();
         }

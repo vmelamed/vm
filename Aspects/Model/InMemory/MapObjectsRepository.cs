@@ -154,20 +154,60 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Gets a unique store id for the specified type of objects.
+        /// </summary>
+        /// <typeparam name="TId">The type of the store identifier.</typeparam>
+        /// <param name="objectsType">Type of the objects.</param>
+        /// <returns>Unique ID value.</returns>
+        /// <exception cref="System.NotImplementedException">The repository does not support entities with ID of type +typeof(TId)</exception>
+        public TId GetStoreId<TId>(
+            Type objectsType)
+            where TId : IEquatable<TId>
+        {
+            if (typeof(TId) != typeof(long))
+                throw new NotImplementedException("The repository does not support entities with ID of type "+typeof(TId));
+
+            object id = Interlocked.Increment(ref _longId);
+
+            return (TId)id;
+        }
+
+        /// <summary>
         /// Creates an <see cref="BaseDomainEntity" />-derived object of type <typeparamref name="T" />.
         /// Also extends the object with repository/ORM specific qualities like proxy, properties change tracking, etc.
         /// </summary>
         /// <typeparam name="T">The type of the entity to be created.</typeparam>
         /// <returns>The created entity.</returns>
         /// <exception cref="System.InvalidOperationException">The repository does not support type +typeof(T).FullName</exception>
-        public T CreateEntity<T>() where T : BaseDomainEntity, new() => ObjectsRepositorySpecifics.CreateEntity<T>();
+        public T CreateEntity<T>()
+            where T : BaseDomainEntity, new()
+            => ObjectsRepositorySpecifics.CreateEntity<T>();
+
+        /// <summary>
+        /// Creates a <see cref="BaseDomainEntity" />-derived object of type <paramref name="entityType" />
+        /// Also extends the object with repository/ORM specific qualities like proxy, properties change tracking, etc.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <returns>The created entity.</returns>
+        public BaseDomainEntity CreateEntity(
+            Type entityType)
+            => (BaseDomainEntity)ObjectsRepositorySpecifics.CreateEntity(entityType);
 
         /// <summary>
         /// Creates a <see cref="T:Value" /> derived object of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
         /// <returns>The created entity.</returns>
-        public T CreateValue<T>() where T : BaseDomainValue, new() => ObjectsRepositorySpecifics.CreateValue<T>();
+        public T CreateValue<T>() where T : BaseDomainValue, new()
+            => ObjectsRepositorySpecifics.CreateValue<T>();
+
+        /// <summary>
+        /// Creates the value.
+        /// </summary>
+        /// <param name="valueType">Type of the value.</param>
+        /// <returns>BaseDomainEntity.</returns>
+        public BaseDomainValue CreateValue(Type valueType)
+            => (BaseDomainValue)ObjectsRepositorySpecifics.CreateEntity(valueType);
 
         /// <summary>
         /// Adds a new entity of <typeparamref name="T" /> to the repository.

@@ -34,5 +34,4 @@ namespace vm.Aspects.Model.EFRepository
         }
     }
     #endregion
-
 }
