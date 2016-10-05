@@ -14,7 +14,7 @@ namespace vm.Aspects
     {
         /// <summary>
         /// The method is only applicable to enum types marked with attribute <see cref="T:System.FlagsAttribute"/>.
-        /// It determines whether the specified enum value has no others but only some (or none) of the specified flags.
+        /// It determines whether the specified enum value has no flags.
         /// </summary>
         /// <typeparam name="TEnum">The enum type which must be marked with the attribute <see cref="T:System.FlagsAttribute"/>.</typeparam>
         /// <param name="value">The value to be tested.</param>

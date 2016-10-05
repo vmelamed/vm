@@ -223,12 +223,17 @@ namespace vm.Aspects.Wcf.Services
                     {
                         _serviceInitializer = ServiceLocator.Current.GetInstance<IInitializeService>(InitializerResolveName);
                     }
-                    catch (ActivationException)
+                    catch (ActivationException x)
                     {
-                        // swallow it - there is no registered initializer
+                        // log and swallow - there is no registered initializer
+                        Facility.LogWriter
+                                .ExceptionError(x);
                     }
-                    catch (ResolutionFailedException)
+                    catch (ResolutionFailedException x)
                     {
+                        // log and swallow - there is no registered initializer
+                        Facility.LogWriter
+                                .ExceptionError(x);
                     }
 
                 return _serviceInitializer;
