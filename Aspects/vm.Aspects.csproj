@@ -360,7 +360,9 @@
     <Compile Include="Validation\XmlStringValidator.cs" />
     <Compile Include="Validation\XmlStringValidatorAttribute.cs" />
     <Compile Include="Visitor\CatchallVisitor.cs" />
+    <Compile Include="Visitor\IVisited.Tasks.cs" />
     <Compile Include="Visitor\IVisited.cs" />
+    <Compile Include="Visitor\IVisitorTasks.cs" />
     <Compile Include="Visitor\IVisitor.cs" />
   </ItemGroup>
   <ItemGroup>

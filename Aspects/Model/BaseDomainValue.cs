@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
@@ -16,7 +17,7 @@ namespace vm.Aspects.Model
     /// However the value objects should be validated and also can participate in the visitor pattern.
     /// </remarks>
     [DebuggerDisplay("{GetType().Name, nq}")]
-    public abstract partial class BaseDomainValue : IValidatable, IVisited<BaseDomainValue>
+    public abstract partial class BaseDomainValue : IValidatable, IVisited<BaseDomainValue>, IVisitedTasks<BaseDomainValue>
     {
         #region IValidatable Members
         /// <summary>
@@ -57,6 +58,23 @@ namespace vm.Aspects.Model
         /// <exception cref="System.NotImplementedException">Always thrown.</exception>
         public BaseDomainValue Accept(
             IVisitor<BaseDomainValue> visitor)
+        {
+            if (visitor == null)
+                throw new ArgumentNullException(nameof(visitor));
+
+            throw new NotImplementedException($"Either values of type {GetType().Name} do not accept visitors of type {1} or the visitors do not have a concrete overload for {visitor.GetType().Name}.");
+        }
+        #endregion
+
+        #region IVisitedTasks<BaseDomainValue> Members
+        /// <summary>
+        /// Throws <see cref="T:NotImplementedException"/> exception.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
+        /// <exception cref="System.NotImplementedException">Always thrown.</exception>
+        public Task<BaseDomainValue> AcceptAsync(
+            IVisitorTasks<BaseDomainValue> visitor)
         {
             if (visitor == null)
                 throw new ArgumentNullException(nameof(visitor));
