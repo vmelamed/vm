@@ -78,7 +78,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             : base(symmetricAlgorithmName)
         {
             Contract.Requires<ArgumentNullException>(password != null, nameof(password));
-            Contract.Requires<ArgumentNullException>(password!=null, nameof(password));
             Contract.Requires<ArgumentException>(password.Length > 0, "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(password.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(numberOfIterations >= PasswordDerivationConstants.MinNumberOfIterations, "The "+nameof(numberOfIterations)+" cannot be at less than \"PasswordDerivationConstants.MinNumberOfIterations\" bytes long.");

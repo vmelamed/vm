@@ -54,12 +54,5 @@ namespace vm.Aspects.Wcf.FaultContracts
                 }
             }
         }
-
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        void ObjectInvariant()
-        {
-            Contract.Invariant(InnerExceptions == null);
-        }
     }
 }

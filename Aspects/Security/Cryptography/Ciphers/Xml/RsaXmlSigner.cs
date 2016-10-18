@@ -50,7 +50,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>()!=null);
                 Contract.Ensures(Contract.Result<string>().Length > 0);
                 Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 

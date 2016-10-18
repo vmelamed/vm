@@ -23,10 +23,10 @@ namespace vm.Aspects.Facilities
     {
         const string EventName = "EL Log event";
 
-        EventSource _etwSource;
-        IEtwLogEntryHandler _etwLogEntryHandler;
-        IDictionary<PropertyInfo, int> _logEntryToEtwWriteIndex;
-        int _parametersCount;
+        readonly EventSource _etwSource;
+        readonly IEtwLogEntryHandler _etwLogEntryHandler;
+        readonly IDictionary<PropertyInfo, int> _logEntryToEtwWriteIndex;
+        readonly int _parametersCount;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EtwTraceListener" /> class.
@@ -39,7 +39,7 @@ namespace vm.Aspects.Facilities
             IDictionary<PropertyInfo, int> logEntryToEtwWriteIndex = null,
             ILogFormatter formatter = null)
         {
-            Contract.Requires<ArgumentNullException>(etwSource != null, "etwSource");
+            Contract.Requires<ArgumentNullException>(etwSource != null, nameof(etwSource));
             Contract.Requires<ArgumentException>(logEntryToEtwWriteIndex == null || logEntryToEtwWriteIndex.Count==logEntryToEtwWriteIndex.Select(kv => kv.Value).Max(), "The maximum index mapped in the argument "+nameof(logEntryToEtwWriteIndex)+" is different from the number of entries in it.");
 
             if (logEntryToEtwWriteIndex != null  &&  logEntryToEtwWriteIndex.Count != 0)
@@ -79,7 +79,7 @@ namespace vm.Aspects.Facilities
                 Type dataType,
                 string source)
             {
-                Contract.Requires<ArgumentNullException>(dataType != null, "dataType");
+                Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
 
                 TraceEventType = traceEventType;
 

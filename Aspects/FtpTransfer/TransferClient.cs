@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security;
@@ -147,6 +148,11 @@ namespace vm.Aspects.FtpTransfer
             string method,
             string fileName)
         {
+            Contract.Requires<ArgumentNullException>(method!=null, nameof(method));
+            Contract.Requires<ArgumentException>(method.Length > 0, "The argument "+nameof(method)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(method.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(method)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(string.IsNullOrWhiteSpace(fileName) || Configuration.Link != null);
+
             var fileUrl = Configuration.Link;
 
             if (!string.IsNullOrWhiteSpace(fileName))

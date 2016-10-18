@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -68,13 +69,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                             .Invoke(new object[] { fault, fault.HttpStatusCode }));
             }
 
-            if (ContextUtilities.HasWebOperationContext)
-                return input.CreateExceptionMethodReturn(
-                                new FaultException(
-                                        $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}"));
-            else
-                return input.CreateExceptionMethodReturn(
-                                new WebFaultException<Fault>(fault, fault.HttpStatusCode));
+            return input.CreateExceptionMethodReturn(
+                        new WebFaultException<Fault>(
+                                new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
+                                HttpStatusCode.InternalServerError));
         }
 
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
@@ -83,6 +81,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
             IMethodInvocation input,
             Type faultType)
         {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
             IEnumerable<Type> contracts;
 
             if (_faultContracts.TryGetValue(input.MethodBase, out contracts))

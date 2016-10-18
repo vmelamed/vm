@@ -31,6 +31,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <param name="expectedFaults">Expected fault types to check for. Can be <see langword="null"/></param>
         /// <param name="serializedFault">The serialized fault string contained in the <paramref name="exception"/>.</param>
         /// <returns>The resolved <see cref="Fault"/> instance or <see langword="null"/>.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#")]
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Here we handle the specific exception.")]
         [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#", Justification = "We need two results here.")]
         public static Fault Resolve(
@@ -57,6 +58,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <param name="expectedFaults">Expected fault types to check for. Can be <see langword="null"/></param>
         /// <param name="responseText">The serialized fault string contained in the <paramref name="exception" />.</param>
         /// <returns>The resolved <see cref="Fault" /> instance or <see langword="null" />.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#")]
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Here we handle the specific exception.")]
         [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#", Justification = "We need two results here.")]
         public static Fault Resolve(

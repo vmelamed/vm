@@ -64,7 +64,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Contract.Requires<ArgumentNullException>(key != null, nameof(key));
             Contract.Requires<ArgumentException>(key.Length != 0, "The length of the array in the argument "+nameof(key)+" cannot be 0.");
             Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
-            Contract.Requires<ArgumentNullException>(keyLocation!=null, nameof(keyLocation));
             Contract.Requires<ArgumentException>(keyLocation.Length > 0, "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(keyLocation.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<Task>() != null);
@@ -75,7 +74,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public Task<byte[]> GetKeyAsync(string keyLocation)
         {
             Contract.Requires<ArgumentNullException>(keyLocation != null, nameof(keyLocation));
-            Contract.Requires<ArgumentNullException>(keyLocation!=null, nameof(keyLocation));
             Contract.Requires<ArgumentException>(keyLocation.Length > 0, "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(keyLocation.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(keyLocation)+" cannot be empty or consist of whitespace characters only.");
             Contract.Ensures(Contract.Result<byte[]>() != null, "The returned value is null.");

@@ -103,7 +103,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (fault == null)
                 fault = Message.CreateMessage(version ?? MessageVersion.Default, "");
 
-            Contract.Assume(fault != null);
+            Contract.Assert(fault != null);
 
             try
             {

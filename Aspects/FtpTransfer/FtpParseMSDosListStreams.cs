@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -52,6 +53,8 @@ namespace vm.Aspects.FtpTransfer
 
         static FtpFileListEntry StreamDescriptorFactory(Match match)
         {
+            Contract.Requires<ArgumentNullException>(match != null, nameof(match));
+
             int num;
             DateTime dt;
 
