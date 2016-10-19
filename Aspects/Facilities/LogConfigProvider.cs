@@ -169,7 +169,7 @@ namespace vm.Aspects.Facilities
                 try
                 {
                     return new LogWriter(
-                                        ServiceLocator.Current.GetInstance<LoggingConfiguration>(_logConfigurationFileName));
+                                    ServiceLocator.Current.GetInstance<LoggingConfiguration>(_logConfigurationFileName));
                 }
                 catch (Exception x)
                 {

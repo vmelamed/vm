@@ -85,9 +85,9 @@ namespace vm.Aspects.Facilities
                     .RegisterInstanceIfNot<IGuidGenerator>(registrations, new GuidGenerator())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
                     .RegisterInstanceIfNot<Lazy<LogWriter>>(registrations, new Lazy<LogWriter>(
-                                                        () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
+                                                                                () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
                     .RegisterInstanceIfNot<Lazy<ExceptionManager>>(registrations, new Lazy<ExceptionManager>(
-                                                        () => ExceptionPolicyProvider.CreateExceptionManager()))
+                                                                                        () => ExceptionPolicyProvider.CreateExceptionManager()))
                     .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
                     ;
             }
@@ -113,9 +113,9 @@ namespace vm.Aspects.Facilities
                     .RegisterInstanceIfNot<IGuidGenerator>(registrations, new TestGuidGenerator())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
                     .RegisterInstanceIfNot<Lazy<LogWriter>>(registrations, new Lazy<LogWriter>(
-                                                        () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, true), true))
+                                                                                () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, true), true))
                     .RegisterInstanceIfNot<Lazy<ExceptionManager>>(registrations, new Lazy<ExceptionManager>(
-                                                        () => ExceptionPolicyProvider.CreateExceptionManager(), true))
+                                                                                        () => ExceptionPolicyProvider.CreateExceptionManager(), true))
                     ;
             }
         }
