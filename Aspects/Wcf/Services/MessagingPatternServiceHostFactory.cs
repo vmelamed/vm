@@ -85,7 +85,7 @@ namespace vm.Aspects.Wcf.Services
     /// 	)
     /// </code>
     /// </remarks>
-    public class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory where TContract : class
+    public class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory, ICreateServiceHost where TContract : class
     {
         Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
         Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
@@ -227,8 +227,10 @@ namespace vm.Aspects.Wcf.Services
         }
         #endregion
 
+        #region ICreateServiceHost implementation
         /// <summary>
-        /// Creates a service host outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
+        /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
         /// Here it does the following:
         /// <list type="number">
         /// <item><description>
@@ -253,14 +255,12 @@ namespace vm.Aspects.Wcf.Services
             Type serviceType,
             params Uri[] baseAddresses)
         {
-            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-
             return CreateServiceHost(serviceType, baseAddresses);
         }
 
         /// <summary>
-        /// Creates a service host outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
+        /// Generic method which creates a service host outside of WAS where the created service is specified by the type parameter of the generic.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
         /// Here it does the following:
         /// <list type="number"><item><description>
         /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
@@ -276,13 +276,12 @@ namespace vm.Aspects.Wcf.Services
         public ServiceHost CreateHost<TService>(
             params Uri[] baseAddresses)
         {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-
             return CreateServiceHost<TService>(baseAddresses);
         }
 
         /// <summary>
-        /// Creates a host for a known service type outside of WAS. Can be used for testing purposes when the service is created in a self-hosting environment.
+        /// Creates a service host outside of WAS for a service type that is resolved internally, i.e. from DI container or hard-coded.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
         /// Here it does the following:
         /// <list type="number"><item><description>
         /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
@@ -297,41 +296,15 @@ namespace vm.Aspects.Wcf.Services
         public virtual ServiceHost CreateHost(
             params Uri[] baseAddresses)
         {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-
             throw new NotImplementedException("The descendant host must implement this method if you need it.");
         }
 
         /// <summary>
-        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
+        /// Represents the task of initializing the created host.
         /// </summary>
-        /// <typeparam name="TService">The type of the service.</typeparam>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        protected ServiceHost CreateServiceHost<TService>(
-            Uri[] baseAddresses) => CreateServiceHost(typeof(TService), baseAddresses);
+        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
+        #endregion
 
-        /// <summary>
-        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
-        /// </summary>
-        /// <param name="serviceType">Specifies the type of service to host.
-        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
-        /// </param>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        protected override ServiceHost CreateServiceHost(
-            Type serviceType,
-            Uri[] baseAddresses)
-        {
-            if (serviceType == null)
-                throw new ArgumentNullException(nameof(serviceType));
-
-            RegisterDefaults(serviceType);
-
-            return DoCreateServiceHost(serviceType, baseAddresses);
-        }
-
-        #region Overridables
         /// <summary>
         /// Sets the endpoint provider method.
         /// </summary>
@@ -360,11 +333,7 @@ namespace vm.Aspects.Wcf.Services
             return this;
         }
 
-        /// <summary>
-        /// Gets a value indicating whether the created host is initialized yet.
-        /// </summary>
-        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
-
+        #region Protected overridables
         /// <summary>
         /// Registers the service's contract and implementation types in the DI container 
         /// as well as all the facilities needed for the normal work of the services from this framework.
@@ -477,6 +446,35 @@ namespace vm.Aspects.Wcf.Services
             Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
 
             return serviceType.GetServiceResolveName();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
+        /// </summary>
+        /// <typeparam name="TService">The type of the service.</typeparam>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        protected ServiceHost CreateServiceHost<TService>(
+            Uri[] baseAddresses) => CreateServiceHost(typeof(TService), baseAddresses);
+
+        /// <summary>
+        /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
+        /// </summary>
+        /// <param name="serviceType">Specifies the type of service to host.
+        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
+        /// </param>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        protected override ServiceHost CreateServiceHost(
+            Type serviceType,
+            Uri[] baseAddresses)
+        {
+            if (serviceType == null)
+                throw new ArgumentNullException(nameof(serviceType));
+
+            RegisterDefaults(serviceType);
+
+            return DoCreateServiceHost(serviceType, baseAddresses);
         }
 
         /// <summary>

@@ -359,6 +359,7 @@
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
+    <Compile Include="Services\ICreateServiceHost.cs" />
     <Compile Include="Services\IInitializeService.cs" />
     <Compile Include="Services\MessagingPatternInitializedServiceHostFactory.cs" />
     <Compile Include="Services\MessagingPatternServiceHostFactory.cs" />
