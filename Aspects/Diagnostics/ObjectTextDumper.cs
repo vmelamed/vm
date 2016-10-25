@@ -459,6 +459,12 @@ namespace vm.Aspects.Diagnostics
             if (sequence == null)
                 return false;
 
+            if (DumpedDictionary(
+                        sequence,
+                        state.ClassDumpData.DumpAttribute,
+                        enumerateCustom))
+                return true;
+
             return DumpedSequenceObject(
                         sequence,
                         state.ClassDumpData.DumpAttribute,
@@ -760,7 +766,101 @@ namespace vm.Aspects.Diagnostics
             if (sequence == null)
                 return false;
 
+            if (DumpedDictionary(
+                        sequence,
+                        state.ClassDumpData.DumpAttribute))
+                return true;
+
             return DumpedSequenceObject(sequence, state.CurrentPropertyDumpAttribute);
+        }
+
+        bool DumpedDictionary(
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute,
+            bool enumerateCustom = false)
+        {
+            var dictionaryType = sequence
+                                    .GetType()
+                                    .GetInterfaces()
+                                    .FirstOrDefault(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+
+            if (dictionaryType == null)
+                return false;
+
+            var typeArguments = dictionaryType.GetGenericArguments();
+
+            Contract.Assume(typeArguments.Length == 2);
+
+            var keyType       = typeArguments[0];
+            var valueType     = typeArguments[1];
+
+            if (!keyType.IsBasicType())
+                return false;
+
+            var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
+            var sequenceType = sequence.GetType();
+
+            _writer.Write(
+                DumpFormat.SequenceTypeName,
+                GetTypeName(sequenceType),
+                ((ICollection)sequence).Count.ToString(CultureInfo.InvariantCulture));
+
+            // how many items to dump max?
+            var max = dumpAttribute.MaxLength;
+
+            if (max < 0)
+                max = int.MaxValue;
+            else
+            {
+                if (max == 0)        // limit sequences of primitive types (can be very big)
+                {
+                    max = DumpAttribute.DefaultMaxElements;
+                }
+            }
+
+            _writer.Write(
+                    DumpFormat.SequenceType,
+                    GetTypeName(sequenceType),
+                    sequenceType.Namespace,
+                    sequenceType.AssemblyQualifiedName);
+
+            // stop the recursion if dump.Recurse is false
+            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
+                return true;
+
+            var n = 0;
+
+            _writer.WriteLine();
+            _writer.Write("{");
+            Indent();
+
+            foreach (var kv in sequence)
+            {
+                Contract.Assume(kv.GetType() == keyValueType);
+
+                var key   = keyValueType.GetProperty("Key").GetValue(kv, null);
+                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
+
+                _writer.WriteLine();
+                if (n++ >= max)
+                {
+                    _writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    break;
+                }
+                _writer.Write("[");
+                DumpObject(key);
+                _writer.Write("] = ");
+                Indent();
+                DumpObject(value);
+                _writer.Write(";");
+                Unindent();
+            }
+
+            Unindent();
+            _writer.WriteLine();
+            _writer.Write("}");
+
+            return true;
         }
 
         bool DumpedSequenceObject(
@@ -807,8 +907,12 @@ namespace vm.Aspects.Diagnostics
             if (max < 0)
                 max = int.MaxValue;
             else
+            {
                 if (max == 0)        // limit sequences of primitive types (can be very big)
-                max = DumpAttribute.DefaultMaxElements;
+                {
+                    max = DumpAttribute.DefaultMaxElements;
+                }
+            }
 
             if (sequenceType == typeof(byte[]))
             {
@@ -824,10 +928,10 @@ namespace vm.Aspects.Diagnostics
             }
 
             _writer.Write(
-                    DumpFormat.SequenceType,
-                    GetTypeName(sequenceType),
-                    sequenceType.Namespace,
-                    sequenceType.AssemblyQualifiedName);
+                DumpFormat.SequenceType,
+                GetTypeName(sequenceType),
+                sequenceType.Namespace,
+                sequenceType.AssemblyQualifiedName);
 
             // stop the recursion if dump.Recurse is false
             if (dumpAttribute.RecurseDump==ShouldDump.Skip)

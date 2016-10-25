@@ -1832,6 +1832,70 @@ List<String>[3]: (System.Collections.Generic.List`1[[System.String, mscorlib, Ve
             }
         }
 
+        [TestMethod]
+        public void TestDictionaryBaseTypes()
+        {
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var test = new Dictionary<string,int>
+                {
+                    ["one"] = 1,
+                    ["two"] = 2,
+                    ["three"] = 3,
+                };
+                var target = new ObjectTextDumper(w);
+                var expected = @"
+Dictionary<String, Int32>[3]: (System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+{
+  [one] = 1;
+  [two] = 2;
+  [three] = 3;
+}";
+
+                target.Dump(test);
+
+                var actual = w.GetStringBuilder().ToString();
+
+                TestContext.WriteLine("{0}", actual);
+                Assert.AreEqual(expected, actual);
+            }
+        }
+
+        [TestMethod]
+        public void TestDictionaryBaseTypeAndObject()
+        {
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var test = new Dictionary<int,Object4_1>
+                {
+                    [1] = new Object4_1 { Property1 = "one" },
+                    [2] = new Object4_1 { Property1 = "two" },
+                    [3] = new Object4_1 { Property1 = "three" },
+                };
+                var target = new ObjectTextDumper(w);
+                var expected = @"
+Dictionary<Int32, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+{
+  [1] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+      Property1                = one
+      Property2                = Property2;
+  [2] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+      Property1                = two
+      Property2                = Property2;
+  [3] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+      Property1                = three
+      Property2                = Property2;
+}";
+
+                target.Dump(test);
+
+                var actual = w.GetStringBuilder().ToString();
+
+                TestContext.WriteLine("{0}", actual);
+                Assert.AreEqual(expected, actual);
+            }
+        }
+
         class Base
         {
             public virtual string StringProperty { get; set; }

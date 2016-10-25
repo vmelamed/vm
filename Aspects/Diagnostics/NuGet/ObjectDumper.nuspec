@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.6.8</version>
+        <version>1.6.10</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,7 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            Fixed a bug where the dump was misbehaving if the dumped object was disposed.
+            Added friendlier printing for dictionaries with key types of promitive, string, Guid and other base types.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
