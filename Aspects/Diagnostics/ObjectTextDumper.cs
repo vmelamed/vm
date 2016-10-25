@@ -779,8 +779,12 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute,
             bool enumerateCustom = false)
         {
-            var dictionaryType = sequence
-                                    .GetType()
+            var sequenceType = sequence.GetType();
+
+            if (!sequenceType.IsGenericType)
+                return false;
+
+            var dictionaryType = sequenceType
                                     .GetInterfaces()
                                     .FirstOrDefault(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
@@ -798,7 +802,6 @@ namespace vm.Aspects.Diagnostics
                 return false;
 
             var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
-            var sequenceType = sequence.GetType();
 
             _writer.Write(
                 DumpFormat.SequenceTypeName,
