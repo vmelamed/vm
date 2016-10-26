@@ -253,10 +253,7 @@ namespace vm.Aspects.Wcf.Services
         /// </returns>
         public ServiceHost CreateHost(
             Type serviceType,
-            params Uri[] baseAddresses)
-        {
-            return CreateServiceHost(serviceType, baseAddresses);
-        }
+            params Uri[] baseAddresses) => CreateServiceHost(serviceType, baseAddresses);
 
         /// <summary>
         /// Generic method which creates a service host outside of WAS where the created service is specified by the type parameter of the generic.
@@ -274,10 +271,7 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
         /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
         public ServiceHost CreateHost<TService>(
-            params Uri[] baseAddresses)
-        {
-            return CreateServiceHost<TService>(baseAddresses);
-        }
+            params Uri[] baseAddresses) => CreateServiceHost<TService>(baseAddresses);
 
         /// <summary>
         /// Creates a service host outside of WAS for a service type that is resolved internally, i.e. from DI container or hard-coded.
