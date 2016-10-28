@@ -786,7 +786,8 @@ namespace vm.Aspects.Diagnostics
 
             var dictionaryType = sequenceType
                                     .GetInterfaces()
-                                    .FirstOrDefault(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+                                    .FirstOrDefault(t => t.IsGenericType  &&
+                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
             if (dictionaryType == null)
                 return false;
