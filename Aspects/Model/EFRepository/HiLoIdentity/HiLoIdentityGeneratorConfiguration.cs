@@ -20,12 +20,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                 ;
 
             Property(g => g.HighValue)
-                .IsRequired()
                 .HasColumnOrder(i++)
                 ;
 
             Property(g => g.MaxLowValue)
-                .IsRequired()
                 .HasColumnOrder(i++)
                 ;
 

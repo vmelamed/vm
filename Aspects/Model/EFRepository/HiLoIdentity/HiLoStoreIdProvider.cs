@@ -135,7 +135,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         }
 
         /// <summary>
-        /// The default resolve name of the repository: "Transient".
+        /// The default resolve name of the repository supplying the ID-s. Must have transient lifetime.
         /// </summary>
         /// <remarks>
         /// Note that the code in <see cref="M:GetNew"/> requires that the repository instance must have transient lifetime.
