@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Policies;
-using System.Diagnostics.Contracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
 {
@@ -88,7 +85,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <returns>Return value from the target.</returns>
         /// <exception cref="ArgumentNullException">
         /// </exception>
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification="There is no real parameter.")]
+        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "There is no real parameter.")]
         public override IMethodReturn Invoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
@@ -98,20 +95,23 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (getNext == null)
                 throw new ArgumentNullException(nameof(getNext));
 
-            // validate the custom context if necessary
-            foreach (var attribute in input.MethodBase
+            var attributes = input.MethodBase
                                            .GetCustomAttributes<CustomDataContextTypeAttribute>(true)
                                            .Union(
                                                 input.MethodBase
                                                      .DeclaringType
-                                                     .GetCustomAttributes<CustomDataContextTypeAttribute>(true)))
+                                                     .GetCustomAttributes<CustomDataContextTypeAttribute>(true)).ToList();
+
+            // validate the custom context if necessary
+            foreach (var attribute in attributes)
             {
                 var contextType = typeof(CustomDataContext<>).MakeGenericType(attribute.CustomDataContextType);
                 var contextValue = contextType.GetProperty("Current").GetValue(null, null);
 
                 if (contextValue == null)
                 {
-                    if (!attribute.Optional)
+                    if (!attribute.Optional &&
+                        !attributes.Any(a => a.CustomDataContextType==attribute.CustomDataContextType && a.Optional))
                         return input.CreateExceptionMethodReturn(new InvalidOperationException("The expected custom context object (message header) is not present."));
                 }
                 else
