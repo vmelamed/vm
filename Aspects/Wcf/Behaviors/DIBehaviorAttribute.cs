@@ -109,7 +109,7 @@ namespace vm.Aspects.Wcf.Behaviors
                     var contract = TargetContract;
 
                     if (contract == null)
-                        contract = interfaces.First(
+                        contract = interfaces.FirstOrDefault(
                                     i =>
                                     {
                                         var a = i.GetCustomAttribute<ServiceContractAttribute>();
