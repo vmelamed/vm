@@ -261,14 +261,12 @@
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
     <Compile Include="AsyncCallContext.cs" />
-    <Compile Include="Behaviors\AsyncCallContextBehaviorAttribute.cs" />
-    <Compile Include="Behaviors\AsyncCallContextMessageInspector.cs" />
-    <Compile Include="Behaviors\EnableCorsAttribute.cs" />
-    <Compile Include="Behaviors\EnableCorsEndpointBehavior.cs" />
-    <Compile Include="Behaviors\EnableCorsMessageInspector.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsAttribute.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsEndpointBehavior.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsMessageInspector.cs" />
     <Compile Include="Behaviors\IWcfContextUtilities.cs" />
-    <Compile Include="Behaviors\PreflightOperationBehavior.cs" />
-    <Compile Include="Behaviors\PreflightOperationInvoker.cs" />
+    <Compile Include="Behaviors\EnableCors\PreflightOperationBehavior.cs" />
+    <Compile Include="Behaviors\EnableCors\PreflightOperationInvoker.cs" />
     <Compile Include="Behaviors\WcfContextUtilities.cs" />
     <Compile Include="Bindings\BindingConfigurator.cs" />
     <Compile Include="Bindings\BindingConfigurator.Registrar.cs" />
@@ -343,7 +341,6 @@
     <Compile Include="FaultContracts\XmlFault.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Msmq\Utilities.cs" />
-    <Compile Include="PerAsyncCallContextLifetimeManager.cs" />
     <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

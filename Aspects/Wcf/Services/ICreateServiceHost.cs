@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Threading.Tasks;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Services
 {
@@ -11,6 +14,37 @@ namespace vm.Aspects.Wcf.Services
     [ContractClass(typeof(ICreateServiceHostContract))]
     public interface ICreateServiceHost
     {
+        /// <summary>
+        /// Gets the default type of the hosted service. This is the type of service that will be hosted by the service host created by <see cref="CreateHost(Uri[])"/>.
+        /// The property may be <see langword="null"/>.
+        /// </summary>
+        Type DefaultServiceType { get; }
+
+        /// <summary>
+        /// Sets an endpoint provider delegate.
+        /// </summary>
+        /// <param name="provideEndpoints">The provide endpoints.</param>
+        /// <returns>ICreateServiceHost.</returns>
+        ICreateServiceHost SetEndpointProvider(
+            Func<IEnumerable<ServiceEndpoint>> provideEndpoints);
+
+        /// <summary>
+        /// Sets the service registrar which registers injection types specific to the service associated with this factory.
+        /// </summary>
+        /// <param name="registrar">The registration method.</param>
+        ICreateServiceHost SetServiceRegistrar(
+            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar);
+
+        /// <summary>
+        /// Registers the service's contract and implementation types in the DI container
+        /// as well as all the facilities needed for the normal work of the services from this framework.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.
+        /// Can be <see langword="null" />, in which case the service type must be registered in the DI container or an overridden <see cref="DefaultServiceType" /> must return non-null value.</param>
+        /// <returns>IUnityContainer.</returns>
+        IUnityContainer RegisterDefaults(
+            Type serviceType = null);
+
         /// <summary>
         /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.
         /// Can be used when the service is created in a self-hosting environment or for testing purposes.
@@ -82,6 +116,40 @@ namespace vm.Aspects.Wcf.Services
             throw new NotImplementedException();
         }
 
+        public ICreateServiceHost SetEndpointProvider(
+            Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
+        {
+            Contract.Requires<ArgumentNullException>(provideEndpoints != null, nameof(provideEndpoints));
+            Contract.Ensures(Contract.Result<ICreateServiceHost>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public ICreateServiceHost SetServiceRegistrar(
+            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
+        {
+            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
+            Contract.Ensures(Contract.Result<ICreateServiceHost>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IUnityContainer RegisterDefaults(
+            Type serviceType)
+        {
+            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public Type DefaultServiceType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public Task<bool> InitializeHostTask
         {
             get
@@ -91,5 +159,4 @@ namespace vm.Aspects.Wcf.Services
         }
     }
     #endregion
-
 }
