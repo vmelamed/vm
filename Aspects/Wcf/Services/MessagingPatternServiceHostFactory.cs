@@ -85,7 +85,7 @@ namespace vm.Aspects.Wcf.Services
     /// 	)
     /// </code>
     /// </remarks>
-    public class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory, ICreateServiceHost where TContract : class
+    public abstract class MessagingPatternServiceHostFactory<TContract> : ServiceHostFactory, ICreateServiceHost where TContract : class
     {
         Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
         Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
@@ -302,21 +302,7 @@ namespace vm.Aspects.Wcf.Services
         /// Gets the default type of the hosted service. This is the type of service that will be hosted by the service host created by <see cref="CreateHost(Uri[])" />.
         /// The default implementation tries to find a registration for <typeparamref name="TContract"/> and if it doesn't find it, returns <see langword="null" />.
         /// </summary>
-        public virtual Type DefaultServiceType
-        {
-            get
-            {
-                ContainerRegistration registration;
-
-                if (!DIContainer
-                        .Root
-                        .GetRegistrationsSnapshot()
-                        .TryGetValue(new RegistrationLookup(typeof(TContract)), out registration))
-                    return null;
-
-                return registration.MappedToType;
-            }
-        }
+        public abstract Type DefaultServiceType { get; }
 
         /// <summary>
         /// Represents the task of initializing the created host.
@@ -413,6 +399,28 @@ namespace vm.Aspects.Wcf.Services
             }
         }
         #endregion
+
+        /// <summary>
+        /// Finds the service type in DI container.
+        /// </summary>
+        /// <remarks>
+        /// The method is a utility that can be useful to the implementors of the descending classes who prefer
+        /// to registr service types explicitly outside of the host and do not rely on <see cref="RegisterDefaults(Type)"/>.
+        /// In this case <see cref="DefaultServiceType"/> can be implemented by just calling this method and not overriding it in each service host factory.
+        /// </remarks>
+        /// <returns>Type.</returns>
+        protected virtual Type FindServiceTypeInDIContainer()
+        {
+            ContainerRegistration registration;
+
+            if (!DIContainer
+                    .Root
+                    .GetRegistrationsSnapshot()
+                    .TryGetValue(new RegistrationLookup(typeof(TContract)), out registration))
+                return null;
+
+            return registration.MappedToType;
+        }
 
         #region Protected overridables
         /// <summary>

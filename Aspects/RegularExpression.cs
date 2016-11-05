@@ -243,7 +243,7 @@ namespace vm.Aspects
         /// Matches URL root and path including intranet addresses (without domain and top level parts). 
         /// Note: in internet scenario these addresses may fail to connect to the resource, as they may be missing the top and domain level parts of the addresses, e.g. missing vm.com.
         /// </summary>
-        const string rexUrlRootAndPath = rexUrlRoot + rexUrlPath;
+        const string rexUrlRootAndPath = rexUrlRoot + rexUrlPath + "/?";
 
         /// <summary>
         /// Matches URL root and path requiring FQDN, i.e. all levels of DNS level or IP address or localhost.
@@ -494,7 +494,6 @@ namespace vm.Aspects
         /// </summary>
         public static Regex UsStateCode => _rexUsStateCode.Value;
         #endregion
-
 
         #region UsZipCode
         /// <summary>

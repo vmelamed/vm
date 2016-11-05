@@ -77,7 +77,7 @@ namespace vm.Aspects.Wcf.Services
     /// </code>
     /// See also <seealso cref="MessagingPatternServiceHostFactory{TContract}"/>.
     /// </remarks>
-    public class MessagingPatternInitializedServiceHostFactory<TContract, TInitializer> : MessagingPatternServiceHostFactory<TContract>
+    public abstract class MessagingPatternInitializedServiceHostFactory<TContract, TInitializer> : MessagingPatternServiceHostFactory<TContract>
         where TContract : class
         where TInitializer : IInitializeService
     {
