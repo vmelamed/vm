@@ -46,6 +46,11 @@ namespace vm.Aspects.Wcf.Services
             Type serviceType = null);
 
         /// <summary>
+        /// Gets a value indicating whether all types and instances needed for this  this instance are registered.
+        /// </summary>
+        bool AreRegistered { get; }
+
+        /// <summary>
         /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.
         /// Can be used when the service is created in a self-hosting environment or for testing purposes.
         /// </summary>
@@ -151,6 +156,14 @@ namespace vm.Aspects.Wcf.Services
         }
 
         public Task<bool> InitializeHostTask
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool AreRegistered
         {
             get
             {

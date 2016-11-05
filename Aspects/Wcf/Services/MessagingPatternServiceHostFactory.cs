@@ -97,11 +97,6 @@ namespace vm.Aspects.Wcf.Services
         public string MessagingPattern { get; }
 
         /// <summary>
-        /// Gets the container resolve name of the service.
-        /// </summary>
-        public string ServiceResolveName { get; private set; }
-
-        /// <summary>
         /// Gets or sets the metadata features.
         /// </summary>
         /// <value>The metadata features.</value>
@@ -113,17 +108,17 @@ namespace vm.Aspects.Wcf.Services
         public EndpointIdentity EndpointIdentity { get; }
 
         /// <summary>
+        /// Gets the container resolve name of the service.
+        /// </summary>
+        public string ServiceResolveName { get; private set; }
+
+        /// <summary>
         /// Gets a registration lifetime manager for a service.
         /// If not set explicitly in the inheriting classes, defaults to <see cref="TransientLifetimeManager"/> (per-call).
         /// </summary>
         /// <returns>Service's lifetime manager</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will dispose it.")]
         protected virtual LifetimeManager ServiceLifetimeManager => new TransientLifetimeManager();
-
-        /// <summary>
-        /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
-        /// </summary>
-        protected virtual bool AreRegistered { get; set; }
         #endregion
 
         #region Constructors
@@ -144,7 +139,6 @@ namespace vm.Aspects.Wcf.Services
             MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern)
                                     ? typeof(TContract).GetMessagingPattern()
                                     : messagingPattern;
-            MetadataFeatures = MetadataFeatures.All;
         }
 
         /// <summary>
@@ -229,85 +223,10 @@ namespace vm.Aspects.Wcf.Services
 
         #region ICreateServiceHost implementation
         /// <summary>
-        /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.
-        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
-        /// Here it does the following:
-        /// <list type="number">
-        /// <item><description>
-        /// Calls <see cref="RegisterDefaults"/>, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
-        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
-        /// </description></item><item><description>
-        /// Then it calls <see cref="DoCreateServiceHost"/> which modifies the descriptions of all endpoints to the pattern specified in the constructor
-        /// if there is a registered pattern binding factory in the current container.
-        /// </description></item>
-        /// </list>
-        /// </summary>
-        /// <param name="serviceType">Specifies the type of service to host.
-        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
-        /// </param>
-        /// <param name="baseAddresses">
-        /// The <see cref="Array"/> of type <see cref="Uri"/> that contains the base addresses for the service hosted.
-        /// </param>
-        /// <returns>
-        /// A <see cref="ServiceHost"/> for the type of service specified with a specific base address.
-        /// </returns>
-        public ServiceHost CreateHost(
-            Type serviceType,
-            params Uri[] baseAddresses) => CreateServiceHost(serviceType, baseAddresses);
-
-        /// <summary>
-        /// Generic method which creates a service host outside of WAS where the created service is specified by the type parameter of the generic.
-        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
-        /// Here it does the following:
-        /// <list type="number"><item><description>
-        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
-        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
-        /// </description></item><item><description>
-        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
-        /// if there is a registered pattern binding factory in the current container.
-        /// </description></item></list>
-        /// </summary>
-        /// <typeparam name="TService">Specifies the type of service to host.</typeparam>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        public ServiceHost CreateHost<TService>(
-            params Uri[] baseAddresses) => CreateServiceHost<TService>(baseAddresses);
-
-        /// <summary>
-        /// Creates a service host outside of WAS for a service type that is resolved internally, i.e. from DI container or hard-coded.
-        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
-        /// Here it does the following:
-        /// <list type="number"><item><description>
-        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
-        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
-        /// </description></item><item><description>
-        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
-        /// if there is a registered pattern binding factory in the current container. The implementing descendants must use concrete service type here.
-        /// </description></item></list>
-        /// </summary>
-        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
-        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
-        public virtual ServiceHost CreateHost(
-            params Uri[] baseAddresses)
-        {
-            Type serviceType = DefaultServiceType;
-
-            if (serviceType == null)
-                throw new InvalidOperationException($"The interface {typeof(TContract).FullName} is not registered in the container. Either register the service implementation or call one of the other CreateHost overloads and specify the service implementation type explicitly.");
-
-            return CreateHost(serviceType, baseAddresses);
-        }
-
-        /// <summary>
         /// Gets the default type of the hosted service. This is the type of service that will be hosted by the service host created by <see cref="CreateHost(Uri[])" />.
         /// The default implementation tries to find a registration for <typeparamref name="TContract"/> and if it doesn't find it, returns <see langword="null" />.
         /// </summary>
         public abstract Type DefaultServiceType { get; }
-
-        /// <summary>
-        /// Represents the task of initializing the created host.
-        /// </summary>
-        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
 
         /// <summary>
         /// Sets the endpoint provider method.
@@ -398,8 +317,89 @@ namespace vm.Aspects.Wcf.Services
                 return DIContainer.Root;
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
+        /// </summary>
+        public virtual bool AreRegistered { get; protected set; }
+
+        /// <summary>
+        /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
+        /// Here it does the following:
+        /// <list type="number">
+        /// <item><description>
+        /// Calls <see cref="RegisterDefaults"/>, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
+        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
+        /// </description></item><item><description>
+        /// Then it calls <see cref="DoCreateServiceHost"/> which modifies the descriptions of all endpoints to the pattern specified in the constructor
+        /// if there is a registered pattern binding factory in the current container.
+        /// </description></item>
+        /// </list>
+        /// </summary>
+        /// <param name="serviceType">Specifies the type of service to host.
+        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
+        /// </param>
+        /// <param name="baseAddresses">
+        /// The <see cref="Array"/> of type <see cref="Uri"/> that contains the base addresses for the service hosted.
+        /// </param>
+        /// <returns>
+        /// A <see cref="ServiceHost"/> for the type of service specified with a specific base address.
+        /// </returns>
+        public ServiceHost CreateHost(
+            Type serviceType,
+            params Uri[] baseAddresses) => CreateServiceHost(serviceType, baseAddresses);
+
+        /// <summary>
+        /// Generic method which creates a service host outside of WAS where the created service is specified by the type parameter of the generic.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
+        /// Here it does the following:
+        /// <list type="number"><item><description>
+        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
+        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
+        /// </description></item><item><description>
+        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
+        /// if there is a registered pattern binding factory in the current container.
+        /// </description></item></list>
+        /// </summary>
+        /// <typeparam name="TService">Specifies the type of service to host.</typeparam>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        public ServiceHost CreateHost<TService>(
+            params Uri[] baseAddresses) => CreateServiceHost<TService>(baseAddresses);
+
+        /// <summary>
+        /// Creates a service host outside of WAS for a service type that is resolved internally, i.e. from DI container or hard-coded.
+        /// Can be used when the service is created in a self-hosting environment or for testing purposes.
+        /// Here it does the following:
+        /// <list type="number"><item><description>
+        /// Calls <see cref="RegisterDefaults" />, which initializes the unity container from code and/or configuration file (app/web.config or DIContainer.config).
+        /// If the container is initialized from unity.config file it must be in the same directory as the main configuration file.
+        /// </description></item><item><description>
+        /// Then it calls <see cref="DoCreateServiceHost" /> which modifies the descriptions of all endpoints to the pattern specified in the constructor
+        /// if there is a registered pattern binding factory in the current container. The implementing descendants must use concrete service type here.
+        /// </description></item></list>
+        /// </summary>
+        /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
+        /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
+        public virtual ServiceHost CreateHost(
+            params Uri[] baseAddresses)
+        {
+            Type serviceType = DefaultServiceType;
+
+            if (serviceType == null)
+                throw new InvalidOperationException($"The interface {typeof(TContract).FullName} is not registered in the container. Either register the service implementation or call one of the other CreateHost overloads and specify the service implementation type explicitly.");
+
+            return CreateHost(serviceType, baseAddresses);
+        }
+
+        /// <summary>
+        /// Represents the task of initializing the created host.
+        /// </summary>
+        public virtual Task<bool> InitializeHostTask => Task.FromResult(true);
         #endregion
 
+        #region Protected overridables
         /// <summary>
         /// Finds the service type in DI container.
         /// </summary>
@@ -422,7 +422,6 @@ namespace vm.Aspects.Wcf.Services
             return registration.MappedToType;
         }
 
-        #region Protected overridables
         /// <summary>
         /// Registers the facilities needed for the normal work of the services from this framework.
         /// </summary>
