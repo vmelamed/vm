@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -405,7 +404,7 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <remarks>
         /// The method is a utility that can be useful to the implementors of the descending classes who prefer
-        /// to registr service types explicitly outside of the host and do not rely on <see cref="RegisterDefaults(Type)"/>.
+        /// to register service types explicitly outside of the host and do not rely on <see cref="RegisterDefaults(Type)"/>.
         /// In this case <see cref="DefaultServiceType"/> can be implemented by just calling this method and not overriding it in each service host factory.
         /// </remarks>
         /// <returns>Type.</returns>
