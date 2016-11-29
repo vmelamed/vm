@@ -289,7 +289,7 @@
     <Compile Include="Facilities\Clock.cs" />
     <Compile Include="Facilities\DumpExceptionFormatter.cs" />
     <Compile Include="Facilities\EtwLogEntryBaseEventSource.cs" />
-    <Compile Include="Facilities\ElLogEntrySource.cs" />
+    <Compile Include="Facilities\EtwTraceListener.cs" />
     <Compile Include="Facilities\EtwLogEntryEventSource.cs" />
     <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
     <Compile Include="Facilities\Facility.cs" />
