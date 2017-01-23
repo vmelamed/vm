@@ -85,7 +85,7 @@ namespace vm.Aspects.Wcf.Bindings
         public override Binding Configure(
             NetMsmqBinding binding)
         {
-            base.Configure(binding);
+            ConfigureDefault(binding);
 
             binding.ExactlyOnce             = true;                            // The queue must be durable
             binding.Durable                 = true;

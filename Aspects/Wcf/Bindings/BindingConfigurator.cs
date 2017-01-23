@@ -5,6 +5,8 @@ using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.MsmqIntegration;
+using System.Threading;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -31,6 +33,8 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         public abstract string MessagingPattern { get; }
 
+        static ReaderWriterLockSlim _syncConfigurators = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+
         static IDictionary<Type, Func<BindingConfigurator, Binding, Binding>> _configurators = new Dictionary<Type, Func<BindingConfigurator, Binding, Binding>>
         {
             [typeof(BasicHttpBinding)]              = (c,b) => c.Configure((BasicHttpBinding)b),
@@ -50,6 +54,17 @@ namespace vm.Aspects.Wcf.Bindings
         };
 
         /// <summary>
+        /// Adds a configurator for binding.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public static void AddConfigurator<T>()
+            where T : Binding
+        {
+            using (_syncConfigurators.WriterLock())
+                _configurators[typeof(T)] = (c, b) => c.Configure((T)b);
+        }
+
+        /// <summary>
         /// Configures the specified binding.
         /// </summary>
         /// <param name="binding">The binding.</param>
@@ -62,9 +77,10 @@ namespace vm.Aspects.Wcf.Bindings
 
             Func<BindingConfigurator, Binding, Binding> configure;
 
-            if (!_configurators.TryGetValue(binding.GetType(), out configure))
-                throw new NotSupportedException(
-                            $"Configuration of {binding.GetType().Name} binding is not supported.");
+            using (_syncConfigurators.ReaderLock())
+                if (!_configurators.TryGetValue(binding.GetType(), out configure))
+                    throw new NotSupportedException(
+                                $"Configuration of {binding.GetType().Name} binding is not supported.");
 
             return configure(this, binding);
         }
@@ -111,6 +127,24 @@ namespace vm.Aspects.Wcf.Bindings
 
             throw new NotSupportedException(
                         $"A {binding.GetType().Name} binding is incompatible with messaging pattern {MessagingPattern}.");
+        }
+
+        /// <summary>
+        /// Throws exception because the binding is not compatible with the current messaging pattern.
+        /// </summary>
+        /// <param name="binding">The binding.</param>
+        /// <returns>Binding.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when <paramref name="binding"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="System.NotSupportedException">Always thrown.</exception>
+        protected virtual void NotImplementedBinding(
+            Binding binding)
+        {
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+
+            throw new NotImplementedException(
+                        $"A {binding.GetType().Name} binding is not implemented yet for messaging pattern {MessagingPattern}.");
         }
 
         /// <summary>
