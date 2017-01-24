@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -19,39 +19,42 @@ namespace vm.Aspects.Wcf.Services
     /// uses <see cref="IInitializeService"/> implementing initializer.
     /// </summary>
     /// <typeparam name="TContract">The type of the t contract.</typeparam>
+    /// <typeparam name="TService">The type of the service implementation.</typeparam>
     /// <typeparam name="TInitializer">The type of the t initializer.</typeparam>
     /// <remarks>
     /// This is the sequence of calls during the service creation and initialization:
     /// <code>
-    /// RegisterDefaults 
-    /// 	( 
-    /// 		registers some Dump metadata, 
-    /// 		initializes the DIContainer, 
-    /// 		gets the registrations, 
-    /// 		registers Facility-s, SEH-s, BindingConfigurator-s
-    /// 	)
-    /// 	DoRegisterDefaults
-    /// 		(
-    /// 			*** good method to override in order to add registration of other facilities, e.g. repositories, etc. ***
-    /// 		)
-    /// 	(
-    /// 		registers the service with ServiceResolveName and ServiceLifetimeManager
-    /// 	)
-    /// DoCreateServiceHost
-    /// 	(
-    /// 		creates the host
-    /// 	)
-    /// 	AddEndpoints
-    /// 		(
-    /// 			does nothing, relies on the configuration to add endpoints
-    /// 			*** good method to override in order to add programmatically endpoints ***
-    /// 		)
-    /// 	(
-    /// 		configures the bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,
-    /// 		subscribes to host.Opening with InitializeHost and host.Closing with CleanupHost
-    /// 		*** good method to override in order to add more stuff to the host ***
-    /// 	)
-    /// 	
+    /// CreateService
+    ///     RegisterDefaults 
+    ///     	( 
+    ///     		registers some Dump metadata, 
+    ///     		initializes the DIContainer, 
+    ///     		gets the registrations, 
+    ///     		registers Facility-s, SEH-s, BindingConfigurator-s, etc.
+    ///     	)
+    ///     	DoRegisterDefaults
+    ///     		(
+    ///     			*** good method to override in order to add registration of other facilities, e.g. repositories, etc. ***
+    ///     		)
+    ///     	(
+    ///     		registers the service with ServiceResolveName and ServiceLifetimeManager
+    ///     	)
+    ///     	
+    ///     DoCreateServiceHost
+    ///     	(
+    ///     		creates the host
+    ///     	)
+    ///     	AddEndpoints
+    ///     		(
+    ///     			does nothing, relies on the configuration to add endpoints
+    ///     			*** good method to override in order to add programmatically endpoints ***
+    ///     		)
+    ///     	(
+    ///     		configures the bindings according to the MessagingPattern, transaction timeout, debug behaviors, metadata behavior,
+    ///     		subscribes to host.Opening with InitializeHost and host.Closing with CleanupHost
+    ///     		*** good method to override in order to add more stuff to the host ***
+    ///     	)
+    ///     	
     /// </code>
     /// when the service host is created it fires host.Opening
     /// <code>
@@ -75,10 +78,11 @@ namespace vm.Aspects.Wcf.Services
     /// 		*** good method to call in order to add some cleanup tasks ***
     /// 	)
     /// </code>
-    /// See also <seealso cref="MessagingPatternServiceHostFactory{TContract}"/>.
+    /// See also <seealso cref="MessagingPatternServiceHostFactory{TContract, TService}"/>.
     /// </remarks>
-    public abstract class MessagingPatternInitializedServiceHostFactory<TContract, TInitializer> : MessagingPatternServiceHostFactory<TContract>
+    public abstract class MessagingPatternInitializedServiceHostFactory<TContract, TService, TInitializer> : MessagingPatternServiceHostFactory<TContract, TService>
         where TContract : class
+        where TService : TContract
         where TInitializer : IInitializeService
     {
         IInitializeService _serviceInitializer;
@@ -90,7 +94,7 @@ namespace vm.Aspects.Wcf.Services
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
+        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory{TContract,TService,TInitializer}" /> class.
         /// </summary>
         /// <param name="messagingPattern">
         /// The binding pattern to be applied to all descriptions of end points in the service host.
@@ -99,7 +103,11 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
-        /// <param name="initializerResolveName">The resolve name of the initializer.</param>
+        /// <param name="initializerResolveName">
+        /// The resolve name to register the initializer with.
+        /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
+        /// If <see langword="null"/> the host will use the resolve name of the service type.
+        /// </param>
         public MessagingPatternInitializedServiceHostFactory(
             string messagingPattern = null,
             string initializerResolveName = null)
@@ -109,7 +117,7 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
+        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory{TContract,TService,TInitializer}" /> class.
         /// </summary>
         /// <param name="identityType">Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" /> or <see cref="ServiceIdentity.Rsa" />.</param>
         /// <param name="identity">The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
@@ -122,7 +130,11 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
-        /// <param name="initializerResolveName">The resolve name of the initializer.</param>
+        /// <param name="initializerResolveName">
+        /// The resolve name to register the initializer with.
+        /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
+        /// If <see langword="null"/> the host will use the resolve name of the service type.
+        /// </param>
         public MessagingPatternInitializedServiceHostFactory(
             ServiceIdentity identityType,
             string identity,
@@ -137,7 +149,7 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory&lt;TContract&gt;" /> class.
+        /// Initializes a new instance of the <see cref="T:MessagingPatternInitializedServiceHostFactory{TContract,TService,TInitializer}" /> class.
         /// </summary>
         /// <param name="identityType">Type of the identity should be either <see cref="ServiceIdentity.Certificate"/> or <see cref="ServiceIdentity.Rsa"/>.</param>
         /// <param name="certificate">Specifies the identifying certificate. Assumes that the identity type is <see cref="ServiceIdentity.Certificate" />.</param>
@@ -148,7 +160,11 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute"/> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
-        /// <param name="initializerResolveName">The resolve name of the initializer.</param>
+        /// <param name="initializerResolveName">
+        /// The resolve name to register the initializer with.
+        /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
+        /// If <see langword="null"/> the host will use the resolve name of the service type.
+        /// </param>
         public MessagingPatternInitializedServiceHostFactory(
             ServiceIdentity identityType,
             X509Certificate2 certificate,
@@ -168,9 +184,6 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Initializes the DI container with all necessary registrations. The overloads should always call this method last.
         /// </summary>
-        /// <param name="serviceType">Type of the service.
-        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in an override of <see cref="DoRegisterDefaults"/>.
-        /// </param>
         /// <param name="container">The container.</param>
         /// <param name="registrations">The registrations.</param>
         /// <returns>The current IUnityContainer.</returns>
@@ -183,11 +196,10 @@ namespace vm.Aspects.Wcf.Services
         /// }
         /// </code></remarks>
         protected override IUnityContainer DoRegisterDefaults(
-            Type serviceType,
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            ObtainInitializerResolveName(serviceType);
+            ObtainInitializerResolveName();
 
             return container.RegisterTypeIfNot<IInitializeService, TInitializer>(
                                                     registrations,
@@ -198,15 +210,18 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Determines the resolve name of the initializer.
         /// </summary>
-        /// <param name="serviceType">Type of the service.
-        /// Can be <see langword="null"/>, in which case the service type must be registered in the DI container against <typeparamref name="TContract"/>, probably in <see cref="DoRegisterDefaults"/>.
-        /// </param>
         /// <returns>the resolve name of the initializer</returns>
-        protected virtual string ObtainInitializerResolveName(
-            Type serviceType)
+        protected virtual string ObtainInitializerResolveName()
         {
-            if (InitializerResolveName == null)
-                InitializerResolveName = ServiceResolveName;
+            if (InitializerResolveName != null)
+                return InitializerResolveName;
+
+            InitializerResolveName = typeof(TInitializer).GetCustomAttribute<ResolveNameAttribute>()?.Name;
+
+            if (InitializerResolveName != null)
+                return InitializerResolveName;
+
+            InitializerResolveName = ServiceResolveName;
 
             return InitializerResolveName;
         }
@@ -276,8 +291,8 @@ namespace vm.Aspects.Wcf.Services
 
                 Debugger.Break();
 #endif
-                RegisterDefaults(serviceType);
-                ObtainInitializerResolveName(serviceType);
+                RegisterDefaults();
+                ObtainInitializerResolveName();
             }
 
             var initializer = ServiceInitializer;
@@ -290,7 +305,7 @@ namespace vm.Aspects.Wcf.Services
                                                 t =>
                                                 {
                                                     if (t.IsCompleted  &&  t.Result)
-                                                        HostInitialized(host, serviceType);
+                                                        HostInitialized(host);
                                                     else
                                                         throw new InvalidOperationException(
                                                                     $"{GetType().Name} could not initialize the host.");
