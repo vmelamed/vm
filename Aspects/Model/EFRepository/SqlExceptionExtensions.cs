@@ -62,14 +62,23 @@ namespace vm.Aspects.Model.EFRepository
             -2,
             -1,
             2,
+            20,
             53,
             64,
-            121,
             233,
-            1231,
+            1231,   // ?
+            4060,
+            10053,
             10054,
             10060,
-            10061,
+            10928,
+            10929,
+            40197,
+            40501,
+            40613,
+            49918,
+            49919,
+            49920,
         };
 
         static readonly int[] _sqlTransactionNumbers = new int[]
@@ -77,6 +86,8 @@ namespace vm.Aspects.Model.EFRepository
             1204,
             1205,
             1222,
+            40549,
+            40550,
         };
 
         /// <summary>

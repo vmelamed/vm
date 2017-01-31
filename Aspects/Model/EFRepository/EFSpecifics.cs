@@ -279,7 +279,7 @@ namespace vm.Aspects.Model.EFRepository
                 return true;
 
             // walk the exceptions chain and see if the root cause is a SqlException - transaction or connectivity problem
-            Exception ex = exception;
+            var ex = exception;
             SqlException sqlException = null;
 
             do
