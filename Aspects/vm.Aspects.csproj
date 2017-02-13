@@ -274,7 +274,6 @@
     <Compile Include="DIContainer.cs" />
     <Compile Include="DIContainer.Extensions.cs" />
     <Compile Include="DIContainer.Extensions2.cs" />
-    <Compile Include="DIContainer.ExtensionsRegister.cs" />
     <Compile Include="DIContainer.GenericExtensions.cs" />
     <Compile Include="DIContainer.GenericExtensions2.cs" />
     <Compile Include="DisposableExtensions.cs" />

@@ -161,7 +161,7 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
-                Exception ex = x.IsTransient()
+                Exception ex = x.IsTransient()  ||  x.IsOptimisticConcurrency()
                                     ? ex = new RepeatableOperationException(x)  // wrap and rethrow
                                     : x;
 

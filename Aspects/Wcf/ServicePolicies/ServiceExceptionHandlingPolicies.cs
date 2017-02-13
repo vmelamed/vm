@@ -111,6 +111,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 GetThrowFaultExceptionPolicyEntry<SerializationException, SerializationFault>(eventId++, logExceptionTitle),
                 GetThrowFaultExceptionPolicyEntry<XmlException, XmlFault>(eventId++, logExceptionTitle),
                 GetThrowFaultExceptionPolicyEntry<AggregateException, AggregateFault>(eventId++, logExceptionTitle),
+                GetThrowFaultExceptionPolicyEntry<RepeatableOperationException, RepeatableOperationFault>(eventId++, logExceptionTitle),
                 
                 // to keep the event ID-s consistent, only append to the list above
             };

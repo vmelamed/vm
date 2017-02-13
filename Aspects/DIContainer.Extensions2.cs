@@ -1,71 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using Microsoft.Practices.Unity;
 
 namespace vm.Aspects
 {
     public static partial class DIContainer
     {
-        #region GetRegistrationSnapshot
-        /// <summary>
-        /// Gets a snapshot of the registrations in the specified container.
-        /// </summary>
-        /// <param name="container">The container.</param>
-        /// <returns>
-        /// Instance of <see cref="T:IDictionary{RegistrationLookup, ContainerRegistration}"/> - a snapshot of the current registrations in the container.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="container"/> is <see langword="null"/>.
-        /// </exception>
-        /// <remarks>
-        /// The method is useful only inside of a critical sections guarded with <c>lock (DIContainer.Root)</c> - 
-        /// then it is safe to use the registration family of methods RegisterTypeIfNot or RegisterInstanceIfNot which take a second (or third) 
-        /// parameter of type <see cref="T:IDictionary{RegistrationLookup, ContainerRegistration}"/>. Using the snapshot improves the
-        /// performance issues documented in http://philipm.at/2011/0819/ when used for a series of registrations.
-        /// </remarks>
-        /// <example>
-        /// <code>
-        /// <![CDATA[
-        /// ...
-        /// lock (DIContainer.Root)
-        /// {
-        ///     var registrations = DIContainer.Root.GetRegistrationSnapshot();
-        /// 
-        ///     DIContainer.Root
-        ///         .RegisterTypeIfNot(registrations, typeof(Interface1), typeof(Type1))
-        ///         .RegisterTypeIfNot(registrations, typeof(Interface2), typeof(Type2))
-        ///         ...
-        ///     ;
-        /// }
-        /// ...
-        /// ]]>
-        /// </code>
-        /// </example>
-        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot(
-            this IUnityContainer container)
-        {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
-
-            return container.Registrations.ToDictionary(
-                        cr => new RegistrationLookup(cr.RegisteredType, cr.Name),
-                        cr => cr);
-        }
-
-        /// <summary>
-        /// Gets a snapshot of the registrations in the specified container.
-        /// Simply a short cut for <c>GetRegistrationDictionary(DIContainer.Root)</c>
-        /// </summary>
-        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot()
-        {
-            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
-
-            return GetRegistrationsSnapshot(DIContainer.Root);
-        }
-        #endregion
-
         #region Conditionally register a type using a registrations snapshot
         /// <summary>
         /// Registers the type <paramref name="type"/>, if it is not already registered.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -217,6 +218,135 @@ namespace vm.Aspects
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a snapshot of the registrations in the specified container.
+        /// </summary>
+        /// <param name="container">The container.</param>
+        /// <returns>
+        /// Instance of <see cref="T:IDictionary{RegistrationLookup, ContainerRegistration}"/> - a snapshot of the current registrations in the container.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown if <paramref name="container"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        /// The method is useful only inside of a critical sections guarded with <c>lock (DIContainer.Root)</c> - 
+        /// then it is safe to use the registration family of methods RegisterTypeIfNot or RegisterInstanceIfNot which take a second (or third) 
+        /// parameter of type <see cref="T:IDictionary{RegistrationLookup, ContainerRegistration}"/>. Using the snapshot improves the
+        /// performance issues documented in http://philipm.at/2011/0819/ when used for a series of registrations.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// ...
+        /// lock (DIContainer.Root)
+        /// {
+        ///     var registrations = DIContainer.Root.GetRegistrationSnapshot();
+        /// 
+        ///     DIContainer.Root
+        ///         .RegisterTypeIfNot(registrations, typeof(Interface1), typeof(Type1))
+        ///         .RegisterTypeIfNot(registrations, typeof(Interface2), typeof(Type2))
+        ///         ...
+        ///     ;
+        /// }
+        /// ...
+        /// ]]>
+        /// </code>
+        /// </example>
+        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot(
+            this IUnityContainer container)
+        {
+            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
+            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
+
+            lock (container)
+                return container
+                            .Registrations
+                            .ToDictionary(
+                                cr => new RegistrationLookup(cr.RegisteredType, cr.Name),
+                                cr => cr);
+        }
+
+        /// <summary>
+        /// Gets a snapshot of the registrations in the specified container.
+        /// Simply a short cut for <c>GetRegistrationDictionary(DIContainer.Root)</c>
+        /// </summary>
+        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot()
+        {
+            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
+
+            return GetRegistrationsSnapshot(DIContainer.Root);
+        }
+
+        /// <summary>
+        /// Registers the types and instances of the <see cref="T:ContainerRegistrar"/> in the specified container.
+        /// The method is thread safe.
+        /// </summary>
+        /// <param name="container">The container.</param>
+        /// <param name="registrar">The registrar.</param>
+        /// <param name="isTest">if set to <see langword="true" /> forces the registrar to register its test configuration.</param>
+        /// <returns>IUnityContainer - the <paramref name="container"/> if it is not <see langword="null"/>, otherwise returns <see cref="P:DIContainer.Root"/>.</returns>
+        /// <remarks>
+        /// This method allows for chained registrations like this:
+        /// <code>
+        /// <![CDATA[
+        ///     DIContainer.Initialize()
+        ///                .Register(Facility.Registrar)
+        ///                .Register(EFRepositoryRegistrar.Default)
+        ///                ...
+        ///                ;
+        /// ]]>
+        /// </code>
+        /// </remarks>
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]
+        public static IUnityContainer Register(
+            this IUnityContainer container,
+            ContainerRegistrar registrar,
+            bool isTest = false)
+        {
+            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
+            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
+
+            return registrar.Register(container, isTest);
+        }
+
+        /// <summary>
+        /// Registers the types and instances of the <see cref="T:ContainerRegistrar"/> in the specified container.
+        /// The method is <b>not</b> thread safe and should be called from a synchronized context.
+        /// </summary>
+        /// <param name="container">The container.</param>
+        /// <param name="registrar">The registrar.</param>
+        /// <param name="registrations">The registrations.</param>
+        /// <param name="isTest">if set to <see langword="true" /> [is test].</param>
+        /// <returns>IUnityContainer.</returns>
+        /// <remarks>
+        /// This method allows for chained registrations like this:
+        /// <code>
+        /// <![CDATA[
+        ///     lock (DIContainer.Initialize())
+        ///     {
+        ///         var registrations = DIContainer.Root.GetRegistrationsSnapshot();
+        ///         
+        ///         DIContainer.Root
+        ///                    .Register(Facility.Registrar, registrations)
+        ///                    .Register(EFRepositoryRegistrar, registrations)
+        ///                    ...
+        ///                    ;
+        ///     }
+        /// ]]>
+        /// </code>
+        /// </remarks>
+        public static IUnityContainer UnsafeRegister(
+            this IUnityContainer container,
+            ContainerRegistrar registrar,
+            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            bool isTest = false)
+        {
+            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
+            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
+
+            return registrar.UnsafeRegister(container, registrations, isTest);
         }
 
         /// <summary>
