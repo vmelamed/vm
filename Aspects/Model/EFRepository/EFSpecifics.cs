@@ -178,7 +178,7 @@ namespace vm.Aspects.Model.EFRepository
 
                 // change the property's value and see if the state of the object changes too
                 var propOriginalValue = pi.GetValue(reference, null);
-                var propChangedValue  = change(propOriginalValue);
+                var propChangedValue = change(propOriginalValue);
 
                 try
                 {
@@ -255,7 +255,29 @@ namespace vm.Aspects.Model.EFRepository
         /// <param name="exception">The exception.</param>
         /// <returns><see langword="true" /> if the specified exception is a connection problem; otherwise, <see langword="false" />.</returns>
         public bool IsConnectionRelated(
-            Exception exception) => SqlExceptionExtensions.IsSqlConnectionProblem(exception);
+            Exception exception)
+        {
+            if (IsOptimisticConcurrency(exception))
+                return false;
+
+            // walk the exceptions chain and see if the root cause is a SqlException - transaction or connectivity problem
+            var ex = exception;
+            SqlException sqlException = null;
+
+            do
+            {
+                sqlException = ex as SqlException;
+                if (sqlException != null)
+                    break;
+                ex = ex.InnerException;
+            }
+            while (ex != null);
+
+            if (sqlException == null)
+                return false;
+
+            return SqlExceptionExtensions.IsSqlConnectionProblem(exception);
+        }
 
         /// <summary>
         /// Determines whether the specified exception is a result of problems related to transactions isolation.
@@ -265,7 +287,29 @@ namespace vm.Aspects.Model.EFRepository
         ///   <see langword="true"/> if the specified exception is a transactions isolation problem; otherwise, <see langword="false"/>.
         /// </returns>
         public bool IsTransactionRelated(
-            Exception exception) => SqlExceptionExtensions.IsSqlTransactionProblem(exception);
+            Exception exception)
+        {
+            if (IsOptimisticConcurrency(exception))
+                return false;
+
+            // walk the exceptions chain and see if the root cause is a SqlException - transaction or connectivity problem
+            var ex = exception;
+            SqlException sqlException = null;
+
+            do
+            {
+                sqlException = ex as SqlException;
+                if (sqlException != null)
+                    break;
+                ex = ex.InnerException;
+            }
+            while (ex != null);
+
+            if (sqlException == null)
+                return false;
+
+            return SqlExceptionExtensions.IsSqlTransactionProblem(exception);
+        }
 
         /// <summary>
         /// Determines whether the specified exception allows for the operation to be repeated, e.g. optimistic concurrency, transaction killed, etc..

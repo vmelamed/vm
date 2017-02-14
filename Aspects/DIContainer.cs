@@ -419,17 +419,17 @@ namespace vm.Aspects
             {
                 string regType = item.RegisteredType.IsGenericType
                                         ? string.Format(
-                                                "{0}<{1}>",
-                                                item.RegisteredType.Name.Split('`')[0],
-                                                string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
+                                                    "{0}<{1}>",
+                                                    item.RegisteredType.Name.Split('`')[0],
+                                                    string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
                                         : item.RegisteredType.Name;
-                string mapTo    = item.MappedToType.IsGenericType
-                                        ? string.Format(
-                                                "{0}<{1}>",
-                                                item.MappedToType.Name.Split('`')[0],
-                                                string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
-                                        : item.MappedToType.Name;
-                var regName  = item.Name ?? "[default]";
+                string mapTo = item.MappedToType.IsGenericType
+                                            ? string.Format(
+                                                    "{0}<{1}>",
+                                                    item.MappedToType.Name.Split('`')[0],
+                                                    string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
+                                            : item.MappedToType.Name;
+                var regName = item.Name ?? "[default]";
                 var lifetime = item.LifetimeManagerType.Name;
 
                 Contract.Assert(lifetime.Length > "LifetimeManager".Length);

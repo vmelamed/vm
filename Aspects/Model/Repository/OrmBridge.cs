@@ -236,6 +236,21 @@ namespace vm.Aspects.Model.Repository
         }
 
         /// <summary>
+        /// Determines whether the specified exception is a result of a transaction deadlock problems in the store.
+        /// </summary>
+        /// <param name="exception">The exception to be tested.</param>
+        /// <returns>
+        ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
+        /// </returns>
+        public static bool IsTransactionRelated(
+            this Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            return OrmSpecifics.IsTransactionRelated(exception);
+        }
+
+        /// <summary>
         /// Determines whether the specified exception is a result of connectivity problems to the store.
         /// </summary>
         /// <param name="exception">The exception to be tested.</param>
