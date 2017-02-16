@@ -338,8 +338,8 @@ namespace vm.Aspects.Model.EFRepository
             if (sqlException == null)
                 return false;
 
-            return IsConnectionRelated(sqlException) ||
-                   IsTransactionRelated(sqlException);
+            return sqlException.IsSqlConnectionProblem() ||
+                   sqlException.IsSqlTransactionProblem();
         }
 
         #endregion

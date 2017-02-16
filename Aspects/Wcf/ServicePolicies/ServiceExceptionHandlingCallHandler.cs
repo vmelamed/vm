@@ -6,9 +6,11 @@ using System.Net;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using System.Threading;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
+using vm.Aspects.Threading;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.FaultContracts;
 
@@ -70,11 +72,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
             }
 
             return input.CreateExceptionMethodReturn(
-                        new WebFaultException<Fault>(
-                                new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
-                                HttpStatusCode.InternalServerError));
+                            new WebFaultException<Fault>(
+                                    new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
+                                    HttpStatusCode.InternalServerError));
         }
 
+        static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
 
         static bool IsFaultSupported(
@@ -85,39 +88,43 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             IEnumerable<Type> contracts;
 
-            if (_faultContracts.TryGetValue(input.MethodBase, out contracts))
-                return contracts.Contains(faultType);
-
-            var method = input.MethodBase;
-
-            if (method.GetCustomAttribute<OperationContractAttribute>() == null)
-                method = input
-                            .Target
-                            .GetType()
-                            .GetInterfaces()
-                            .Where(i => i.GetCustomAttribute<ServiceContractAttribute>() != null)
-                            .SelectMany(i => i.GetMethods())
-                            .FirstOrDefault(m => m.GetCustomAttribute<OperationContractAttribute>() != null  &&
-                                                 m.Name == input.MethodBase.Name)
-                            ;
-
-            if (method == null)
+            using (_sync.UpgradableReaderLock())
             {
-                Facility.LogWriter.TraceError($"Could not find operation contract {input.MethodBase.Name}.");
-                return false;
+                var method = input.MethodBase;
+
+                if (_faultContracts.TryGetValue(method, out contracts))
+                    return contracts.Contains(faultType);
+
+                if (method.GetCustomAttribute<OperationContractAttribute>() == null)
+                    method = input
+                                .Target
+                                .GetType()
+                                .GetInterfaces()
+                                .Where(i => i.GetCustomAttribute<ServiceContractAttribute>() != null)
+                                .SelectMany(i => i.GetMethods())
+                                .FirstOrDefault(m => m.GetCustomAttribute<OperationContractAttribute>() != null  &&
+                                                     m.Name == input.MethodBase.Name)
+                                ;
+
+                if (method == null)
+                {
+                    Facility.LogWriter.TraceError($"Could not find operation contract {input.MethodBase.Name}.");
+                    return false;
+                }
+
+                contracts = new HashSet<Type>(method.GetCustomAttributes<FaultContractAttribute>().Select(a => a.DetailType));
+
+                using (_sync.WriterLock())
+                    _faultContracts[input.MethodBase] = contracts;
             }
 
-            var set = new HashSet<Type>(method.GetCustomAttributes<FaultContractAttribute>().Select(a => a.DetailType));
-
-            _faultContracts[input.MethodBase] = set;
-
-            if (set.Count() == 0)
+            if (contracts.Count() == 0)
             {
                 Facility.LogWriter.TraceError($"The operation contract {input.MethodBase.Name} does not define any fault contracts.");
                 return false;
             }
 
-            if (!set.Contains(faultType))
+            if (!contracts.Contains(faultType))
             {
                 Facility.LogWriter.TraceError($"The operation contract {input.MethodBase.Name} does not define the fault contract {faultType.Name}.");
                 return false;
