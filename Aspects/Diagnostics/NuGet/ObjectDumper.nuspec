@@ -28,7 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            Added friendlier printing for dictionaries with key types of promitive, string, Guid and other base types.
+            Includes builds for .NET 4.0, 4.5.2 and 4.6.2.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
