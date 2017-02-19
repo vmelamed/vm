@@ -8,9 +8,9 @@ del *.nupkg
 NuGet Update -self
 if not .%1.==.. NuGet SetApiKey %1
 
-rem ------- .NET 4.0 -------
-set FrameworkVersion=4.0
-set FrameworkVersionConst=DOTNET40
+rem ------- .NET 4.5.2 -------
+set FrameworkVersion=4.5.2
+set FrameworkVersionConst=DOTNET452
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
 
 msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%

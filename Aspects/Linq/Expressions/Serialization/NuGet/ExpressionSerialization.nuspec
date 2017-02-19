@@ -26,7 +26,7 @@
             - The XML documents are validated against a schema:  urn:schemas-vm-com:Aspects.Expression
         </description>
         <releaseNotes>
-            Fixing the dependencies.
+            Includes builds for .NET 4.5.2 and 4.6.2.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
@@ -37,10 +37,10 @@
         <tags>.net LINQ expression tree serialization XML aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET40\vm.Aspects.Linq.Expressions.Serialization.dll"
-              target="lib\net40"/>
-        <file src="..\bin\ReleaseDOTNET40\vm.Aspects.Linq.Expressions.Serialization.xml"
-              target="lib\net40"/>
+        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Linq.Expressions.Serialization.dll"
+              target="lib\net452"/>
+        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Linq.Expressions.Serialization.xml"
+              target="lib\net452"/>
 
         <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Linq.Expressions.Serialization.dll"
               target="lib\net462"/>
