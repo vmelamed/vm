@@ -3,10 +3,9 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using FileCrypt.Properties;
-using vm.Aspects.Security.Cryptography.Ciphers;
+using vm.Aspects.Security.Cryptography.Ciphers.Utilities.Properties;
 
-namespace FileCrypt
+namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 {
     static class Program
     {

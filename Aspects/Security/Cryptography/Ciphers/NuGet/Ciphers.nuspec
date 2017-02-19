@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.11.16</version>
+        <version>1.11.17</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -48,22 +48,22 @@
         <file src="..\ProtectedKey\bin\ReleaseDOTNET452\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net452"/>
         
-        <!--<file src="..\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="lib\net461"/>
+        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.dll"
+              target="lib\net462"/>
         <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.xml"
-              target="lib\net461"/>
+              target="lib\net462"/>
         <file src="..\ProtectedKey\bin\ReleaseDOTNET461\Microsoft.Practices.ServiceLocation.dll"
-              target="lib\net461"/>
+              target="lib\net462"/>
         <file src="..\EncryptedKey\bin\ReleaseDOTNET461\EncryptedKey.exe"
-              target="tools\net461"/>
+              target="tools\net462"/>
         <file src="..\ProtectedKey\bin\ReleaseDOTNET461\ProtectedKey.exe"
-              target="tools\net461"/>
+              target="tools\net462"/>
         <file src="..\MacKey\bin\ReleaseDOTNET461\MacKey.exe"
-              target="tools\net461"/>
+              target="tools\net462"/>
         <file src="..\ProtectedKey\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="tools\net461"/>
+              target="tools\net462"/>
         <file src="..\ProtectedKey\bin\ReleaseDOTNET461\Microsoft.Practices.ServiceLocation.dll"
-              target="tools\net461"/>-->
+              target="tools\net462"/>
 
         <file src="..\**\*.cs"
               target="src" />

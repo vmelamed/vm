@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.91</version>
+        <version>1.0.92</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -37,9 +37,15 @@
         <tags>.net LINQ expression tree serialization XML aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\Release\vm.Aspects.Linq.Expressions.Serialization.dll"
+        <file src="..\bin\ReleaseDOTNET40\vm.Aspects.Linq.Expressions.Serialization.dll"
               target="lib\net40"/>
-        <file src="..\bin\Release\vm.Aspects.Linq.Expressions.Serialization.xml"
+        <file src="..\bin\ReleaseDOTNET40\vm.Aspects.Linq.Expressions.Serialization.xml"
               target="lib\net40"/>
+
+        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Linq.Expressions.Serialization.dll"
+              target="lib\net462"/>
+        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Linq.Expressions.Serialization.xml"
+              target="lib\net462"/>
+
     </files>
 </package>

@@ -252,7 +252,7 @@ namespace vm.Aspects.Facilities
                 else
                     parameters[kv.Value] = kv.Key.GetValue(eventCache);
 
-#if DOTNET461
+#if DOTNET461 || DOTNET462
             _etwSource.Write(
                 EventName,
                 GetEventSourceOptions(eventType),
@@ -260,7 +260,8 @@ namespace vm.Aspects.Facilities
 #endif
         }
 
-        static void TraceNonLogEntry(
+#if DOTNET461 || DOTNET462
+        void TraceNonLogEntry(
             TraceEventCache eventCache,
             TraceEventType eventType,
             object data)
@@ -275,11 +276,25 @@ namespace vm.Aspects.Facilities
             if (stringData == null)
                 stringData = data.DumpString();
 
-#if DOTNET461
             _etwSource.Write(
                 EventName,
                 GetEventSourceOptions(eventType),
                 stringData);
+#elif DOTNET452
+            void TraceNonLogEntry(
+            TraceEventCache eventCache,
+            TraceEventType eventType,
+            object data)
+        {
+            if (eventCache == null)
+                throw new ArgumentNullException(nameof(eventCache));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            var stringData = data as string;
+
+            if (stringData == null)
+                stringData = data.DumpString();
 #endif
         }
 
@@ -313,7 +328,7 @@ namespace vm.Aspects.Facilities
                 [TraceEventType.Stop]        = EventOpcode.Stop,
             });
 
-#if DOTNET461
+#if DOTNET461 || DOTNET462
         static EventSourceOptions GetEventSourceOptions(
             TraceEventType eventType)
             => new EventSourceOptions
@@ -324,19 +339,27 @@ namespace vm.Aspects.Facilities
             };
 #endif
 
+#if DOTNET461 || DOTNET462
         /// <summary>
         /// When overridden in a derived class, writes the specified message to the listener you create in the derived class.
         /// </summary>
         /// <param name="message">A message to write.</param>
         public override void Write(string message)
         {
-#if DOTNET461
             if (string.IsNullOrEmpty(message))
                 return;
 
             _etwSource.Write(EventName, message);
-#endif
         }
+#elif DOTNET452
+        /// <summary>
+        /// When overridden in a derived class, writes the specified message to the listener you create in the derived class.
+        /// </summary>
+        /// <param name="message">A message to write.</param>
+        public override void Write(string message)
+        {
+        }
+#endif
 
         /// <summary>
         /// When overridden in a derived class, writes a message to the listener you create in the derived class, followed by a line terminator.

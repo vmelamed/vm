@@ -1,16 +1,37 @@
 pushd
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 set Configuration=Release
-set vmAspectsVersion=1.0.91-beta
+set vmAspectsVersion=1.0.92-beta
 
 cd %~dp0..
 del *.nupkg
 NuGet Update -self
 if not .%1.==.. NuGet SetApiKey %1
 
-rem ------- .NET 4.5.2 -------
-set FrameworkVersion=4.5.2
-set FrameworkVersionConst=DOTNET452
+:::rem ------- .NET 4.5.2 -------
+:::set FrameworkVersion=4.5.2
+:::set FrameworkVersionConst=DOTNET452
+:::set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
+:::
+:::msbuild vm.Aspects.csproj %commonBuildOptions%
+:::if errorlevel 1 goto exit
+:::cd Model
+:::msbuild vm.Aspects.Model.csproj %commonBuildOptions%
+:::if errorlevel 1 goto exit
+:::cd ..\Parsers
+:::msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
+:::if errorlevel 1 goto exit
+:::cd ..\FtpTransfer
+:::msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
+:::if errorlevel 1 goto exit
+:::cd ..\Wcf
+:::msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
+:::if errorlevel 1 goto exit
+:::cd ..
+
+rem ------- .NET 4.6.2 -------
+set FrameworkVersion=4.6.2
+set FrameworkVersionConst=DOTNET462
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
 
 msbuild vm.Aspects.csproj %commonBuildOptions%
@@ -28,27 +49,6 @@ cd ..\Wcf
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 cd ..
-
-:rem ------- .NET 4.6.1 -------
-:set FrameworkVersion=4.6.1
-:set FrameworkVersionConst=DOTNET461
-:set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
-:
-:msbuild vm.Aspects.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:cd Model
-:msbuild vm.Aspects.Model.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:cd ..\Parsers
-:msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:cd ..\FtpTransfer
-:msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:cd ..\Wcf
-:msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:cd ..
 
 rem ------- Package -------
 NuGet Pack NuGet\vm.Aspects.nuspec -symbols -Prop Configuration=%Configuration%

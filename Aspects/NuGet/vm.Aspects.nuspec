@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.91-beta</version>
+        <version>1.0.92-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -51,7 +51,7 @@
         <tags></tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.dll"
+        <!--<file src="..\bin\ReleaseDOTNET452\vm.Aspects.dll"
               target="lib\net452"/>
         <file src="..\bin\ReleaseDOTNET452\vm.Aspects.xml"
               target="lib\net452"/>
@@ -74,28 +74,32 @@
         <file src="..\bin\ReleaseDOTNET452\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
               target="lib\net452"/>
         <file src="..\bin\ReleaseDOTNET452\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
-              target="lib\net452"/>
+              target="lib\net452"/>-->
 
-        <!--<file src="..\bin\ReleaseDOTNET461\vm.Aspects.dll"
-              target="lib\net461"/>
-        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.xml"
-              target="lib\net461"/>
-        <file src="..\Model\bin\ReleaseDOTNET461\vm.Aspects.Model.dll"
-              target="lib\net461"/>
-        <file src="..\Model\bin\ReleaseDOTNET461\vm.Aspects.Model.xml"
-              target="lib\net461"/>
-        <file src="..\Wcf\bin\ReleaseDOTNET461\vm.Aspects.Wcf.dll"
-              target="lib\net461"/>
-        <file src="..\Wcf\bin\ReleaseDOTNET461\vm.Aspects.Wcf.xml"
-              target="lib\net461"/>
-        <file src="..\Parsers\bin\ReleaseDOTNET461\vm.Aspects.Parsers.dll"
-              target="lib\net461"/>
-        <file src="..\Parsers\bin\ReleaseDOTNET461\vm.Aspects.Parsers.xml"
-              target="lib\net461"/>
-        <file src="..\bin\ReleaseDOTNET461\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
-              target="lib\net461"/>
-        <file src="..\bin\ReleaseDOTNET461\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
-              target="lib\net461"/>-->
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.dll"
+              target="lib\net462"/>
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.xml"
+              target="lib\net462"/>
+        <file src="..\Model\bin\ReleaseDOTNET462\vm.Aspects.Model.dll"
+              target="lib\net462"/>
+        <file src="..\Model\bin\ReleaseDOTNET462\vm.Aspects.Model.xml"
+              target="lib\net462"/>
+        <file src="..\Wcf\bin\ReleaseDOTNET462\vm.Aspects.Wcf.dll"
+              target="lib\net462"/>
+        <file src="..\Wcf\bin\ReleaseDOTNET462\vm.Aspects.Wcf.xml"
+              target="lib\net462"/>
+        <file src="..\Parsers\bin\ReleaseDOTNET462\vm.Aspects.Parsers.dll"
+              target="lib\net462"/>
+        <file src="..\Parsers\bin\ReleaseDOTNET462\vm.Aspects.Parsers.xml"
+              target="lib\net462"/>
+        <file src="..\FtpTransfer\bin\ReleaseDOTNET462\vm.Aspects.FtpTransfer.dll"
+              target="lib\net462"/>
+        <file src="..\FtpTransfer\bin\ReleaseDOTNET462\vm.Aspects.FtpTransfer.xml"
+              target="lib\net462"/>
+        <file src="..\bin\ReleaseDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
+              target="lib\net462"/>
+        <file src="..\bin\ReleaseDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
+              target="lib\net462"/>
 
         <file src="..\**\*.cs"
               target="src" />

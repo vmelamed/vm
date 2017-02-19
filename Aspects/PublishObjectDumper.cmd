@@ -16,14 +16,6 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
-rem ------- .NET 4.5.2 -------
-set FrameworkVersion=4.5.2
-set FrameworkVersionConst=DOTNET452
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
-
-msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
 set FrameworkVersionConst=DOTNET462

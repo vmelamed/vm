@@ -46,11 +46,6 @@
         <file src="..\bin\ReleaseDOTNET40\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net40"/>
 
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Diagnostics.ObjectDumper.dll"
-              target="lib\net452"/>
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Diagnostics.ObjectDumper.xml"
-              target="lib\net452"/>
-
         <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net462"/>
         <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Diagnostics.ObjectDumper.xml"
