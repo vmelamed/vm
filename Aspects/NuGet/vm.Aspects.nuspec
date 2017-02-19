@@ -20,7 +20,7 @@
         <copyright>Copyright © vm 2013-2016</copyright>
         <dependencies>
             <dependency id="System.Diagnostics.Tracing"
-                        version="4.1.0" />
+                        version="4.3.0" />
             
             <dependency id="CommonServiceLocator"
                         version="1.3" />
@@ -47,7 +47,7 @@
                         version="6.1.3" />
 
             <dependency id="AspectObjectDumper"
-                        version="1.6.8" />
+                        version="1.6.15" />
         </dependencies>
         <tags></tags>
     </metadata>
