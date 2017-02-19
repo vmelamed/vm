@@ -18,7 +18,7 @@
             * Built and tested with .NET v4.6.
         </description>
         <releaseNotes>
-            Added a Base64 encoding option /6 to the FileCrypt utility.
+            Builds targeting .NET 4.5.2 and 4.6.2.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -48,21 +48,21 @@
         <file src="..\ProtectedKey\bin\ReleaseDOTNET452\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net452"/>
         
-        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net462"/>
-        <file src="..\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net462"/>
-        <file src="..\ProtectedKey\bin\ReleaseDOTNET461\Microsoft.Practices.ServiceLocation.dll"
+        <file src="..\ProtectedKey\bin\ReleaseDOTNET462\Microsoft.Practices.ServiceLocation.dll"
               target="lib\net462"/>
-        <file src="..\EncryptedKey\bin\ReleaseDOTNET461\EncryptedKey.exe"
+        <file src="..\EncryptedKey\bin\ReleaseDOTNET462\EncryptedKey.exe"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\ReleaseDOTNET461\ProtectedKey.exe"
+        <file src="..\ProtectedKey\bin\ReleaseDOTNET462\ProtectedKey.exe"
               target="tools\net462"/>
-        <file src="..\MacKey\bin\ReleaseDOTNET461\MacKey.exe"
+        <file src="..\MacKey\bin\ReleaseDOTNET462\MacKey.exe"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\ReleaseDOTNET461\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\ProtectedKey\bin\ReleaseDOTNET462\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\ReleaseDOTNET461\Microsoft.Practices.ServiceLocation.dll"
+        <file src="..\ProtectedKey\bin\ReleaseDOTNET462\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net462"/>
 
         <file src="..\**\*.cs"
