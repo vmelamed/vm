@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
+    /// <summary>
+    /// Fault and Exception Extensions which populate their Data collections
+    /// </summary>
     public static class ExceptionExtensions
     {
         /// <summary>
