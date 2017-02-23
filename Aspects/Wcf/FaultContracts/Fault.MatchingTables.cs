@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
@@ -238,6 +239,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(SerializationException)]                = typeof(SerializationFault),
             [typeof(UnauthorizedAccessException)]           = typeof(UnauthorizedAccessFault),
             [typeof(XmlException)]                          = typeof(XmlFault),
+            [typeof(AuthenticationException)]               = typeof(AuthenticationFault),
         };
 
         /// <summary>
@@ -265,6 +267,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(SerializationFault)]                    = typeof(SerializationException),
             [typeof(UnauthorizedAccessFault)]               = typeof(UnauthorizedAccessException),
             [typeof(XmlFault)]                              = typeof(XmlException),
+            [typeof(AuthenticationFault)]                   = typeof(AuthenticationException),
         };
 
         static IDictionary<Type, Func<Exception, Fault>> _exceptionToFaultFactories = new Dictionary<Type, Func<Exception, Fault>>
@@ -289,6 +292,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(SerializationException)]                = FaultFactory,
             [typeof(UnauthorizedAccessException)]           = FaultFactory,
             [typeof(XmlException)]                          = FaultFactory,
+            [typeof(AuthenticationException)]               = FaultFactory,
         };
 
 
@@ -329,6 +333,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(SerializationFault)]                    = f => new SerializationException(f.Message).PopulateData(f.Data),
             [typeof(UnauthorizedAccessFault)]               = f => new UnauthorizedAccessException(f.Message).PopulateData(f.Data),
             [typeof(XmlFault)]                              = f => new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f.Data),
+            [typeof(AuthenticationFault)]                   = f => new AuthenticationException(f.Message).PopulateData(f.Data),
         };
 
         /// <summary>
@@ -359,6 +364,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                 [typeof(SerializationFault)]                = HttpStatusCode.BadRequest,
                 [typeof(UnauthorizedAccessFault)]           = HttpStatusCode.Unauthorized,
                 [typeof(XmlFault)]                          = HttpStatusCode.InternalServerError,
+                [typeof(AuthenticationFault)]               = HttpStatusCode.Unauthorized,
             });
 
         /// <summary>
@@ -389,6 +395,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                 [typeof(UnauthorizedAccessException)]       = HttpStatusCode.Unauthorized,
                 [typeof(ValidationException)]               = HttpStatusCode.BadRequest,
                 [typeof(XmlException)]                      = HttpStatusCode.InternalServerError,
+                [typeof(AuthenticationException)]           = HttpStatusCode.Unauthorized,
             });
 
         /// <summary>
