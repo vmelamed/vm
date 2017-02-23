@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -114,6 +113,31 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
         }
 
+
+        /// <summary>
+        /// Adds a new fault to exception types mapping.
+        /// </summary>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <typeparam name="TFault">The type of the fault.</typeparam>
+        /// <param name="exceptionFactory">A factory delegate which should produce an exception object from a fault object.</param>
+        /// <param name="faultFactory">A factory delegate which should produce a fault object from an exception object.
+        /// If <see langword="null" /> this method will assume a default factory which will create the fault object and
+        /// will attempt to copy all exception's properties to the fault's properties with the same and type.
+        /// Properties that do not have a counterpart, will be added to the <see cref="Data" /> dictionary
+        /// with values converted to string (invoking <see cref="object.ToString()" />)</param>
+        /// <param name="force">if set to <see langword="true" /> the mapping will be implemented even if the types participate in existing mappings,
+        /// otherwise if the types are already mapped to, the method will throw <see cref="InvalidOperationException" />.</param>
+        /// <exception cref="InvalidOperationException">The type {exceptionType.Name} is already mapped to {faultType.Name}.
+        /// or
+        /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
+        public static void AddMappingFaultToException<TException, TFault>(
+            Func<Fault, Exception> exceptionFactory,
+            Func<Exception, Fault> faultFactory = null,
+            bool force = false)
+            where TException : Exception
+            where TFault : Fault
+            => AddMappingFaultToException(typeof(TException), typeof(TFault), exceptionFactory, faultFactory, force);
+
         /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
         /// </summary>
@@ -138,6 +162,15 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
         }
 
+
+        /// <summary>
+        /// Removes the fault to exception types mapping with the specified types.
+        /// </summary>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <typeparam name="TFault">The type of the fault.</typeparam>
+        public static void RemoveMappingFaultToException<TException, TFault>()
+            => RemoveMappingFaultToException(typeof(TException), typeof(TFault));
+
         /// <summary>
         /// Factory for generating faults out of the corresponding exceptions.
         /// </summary>
@@ -150,13 +183,13 @@ namespace vm.Aspects.Wcf.FaultContracts
             Contract.Ensures(Contract.Result<Fault>() != null);
 
             Type faultType;
-            HttpStatusCode httpCode;
-            bool found;
+            var isFound = false;
+            var httpCode = HttpStatusCode.InternalServerError;
 
             using (_lock.ReaderLock())
             {
-                found =_exceptionToFault.TryGetValue(exception.GetType(), out faultType);
-                if (!ExceptionToHttpStatusCode.TryGetValue(exception.GetType(), out httpCode))
+                isFound =_exceptionToFault.TryGetValue(exception.GetType(), out faultType);
+                if (!isFound  &&  !ExceptionToHttpStatusCode.TryGetValue(exception.GetType(), out httpCode))
                     httpCode = ExceptionToHttpStatusCode[typeof(Exception)];
             }
 
@@ -165,7 +198,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                                         .GetProperties(BindingFlags.Public|BindingFlags.Instance)
                                         .Where(pi => pi.GetGetMethod() != null);
 
-            if (!found)
+            if (!isFound)
             {
                 var result = new Fault
                 {
@@ -182,34 +215,31 @@ namespace vm.Aspects.Wcf.FaultContracts
 
             Fault fault = (Fault)faultType
                                     .GetConstructor(Type.EmptyTypes)
-                                    .Invoke(null)
-                                    ;
-
-            fault.Data = new Dictionary<string, string>();
+                                    .Invoke(null);
 
             foreach (var xpi in exceptionProperties)
-                try
-                {
-                    var fpi = faultType.GetProperty(xpi.Name, xpi.PropertyType);
+                if (xpi.Name!=nameof(Exception.Data)  &&  xpi.GetIndexParameters().Count() == 0)
+                    try
+                    {
+                        Contract.Assume(xpi != null);
 
-                    if (fpi != null)
-                        fpi.SetValue(fault, xpi.GetValue(exception));
-                    else
-                        fault.Data[$"Exception.{xpi.Name}"] = xpi.GetValue(exception).ToString();
-                }
-                catch (AmbiguousMatchException)
-                {
-                }
+                        var value = xpi.GetValue(exception);
 
-            if (exception.Data != null  &&  exception.Data.Count > 0)
-            {
-                fault.Data = new Dictionary<string, string>();
+                        if (value == null)
+                            continue;
 
-                foreach (DictionaryEntry de in exception.Data)
-                    fault.Data[de.Key.ToString()] = de.Value.ToString();
-            }
+                        var fpi = faultType.GetProperty(xpi.Name, BindingFlags.Public|BindingFlags.Instance, null, xpi.PropertyType, Type.EmptyTypes, null);
 
-            return fault;
+                        if (fpi != null  &&  fpi.CanWrite)
+                            fpi.SetValue(fault, value);
+                        else
+                            fault.Data[$"Exception.{xpi.Name}"] = value.ToString();
+                    }
+                    catch (AmbiguousMatchException)
+                    {
+                    }
+
+            return fault.PopulateData(exception.Data);
         }
 
         static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);

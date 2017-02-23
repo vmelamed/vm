@@ -7,11 +7,9 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Threading;
-using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -25,19 +23,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// <seealso cref="ICallHandler" />
     public sealed class ServiceExceptionHandlingCallHandler : ICallHandler
     {
-        /// <summary>
-        /// Gets or sets the context utilities.
-        /// </summary>
-        [Dependency]
-        public IWcfContextUtilities ContextUtilities { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceExceptionHandlingCallHandler"/> class.
-        /// </summary>
-        public ServiceExceptionHandlingCallHandler()
-        {
-        }
-
         int ICallHandler.Order { get; set; }
 
         IMethodReturn ICallHandler.Invoke(
@@ -60,21 +45,20 @@ namespace vm.Aspects.Wcf.ServicePolicies
             var faultType = Fault.GetFaultTypeForException(exception.GetType());
             Fault fault = null;
 
-            if (IsFaultSupported(input, faultType))
-            {
-                fault = Fault.FaultFactory(exception);
+            if (!IsFaultSupported(input, faultType))
 
                 return input.CreateExceptionMethodReturn(
-                                (Exception)typeof(WebFaultException<>)
-                                            .MakeGenericType(faultType)
-                                            .GetConstructor(new Type[] { faultType })
-                                            .Invoke(new object[] { fault, fault.HttpStatusCode }));
-            }
+                                new WebFaultException<Fault>(
+                                        new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
+                                        HttpStatusCode.InternalServerError));
+
+            fault = Fault.FaultFactory(exception);
 
             return input.CreateExceptionMethodReturn(
-                            new WebFaultException<Fault>(
-                                    new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
-                                    HttpStatusCode.InternalServerError));
+                            (Exception)typeof(WebFaultException<>)
+                                            .MakeGenericType(faultType)
+                                            .GetConstructor(new Type[] { faultType, typeof(HttpStatusCode) })
+                                            .Invoke(new object[] { fault, fault.HttpStatusCode }));
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
