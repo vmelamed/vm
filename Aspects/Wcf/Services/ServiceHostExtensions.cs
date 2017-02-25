@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -81,7 +82,7 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="host">The host.</param>
         /// <param name="identity">The endpoint identity.</param>
         /// <returns>ServiceHost.</returns>
-        public static ServiceHost SetServiceIdentity(
+        public static ServiceHost SetServiceEndpointIdentity(
             this ServiceHost host,
             EndpointIdentity identity)
         {
@@ -101,17 +102,56 @@ namespace vm.Aspects.Wcf.Services
         }
 
         /// <summary>
+        /// Sets the service identity.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <param name="certificatePropertyValue">The certificate property value to find a certificate by.</param>
+        /// <param name="findBy">The certificate property type to find certificate by.</param>
+        /// <param name="storeLocation">The certificate store location.</param>
+        /// <param name="storeName">Name of the certificate store.</param>
+        /// <returns>ServiceHost.</returns>
+        public static ServiceHost SetServiceCredentials(
+            this ServiceHost host,
+            object certificatePropertyValue,
+            X509FindType findBy = X509FindType.FindBySubjectName,
+            StoreLocation storeLocation = StoreLocation.LocalMachine,
+            StoreName storeName = StoreName.My)
+        {
+            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(certificatePropertyValue!=null, nameof(certificatePropertyValue));
+            Contract.Ensures(Contract.Result<ServiceHost>() != null);
+
+            host.Credentials.ServiceCertificate.SetCertificate(storeLocation, storeName, findBy, certificatePropertyValue);
+            return host;
+        }
+
+        /// <summary>
+        /// Sets the service identity.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <param name="certificateSubject">The subject of the certificate to be used for service credential.</param>
+        /// <returns>ServiceHost.</returns>
+        public static ServiceHost SetServiceCredentials(
+            this ServiceHost host,
+            string certificateSubject)
+        {
+            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(certificateSubject!=null, nameof(certificateSubject));
+            Contract.Requires<ArgumentException>(certificateSubject.Length > 0, "The argument "+nameof(certificateSubject)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(certificateSubject.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(certificateSubject)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Ensures(Contract.Result<ServiceHost>() != null);
+
+            host.Credentials.ServiceCertificate.SetCertificate(certificateSubject);
+            return host;
+        }
+
+        /// <summary>
         /// Configures the bindings of a service's endpoints for particular messaging pattern.
         /// </summary>
         /// <param name="host">The host.</param>
         /// <param name="serviceContractType">Type of the service contract.</param>
         /// <param name="messagingPattern">The messaging pattern.</param>
         /// <returns>ServiceHost.</returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// host
-        /// or
-        /// serviceContractType
-        /// </exception>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         public static ServiceHost ConfigureBindings(
             this ServiceHost host,

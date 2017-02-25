@@ -138,7 +138,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MessagingPatternServiceHostFactory(
+        protected MessagingPatternServiceHostFactory(
             string messagingPattern = null)
         {
             MessagingPattern = string.IsNullOrWhiteSpace(messagingPattern)
@@ -165,7 +165,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MessagingPatternServiceHostFactory(
+        protected MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             string identity = null,
             string messagingPattern = null)
@@ -191,7 +191,7 @@ namespace vm.Aspects.Wcf.Services
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MessagingPatternServiceHostFactory(
+        protected MessagingPatternServiceHostFactory(
             ServiceIdentity identityType,
             X509Certificate2 certificate,
             string messagingPattern)
@@ -216,7 +216,7 @@ namespace vm.Aspects.Wcf.Services
         /// pattern from the <see cref="MessagingPatternAttribute" /> applied to the contract (the interface).
         /// If the messaging pattern is not resolved yet, the host will assume that the binding is fully configured, e.g. from a config file.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MessagingPatternServiceHostFactory(
+        protected MessagingPatternServiceHostFactory(
             Claim identityClaim,
             string messagingPattern)
             : this(messagingPattern)
@@ -438,7 +438,7 @@ namespace vm.Aspects.Wcf.Services
             // Add the endpoints, identity and other common properties and behaviors:
             host = AddEndpoints(host)
                         .ConfigureBindings(typeof(TContract), MessagingPattern)
-                        .SetServiceIdentity(EndpointIdentity)
+                        .SetServiceEndpointIdentity(EndpointIdentity)
                         .AddTransactionTimeout()
                         .AddDebugBehaviors()
                         .AddMetadataBehaviors(MetadataFeatures)
@@ -491,7 +491,6 @@ namespace vm.Aspects.Wcf.Services
             Contract.Requires<ArgumentNullException>(sender != null, nameof(sender));
 
             var host = (ServiceHostBase)sender;
-            var serviceType = host.Description.ServiceType;
 
             if (!DIContainer.Root.IsRegistered<TContract>(string.IsNullOrWhiteSpace(ServiceResolveName) ? null : ServiceResolveName))
             {
@@ -538,8 +537,6 @@ namespace vm.Aspects.Wcf.Services
             EventArgs e)
         {
             Contract.Requires<ArgumentNullException>(sender != null, nameof(sender));
-
-            var host = (ServiceHostBase)sender;
 
             Facility.LogWriter
                     .EventLogInfo($"The service host for service {typeof(TService).FullName} has been closed.");

@@ -199,7 +199,7 @@ namespace vm.Aspects.Wcf.Bindings
                 Transport = new TcpTransportSecurity
                 {
                     ProtectionLevel      = ProtectionLevel.EncryptAndSign,
-                    ClientCredentialType = TcpClientCredentialType.Windows,
+                    ClientCredentialType = TcpClientCredentialType.None,
                 },
             };
 

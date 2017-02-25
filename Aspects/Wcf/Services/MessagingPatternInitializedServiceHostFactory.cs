@@ -81,6 +81,7 @@ namespace vm.Aspects.Wcf.Services
     /// </code>
     /// See also <seealso cref="MessagingPatternServiceHostFactory{TContract, TService}"/>.
     /// </remarks>
+    [SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes", Justification = "We need to be able to specify the initializer.")]
     public abstract class MessagingPatternInitializedServiceHostFactory<TContract, TService, TInitializer> : MessagingPatternServiceHostFactory<TContract, TService>
         where TContract : class
         where TService : TContract
@@ -109,7 +110,7 @@ namespace vm.Aspects.Wcf.Services
         /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
         /// If <see langword="null"/> the host will use the resolve name of the service type.
         /// </param>
-        public MessagingPatternInitializedServiceHostFactory(
+        protected MessagingPatternInitializedServiceHostFactory(
             string messagingPattern = null,
             string initializerResolveName = null)
             : base(messagingPattern)
@@ -136,7 +137,7 @@ namespace vm.Aspects.Wcf.Services
         /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
         /// If <see langword="null"/> the host will use the resolve name of the service type.
         /// </param>
-        public MessagingPatternInitializedServiceHostFactory(
+        protected MessagingPatternInitializedServiceHostFactory(
             ServiceIdentity identityType,
             string identity,
             string messagingPattern = null,
@@ -166,7 +167,7 @@ namespace vm.Aspects.Wcf.Services
         /// If <see langword="null"/> the host will use the name specified with <see cref="ResolveNameAttribute"/> on the initializer class.
         /// If <see langword="null"/> the host will use the resolve name of the service type.
         /// </param>
-        public MessagingPatternInitializedServiceHostFactory(
+        protected MessagingPatternInitializedServiceHostFactory(
             ServiceIdentity identityType,
             X509Certificate2 certificate,
             string messagingPattern = null,
