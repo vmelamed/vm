@@ -1,19 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.ServiceModel.MsmqIntegration;
 
 namespace vm.Aspects.Wcf.Bindings
 {
     /// <summary>
-    /// Class RequestResponseNoSecurityConfigurator. Configures the bindings for request-response messaging pattern with no security.
+    /// Class RequestResponseTransportWinAuthSecurityConfigurator. Configures the bindings for request-response messaging pattern with Windows authentication of the client. 
     /// </summary>
-    public class RequestResponseNoSecurityConfigurator : BindingConfigurator
+    public class RequestResponseTransportClientWindowsAuthenticationConfigurator : RequestResponseNoSecurityConfigurator
     {
         /// <summary>
         /// The pattern name
         /// </summary>
-        public const string PatternName = "RequestResponseNoSecurity";
+        public new const string PatternName = "RequestResponseTransportWindowsClientAuthentication";
 
         /// <summary>
         /// Gets the human readable messaging pattern identifier.
@@ -31,12 +31,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
             binding.Security = new BasicHttpSecurity
             {
-                Mode = BasicHttpSecurityMode.None,
+                Mode      = BasicHttpSecurityMode.Transport,
+                Transport = new HttpTransportSecurity
+                {
+                    ClientCredentialType = HttpClientCredentialType.Windows,
+                },
             };
 
             return binding;
@@ -53,16 +54,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
             binding.Security = new BasicHttpsSecurity
             {
                 Mode      = BasicHttpsSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
                 {
-                    ClientCredentialType = HttpClientCredentialType.None,
-                }
+                    ClientCredentialType = HttpClientCredentialType.Windows,
+                },
             };
 
             return binding;
@@ -79,17 +77,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
             binding.Security = new BasicHttpSecurity
             {
-                Mode = BasicHttpSecurityMode.None,
-            };
-            binding.ReliableSession = new OptionalReliableSession
-            {
-                Enabled = false,
-                Ordered = false,
+                Mode      = BasicHttpSecurityMode.Transport,
+                Transport = new HttpTransportSecurity
+                {
+                    ClientCredentialType = HttpClientCredentialType.Windows,
+                },
             };
 
             return binding;
@@ -106,21 +100,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
             binding.Security = new BasicHttpsSecurity
             {
                 Mode      = BasicHttpsSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
                 {
-                    ClientCredentialType = HttpClientCredentialType.None,
+                    ClientCredentialType = HttpClientCredentialType.Windows,
                 },
-            };
-            binding.ReliableSession = new OptionalReliableSession
-            {
-                Enabled = false,
-                Ordered = false,
             };
 
             return binding;
@@ -137,13 +123,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
-            binding.BypassProxyOnLocal = true;
-            binding.Security           = new WebHttpSecurity
+            binding.Security = new WebHttpSecurity
             {
-                Mode = WebHttpSecurityMode.None,
+                Mode      = WebHttpSecurityMode.Transport,
+                Transport = new HttpTransportSecurity
+                {
+                    ClientCredentialType = HttpClientCredentialType.Windows,
+                },
             };
 
             return binding;
@@ -160,18 +146,13 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
-            binding.Security           = new WSHttpSecurity
+            binding.Security = new WSHttpSecurity
             {
-                Mode = SecurityMode.None,
-            };
-            binding.TransactionFlow    = false;
-            binding.ReliableSession    = new OptionalReliableSession
-            {
-                Enabled = false,
-                Ordered = false,
+                Mode      = SecurityMode.Transport,
+                Transport = new HttpTransportSecurity
+                {
+                    ClientCredentialType = HttpClientCredentialType.Windows
+                },
             };
 
             return binding;
@@ -188,14 +169,14 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
             binding.Security = new NetNamedPipeSecurity
             {
-                Mode = NetNamedPipeSecurityMode.None,
+                Mode      = NetNamedPipeSecurityMode.Transport,
+                Transport = new NamedPipeTransportSecurity
+                {
+                    ProtectionLevel = ProtectionLevel.EncryptAndSign,
+                }
             };
-            binding.TransactionFlow = false;
 
             return binding;
         }
@@ -211,44 +192,16 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            if (binding.MaxReceivedMessageSize == Constants.DefaultReceivedMessageSize)
-                binding.MaxReceivedMessageSize = Constants.MaxReceivedMessage;
-
-            binding.Security        = new NetTcpSecurity
+            binding.Security = new NetTcpSecurity
             {
-                Mode = SecurityMode.None,
-            };
-            binding.TransactionFlow = false;
-            binding.ReliableSession = new OptionalReliableSession
-            {
-                Enabled = false,
-                Ordered = false,
+                Mode      = SecurityMode.Transport,
+                Transport = new TcpTransportSecurity
+                {
+                    ProtectionLevel      = ProtectionLevel.EncryptAndSign,
+                    ClientCredentialType = TcpClientCredentialType.Windows,
+                },
             };
 
-            return binding;
-        }
-
-        /// <summary>
-        /// Configures the specified binding.
-        /// </summary>
-        /// <param name="binding">The binding.</param>
-        /// <returns>Binding.</returns>
-        public override Binding Configure(
-            NetMsmqBinding binding)
-        {
-            IncompatibleBinding(binding);
-            return binding;
-        }
-
-        /// <summary>
-        /// Configures the specified binding.
-        /// </summary>
-        /// <param name="binding">The binding.</param>
-        /// <returns>Binding.</returns>
-        public override Binding Configure(
-            MsmqIntegrationBinding binding)
-        {
-            IncompatibleBinding(binding);
             return binding;
         }
     }

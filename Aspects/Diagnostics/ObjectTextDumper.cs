@@ -461,8 +461,7 @@ namespace vm.Aspects.Diagnostics
 
             if (DumpedDictionary(
                         sequence,
-                        state.ClassDumpData.DumpAttribute,
-                        enumerateCustom))
+                        state.ClassDumpData.DumpAttribute))
                 return true;
 
             return DumpedSequenceObject(
@@ -776,8 +775,7 @@ namespace vm.Aspects.Diagnostics
 
         bool DumpedDictionary(
             IEnumerable sequence,
-            DumpAttribute dumpAttribute,
-            bool enumerateCustom = false)
+            DumpAttribute dumpAttribute)
         {
             var sequenceType = sequence.GetType();
 

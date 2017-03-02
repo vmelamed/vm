@@ -210,6 +210,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>System.Object.</returns>
         public static object CreateEntity(Type entityType)
         {
+            Contract.Requires<ArgumentNullException>(entityType != null, nameof(entityType));
             Contract.Requires<InvalidOperationException>(typeof(DomainEntity<long, string>).IsAssignableFrom(entityType), "The repository does not support this type.");
             Contract.Ensures(Contract.Result<object>() != null);
 
@@ -235,6 +236,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>System.Object.</returns>
         public static object CreateValue(Type valueType)
         {
+            Contract.Requires<ArgumentNullException>(valueType != null, nameof(valueType));
             Contract.Ensures(Contract.Result<object>() != null);
 
             return CreateCollections(Activator.CreateInstance(valueType));

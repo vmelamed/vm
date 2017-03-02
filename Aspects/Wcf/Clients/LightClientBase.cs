@@ -53,6 +53,7 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             string remoteAddress,
@@ -89,6 +90,7 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             string endpointConfigurationName,
@@ -128,6 +130,7 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             string remoteAddress,
@@ -154,6 +157,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
         /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             string remoteAddress,
@@ -187,6 +191,7 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             Binding binding,
@@ -220,6 +225,7 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             Binding binding,
@@ -250,6 +256,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
         /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         protected LightClientBase(
             Binding binding,
@@ -286,8 +293,8 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(ChannelFactory != null);
             Contract.Ensures(Contract.Result<Binding>() != null);
 
-            var remoteUri          = new Uri(remoteAddress);
-            var scheme             = remoteUri.Scheme;
+            var remoteUri = new Uri(remoteAddress);
+            var scheme = remoteUri.Scheme;
             var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
 
             if ((scheme == "http"  ||  scheme == "https") &&
@@ -322,7 +329,10 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(Contract.Result<Binding>() != null);
             Contract.Ensures(ChannelFactory != null);
 
-            ConfigureBinding(binding, messagingPattern ?? typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false)?.Name);
+            if (string.IsNullOrWhiteSpace(messagingPattern))
+                messagingPattern = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false)?.Name;
+
+            ConfigureBinding(binding, messagingPattern);
 
             if (binding is WebHttpBinding)
             {
@@ -334,6 +344,7 @@ namespace vm.Aspects.Wcf.Clients
                                         binding,
                                         new EndpointAddress(new Uri(remoteAddress), identity));
 
+            ConfigureChannelFactory(messagingPattern);
             return binding;
         }
 
@@ -357,6 +368,29 @@ namespace vm.Aspects.Wcf.Clients
 
             // configure the binding
             configurator.Configure(binding);
+        }
+
+        /// <summary>
+        /// Gives the inheritors the chance to tweak the setting of the channel factory.
+        /// </summary>
+        /// <example>
+        /// <![CDATA[
+        /// protected override void ConfigureChannelFactory()
+        /// {
+        ///     ChannelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;
+        /// }
+        /// ]]>
+        /// </example>
+        protected virtual void ConfigureChannelFactory(
+            string messagingPattern)
+        {
+            Contract.Requires<ArgumentNullException>(messagingPattern!=null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Length > 0, "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+
+            // here we do nothing but give the user the opportunity to tweak the channel factory, e.g.
+            //
+            // ChannelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;
         }
 
         #region IDisposable pattern implementation

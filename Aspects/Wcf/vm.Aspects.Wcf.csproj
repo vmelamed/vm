@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET462</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;DOTNET462</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
@@ -59,7 +59,7 @@
     <CodeContractsLibPaths />
     <CodeContractsExtraRewriteOptions />
     <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
+    <CodeContractsSQLServerOption>%28localdb%29\ProjectsV13</CodeContractsSQLServerOption>
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
@@ -171,7 +171,7 @@
     <CodeContractsLibPaths />
     <CodeContractsExtraRewriteOptions />
     <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
+    <CodeContractsSQLServerOption>%28localdb%29\ProjectsV13</CodeContractsSQLServerOption>
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
@@ -276,7 +276,14 @@
     <Compile Include="Bindings\FireAndForgetNoSecurityConfigurator.cs" />
     <Compile Include="Bindings\MessagingPatternAttribute.cs" />
     <Compile Include="Bindings\RequestResponseConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageClientCertificateAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageClientWindowsAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageConfiguratorBase.cs" />
     <Compile Include="Bindings\RequestResponseNoSecurityConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportClientCertificateAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportClientWindowsAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseTxConfigurator.cs" />
     <Compile Include="Bindings\StreamingNoSecurityConfigurator.cs" />
     <Compile Include="Bindings\StreamingConfigurator.cs" />

@@ -105,43 +105,17 @@ namespace vm.Aspects.Wcf.Services
         /// Sets the service identity.
         /// </summary>
         /// <param name="host">The host.</param>
-        /// <param name="certificatePropertyValue">The certificate property value to find a certificate by.</param>
-        /// <param name="findBy">The certificate property type to find certificate by.</param>
-        /// <param name="storeLocation">The certificate store location.</param>
-        /// <param name="storeName">Name of the certificate store.</param>
+        /// <param name="certificate">The certificate.</param>
         /// <returns>ServiceHost.</returns>
         public static ServiceHost SetServiceCredentials(
             this ServiceHost host,
-            object certificatePropertyValue,
-            X509FindType findBy = X509FindType.FindBySubjectName,
-            StoreLocation storeLocation = StoreLocation.LocalMachine,
-            StoreName storeName = StoreName.My)
+            X509Certificate2 certificate)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(certificatePropertyValue!=null, nameof(certificatePropertyValue));
+            Contract.Requires<ArgumentNullException>(host        != null, nameof(host));
+            Contract.Requires<ArgumentNullException>(certificate != null, nameof(certificate));
             Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
-            host.Credentials.ServiceCertificate.SetCertificate(storeLocation, storeName, findBy, certificatePropertyValue);
-            return host;
-        }
-
-        /// <summary>
-        /// Sets the service identity.
-        /// </summary>
-        /// <param name="host">The host.</param>
-        /// <param name="certificateSubject">The subject of the certificate to be used for service credential.</param>
-        /// <returns>ServiceHost.</returns>
-        public static ServiceHost SetServiceCredentials(
-            this ServiceHost host,
-            string certificateSubject)
-        {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(certificateSubject!=null, nameof(certificateSubject));
-            Contract.Requires<ArgumentException>(certificateSubject.Length > 0, "The argument "+nameof(certificateSubject)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(certificateSubject.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(certificateSubject)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
-            host.Credentials.ServiceCertificate.SetCertificate(certificateSubject);
+            host.Credentials.ServiceCertificate.Certificate = certificate;
             return host;
         }
 
@@ -404,6 +378,31 @@ namespace vm.Aspects.Wcf.Services
                 });
 
             return host;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="ServiceAuthorizationManager"/> to a <see cref="ServiceHost"/>.
+        /// </summary>
+        /// <param name="serviceHost"></param>
+        /// <param name="serviceAuthorizationManager"></param>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        public static ServiceHost AddServiceAuthorizationBehavior(
+            this ServiceHost serviceHost,
+            ServiceAuthorizationManager serviceAuthorizationManager)
+        {
+            Contract.Requires<ArgumentNullException>(serviceHost != null, nameof(serviceHost));
+            Contract.Requires<ArgumentNullException>(serviceAuthorizationManager != null, nameof(serviceAuthorizationManager));
+
+            serviceHost.Description.Behaviors.Remove<ServiceAuthorizationBehavior>();
+            serviceHost.Description.Behaviors.Add(
+                                                new ServiceAuthorizationBehavior
+                                                {
+                                                    PrincipalPermissionMode     = PrincipalPermissionMode.Custom,
+                                                    ServiceAuthorizationManager = serviceAuthorizationManager,
+
+                                                });
+
+            return serviceHost;
         }
 
         /// <summary>

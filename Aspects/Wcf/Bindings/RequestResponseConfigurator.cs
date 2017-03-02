@@ -2,12 +2,11 @@
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.ServiceModel.MsmqIntegration;
 
 namespace vm.Aspects.Wcf.Bindings
 {
     /// <summary>
-    /// Class RequestResponseConfigurator. Configures the bindings for request-response messaging pattern with Windows (Kerberos) security. 
+    /// Class RequestResponseConfigurator. Configures the bindings for request-response messaging pattern with Windows (Kerberos ор NTLM) security. 
     /// </summary>
     public class RequestResponseConfigurator : RequestResponseNoSecurityConfigurator
     {
@@ -32,7 +31,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new BasicHttpSecurity
+            binding.Security = new BasicHttpSecurity
             {
                 Mode      = BasicHttpSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
@@ -55,7 +54,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new BasicHttpsSecurity
+            binding.Security = new BasicHttpsSecurity
             {
                 Mode      = BasicHttpsSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
@@ -78,7 +77,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new BasicHttpSecurity
+            binding.Security = new BasicHttpSecurity
             {
                 Mode      = BasicHttpSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
@@ -101,7 +100,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new BasicHttpsSecurity
+            binding.Security = new BasicHttpsSecurity
             {
                 Mode      = BasicHttpsSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
@@ -124,12 +123,12 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new WebHttpSecurity
+            binding.Security = new WebHttpSecurity
             {
                 Mode      = WebHttpSecurityMode.Transport,
                 Transport = new HttpTransportSecurity
                 {
-                    ClientCredentialType = HttpClientCredentialType.None,
+                    ClientCredentialType = HttpClientCredentialType.None,   // usually we use something like OpenID Connect here
                 },
             };
 
@@ -147,7 +146,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security           = new WSHttpSecurity
+            binding.Security = new WSHttpSecurity
             {
                 Mode      = SecurityMode.Transport,
                 Transport = new HttpTransportSecurity
@@ -170,7 +169,7 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security        = new NetNamedPipeSecurity
+            binding.Security = new NetNamedPipeSecurity
             {
                 Mode      = NetNamedPipeSecurityMode.Transport,
                 Transport = new NamedPipeTransportSecurity
@@ -193,40 +192,16 @@ namespace vm.Aspects.Wcf.Bindings
         {
             base.Configure(binding);
 
-            binding.Security        = new NetTcpSecurity
+            binding.Security = new NetTcpSecurity
             {
                 Mode      = SecurityMode.Transport,
                 Transport = new TcpTransportSecurity
                 {
                     ProtectionLevel      = ProtectionLevel.EncryptAndSign,
-                    ClientCredentialType = TcpClientCredentialType.None,
+                    ClientCredentialType = TcpClientCredentialType.Windows,
                 },
             };
 
-            return binding;
-        }
-
-        /// <summary>
-        /// Configures the specified binding.
-        /// </summary>
-        /// <param name="binding">The binding.</param>
-        /// <returns>Binding.</returns>
-        public override Binding Configure(
-            NetMsmqBinding binding)
-        {
-            IncompatibleBinding(binding);
-            return binding;
-        }
-
-        /// <summary>
-        /// Configures the specified binding.
-        /// </summary>
-        /// <param name="binding">The binding.</param>
-        /// <returns>Binding.</returns>
-        public override Binding Configure(
-            MsmqIntegrationBinding binding)
-        {
-            IncompatibleBinding(binding);
             return binding;
         }
     }
