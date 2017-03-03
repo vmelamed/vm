@@ -61,9 +61,8 @@ namespace vm.Aspects.Wcf.Behaviors
         public ExceptionShieldingAttribute(
             string exceptionPolicyName)
         {
-            Contract.Requires<ArgumentNullException>(exceptionPolicyName!=null, nameof(exceptionPolicyName));
-            Contract.Requires<ArgumentException>(exceptionPolicyName.Length > 0, "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(exceptionPolicyName != null, nameof(exceptionPolicyName));
+            Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty string or consist of whitespace characters only.");
 
             ExceptionPolicyName = exceptionPolicyName;
 
@@ -220,7 +219,7 @@ namespace vm.Aspects.Wcf.Behaviors
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         void ObjectInvariant()
         {
-            Contract.Invariant(ExceptionPolicyName!=null && ExceptionPolicyName.Length > 0 && ExceptionPolicyName.Any(c => !char.IsWhiteSpace(c)));
+            Contract.Invariant(ExceptionPolicyName?.Any(c => !char.IsWhiteSpace(c)) ?? false);
             Contract.Invariant(_errorHandler != null);
             Contract.Invariant(_contractBehavior != null);
             Contract.Invariant(_serviceBehavior != null);

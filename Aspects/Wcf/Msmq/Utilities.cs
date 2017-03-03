@@ -30,11 +30,10 @@ namespace vm.Aspects.Wcf.Msmq
             string address,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentNullException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             return CreateTheQueue(address, false, true, sendersReceivers);
@@ -52,11 +51,10 @@ namespace vm.Aspects.Wcf.Msmq
             bool isTransactional,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentNullException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             return CreateTheQueue(address, false, isTransactional, sendersReceivers);
@@ -76,11 +74,10 @@ namespace vm.Aspects.Wcf.Msmq
             string address,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentNullException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             return CreateTheQueue(address, true, true, sendersReceivers);
@@ -98,11 +95,10 @@ namespace vm.Aspects.Wcf.Msmq
             bool isTransactional,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             return CreateTheQueue(address, true, isTransactional, sendersReceivers);
@@ -122,11 +118,10 @@ namespace vm.Aspects.Wcf.Msmq
         public static void DeleteQueue(
             string address)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
 
-            var match     = GuardAddress(address);
+            var match = GuardAddress(address);
             var queuePath = QueuePath(
                                 match.Groups["queue"].Value,
                                 IsPublic(match.Groups["scope"].Value));
@@ -144,17 +139,15 @@ namespace vm.Aspects.Wcf.Msmq
             bool isTransactional,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentException>(address != null  &&  address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be null, empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
-            var match     = GuardAddress(address);
-            var machine   = match.Groups["machine"].Value;
+            var match = GuardAddress(address);
+            var machine = match.Groups["machine"].Value;
             var queueName = match.Groups["queue"].Value;
-            var isPublic  = IsPublic(match.Groups["scope"].Value);
+            var isPublic = IsPublic(match.Groups["scope"].Value);
             var queuePath = QueuePath(queueName, isPublic, isDeadLetterQueue);
 
             // make sure we are using WindowsPrincipal
@@ -197,9 +190,8 @@ namespace vm.Aspects.Wcf.Msmq
         /// <exception cref="System.ArgumentException">The string does not represent a valid net.msmq address.;address</exception>
         static Match GuardAddress(string address)
         {
-            Contract.Requires<ArgumentNullException>(address!=null, nameof(address));
-            Contract.Requires<ArgumentException>(address.Length > 0, "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(address != null  &&  address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<Match>() != null);
             Contract.Ensures(Contract.Result<Match>().Success == true);
 
@@ -225,11 +217,9 @@ namespace vm.Aspects.Wcf.Msmq
             bool isPublic,
             bool isDlq = false)
         {
-            Contract.Requires<ArgumentNullException>(queueName!=null, nameof(queueName));
-            Contract.Requires<ArgumentException>(queueName.Length > 0, "The argument "+nameof(queueName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(queueName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(queueName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentException>(queueName != null  &&  queueName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(queueName)+" cannot be null, empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             if (isDlq)
@@ -244,14 +234,10 @@ namespace vm.Aspects.Wcf.Msmq
             bool isPublic,
             bool isDlq = false)
         {
-            Contract.Requires<ArgumentNullException>(machine!=null, nameof(machine));
-            Contract.Requires<ArgumentException>(machine.Length > 0, "The argument "+nameof(machine)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(machine.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(machine)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(queueName!=null, nameof(queueName));
-            Contract.Requires<ArgumentException>(queueName.Length > 0, "The argument "+nameof(queueName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(queueName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(queueName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Requires<ArgumentException>(machine != null  &&  machine.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(machine)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(queueName != null  &&  queueName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(queueName)+" cannot be null, empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             if (isDlq)
@@ -264,8 +250,7 @@ namespace vm.Aspects.Wcf.Msmq
                             queueName);
         }
 
-        static bool IsPublic(
-            string scope) => string.IsNullOrWhiteSpace(scope)  ||
-                             scope.Equals(PublicAddress, StringComparison.OrdinalIgnoreCase);
+        static bool IsPublic(string scope) => scope.IsNullOrWhiteSpace()  ||
+                                              scope.Equals(PublicAddress, StringComparison.OrdinalIgnoreCase);
     }
 }

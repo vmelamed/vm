@@ -19,8 +19,8 @@ namespace vm.Aspects.Diagnostics
             #endregion
 
             public DumpState(
-                object instance, 
-                Type type, 
+                object instance,
+                Type type,
                 ClassDumpData classDumpData,
                 DumpAttribute instanceDumpAttribute,
                 BindingFlags propertiesBindingFlags,
@@ -77,7 +77,7 @@ namespace vm.Aspects.Diagnostics
             {
                 var defaultProperty = DefaultProperty;
 
-                if (string.IsNullOrWhiteSpace(defaultProperty))
+                if (defaultProperty.IsNullOrWhiteSpace())
                     return false;
 
                 var pi = Type.GetProperty(defaultProperty);

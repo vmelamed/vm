@@ -202,8 +202,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.15.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\AspectObjectDumper.1.6.15\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.17.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\AspectObjectDumper.1.6.17\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -285,9 +285,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
-    <Content Include="Xml\TestOrder.xml">
+    <None Include="Xml\TestOrder.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

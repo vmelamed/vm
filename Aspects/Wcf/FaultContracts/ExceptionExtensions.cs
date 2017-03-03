@@ -22,7 +22,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             IDictionary<string, string> data)
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            Contract.Requires<ArgumentNullException>(data      != null, nameof(data));
+            Contract.Ensures(Contract.Result<Exception>() != null);
 
             if (data.Count == 0)
                 return exception;
@@ -43,7 +44,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             IDictionary data)
         {
             Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
-            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            Contract.Requires<ArgumentNullException>(data  != null, nameof(data));
+            Contract.Ensures(Contract.Result<Fault>() != null);
 
             if (data.Count == 0)
                 return fault;

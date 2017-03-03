@@ -50,7 +50,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Length > 0);
                 Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 return _hashAlgorithmName;
@@ -394,7 +393,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         }
 
                         // if it doesn't have unique id, generate a new one and add it to the element, so that we can refer to it from the reference object
-                        if (string.IsNullOrWhiteSpace(xmlId))
+                        if (xmlId.IsNullOrWhiteSpace())
                         {
                             xmlId = GetNewId(ref id, xmlIds);
 
@@ -442,8 +441,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             HashSet<string> xmlIds)
         {
             Contract.Requires<ArgumentNullException>(xmlIds!=null, nameof(xmlIds));
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             string xmlId;
@@ -515,8 +513,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         void Invariant()
         {
             Contract.Invariant(_asymmetric != null, "The signing/signature verification object cannot be null.");
-            Contract.Invariant(IdAttributeNames == null || IdAttributeNames.All(id => id!=null && id.Any(c => !char.IsWhiteSpace(c))),
-                                    "The \"IdAttributeNames\" contains invalid attribute names.");
+            Contract.Invariant(IdAttributeNames == null || IdAttributeNames.All(id => !id.IsNullOrWhiteSpace()), "The \"IdAttributeNames\" contains invalid attribute names.");
         }
     }
 }

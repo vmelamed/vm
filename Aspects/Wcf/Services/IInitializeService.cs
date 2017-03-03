@@ -51,7 +51,7 @@ namespace vm.Aspects.Wcf.Services
 
         public bool IsInitialized
         {
-            get { throw new System.NotImplementedException(); }
+            get { throw new NotImplementedException(); }
         }
 
         public bool Initialize(
@@ -60,12 +60,11 @@ namespace vm.Aspects.Wcf.Services
             int maxWaitTime)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(messagingPattern!=null, nameof(messagingPattern));
-            Contract.Requires<ArgumentException>(messagingPattern.Length > 0, "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(messagingPattern != null  &&  messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<bool>() && IsInitialized);
 
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task<bool> InitializeAsync(
@@ -74,13 +73,12 @@ namespace vm.Aspects.Wcf.Services
             int maxWaitTime)
         {
             Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(messagingPattern!=null, nameof(messagingPattern));
-            Contract.Requires<ArgumentException>(messagingPattern.Length > 0, "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(messagingPattern != null  &&  messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<Task<bool>>() != null);
             Contract.Ensures(Contract.Result<Task<bool>>().Result && IsInitialized);
 
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         #endregion

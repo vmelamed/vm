@@ -22,9 +22,8 @@ namespace vm.Aspects
         public ApiVersionAttribute(
             string version)
         {
-            Contract.Requires<ArgumentNullException>(version!=null, nameof(version));
-            Contract.Requires<ArgumentException>(version.Length > 0, "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(version != null, nameof(version));
+            Contract.Requires<ArgumentException>(version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be null, empty string or consist of whitespace characters only.");
 
             if (!SemanticVersion.TryParse(version, out _version))
                 throw new ArgumentException("Invalid semantic version specified. See http://semver.org.", nameof(version));
@@ -57,8 +56,7 @@ namespace vm.Aspects
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>()!=null);
-                Contract.Ensures(Contract.Result<string>().Length > 0);
+                Contract.Ensures(Contract.Result<string>() != null);
                 Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 return _version.ToString();

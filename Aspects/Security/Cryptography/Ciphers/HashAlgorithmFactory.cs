@@ -49,7 +49,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             // 1. If the user passed hash algorithm name that is not null, empty or whitespace characters only, 
             //    it will be used in creating the <see cref="T:HashAlgorithm"/> object.
-            if (!string.IsNullOrWhiteSpace(hashAlgorithmName))
+            if (!hashAlgorithmName.IsNullOrWhiteSpace())
                 _hashAlgorithmName = hashAlgorithmName;
             else
             {
@@ -76,7 +76,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 {
                 }
 
-                if (string.IsNullOrWhiteSpace(_hashAlgorithmName))
+                if (_hashAlgorithmName.IsNullOrWhiteSpace())
                     // 4. if the hash algorithm name has not been resolved so far, assume the default algorithm:
                     _hashAlgorithmName = Algorithms.Hash.Default;
             }

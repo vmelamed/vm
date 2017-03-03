@@ -199,5 +199,15 @@ namespace vm.Aspects
 
             return pi.CanRead;
         }
+
+        /// <summary>
+        /// Determines whether the specified string is null, or empty or consist of whitespace characters only.
+        /// Equivalent to <code>!string.IsNullOrWhiteSpace(s)</code> but has the attribute <see cref="PureAttribute"/>
+        /// which makes it suitable to participate in Code Contracts.
+        /// </summary>
+        /// <param name="value">The s.</param>
+        /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
+        [Pure]
+        public static bool IsNullOrWhiteSpace(this string value) => value?.All(c => char.IsWhiteSpace(c)) ?? true;
     }
 }

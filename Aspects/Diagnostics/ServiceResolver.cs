@@ -51,7 +51,7 @@ namespace vm.Aspects.Diagnostics
                 throw new ActivationException(
                             $"Service type {serviceType.FullName} is not registered in the internal service locator.");
 
-            if (!string.IsNullOrWhiteSpace(key))
+            if (!key.IsNullOrWhiteSpace())
                 throw new ActivationException(
                             $"Named instance '{key}' of the service {serviceType.FullName} is not registered in the internal service locator.");
 

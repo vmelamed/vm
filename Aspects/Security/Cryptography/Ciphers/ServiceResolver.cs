@@ -20,7 +20,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                if (string.IsNullOrWhiteSpace(name))
+                if (name.IsNullOrWhiteSpace())
                     name = string.Empty;
 
                 Type = type;
@@ -190,7 +190,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (serviceType == null)
                 throw new ArgumentNullException(nameof(serviceType));
-            if (string.IsNullOrWhiteSpace(key))
+            if (key.IsNullOrWhiteSpace())
                 key = string.Empty;
 
             var v = _defaultServices.FirstOrDefault(kv => kv.Key == new TypeAndName(serviceType, key));

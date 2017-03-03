@@ -14,9 +14,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             string property)
         {
             Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(property!=null, nameof(property));
-            Contract.Requires<ArgumentException>(property.Length > 0, "The argument "+nameof(property)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(property.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(property)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(property != null  &&  property.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(property)+" cannot be null, empty string or consist of whitespace characters only.");
 
             Instance = instance;
             Property = property;

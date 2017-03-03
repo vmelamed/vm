@@ -44,8 +44,7 @@ namespace vm.Aspects.Wcf
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Length > 0);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 if (_name == null)
                     Initialize();
@@ -210,8 +209,7 @@ namespace vm.Aspects.Wcf
             {
                 // put the custom header into the outgoing message which is in the current operation context (called by the clients)
                 Contract.Requires<ArgumentNullException>(value != null, nameof(value));
-                Contract.Requires<ArgumentException>(value.Name.Length > 0, "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
-                Contract.Requires<ArgumentException>(value.Name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(value.Name)+" cannot be empty or consist of whitespace characters only.");
+                Contract.Requires<ArgumentException>(!value.Name.IsNullOrWhiteSpace(), "The property "+nameof(value.Name)+" cannot be null, empty string or consist of whitespace characters only.");
                 Contract.Requires<InvalidOperationException>(OperationContext.Current != null, "The current thread does not have operation context.");
 
                 // make sure the header is initialized.

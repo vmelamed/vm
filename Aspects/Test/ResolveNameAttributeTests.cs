@@ -13,7 +13,7 @@ namespace vm.Aspects.Tests
             Assert.AreEqual("test", target.Name);
         }
 
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
         public void ResolveNameAttributeNullTest()
         {

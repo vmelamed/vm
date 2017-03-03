@@ -28,9 +28,7 @@ namespace vm.Aspects.Wcf.Bindings
             string name,
             bool restful = false)
         {
-            Contract.Requires<ArgumentNullException>(name!=null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
 
             Name    = name;
             Restful = restful;

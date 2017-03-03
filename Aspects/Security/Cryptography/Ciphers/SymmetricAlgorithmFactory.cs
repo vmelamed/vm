@@ -31,7 +31,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             // 1. If the user passed symmetric algorithm name that is not null, empty or whitespace characters only, 
             //    it will be used in creating the <see cref="T:Symmetric"/> object.
-            if (!string.IsNullOrWhiteSpace(symmetricAlgorithmName))
+            if (!symmetricAlgorithmName.IsNullOrWhiteSpace())
                 _symmetricAlgorithmName = symmetricAlgorithmName;
             else
             {
@@ -59,7 +59,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 {
                 }
 
-                if (string.IsNullOrWhiteSpace(_symmetricAlgorithmName))
+                if (_symmetricAlgorithmName.IsNullOrWhiteSpace())
                     // 4. if the symmetric algorithm name has not been resolved so far, assume the default algorithm:
                     _symmetricAlgorithmName = Algorithms.Symmetric.Default;
             }

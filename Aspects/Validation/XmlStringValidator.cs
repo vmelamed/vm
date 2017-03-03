@@ -39,12 +39,8 @@ namespace vm.Aspects.Validation
             string schemaUrn,
             string filePath)
         {
-            Contract.Requires<ArgumentNullException>(schemaUrn!=null, nameof(schemaUrn));
-            Contract.Requires<ArgumentException>(schemaUrn.Length > 0, "The argument "+nameof(schemaUrn)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(schemaUrn.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(schemaUrn)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(filePath!=null, nameof(filePath));
-            Contract.Requires<ArgumentException>(filePath.Length > 0, "The argument "+nameof(filePath)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(filePath.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(filePath)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(schemaUrn != null  &&  schemaUrn.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(schemaUrn)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(filePath != null  &&  filePath.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(filePath)+" cannot be null, empty string or consist of whitespace characters only.");
 
             using (var schemaStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 _schemas.Add(

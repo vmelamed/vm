@@ -31,9 +31,7 @@ namespace vm.Aspects.Wcf
         public object GetData(
             string slotName)
         {
-            Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
-            Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
 
             object entry;
 
@@ -66,9 +64,7 @@ namespace vm.Aspects.Wcf
             string slotName,
             object entry)
         {
-            Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
-            Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
 
             using (_lock.WriterLock())
             {
@@ -88,9 +84,7 @@ namespace vm.Aspects.Wcf
         public void FreeDataSlot(
             string slotName)
         {
-            Contract.Requires<ArgumentNullException>(slotName!=null, nameof(slotName));
-            Contract.Requires<ArgumentException>(slotName.Length > 0, "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
 
             object entry;
 

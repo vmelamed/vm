@@ -392,6 +392,7 @@ namespace vm.Aspects.Wcf.Services
         {
             Contract.Requires<ArgumentNullException>(serviceHost != null, nameof(serviceHost));
             Contract.Requires<ArgumentNullException>(serviceAuthorizationManager != null, nameof(serviceAuthorizationManager));
+            Contract.Ensures(Contract.Result<ServiceHost>() != null);
 
             serviceHost.Description.Behaviors.Remove<ServiceAuthorizationBehavior>();
             serviceHost.Description.Behaviors.Add(

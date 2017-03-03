@@ -68,7 +68,7 @@ namespace vm.Aspects.Diagnostics
         /// The property value that should be in effect.
         /// </returns>
         public string DefaultProperty(DumpAttribute instanceAttribute) => instanceAttribute != null  &&
-                                                                          !string.IsNullOrWhiteSpace(instanceAttribute.DefaultProperty)
+                                                                          !instanceAttribute.DefaultProperty.IsNullOrWhiteSpace()
                                                                                ? instanceAttribute.DefaultProperty
                                                                                : _dumpAttribute.DefaultProperty;
 
@@ -139,7 +139,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator==(ClassDumpData left, ClassDumpData right) => left.Equals(right);
+        public static bool operator ==(ClassDumpData left, ClassDumpData right) => left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="ClassDumpData"/> objects.
@@ -150,7 +150,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator!=(ClassDumpData left, ClassDumpData right) => !(left==right);
+        public static bool operator !=(ClassDumpData left, ClassDumpData right) => !(left==right);
         #endregion
     }
 }

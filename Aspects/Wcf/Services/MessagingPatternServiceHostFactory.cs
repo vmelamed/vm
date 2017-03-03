@@ -7,7 +7,6 @@ using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IdentityModel.Claims;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -171,8 +170,7 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern = null)
             : this(messagingPattern)
         {
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             if (identityType != ServiceIdentity.None)
                 EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity);

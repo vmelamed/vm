@@ -204,10 +204,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         HiLoIdentityGenerator CreateOrGetFreshGenerator(
             string entitySetName)
         {
-            Contract.Requires<ArgumentNullException>(entitySetName!=null, nameof(entitySetName));
-            Contract.Requires<ArgumentNullException>(entitySetName!=null, nameof(entitySetName));
-            Contract.Requires<ArgumentException>(entitySetName.Length > 0, "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(entitySetName != null  &&  entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
 
             HiLoIdentityGenerator generator;

@@ -36,20 +36,20 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </remarks>
         public string GetKeyLocation(string keyLocation)
         {
-            if (!string.IsNullOrWhiteSpace(keyLocation))
+            if (!keyLocation.IsNullOrWhiteSpace())
                 return keyLocation;
 
             var location = ConfigurationManager.AppSettings[AppSettingsKeyContainerNameEntry];
 
-            if (!string.IsNullOrWhiteSpace(location))
+            if (!location.IsNullOrWhiteSpace())
                 return location;
 
             var fileName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            if (fileName.IsNullOrWhiteSpace())
             {
                 fileName = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-                if (!string.IsNullOrWhiteSpace(fileName))
+                if (!fileName.IsNullOrWhiteSpace())
                 {
                     var index = fileName.LastIndexOf(".exe.config", StringComparison.OrdinalIgnoreCase);
 
@@ -62,7 +62,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            if (fileName.IsNullOrWhiteSpace())
                 fileName = "key";
 
             return fileName + DefaultKeyLocationSuffix;

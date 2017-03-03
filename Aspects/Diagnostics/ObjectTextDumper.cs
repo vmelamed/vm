@@ -586,12 +586,12 @@ namespace vm.Aspects.Diagnostics
 
             // did they specify DumpAttribute.DumpMethod?
             var dumpMethodName = state.CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass      = state.CurrentPropertyDumpAttribute.DumpClass;
+            var dumpClass = state.CurrentPropertyDumpAttribute.DumpClass;
 
-            if (dumpClass==null  &&  string.IsNullOrWhiteSpace(dumpMethodName))
+            if (dumpClass==null  &&  dumpMethodName.IsNullOrWhiteSpace())
                 return false;
 
-            if (string.IsNullOrWhiteSpace(dumpMethodName))
+            if (dumpMethodName.IsNullOrWhiteSpace())
                 dumpMethodName = "Dump";
 
             MethodInfo dumpMethod = null;   // best match
@@ -794,8 +794,8 @@ namespace vm.Aspects.Diagnostics
 
             Contract.Assume(typeArguments.Length == 2);
 
-            var keyType       = typeArguments[0];
-            var valueType     = typeArguments[1];
+            var keyType = typeArguments[0];
+            var valueType = typeArguments[1];
 
             if (!keyType.IsBasicType())
                 return false;
@@ -840,7 +840,7 @@ namespace vm.Aspects.Diagnostics
             {
                 Contract.Assume(kv.GetType() == keyValueType);
 
-                var key   = keyValueType.GetProperty("Key").GetValue(kv, null);
+                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
                 var value = keyValueType.GetProperty("Value").GetValue(kv, null);
 
                 _writer.WriteLine();

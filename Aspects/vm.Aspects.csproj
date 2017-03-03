@@ -132,7 +132,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET462</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462;TEST</DefineConstants>
     <DocumentationFile>bin\Debug\vm.Aspects.XML</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -261,8 +261,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.15.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\AspectObjectDumper.1.6.15\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.6.17.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectObjectDumper.1.6.17\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

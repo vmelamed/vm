@@ -43,8 +43,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
                         _exitCode = Import();
                         break;
 
-                    case null:
                     case HelpCommand:
+                    default:
                         _exitCode = Usage();
                         break;
                     }
@@ -145,9 +145,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetFile(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Length > 0, "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(argument?.Any(c => !char.IsWhiteSpace(c)) ?? false, "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             var fileInfo = new FileInfo(argument);
 
@@ -175,9 +173,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetKey(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Length > 0, "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(argument?.Any(c => !char.IsWhiteSpace(c)) ?? false, "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             _key = ParseHexValue(GetHexValue(argument));
             return _key != null;
@@ -200,9 +196,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static string GetHexValue(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument!=null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Length > 0, "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(argument?.Any(c => !char.IsWhiteSpace(c)) ?? false, "The argument "+nameof(argument)+" cannot be null, empty or consist of whitespace characters only.");
 
             if (!Regex.IsMatch(argument, RexByteArray))
             {

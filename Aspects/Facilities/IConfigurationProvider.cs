@@ -26,9 +26,8 @@ namespace vm.Aspects.Facilities
         {
             get
             {
-                Contract.Requires<ArgumentNullException>(settingName!=null, nameof(settingName));
-                Contract.Requires<ArgumentException>(settingName.Length > 0, "The argument "+nameof(settingName)+" cannot be empty or consist of whitespace characters only.");
-                Contract.Requires<ArgumentException>(settingName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(settingName)+" cannot be empty or consist of whitespace characters only.");
+                Contract.Ensures(Contract.Result<string>() != null);
+                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 throw new NotImplementedException();
             }

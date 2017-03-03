@@ -24,9 +24,7 @@ namespace vm.Aspects
         /// <exception cref="System.ArgumentException">The name cannot be null, empty or whitespace only string.;name</exception>
         public ResolveNameAttribute(string name)
         {
-            Contract.Requires<ArgumentNullException>(name != null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
 
             Name = name;
         }

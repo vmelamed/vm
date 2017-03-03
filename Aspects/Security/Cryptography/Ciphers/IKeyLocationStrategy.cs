@@ -44,8 +44,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         #region IKeyLocationStrategy Members
         public string GetKeyLocation(string keyLocation)
         {
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
             throw new NotImplementedException();

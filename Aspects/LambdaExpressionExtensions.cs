@@ -28,10 +28,7 @@ namespace vm.Aspects
         {
             Contract.Requires<ArgumentNullException>(lambda != null, nameof(lambda));
             Contract.Ensures(Contract.Result<string>() != null, "Could not determine the property name from the given lambda.");
-            Contract.Ensures(Contract.Result<string>()!=null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
-
 
             var memberExpression = lambda.Body as MemberExpression;
 

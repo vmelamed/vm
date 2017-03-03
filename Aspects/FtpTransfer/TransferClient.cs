@@ -54,7 +54,7 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>The stream that will receive the files list text. The interpretation of the list text is up to the consumer.</returns>
         public Stream ListFiles()
         {
-            var request  = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
+            var request = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
             var response = request.GetResponse();
 
             return response.GetResponseStream();
@@ -67,7 +67,7 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task{Stream}.</returns>
         public Stream DownloadFile(string name)
         {
-            var request  = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
+            var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
             var response = request.GetResponse();
 
             return response.GetResponseStream();
@@ -98,7 +98,7 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>The stream that will receive the files list text. The interpretation of the list text is up to the consumer.</returns>
         public async Task<Stream> ListFilesAsync()
         {
-            var request  = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
+            var request = PrepareFileRequest(WebRequestMethods.Ftp.ListDirectoryDetails, null);
             var response = await request.GetResponseAsync();
 
             return response.GetResponseStream();
@@ -111,7 +111,7 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task{Stream}.</returns>
         public async Task<Stream> DownloadFileAsync(string name)
         {
-            var request  = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
+            var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
             var response = await request.GetResponseAsync();
 
             return response.GetResponseStream();
@@ -148,10 +148,8 @@ namespace vm.Aspects.FtpTransfer
             string method,
             string fileName)
         {
-            Contract.Requires<ArgumentNullException>(method!=null, nameof(method));
-            Contract.Requires<ArgumentException>(method.Length > 0, "The argument "+nameof(method)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(method.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(method)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(Configuration.Link != null  ||  fileName != null && fileName.Length > 0  && fileName.Any(c => !char.IsWhiteSpace(c)), "Invalid configuration or parameter "+nameof(fileName));
+            Contract.Requires<ArgumentException>(method != null  &&  method.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(method)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(Configuration.Link != null  ||  !fileName.IsNullOrWhiteSpace(), "Invalid configuration or parameter "+nameof(fileName));
 
             var fileUrl = Configuration.Link;
 

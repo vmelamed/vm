@@ -80,8 +80,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>()!=null);
-                Contract.Ensures(Contract.Result<string>().Length > 0);
+                Contract.Ensures(Contract.Result<string>() != null);
                 Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 return _hashAlgorithm.GetType().FullName;

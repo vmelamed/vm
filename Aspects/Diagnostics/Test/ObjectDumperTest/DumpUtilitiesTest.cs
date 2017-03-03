@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {
@@ -30,6 +28,46 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 Assert.AreEqual("\r\n", writer.Unindent(-1).NewLine);
                 Assert.AreEqual("\r\n", writer.Unindent(0).NewLine);
             }
+        }
+
+        [TestMethod]
+        public void TestIsNullOrWhiteSpaceExtensionWithNullString()
+        {
+            string target = null;
+
+            Assert.IsTrue(target.IsNullOrWhiteSpace());
+        }
+
+        [TestMethod]
+        public void TestIsNullOrWhiteSpaceExtensionWithEmptyString()
+        {
+            string target = "";
+
+            Assert.IsTrue(target.IsNullOrWhiteSpace());
+        }
+
+        [TestMethod]
+        public void TestIsNullOrWhiteSpaceExtensionWithBlankString()
+        {
+            string target = " ";
+
+            Assert.IsTrue(target.IsNullOrWhiteSpace());
+        }
+
+        [TestMethod]
+        public void TestIsNullOrWhiteSpaceExtensionWithNonBlankString1()
+        {
+            string target = " abc";
+
+            Assert.IsFalse(target.IsNullOrWhiteSpace());
+        }
+
+        [TestMethod]
+        public void TestIsNullOrWhiteSpaceExtensionWithNonBlankString2()
+        {
+            string target = "abc";
+
+            Assert.IsFalse(target.IsNullOrWhiteSpace());
         }
     }
 }

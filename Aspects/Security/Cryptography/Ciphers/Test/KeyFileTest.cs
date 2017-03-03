@@ -133,7 +133,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void PutKeyNullLocationAsyncTest()
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
@@ -233,7 +233,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void GetKeyNullLocationAsyncTest()
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
@@ -299,7 +299,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void DeleteKeyLocationNullTest()
         {
             var target = new KeyFile();

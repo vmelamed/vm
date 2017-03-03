@@ -62,9 +62,8 @@ namespace vm.Aspects.FtpTransfer
     {
         public Stream DownloadFile(string name)
         {
-            Contract.Requires<ArgumentNullException>(name!=null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<Stream>() != null);
 
             throw new NotImplementedException();
@@ -72,9 +71,8 @@ namespace vm.Aspects.FtpTransfer
 
         public Task<Stream> DownloadFileAsync(string name)
         {
-            Contract.Requires<ArgumentNullException>(name!=null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
+
             Contract.Ensures(Contract.Result<Stream>() != null);
 
             throw new NotImplementedException();
@@ -98,9 +96,7 @@ namespace vm.Aspects.FtpTransfer
         {
             Contract.Requires<ArgumentNullException>(stream != null, nameof(stream));
             Contract.Requires<ArgumentException>(stream.CanRead);
-            Contract.Requires<ArgumentNullException>(name!=null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
 
             throw new NotImplementedException();
         }
@@ -109,9 +105,7 @@ namespace vm.Aspects.FtpTransfer
         {
             Contract.Requires<ArgumentNullException>(stream != null, nameof(stream));
             Contract.Requires<ArgumentException>(stream.CanRead);
-            Contract.Requires<ArgumentNullException>(name!=null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Length > 0, "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
 
             throw new NotImplementedException();
         }

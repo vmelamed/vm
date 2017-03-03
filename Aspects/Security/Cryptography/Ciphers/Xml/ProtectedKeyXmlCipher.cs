@@ -124,7 +124,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             var encryptedXml = new EncryptedXml(document);
 
-            if (string.IsNullOrWhiteSpace(xmlPath))
+            if (xmlPath.IsNullOrWhiteSpace())
                 EncryptElement(document.DocumentElement, encryptedXml);
             else
                 foreach (XmlElement element in document.SelectNodes(xmlPath, namespaceManager).OfType<XmlElement>())

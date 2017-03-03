@@ -25,9 +25,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
             string connectionString)
             : base(connectionString)
         {
-            Contract.Requires<ArgumentNullException>(connectionString!=null, nameof(connectionString));
-            Contract.Requires<ArgumentException>(connectionString.Length > 0, "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(connectionString != null  &&  connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be null, empty string or consist of whitespace characters only.");
         }
 
         /// <summary>
@@ -41,9 +39,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
             IStoreIdProvider storeIdProvider = null)
             : base(connectionString, storeIdProvider)
         {
-            Contract.Requires<ArgumentNullException>(connectionString!=null, nameof(connectionString));
-            Contract.Requires<ArgumentException>(connectionString.Length > 0, "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(connectionString != null  &&  connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be null, empty string or consist of whitespace characters only.");
         }
         #endregion
 

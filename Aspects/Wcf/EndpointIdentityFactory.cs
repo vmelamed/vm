@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 
@@ -12,31 +11,6 @@ namespace vm.Aspects.Wcf
     /// </summary>
     public static class EndpointIdentityFactory
     {
-        /// <summary>
-        /// Creates an endpoint identity either from string identifier or from a certificate.
-        /// </summary>
-        /// <param name="identityType">Type of the identity.</param>
-        /// <param name="identity">The identity: the DNS name, SPN, UPN or the RSA key. If <see langword="null"/>, <paramref name="identifyingCertificate"/> must not be <see langword="null"/>.</param>
-        /// <param name="identifyingCertificate">The identifying certificate. If <see langword="null"/>, <paramref name="identity"/> must not be <see langword="null"/>.</param>
-        /// <returns>EndpointIdentity instance.</returns>
-        /// <exception cref="System.NotSupportedException">
-        /// Thrown if the identity type is not supported.
-        /// </exception>
-        public static EndpointIdentity CreateEndpointIdentity(
-            ServiceIdentity identityType,
-            string identity,
-            X509Certificate2 identifyingCertificate)
-        {
-            Contract.Requires<ArgumentException>(
-                (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))) || identifyingCertificate!=null,
-                "Both parameters - identity and identifyingCertificate - cannot be null at the same time.");
-
-            if (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c)))
-                return CreateEndpointIdentity(identityType, identity);
-            else
-                return CreateEndpointIdentity(identityType, identifyingCertificate);
-        }
-
         /// <summary>
         /// Creates an endpoint identity.
         /// </summary>
@@ -51,17 +25,13 @@ namespace vm.Aspects.Wcf
         /// </exception>
         public static EndpointIdentity CreateEndpointIdentity(
             ServiceIdentity identityType,
-            string identity)
+            string identity = null)
         {
-            Contract.Requires<ArgumentException>(identityType != ServiceIdentity.Certificate);
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType != ServiceIdentity.Certificate, "Invalid combination of identity parameters.");
+            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             switch (identityType)
             {
-            case ServiceIdentity.None:
-                return null;
-
             case ServiceIdentity.Dns:
                 return EndpointIdentity.CreateDnsIdentity(identity);
 
@@ -73,6 +43,9 @@ namespace vm.Aspects.Wcf
 
             case ServiceIdentity.Rsa:
                 return EndpointIdentity.CreateRsaIdentity(identity);
+
+            default:
+                return null;
             }
 
             throw new NotSupportedException($"Identity type {identityType} is not supported.");
@@ -99,17 +72,17 @@ namespace vm.Aspects.Wcf
 
             switch (identityType)
             {
-            case ServiceIdentity.None:
-                return null;
-
             case ServiceIdentity.Certificate:
                 return EndpointIdentity.CreateX509CertificateIdentity(identifyingCertificate);
 
-            case ServiceIdentity.Dns:
-                return EndpointIdentity.CreateDnsIdentity(identifyingCertificate.SubjectName.Name.Split(',')[0]);
-
             case ServiceIdentity.Rsa:
                 return EndpointIdentity.CreateRsaIdentity(identifyingCertificate);
+
+            case ServiceIdentity.Dns:
+                return EndpointIdentity.CreateDnsIdentity(identifyingCertificate.SubjectName.Name.Split(',')[0].Replace("CN=", ""));
+
+            default:
+                return null;
             }
 
             throw new NotSupportedException($"Identity type {identityType} is not supported.");

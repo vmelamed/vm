@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.6.16</version>
+        <version>1.6.18</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -28,7 +28,7 @@
             * Build and tested with .NET 4.0, 4.6. This package targets .NET 4.0.
         </description>
         <releaseNotes>
-            Includes builds for .NET 4.0, 4.5.2 and 4.6.2.
+            Cosmetic changes and fixes for benign warning messages.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>

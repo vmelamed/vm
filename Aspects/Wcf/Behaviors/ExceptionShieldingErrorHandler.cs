@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
@@ -54,9 +53,7 @@ namespace vm.Aspects.Wcf.Behaviors
             string exceptionPolicyName)
         {
             Contract.Requires<ArgumentNullException>(wcfContext != null, nameof(wcfContext));
-            Contract.Requires<ArgumentNullException>(exceptionPolicyName != null, nameof(exceptionPolicyName));
-            Contract.Requires<ArgumentException>(exceptionPolicyName.Length > 0, "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(exceptionPolicyName != null  &&  exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be null, empty string or consist of whitespace characters only.");
 
             _wcfContext         = wcfContext;
             ExceptionPolicyName = exceptionPolicyName;
@@ -342,7 +339,7 @@ namespace vm.Aspects.Wcf.Behaviors
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
 
             var result = optionalHandlingInstanceId;
-            var match  = RegularExpression.Guid.Match(exception.Message);
+            var match = RegularExpression.Guid.Match(exception.Message);
 
             if (match.Success)
                 result = new Guid(match.Value);
@@ -441,7 +438,7 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
 
-            var responseMessageProperty               = new HttpResponseMessageProperty();
+            var responseMessageProperty = new HttpResponseMessageProperty();
 
             responseMessageProperty.StatusCode        = httpStatusCode;
             responseMessageProperty.StatusDescription = Fault.GetHttpStatusDescription(responseMessageProperty.StatusCode);

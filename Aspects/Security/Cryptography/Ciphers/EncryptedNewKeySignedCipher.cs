@@ -91,7 +91,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             X509Certificate2 signCertificate = null,
             string symmetricAlgorithmName = null,
             string hashAlgorithmName = null)
-            : base(exchangeCertificate, symmetricAlgorithmName, !string.IsNullOrWhiteSpace(hashAlgorithmName)
+            : base(exchangeCertificate, symmetricAlgorithmName, !hashAlgorithmName.IsNullOrWhiteSpace()
                                                                     ? hashAlgorithmName
                                                                     : signCertificate.HashAlgorithm())
         {
