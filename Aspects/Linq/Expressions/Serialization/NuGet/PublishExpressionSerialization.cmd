@@ -1,5 +1,5 @@
 ﻿if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmExpressionSerialization=1.0.95
+set vmExpressionSerialization=1.0.96
 set Configuration=Release
 pushd
 
