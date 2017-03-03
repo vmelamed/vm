@@ -1,7 +1,7 @@
 pushd
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
 set Configuration=Release
-set vmAspectsVersion=1.0.96-beta
+set vmAspectsVersion=1.0.97-beta
 
 cd %~dp0..
 del *.nupkg

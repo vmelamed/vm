@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.11.17</version>
+        <version>1.11.18</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -31,7 +31,7 @@
         <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <!--<file src="..\bin\ReleaseDOTNET452\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net452"/>
         <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net452"/>
@@ -46,7 +46,7 @@
         <file src="..\ProtectedKey\bin\ReleaseDOTNET452\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net452"/>
         <file src="..\ProtectedKey\bin\ReleaseDOTNET452\Microsoft.Practices.ServiceLocation.dll"
-              target="tools\net452"/>
+              target="tools\net452"/>-->
         
         <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net462"/>
