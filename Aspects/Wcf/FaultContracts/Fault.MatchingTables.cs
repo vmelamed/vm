@@ -113,7 +113,6 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
         }
 
-
         /// <summary>
         /// Adds a new fault to exception types mapping.
         /// </summary>
@@ -131,12 +130,41 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// or
         /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
         public static void AddMappingFaultToException<TException, TFault>(
-            Func<Fault, Exception> exceptionFactory,
-            Func<Exception, Fault> faultFactory = null,
+            Func<TFault, TException> exceptionFactory,
+            Func<TException, TFault> faultFactory = null,
             bool force = false)
             where TException : Exception
             where TFault : Fault
-            => AddMappingFaultToException(typeof(TException), typeof(TFault), exceptionFactory, faultFactory, force);
+        {
+            using (_lock.UpgradableReaderLock())
+            {
+                if (!force)
+                {
+                    Type existing;
+
+                    if (_exceptionToFault.TryGetValue(typeof(TException), out existing)  &&  existing != typeof(TFault))
+                        throw new InvalidOperationException($"The type {typeof(TException).Name} is already mapped to {typeof(TFault).Name}.");
+                    if (_faultToException.TryGetValue(typeof(TFault), out existing)  &&  existing != typeof(TException))
+                        throw new InvalidOperationException($"The type {typeof(TFault).Name} is already mapped to {typeof(TException).Name}.");
+                }
+
+                using (_lock.WriterLock())
+                {
+                    _exceptionToFault[typeof(TException)] = typeof(TFault);
+                    _faultToException[typeof(TFault)]     = typeof(TException);
+
+                    if (faultFactory != null)
+                        _exceptionToFaultFactories[typeof(TException)] = (Func<Exception, Fault>)faultFactory;
+                    else
+                        _exceptionToFaultFactories[typeof(TException)] = FaultFactory;
+
+                    if (exceptionFactory != null)
+                        _faultToExceptionFactories[typeof(TFault)] = (Func<Fault, Exception>)exceptionFactory;
+                    else
+                        _faultToExceptionFactories[typeof(TFault)] = f => new Exception(f.Message).PopulateData(f.Data);
+                }
+            }
+        }
 
         /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
@@ -300,7 +328,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(AuthenticationFault)]                   = typeof(AuthenticationException),
         };
 
-        static IDictionary<Type, Func<Exception, Fault>> _exceptionToFaultFactories = new Dictionary<Type, Func<Exception, Fault>>
+        static IDictionary<Type, Func<Exception, object>> _exceptionToFaultFactories = new Dictionary<Type, Func<Exception, object>>
         {
             [typeof(Exception)]                             = FaultFactory,
             [typeof(AggregateException)]                    = FaultFactory,
@@ -326,7 +354,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         };
 
 
-        static IDictionary<Type, Func<Fault, Exception>> _faultToExceptionFactories = new Dictionary<Type, Func<Fault, Exception>>
+        static IDictionary<Type, Func<Fault, object>> _faultToExceptionFactories = new Dictionary<Type, Func<Fault, object>>
         {
             [typeof(Fault)]                                 = f => new Exception(f.Message).PopulateData(f.Data),
             [typeof(AggregateFault)]                        = f => new AggregateException(f.Message).PopulateData(f.Data),

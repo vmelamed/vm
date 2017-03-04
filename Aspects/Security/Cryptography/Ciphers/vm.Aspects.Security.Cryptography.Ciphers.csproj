@@ -289,12 +289,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\vm.Aspects.csproj">
-      <Project>{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}</Project>
-      <Name>vm.Aspects</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Documents\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout">
       <DependentUpon>EncryptedNewKey.EncryptMethodTemplate.sequencediagram</DependentUpon>
     </EmbeddedResource>

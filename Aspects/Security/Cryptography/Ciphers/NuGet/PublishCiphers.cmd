@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmCiphersVersion=1.11.18
+set vmCiphersVersion=1.11.19
 set Configuration=Release
 pushd
 
@@ -8,19 +8,19 @@ del *.nupkg
 NuGet Update -self
 if not .%1.==.. NuGet SetApiKey %1
 
-:rem ------- .NET 4.5.2 -------
-:set FrameworkVersion=4.5.2
-:set FrameworkVersionConst=DOTNET452
-:set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
-:
-:msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
-:msbuild MacKey\MacKey.csproj %commonBuildOptions%
-:if errorlevel 1 goto exit
+rem ------- .NET 4.5.2 -------
+set FrameworkVersion=4.5.2
+set FrameworkVersionConst=DOTNET452
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
+
+msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+msbuild MacKey\MacKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
 
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
