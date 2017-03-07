@@ -7,7 +7,9 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
+using System.Text;
 using System.Text.RegularExpressions;
+using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Clients;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -77,7 +79,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (stream == null)
                     return null;
 
-                var reader = new StreamReader(stream, true);
+                var reader = new StreamReader(stream, Encoding.UTF8);
 
                 responseText = reader.ReadToEnd();
                 stream.Seek(0, SeekOrigin.Begin);
@@ -100,8 +102,15 @@ namespace vm.Aspects.Wcf.FaultContracts
 
                             return s.ReadObject(stream) as Fault;
                         }
-                        catch (SerializationException)
+                        catch (SerializationException x)
                         {
+                            Facility.LogWriter.ExceptionWarning(x);
+                            return null;
+                        }
+                        catch (Exception x)
+                        {
+                            Facility.LogWriter.ExceptionError(x);
+                            throw;
                         }
                         finally
                         {
@@ -119,6 +128,9 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (faultType == null)
                     return null;
 
+                // TODO: remove!!!
+                Console.WriteLine(faultType.FullName);
+
                 var serializer = new DataContractJsonSerializer(
                                             faultType,
                                             new DataContractJsonSerializerSettings
@@ -130,9 +142,16 @@ namespace vm.Aspects.Wcf.FaultContracts
 
                 return serializer.ReadObject(stream) as Fault;
             }
-            catch (SerializationException)
+            catch (SerializationException x)
             {
+                // TODO: remove!!!
+                Console.WriteLine(x.DumpString());
                 return null;
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine(x.DumpString());
+                throw;
             }
         }
     }
