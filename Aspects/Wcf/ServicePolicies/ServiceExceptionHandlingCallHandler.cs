@@ -40,29 +40,35 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             if (methodReturn.Exception == null)
                 return methodReturn;
-
-            var exception = methodReturn.Exception;
-            var faultType = Fault.GetFaultTypeForException(exception.GetType());
-            Fault fault = null;
-
-            if (!IsFaultSupported(input, faultType))
-
-                return input.CreateExceptionMethodReturn(
-                                new WebFaultException<Fault>(
-                                        new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{methodReturn.Exception.DumpString()}" },
-                                        HttpStatusCode.InternalServerError));
-
-            fault = Fault.FaultFactory(exception);
-
-            return input.CreateExceptionMethodReturn(
-                            (Exception)typeof(WebFaultException<>)
-                                            .MakeGenericType(faultType)
-                                            .GetConstructor(new Type[] { faultType, typeof(HttpStatusCode) })
-                                            .Invoke(new object[] { fault, fault.HttpStatusCode }));
+            else
+                return HandleException(input, methodReturn.Exception);
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
+
+        static IMethodReturn HandleException(
+            IMethodInvocation input,
+            Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
+            var factory = Fault.TryGetExceptionToFaultFactory(exception.GetType());
+
+            if (factory == null)
+                return input.CreateExceptionMethodReturn(
+                                new WebFaultException<Fault>(
+                                        new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}" },
+                                        HttpStatusCode.InternalServerError));
+
+            var fault = factory(exception);
+
+            return input.CreateExceptionMethodReturn(
+                            (Exception)typeof(WebFaultException<>)
+                                            .MakeGenericType(fault.GetType())
+                                            .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
+                                            .Invoke(new object[] { fault, fault.HttpStatusCode }));
+        }
 
         static bool IsFaultSupported(
             IMethodInvocation input,

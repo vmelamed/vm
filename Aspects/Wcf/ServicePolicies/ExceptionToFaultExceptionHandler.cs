@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Net;
 using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Wcf.FaultContracts;
@@ -25,7 +20,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <returns>Modified exception to pass to the next exceptionHandlerData in the chain.</returns>
         public Exception HandleException(Exception exception, Guid handlingInstanceId)
         {
-            var fault = Fault.FaultFactory(exception);
+            var factory = Fault.TryGetExceptionToFaultFactory(exception.GetType()) ?? Fault.TryGetExceptionToFaultFactory<Exception>();
+            var fault = factory(exception);
 
             fault.Data["handlingInstanceId"] = handlingInstanceId.ToString();
 

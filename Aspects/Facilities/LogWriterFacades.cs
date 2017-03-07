@@ -18,7 +18,6 @@ namespace vm.Aspects.Facilities
         /// The general log category - can be defined to be anything... - "General"
         /// </summary>
         public const string General        = "General";
-
         /// <summary>
         /// The alert log category - can be defined to go to all usual places as well as to some specific e-mail addresses, e.g. operations team - "Alert"
         /// </summary>

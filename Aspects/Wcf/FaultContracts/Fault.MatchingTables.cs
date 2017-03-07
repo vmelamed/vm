@@ -62,60 +62,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Adds a new fault to exception types mapping.
         /// </summary>
-        /// <param name="exceptionType">Type of the exception.</param>
-        /// <param name="faultType">Type of the fault.</param>
-        /// <param name="exceptionFactory">A factory delegate which should produce an exception object from a fault object.</param>
-        /// <param name="faultFactory">
-        /// A factory delegate which should produce a fault object from an exception object.
-        /// If <see langword="null"/> this method will assume a default factory which will create the fault object and 
-        /// will attempt to copy all exception's properties to the fault's properties with the same and type.
-        /// Properties that do not have a counterpart, will be added to the <see cref="Data"/> dictionary 
-        /// with values converted to string (invoking <see cref="object.ToString()"/>)
-        /// </param>
-        /// <param name="force">if set to <see langword="true" /> the mapping will be implemented even if the types participate in existing mappings,
-        /// otherwise if the types are already mapped to, the method will throw <see cref="InvalidOperationException" />.</param>
-        /// <exception cref="InvalidOperationException">The type {exceptionType.Name} is already mapped to {faultType.Name}.
-        /// or
-        /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
-        [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "By design.")]
-        public static void AddMappingFaultToException(
-            Type exceptionType,
-            Type faultType,
-            Func<Fault, Exception> exceptionFactory,
-            Func<Exception, Fault> faultFactory = null,
-            bool force = false)
-        {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument "+nameof(exceptionType)+" must be an exception type.");
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument "+nameof(faultType)+" must be a fault type.");
-
-            using (_lock.UpgradableReaderLock())
-            {
-                if (!force)
-                {
-                    Type existing;
-
-                    if (_exceptionToFault.TryGetValue(exceptionType, out existing)  &&  existing != faultType)
-                        throw new InvalidOperationException($"The type {exceptionType.Name} is already mapped to {faultType.Name}.");
-                    if (_faultToException.TryGetValue(faultType, out existing)  &&  existing != exceptionType)
-                        throw new InvalidOperationException($"The type {faultType.Name} is already mapped to {exceptionType.Name}.");
-                }
-
-                using (_lock.WriterLock())
-                {
-                    _exceptionToFault[exceptionType] = faultType;
-                    _faultToException[faultType]     = exceptionType;
-
-                    _exceptionToFaultFactories[exceptionType] = faultFactory ?? FaultFactory;
-                    _faultToExceptionFactories[faultType]     = exceptionFactory ?? (f => new Exception(f.Message).PopulateData(f.Data));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Adds a new fault to exception types mapping.
-        /// </summary>
         /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <typeparam name="TFault">The type of the fault.</typeparam>
         /// <param name="exceptionFactory">A factory delegate which should produce an exception object from a fault object.</param>
@@ -129,9 +75,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <exception cref="InvalidOperationException">The type {exceptionType.Name} is already mapped to {faultType.Name}.
         /// or
         /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
+        [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "No choice here.")]
         public static void AddMappingFaultToException<TException, TFault>(
-            Func<TFault, TException> exceptionFactory,
-            Func<TException, TFault> faultFactory = null,
+            Func<Fault, TException> exceptionFactory,
+            Func<Exception, TFault> faultFactory = null,
             bool force = false)
             where TException : Exception
             where TFault : Fault
@@ -143,9 +90,10 @@ namespace vm.Aspects.Wcf.FaultContracts
                     Type existing;
 
                     if (_exceptionToFault.TryGetValue(typeof(TException), out existing)  &&  existing != typeof(TFault))
-                        throw new InvalidOperationException($"The type {typeof(TException).Name} is already mapped to {typeof(TFault).Name}.");
+                        throw new InvalidOperationException($"The type {typeof(TException).Name} is already mapped to {existing.Name}.");
+
                     if (_faultToException.TryGetValue(typeof(TFault), out existing)  &&  existing != typeof(TException))
-                        throw new InvalidOperationException($"The type {typeof(TFault).Name} is already mapped to {typeof(TException).Name}.");
+                        throw new InvalidOperationException($"The type {typeof(TFault).Name} is already mapped to {existing.Name}.");
                 }
 
                 using (_lock.WriterLock())
@@ -154,17 +102,125 @@ namespace vm.Aspects.Wcf.FaultContracts
                     _faultToException[typeof(TFault)]     = typeof(TException);
 
                     if (faultFactory != null)
-                        _exceptionToFaultFactories[typeof(TException)] = (Func<Exception, Fault>)faultFactory;
+                        _exceptionToFaultFactories[typeof(TException)] = faultFactory;
                     else
-                        _exceptionToFaultFactories[typeof(TException)] = FaultFactory;
+                        _exceptionToFaultFactories[typeof(TException)] = FaultFactory<TException>;
 
                     if (exceptionFactory != null)
-                        _faultToExceptionFactories[typeof(TFault)] = (Func<Fault, Exception>)exceptionFactory;
+                        _faultToExceptionFactories[typeof(TFault)] = exceptionFactory;
                     else
                         _faultToExceptionFactories[typeof(TFault)] = f => new Exception(f.Message).PopulateData(f.Data);
                 }
             }
         }
+
+        /// <summary>
+        /// Tries to get the <paramref name="exceptionType"/> exception to fault factory.
+        /// </summary>
+        /// <param name="exceptionType">Type of the exception.</param>
+        /// <returns>The Exception to Fault factory delegate.</returns>
+        public static Func<Exception, Fault> TryGetExceptionToFaultFactory(
+            Type exceptionType)
+        {
+            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
+            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
+
+            Func<Exception, Fault> factory;
+
+            if (_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
+                return factory;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Gets the <paramref name="exceptionType"/> exception to fault factory and if it doesn't find one, throws an <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <param name="exceptionType">Type of the exception.</param>
+        /// <returns>The Exception to Fault factory delegate.</returns>
+        public static Func<Exception, Fault> GetExceptionToFaultFactory(
+            Type exceptionType)
+        {
+            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
+            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
+
+            Func<Exception, Fault> factory;
+
+            if (!_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
+                throw new ArgumentException($"Could not find an exception ({exceptionType.Name}) to fault factory.", nameof(exceptionType));
+
+            return factory;
+        }
+
+        /// <summary>
+        /// Tries to get the exception <typeparamref name="TException"/> to fault factory.
+        /// </summary>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <returns>Func&lt;Exception, Fault&gt;.</returns>
+        public static Func<Exception, Fault> TryGetExceptionToFaultFactory<TException>()
+            => TryGetExceptionToFaultFactory(typeof(TException));
+
+        /// <summary>
+        /// Gets the exception <typeparamref name="TException"/> to fault factory and if it doesn't find one, throws an <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <typeparam name="TException">The type of the t exception.</typeparam>
+        /// <returns>Func&lt;Exception, Fault&gt;.</returns>
+        public static Func<Exception, Fault> GetExceptionToFaultFactory<TException>()
+            => GetExceptionToFaultFactory(typeof(TException));
+
+        /// <summary>
+        /// Tries to get the <paramref name="faultType"/> fault to exception factory.
+        /// </summary>
+        /// <param name="faultType">Type of the fault.</param>
+        /// <returns>The Fault to Exception factory delegate.</returns>
+        public static Func<Fault, Exception> TryGetFaultToExceptionFactory(
+            Type faultType)
+        {
+            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
+            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Exception or descendant type.");
+
+            Func<Fault, Exception> factory;
+
+            if (_faultToExceptionFactories.TryGetValue(faultType, out factory))
+                return factory;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Gets the <paramref name="faultType"/> fault to exception factory and if it doesn't find one, throws <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <param name="faultType">Type of the fault.</param>
+        /// <returns>The Fault to Exception factory delegate.</returns>
+        public static Func<Fault, Exception> GetFaultToExceptionFactory(
+            Type faultType)
+        {
+            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
+            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Fault or descendant type.");
+
+            Func<Fault, Exception> factory;
+
+            if (!_faultToExceptionFactories.TryGetValue(faultType, out factory))
+                throw new ArgumentException($"Could not find an exception ({faultType.Name}) to fault factory.", nameof(faultType));
+
+            return factory;
+        }
+
+        /// <summary>
+        /// Tries to get the <typeparamref name="TFault"/> fault to exception factory.
+        /// </summary>
+        /// <typeparam name="TFault">The type of the fault.</typeparam>
+        /// <returns>The Fault to Exception factory delegate.</returns>
+        public static Func<Fault, Exception> TryGetFaultToExceptionFactory<TFault>()
+            => TryGetFaultToExceptionFactory(typeof(TFault));
+
+        /// <summary>
+        /// Gets the <typeparamref name="TFault"/> fault to exception factory and if it doesn't find one, throws <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <typeparam name="TFault">The type of the fault.</typeparam>
+        /// <returns>The Fault to Exception factory delegate.</returns>
+        public static Func<Fault, Exception> GetFaultToExceptionFactory<TFault>()
+            => GetFaultToExceptionFactory(typeof(TFault));
 
         /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
@@ -204,8 +260,9 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         /// <param name="exception">The exception.</param>
         /// <returns>Fault.</returns>
-        public static Fault FaultFactory(
+        public static Fault FaultFactory<TException>(
             Exception exception)
+            where TException : Exception
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<Fault>() != null);
@@ -218,7 +275,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             {
                 isFound =_exceptionToFault.TryGetValue(exception.GetType(), out faultType);
                 if (!isFound  &&  !ExceptionToHttpStatusCode.TryGetValue(exception.GetType(), out httpCode))
-                    httpCode = ExceptionToHttpStatusCode[typeof(Exception)];
+                    httpCode = ExceptionToHttpStatusCode[typeof(System.Exception)];
             }
 
             var exceptionProperties = exception
@@ -328,70 +385,103 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(AuthenticationFault)]                   = typeof(AuthenticationException),
         };
 
-        static IDictionary<Type, Func<Exception, object>> _exceptionToFaultFactories = new Dictionary<Type, Func<Exception, object>>
+        /// <summary>
+        /// Checks that the passed in exception argument if of type <typeparamref name="TException"/> or its descendant.
+        /// </summary>
+        /// <typeparam name="TException">The actual type of the exception.</typeparam>
+        /// <param name="exception">The exception to be checked.</param>
+        public static void CheckFault<TException>(Exception exception)
+            where TException : Exception
         {
-            [typeof(Exception)]                             = FaultFactory,
-            [typeof(AggregateException)]                    = FaultFactory,
-            [typeof(ArgumentException)]                     = FaultFactory,
-            [typeof(ArgumentNullException)]                 = FaultFactory,
-            [typeof(ArgumentValidationException)]           = FaultFactory,
-            [typeof(BusinessException)]                     = FaultFactory,
-            [typeof(DataException)]                         = FaultFactory,
-            [typeof(DirectoryNotFoundException)]            = FaultFactory,
-            [typeof(FileNotFoundException)]                 = FaultFactory,
-            [typeof(FormatException)]                       = FaultFactory,
-            [typeof(InvalidOperationException)]             = FaultFactory,
-            [typeof(IOException)]                           = FaultFactory,
-            [typeof(NotImplementedException)]               = FaultFactory,
-            [typeof(ObjectNotFoundException)]               = FaultFactory,
-            [typeof(ObjectIdentifierNotUniqueException)]    = FaultFactory,
-            [typeof(PathTooLongException)]                  = FaultFactory,
-            [typeof(RepeatableOperationException)]          = FaultFactory,
-            [typeof(SerializationException)]                = FaultFactory,
-            [typeof(UnauthorizedAccessException)]           = FaultFactory,
-            [typeof(XmlException)]                          = FaultFactory,
-            [typeof(AuthenticationException)]               = FaultFactory,
+            if (exception is TException)
+                return;
+
+            throw new ArgumentException($"The actual type of the exception must be {typeof(TException).Name}.", nameof(exception));
+        }
+
+        static IDictionary<Type, Func<Exception, Fault>> _exceptionToFaultFactories = new Dictionary<Type, Func<Exception, Fault>>
+        {
+            [typeof(Exception)]                             = FaultFactory<Exception>,
+            [typeof(AggregateException)]                    = FaultFactory<AggregateException>,
+            [typeof(ArgumentException)]                     = FaultFactory<ArgumentException>,
+            [typeof(ArgumentNullException)]                 = FaultFactory<ArgumentNullException>,
+            [typeof(ArgumentValidationException)]           = FaultFactory<ArgumentValidationException>,
+            [typeof(BusinessException)]                     = FaultFactory<BusinessException>,
+            [typeof(DataException)]                         = FaultFactory<DataException>,
+            [typeof(DirectoryNotFoundException)]            = FaultFactory<DirectoryNotFoundException>,
+            [typeof(FileNotFoundException)]                 = FaultFactory<FileNotFoundException>,
+            [typeof(FormatException)]                       = FaultFactory<FormatException>,
+            [typeof(InvalidOperationException)]             = FaultFactory<InvalidOperationException>,
+            [typeof(IOException)]                           = FaultFactory<IOException>,
+            [typeof(NotImplementedException)]               = FaultFactory<NotImplementedException>,
+            [typeof(ObjectNotFoundException)]               = FaultFactory<ObjectNotFoundException>,
+            [typeof(ObjectIdentifierNotUniqueException)]    = FaultFactory<ObjectIdentifierNotUniqueException>,
+            [typeof(PathTooLongException)]                  = FaultFactory<PathTooLongException>,
+            [typeof(RepeatableOperationException)]          = FaultFactory<RepeatableOperationException>,
+            [typeof(SerializationException)]                = FaultFactory<SerializationException>,
+            [typeof(UnauthorizedAccessException)]           = FaultFactory<UnauthorizedAccessException>,
+            [typeof(XmlException)]                          = FaultFactory<XmlException>,
+            [typeof(AuthenticationException)]               = FaultFactory<AuthenticationException>,
         };
 
-
-        static IDictionary<Type, Func<Fault, object>> _faultToExceptionFactories = new Dictionary<Type, Func<Fault, object>>
+        /// <summary>
+        /// Checks that the passed in fault argument is actually of type <typeparamref name="TFault"/> or its descendant.
+        /// </summary>
+        /// <typeparam name="TFault">The actual type of the fault.</typeparam>
+        /// <param name="fault">The fault to be checked.</param>
+        public static void CheckFault<TFault>(Fault fault)
+            where TFault : Fault
         {
-            [typeof(Fault)]                                 = f => new Exception(f.Message).PopulateData(f.Data),
-            [typeof(AggregateFault)]                        = f => new AggregateException(f.Message).PopulateData(f.Data),
+            if (fault is TFault)
+                return;
+
+            throw new ArgumentException($"The actual type of the fault must be {typeof(TFault).Name}.", nameof(fault));
+        }
+
+        static IDictionary<Type, Func<Fault, Exception>> _faultToExceptionFactories = new Dictionary<Type, Func<Fault, Exception>>
+        {
+            [typeof(Fault)]                                 = f => { CheckFault<Fault>(f); return new Exception(f.Message).PopulateData(f.Data); },
+            [typeof(AggregateFault)]                        = f => { CheckFault<Fault>(f); return new AggregateException(f.Message).PopulateData(f.Data); },
             [typeof(ArgumentFault)]                         = f =>
                                                             {
+                                                                CheckFault<ArgumentFault>(f);
+
                                                                 var x = new ArgumentException(f.Message, ((ArgumentFault)f).ParamName).PopulateData(f.Data);
                                                                 x.Data["InnerExceptionMessages"] = f.InnerExceptionsMessages;
                                                                 return x;
                                                             },
-            [typeof(ArgumentNullFault)]                     = f => new ArgumentNullException(((ArgumentFault)f).ParamName, f.Message).PopulateData(f.Data),
-            [typeof(ArgumentValidationFault)]               = f => new ArgumentValidationException(((ArgumentValidationFault)f).ValidationResults, ((ArgumentValidationFault)f).ParamName).PopulateData(f.Data),
-            [typeof(BusinessFault)]                         = f => new BusinessException(f.Message).PopulateData(f.Data),
-            [typeof(DataFault)]                             = f => new DataException(f.Message).PopulateData(f.Data),
-            [typeof(DirectoryNotFoundFault)]                = f => new DirectoryNotFoundException(f.Message).PopulateData(f.Data),
-            [typeof(FileNotFoundFault)]                     = f => new FileNotFoundException(f.Message, ((FileNotFoundFault)f).FileName).PopulateData(f.Data),
-            [typeof(FormatFault)]                           = f => new FormatException(f.Message).PopulateData(f.Data),
-            [typeof(InvalidOperationFault)]                 = f => new InvalidOperationException(f.Message).PopulateData(f.Data),
-            [typeof(IOFault)]                               = f => new IOException(f.Message).PopulateData(f.Data),
-            [typeof(NotImplementedFault)]                   = f => new NotImplementedException(f.Message).PopulateData(f.Data),
+            [typeof(ArgumentNullFault)]                     = f => { CheckFault<Fault>(f); return new ArgumentNullException(((ArgumentNullFault)f).ParamName, f.Message).PopulateData(f.Data); },
+            [typeof(ArgumentValidationFault)]               = f => { CheckFault<Fault>(f); return new ArgumentValidationException(((ArgumentValidationFault)f).ValidationResults, ((ArgumentValidationFault)f).ParamName).PopulateData(f.Data); },
+            [typeof(BusinessFault)]                         = f => { CheckFault<Fault>(f); return new BusinessException(f.Message).PopulateData(f.Data); },
+            [typeof(DataFault)]                             = f => { CheckFault<Fault>(f); return new DataException(f.Message).PopulateData(f.Data); },
+            [typeof(DirectoryNotFoundFault)]                = f => { CheckFault<Fault>(f); return new DirectoryNotFoundException(f.Message).PopulateData(f.Data); },
+            [typeof(FileNotFoundFault)]                     = f => { CheckFault<Fault>(f); return new FileNotFoundException(f.Message, ((FileNotFoundFault)f).FileName).PopulateData(f.Data); },
+            [typeof(FormatFault)]                           = f => { CheckFault<Fault>(f); return new FormatException(f.Message).PopulateData(f.Data); },
+            [typeof(InvalidOperationFault)]                 = f => { CheckFault<Fault>(f); return new InvalidOperationException(f.Message).PopulateData(f.Data); },
+            [typeof(IOFault)]                               = f => { CheckFault<Fault>(f); return new IOException(f.Message).PopulateData(f.Data); },
+            [typeof(NotImplementedFault)]                   = f => { CheckFault<Fault>(f); return new NotImplementedException(f.Message).PopulateData(f.Data); },
             [typeof(ObjectNotFoundFault)]                   = f =>
                                                             {
+                                                                CheckFault<ObjectNotFoundFault>(f);
+
                                                                 var x = new ObjectNotFoundException(((ObjectNotFoundFault)f).ObjectIdentifier,null,f.Message).PopulateData(f.Data);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
                                                                 return x;
                                                             },
             [typeof(ObjectIdentifierNotUniqueFault)]        = f =>
                                                             {
+                                                                CheckFault<Fault>(f);
+
                                                                 var x = new ObjectIdentifierNotUniqueException(((ObjectIdentifierNotUniqueFault)f).ObjectIdentifier,null,f.Message).PopulateData(f.Data);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
                                                                 return x;
                                                             },
-            [typeof(PathTooLongFault)]                      = f => new PathTooLongException(f.Message).PopulateData(f.Data),
-            [typeof(RepeatableOperationFault)]              = f => new RepeatableOperationException(f.Message).PopulateData(f.Data),
-            [typeof(SerializationFault)]                    = f => new SerializationException(f.Message).PopulateData(f.Data),
-            [typeof(UnauthorizedAccessFault)]               = f => new UnauthorizedAccessException(f.Message).PopulateData(f.Data),
-            [typeof(XmlFault)]                              = f => new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f.Data),
-            [typeof(AuthenticationFault)]                   = f => new AuthenticationException(f.Message).PopulateData(f.Data),
+            [typeof(PathTooLongFault)]                      = f => { CheckFault<Fault>(f); return new PathTooLongException(f.Message).PopulateData(f.Data); },
+            [typeof(RepeatableOperationFault)]              = f => { CheckFault<Fault>(f); return new RepeatableOperationException(f.Message).PopulateData(f.Data); },
+            [typeof(SerializationFault)]                    = f => { CheckFault<Fault>(f); return new SerializationException(f.Message).PopulateData(f.Data); },
+            [typeof(UnauthorizedAccessFault)]               = f => { CheckFault<Fault>(f); return new UnauthorizedAccessException(f.Message).PopulateData(f.Data); },
+            [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f.Data); },
+            [typeof(AuthenticationFault)]                   = f => { CheckFault<Fault>(f); return new AuthenticationException(f.Message).PopulateData(f.Data); },
         };
 
         /// <summary>

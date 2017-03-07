@@ -84,10 +84,8 @@ namespace vm.Aspects.Facilities
                     .RegisterInstanceIfNot<IClock>(registrations, new Clock())
                     .RegisterInstanceIfNot<IGuidGenerator>(registrations, new GuidGenerator())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
-                    .RegisterInstanceIfNot<Lazy<LogWriter>>(registrations, new Lazy<LogWriter>(
-                                                                                () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
-                    .RegisterInstanceIfNot<Lazy<ExceptionManager>>(registrations, new Lazy<ExceptionManager>(
-                                                                                        () => ExceptionPolicyProvider.CreateExceptionManager()))
+                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
+                    .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
                     .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
                     ;
             }
@@ -112,10 +110,8 @@ namespace vm.Aspects.Facilities
                     .RegisterInstanceIfNot<IClock>(registrations, new TestClock())
                     .RegisterInstanceIfNot<IGuidGenerator>(registrations, new TestGuidGenerator())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
-                    .RegisterInstanceIfNot<Lazy<LogWriter>>(registrations, new Lazy<LogWriter>(
-                                                                                () => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, true), true))
-                    .RegisterInstanceIfNot<Lazy<ExceptionManager>>(registrations, new Lazy<ExceptionManager>(
-                                                                                        () => ExceptionPolicyProvider.CreateExceptionManager(), true))
+                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, true)))
+                    .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
                     ;
             }
         }

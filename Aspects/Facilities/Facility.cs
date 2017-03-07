@@ -23,14 +23,14 @@ namespace vm.Aspects.Facilities
 
         static void InitializeFacilities()
         {
-            _clock            = new Lazy<IClock>(() => ServiceLocator.Current.GetInstance<IClock>(), true);
-            _guidGenerator    = new Lazy<IGuidGenerator>(() => ServiceLocator.Current.GetInstance<IGuidGenerator>(), true);
-            _validatorFactory = new Lazy<ValidatorFactory>(() => ServiceLocator.Current.GetInstance<ValidatorFactory>(), true);
-            _exceptionManager = new Lazy<ExceptionManager>(() => ServiceLocator.Current.GetInstance<Lazy<ExceptionManager>>().Value, true);
-            _logWriter        = new Lazy<LogWriter>(() => ServiceLocator.Current.GetInstance<Lazy<LogWriter>>().Value, true);
+            _clock            = ServiceLocator.Current.GetInstance<Lazy<IClock>>();
+            _guidGenerator    = ServiceLocator.Current.GetInstance<Lazy<IGuidGenerator>>();
+            _validatorFactory = ServiceLocator.Current.GetInstance<Lazy<ValidatorFactory>>();
+            _exceptionManager = ServiceLocator.Current.GetInstance<Lazy<ExceptionManager>>();
+            _logWriter        = ServiceLocator.Current.GetInstance<Lazy<LogWriter>>();
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification="InitializeFacilities is called from Reset too.")]
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "InitializeFacilities is called from Reset too.")]
         static Facility()
         {
             InitializeFacilities();

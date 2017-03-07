@@ -280,15 +280,14 @@ namespace vm.Aspects.Facilities
             }
             catch (ConfigurationErrorsException)
             {
-                // it and try the other
                 logWriter = containerOverConfigFile
                                 ? CreateLogWriterFromConfigFile(configFileName)
                                 : CreateLogWriterFromContainer(resolveName);
             }
 
-
             Logger.Reset();
             Logger.SetLogWriter(logWriter);
+
             return logWriter;
         }
     }

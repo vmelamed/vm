@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -109,15 +110,23 @@ namespace vm.Aspects.Wcf.Behaviors
             Contract.Requires<ArgumentException>((serviceContract == null || serviceType.GetInterface(serviceContract.Name) != null)  &&
                                                  (serviceContract != null || typeof(MarshalByRefObject).IsAssignableFrom(serviceType)), "If no service interface is specified, the service type must be derived from System.MarshalByRefObject.");
 
-            // the object must either implement the interface cached in serviceContract or
-            // must inherit from MarshalByRefObject. Otherwise we cannot get a transparent proxy!
-            if (serviceContract != null && serviceType.GetInterface(serviceContract.Name) == null  ||
-                serviceContract == null && !typeof(MarshalByRefObject).IsAssignableFrom(serviceType))
-                throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.", nameof(serviceType));
+            try
+            {
+                // the object must either implement the interface cached in serviceContract or
+                // must inherit from MarshalByRefObject. Otherwise we cannot get a transparent proxy!
+                if (serviceContract != null && serviceType.GetInterface(serviceContract.Name) == null  ||
+                    serviceContract == null && !typeof(MarshalByRefObject).IsAssignableFrom(serviceType))
+                    throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.", nameof(serviceType));
 
-            return serviceContract!=null
-                        ? DIContainer.Root.Resolve(serviceContract, serviceResolveName)
-                        : DIContainer.Root.Resolve(serviceType, serviceResolveName);
+                return serviceContract!=null
+                            ? DIContainer.Root.Resolve(serviceContract, serviceResolveName)
+                            : DIContainer.Root.Resolve(serviceType, serviceResolveName);
+            }
+            catch (Exception x)
+            {
+                Facility.LogWriter.ExceptionCritical(x);
+                throw;
+            }
         }
     }
 }
