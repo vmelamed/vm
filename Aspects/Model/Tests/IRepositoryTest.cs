@@ -268,7 +268,7 @@ namespace vm.Aspects.Model.Tests
 
             using (target = GetInitializedRepository())
             {
-                target.Attach(entity);
+                target.AttachEntity(entity);
                 target.CommitChanges();
 
                 var entity1 = target.GetByStoreId<TestEntity, long>(id);
@@ -346,7 +346,7 @@ namespace vm.Aspects.Model.Tests
                 {
                     targetType = target.GetType();
 
-                    target.Attach(entity, EntityState.Added);
+                    target.AttachEntity(entity, EntityState.Added);
                     target.CommitChanges();
 
                     Assert.IsTrue(false, "Expected some exception showing that attaching existing entity in Added state is not a valid operation.");
@@ -412,7 +412,7 @@ namespace vm.Aspects.Model.Tests
 
                 entity1.Id = id1;
 
-                target.Attach(entity1, EntityState.Added);
+                target.AttachEntity(entity1, EntityState.Added);
                 target.CommitChanges();
                 id1 = entity1.Id;
 
@@ -456,7 +456,7 @@ namespace vm.Aspects.Model.Tests
 
             using (target = GetInitializedRepository())
             {
-                target.Attach(entity, EntityState.Deleted);
+                target.AttachEntity(entity, EntityState.Deleted);
                 target.CommitChanges();
 
                 Assert.IsNull(target.GetByStoreId<TestEntity, long>(id));
@@ -509,7 +509,7 @@ namespace vm.Aspects.Model.Tests
 
                     entity1.Id = id1;
 
-                    target.Attach(entity1, EntityState.Deleted);
+                    target.AttachEntity(entity1, EntityState.Deleted);
                     target.CommitChanges();
 
                     Assert.IsNull(target.GetByStoreId<TestEntity, long>(id1));
@@ -546,7 +546,7 @@ namespace vm.Aspects.Model.Tests
                 target.Add(entity);
                 target.CommitChanges();
 
-                target.Detach(entity);
+                target.DetachEntity(entity);
 
                 entity.StringProperty = "testValue";
                 target.CommitChanges();
@@ -636,7 +636,7 @@ namespace vm.Aspects.Model.Tests
 
                 target.Add(entity);
                 Assert.IsNotNull(target.GetByStoreId<TestEntity, long>(id));
-                target.Delete(entity);
+                target.DeleteEntity(entity);
                 Assert.IsNull(target.GetByStoreId<TestEntity, long>(id));
 
                 target.CommitChanges();
@@ -685,7 +685,7 @@ namespace vm.Aspects.Model.Tests
                 Assert.AreEqual(name, entity.Name);
                 Assert.AreEqual("testValue", entity.StringProperty);
 
-                target.Delete(entity);
+                target.DeleteEntity(entity);
                 target.CommitChanges();
             }
 
@@ -722,7 +722,7 @@ namespace vm.Aspects.Model.Tests
             {
                 Assert.IsNull(target.GetByStoreId<TestEntity, long>(id));
 
-                target.Delete(entity);
+                target.DeleteEntity(entity);
 
                 Assert.IsNull(target.GetByStoreId<TestEntity, long>(id));
             }

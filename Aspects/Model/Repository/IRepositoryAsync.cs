@@ -138,13 +138,13 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             throw new NotImplementedException();
         }
 
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity,
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
@@ -152,8 +152,28 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Detach<T>(
+        public IRepository AttachValue<T>(
+            T value) where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRepository AttachValue<T>(
+            T value,
+            EntityState state,
+            params string[] modifiedProperties) where T : BaseDomainValue
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRepository DetachEntity<T>(
             T entity) where T : BaseDomainEntity
+        {
+            throw new NotImplementedException();
+        }
+
+        public IRepository DetachValue<T>(
+            T value) where T : BaseDomainValue
         {
             throw new NotImplementedException();
         }
@@ -174,7 +194,7 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Delete<T>(
+        public IRepository DeleteEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             throw new NotImplementedException();

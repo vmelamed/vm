@@ -189,7 +189,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>
         ///   <c>this</c>
         /// </returns>
-        public IRepository Attach<T>(T entity) where T : BaseDomainEntity
+        public IRepository AttachEntity<T>(T entity) where T : BaseDomainEntity
         {
             Set<T>().Attach(entity);
             return this;
@@ -207,7 +207,7 @@ namespace vm.Aspects.Model.EFRepository
         /// otherwise, only the modified properties will be updated in the store.
         /// </param>
         /// <returns><c>this</c></returns>
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity,
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
@@ -230,6 +230,54 @@ namespace vm.Aspects.Model.EFRepository
         }
 
         /// <summary>
+        /// Attaches the specified value to the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach.</param>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
+        public IRepository AttachValue<T>(T value) where T : BaseDomainValue
+        {
+            Set<T>().Attach(value);
+            return this;
+        }
+
+        /// <summary>
+        /// Attaches the specified value to the context of the repository and marks the entire value or the specified properties as modified.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach and mark as modified.</param>
+        /// <param name="state">The repository related state of the object.</param>
+        /// <param name="modifiedProperties">
+        /// The names of the properties that actually changed their values.
+        /// If the array is empty, the entire value will be marked as modified and updated in the store 
+        /// otherwise, only the modified properties will be updated in the store.
+        /// </param>
+        /// <returns><c>this</c></returns>
+        public IRepository AttachValue<T>(
+            T value,
+            EntityState state,
+            params string[] modifiedProperties) where T : BaseDomainValue
+        {
+            Set<T>().Add(value);
+
+            var entry = ChangeTracker.Entries<T>()
+                                     .FirstOrDefault(e => ReferenceEquals(e.Entity, value));
+
+            if (state == EntityState.Modified && modifiedProperties.Length > 0)
+            {
+                entry.State = EFEntityState.Unchanged;
+                foreach (var property in modifiedProperties)
+                    entry.Property(property).IsModified = true;
+            }
+            else
+                entry.State = EFSpecifics.ConvertState(state);
+
+            return this;
+        }
+
+        /// <summary>
         /// Detaches the specified entity to the context of the repository.
         /// </summary>
         /// <typeparam name="T">The type of the entity.</typeparam>
@@ -237,9 +285,23 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>
         ///   <c>this</c>
         /// </returns>
-        public IRepository Detach<T>(T entity) where T : BaseDomainEntity
+        public IRepository DetachEntity<T>(T entity) where T : BaseDomainEntity
         {
             ObjectContext.Detach(entity);
+            return this;
+        }
+
+        /// <summary>
+        /// Detaches the specified value to the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach.</param>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
+        public IRepository DetachValue<T>(T value) where T : BaseDomainValue
+        {
+            ObjectContext.Detach(value);
             return this;
         }
 
@@ -279,7 +341,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <remarks>
         /// Consider if <paramref name="entity" /> is <see langword="null"/> or not found in the repository, the method to silently succeed.
         /// </remarks>
-        public IRepository Delete<T>(
+        public IRepository DeleteEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             try

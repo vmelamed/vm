@@ -236,7 +236,7 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             var entityWith = entity as DomainEntity<long, string>;
@@ -278,7 +278,7 @@ namespace vm.Aspects.Model.InMemory
         /// otherwise, only the modified properties will be updated in the store.</param>
         /// <returns><c>this</c></returns>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#"), SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "It is cast only once.")]
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity,
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
@@ -334,14 +334,53 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
+        /// Attaches the specified value to the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach.</param>
+        /// <returns><c>this</c></returns>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        public IRepository AttachValue<T>(
+            T value) where T : BaseDomainValue => this;
+
+        /// <summary>
+        /// Attaches the specified value to the context of the repository and marks the entire entity or the specified properties as modified.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach and mark as modified.</param>
+        /// <param name="state">The repository related state of the object.</param>
+        /// <param name="modifiedProperties">The names of the properties that actually changed their values.
+        /// If the array is empty, the entire entity will be marked as modified and updated in the store
+        /// otherwise, only the modified properties will be updated in the store.</param>
+        /// <returns><c>this</c></returns>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#"), SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "It is cast only once.")]
+        public IRepository AttachValue<T>(
+            T value,
+            EntityState state,
+            params string[] modifiedProperties) where T : BaseDomainValue => this;
+
+        /// <summary>
         /// Detaches the specified entity from the context of the repository.
         /// </summary>
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to attach.</param>
         /// <returns><c>this</c></returns>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
-        public IRepository Detach<T>(
+        public IRepository DetachEntity<T>(
             T entity) where T : BaseDomainEntity
+        {
+            throw new NotImplementedException("The ListObjectsRepository does not implement the method Detach.");
+        }
+
+        /// <summary>
+        /// Detaches the specified value from the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The value to attach.</param>
+        /// <returns><c>this</c></returns>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
+        public IRepository DetachValue<T>(
+            T value) where T : BaseDomainValue
         {
             throw new NotImplementedException("The ListObjectsRepository does not implement the method Detach.");
         }
@@ -354,7 +393,7 @@ namespace vm.Aspects.Model.InMemory
         /// <returns><c>this</c></returns>
         /// <remarks>Consider if <paramref name="instance" /> is <see langword="null" /> or not found in the repository, the method to silently succeed.</remarks>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
-        public IRepository Delete<T>(
+        public IRepository DeleteEntity<T>(
             T instance) where T : BaseDomainEntity
         {
             var entityWith = instance as DomainEntity<long, string>;

@@ -87,16 +87,16 @@ namespace vm.Aspects.Model.Repository
         /// <summary>
         /// Attaches the specified instance to the context of the repository.
         /// </summary>
-        /// <typeparam name="T">The type of the instance.</typeparam>
-        /// <param name="entity">The instance to attach.</param>
+        /// <typeparam name="T">The type of the entity instance.</typeparam>
+        /// <param name="entity">The entity instance to attach.</param>
         /// <returns><c>this</c></returns>
-        IRepository Attach<T>(T entity) where T : BaseDomainEntity;
+        IRepository AttachEntity<T>(T entity) where T : BaseDomainEntity;
 
         /// <summary>
         /// Attaches the specified instance to the context of the repository and marks the entire instance or the specified properties as modified.
         /// </summary>
-        /// <typeparam name="T">The type of the instance.</typeparam>
-        /// <param name="entity">The instance to attach and mark as modified.</param>
+        /// <typeparam name="T">The type of the entity instance.</typeparam>
+        /// <param name="entity">The entity instance to attach and mark as modified.</param>
         /// <param name="state">The repository related state of the object.</param>
         /// <param name="modifiedProperties">
         /// The names of the properties that actually changed their values.
@@ -104,7 +104,29 @@ namespace vm.Aspects.Model.Repository
         /// otherwise, only the modified properties will be updated in the store.
         /// </param>
         /// <returns><c>this</c></returns>
-        IRepository Attach<T>(T entity, EntityState state, params string[] modifiedProperties) where T : BaseDomainEntity;
+        IRepository AttachEntity<T>(T entity, EntityState state, params string[] modifiedProperties) where T : BaseDomainEntity;
+
+        /// <summary>
+        /// Attaches the specified instance to the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value value instance.</typeparam>
+        /// <param name="value">The value instance to attach.</param>
+        /// <returns><c>this</c></returns>
+        IRepository AttachValue<T>(T value) where T : BaseDomainValue;
+
+        /// <summary>
+        /// Attaches the specified instance to the context of the repository and marks the entire instance or the specified properties as modified.
+        /// </summary>
+        /// <typeparam name="T">The type of the value instance.</typeparam>
+        /// <param name="value">The value instance to attach and mark as modified.</param>
+        /// <param name="state">The repository related state of the object.</param>
+        /// <param name="modifiedProperties">
+        /// The names of the properties that actually changed their values.
+        /// If the array is empty, the entire entity will be marked as modified and updated in the store 
+        /// otherwise, only the modified properties will be updated in the store.
+        /// </param>
+        /// <returns><c>this</c></returns>
+        IRepository AttachValue<T>(T value, EntityState state, params string[] modifiedProperties) where T : BaseDomainValue;
 
         /// <summary>
         /// Detaches the specified instance from the context of the repository.
@@ -112,7 +134,15 @@ namespace vm.Aspects.Model.Repository
         /// <typeparam name="T">The type of the instance.</typeparam>
         /// <param name="entity">The instance to attach.</param>
         /// <returns><c>this</c></returns>
-        IRepository Detach<T>(T entity) where T : BaseDomainEntity;
+        IRepository DetachEntity<T>(T entity) where T : BaseDomainEntity;
+
+        /// <summary>
+        /// Detaches the specified value instance from the context of the repository.
+        /// </summary>
+        /// <typeparam name="T">The type of the value instance.</typeparam>
+        /// <param name="entity">The instance to attach.</param>
+        /// <returns><c>this</c></returns>
+        IRepository DetachValue<T>(T entity) where T : BaseDomainValue;
 
         /// <summary>
         /// Gets an instance of type <typeparamref name="T"/> from the repository where the instance is referred to by repository ID.
@@ -145,7 +175,7 @@ namespace vm.Aspects.Model.Repository
         /// <remarks>
         /// Consider if <paramref name="entity"/> is <see langword="null"/> or not found in the repository, the method to silently succeed.
         /// </remarks>
-        IRepository Delete<T>(T entity) where T : BaseDomainEntity;
+        IRepository DeleteEntity<T>(T entity) where T : BaseDomainEntity;
 
         /// <summary>
         /// Deletes an instance from the repository.
@@ -295,7 +325,7 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
@@ -305,7 +335,7 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Attach<T>(
+        public IRepository AttachEntity<T>(
             T entity,
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
@@ -318,10 +348,39 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Detach<T>(
+        public IRepository AttachValue<T>(
+            T value) where T : BaseDomainValue
+        {
+            Contract.Requires<ArgumentNullException>(value != null, nameof(value));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository AttachValue<T>(
+            T value,
+            EntityState state,
+            params string[] modifiedProperties) where T : BaseDomainValue
+        {
+            Contract.Requires<ArgumentNullException>(value != null, nameof(value));
+            Contract.Requires<ArgumentNullException>(modifiedProperties != null, nameof(modifiedProperties));
+            Contract.Ensures(Contract.Result<IRepository>() != null);
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository DetachEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+
+            throw new NotImplementedException();
+        }
+
+        public IRepository DetachValue<T>(
+            T value) where T : BaseDomainValue
+        {
+            Contract.Requires<ArgumentNullException>(value != null, nameof(value));
 
             throw new NotImplementedException();
         }
@@ -342,7 +401,7 @@ namespace vm.Aspects.Model.Repository
             throw new NotImplementedException();
         }
 
-        public IRepository Delete<T>(
+        public IRepository DeleteEntity<T>(
             T entity) where T : BaseDomainEntity
         {
             Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));

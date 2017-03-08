@@ -34,7 +34,7 @@ namespace vm.Aspects.Model.Repository
             Contract.Requires<ArgumentNullException>(modifiedProperties != null, nameof(modifiedProperties));
             Contract.Ensures(Contract.Result<IRepository>() != null);
 
-            return repository.Attach<T>(
+            return repository.AttachEntity<T>(
                                     entity,
                                     state,
                                     modifiedProperties
