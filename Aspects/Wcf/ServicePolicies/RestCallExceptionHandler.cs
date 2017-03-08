@@ -118,24 +118,30 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Fault fault,
             string responseText)
         {
-            Exception ex;
+            Exception x = null;
 
             if (fault == null)
-                ex = new FaultException(
+                return new FaultException(
                             new FaultReason(
                                     new[]
                                     {
                                         new FaultReasonText("Unresolved ProtocolException."),
                                         new FaultReasonText(responseText),
                                     }));
-            else
-                ex = (FaultException)typeof(FaultException<>)
-                                    .MakeGenericType(fault.GetType())
-                                    .GetConstructor(new Type[] { fault.GetType() })
-                                    .Invoke(new object[] { fault })
-                                    ;
 
-            return ex;
+            var exceptionFactory = Fault.TryGetFaultToExceptionFactory(fault.GetType());
+
+            if (exceptionFactory != null)
+                x = exceptionFactory(fault);
+            else
+                x = (FaultException)typeof(FaultException<>)
+                                            .MakeGenericType(fault.GetType())
+                                            .GetConstructor(new Type[] { fault.GetType() })
+                                            .Invoke(new object[] { fault })
+                                            ;
+
+            x.Data["ResponseText"] = responseText;
+            return x;
         }
     }
 }

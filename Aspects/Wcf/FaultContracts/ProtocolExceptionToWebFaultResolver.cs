@@ -9,7 +9,6 @@ using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
-using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Clients;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -72,9 +71,11 @@ namespace vm.Aspects.Wcf.FaultContracts
 
             responseText = null;
 
+            Stream stream = null;
+
             try
             {
-                var stream = exception.Response?.GetResponseStream();
+                stream = exception.Response?.GetResponseStream();
 
                 if (stream == null)
                     return null;
@@ -92,28 +93,18 @@ namespace vm.Aspects.Wcf.FaultContracts
                         try
                         {
                             var s = new DataContractJsonSerializer(
-                                            type,
-                                            new DataContractJsonSerializerSettings
-                                            {
-                                                DateTimeFormat            = new DateTimeFormat("o", CultureInfo.InvariantCulture),
-                                                EmitTypeInformation       = EmitTypeInformation.Never,
-                                                UseSimpleDictionaryFormat = true,
-                                            });
+                                        type,
+                                        new DataContractJsonSerializerSettings
+                                        {
+                                            DateTimeFormat      = new DateTimeFormat("o", CultureInfo.InvariantCulture),
+                                            EmitTypeInformation = EmitTypeInformation.Never,
+                                        });
 
                             return s.ReadObject(stream) as Fault;
                         }
-                        catch (SerializationException x)
+                        catch (SerializationException)
                         {
-                            Facility.LogWriter.ExceptionWarning(x);
-                            return null;
-                        }
-                        catch (Exception x)
-                        {
-                            Facility.LogWriter.ExceptionError(x);
-                            throw;
-                        }
-                        finally
-                        {
+                            // not this one - try the next one
                             stream.Seek(0, SeekOrigin.Begin);
                         }
 
@@ -128,30 +119,23 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (faultType == null)
                     return null;
 
-                // TODO: remove!!!
-                Console.WriteLine(faultType.FullName);
-
                 var serializer = new DataContractJsonSerializer(
                                             faultType,
                                             new DataContractJsonSerializerSettings
                                             {
-                                                DateTimeFormat            = new DateTimeFormat("o", CultureInfo.InvariantCulture),
-                                                EmitTypeInformation       = EmitTypeInformation.Never,
-                                                UseSimpleDictionaryFormat = true,
+                                                DateTimeFormat      = new DateTimeFormat("o", CultureInfo.InvariantCulture),
+                                                EmitTypeInformation = EmitTypeInformation.Never,
                                             });
 
                 return serializer.ReadObject(stream) as Fault;
             }
-            catch (SerializationException x)
+            catch (SerializationException)
             {
-                // TODO: remove!!!
-                Console.WriteLine(x.DumpString());
                 return null;
             }
-            catch (Exception x)
+            finally
             {
-                Console.WriteLine(x.DumpString());
-                throw;
+                stream?.Seek(0, SeekOrigin.Begin);
             }
         }
     }
