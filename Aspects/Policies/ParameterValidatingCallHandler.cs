@@ -1,13 +1,13 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Reflection;
 
 namespace vm.Aspects.Policies
 {
@@ -95,20 +95,20 @@ namespace vm.Aspects.Policies
             using (var configurationSource = ConfigurationSourceFactory.Create())
                 switch (specificationSource)
                 {
-                case SpecificationSource.Both:
-                    return new CompositeValidatorFactory(
-                                    new AttributeValidatorFactory(),
-                                    new ConfigurationValidatorFactory(configurationSource));
+                    case SpecificationSource.Both:
+                        return new CompositeValidatorFactory(
+                                        new AttributeValidatorFactory(),
+                                        new ConfigurationValidatorFactory(configurationSource));
 
-                case SpecificationSource.Attributes:
-                    return new AttributeValidatorFactory();
+                    case SpecificationSource.Attributes:
+                        return new AttributeValidatorFactory();
 
-                case SpecificationSource.Configuration:
-                    return new ConfigurationValidatorFactory(configurationSource);
+                    case SpecificationSource.Configuration:
+                        return new ConfigurationValidatorFactory(configurationSource);
 
-                case SpecificationSource.ParameterAttributesOnly:
-                default:
-                    throw new InvalidOperationException("Invalid specification source.");
+                    case SpecificationSource.ParameterAttributesOnly:
+                    default:
+                        throw new InvalidOperationException("Invalid specification source.");
                 }
         }
 
@@ -270,7 +270,9 @@ namespace vm.Aspects.Policies
                 type == typeof(DBNull);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         [ContractInvariantMethod]
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         void Invariant()
         {
             Contract.Invariant(_validatorFactory != null);

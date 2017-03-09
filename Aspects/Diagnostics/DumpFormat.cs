@@ -144,6 +144,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         public static string Value { get; set; }
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [ContractInvariantMethod]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         static void ObjectInvariant()

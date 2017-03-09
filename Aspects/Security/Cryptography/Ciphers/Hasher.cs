@@ -494,6 +494,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         [ContractInvariantMethod]
         void Invariant()
         {

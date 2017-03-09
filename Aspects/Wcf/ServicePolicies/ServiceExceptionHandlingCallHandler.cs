@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
@@ -7,7 +9,6 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Threading;
 using vm.Aspects.Wcf.FaultContracts;
@@ -47,6 +48,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
         static IMethodReturn HandleException(
             IMethodInvocation input,
             Exception exception)
@@ -70,6 +72,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                             .Invoke(new object[] { fault, fault.HttpStatusCode }));
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         static bool IsFaultSupported(
             IMethodInvocation input,
             Type faultType)

@@ -177,6 +177,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         public override string ToString() => _writer.ToString();
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         [ContractInvariantMethod]
         void Invariant()
         {

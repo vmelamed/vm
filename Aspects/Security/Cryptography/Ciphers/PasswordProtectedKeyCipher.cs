@@ -422,6 +422,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             base.Dispose(disposing);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         [ContractInvariantMethod]
         void Invariant()
         {

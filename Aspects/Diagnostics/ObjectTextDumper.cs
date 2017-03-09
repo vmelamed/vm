@@ -1077,6 +1077,8 @@ namespace vm.Aspects.Diagnostics
         }
         #endregion
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         [ContractInvariantMethod]
         void Invariant()
         {

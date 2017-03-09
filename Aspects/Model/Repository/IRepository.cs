@@ -140,9 +140,9 @@ namespace vm.Aspects.Model.Repository
         /// Detaches the specified value instance from the context of the repository.
         /// </summary>
         /// <typeparam name="T">The type of the value instance.</typeparam>
-        /// <param name="entity">The instance to attach.</param>
+        /// <param name="value">The instance to attach.</param>
         /// <returns><c>this</c></returns>
-        IRepository DetachValue<T>(T entity) where T : BaseDomainValue;
+        IRepository DetachValue<T>(T value) where T : BaseDomainValue;
 
         /// <summary>
         /// Gets an instance of type <typeparamref name="T"/> from the repository where the instance is referred to by repository ID.
