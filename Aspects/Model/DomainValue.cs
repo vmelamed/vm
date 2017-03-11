@@ -28,6 +28,7 @@ namespace vm.Aspects.Model
         /// Gets or sets the store identifier.
         /// The property is applied the attributes <see cref="KeyAttribute"/> and <see cref="ColumnAttribute"/> with parameter <c>Order = 0</c>.
         /// </summary>
+        [CacheKey(IsPrimary = true)]
         public virtual TId Id
         {
             get { return _id; }

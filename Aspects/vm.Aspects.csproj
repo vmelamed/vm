@@ -313,6 +313,7 @@
     <Compile Include="IDisposed.cs" />
     <Compile Include="IListExtensions.cs" />
     <Compile Include="LambdaExpressionExtensions.cs" />
+    <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Policies\CallTraceCallHandler.cs" />
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
     <Compile Include="Policies\ParameterValidatingCallHandler.cs" />
@@ -379,7 +380,6 @@
     </None>
     <None Include="ObjectDumper.nuspec" />
     <None Include="packages.config" />
-    <None Include="PublishObjectDumper.cmd" />
     <None Include="vm.Aspects.Messages.reg" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
@@ -11,9 +14,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Validation;
 
@@ -207,11 +207,15 @@ namespace vm.Aspects.Model.EFRepository
         public override int SaveChanges()
         {
             PreprocessEntries();
-            return base.SaveChanges();
+
+            var changes = base.SaveChanges();
+
+            PostprocessEntries();
+            return changes;
         }
 
         /// <summary>
-        /// save changes as an asynchronous operation.
+        /// Save All changes as an asynchronous operation.
         /// </summary>
         /// <returns>A task that represents the asynchronous save operation.
         /// The task result contains the number of state entries written to the underlying database. This can include
@@ -220,18 +224,34 @@ namespace vm.Aspects.Model.EFRepository
         /// included in the entity class (often referred to as independent associations).</returns>
         /// <remarks>Multiple active operations on the same context instance are not supported.  Use 'await' to ensure
         /// that any asynchronous operations have completed before calling another method on this context.</remarks>
-        public override Task<int> SaveChangesAsync()
+        public override async Task<int> SaveChangesAsync()
         {
             PreprocessEntries();
-            return base.SaveChangesAsync();
+
+            var changes = await base.SaveChangesAsync();
+
+            await PostprocessEntriesAsync();
+            return changes;
         }
 
         /// <summary>
-        /// Pre-processes the entries that are to be committed. E.g: adds audit data, logs, etc.
+        /// Pre-processes the entries that are to be committed. E.g: lists all changes for post-processing.
         /// </summary>
         protected virtual void PreprocessEntries()
         {
         }
+
+        /// <summary>
+        /// Post-processes the entries that were committed. E.g: refreshes object cache, adds audit data, logs, etc..
+        /// </summary>
+        protected virtual void PostprocessEntries()
+        {
+        }
+
+        /// <summary>
+        /// Asynchronously post-processes the entries that were committed. E.g: refreshes object cache, adds audit data, logs, etc..
+        /// </summary>
+        protected virtual Task PostprocessEntriesAsync() => Task.FromResult(true);
 
         /// <summary>
         /// Extension point allowing the user to customize validation of an entity or filter out validation results.

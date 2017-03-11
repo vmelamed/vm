@@ -244,6 +244,8 @@
     </Compile>
     <Compile Include="BaseDomainEntity.cs" />
     <Compile Include="BaseDomainValue.cs" />
+    <Compile Include="CachedAttribute.cs" />
+    <Compile Include="CacheKeyAttribute.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainEntity.Metadata.cs">
       <DependentUpon>DomainEntity.cs</DependentUpon>
