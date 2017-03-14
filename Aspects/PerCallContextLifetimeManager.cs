@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using System;
 using System.Runtime.Remoting.Messaging;
+using System.Security.Permissions;
 
 namespace vm.Aspects
 {
@@ -8,6 +9,7 @@ namespace vm.Aspects
     /// Class PerCallContextLifetimeManager. Used for objects which lifetime should end with the end of the current 
     /// .NET remoting or WCF call context. The objects are stored in the current <see cref="T:System.Runtime.Remoting.Messaging.CallContext"/>.
     /// </summary>
+    [PermissionSet(SecurityAction.LinkDemand)]
     public class PerCallContextLifetimeManager : LifetimeManager
     {
         /// <summary>

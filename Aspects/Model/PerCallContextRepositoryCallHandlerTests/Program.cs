@@ -27,8 +27,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             container
                 .Register(Facility.Registrar)
                 .Register(Repository.Registrar)
-                .RegisterTypeIfNot<IService, Service>()
-                .RegisterTypeIfNot<IServiceTasks, Service>()
+                .RegisterTypeIfNot<IService, Service>(
+                        new Interceptor<InterfaceInterceptor>(),
+                        new InterceptionBehavior<PolicyInjectionBehavior>())
+                .RegisterTypeIfNot<IServiceTasks, Service>(
+                        new Interceptor<InterfaceInterceptor>(),
+                        new InterceptionBehavior<PolicyInjectionBehavior>())
                 ;
 
             var interception = container
