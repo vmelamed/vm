@@ -349,12 +349,8 @@ namespace vm.Aspects.Model.EFRepository
                 return;
 
             if (disposing)
-            {
-                var disposable = StoreIdProvider as IDisposable;
+                StoreIdProvider?.Dispose();
 
-                if (disposable != null)
-                    disposable.Dispose();
-            }
             base.Dispose(disposing);
         }
         #endregion

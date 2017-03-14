@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Transactions;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 
@@ -20,7 +19,85 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         IStoreUniqueId<int>,
         IStoreUniqueId<Guid>
     {
-        #region IStoreIdProvider Members
+        #region Constants:
+        /// <summary>
+        /// The default resolve name of the repository supplying the ID-s. Must have transient lifetime.
+        /// </summary>
+        /// <remarks>
+        /// Note that the code in <see cref="M:GetNew"/> requires that the repository instance must have transient lifetime.
+        /// </remarks>
+        public const string HiLoGeneratorsRepositoryResolveName = "HiLoRepository";
+
+        /// <summary>
+        /// The default entity set name - "_".
+        /// </summary>
+        public const string DefaultEntitySetName = "_";
+
+        /// <summary>
+        /// The default transaction scope option: RequiresNew
+        /// </summary>
+        public const TransactionScopeOption DefaultTransactionScopeOption = TransactionScopeOption.RequiresNew;
+
+        /// <summary>
+        /// The default transaction timeout in number of seconds: 60sec / 30min in DEBUG mode
+        /// </summary>
+        public const int DefaultTransactionTimeoutSeconds
+#if DEBUG
+                    		= 30 * 60;
+#else
+                            = 60;
+#endif
+
+        /// <summary>
+        /// The default transaction timeout. 
+        /// </summary>
+        static readonly TimeSpan DefaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
+
+        /// <summary>
+        /// Specifies the default isolation level of the transactions: Serializable
+        /// </summary>
+        public const IsolationLevel DefaultIsolationLevel = IsolationLevel.Serializable;
+        #endregion
+
+        #region The HiLoGenerator objects and the related properties:
+        /// <summary>
+        /// Synchronizes the access to the generators dictionary.
+        /// </summary>
+        readonly object _sync = new object();
+        /// <summary>
+        /// The per entity set generator objects.
+        /// </summary>
+        readonly IDictionary<string, HiLoIdentityGenerator> _generators = new Dictionary<string, HiLoIdentityGenerator>();
+        /// <summary>
+        /// The generators repository factory
+        /// </summary>
+        readonly Func<IRepository> _generatorsRepositoryFactory;
+        /// <summary>
+        /// If set to <see langword="true" /> getting an ID will be done from within a new transaction scope.
+        /// Especially needed when the owning repository is enlisted in external transaction: we do not want
+        /// the outcomes of the two transactions to interfere each other.
+        /// </summary>
+        readonly bool _useTransactionScope;
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HiLoStoreIdProvider" /> class.
+        /// </summary>
+        /// <param name="generatorsRepositoryFactory">The generators repository factory.</param>
+        /// <param name="useTransactionScope">If set to <see langword="true" /> getting an ID will be done from within a new transaction scope.</param>
+        public HiLoStoreIdProvider(
+
+            [Dependency(HiLoGeneratorsRepositoryResolveName)]
+            Func<IRepository> generatorsRepositoryFactory,
+
+            bool useTransactionScope)
+        {
+            _generatorsRepositoryFactory = generatorsRepositoryFactory ??
+                                                (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName));
+            _useTransactionScope = useTransactionScope;
+        }
+
+        #region IStoreIdProvider
         /// <summary>
         /// Gets a provider which generates ID sequence of type <typeparamref name="TId" />.
         /// </summary>
@@ -41,12 +118,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         }
         #endregion
 
+        #region IStoreUniqueId<long>
         long IStoreUniqueId<long>.GetNewId<T>(
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
-
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -59,9 +134,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
-
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -69,13 +141,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
             return DoGetNew(objectsType, efRepository);
         }
+        #endregion
 
+        #region IStoreUniqueId<int>
         int IStoreUniqueId<int>.GetNewId<T>(
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
-
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -94,9 +165,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
-
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -110,12 +178,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
             return unchecked((int)id);
         }
+        #endregion
 
+        #region IStoreUniqueId<Guid>
         Guid IStoreUniqueId<Guid>.GetNewId<T>(
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
             if (!(repository is EFRepositoryBase))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
@@ -126,130 +194,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
             if (!(repository is EFRepositoryBase))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return Facility.GuidGenerator.NewGuid();
         }
-
-        /// <summary>
-        /// The default resolve name of the repository supplying the ID-s. Must have transient lifetime.
-        /// </summary>
-        /// <remarks>
-        /// Note that the code in <see cref="M:GetNew"/> requires that the repository instance must have transient lifetime.
-        /// </remarks>
-        public const string HiLoGeneratorsRepositoryResolveName = "HiLoRepository";
-
-        /// <summary>
-        /// The default entity set name - "_".
-        /// </summary>
-        public const string DefaultEntitySetName = "_";
-
-        readonly Func<IRepository> _generatorsRepositoryFactory;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HiLoStoreIdProvider"/> class.
-        /// </summary>
-        /// <param name="generatorsRepositoryFactory">
-        /// The generators' repository factory method. If the factory is <see langword="null"/> 
-        /// the constructor will try to resolve it from the service locator with resolve name <see cref="F:HiLoGeneratorsRepositoryResolveName"/>
-        /// </param>
-        public HiLoStoreIdProvider(
-            [Dependency(HiLoGeneratorsRepositoryResolveName)]
-            Func<IRepository> generatorsRepositoryFactory)
-        {
-            _generatorsRepositoryFactory = generatorsRepositoryFactory ??
-                                                (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName));
-        }
-
-        #region Transaction scope defaults:
-        /// <summary>
-        /// The default transaction scope option: RequiresNew
-        /// </summary>
-        public const TransactionScopeOption DefaultTransactionScopeOption = TransactionScopeOption.RequiresNew;
-
-        /// <summary>
-        /// The default transaction timeout in number of seconds: 60sec / 30min in DEBUG mode
-        /// </summary>
-        public const int DefaultTransactionTimeoutSeconds
-#if DEBUG
-                    		= 30 * 60;
-#else
-                            = 60;
-#endif
-        /// <summary>
-        /// The default transaction timeout. 
-        /// </summary>
-        static readonly TimeSpan DefaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
-
-        /// <summary>
-        /// Specifies the default isolation level of the transactions: Serializable
-        /// </summary>
-        public const IsolationLevel DefaultIsolationLevel = IsolationLevel.Serializable;
         #endregion
-
-        #region The HiLoGenerator objects and the related properties:
-        /// <summary>
-        /// The per entity set generator objects.
-        /// </summary>
-        readonly IDictionary<string, HiLoIdentityGenerator> _generators = new Dictionary<string, HiLoIdentityGenerator>();
-        /// <summary>
-        /// Synchronizes the access to the generators.
-        /// </summary>
-        readonly object _sync = new object();
-        #endregion
-
-        HiLoIdentityGenerator CreateOrGetFreshGenerator(
-            string entitySetName)
-        {
-            Contract.Requires<ArgumentException>(entitySetName != null  &&  entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
-
-            HiLoIdentityGenerator generator;
-
-            // Start a new, independent serializable transaction and use a repository with a *transient* lifetime manager.
-            // We don't want a failed external transaction to invalidate our in-memory generators.
-            using (var transactionScope = new TransactionScope(
-                                                DefaultTransactionScopeOption,
-                                                new TransactionOptions
-                                                {
-                                                    IsolationLevel = DefaultIsolationLevel,
-                                                    Timeout        = DefaultTransactionTimeout,
-                                                }))
-            {
-                using (var localRepository = _generatorsRepositoryFactory())
-                {
-                    if (localRepository == null)
-                        throw new ConfigurationErrorsException("Could not resolve a repository for the Hi-Lo generators with resolve name " + HiLoGeneratorsRepositoryResolveName);
-
-                    // get a fresh generator object from the DB
-                    generator = localRepository
-                                    .Entities<HiLoIdentityGenerator>()
-                                    .FirstOrDefault(g => g.EntitySetName == entitySetName)
-                                    ;
-
-                    if (generator == null)
-                    {
-                        // create a new generator
-                        generator = new HiLoIdentityGenerator(entitySetName);
-                        localRepository.Add(generator);
-                    }
-
-                    generator.IncrementHighValue();
-                    localRepository.CommitChanges();
-                }
-
-                // the newly loaded generator owns the range from (HighValue-1)*MaxLowValue to HighValue*(MaxLowValue-1).
-                transactionScope.Complete();
-            }
-
-            // replace the old generator in the hash table with the fresh one
-            _generators[entitySetName] = generator;
-            return generator;
-        }
 
         long DoGetNew<T>(EFRepositoryBase efRepository)
         {
@@ -268,7 +218,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
                 if (id == -1L)
                 {
-                    generator = CreateOrGetFreshGenerator(entitySetName);
+                    generator = GetOrCreateFreshGenerator(entitySetName);
                     id = generator.GetId();
                 }
             }
@@ -295,12 +245,72 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
                 if (id == -1L)
                 {
-                    generator = CreateOrGetFreshGenerator(entitySetName);
+                    generator = GetOrCreateFreshGenerator(entitySetName);
                     id = generator.GetId();
                 }
             }
 
             return id;
+        }
+
+        HiLoIdentityGenerator GetOrCreateFreshGenerator(
+            string entitySetName)
+        {
+            Contract.Requires<ArgumentNullException>(entitySetName != null, nameof(entitySetName));
+            Contract.Requires<ArgumentException>(entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
+
+            HiLoIdentityGenerator generator;
+
+            // Start a new, independent serializable transaction and use a repository with a *transient* lifetime manager.
+            // We don't want a failed external transaction to invalidate our in-memory generators.
+            TransactionScope transactionScope = null;
+
+            // open transaction scope if requested
+            if (_useTransactionScope)
+                transactionScope = new TransactionScope(
+                                                DefaultTransactionScopeOption,
+                                                new TransactionOptions
+                                                {
+                                                    IsolationLevel = DefaultIsolationLevel,
+                                                    Timeout        = DefaultTransactionTimeout,
+                                                });
+
+            try
+            {
+                using (var repository = _generatorsRepositoryFactory())
+                {
+
+                    // get a fresh generator object from the DB
+                    generator = repository
+                                    .Entities<HiLoIdentityGenerator>()
+                                    .FirstOrDefault(g => g.EntitySetName == entitySetName)
+                                    ;
+
+                    if (generator == null)
+                    {
+                        // create a new generator
+                        generator = new HiLoIdentityGenerator(entitySetName);
+                        repository.Add(generator);
+                    }
+
+                    generator.IncrementHighValue();
+
+                    repository.CommitChanges();
+                    transactionScope?.Complete();
+                }
+
+                // now the newly loaded generator owns the range from (HighValue-1)*MaxLowValue to HighValue*(MaxLowValue-1).
+                // replace the old generator in the hash table with the fresh one
+                _generators[entitySetName] = generator;
+                return generator;
+            }
+            finally
+            {
+                if (_useTransactionScope)
+                    transactionScope.Dispose();
+            }
         }
     }
 }

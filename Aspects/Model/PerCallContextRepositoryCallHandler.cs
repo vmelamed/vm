@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -6,11 +8,8 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Transactions;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
-using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model
 {
@@ -18,9 +17,10 @@ namespace vm.Aspects.Model
     /// The class PerCallContextRepositoryCallHandler is meant to be used as a policy (AOP aspect) in the call context of a WCF call.
     /// It is assumed that the repository is resolved from the DI container and has <see cref="PerCallContextLifetimeManager"/>, i.e. all
     /// resolutions for <see cref="IRepository"/> with the same resolve name in the same WCF call context will return one and the same repository object.
-    /// This handler implements two post-call actions: if there are no exceptions, it commits the unit of work, otherwise rolls back the current transaction
-    /// and then removes the repository's lifetime manager from the container. In other words the application developer does not need to worry about 
-    /// saving changes in the repository, committing and rolling-back transactions, error handling, repository disposal, etc.
+    /// This handler implements two post-call actions: if there are no exceptions, it calls <see cref="IRepository.CommitChanges"/> to commit the unit 
+    /// of work, otherwise rolls back the current transaction and then removes the repository's lifetime manager from the container. In other words,
+    /// the application developer does not need to worry about saving changes in the repository, committing and rolling-back transactions, 
+    /// error handling, repository disposal, etc.
     /// </summary>
     public class PerCallContextRepositoryCallHandler : ICallHandler
     {
@@ -30,11 +30,34 @@ namespace vm.Aspects.Model
         public string RepositoryResolveName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to create transaction scope for task asynchronous method.
+        /// Gets or sets a value indicating whether to create explicitly transaction scope.
+        /// The use of this property must be very well justified.
         /// </summary>
-        public bool CreateTransactionScopeForTasks { get; set; } = true;
+        public bool CreateTransactionScope { get; set; }
+
+        /// <summary>
+        /// Gets or sets the explicitly created transaction scope.
+        /// </summary>
+        TransactionScope TransactionScope { get; set; }
+        /// <summary>
+        /// Gets or sets the repository registration.
+        /// </summary>
+        ContainerRegistration RepositoryRegistration { get; set; }
+        /// <summary>
+        /// Gets or sets the synchronous repository.
+        /// </summary>
+        IRepository Repository { get; set; }
+        /// <summary>
+        /// Gets or sets the asynchronous repository.
+        /// </summary>
+        IRepositoryAsync AsyncRepository { get; set; }
 
         #region ICallHandler Members
+        /// <summary>
+        /// Order in which the handler will be executed
+        /// </summary>
+        /// <value>The order.</value>
+        public int Order { get; set; }
 
         /// <summary>
         /// After the call the handler searches in the registrations for instantiated IRepository object with <see cref="T:PerCallContextLifetimeManager"/>; 
@@ -64,13 +87,6 @@ namespace vm.Aspects.Model
 
             return PostInvoke(input, result);
         }
-
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        /// <value>The order.</value>
-        public int Order { get; set; }
-
         #endregion
 
         /// <summary>
@@ -79,22 +95,55 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="input">The input.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The scope will be disposed in PostInvoke.")]
-        protected virtual void PreInvoke(IMethodInvocation input)
+        protected virtual void PreInvoke(
+            IMethodInvocation input)
         {
-            if (!CreateTransactionScopeForTasks)
-                return;
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
 
-            if (Transaction.Current != null)
+            // find the repository registration
+            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
+
+            lock (DIContainer.Root)
+                registrations = DIContainer.Root.GetRegistrationsSnapshot();
+
+            // get the repository registration
+            ContainerRegistration registration = null;
+
+            if (registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration)  ||
+                registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration))
+                RepositoryRegistration = registration;
+
+            // set the repository properties
+            var value = RepositoryRegistration.LifetimeManager.GetValue();
+
+            Contract.Assume(value != null);
+
+            Repository = value as IRepository;
+            if (Repository == null)
             {
-                Debug.WriteLine(
-                    "WARNING: Did not create transaction scope. The method {0} is called from within an existing transaction {1}/{2}. Is this intended!",
-                    input.MethodBase.Name,
-                    Transaction.Current.TransactionInformation.LocalIdentifier,
-                    Transaction.Current.TransactionInformation.DistributedIdentifier);
-                return;
+                AsyncRepository = value as IRepositoryAsync;
+                if (AsyncRepository != null)
+                    Repository = AsyncRepository as IRepository;
             }
 
-            SetTransactionScope(input, new TransactionScope(TransactionScopeAsyncFlowOption.Enabled));
+            Contract.Assume(Repository != null  ||  AsyncRepository != null);
+
+            // open the transaction scope if necessary
+            if (CreateTransactionScope)
+            {
+                if (Transaction.Current != null)
+                {
+                    Debug.WriteLine(
+                        "WARNING: Did not create transaction scope. The method {0} is called in the context of an existing transaction {1}/{2}. Is this intended!",
+                        input.MethodBase.Name,
+                        Transaction.Current.TransactionInformation.LocalIdentifier,
+                        Transaction.Current.TransactionInformation.DistributedIdentifier);
+                    return;
+                }
+
+                TransactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                Repository.EnlistInAmbientTransaction();
+            }
         }
 
         /// <summary>
@@ -128,8 +177,10 @@ namespace vm.Aspects.Model
             IMethodInvocation input,
             IMethodReturn result)
         {
-            if (!CreateTransactionScopeForTasks)
-                return result;
+            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (((MethodInfo)input.MethodBase).ReturnType.Is<Task>())
                 return PostInvokeAsync(input, result);
@@ -146,36 +197,21 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            var scope        = GetTransactionScope(input);
-            var registration = GetRepositoryRegistration();
-
             try
             {
-                if (result.Exception != null)
-                    return result;
+                if (result.Exception == null)
+                    CommitChanges();
 
-                var repository = registration?.LifetimeManager?.GetValue() as IRepository;
-
-                if (repository != null)
-                    CommitChanges(registration, scope);
+                return result;
             }
             catch (Exception x)
             {
-                Exception ex = x.IsTransient()  ||  x.IsOptimisticConcurrency()
-                                    ? ex = new RepeatableOperationException(x)  // wrap and rethrow
-                                    : x;
-
-                ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
-                result = input.CreateExceptionMethodReturn(ex);
+                return ProcessException(input, x);
             }
             finally
             {
-                registration?.LifetimeManager?.RemoveValue();
-                scope?.Dispose();
-                SetTransactionScope(input, null);
+                CleanUp();
             }
-
-            return result;
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
@@ -187,23 +223,12 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(result != null, nameof(result));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            var scope        = GetTransactionScope(input);
-            var registration = GetRepositoryRegistration();
-            var repository   = registration?.LifetimeManager?.GetValue() as IRepository;
-
             try
             {
                 if (result.Exception != null)
                     return result;
 
-                if (repository == null)
-                {
-                    SetTransactionScope(input, null);
-                    return result;
-                }
-
                 // at this point we have a repository, we have a transaction scope, and we do not have exceptions.
-
                 var returnedTask = result.ReturnValue as Task;
                 var returnedTaskResultType = returnedTask.GetType().IsGenericType
                                                     ? returnedTask.GetType().GetGenericArguments()[0]
@@ -211,143 +236,84 @@ namespace vm.Aspects.Model
                 var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultType);
 
                 return input.CreateMethodReturn(
-                                gmi.Invoke(null, new object[] { returnedTask, input, registration, scope }));
+                                    gmi.Invoke(this, new object[] { returnedTask, input }));
             }
             catch (Exception x)
             {
-                return input.CreateExceptionMethodReturn(x);
+                return ProcessException(input, x);
+            }
+            finally
+            {
+                CleanUp();
             }
         }
 
         static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
-                                                                .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Static);
+                                                                .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
 
-        static async Task<T> DoInvokeAsyncGeneric<T>(
+        async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
-            IMethodInvocation input,
-            ContainerRegistration registration,
-            TransactionScope scope)
+            IMethodInvocation input)
         {
             Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
             Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
-            Contract.Requires<ArgumentNullException>(scope        != null, nameof(scope));
+
             Contract.Ensures(Contract.Result<Task<T>>() != null);
 
-            // find the repository and commit the changes
-            try
-            {
-                // await the actions in the handlers in the handlers pipeline after this to finish their tasks
-                var result = await returnedTask;
+            // await the actions in the handlers in the pipeline after this to finish their tasks
+            var result = await returnedTask;
 
-                if (await CommitChangesAsync(registration, scope) == null)
-                    CommitChanges(registration, scope);
-
-                return result;
-            }
-            catch (Exception x)
-            {
-                Exception ex = x;
-
-                // flatten the aggregate exceptions if we can
-                var aggregateException = ex as AggregateException;
-
-                if (aggregateException != null  &&  aggregateException.InnerExceptions.Count == 1)
-                    ex = aggregateException.InnerExceptions[0];
-
-                if (ex.IsTransient())
-                    ex = new RepeatableOperationException(ex);
-
-                ex.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
-                throw ex;
-            }
-            finally
-            {
-                registration?.LifetimeManager?.RemoveValue();
-                scope.Dispose();
-                SetTransactionScope(input, null);
-            }
+            await CommitChangesAsync();
+            return result;
         }
 
-        static IRepository CommitChanges(
-            ContainerRegistration registration,
-            TransactionScope scope)
+        void CommitChanges()
         {
-            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
-
-            var value      = registration.LifetimeManager.GetValue();
-            var repository = value as IRepository;
-
-            if (repository != null  &&
-                !(repository?.IsDisposed).GetValueOrDefault())
-            {
-                repository.CommitChanges();
-                scope.Complete();
-            }
-
-            return repository;
+            Repository.CommitChanges();
+            TransactionScope?.Complete();
         }
 
-        static async Task<IRepositoryAsync> CommitChangesAsync(
-            ContainerRegistration registration,
-            TransactionScope scope)
+        async Task CommitChangesAsync()
         {
-            Contract.Requires<ArgumentNullException>(registration != null, nameof(registration));
-
-            var value      = registration.LifetimeManager.GetValue();
-            var repository = value as IRepositoryAsync;
-
-            if (repository != null  &&
-                !(repository?.IsDisposed).GetValueOrDefault())
-            {
-                await repository.CommitChangesAsync();
-                scope.Complete();
-            }
-
-            return repository;
-        }
-
-        ContainerRegistration GetRepositoryRegistration()
-        {
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations;
-
-            lock (DIContainer.Root)
-                registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-            // the repository registration
-            ContainerRegistration registration = null;
-
-            if (!(registrations.TryGetValue(new RegistrationLookup(typeof(IRepositoryAsync), RepositoryResolveName), out registration) ||
-                  registrations.TryGetValue(new RegistrationLookup(typeof(IRepository), RepositoryResolveName), out registration)))
-                return null;
-
-            return registration;
-        }
-
-        const string TransactionScopeKey = "transactionScope";
-
-        static TransactionScope GetTransactionScope(
-            IMethodInvocation input)
-        {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-
-            object obj;
-
-            input.InvocationContext.TryGetValue(TransactionScopeKey, out obj);
-
-            return obj as TransactionScope;
-        }
-
-        static void SetTransactionScope(
-            IMethodInvocation input,
-            TransactionScope scope)
-        {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-
-            if (scope != null)
-                input.InvocationContext.Add(TransactionScopeKey, scope);
+            if (AsyncRepository != null)
+                await AsyncRepository.CommitChangesAsync();
             else
-                input.InvocationContext.Remove(TransactionScopeKey);
+                Repository.CommitChanges();
+
+            TransactionScope?.Complete();
+        }
+
+        void CleanUp()
+        {
+            // dispose the repository
+            RepositoryRegistration?.LifetimeManager?.RemoveValue();
+
+            // dispose the transaction scope
+            TransactionScope?.Dispose();
+        }
+
+        IMethodReturn ProcessException(
+            IMethodInvocation input,
+            Exception exception)
+        {
+            Contract.Requires<ArgumentNullException>(input     != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+
+            var aggregateException = exception as AggregateException;
+
+            if (aggregateException != null  &&  aggregateException.InnerExceptions.Count == 1)
+                exception = aggregateException.InnerExceptions[0];
+
+            exception = exception.IsTransient()  ||  exception.IsOptimisticConcurrency()
+                            ? exception = new RepeatableOperationException(exception)  // wrap and rethrow
+                            : exception;
+
+            // add more info to the exception
+            exception.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
+
+            return input.CreateExceptionMethodReturn(exception);
         }
     }
 }
