@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Wcf.Behaviors;
@@ -15,47 +17,52 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     [ServiceBehavior(
         InstanceContextMode = InstanceContextMode.PerCall,
         ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public partial class Service : IService
+    public class ServiceTasks : IServiceTasks
     {
         static Random _random = new Random(DateTime.UtcNow.Millisecond);
-        IRepository _repository;
+        IRepositoryAsync _repository;
 
-        public Service(
-            IRepository repository)
+        public ServiceTasks(
+            IRepositoryAsync repository)
         {
             _repository = repository;
         }
 
-        #region IService
-        public void AddNewEntity()
-            => _repository
+        #region IServiceTasks
+        public async Task AddNewEntityAsync()
+        {
+            Debug.WriteLine($"Method {nameof(AddNewEntityAsync)} using service with repository #{((TestRepository)_repository).Id}");
+
+            _repository
                     .Add(CreateEntity(_random.Next(5)))
                     ;
+        }
+        public async Task<int> CountOfEntitiesAsync()
+            => await _repository
+                        .Entities<Entity>()
+                        .CountAsync()
+                        ;
 
-        public int CountOfEntities()
-            => _repository
-                    .Entities<Entity>()
-                    .Count()
-                    ;
-
-        public ICollection<Entity> GetEntities(
+        public async Task<ICollection<Entity>> GetEntitiesAsync(
             int skip,
             int take)
-            => _repository
-                    .Entities<Entity>()
-                    .FetchAlso(e => e.ValuesList)
-                    .OrderBy(e => e.Id)
-                    .Skip(skip)
-                    .Take(take)
-                    .ToList()
-                    ;
+            => await _repository
+                        .Entities<Entity>()
+                        .FetchAlso(e => e.ValuesList)
+                        .OrderBy(e => e.Id)
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync()
+                        ;
 
-        public void UpdateEntities()
+        public async Task UpdateEntitiesAsync()
         {
-            var n = _random.Next(CountOfEntities()-1);
-            var e = GetEntities(n, 1).First();
+            Debug.WriteLine($"Method {nameof(UpdateEntitiesAsync)} using service with repository #{((TestRepository)_repository).Id}");
 
-            UpdateEntity(e, _random.Next(5));
+            var n = _random.Next(await CountOfEntitiesAsync() - 1);
+            var e = (await GetEntitiesAsync(n, 1)).First();
+
+            UpdateEntity(e, Math.Min(_random.Next(e.ValuesList.Count()-1), 0));
         }
         #endregion
 

@@ -10,7 +10,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         [Dump(2)]
         public object Name { get; set; }
 
-        [Dump(3)]
+        [Dump(3, RecurseDump = ShouldDump.Skip)]
         public object ValuesList { get; set; }
 
         [Dump(4)]

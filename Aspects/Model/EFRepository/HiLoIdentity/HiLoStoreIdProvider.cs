@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -19,12 +18,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         IStoreUniqueId<int>,
         IStoreUniqueId<Guid>
     {
-        #region Constants:
+        #region Constants
         /// <summary>
         /// The default resolve name of the repository supplying the ID-s. Must have transient lifetime.
         /// </summary>
         /// <remarks>
-        /// Note that the code in <see cref="M:GetNew"/> requires that the repository instance must have transient lifetime.
+        /// Note that the code in <see cref="GetOrCreateFreshGenerator"/> requires that the resolved repository instance must have transient lifetime, so that it is not reused by any other.
         /// </remarks>
         public const string HiLoGeneratorsRepositoryResolveName = "HiLoRepository";
 
@@ -81,20 +80,31 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         #endregion
 
         /// <summary>
+        /// The default generators repository factory delegate.
+        /// </summary>
+        public readonly static Func<IRepository> DefaultGeneratorsRepositoryFactory = () => DIContainer.Root.Resolve<IRepository>(HiLoGeneratorsRepositoryResolveName);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HiLoStoreIdProvider" /> class.
+        /// </summary>
+        /// <param name="generatorsRepositoryFactory">The generators repository factory.</param>
+        [InjectionConstructor]
+        public HiLoStoreIdProvider(
+            [Dependency(HiLoGeneratorsRepositoryResolveName)] Func<IRepository> generatorsRepositoryFactory) : this(generatorsRepositoryFactory, false)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="HiLoStoreIdProvider" /> class.
         /// </summary>
         /// <param name="generatorsRepositoryFactory">The generators repository factory.</param>
         /// <param name="useTransactionScope">If set to <see langword="true" /> getting an ID will be done from within a new transaction scope.</param>
         public HiLoStoreIdProvider(
-
-            [Dependency(HiLoGeneratorsRepositoryResolveName)]
-            Func<IRepository> generatorsRepositoryFactory,
-
-            bool useTransactionScope)
+            Func<IRepository> generatorsRepositoryFactory = null,
+            bool useTransactionScope = false)
         {
-            _generatorsRepositoryFactory = generatorsRepositoryFactory ??
-                                                (() => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName));
-            _useTransactionScope = useTransactionScope;
+            _generatorsRepositoryFactory = generatorsRepositoryFactory ?? DefaultGeneratorsRepositoryFactory;
+            _useTransactionScope         = useTransactionScope;
         }
 
         #region IStoreIdProvider
@@ -281,7 +291,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             {
                 using (var repository = _generatorsRepositoryFactory())
                 {
-
                     // get a fresh generator object from the DB
                     generator = repository
                                     .Entities<HiLoIdentityGenerator>()
@@ -291,7 +300,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                     if (generator == null)
                     {
                         // create a new generator
-                        generator = new HiLoIdentityGenerator(entitySetName);
+                        generator = repository.CreateEntity<HiLoIdentityGenerator>();
+                        generator.EntitySetName = entitySetName;
+
                         repository.Add(generator);
                     }
 

@@ -18,22 +18,25 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             Map(e =>
                 {
                     e.MapInheritedProperties();
-                    e.ToTable(nameof(Entity));
+                    e.ToTable(nameof(Entity), "Test");
                 });
+
+            Property(e => e.Name)
+                .HasColumnOrder(i++)
+                .HasMaxLength(64)
+                ;
 
             Property(e => e.UniqueId)
                 .HasColumnOrder(i++)
                 ;
 
-            Property(e => e.Name)
-                .HasMaxLength(64)
+            Property(e => e.CreatedOn)
                 .HasColumnOrder(i++)
                 ;
 
-            Property(e => e.CreatedOn)
-                ;
-
             Property(e => e.UpdatedOn)
+                .HasColumnOrder(i++)
+                .IsConcurrencyToken()
                 ;
 
             HasMany(e => e.ValuesList)

@@ -2,17 +2,17 @@ using System.Data.Entity.Migrations;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<Repository>
+    internal sealed class Configuration : DbMigrationsConfiguration<TestRepository>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled        = true;
-            AutomaticMigrationDataLossAllowed = false;
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey                        = "PerCallContextRepositoryCallHandlerTest";
             MigrationsDirectory               = @"Migrations";
         }
 
-        protected override void Seed(Repository context)
+        protected override void Seed(TestRepository context)
         {
         }
     }

@@ -240,16 +240,13 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
-                return ProcessException(input, x);
-            }
-            finally
-            {
                 CleanUp();
+                return ProcessException(input, x);
             }
         }
 
         static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
-                                                                .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
+                                                                    .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
 
         async Task<T> DoInvokeAsyncGeneric<T>(
             Task<T> returnedTask,
@@ -264,6 +261,7 @@ namespace vm.Aspects.Model
             var result = await returnedTask;
 
             await CommitChangesAsync();
+            CleanUp();
             return result;
         }
 

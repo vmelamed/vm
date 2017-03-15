@@ -192,8 +192,9 @@ namespace vm.Aspects.Model.EFRepository
 
             if (StoreIdProvider is HiLoStoreIdProvider)
                 // Add the configuration of the HiLo PK generator generators
-                modelBuilder.Configurations
-                            .Add(new HiLoIdentityGeneratorConfiguration());
+                modelBuilder
+                    .Configurations
+                    .Add(new HiLoIdentityGeneratorConfiguration());
         }
 
         /// <summary>

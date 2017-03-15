@@ -18,7 +18,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             Map(e =>
                 {
                     e.MapInheritedProperties();
-                    e.ToTable(nameof(Value));
+                    e.ToTable(nameof(Value), "Test");
                 });
 
             Property(v => v.Name)
@@ -36,6 +36,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             Property(v => v.UpdatedOn)
                 .HasColumnOrder(i++)
+                .IsConcurrencyToken()
                 ;
 
             HasRequired(v => v.Entity)

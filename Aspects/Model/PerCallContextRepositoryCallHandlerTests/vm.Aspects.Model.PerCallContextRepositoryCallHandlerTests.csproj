@@ -92,6 +92,9 @@
       <HintPath>..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -106,18 +109,25 @@
   <ItemGroup>
     <Compile Include="Entity.cs" />
     <Compile Include="Entity.Metadata.cs" />
-    <Compile Include="IServiceTasks.cs" />
-    <Compile Include="Migrations\201703132248106_Initial.cs" />
-    <Compile Include="Migrations\201703132248106_Initial.Designer.cs">
-      <DependentUpon>201703132248106_Initial.cs</DependentUpon>
+    <Compile Include="IService.Client.cs" />
+    <Compile Include="IService.Tasks.Client.cs" />
+    <Compile Include="IService.Tasks.cs" />
+    <Compile Include="Migrations\201703150635113_Initial.cs" />
+    <Compile Include="Migrations\201703150635113_Initial.Designer.cs">
+      <DependentUpon>201703150635113_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository.cs" />
-    <Compile Include="Repository.Registrar.cs" />
+    <Compile Include="ServiceRegistrar.cs" />
+    <Compile Include="ServiceHostFactory.cs" />
+    <Compile Include="ServiceInitializer.cs" />
+    <Compile Include="ServiceTasks.cs" />
+    <Compile Include="TestRepository.cs" />
+    <Compile Include="TestRepository.Registrar.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Service.cs" />
+    <Compile Include="TestRepository.Views.cs" />
     <Compile Include="Value.cs" />
     <Compile Include="Value.Map.cs" />
     <Compile Include="Value.Metadata.cs" />
@@ -132,14 +142,18 @@
       <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
       <Name>vm.Aspects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Wcf\vm.Aspects.Wcf.csproj">
+      <Project>{165DED1C-2F5B-4941-854C-EC928ADA3F32}</Project>
+      <Name>vm.Aspects.Wcf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\vm.Aspects.Model.csproj">
       <Project>{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}</Project>
       <Name>vm.Aspects.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703132248106_Initial.resx">
-      <DependentUpon>201703132248106_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201703150635113_Initial.resx">
+      <DependentUpon>201703150635113_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
