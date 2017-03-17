@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Model.InMemory;
 
 namespace vm.Aspects.Model.Repository
@@ -226,6 +226,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is an optimistic concurrency problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         public static bool IsOptimisticConcurrency(
             this Exception exception)
         {
@@ -241,6 +242,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         public static bool IsTransactionRelated(
             this Exception exception)
         {
@@ -256,6 +258,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         public static bool IsConnectionRelated(
             this Exception exception)
         {
@@ -271,6 +274,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is allows for the operation to be repeated; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         public static bool IsTransient(
             this Exception exception)
         {

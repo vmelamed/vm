@@ -96,6 +96,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is an optimistic concurrency problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         bool IsOptimisticConcurrency(Exception exception);
 
         /// <summary>
@@ -105,6 +106,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         bool IsConnectionRelated(Exception exception);
 
         /// <summary>
@@ -114,6 +116,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a transactions isolation problem; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         bool IsTransactionRelated(Exception exception);
 
         /// <summary>
@@ -123,6 +126,7 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is allows for the operation to be repeated; otherwise, <see langword="false"/>.
         /// </returns>
+        [Pure]
         bool IsTransient(Exception exception);
     }
 

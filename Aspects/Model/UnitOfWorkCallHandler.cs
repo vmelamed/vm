@@ -1,17 +1,22 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using vm.Aspects.Exceptions;
+using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Model
 {
+    /// <summary>
+    /// The local data to carry between the phases of the call handler.
+    /// </summary>
     public class RepositoryData
     {
         /// <summary>
@@ -28,6 +33,22 @@ namespace vm.Aspects.Model
         /// Gets or sets the asynchronous repository.
         /// </summary>
         public IRepositoryAsync AsyncRepository { get; set; }
+    }
+
+    /// <summary>
+    /// OptimisticConcurrencyStrategy defines the strategies for handling optimistic concurrency exceptions (<see cref="OptimisticConcurrencyException"/>)
+    /// </summary>
+    public enum OptimisticConcurrencyStrategy
+    {
+        /// <summary>
+        /// If the store contains newer values for the object - do not allow changes and extend the exception to the client.
+        /// </summary>
+        StoreWins,
+
+        /// <summary>
+        /// Even if the store contains newer values for the object - the client values are considered with higher priority and the changes are allowed nevertheless.
+        /// </summary>
+        ClientWins,
     }
 
     /// <summary>
@@ -51,6 +72,11 @@ namespace vm.Aspects.Model
         /// The use of this property must be very well justified.
         /// </summary>
         public bool CreateTransactionScope { get; set; }
+
+        /// <summary>
+        /// Gets or sets the optimistic concurrency strategy.
+        /// </summary>
+        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
         /// <summary>
         /// Guards the registrations below.
@@ -106,21 +132,8 @@ namespace vm.Aspects.Model
 
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            if (((MethodInfo)input.MethodBase).ReturnType.Is<Task>())
-                return PostInvokeAsync(input, result, callData);
-            else
-                return PostInvokeSync(input, result, callData);
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
-        IMethodReturn PostInvokeSync(
-            IMethodInvocation input,
-            IMethodReturn result,
-            RepositoryData callData)
-        {
-            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            if (result.IsAsyncCall())
+                return result;
 
             try
             {
@@ -144,7 +157,7 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
-                return ProcessException(input, x);
+                return input.CreateExceptionMethodReturn(ProcessException(input, x));
             }
             finally
             {
@@ -152,19 +165,25 @@ namespace vm.Aspects.Model
             }
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By design.")]
-        IMethodReturn PostInvokeAsync(
+        /// <summary>
+        /// Gives the aspect a chance to do some final work after the main task is truly complete.
+        /// The overriding implementations should begin by calling the base class' implementation first.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The call data.</param>
+        /// <returns>Task{TResult}.</returns>
+        protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
-            IMethodReturn result,
+            IMethodReturn methodReturn,
             RepositoryData callData)
         {
-            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
 
             try
             {
-                if (result.Exception != null)
+                if (methodReturn.Exception != null)
                 {
                     CleanUp(callData);
                     return result;
@@ -178,63 +197,82 @@ namespace vm.Aspects.Model
                     return result;
                 }
 
+                callData.Repository =
                 callData.AsyncRepository = hasRepository.AsyncRepository;
 
                 if (callData.AsyncRepository == null)
                 {
                     callData.Repository = hasRepository.Repository;
+
                     CommitChanges(callData);
+                    return result;
                 }
-
-                // at this point we have async repository, we have a transaction scope, and we do not have exceptions.
-                var returnedTask = result.ReturnValue as Task;
-                var returnedTaskResultType = returnedTask.GetType().IsGenericType
-                                                    ? returnedTask.GetType().GetGenericArguments()[0]
-                                                    : typeof(bool);
-                var gmi = _miDoInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultType);
-
-                return input.CreateMethodReturn(
-                                    gmi.Invoke(this, new object[] { returnedTask, input, callData }));
+                else
+                {
+                    await CommitChangesAsync(callData);
+                    return result;
+                }
             }
             catch (Exception x)
             {
-                CleanUp(callData);
-                return ProcessException(input, x);
+                throw ProcessException(input, x);
             }
-        }
-
-        static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(UnitOfWorkCallHandler)
-                                                                    .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
-
-        async Task<T> DoInvokeAsyncGeneric<T>(
-            Task<T> returnedTask,
-            RepositoryData callData)
-        {
-            Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
-
-            Contract.Ensures(Contract.Result<Task<T>>() != null);
-
-            // await the actions in the handlers in the pipeline after this to finish their tasks
-            var result = await returnedTask;
-
-            await CommitChangesAsync(callData);
-            CleanUp(callData);
-
-            return result;
+            finally
+            {
+                CleanUp(callData);
+            }
         }
 
         void CommitChanges(
             RepositoryData callData)
         {
-            callData.Repository?.CommitChanges();
-            callData.TransactionScope?.Complete();
+            var success = false;
+
+            while (!success)
+                try
+                {
+                    callData.Repository?.CommitChanges();
+                    callData.TransactionScope?.Complete();
+                    success = true;
+                }
+                catch (DbUpdateConcurrencyException x)
+                {
+                    // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
+                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                        throw;
+
+                    Facility.LogWriter.ExceptionWarning(x);
+
+                    var entry = x.Entries.Single();
+
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                }
         }
 
         async Task CommitChangesAsync(
             RepositoryData callData)
         {
-            await callData.AsyncRepository?.CommitChangesAsync();
-            callData.TransactionScope?.Complete();
+            var success = false;
+
+            while (!success)
+                try
+                {
+                    await callData.AsyncRepository?.CommitChangesAsync();
+                    callData.TransactionScope?.Complete();
+                    success = true;
+                }
+                catch (DbUpdateConcurrencyException x)
+                {
+                    // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
+                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                        throw;
+
+                    Facility.LogWriter.ExceptionWarning(x);
+
+                    var entry = x.Entries.Single();
+
+                    entry.OriginalValues.SetValues(await entry.GetDatabaseValuesAsync());
+                }
         }
 
         void CleanUp(
@@ -245,7 +283,7 @@ namespace vm.Aspects.Model
             callData.TransactionScope?.Dispose();
         }
 
-        IMethodReturn ProcessException(
+        Exception ProcessException(
             IMethodInvocation input,
             Exception exception)
         {
@@ -259,14 +297,13 @@ namespace vm.Aspects.Model
             if (aggregateException != null  &&  aggregateException.InnerExceptions.Count == 1)
                 exception = aggregateException.InnerExceptions[0];
 
-            exception = exception.IsTransient()  ||  exception.IsOptimisticConcurrency()
-                            ? exception = new RepeatableOperationException(exception)  // wrap and rethrow
-                            : exception;
+            if (exception.IsTransient()  ||  exception.IsOptimisticConcurrency())
+                exception = new RepeatableOperationException(exception);
 
             // add more info to the exception
             exception.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
 
-            return input.CreateExceptionMethodReturn(exception);
+            return exception;
         }
     }
 }

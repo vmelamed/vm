@@ -80,9 +80,12 @@ namespace vm.Aspects.Policies
 
             if (taskResult != null)
                 return await taskResult;
-
-            await (Task)methodReturn.ReturnValue;
-            return default(TResult);
+            else
+            {
+                // in case when the target method does not return Task<Result> - it must be just Task
+                await (Task)methodReturn.ReturnValue;
+                return default(TResult);
+            }
         }
 
         static readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
