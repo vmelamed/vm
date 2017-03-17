@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -14,6 +17,9 @@ namespace vm.Aspects.Wcf.Behaviors
     {
         readonly Type _serviceContractType;
         readonly string _serviceResolveName;
+
+        readonly static object _sync = new object();
+        readonly static IDictionary<InstanceContext, IUnityContainer> _containers = new Dictionary<InstanceContext, IUnityContainer>();
 
         /// <summary>
         /// Initializes the provider with an interface type.
@@ -49,7 +55,16 @@ namespace vm.Aspects.Wcf.Behaviors
             if (instanceContext.Host == null)
                 throw new ArgumentException("The instance context's property Host cannot be null.", nameof(instanceContext));
 
+            var childContainer = DIContainer.Root.CreateChildContainer();
+
+            lock (_sync)
+            {
+                Debug.Assert(!_containers.ContainsKey(instanceContext), "THERE IS A CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT ALREADY.");
+                _containers[instanceContext] = childContainer;
+            }
+
             return CreateInstance(
+                        childContainer,
                         instanceContext.Host.Description.ServiceType,
                         _serviceContractType,
                         _serviceResolveName);
@@ -75,33 +90,33 @@ namespace vm.Aspects.Wcf.Behaviors
             InstanceContext instanceContext,
             object instance)
         {
-            IDisposable disposable = instance as IDisposable;
+            IUnityContainer childContainer = null;
 
-            if (disposable != null)
-                disposable.Dispose();
+            lock (_sync)
+            {
+                _containers.TryGetValue(instanceContext, out childContainer);
+                _containers.Remove(instanceContext);
+            }
+
+            Debug.Assert(childContainer != null, "THERE IS NO CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT.");
+            childContainer.Dispose();
         }
         #endregion
 
         /// <summary>
         /// Creates a DI resolved instance (of a service) with dynamic binding to the type and the interface of the object.
         /// </summary>
+        /// <param name="container">The DI container.</param>
         /// <param name="serviceType">The type of the created object (service).</param>
         /// <param name="serviceContract">The type of the interface (service contract).</param>
         /// <param name="serviceResolveName">The DI resolve name of the service.</param>
         /// <returns>A reference to the newly created instance (service).</returns>
-        /// <exception cref="System.ArgumentNullException">serviceType</exception>
         /// <exception cref="System.ArgumentException">If no service interface is specified, the service type must be derived from the class MarshalByRefObject.;serviceType</exception>
-        /// <exception cref="ArgumentNullException">The <paramref name="serviceType" /> is <see langword="null" />.</exception>
-        /// <exception cref="ArgumentException"><list type="bullet">
-        ///   <item>
-        /// The <paramref name="serviceContract" /> is <see langword="null" /> and the class <paramref name="serviceType" />
-        /// does not inherit from <see cref="MarshalByRefObject" /> or
-        /// </item>
-        ///   <item>
-        ///     <paramref name="serviceContract" /> is not <see langword="null" /> but is not implemented by <paramref name="serviceType" />.
-        /// </item>
-        /// </list></exception>
-        static object CreateInstance(
+        /// <exception cref="System.ArgumentNullException">serviceType</exception>
+        /// <exception cref="ArgumentNullException">If no service interface is specified, the service type must be derived from the class MarshalByRefObject.;serviceType</exception>
+        /// <exception cref="ArgumentException">The <paramref name="serviceType" /> is <see langword="null" />.</exception>
+        object CreateInstance(
+            IUnityContainer container,
             Type serviceType,
             Type serviceContract,
             string serviceResolveName)
@@ -119,8 +134,8 @@ namespace vm.Aspects.Wcf.Behaviors
                     throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.", nameof(serviceType));
 
                 return serviceContract!=null
-                            ? DIContainer.Root.Resolve(serviceContract, serviceResolveName)
-                            : DIContainer.Root.Resolve(serviceType, serviceResolveName);
+                            ? container.Resolve(serviceContract, serviceResolveName)
+                            : container.Resolve(serviceType, serviceResolveName);
             }
             catch (Exception x)
             {

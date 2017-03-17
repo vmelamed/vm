@@ -78,7 +78,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 .AddMatchingRule<TagAttributeMatchingRule>(
                         new InjectionConstructor(nameof(TestService), false))
 
-                .AddCallHandler<PerCallContextRepositoryCallHandler>()
+                .AddCallHandler<UnitOfWorkCallHandler>()
                 ;
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))

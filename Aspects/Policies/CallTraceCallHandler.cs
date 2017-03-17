@@ -260,28 +260,8 @@ namespace vm.Aspects.Policies
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             // async methods are always dumped in ContinueWith
-            if (methodReturn.ReturnValue is Task)
-                return methodReturn;
-
-            callData.CallTimer.Stop();
-
-            if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
-                return methodReturn;
-
-            Action<LogEntry> logAfterCall = e => Facility.ExceptionManager
-                                                         .Process(
-                                                            () => LogAfterCallData(e, input, callData, methodReturn),
-                                                            ExceptionPolicyProvider.LogAndSwallow);
-
-            var entry = NewLogEntry(EndCallCategory);
-
-            if (!LogWriter.ShouldLog(entry))
-                return methodReturn;
-
-            if (LogAsynchronously)
-                Task.Run(() => logAfterCall(entry));
-            else
-                logAfterCall(entry);
+            if (!methodReturn.IsAsyncCall())
+                LogPostInvoke(input, methodReturn, callData);
 
             return methodReturn;
         }
@@ -302,10 +282,27 @@ namespace vm.Aspects.Policies
         {
             var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
 
+            LogPostInvoke(input, methodReturn, callData);
+
+            return result;
+        }
+        #endregion
+
+        /// <summary>
+        /// Does the actual post-invoke logging.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The call data.</param>
+        protected virtual void LogPostInvoke(
+            IMethodInvocation input,
+            IMethodReturn methodReturn,
+            CallData callData)
+        {
             callData.CallTimer.Stop();
 
             if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
-                return result;
+                return;
 
             Action<LogEntry> logAfterCall = e => Facility.ExceptionManager
                                                          .Process(
@@ -315,16 +312,13 @@ namespace vm.Aspects.Policies
             var entry = NewLogEntry(EndCallCategory);
 
             if (!LogWriter.ShouldLog(entry))
-                return result;
+                return;
 
             if (LogAsynchronously)
                 Task.Run(() => logAfterCall(entry));
             else
                 logAfterCall(entry);
-
-            return result;
         }
-        #endregion
 
         /// <summary>
         /// Creates a new log entry.

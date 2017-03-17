@@ -9,7 +9,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// Transforms 
     /// </summary>
     /// <seealso cref="IExceptionHandler" />
-    public class ExceptionToFaultExceptionHandler : IExceptionHandler
+    public class ServiceFaultFromExceptionHandler : IExceptionHandler
     {
         /// <summary>
         /// When implemented by a class, handles an <see cref="Exception"/> by converting it to

@@ -40,7 +40,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                         .AddCallHandler<ServiceExceptionHandlingCallHandler>(new ContainerControlledLifetimeManager())
                         .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(Facility.LogWriter))
                         .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor())
-                        .AddCallHandler<PerCallContextRepositoryCallHandler>()
+                        .AddCallHandler<UnitOfWorkCallHandler>()
                         ;
                 }
             }

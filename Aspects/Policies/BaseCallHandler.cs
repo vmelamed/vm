@@ -24,36 +24,38 @@ namespace vm.Aspects.Policies
     /// <seealso cref="ICallHandler" />
     public abstract class BaseCallHandler<T> : ICallHandler
     {
-        static readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
-        static readonly IDictionary<MethodBase, MethodInfo> _continueWiths = new Dictionary<MethodBase, MethodInfo>();
+        readonly MethodInfo _continueWithGeneric;
 
-        readonly MethodInfo _openContinueWith;
+        /// <summary>
+        /// Gets a value indicating whether the current class overrides <see cref="ContinueWith"/>
+        /// </summary>
+        protected bool IsContinueWithOverridden { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseCallHandler{T}"/> class.
         /// </summary>
         protected BaseCallHandler()
         {
-            _openContinueWith = GetType()
-                                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                                .Where(
-                                    m =>
-                                    {
-                                        if (!m.IsGenericMethod        ||
-                                            m.Name != "ContinueWith"  ||
-                                            m.GetGenericArguments().Count() != 1)
-                                            return false;
+            _continueWithGeneric = GetType()
+                                        .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                                        .Where(
+                                            m =>
+                                            {
+                                                if (!m.IsGenericMethod        ||
+                                                    m.Name != "ContinueWith"  ||
+                                                    m.GetGenericArguments().Count() != 1)
+                                                    return false;
 
-                                        var parameters = m.GetParameters();
+                                                var parameters = m.GetParameters();
 
-                                        return parameters.Count()          == 3                          &&
-                                               parameters[0].ParameterType == typeof(IMethodInvocation)  &&
-                                               parameters[1].ParameterType == typeof(IMethodReturn)      &&
-                                               parameters[2].ParameterType == typeof(T);
-                                    })
-                                .Single();
+                                                return parameters.Count()          == 3                          &&
+                                                       parameters[0].ParameterType == typeof(IMethodInvocation)  &&
+                                                       parameters[1].ParameterType == typeof(IMethodReturn)      &&
+                                                       parameters[2].ParameterType == typeof(T);
+                                            })
+                                        .Single();
 
-            IsContinueWithOverridden = _openContinueWith.GetBaseDefinition().DeclaringType != _openContinueWith.DeclaringType;
+            IsContinueWithOverridden = _continueWithGeneric.GetBaseDefinition().DeclaringType != _continueWithGeneric.DeclaringType;
         }
 
         /// <summary>
@@ -83,6 +85,9 @@ namespace vm.Aspects.Policies
             return default(TResult);
         }
 
+        static readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
+        static readonly IDictionary<MethodBase, MethodInfo> _continueWiths = new Dictionary<MethodBase, MethodInfo>();
+
         /// <summary>
         /// Creates and caches a new continue-with method for each method called on the target.
         /// </summary>
@@ -93,6 +98,9 @@ namespace vm.Aspects.Policies
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
 
+            if (!IsContinueWithOverridden)
+                return null;
+
             MethodInfo continueWith;
 
             using (_sync.ReaderLock())
@@ -101,18 +109,14 @@ namespace vm.Aspects.Policies
 
             continueWith = null;
 
-            if (IsContinueWithOverridden)
+            if (input.IsAsyncCall())
             {
-                var resultType = ((MethodInfo)input.MethodBase).ReturnType;
+                var resultType = input.ResultType();
+                var returnedTaskResultType = resultType.IsGenericType
+                                                ? resultType.GetGenericArguments()[0]
+                                                : typeof(bool);
 
-                if (typeof(Task).IsAssignableFrom(resultType))
-                {
-                    var returnedTaskResultType = resultType.IsGenericType
-                                                    ? resultType.GetGenericArguments()[0]
-                                                    : typeof(bool);
-
-                    continueWith = _openContinueWith.MakeGenericMethod(returnedTaskResultType);
-                }
+                continueWith = _continueWithGeneric.MakeGenericMethod(returnedTaskResultType);
             }
 
             using (_sync.WriterLock())
@@ -120,11 +124,6 @@ namespace vm.Aspects.Policies
 
             return continueWith;
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the current class overrides <see cref="ContinueWith"/>
-        /// </summary>
-        protected bool IsContinueWithOverridden { get; }
 
         /// <summary>
         /// Prepares per call data specific to the handler.
@@ -172,7 +171,6 @@ namespace vm.Aspects.Policies
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             var continueWith = GetContinueWith(input);
-
             var result = getNext().Invoke(input, getNext);
 
             if (continueWith == null)

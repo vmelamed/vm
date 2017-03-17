@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -13,7 +14,6 @@ using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Threading;
 
@@ -76,13 +76,15 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// or
         /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "No choice here.")]
-        public static void AddMappingFaultToException<TException, TFault>(
+        public static void AddMappingFaultToException<TFault, TException>(
             Func<Fault, TException> exceptionFactory,
             Func<Exception, TFault> faultFactory = null,
             bool force = false)
-            where TException : Exception
             where TFault : Fault
+            where TException : Exception
         {
+            Contract.Requires<ArgumentNullException>(exceptionFactory != null, nameof(exceptionFactory));
+
             using (_lock.UpgradableReaderLock())
             {
                 if (!force)
@@ -225,11 +227,11 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
         /// </summary>
-        /// <param name="exceptionType">Type of the exception.</param>
         /// <param name="faultType">Type of the fault.</param>
+        /// <param name="exceptionType">Type of the exception.</param>
         public static void RemoveMappingFaultToException(
-            Type exceptionType,
-            Type faultType)
+            Type faultType,
+            Type exceptionType)
         {
             Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
             Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));

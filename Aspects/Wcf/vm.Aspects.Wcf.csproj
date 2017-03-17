@@ -357,12 +357,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ServiceIdentity.cs" />
-    <Compile Include="ServicePolicies\ExceptionToFaultExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.cs" />
     <Compile Include="ServicePolicies\RestCallExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
     <Compile Include="Services\ICreateServiceHost.cs" />
     <Compile Include="Services\IInitializeService.cs" />

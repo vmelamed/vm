@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -12,10 +16,6 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -278,6 +278,7 @@ namespace vm.Aspects.Wcf.Services
                 DIContainer.Root
                         .UnsafeRegister(Facility.Registrar, registrations)
                         .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
+                        .UnsafeRegister(ServiceFaultFromExceptionHandlingPolicies.Registrar, registrations)
                         .UnsafeRegister(BindingConfigurator.Registrar, registrations)
                         ;
 

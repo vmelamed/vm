@@ -9,6 +9,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
+using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 using vm.Aspects.Policies;
 using vm.Aspects.Threading;
@@ -26,6 +27,29 @@ namespace vm.Aspects.Wcf.ServicePolicies
     public sealed class ServiceExceptionHandlingCallHandler : BaseCallHandler<bool>
     {
         /// <summary>
+        /// Gives the aspect a chance to do some final work after the main task is truly complete.
+        /// The overriding implementations should begin by calling the base class' implementation first.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The call data.</param>
+        /// <returns>Task{TResult}.</returns>
+        protected override Task<TResult> ContinueWith<TResult>(
+            IMethodInvocation input,
+            IMethodReturn methodReturn,
+            bool callData)
+        {
+            var result = base.ContinueWith<TResult>(input, methodReturn, callData);
+
+            if (result.Exception == null)
+                return result;
+
+            return Task.FromException<TResult>(
+                            TransformException(result.Exception));
+        }
+
+        /// <summary>
         /// Process the output from the call so far and optionally modify the output.
         /// </summary>
         /// <param name="input">The input.</param>
@@ -40,34 +64,33 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (methodReturn.Exception == null)
                 return methodReturn;
 
-            return HandleException(input, methodReturn.Exception);
+            return input.CreateExceptionMethodReturn(
+                            TransformException(methodReturn.Exception));
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
-        static IMethodReturn HandleException(
-            IMethodInvocation input,
+        static FaultException TransformException(
             Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            Contract.Ensures(Contract.Result<FaultException>() != null);
 
             var factory = Fault.TryGetExceptionToFaultFactory(exception.GetType());
 
             if (factory == null)
-                return input.CreateExceptionMethodReturn(
-                                new WebFaultException<Fault>(
-                                        new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}" },
-                                        HttpStatusCode.InternalServerError));
+                return new WebFaultException<Fault>(
+                                new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}" },
+                                HttpStatusCode.InternalServerError);
 
             var fault = factory(exception);
 
-            return input.CreateExceptionMethodReturn(
-                            (Exception)typeof(WebFaultException<>)
-                                            .MakeGenericType(fault.GetType())
-                                            .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
-                                            .Invoke(new object[] { fault, fault.HttpStatusCode }));
+            return (FaultException)typeof(WebFaultException<>)
+                                .MakeGenericType(fault.GetType())
+                                .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
+                                .Invoke(new object[] { fault, fault.HttpStatusCode });
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

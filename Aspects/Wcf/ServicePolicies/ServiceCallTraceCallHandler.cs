@@ -80,9 +80,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
             CallData callData,
             IMethodInvocation input)
         {
-            var serviceCallData = (ServiceCallData)callData;
+            base.InitializeCallData(callData, input);
 
-            base.InitializeCallData(serviceCallData, input);
+            var serviceCallData = (ServiceCallData)callData;
 
             if (IncludeCustomContext)
             {

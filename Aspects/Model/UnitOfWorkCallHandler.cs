@@ -39,7 +39,7 @@ namespace vm.Aspects.Model
     /// the application developer does not need to worry about saving changes in the repository, committing and rolling-back transactions, 
     /// error handling, repository disposal, etc.
     /// </summary>
-    public class PerCallContextRepositoryCallHandler : BaseCallHandler<RepositoryData>
+    public class UnitOfWorkCallHandler : BaseCallHandler<RepositoryData>
     {
         /// <summary>
         /// Gets or sets the resolve name of the repository registered in the current call context.
@@ -203,7 +203,7 @@ namespace vm.Aspects.Model
             }
         }
 
-        static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(PerCallContextRepositoryCallHandler)
+        static readonly MethodInfo _miDoInvokeAsyncGeneric = typeof(UnitOfWorkCallHandler)
                                                                     .GetMethod(nameof(DoInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
 
         async Task<T> DoInvokeAsyncGeneric<T>(

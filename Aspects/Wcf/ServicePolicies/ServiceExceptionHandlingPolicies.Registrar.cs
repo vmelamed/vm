@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
+using System.Collections.Generic;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
 
@@ -24,19 +23,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
             }
         }
 
-        static readonly WcfExceptionHandlingPoliciesRegistrar _registrar = new WcfExceptionHandlingPoliciesRegistrar();
-
         /// <summary>
         /// Gets the WCF exception handling policies registrar.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new WcfExceptionHandlingPoliciesRegistrar();
     }
 }

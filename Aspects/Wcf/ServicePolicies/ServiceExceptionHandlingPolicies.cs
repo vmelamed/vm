@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
@@ -9,10 +13,6 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.FaultContracts;
@@ -20,8 +20,8 @@ using vm.Aspects.Wcf.FaultContracts;
 namespace vm.Aspects.Wcf.ServicePolicies
 {
     /// <summary>
-    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which add a number of mappings of exceptions to faults 
-    /// which will be used by the WCF exception shielding mechanism. 
+    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which adds a number of mappings of 
+    /// exceptions to faults that will be used by the WCF exception shielding mechanism. 
     /// </summary>
     public partial class ServiceExceptionHandlingPolicies : IExceptionPolicyProvider
     {
