@@ -1,7 +1,12 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects.Policies
 {
@@ -19,48 +24,107 @@ namespace vm.Aspects.Policies
     /// <seealso cref="ICallHandler" />
     public abstract class BaseCallHandler<T> : ICallHandler
     {
-        #region ICallHandler implementation
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        public int Order { get; set; }
+        static readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
+        static readonly IDictionary<MethodBase, MethodInfo> _continueWiths = new Dictionary<MethodBase, MethodInfo>();
+
+        readonly MethodInfo _openContinueWith;
 
         /// <summary>
-        /// Implement this method to execute your handler processing.
+        /// Initializes a new instance of the <see cref="BaseCallHandler{T}"/> class.
         /// </summary>
-        /// <param name="input">Inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
-        /// chain.</param>
-        /// <returns>Return value from the target.</returns>
-        /// <exception cref="System.ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
-        public virtual IMethodReturn Invoke(
-            IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+        protected BaseCallHandler()
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            _openContinueWith = GetType()
+                                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                                .Where(
+                                    m =>
+                                    {
+                                        if (!m.IsGenericMethod        ||
+                                            m.Name != "ContinueWith"  ||
+                                            m.GetGenericArguments().Count() != 1)
+                                            return false;
 
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
+                                        var parameters = m.GetParameters();
 
-            var callData = Prepare(input);
+                                        return parameters.Count()          == 3                          &&
+                                               parameters[0].ParameterType == typeof(IMethodInvocation)  &&
+                                               parameters[1].ParameterType == typeof(IMethodReturn)      &&
+                                               parameters[2].ParameterType == typeof(T);
+                                    })
+                                .Single();
 
-            var methodReturn = PreInvoke(input, callData);
-
-            if (methodReturn != null)
-                return methodReturn;
-
-            methodReturn = DoInvoke(input, getNext, callData);
-
-            var methodTask = methodReturn.ReturnValue as Task;
-
-            if (methodTask != null)
-                methodTask.Wait();
-
-            return PostInvoke(input, methodReturn, callData);
+            IsContinueWithOverridden = _openContinueWith.GetBaseDefinition().DeclaringType != _openContinueWith.DeclaringType;
         }
-        #endregion
+
+        /// <summary>
+        /// Gives the aspect a chance to do some final work after the main task is truly complete.
+        /// The overriding implementations should begin by calling the base class' implementation first.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The call data.</param>
+        /// <returns>Task{TResult}.</returns>
+        protected virtual async Task<TResult> ContinueWith<TResult>(
+            IMethodInvocation input,
+            IMethodReturn methodReturn,
+            T callData)
+        {
+            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
+
+            var taskResult = methodReturn.ReturnValue as Task<TResult>;
+
+            if (taskResult != null)
+                return await taskResult;
+
+            await (Task)methodReturn.ReturnValue;
+            return default(TResult);
+        }
+
+        /// <summary>
+        /// Creates and caches a new continue-with method for each method called on the target.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>MethodInfo.</returns>
+        MethodInfo GetContinueWith(
+            IMethodInvocation input)
+        {
+            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
+            MethodInfo continueWith;
+
+            using (_sync.ReaderLock())
+                if (_continueWiths.TryGetValue(input.MethodBase, out continueWith))
+                    return continueWith;
+
+            continueWith = null;
+
+            if (IsContinueWithOverridden)
+            {
+                var resultType = ((MethodInfo)input.MethodBase).ReturnType;
+
+                if (typeof(Task).IsAssignableFrom(resultType))
+                {
+                    var returnedTaskResultType = resultType.IsGenericType
+                                                    ? resultType.GetGenericArguments()[0]
+                                                    : typeof(bool);
+
+                    continueWith = _openContinueWith.MakeGenericMethod(returnedTaskResultType);
+                }
+            }
+
+            using (_sync.WriterLock())
+                _continueWiths[input.MethodBase] = continueWith;
+
+            return continueWith;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the current class overrides <see cref="ContinueWith"/>
+        /// </summary>
+        protected bool IsContinueWithOverridden { get; }
 
         /// <summary>
         /// Prepares per call data specific to the handler.
@@ -103,11 +167,19 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(input   != null, nameof(input));
             Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            return getNext().Invoke(input, getNext);
+            var continueWith = GetContinueWith(input);
+
+            var result = getNext().Invoke(input, getNext);
+
+            if (continueWith == null)
+                return result;
+            else
+                return input.CreateMethodReturn(
+                                continueWith.Invoke(this, new object[] { input, result, callData }));
         }
 
         /// <summary>
@@ -122,11 +194,47 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
             Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             return methodReturn;
         }
+
+        #region ICallHandler implementation
+        /// <summary>
+        /// Order in which the handler will be executed
+        /// </summary>
+        public int Order { get; set; }
+
+        /// <summary>
+        /// Implement this method to execute your handler processing.
+        /// </summary>
+        /// <param name="input">Inputs to the current call to the target.</param>
+        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
+        /// chain.</param>
+        /// <returns>Return value from the target.</returns>
+        /// <exception cref="System.ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
+        public virtual IMethodReturn Invoke(
+            IMethodInvocation input,
+            GetNextHandlerDelegate getNext)
+        {
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (getNext == null)
+                throw new ArgumentNullException(nameof(getNext));
+
+            var callData = Prepare(input);
+
+            var methodReturn = PreInvoke(input, callData);
+
+            if (methodReturn == null)
+                methodReturn = DoInvoke(input, getNext, callData);
+
+            return PostInvoke(input, methodReturn, callData);
+        }
+        #endregion
     }
 }

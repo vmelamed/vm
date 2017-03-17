@@ -259,6 +259,12 @@ namespace vm.Aspects.Policies
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
+            // async methods are always dumped in ContinueWith
+            if (methodReturn.ReturnValue is Task)
+                return methodReturn;
+
+            callData.CallTimer.Stop();
+
             if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
                 return methodReturn;
 
@@ -269,8 +275,6 @@ namespace vm.Aspects.Policies
 
             var entry = NewLogEntry(EndCallCategory);
 
-            callData.CallTimer.Stop();
-
             if (!LogWriter.ShouldLog(entry))
                 return methodReturn;
 
@@ -280,6 +284,45 @@ namespace vm.Aspects.Policies
                 logAfterCall(entry);
 
             return methodReturn;
+        }
+
+        /// <summary>
+        /// Gives the aspect a chance to do some final work after the main task is truly complete.
+        /// The overriding implementations should begin by calling the base class' implementation first.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The call data.</param>
+        /// <returns>Task{TResult}.</returns>
+        protected override async Task<TResult> ContinueWith<TResult>(
+            IMethodInvocation input,
+            IMethodReturn methodReturn,
+            CallData callData)
+        {
+            var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
+
+            callData.CallTimer.Stop();
+
+            if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
+                return result;
+
+            Action<LogEntry> logAfterCall = e => Facility.ExceptionManager
+                                                         .Process(
+                                                            () => LogAfterCallData(e, input, callData, methodReturn),
+                                                            ExceptionPolicyProvider.LogAndSwallow);
+
+            var entry = NewLogEntry(EndCallCategory);
+
+            if (!LogWriter.ShouldLog(entry))
+                return result;
+
+            if (LogAsynchronously)
+                Task.Run(() => logAfterCall(entry));
+            else
+                logAfterCall(entry);
+
+            return result;
         }
         #endregion
 
