@@ -8,8 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using vm.Aspects.Facilities;
-using vm.Aspects.Model.Repository;
+using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
@@ -19,38 +18,65 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         {
             try
             {
+                StartServices();
                 Register();
                 Initialize();
-                //Run();
-                RunAsync().Wait();
+                RunSync();
+                //RunAsync().Wait();
             }
             catch (Exception x)
             {
                 Debug.WriteLine(x.DumpString());
+                Console.WriteLine(x.DumpString());
             }
+
+            Console.Write("Press any key to finish...");
+            Console.ReadKey(true);
+        }
+
+        static void StartServices()
+        {
+            var testServiceHostFactory      = new TestServiceHostFactory();
+            var testServiceTasksHostFactory = new TestServiceTasksHostFactory();
+            var address                     = new Uri("net.tcp://localhost:14808/");
+
+            var testServiceHost      = testServiceHostFactory
+                                            .CreateHost(address)
+                                            ;
+            var testServiceTasksHost = testServiceTasksHostFactory
+                                            .CreateHost(address)
+                                            ;
+
+            testServiceHost.Open();
+            testServiceTasksHost.Open();
+
+            Console.WriteLine($"\nA service host for {testServiceHost.Description.ServiceType.Name} has started and is listening on:");
+            foreach (var ep in testServiceHost.Description.Endpoints)
+                Console.WriteLine("    {0}", ep.ListenUri.AbsoluteUri.ToString());
+
+            Console.WriteLine($"\nA service host for {testServiceTasksHost.Description.ServiceType.Name} has started and is listening on:");
+            foreach (var ep in testServiceTasksHost.Description.Endpoints)
+                Console.WriteLine("    {0}", ep.ListenUri.AbsoluteUri.ToString());
         }
 
         static void Register()
         {
-            var container = DIContainer.Initialize();
-            var registrations = container.GetRegistrationsSnapshot();
+            var registrations = DIContainer.Root.GetRegistrationsSnapshot();
 
-            container
-                .UnsafeRegister(Facility.Registrar, registrations)
-                .UnsafeRegister(TestRepository.Registrar, registrations)
-                .RegisterTypeIfNot<IService, ServiceClient>(registrations, "client", new InjectionFactory(c => new ServiceClient()))
-                .RegisterTypeIfNot<IServiceTasks, ServiceTasks>(registrations, "client", new InjectionFactory(c => new ServiceTasksClient()))
+            DIContainer.Root
+                .RegisterTypeIfNot<ITestService, TestServiceClient>(registrations, "client", new InjectionFactory(c => new TestServiceClient("net.tcp://localhost:14808/TestService.svc", ServiceIdentity.None, "")))
+                .RegisterTypeIfNot<ITestServiceTasks, TestServiceTasks>(registrations, "client", new InjectionFactory(c => new TestServiceTasksClient("net.tcp://localhost:14808/TestServiceTasks.svc", ServiceIdentity.None, "")))
                 ;
 
-            var interception = container
+            var interception = DIContainer.Root
                                     .AddNewExtension<Interception>()
                                     .Configure<Interception>()
                                     ;
 
             interception
-                .AddPolicy(nameof(Service))
+                .AddPolicy(nameof(TestService))
                 .AddMatchingRule<TagAttributeMatchingRule>(
-                        new InjectionConstructor(nameof(Service), false))
+                        new InjectionConstructor(nameof(TestService), false))
 
                 .AddCallHandler<PerCallContextRepositoryCallHandler>()
                 ;
@@ -71,44 +97,54 @@ $@"
 
         static void Initialize()
         {
-            using (var repository = ServiceLocator.Current.GetInstance<IRepository>("transient"))
-                repository.Initialize();
-
             Debug.WriteLine("-------------------------------");
-        }
-
-        static async Task InitializeAsync()
-        {
-            using (var repository = ServiceLocator.Current.GetInstance<IRepositoryAsync>("transient"))
-                await repository.InitializeAsync();
-        }
-
-        static void Run()
-        {
-            // initially add 100 entities
-            for (var i = 0; i<100; i++)
-                AddEntity();
-
-            for (var i = 0; i<100; i++)
-                UpdateEntity();
-        }
-
-        static void AddEntity()
-        {
-            var service = ServiceLocator.Current.GetInstance<IService>();
-
-            service.AddNewEntity();
-        }
-
-        static void UpdateEntity()
-        {
-            var service = ServiceLocator.Current.GetInstance<IService>();
-
-            service.UpdateEntities();
         }
 
         const int NumberOfTasks    = 100;
         const int ConcurrencyLevel = 1;
+
+        static void RunSync()
+        {
+            ITestService client = null;
+            var successful = 0;
+            var failed     = 0;
+
+            // initially add 100 entities
+            for (var i = 0; i<NumberOfTasks; i++)
+                try
+                {
+                    if (client == null)
+                        client = ServiceLocator.Current.GetInstance<ITestService>("client");
+                    client.AddNewEntity();
+                    successful++;
+                }
+                catch (Exception x)
+                {
+                    Debug.WriteLine(x.DumpString());
+                    client.Dispose();
+                    client = null;
+                    failed++;
+                }
+
+            for (var i = 0; i<NumberOfTasks; i++)
+                try
+                {
+                    if (client == null)
+                        client = ServiceLocator.Current.GetInstance<ITestService>("client");
+                    client.UpdateEntities();
+                    successful++;
+                }
+                catch (Exception x)
+                {
+                    Debug.WriteLine(x.DumpString());
+                    client.Dispose();
+                    client = null;
+                    failed++;
+                }
+
+            Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+            Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+        }
 
         static async Task RunAsync()
         {
@@ -125,13 +161,13 @@ $@"
                         tasks.Add(GetTask(n++));
 
                     if (tasks.Count() == ConcurrencyLevel || n >= 2*NumberOfTasks)
+                    {
+                        Task task = null;
+
                         try
                         {
-                            var task = await Task.WhenAny(tasks);
+                            task = await Task.WhenAny(tasks);
 
-                            tasks.Remove(task);
-                            if (task.IsFaulted)
-                                throw task.Exception;
                             successful++;
                         }
                         catch (AggregateException x)
@@ -139,6 +175,10 @@ $@"
                             Debug.WriteLine(x.DumpString());
                             failed++;
                         }
+
+                        if (task != null)
+                            tasks.Remove(task);
+                    }
                 }
             }
             catch (AggregateException x)
@@ -146,32 +186,42 @@ $@"
                 Debug.WriteLine(x.DumpString());
             }
 
-            Debug.WriteLine($"Successfully executed {successful} tasks and {failed} failed");
+            Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+            Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
         }
 
-        static Task GetTask(int index)
+        static async Task GetTask(int index)
         {
-            if (index < NumberOfTasks)
-                return AddEntityAsync();
+            try
+            {
+                ITestServiceTasks client = GetAsyncClient();
 
-            if (index < 2*NumberOfTasks)
-                return UpdateEntityAsync();
+                if (index < NumberOfTasks)
+                    await client.AddNewEntityAsync();
+                else
+                    await client.UpdateEntitiesAsync();
 
-            return null;
+                lock (_sync)
+                    availableClients.Enqueue(client);
+            }
+            catch (Exception)
+            {
+                availableClients.Dispose();
+                throw;
+            }
         }
 
-        static Task AddEntityAsync()
+        static object _sync = new object();
+        static Queue<ITestServiceTasks> availableClients = new Queue<ITestServiceTasks>();
+
+        static ITestServiceTasks GetAsyncClient()
         {
-            var asyncService = ServiceLocator.Current.GetInstance<IServiceTasks>();
+            if (availableClients.Any())
+                lock (_sync)
+                    if (availableClients.Any())
+                        return availableClients.Dequeue();
 
-            return asyncService.AddNewEntityAsync();
-        }
-
-        static Task UpdateEntityAsync()
-        {
-            var asyncService = ServiceLocator.Current.GetInstance<IServiceTasks>();
-
-            return asyncService.UpdateEntitiesAsync();
+            return ServiceLocator.Current.GetInstance<ITestServiceTasks>("client");
         }
     }
 }

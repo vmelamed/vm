@@ -11,7 +11,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         public virtual Guid UniqueId { get; set; }
 
-        public virtual string Name { get; set; }
+        public virtual string RepositoryId { get; set; }
 
         #region Values
         /// <summary>
@@ -23,5 +23,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         public virtual DateTime CreatedOn { get; set; }
 
         public virtual DateTime UpdatedOn { get; set; }
+
+        public virtual byte[] ConcurrencyStamp { get; set; }
+
     }
 }

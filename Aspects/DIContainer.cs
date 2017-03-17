@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -7,9 +11,6 @@ using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
 
 namespace vm.Aspects
 {
@@ -203,6 +204,12 @@ namespace vm.Aspects
                     // initialize the CSL with Unity service location
                     if (!ServiceLocator.IsLocationProviderSet)
                         ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
+
+                    // prepare for interception and policy injection (AOP)
+                    _root
+                        .AddNewExtension<Interception>()
+                        .Configure<Interception>()
+                        ;
 
                     return _root;
                 }
@@ -406,29 +413,30 @@ namespace vm.Aspects
             Contract.Requires<ArgumentNullException>(container != null, nameof(container));
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
 
-            var registrations = container.Registrations;
+            var registrations = container.GetRegistrationsSnapshot();
 
             Contract.Assume(registrations != null);
 
             writer.WriteLine($"Container has {registrations.Count()} Registrations:");
 
             foreach (var item in registrations
+                                    .Values
                                     .OrderBy(i => i.RegisteredType.Name)
                                     .ThenBy(i => i.MappedToType.Name)
                                     .ThenBy(i => i.Name))
             {
                 string regType = item.RegisteredType.IsGenericType
-                                        ? string.Format(
-                                                    "{0}<{1}>",
-                                                    item.RegisteredType.Name.Split('`')[0],
-                                                    string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
-                                        : item.RegisteredType.Name;
+                                    ? string.Format(
+                                                "{0}<{1}>",
+                                                item.RegisteredType.Name.Split('`')[0],
+                                                string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
+                                    : item.RegisteredType.Name;
                 string mapTo = item.MappedToType.IsGenericType
-                                            ? string.Format(
-                                                    "{0}<{1}>",
-                                                    item.MappedToType.Name.Split('`')[0],
-                                                    string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
-                                            : item.MappedToType.Name;
+                                        ? string.Format(
+                                                "{0}<{1}>",
+                                                item.MappedToType.Name.Split('`')[0],
+                                                string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
+                                        : item.MappedToType.Name;
                 var regName = item.Name ?? "[default]";
                 var lifetime = item.LifetimeManagerType.Name;
 

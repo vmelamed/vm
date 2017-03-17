@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
@@ -36,12 +36,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <summary>
         /// Gets or sets a value indicating whether to include the caller's address. Default: true.
         /// </summary>
-        public bool IncludeCallerAddress { get; set; }
+        public bool IncludeCallerAddress { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include the custom context if any. Default: true.
         /// </summary>
-        public bool IncludeCustomContext { get; set; }
+        public bool IncludeCustomContext { get; set; } = true;
         #endregion
 
         /// <summary>
@@ -53,26 +53,36 @@ namespace vm.Aspects.Wcf.ServicePolicies
             : base(logWriter)
         {
             Contract.Requires<ArgumentNullException>(logWriter != null, nameof(logWriter));
-
-            IncludeCallerAddress = true;
-            IncludeCustomContext = true;
         }
 
         /// <summary>
-        /// Creates the call data.
+        /// Prepares per call data specific to the handler - an instance of <see cref="T:vm.Aspects.Policies.CallData" />.
         /// </summary>
-        /// <returns>CallData.</returns>
-        protected override CallData CreateCallData() => new ServiceCallData();
-
-        /// <summary>
-        /// Creates and fills a new call data object with additional audit data about the call.
-        /// </summary>
-        /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <returns>A <see cref="CallData" /> containing some additional audit data about the call.</returns>
-        protected override CallData GetCallData(
+        /// <param name="input">The input.</param>
+        /// <returns>T.</returns>
+        protected override CallData Prepare(
             IMethodInvocation input)
         {
-            var callData = (ServiceCallData)base.GetCallData(input);
+            Contract.Ensures(Contract.Result<CallData>() != null);
+
+            var serviceCallData = new ServiceCallData();
+
+            return InitializeCallData(serviceCallData, input);
+        }
+
+        /// <summary>
+        /// Initializes the call data.
+        /// </summary>
+        /// <param name="callData">The call data.</param>
+        /// <param name="input">The input.</param>
+        /// <returns>CallData.</returns>
+        protected override CallData InitializeCallData(
+            CallData callData,
+            IMethodInvocation input)
+        {
+            var serviceCallData = (ServiceCallData)callData;
+
+            base.InitializeCallData(serviceCallData, input);
 
             if (IncludeCustomContext)
             {
@@ -86,7 +96,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                     var context = contextType.GetProperty("Current").GetValue(null, null);
 
                     if (context != null)
-                        callData.CustomContext = contextType.GetProperty("Value").GetValue(context, null);
+                        serviceCallData.CustomContext = contextType.GetProperty("Value").GetValue(context, null);
                 }
             }
 
@@ -100,7 +110,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
                 if (endpointMessageProperty != null)
                 {
-                    callData.CallerAddress = $"{endpointMessageProperty.Address}:{endpointMessageProperty.Port}";
+                    serviceCallData.CallerAddress = $"{endpointMessageProperty.Address}:{endpointMessageProperty.Port}";
                     // just in case someone needs it up the stack:
                     CallContext.LogicalSetData("callerIpAddress", endpointMessageProperty.Address);
                 }

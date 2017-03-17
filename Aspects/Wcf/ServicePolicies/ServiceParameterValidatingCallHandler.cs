@@ -1,12 +1,11 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Reflection;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -75,26 +74,17 @@ namespace vm.Aspects.Wcf.ServicePolicies
         }
         #endregion
 
-        #region ICallHandler
         /// <summary>
-        /// Implement this method to execute your handler processing.
+        /// Process the input and the context before the control is passed down the aspects pipeline.
+        /// For various reasons it may cut the pipeline short by returning non-<see langword="null" />, e.g. due to an invalid parameter.
         /// </summary>
-        /// <param name="input">Inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
-        /// chain.</param>
-        /// <returns>Return value from the target.</returns>
-        /// <exception cref="ArgumentNullException">
-        /// </exception>
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "There is no real parameter.")]
-        public override IMethodReturn Invoke(
+        /// <param name="input">The input.</param>
+        /// <param name="callData">The per-call data.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+            bool callData)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
-
             var attributes = input.MethodBase
                                            .GetCustomAttributes<CustomDataContextTypeAttribute>(true)
                                            .Union(
@@ -112,7 +102,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 {
                     if (!attribute.Optional &&
                         !attributes.Any(a => a.CustomDataContextType==attribute.CustomDataContextType && a.Optional))
-                        return input.CreateExceptionMethodReturn(new InvalidOperationException("The expected custom context object (message header) is not present."));
+                        return input.CreateExceptionMethodReturn(new InvalidOperationException($"The expected {attribute.CustomDataContextType.Name} custom context object (message header) is not present."));
                 }
                 else
                 {
@@ -120,12 +110,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
                     var results = validator.Validate(contextValue);
 
                     if (!results.IsValid)
-                        return input.CreateExceptionMethodReturn(new ArgumentValidationException(results, "context object (message header)"));
+                        return input.CreateExceptionMethodReturn(new ArgumentValidationException(results, $"{attribute.CustomDataContextType.Name} context object (message header)"));
                 }
             }
 
-            return base.Invoke(input, getNext);
+            return base.PreInvoke(input, callData);
         }
-        #endregion
     }
 }

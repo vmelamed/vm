@@ -8,7 +8,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         public object UniqueId { get; set; }
 
         [Dump(2)]
-        public object Name { get; set; }
+        public object RepositoryId { get; set; }
 
         [Dump(3, RecurseDump = ShouldDump.Skip)]
         public object ValuesList { get; set; }
@@ -18,5 +18,11 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         [Dump(5)]
         public object UpdatedOn { get; set; }
+
+        [Dump(5)]
+        public object Key { get; set; }
+
+        [Dump(6)]
+        public object ConcurrencyStamp { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                     e.ToTable(nameof(Entity), "Test");
                 });
 
-            Property(e => e.Name)
+            Property(e => e.RepositoryId)
                 .HasColumnOrder(i++)
                 .HasMaxLength(64)
                 ;
@@ -36,7 +36,10 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             Property(e => e.UpdatedOn)
                 .HasColumnOrder(i++)
-                .IsConcurrencyToken()
+                ;
+
+            Property(e => e.ConcurrencyStamp)
+                .IsRowVersion()
                 ;
 
             HasMany(e => e.ValuesList)

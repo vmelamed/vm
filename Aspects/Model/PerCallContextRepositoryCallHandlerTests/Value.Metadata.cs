@@ -5,7 +5,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     abstract class ValueMetadata
     {
         [Dump(0)]
-        public object Name { get; set; }
+        public object RepositoryId { get; set; }
 
         [Dump(1, RecurseDump = ShouldDump.Skip)]
         public object Entity { get; set; }
@@ -18,5 +18,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         [Dump(4)]
         public object UpdatedOn { get; set; }
+
+        [Dump(5)]
+        public object ConcurrencyStamp { get; set; }
     }
 }

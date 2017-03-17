@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.TestRepository),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets5f97016fdf7494be6e201d725bfe0f2075873530ba93777e9def37597615e096))]
+    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets606c03ebdfa04f4f677cc4dabaa53db5f5fefc9dc42db02fb431bcf68bebc957))]
 
 namespace Edm_EntityMappingGeneratedViews
 {
@@ -23,14 +23,14 @@ namespace Edm_EntityMappingGeneratedViews
     /// Implements a mapping view cache.
     /// </summary>
     [GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-    internal sealed class ViewsForBaseEntitySets5f97016fdf7494be6e201d725bfe0f2075873530ba93777e9def37597615e096 : DbMappingViewCache
+    internal sealed class ViewsForBaseEntitySets606c03ebdfa04f4f677cc4dabaa53db5f5fefc9dc42db02fb431bcf68bebc957 : DbMappingViewCache
     {
         /// <summary>
         /// Gets a hash value computed over the mapping closure.
         /// </summary>
         public override string MappingHashValue
         {
-            get { return "5f97016fdf7494be6e201d725bfe0f2075873530ba93777e9def37597615e096"; }
+            get { return "606c03ebdfa04f4f677cc4dabaa53db5f5fefc9dc42db02fb431bcf68bebc957"; }
         }
 
         /// <summary>
@@ -126,14 +126,15 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Entity
-        [CodeFirstDatabaseSchema.Entity](T1.Entity_Id, T1.Entity_Name, T1.Entity_UniqueId, T1.Entity_CreatedOn, T1.Entity_UpdatedOn)
+        [CodeFirstDatabaseSchema.Entity](T1.Entity_Id, T1.Entity_RepositoryId, T1.Entity_UniqueId, T1.Entity_CreatedOn, T1.Entity_UpdatedOn, T1.Entity_ConcurrencyStamp)
     FROM (
         SELECT 
             T.Id AS Entity_Id, 
-            T.Name AS Entity_Name, 
+            T.RepositoryId AS Entity_RepositoryId, 
             T.UniqueId AS Entity_UniqueId, 
             T.CreatedOn AS Entity_CreatedOn, 
             T.UpdatedOn AS Entity_UpdatedOn, 
+            T.ConcurrencyStamp AS Entity_ConcurrencyStamp, 
             True AS _from0
         FROM TestRepository.Entities AS T
     ) AS T1");
@@ -147,14 +148,15 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Value
-        [CodeFirstDatabaseSchema.Value](T1.Value_Id, T1.Value_Name, T1.Value_EntityId, T1.Value_CreatedOn, T1.Value_UpdatedOn)
+        [CodeFirstDatabaseSchema.Value](T1.Value_Id, T1.Value_RepositoryId, T1.Value_EntityId, T1.Value_CreatedOn, T1.Value_UpdatedOn, T1.Value_ConcurrencyStamp)
     FROM (
         SELECT 
             T.Id AS Value_Id, 
-            T.Name AS Value_Name, 
+            T.RepositoryId AS Value_RepositoryId, 
             T.EntityId AS Value_EntityId, 
             T.CreatedOn AS Value_CreatedOn, 
             T.UpdatedOn AS Value_UpdatedOn, 
+            T.ConcurrencyStamp AS Value_ConcurrencyStamp, 
             True AS _from0
         FROM TestRepository.Values AS T
     ) AS T1");
@@ -168,14 +170,15 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Entities
-        [vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Entity](T1.Entity_Id, T1.Entity_UniqueId, T1.Entity_Name, T1.Entity_CreatedOn, T1.Entity_UpdatedOn)
+        [vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Entity](T1.Entity_Id, T1.Entity_UniqueId, T1.Entity_RepositoryId, T1.Entity_CreatedOn, T1.Entity_UpdatedOn, T1.Entity_ConcurrencyStamp)
     FROM (
         SELECT 
             T.Id AS Entity_Id, 
             T.UniqueId AS Entity_UniqueId, 
-            T.Name AS Entity_Name, 
+            T.RepositoryId AS Entity_RepositoryId, 
             T.CreatedOn AS Entity_CreatedOn, 
             T.UpdatedOn AS Entity_UpdatedOn, 
+            T.ConcurrencyStamp AS Entity_ConcurrencyStamp, 
             True AS _from0
         FROM CodeFirstDatabase.Entity AS T
     ) AS T1");
@@ -189,14 +192,15 @@ namespace Edm_EntityMappingGeneratedViews
         {
             return new DbMappingView(@"
     SELECT VALUE -- Constructing Values
-        [vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Value](T1.Value_Id, T1.Value_Name, T1.Value_EntityId, T1.Value_CreatedOn, T1.Value_UpdatedOn)
+        [vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Value](T1.Value_Id, T1.Value_RepositoryId, T1.Value_EntityId, T1.Value_CreatedOn, T1.Value_UpdatedOn, T1.Value_ConcurrencyStamp)
     FROM (
         SELECT 
             T.Id AS Value_Id, 
-            T.Name AS Value_Name, 
+            T.RepositoryId AS Value_RepositoryId, 
             T.EntityId AS Value_EntityId, 
             T.CreatedOn AS Value_CreatedOn, 
             T.UpdatedOn AS Value_UpdatedOn, 
+            T.ConcurrencyStamp AS Value_ConcurrencyStamp, 
             True AS _from0
         FROM CodeFirstDatabase.[Value] AS T
     ) AS T1");

@@ -1,45 +1,30 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Linq;
 using System.Security.Permissions;
-using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
     /// <summary>
     /// The handler invokes the method <c>Demand()</c> on all code access security attributes applied to the invoked method.
     /// </summary>
-    public class CodeAccessSecurityCallHandler : ICallHandler
+    public class CodeAccessSecurityCallHandler : BaseCallHandler<bool>
     {
-        #region ICallHandler Members
-
         /// <summary>
-        /// Invokes the method <c>Demand()</c> on all code access security attributes applied to the invoked method.
+        /// Process the input and the context before the control is passed down the aspects pipeline.
+        /// For various reasons it may cut the pipeline short by returning non-<see langword="null" />, e.g. due to an invalid parameter.
         /// </summary>
-        /// <param name="input">Inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
-        /// chain.</param>
-        /// <returns>Return value from the target.</returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// input
-        /// or
-        /// getNext
-        /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="This is the ICallHandler protocol.")]
-        public IMethodReturn Invoke(
+        /// <param name="input">The input.</param>
+        /// <param name="_">ignored</param>
+        /// <returns>IMethodReturn.</returns>
+        protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+            bool _)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
-
-            foreach (var a in input.MethodBase.GetCustomAttributes(true)
-                                              .OfType<CodeAccessSecurityAttribute>())
+            foreach (var a in input
+                                .MethodBase
+                                .GetCustomAttributes(true)
+                                .OfType<CodeAccessSecurityAttribute>())
                 if (!a.Unrestricted && a.Action == SecurityAction.Demand)
                     try
                     {
@@ -50,15 +35,7 @@ namespace vm.Aspects.Policies
                     {
                         return input.CreateExceptionMethodReturn(x);
                     }
-
-            return getNext().Invoke(input, getNext);
+            return null;
         }
-
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        public int Order { get; set; }
-
-        #endregion
     }
 }

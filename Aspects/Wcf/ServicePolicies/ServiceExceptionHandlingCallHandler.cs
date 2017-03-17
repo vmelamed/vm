@@ -10,6 +10,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
 using vm.Aspects.Facilities;
+using vm.Aspects.Policies;
 using vm.Aspects.Threading;
 using vm.Aspects.Wcf.FaultContracts;
 
@@ -22,27 +23,24 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// policy will throe plain <see cref="FaultException"/> with elaborate message text.
     /// </summary>
     /// <seealso cref="ICallHandler" />
-    public sealed class ServiceExceptionHandlingCallHandler : ICallHandler
+    public sealed class ServiceExceptionHandlingCallHandler : BaseCallHandler<bool>
     {
-        int ICallHandler.Order { get; set; }
-
-        IMethodReturn ICallHandler.Invoke(
+        /// <summary>
+        /// Process the output from the call so far and optionally modify the output.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The per-call data.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+            IMethodReturn methodReturn,
+            bool callData)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
-
-            var methodReturn = getNext().Invoke(input, getNext);
-
             if (methodReturn.Exception == null)
                 return methodReturn;
-            else
-                return HandleException(input, methodReturn.Exception);
+
+            return HandleException(input, methodReturn.Exception);
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);

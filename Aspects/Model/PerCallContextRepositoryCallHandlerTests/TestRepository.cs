@@ -9,6 +9,7 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
+    [DebuggerDisplay("{GetType().Name, nq}: {Id}")]
     public partial class TestRepository : EFRepositoryBase
     {
         public Guid Id { get; } = Guid.NewGuid();

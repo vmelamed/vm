@@ -65,10 +65,10 @@ namespace vm.Aspects.Wcf.TestServer
         static PatternAddressesAndBindings[] patternsAddressesAndBindings =
         {
             new PatternAddressesAndBindings { PatternName = RequestResponseNoSecurityConfigurator.PatternName,                                  AddressesAndBindings = addressesAndBindings1 },
+            new PatternAddressesAndBindings { PatternName = RequestResponseConfigurator.PatternName,                                            AddressesAndBindings = addressesAndBindings2 },
             new PatternAddressesAndBindings { PatternName = RequestResponseTransportConfigurator.PatternName,                                   AddressesAndBindings = addressesAndBindings2 },
             new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,        AddressesAndBindings = addressesAndBindings2 },
             new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,    AddressesAndBindings = addressesAndBindings2 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseConfigurator.PatternName,                                            AddressesAndBindings = addressesAndBindings2 },
             new PatternAddressesAndBindings { PatternName = RequestResponseMessageConfigurator.PatternName,                                     AddressesAndBindings = addressesAndBindings3 },
             new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,          AddressesAndBindings = addressesAndBindings3 },
             new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName,      AddressesAndBindings = addressesAndBindings4 },

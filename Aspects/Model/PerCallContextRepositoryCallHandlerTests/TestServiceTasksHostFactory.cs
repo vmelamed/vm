@@ -5,12 +5,12 @@ using vm.Aspects.Wcf.Services;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
-    public class ServiceHostFactory : MessagingPatternInitializedServiceHostFactory<IService, Service, ServiceInitializer>
+    public class TestServiceTasksHostFactory : MessagingPatternInitializedServiceHostFactory<ITestServiceTasks, TestServiceTasks, ServiceInitializer>
     {
         protected override IUnityContainer DoRegisterDefaults(
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations) => base.DoRegisterDefaults(container, registrations)
-                                                                                         .UnsafeRegister(Service.Registrar, registrations)
+                                                                                         .UnsafeRegister(TestService.Registrar, registrations)
                                                                                          ;
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             //        "");
 
             host.AddServiceEndpoint(
-                    typeof(IService),
+                    typeof(ITestServiceTasks),
                     new NetTcpBinding(),
-                    "");
+                    "TestServiceTasks.svc");
 
             return host;
         }

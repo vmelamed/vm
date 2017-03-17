@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using System;
 using System.ServiceModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies

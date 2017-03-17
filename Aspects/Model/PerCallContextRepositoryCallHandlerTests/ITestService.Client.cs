@@ -13,13 +13,13 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     /// <summary>
     /// WCF channel factory based client (proxy) for services implementing the contract IService.
     /// </summary>
-    /// <seealso cref="LightClient{IService}" />
-    /// <seealso cref="IService" />
-    public class ServiceClient : LightClient<IService>, IService
+    /// <seealso cref="LightClient{ITestService}" />
+    /// <seealso cref="ITestService" />
+    public class TestServiceClient : LightClient<ITestService>, ITestService
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class (creates the channel factory)
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class (creates the channel factory)
         /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and service address.
         /// </summary>
         /// <param name="endpointConfigurationName">Name of the endpoint configuration.</param>
@@ -30,7 +30,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             string endpointConfigurationName,
             string remoteAddress,
             string messagingPattern = null)
@@ -42,7 +42,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class (creates the channel factory).
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class (creates the channel factory).
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">
@@ -59,7 +59,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             string remoteAddress,
             ServiceIdentity identityType,
             string identity,
@@ -74,7 +74,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class.
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class.
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">
@@ -86,7 +86,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             string remoteAddress,
             ServiceIdentity identityType,
             X509Certificate2 certificate,
@@ -102,7 +102,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class.
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class.
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityClaim">The identity claim.</param>
@@ -111,7 +111,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             string remoteAddress,
             Claim identityClaim,
             string messagingPattern = null)
@@ -123,7 +123,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class (creates the channel factory).
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class (creates the channel factory).
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -141,7 +141,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
@@ -171,7 +171,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
@@ -189,7 +189,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceClient" /> class.
+        /// Initializes a new instance of the <see cref="TestServiceClient" /> class.
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -199,7 +199,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
-        public ServiceClient(
+        public TestServiceClient(
             Binding binding,
             string remoteAddress,
             Claim identityClaim,
@@ -213,7 +213,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
         #endregion
 
-        #region IService implementation
+        #region ITestService implementation
         public void AddNewEntity(
             ) => Proxy.AddNewEntity();
 

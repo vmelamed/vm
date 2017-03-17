@@ -6,7 +6,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
     [ServiceContract]
     [MessagingPattern(RequestResponseConfigurator.PatternName, true)]
-    public interface IService
+    public interface ITestService
     {
         [OperationContract]
         void AddNewEntity();

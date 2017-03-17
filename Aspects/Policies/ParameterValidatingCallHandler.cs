@@ -14,7 +14,7 @@ namespace vm.Aspects.Policies
     /// <summary>
     /// Class ParameterValidatingCallHandler performs parameter validation based on validation attributes applied to the methods' parameters.
     /// </summary>
-    public class ParameterValidatingCallHandler : ICallHandler
+    public class ParameterValidatingCallHandler : BaseCallHandler<bool>
     {
         readonly string _ruleSet;
         readonly ValidatorFactory _validatorFactory;
@@ -112,27 +112,17 @@ namespace vm.Aspects.Policies
                 }
         }
 
-        #region ICallHandler
         /// <summary>
-        /// Implement this method to execute your handler processing.
+        /// Process the input and the context before the control is passed down the aspects pipeline.
+        /// For various reasons it may cut the pipeline short by returning non-<see langword="null" />, e.g. due to an invalid parameter.
         /// </summary>
-        /// <param name="input">Inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler chain.</param>
-        /// <returns>
-        /// Represents the returned value from the target.
-        /// </returns>
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "There is no real parameter here.")]
-        public virtual IMethodReturn Invoke(
+        /// <param name="input">The input.</param>
+        /// <param name="callData">The per-call data.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
+            bool callData)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
-
             // validate the parameters
             for (int index = 0; index < input.Inputs.Count; ++index)
             {
@@ -143,20 +133,15 @@ namespace vm.Aspects.Policies
                     parameterValue == null)
                     continue;
 
-                var validator = CreateValidator(inputParameter, parameterValue);
-                var results = validator.Validate(parameterValue);
+                var results = CreateValidator(inputParameter, parameterValue)
+                                    .Validate(parameterValue);
 
                 if (!results.IsValid)
                     return input.CreateExceptionMethodReturn(new ArgumentValidationException(results, inputParameter.Name));
             }
 
-            return getNext().Invoke(input, getNext);
+            return null;
         }
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        public int Order { get; set; }
-        #endregion
 
         /// <summary>
         /// Creates a validator for the parameter represented by <paramref name="parameterInfo"/>.

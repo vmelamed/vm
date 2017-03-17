@@ -5,13 +5,14 @@ using System.Data.SqlClient;
 using System.Net;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
+using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.ServicePolicies;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
-    public partial class Service
+    public partial class TestService
     {
-        public const string PolicyName = "ServicePolicy";
+        public const string PolicyName = "TestServicePolicy";
 
         public static ContainerRegistrar Registrar { get; } = new ServiceRegistrar();
 
@@ -22,34 +23,26 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
                 InitializeObjectDumper();
+
                 container
-                    .UnsafeRegister(TestRepository.Registrar, registrations);
-
-                var interception = container
-                                        .UnsafeRegister(TestRepository.Registrar, registrations)
-                                        .AddNewExtension<Interception>()
-                                        .Configure<Interception>()
-                                        ;
-
-                interception
-                    .AddPolicy(nameof(Service))
-                    .AddMatchingRule<TagAttributeMatchingRule>(
-                            new InjectionConstructor(nameof(Service), false))
-
-                    .AddCallHandler<PerCallContextRepositoryCallHandler>()
+                    .UnsafeRegister(TestRepository.Registrar, registrations)
                     ;
 
+                var interception = container.Configure<Interception>();
+
                 if (!registrations.ContainsKey(new RegistrationLookup(typeof(InjectionPolicy), PolicyName)))
+                {
                     interception
                         .AddPolicy(PolicyName)
                         .AddMatchingRule<TagAttributeMatchingRule>(
                                 new InjectionConstructor(PolicyName, false))
 
                         .AddCallHandler<ServiceExceptionHandlingCallHandler>(new ContainerControlledLifetimeManager())
-                        .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager())
-                        .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager())
+                        .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(Facility.LogWriter))
+                        .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor())
                         .AddCallHandler<PerCallContextRepositoryCallHandler>()
                         ;
+                }
             }
 
             static void InitializeObjectDumper()

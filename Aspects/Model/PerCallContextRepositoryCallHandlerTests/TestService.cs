@@ -11,29 +11,37 @@ using vm.Aspects.Wcf.Behaviors;
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
     [DIBehavior]
-    [Tag(Service.PolicyName)]
+    [Tag(TestService.PolicyName)]
     [ServiceBehavior(
         InstanceContextMode = InstanceContextMode.PerCall,
         ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public partial class Service : IService
+    public partial class TestService : ITestService, IHasRepository
     {
         static Random _random = new Random(DateTime.UtcNow.Millisecond);
-        IRepository _repository;
+        Lazy<IRepository> _repository;
 
-        public Service(
-            IRepository repository)
+        IRepository Repository => _repository.Value;
+
+        public TestService(
+            Lazy<IRepository> repository)
         {
             _repository = repository;
         }
 
+        #region IHasRepository
+        IRepository IHasRepository.Repository => Repository;
+
+        public IRepositoryAsync AsyncRepository => null;
+        #endregion
+
         #region IService
         public void AddNewEntity()
-            => _repository
+            => Repository
                     .Add(CreateEntity(_random.Next(5)))
                     ;
 
         public int CountOfEntities()
-            => _repository
+            => Repository
                     .Entities<Entity>()
                     .Count()
                     ;
@@ -41,7 +49,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         public ICollection<Entity> GetEntities(
             int skip,
             int take)
-            => _repository
+            => Repository
                     .Entities<Entity>()
                     .FetchAlso(e => e.ValuesList)
                     .OrderBy(e => e.Id)
@@ -62,13 +70,13 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         Entity CreateEntity(
             int numValues)
         {
-            var e = _repository.CreateEntity<Entity>();
+            var e = Repository.CreateEntity<Entity>();
 
-            e.Id        = _repository.GetStoreId<Entity, long>();
-            e.UniqueId  = Facility.GuidGenerator.NewGuid();
-            e.Name      = Facility.GuidGenerator.NewGuid().ToString("N");
-            e.CreatedOn =
-            e.UpdatedOn = Facility.Clock.UtcNow;
+            e.Id           = Repository.GetStoreId<Entity, long>();
+            e.UniqueId     = Facility.GuidGenerator.NewGuid();
+            e.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
+            e.CreatedOn    =
+            e.UpdatedOn    = Facility.Clock.UtcNow;
 
             for (var i = 0; i<numValues; i++)
             {
@@ -83,12 +91,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         Value CreateValue()
         {
-            var v = _repository.CreateValue<Value>();
+            var v = Repository.CreateValue<Value>();
 
-            v.Id        = _repository.GetStoreId<Value, long>();
-            v.Name      = Facility.GuidGenerator.NewGuid().ToString("N");
-            v.CreatedOn =
-            v.UpdatedOn = Facility.Clock.UtcNow;
+            v.Id           = Repository.GetStoreId<Value, long>();
+            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
+            v.CreatedOn    =
+            v.UpdatedOn    = Facility.Clock.UtcNow;
 
             return v;
         }
@@ -97,7 +105,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             Entity e,
             int numValues)
         {
-            e.Name = Facility.GuidGenerator.NewGuid().ToString("N");
+            e.RepositoryId = Facility.GuidGenerator.NewGuid().ToString("N");
 
             UpdateValues(e, 0, e.ValuesList.Count()-1);
             for (var i = 0; i<numValues; i++)
@@ -127,8 +135,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         void UpdateValue(
             Value v)
         {
-            v.Name      = Facility.GuidGenerator.NewGuid().ToString("N");
-            v.UpdatedOn = Facility.Clock.UtcNow;
+            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
+            v.UpdatedOn    = Facility.Clock.UtcNow;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -7,8 +9,6 @@ using System.Reflection;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 
@@ -39,7 +39,7 @@ namespace vm.Aspects.Policies
     /// Class CallTraceCallHandler is an aspect (policy) which when injected in an object will dump information about each call
     /// into the current <see cref="P:Facility.LogWriter" />.
     /// </summary>
-    public class CallTraceCallHandler : ICallHandler
+    public class CallTraceCallHandler : BaseCallHandler<CallData>
     {
         #region Properties
         /// <summary>
@@ -55,7 +55,7 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Gets or sets a value indicating whether to log an after the calls. Default: true.
         /// </summary>
-        public bool LogAfterCall { get; set; }
+        public bool LogAfterCall { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the message prefix of the event after the calls. Default: null.
@@ -65,18 +65,18 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Gets or sets a value indicating whether to log asynchronously.
         /// </summary>
-        public bool LogAsynchronously { get; set; }
+        public bool LogAsynchronously { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include the identity of the principal caller. Default: true
         /// </summary>
         /// <value><see langword="true"/> to include the principal; otherwise, <see langword="false"/>.</value>
-        public bool IncludePrincipal { get; set; }
+        public bool IncludePrincipal { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include a dump of the parameters. Default: true.
         /// </summary>
-        public bool IncludeParameters { get; set; }
+        public bool IncludeParameters { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include the call stack. Default: false.
@@ -86,37 +86,37 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Gets or sets a value indicating whether to include the call time in the logged events after the calls. Default: true.
         /// </summary>
-        public bool IncludeCallTime { get; set; }
+        public bool IncludeCallTime { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include a dump of the return values in the logged events after the calls. Default: true.
         /// </summary>
-        public bool IncludeReturnValue { get; set; }
+        public bool IncludeReturnValue { get; set; } = true;
 
         /// <summary>
         /// Gets or sets a value indicating whether to include a dump of the exceptions thrown from the calls. Default: true. 
         /// </summary>
-        public bool IncludeException { get; set; }
+        public bool IncludeException { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the category to which the start call log events will be sent. Default: &quot;Start Call Trace&quot;.
         /// </summary>
-        public string StartCategory { get; set; }
+        public string StartCallCategory { get; set; } = LogWriterFacades.StartCallTrace;
 
         /// <summary>
         /// Gets or sets the category to which the end log events will be sent. Default: &quot;Event Call Trace&quot;.
         /// </summary>
-        public string EndCategory { get; set; }
+        public string EndCallCategory { get; set; } = LogWriterFacades.EndCallTrace;
 
         /// <summary>
         /// Gets or sets the priority of the logged call trace events. Default: -1
         /// </summary>
-        public int Priority { get; set; }
+        public int Priority { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the severity of the logged call trace events. Default: TraceEventType.Information
         /// </summary>
-        public TraceEventType Severity { get; set; }
+        public TraceEventType Severity { get; set; } = TraceEventType.Information;
 
         /// <summary>
         /// Gets or sets the logged call trace events' event id. Default: 0
@@ -145,75 +145,37 @@ namespace vm.Aspects.Policies
         {
             Contract.Requires<ArgumentNullException>(logWriter != null, nameof(logWriter));
 
-            LogAsynchronously  = true;
-            LogAfterCall       = true;
-            IncludePrincipal   = true;
-            IncludeParameters  = true;
-            IncludeCallTime    = true;
-            IncludeReturnValue = true;
-            IncludeException   = true;
-            Priority           = -1;
-            StartCategory      = LogWriterFacades.StartCallTrace;
-            EndCategory        = LogWriterFacades.EndCallTrace;
-            Severity           = TraceEventType.Information;
-            LogWriter          = logWriter;
+            LogWriter = logWriter;
         }
-
-        #region ICallHandler Members
-
-        /// <summary>
-        /// The actual handler processing code which initiates the dump.
-        /// </summary>
-        /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler chain.</param>
-        /// <returns>Object representing the return value from the target.</returns>
-        public IMethodReturn Invoke(
-            IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
-        {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
-
-            var callData = GetCallData(input);
-
-            PreInvoke(input, callData);
-
-            var methodReturn = DoInvoke(input, callData, getNext);
-
-            return PostInvoke(input, callData, methodReturn);
-        }
-
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        public int Order { get; set; }
-
-        #endregion
 
         #region Overridables
-
         /// <summary>
-        /// Creates the call data.
+        /// Prepares per call data specific to the handler - an instance of <see cref="CallData"/>.
         /// </summary>
-        /// <returns>CallData.</returns>
-        protected virtual CallData CreateCallData() => new CallData();
-
-        /// <summary>
-        /// Creates and fills a new call data object with additional audit data about the call.
-        /// </summary>
-        /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <returns>A <see cref="CallData"/> containing some additional audit data about the call.</returns>
-        protected virtual CallData GetCallData(
+        /// <param name="input">The input.</param>
+        /// <returns>T.</returns>
+        protected override CallData Prepare(
             IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
             Contract.Ensures(Contract.Result<CallData>() != null);
 
-            var callData = CreateCallData();
+            var callData = new CallData();
+
+            return InitializeCallData(callData, input);
+        }
+
+        /// <summary>
+        /// Initializes the call data.
+        /// </summary>
+        /// <param name="callData">The call data.</param>
+        /// <param name="input">The input.</param>
+        /// <returns>CallData.</returns>
+        protected virtual CallData InitializeCallData(
+            CallData callData,
+            IMethodInvocation input)
+        {
+            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            Contract.Ensures(Contract.Result<CallData>() != null);
 
             if (IncludeCallStack)
                 callData.CallStack = Environment.StackTrace;
@@ -239,58 +201,48 @@ namespace vm.Aspects.Policies
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
         /// <returns>Represents the return value from the target.</returns>
-        protected virtual void PreInvoke(
+        protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
             CallData callData)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            Contract.Ensures(Contract.Result<IMethodReturn>() == null);
 
-            if (!LogBeforeCall)
-                return;
+            if (!LogBeforeCall  ||  !LogWriter.IsLoggingEnabled())
+                return null;
 
-            if (LogWriter.IsLoggingEnabled())
-            {
-                var entry = NewLogEntry(StartCategory);
+            var entry = NewLogEntry(StartCallCategory);
 
-                if (!LogWriter.ShouldLog(entry))
-                    return;
+            if (!LogWriter.ShouldLog(entry))
+                return null;
 
-                Action logBeforeCall = () => Facility.ExceptionManager.Process(
-                                                    () => LogBeforeCallData(entry, input, callData),
-                                                    ExceptionPolicyProvider.LogAndSwallow);
+            Action logBeforeCall = () => Facility.ExceptionManager.Process(
+                                                () => LogBeforeCallData(entry, input, callData),
+                                                ExceptionPolicyProvider.LogAndSwallow);
 
-                if (LogAsynchronously)
-                    Task.Run(logBeforeCall);
-                else
-                    logBeforeCall();
-            }
+            if (LogAsynchronously)
+                Task.Run(logBeforeCall);
+            else
+                logBeforeCall();
+
+            return null;
         }
 
         /// <summary>
         /// Invokes the next handler in the pipeline. Optionally may register the call duration.
         /// </summary>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <param name="callData">The additional audit data about the call.</param>
         /// <param name="getNext">Delegate to execute to get the next delegate in the handler chain.</param>
+        /// <param name="callData">The additional audit data about the call.</param>
         /// <returns>Object representing the return value from the target.</returns>
-        protected virtual IMethodReturn DoInvoke(
+        protected override IMethodReturn DoInvoke(
             IMethodInvocation input,
-            CallData callData,
-            GetNextHandlerDelegate getNext)
+            GetNextHandlerDelegate getNext,
+            CallData callData)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            if (LogWriter.IsLoggingEnabled() && LogAfterCall && IncludeCallTime)
+                callData.CallTimer.Start();
 
-            var next = getNext();
-
-            if (!(LogWriter.IsLoggingEnabled() && LogAfterCall && IncludeCallTime))
-                return next.Invoke(input, getNext);
-
-            callData.CallTimer.Start();
-            return next.Invoke(input, getNext);
+            return base.DoInvoke(input, getNext, callData);
         }
 
         /// <summary>
@@ -305,9 +257,6 @@ namespace vm.Aspects.Policies
             CallData callData,
             IMethodReturn methodReturn)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
@@ -318,63 +267,21 @@ namespace vm.Aspects.Policies
                                                             () => LogAfterCallData(e, input, callData, methodReturn),
                                                             ExceptionPolicyProvider.LogAndSwallow);
 
-            var returnedTask = methodReturn.ReturnValue as Task;
-            var entry = NewLogEntry(EndCategory);
+            var entry = NewLogEntry(EndCallCategory);
 
-            if (returnedTask == null  ||  returnedTask.IsCompleted)
-            {
-                callData.CallTimer.Stop();
+            callData.CallTimer.Stop();
 
-                if (!LogWriter.ShouldLog(entry))
-                    return methodReturn;
+            if (!LogWriter.ShouldLog(entry))
+                return methodReturn;
 
-                if (LogAsynchronously)
-                    Task.Run(() => logAfterCall(entry));
-                else
-                    logAfterCall(entry);
-            }
+            if (LogAsynchronously)
+                Task.Run(() => logAfterCall(entry));
             else
-            {
-                if (!returnedTask.GetType().IsGenericType)
-                    returnedTask = returnedTask.ContinueWith(t => true);
-
-                // call the generic continuation via reflection
-                var returnedTaskResultValueType = returnedTask.GetType().GetGenericArguments()[0];
-                var gmi = _miPostInvokeAsyncGeneric.MakeGenericMethod(returnedTaskResultValueType);
-
-                return input.CreateMethodReturn(
-                                gmi.Invoke(this, new object[] { returnedTask, callData.CallTimer, logAfterCall, entry }));
-            }
+                logAfterCall(entry);
 
             return methodReturn;
         }
         #endregion
-
-        static MethodInfo _miPostInvokeAsyncGeneric = typeof(CallTraceCallHandler)
-                                                            .GetMethod(nameof(PostInvokeAsyncGeneric), BindingFlags.NonPublic|BindingFlags.Instance);
-
-        Task<T> PostInvokeAsyncGeneric<T>(
-            Task<T> returnedTask,
-            Stopwatch callTimer,
-            Action<LogEntry> logAfterCall,
-            LogEntry entry)
-        {
-            Contract.Requires<ArgumentNullException>(returnedTask != null, nameof(returnedTask));
-
-            return returnedTask
-                                    .ContinueWith(
-                                        t =>
-                                        {
-                                            callTimer.Stop();
-                                            if (LogWriter.ShouldLog(entry))
-                                                Task.Run(() => logAfterCall(entry));
-
-                                            if (t.IsFaulted)
-                                                throw t.Exception;
-
-                                            return t.Result;
-                                        });
-        }
 
         /// <summary>
         /// Creates a new log entry.
@@ -492,9 +399,9 @@ namespace vm.Aspects.Policies
             CallData callData,
             IMethodReturn methodReturn)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            Contract.Requires<ArgumentNullException>(writer       != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(callData     != null, nameof(callData));
             Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
 
             DumpMethod(writer, input);
@@ -521,8 +428,7 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
 
-            if (!IncludeCallTime ||
-                callData.CallTimer == null)
+            if (!IncludeCallTime  ||  callData.CallTimer == null)
                 return;
 
             writer.WriteLine();

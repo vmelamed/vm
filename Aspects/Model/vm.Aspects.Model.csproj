@@ -272,6 +272,7 @@
     <Compile Include="EFRepository\StringAttribute.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHasBusinessKey.cs" />
+    <Compile Include="IHasRepository.cs" />
     <Compile Include="IHasStoreId.cs" />
     <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="IMoneyDefaults.cs" />

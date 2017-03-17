@@ -281,7 +281,7 @@ namespace vm.Aspects.Wcf.Services
                         .UnsafeRegister(BindingConfigurator.Registrar, registrations)
                         ;
 
-                // register the defaults of the super classes
+                // register the defaults of the inheriting classes
                 DoRegisterDefaults(DIContainer.Root, registrations);
 
                 ServiceResolveName = ObtainServiceResolveName();
