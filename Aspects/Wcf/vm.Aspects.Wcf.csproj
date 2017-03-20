@@ -357,6 +357,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ServiceIdentity.cs" />
+    <Compile Include="ServicePolicies\ServiceCallTraceData.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.cs" />
     <Compile Include="ServicePolicies\RestCallExceptionHandler.cs" />

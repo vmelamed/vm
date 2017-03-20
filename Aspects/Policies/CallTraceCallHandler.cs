@@ -15,47 +15,10 @@ using vm.Aspects.Facilities;
 namespace vm.Aspects.Policies
 {
     /// <summary>
-    /// Class CallData encapsulates some audit data to be output about the current call.
-    /// </summary>
-    public class CallData
-    {
-        /// <summary>
-        /// Gets or sets the call stack.
-        /// </summary>
-        public string CallStack { get; set; }
-
-        /// <summary>
-        /// Gets or sets the call timer that measures the actual call duration.
-        /// </summary>
-        public Stopwatch CallTimer { get; set; }
-
-        /// <summary>
-        /// Gets or sets the caller's principal identity name.
-        /// </summary>
-        public string IdentityName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the return value.
-        /// </summary>
-        public object ReturnValue { get; set; }
-
-        /// <summary>
-        /// Gets or sets the output values.
-        /// </summary>
-        public IParameterCollection OutputValues { get; set; }
-
-        /// <summary>
-        /// Gets or sets the exception.
-        /// </summary>
-        /// <value>The exception.</value>
-        public Exception Exception { get; set; }
-    }
-
-    /// <summary>
     /// Class CallTraceCallHandler is an aspect (policy) which when injected in an object will dump information about each call
     /// into the current <see cref="P:Facility.LogWriter" />.
     /// </summary>
-    public class CallTraceCallHandler : BaseCallHandler<CallData>
+    public class CallTraceCallHandler : BaseCallHandler<CallTraceData>
     {
         #region Properties
         /// <summary>
@@ -166,16 +129,16 @@ namespace vm.Aspects.Policies
 
         #region Overridables
         /// <summary>
-        /// Prepares per call data specific to the handler - an instance of <see cref="CallData"/>.
+        /// Prepares per call data specific to the handler - an instance of <see cref="CallTraceData"/>.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
-        protected override CallData Prepare(
+        protected override CallTraceData Prepare(
             IMethodInvocation input)
         {
-            Contract.Ensures(Contract.Result<CallData>() != null);
+            Contract.Ensures(Contract.Result<CallTraceData>() != null);
 
-            return InitializeCallData(new CallData(), input);
+            return InitializeCallData(new CallTraceData(), input);
         }
 
         /// <summary>
@@ -184,12 +147,12 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The call data.</param>
         /// <param name="input">The input.</param>
         /// <returns>CallData.</returns>
-        protected virtual CallData InitializeCallData(
-            CallData callData,
+        protected virtual CallTraceData InitializeCallData(
+            CallTraceData callData,
             IMethodInvocation input)
         {
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            Contract.Ensures(Contract.Result<CallData>() != null);
+            Contract.Ensures(Contract.Result<CallTraceData>() != null);
 
             if (IncludeCallStack)
                 callData.CallStack = Environment.StackTrace;
@@ -214,7 +177,7 @@ namespace vm.Aspects.Policies
         /// <returns>Represents the return value from the target.</returns>
         protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() == null);
 
@@ -251,7 +214,7 @@ namespace vm.Aspects.Policies
         protected override IMethodReturn DoInvoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
@@ -281,7 +244,7 @@ namespace vm.Aspects.Policies
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
@@ -310,7 +273,7 @@ namespace vm.Aspects.Policies
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
@@ -342,7 +305,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The call data.</param>
         protected virtual void LogPostInvoke(
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             if (LogAfterCall && LogWriter.IsLoggingEnabled())
             {
@@ -388,7 +351,7 @@ namespace vm.Aspects.Policies
         void LogBeforeCallData(
             LogEntry entry,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
@@ -422,7 +385,7 @@ namespace vm.Aspects.Policies
         protected virtual void DoDumpBeforeCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData,
+            CallTraceData callData,
             IMethodReturn ignore = null)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
@@ -444,7 +407,7 @@ namespace vm.Aspects.Policies
         void LogAfterCallData(
             LogEntry entry,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
@@ -475,7 +438,7 @@ namespace vm.Aspects.Policies
         protected virtual void DoDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer       != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
@@ -500,7 +463,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The additional audit data about the call.</param>
         protected void DumpTime(
             TextWriter writer,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
@@ -519,7 +482,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The additional audit data about the call.</param>
         protected void DumpPrincipal(
             TextWriter writer,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
@@ -586,7 +549,7 @@ namespace vm.Aspects.Policies
         protected void DumpParametersAfterCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(input    != null, nameof(input));
@@ -680,7 +643,7 @@ namespace vm.Aspects.Policies
         /// <param name="callData">The additional audit data about the call.</param>
         protected void DumpStack(
             TextWriter writer,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
@@ -719,7 +682,7 @@ namespace vm.Aspects.Policies
         protected void DumpResult(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(input    != null, nameof(input));

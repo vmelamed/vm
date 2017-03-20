@@ -316,6 +316,7 @@
     <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Policies\BaseCallHandler.cs" />
     <Compile Include="Policies\CallTraceCallHandler.cs" />
+    <Compile Include="Policies\CallTraceData.cs" />
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
     <Compile Include="Policies\ICallHandlerExtensions.cs" />
     <Compile Include="Policies\MarkActivityCallHandler.cs" />

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
-using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -15,43 +14,6 @@ using vm.Aspects.Policies;
 namespace vm.Aspects.Model
 {
     /// <summary>
-    /// The local data to carry between the phases of the call handler.
-    /// </summary>
-    public class RepositoryData
-    {
-        /// <summary>
-        /// Gets or sets the transaction scope.
-        /// </summary>
-        public TransactionScope TransactionScope { get; set; }
-
-        /// <summary>
-        /// Gets or sets the synchronous repository.
-        /// </summary>
-        public IRepository Repository { get; set; }
-
-        /// <summary>
-        /// Gets or sets the asynchronous repository.
-        /// </summary>
-        public IRepositoryAsync AsyncRepository { get; set; }
-    }
-
-    /// <summary>
-    /// OptimisticConcurrencyStrategy defines the strategies for handling optimistic concurrency exceptions (<see cref="OptimisticConcurrencyException"/>)
-    /// </summary>
-    public enum OptimisticConcurrencyStrategy
-    {
-        /// <summary>
-        /// If the store contains newer values for the object - do not allow changes and extend the exception to the client.
-        /// </summary>
-        StoreWins,
-
-        /// <summary>
-        /// Even if the store contains newer values for the object - the client values are considered with higher priority and the changes are allowed nevertheless.
-        /// </summary>
-        ClientWins,
-    }
-
-    /// <summary>
     /// The class PerCallContextRepositoryCallHandler is meant to be used as a policy (AOP aspect) in the call context of a WCF call.
     /// It is assumed that the repository is resolved from the DI container and has <see cref="T:vm.Aspects.Wcf.PerCallContextLifetimeManager"/>, i.e. all
     /// resolutions for <see cref="IRepository"/> with the same resolve name in the same WCF call context will return one and the same repository object.
@@ -60,7 +22,7 @@ namespace vm.Aspects.Model
     /// the application developer does not need to worry about saving changes in the repository, committing and rolling-back transactions, 
     /// error handling, repository disposal, etc.
     /// </summary>
-    public class UnitOfWorkCallHandler : BaseCallHandler<RepositoryData>
+    public class UnitOfWorkCallHandler : BaseCallHandler<UnitOfWorkData>
     {
         /// <summary>
         /// Gets or sets the resolve name of the repository registered in the current call context.
@@ -84,16 +46,11 @@ namespace vm.Aspects.Model
         public int MaxOptimisticConcurrencyRetries { get; set; } = 10;
 
         /// <summary>
-        /// Guards the registrations below.
-        /// </summary>
-        static object _sync = new object();
-
-        /// <summary>
         /// Prepares per-call data specific to the handler.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
-        protected override RepositoryData Prepare(
+        protected override UnitOfWorkData Prepare(
             IMethodInvocation input)
         {
             var hasRepository = input.Target as IHasRepository;
@@ -101,7 +58,7 @@ namespace vm.Aspects.Model
             if (hasRepository == null)
                 throw new InvalidOperationException($"Using this handler on services that do not implement {nameof(IHasRepository)} doesn't make sence. Either implement IHasRepository or remove this handler from the policies chain.");
 
-            var data = new RepositoryData();
+            var data = new UnitOfWorkData();
 
             if (!CreateTransactionScope)
                 return data;
@@ -135,7 +92,7 @@ namespace vm.Aspects.Model
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            RepositoryData callData)
+            UnitOfWorkData callData)
         {
             Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
             Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
@@ -187,7 +144,7 @@ namespace vm.Aspects.Model
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            RepositoryData callData)
+            UnitOfWorkData callData)
         {
             try
             {
@@ -228,7 +185,7 @@ namespace vm.Aspects.Model
         }
 
         void CommitChanges(
-            RepositoryData callData)
+            UnitOfWorkData callData)
         {
             var success = false;
             var retries = 0;
@@ -257,7 +214,7 @@ namespace vm.Aspects.Model
         }
 
         async Task CommitChangesAsync(
-            RepositoryData callData)
+            UnitOfWorkData callData)
         {
             var success = false;
             var retries = 0;
@@ -300,7 +257,7 @@ namespace vm.Aspects.Model
         }
 
         void CleanUp(
-            RepositoryData callData)
+            UnitOfWorkData callData)
         {
             callData.Repository?.Dispose();
             callData.AsyncRepository?.Dispose();

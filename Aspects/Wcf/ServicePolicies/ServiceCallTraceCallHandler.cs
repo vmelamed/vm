@@ -13,21 +13,6 @@ using vm.Aspects.Policies;
 namespace vm.Aspects.Wcf.ServicePolicies
 {
     /// <summary>
-    /// Class ServiceCallData extends <see cref="T:CallData"/> with caller's address and the content of the custom data context (if present in the operation context).
-    /// </summary>
-    public class ServiceCallData : CallData
-    {
-        /// <summary>
-        /// Gets or sets the caller address.
-        /// </summary>
-        public string CallerAddress { get; set; }
-        /// <summary>
-        /// Gets or sets the custom context.
-        /// </summary>
-        public object CustomContext { get; set; }
-    }
-
-    /// <summary>
     /// Class ServiceCallTraceCallHandler extends <see cref="CallTraceCallHandler"/> with WCF service specific information.
     /// </summary>
     public class ServiceCallTraceCallHandler : CallTraceCallHandler
@@ -60,12 +45,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
-        protected override CallData Prepare(
+        protected override CallTraceData Prepare(
             IMethodInvocation input)
         {
-            Contract.Ensures(Contract.Result<CallData>() != null);
+            Contract.Ensures(Contract.Result<CallTraceData>() != null);
 
-            return InitializeCallData(new ServiceCallData(), input);
+            return InitializeCallData(new ServiceCallTraceData(), input);
         }
 
         /// <summary>
@@ -74,13 +59,13 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="callData">The call data.</param>
         /// <param name="input">The input.</param>
         /// <returns>CallData.</returns>
-        protected override CallData InitializeCallData(
-            CallData callData,
+        protected override CallTraceData InitializeCallData(
+            CallTraceData callData,
             IMethodInvocation input)
         {
             base.InitializeCallData(callData, input);
 
-            var serviceCallData = (ServiceCallData)callData;
+            var serviceCallData = (ServiceCallTraceData)callData;
 
             if (IncludeCustomContext)
             {
@@ -127,7 +112,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         protected override void DoDumpBeforeCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData,
+            CallTraceData callData,
             IMethodReturn ignore = null)
         {
             DumpCallerAddress(writer, callData);
@@ -145,7 +130,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         protected override void DoDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData)
+            CallTraceData callData)
         {
             if (!LogBeforeCall)
             {
@@ -157,12 +142,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
         void DumpCallerAddress(
             TextWriter writer,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
 
-            var wcfCallData = callData as ServiceCallData;
+            var wcfCallData = callData as ServiceCallTraceData;
 
             if (wcfCallData == null)
                 throw new ArgumentException("callData must be of type ServiceCallData");
@@ -176,7 +161,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
         void DumpCustomContext(
             TextWriter writer,
-            CallData callData)
+            CallTraceData callData)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
@@ -184,7 +169,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (!IncludeCustomContext)
                 return;
 
-            var wcfCallData = callData as ServiceCallData;
+            var wcfCallData = callData as ServiceCallTraceData;
 
             if (wcfCallData == null)
                 throw new ArgumentException("callData must be of type ServiceCallData", nameof(callData));

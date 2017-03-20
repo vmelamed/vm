@@ -269,6 +269,7 @@
     <Compile Include="EFRepository\ObjectContextExtensions.cs" />
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
+    <Compile Include="UnitOfWorkData.cs" />
     <None Include="EncryptedParts.cs" />
     <Compile Include="EFRepository\StringAttribute.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -293,6 +294,7 @@
       <DependentUpon>Money.cs</DependentUpon>
     </Compile>
     <Compile Include="MoneyDefaults.cs" />
+    <Compile Include="OptimisticConcurrencyStrategy.cs" />
     <Compile Include="Repository\EntityState.cs" />
     <Compile Include="Repository\IOrmSpecifics.cs" />
     <Compile Include="Repository\IRepository.cs" />
