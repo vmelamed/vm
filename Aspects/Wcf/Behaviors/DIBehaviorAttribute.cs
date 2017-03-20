@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -32,7 +33,8 @@ namespace vm.Aspects.Wcf.Behaviors
         /// The resolution name to use when resolving the instance.
         /// Plays the same role as applying a separate <see cref="ResolveNameAttribute"/>.
         /// </param>
-        public DIBehaviorAttribute(string resolveName)
+        public DIBehaviorAttribute(
+            string resolveName)
             : this(resolveName, null)
         {
         }
@@ -79,6 +81,16 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <value></value>
         /// <returns>The contract to which the contract behavior is applicable.</returns>
         public Type TargetContract { get; }
+
+        /// <summary>
+        /// If set to <see langword="false"/> (the default) the instance provider will create a child container off of the root container and 
+        /// the service and all of its dependencies will be resolved from that child container. Upon service instance release, the container, 
+        /// the service and all dependencies with <see cref="HierarchicalLifetimeManager"/> will be disposed.
+        /// If set to <see langword="true"/> the instance provider will resolve the service instance from the root container, 
+        /// upon release the service will be disposed and it is responsible for the disposal of its dependencies.
+        /// </summary>
+        /// <value><c>true</c> if [use root container]; otherwise, <c>false</c>.</value>
+        public bool UseRootContainer { get; set; }
 
         #region IServiceBehavior
         void IServiceBehavior.AddBindingParameters(

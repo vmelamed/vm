@@ -65,9 +65,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             Contract.Ensures(Contract.Result<CallData>() != null);
 
-            var serviceCallData = new ServiceCallData();
-
-            return InitializeCallData(serviceCallData, input);
+            return InitializeCallData(new ServiceCallData(), input);
         }
 
         /// <summary>
@@ -144,19 +142,17 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
-        /// <param name="methodReturn">Object representing the return value from the target.</param>
         protected override void DoDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData,
-            IMethodReturn methodReturn)
+            CallData callData)
         {
             if (!LogBeforeCall)
             {
                 DumpCallerAddress(writer, callData);
                 DumpCustomContext(writer, callData);
             }
-            base.DoDumpAfterCall(writer, input, callData, methodReturn);
+            base.DoDumpAfterCall(writer, input, callData);
         }
 
         void DumpCallerAddress(

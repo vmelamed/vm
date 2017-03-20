@@ -40,6 +40,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             Property(v => v.ConcurrencyStamp)
                 .IsRowVersion()
+                .IsConcurrencyToken()
                 ;
 
             HasRequired(v => v.Entity)

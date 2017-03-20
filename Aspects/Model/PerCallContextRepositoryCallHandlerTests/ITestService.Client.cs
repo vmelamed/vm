@@ -1,5 +1,7 @@
-using System;
 using System.Collections.Generic;
+using System.ServiceModel;
+using vm.Aspects.Wcf.Bindings;
+using System;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.Linq;
@@ -11,7 +13,7 @@ using vm.Aspects.Wcf.Clients;
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
     /// <summary>
-    /// WCF channel factory based client (proxy) for services implementing the contract IService.
+    /// WCF channel factory based client (proxy) for services implementing the contract ITestService.
     /// </summary>
     /// <seealso cref="LightClient{ITestService}" />
     /// <seealso cref="ITestService" />
@@ -158,7 +160,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ServiceClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="T:TestServiceClient{TContract}" /> class.
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -223,9 +225,15 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         public int CountOfEntities(
             ) => Proxy.CountOfEntities();
 
+        public int CountOfValues(
+            ) => Proxy.CountOfValues();
+
         public ICollection<Entity> GetEntities(
             int skip,
             int take) => Proxy.GetEntities(skip, take);
+
+        public EntitiesAndValuesCountsDto GetCounts(
+            ) => Proxy.GetCounts();
         #endregion
     }
 }

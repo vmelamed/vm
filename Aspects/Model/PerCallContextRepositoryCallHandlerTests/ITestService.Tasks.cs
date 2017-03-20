@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using vm.Aspects.Wcf.Bindings;
+using System.Threading.Tasks;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
-    [ServiceContract(Name="ITestService")]
-    [MessagingPattern(RequestResponseConfigurator.PatternName, true)]
+    [ServiceContract(Name="ITestService")][MessagingPattern(RequestResponseConfigurator.PatternName, true)]
     public interface ITestServiceTasks
     {
         [OperationContract(
@@ -25,6 +24,11 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         Task<int> CountOfEntitiesAsync();
 
         [OperationContract(
+            Action="http://tempuri.org/ITestService/CountOfValues",
+            ReplyAction="http://tempuri.org/ITestService/CountOfValuesResponse")]
+        Task<int> CountOfValuesAsync();
+
+        [OperationContract(
             Action="http://tempuri.org/ITestService/GetEntities",
             ReplyAction="http://tempuri.org/ITestService/GetEntitiesResponse")]
         Task<ICollection<Entity>> GetEntitiesAsync(
@@ -32,5 +36,10 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             int skip,
 
             int take);
+
+        [OperationContract(
+            Action="http://tempuri.org/ITestService/GetCounts",
+            ReplyAction="http://tempuri.org/ITestService/GetCountsResponse")]
+        Task<EntitiesAndValuesCountsDto> GetCountsAsync();
     }
 }

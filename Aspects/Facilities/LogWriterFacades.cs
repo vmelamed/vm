@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
+using System.Runtime.Remoting.Messaging;
 
 namespace vm.Aspects.Facilities
 {
@@ -47,12 +49,33 @@ namespace vm.Aspects.Facilities
         /// </summary>
         public const string Email          = "Email";
 
+
+        /// <summary>
+        /// The name of the call context slot for the activity identifier.
+        /// </summary>
+        public const string ActivityIdSlotName = "vm.Aspects.Facilities.ActivityId";
+
+        /// <summary>
+        /// Gets the current activity identifier (the GUID of the current call context).
+        /// </summary>
+        /// <returns>Guid.</returns>
+        public static Guid GetActivityId()
+        {
+            var aid = CallContext.LogicalGetData(ActivityIdSlotName);
+
+            if (aid is Guid)
+                return (Guid)aid;
+            else
+                return default(Guid);
+        }
+
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer.
         /// </summary>
         /// <param name="logger">The log writer.</param>
         /// <param name="category">The category.</param>
         /// <param name="severity">The severity.</param>
+        /// <param name="extendedProperties">The extended properties.</param>
         /// <param name="format">The format.</param>
         /// <param name="args">The arguments.</param>
         /// <returns>The LogWriter.</returns>
@@ -60,13 +83,12 @@ namespace vm.Aspects.Facilities
             this LogWriter logger,
             string category,
             TraceEventType severity,
-            string format,
+            IDictionary<string, object> extendedProperties = null,
+            string format = null,
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
             Contract.Requires<ArgumentException>(category != null  &&  category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(format != null  &&  format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
             if (!logger.IsLoggingEnabled())
@@ -74,35 +96,38 @@ namespace vm.Aspects.Facilities
 
             var entry = new LogEntry
             {
-                Categories = new[] { category },
-                Severity   = severity,
+                Categories         = new[] { category },
+                Severity           = severity,
+                ActivityId         = GetActivityId(),
+                ExtendedProperties = extendedProperties,
             };
 
             if (!logger.ShouldLog(entry))
                 return logger;
 
-            switch (args.Length)
-            {
-            case 0:
-                entry.Message = format;
-                break;
+            if (!format.IsNullOrEmpty())
+                switch ((args?.Length).GetValueOrDefault())
+                {
+                case 0:
+                    entry.Message = format;
+                    break;
 
-            case 1:
-                entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0]);
-                break;
+                case 1:
+                    entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0]);
+                    break;
 
-            case 2:
-                entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0], args[1]);
-                break;
+                case 2:
+                    entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0], args[1]);
+                    break;
 
-            case 3:
-                entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0], args[1], args[2]);
-                break;
+                case 3:
+                    entry.Message = string.Format(CultureInfo.InvariantCulture, format, args[0], args[1], args[2]);
+                    break;
 
-            default:
-                entry.Message = string.Format(CultureInfo.InvariantCulture, format, args);
-                break;
-            }
+                default:
+                    entry.Message = string.Format(CultureInfo.InvariantCulture, format, args);
+                    break;
+                }
 
             logger.Write(entry);
 
@@ -115,8 +140,9 @@ namespace vm.Aspects.Facilities
         /// <param name="logger">The log writer.</param>
         /// <param name="category">The category.</param>
         /// <param name="severity">The severity.</param>
-        /// <param name="formatMessage">A delegate which performs the formatting of the message.</param>
+        /// <param name="formatMessage">A delegate which performs the formatting of the message. The delegate must be able to handle null parameters.</param>
         /// <param name="format">The format.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <param name="args">The arguments.</param>
         /// <returns>The LogWriter.</returns>
         public static LogWriter WriteMessage(
@@ -124,14 +150,13 @@ namespace vm.Aspects.Facilities
             string category,
             TraceEventType severity,
             Func<string, object[], string> formatMessage,
-            string format,
+            IDictionary<string, object> extendedProperties = null,
+            string format = null,
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
             Contract.Requires<ArgumentException>(category != null  &&  category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be null, empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentNullException>(formatMessage != null, nameof(formatMessage));
-            Contract.Requires<ArgumentException>(format != null  &&  format.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(format)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
             if (!logger.IsLoggingEnabled())
@@ -139,8 +164,10 @@ namespace vm.Aspects.Facilities
 
             var entry = new LogEntry
             {
-                Categories = new[] { category },
-                Severity   = severity,
+                Categories         = new[] { category },
+                Severity           = severity,
+                ActivityId         = GetActivityId(),
+                ExtendedProperties = extendedProperties,
             };
 
             if (logger.ShouldLog(entry))
@@ -159,17 +186,19 @@ namespace vm.Aspects.Facilities
         /// <param name="logger">The log writer.</param>
         /// <param name="severity">The severity.</param>
         /// <param name="exception">The exception to be logged.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <returns>LogWriter.</returns>
         public static LogWriter ExceptionMessage(
             this LogWriter logger,
             TraceEventType severity,
-            Exception exception)
+            Exception exception,
+            IDictionary<string, object> extendedProperties = null)
         {
-            Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
+            Contract.Requires<ArgumentNullException>(logger    != null, nameof(logger));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(Exception, severity, (f, a) => exception.DumpString(), "dummy");
+            return logger.WriteMessage(Exception, severity, (_, __) => exception.DumpString(), extendedProperties);
         }
 
         /// <summary>
@@ -177,16 +206,18 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="exception">The exception.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <returns>LogWriter.</returns>
         public static LogWriter ExceptionInfo(
             this LogWriter logger,
-            Exception exception)
+            Exception exception,
+            IDictionary<string, object> extendedProperties = null)
         {
-            Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
+            Contract.Requires<ArgumentNullException>(logger    != null, nameof(logger));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.ExceptionMessage(TraceEventType.Information, exception);
+            return logger.ExceptionMessage(TraceEventType.Information, exception, extendedProperties);
         }
 
 
@@ -195,16 +226,18 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="exception">The exception.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <returns>LogWriter.</returns>
         public static LogWriter ExceptionWarning(
             this LogWriter logger,
-            Exception exception)
+            Exception exception,
+            IDictionary<string, object> extendedProperties = null)
         {
-            Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
+            Contract.Requires<ArgumentNullException>(logger    != null, nameof(logger));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.ExceptionMessage(TraceEventType.Warning, exception);
+            return logger.ExceptionMessage(TraceEventType.Warning, exception, extendedProperties);
         }
 
 
@@ -213,16 +246,18 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="exception">The exception.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <returns>LogWriter.</returns>
         public static LogWriter ExceptionError(
             this LogWriter logger,
-            Exception exception)
+            Exception exception,
+            IDictionary<string, object> extendedProperties = null)
         {
-            Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
+            Contract.Requires<ArgumentNullException>(logger    != null, nameof(logger));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.ExceptionMessage(TraceEventType.Error, exception);
+            return logger.ExceptionMessage(TraceEventType.Error, exception, extendedProperties);
         }
 
 
@@ -231,16 +266,18 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="exception">The exception.</param>
+        /// <param name="extendedProperties">The additional properties.</param>
         /// <returns>LogWriter.</returns>
         public static LogWriter ExceptionCritical(
             this LogWriter logger,
-            Exception exception)
+            Exception exception,
+            IDictionary<string, object> extendedProperties = null)
         {
-            Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
+            Contract.Requires<ArgumentNullException>(logger    != null, nameof(logger));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.ExceptionMessage(TraceEventType.Critical, exception);
+            return logger.ExceptionMessage(TraceEventType.Critical, exception, extendedProperties);
         }
         #endregion
 
@@ -266,7 +303,7 @@ namespace vm.Aspects.Facilities
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(General, severity, format, args);
+            return logger.WriteMessage(General, severity, null, format, args);
         }
 
         /// <summary>
@@ -389,7 +426,7 @@ namespace vm.Aspects.Facilities
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(EventLog, severity, format, args);
+            return logger.WriteMessage(EventLog, severity, null, format, args);
         }
 
         /// <summary>
@@ -503,7 +540,7 @@ namespace vm.Aspects.Facilities
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(Trace, severity, format, args);
+            return logger.WriteMessage(Trace, severity, null, format, args);
         }
 
         /// <summary>
@@ -595,7 +632,7 @@ namespace vm.Aspects.Facilities
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(Alert, severity, format, args);
+            return logger.WriteMessage(Alert, severity, null, format, args);
         }
 
         /// <summary>
@@ -706,7 +743,7 @@ namespace vm.Aspects.Facilities
             Contract.Requires<ArgumentNullException>(args != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
-            return logger.WriteMessage(Email, severity, format, args);
+            return logger.WriteMessage(Email, severity, null, format, args);
         }
 
         /// <summary>

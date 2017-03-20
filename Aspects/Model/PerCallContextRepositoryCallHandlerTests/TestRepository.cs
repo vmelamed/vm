@@ -12,8 +12,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     [DebuggerDisplay("{GetType().Name, nq}: {Id}")]
     public partial class TestRepository : EFRepositoryBase
     {
-        public Guid Id { get; } = Guid.NewGuid();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelRepository" /> class.
         /// Required by the migrations only.
@@ -22,7 +20,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             IStoreIdProvider storeIdProvider)
             : base("TestPCCRCHT", storeIdProvider)
         {
-            Debug.WriteLine($"Creating repository #{Id}");
 #if DEBUG
             //Database.Log = s => Debug.Write(s);
 #endif
@@ -70,13 +67,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 .Add(new EntityMap())
                 .Add(new ValueMap())
                 ;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                Debug.WriteLine($"Disposing repository #{Id}\n");
-            base.Dispose(disposing);
         }
     }
 }

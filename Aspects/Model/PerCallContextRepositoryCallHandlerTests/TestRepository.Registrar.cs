@@ -33,13 +33,13 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
                     // SYNCHRONOUS repositories registration
                     // the repository used by the services
-                    .RegisterTypeIfNot<IRepository, TestRepository>(registrations, new PerCallContextLifetimeManager<IRepository>())
+                    .RegisterTypeIfNot<IRepository, TestRepository>(registrations, new HierarchicalLifetimeManager())
                     // a transient repository used by tests and anything else.
                     .RegisterTypeIfNot<IRepository, TestRepository>(registrations, "transient")
 
                     // ASYNCHRONOUS repositories registration
                     // the repository used by the services
-                    .RegisterTypeIfNot<IRepositoryAsync, TestRepository>(registrations, new PerCallContextLifetimeManager<IRepositoryAsync>())
+                    .RegisterTypeIfNot<IRepositoryAsync, TestRepository>(registrations, new HierarchicalLifetimeManager())
                     // a transient repository used by tests and anything else.
                     .RegisterTypeIfNot<IRepositoryAsync, TestRepository>(registrations, "transient")
 

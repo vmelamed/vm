@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -12,22 +13,25 @@ namespace vm.Aspects.Wcf.Behaviors
     public sealed class DIEndpointBehavior : IEndpointBehavior
     {
         readonly string _resolveName;
+        readonly bool _useRootContainer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DIEndpointBehavior"/> class.
-        /// </summary>
-        public DIEndpointBehavior()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DIEndpointBehavior"/> class.
+        /// Initializes a new instance of the <see cref="DIEndpointBehavior" /> class.
         /// </summary>
         /// <param name="resolveName">Name of the resolve.</param>
+        /// <param name="useRootContainer">
+        /// If set to <see langword="false"/> (the default) the instance provider will create a child container off of the root container and 
+        /// the service and all of its dependencies will be resolved from that child container. Upon service instance release, the container, 
+        /// the service and all dependencies with <see cref="HierarchicalLifetimeManager"/> will be disposed.
+        /// If set to <see langword="true"/> the instance provider will resolve the service instance from the root container, 
+        /// upon release the service will be disposed and it is responsible for the disposal of its dependencies.
+        /// </param>
         public DIEndpointBehavior(
-            string resolveName)
+            string resolveName = null,
+            bool useRootContainer = false)
         {
-            _resolveName = resolveName;
+            _resolveName      = resolveName;
+            _useRootContainer = useRootContainer;
         }
 
         #region IEndpointBehavior Members
@@ -76,7 +80,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (endpointDispatcher.DispatchRuntime==null)
                 throw new ArgumentException("The DispatchRuntime property cannot be null.", nameof(endpointDispatcher));
 
-            endpointDispatcher.DispatchRuntime.InstanceProvider = new DIInstanceProvider(endpoint.Contract.ContractType, _resolveName);
+            endpointDispatcher.DispatchRuntime.InstanceProvider = new DIInstanceProvider(endpoint.Contract.ContractType, _resolveName, _useRootContainer);
         }
 
         /// <summary>

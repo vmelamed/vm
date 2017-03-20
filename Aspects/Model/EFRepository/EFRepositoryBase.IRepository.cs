@@ -7,10 +7,10 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
-    using System.Reflection;
-    using System.Security;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
+    using System.Reflection;
+    using System.Security;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = vm.Aspects.Model.Repository.EntityState;
 
@@ -487,7 +487,11 @@ namespace vm.Aspects.Model.EFRepository
         /// Asynchronously saves the changes buffered in the repository's context.
         /// </summary>
         /// <returns><c>this</c></returns>
-        public Task<IRepositoryAsync> CommitChangesAsync() => SaveChangesAsync().ContinueWith(t => this as IRepositoryAsync);
+        public async Task<IRepositoryAsync> CommitChangesAsync()
+        {
+            await SaveChangesAsync();
+            return this;
+        }
         #endregion
     }
 }

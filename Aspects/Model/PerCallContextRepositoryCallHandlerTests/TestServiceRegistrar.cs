@@ -6,6 +6,7 @@ using System.Net;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
+using vm.Aspects.Policies;
 using vm.Aspects.Wcf.ServicePolicies;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -37,10 +38,11 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                         .AddMatchingRule<TagAttributeMatchingRule>(
                                 new InjectionConstructor(PolicyName, false))
 
+                        .AddCallHandler<MarkActivityCallHandler>()
                         .AddCallHandler<ServiceExceptionHandlingCallHandler>(new ContainerControlledLifetimeManager())
                         .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(Facility.LogWriter))
                         .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor())
-                        .AddCallHandler<UnitOfWorkCallHandler>()
+                        .AddCallHandler<UnitOfWorkCallHandler>(/*new InjectionProperty(nameof(UnitOfWorkCallHandler.OptimisticConcurrencyStrategy), OptimisticConcurrencyStrategy.ClientWins)*/)
                         ;
                 }
             }

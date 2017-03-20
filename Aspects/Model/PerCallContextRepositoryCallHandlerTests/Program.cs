@@ -18,11 +18,19 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         {
             try
             {
+                var sw = new Stopwatch();
+
                 StartServices();
                 Register();
                 Initialize();
-                RunSync();
-                //RunAsync().Wait();
+
+                sw.Start();
+
+                //RunSync();
+                RunAsync().Wait();
+
+                sw.Stop();
+                Console.WriteLine($@"Test duration: {sw.Elapsed:d\.hh\.mm\.ss\.fffffff}");
             }
             catch (Exception x)
             {
@@ -101,7 +109,7 @@ $@"
         }
 
         const int NumberOfTasks    = 100;
-        const int ConcurrencyLevel = 1;
+        const int ConcurrencyLevel = 8;
 
         static void RunSync()
         {
@@ -142,8 +150,12 @@ $@"
                     failed++;
                 }
 
+            var counts = client.GetCounts();
+
             Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
             Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+            Console.WriteLine($"The service created {counts.Entities} entities and {counts.Values} values.");
+            Console.WriteLine($"There are {client.CountOfEntities()} entities and {client.CountOfValues()} values in the database.");
         }
 
         static async Task RunAsync()
@@ -188,6 +200,12 @@ $@"
 
             Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
             Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+
+            var client = GetAsyncClient();
+            var counts = client.GetCountsAsync().Result;
+
+            Console.WriteLine($"The service created {counts.Entities} entities and {counts.Values} values.");
+            Console.WriteLine($"There are {await client.CountOfEntitiesAsync()} entities and {await client.CountOfValuesAsync()} values in the database.");
         }
 
         static async Task GetTask(int index)
@@ -201,8 +219,7 @@ $@"
                 else
                     await client.UpdateEntitiesAsync();
 
-                lock (_sync)
-                    availableClients.Enqueue(client);
+                ReleaseAsyncClient(client);
             }
             catch (Exception)
             {
@@ -222,6 +239,12 @@ $@"
                         return availableClients.Dequeue();
 
             return ServiceLocator.Current.GetInstance<ITestServiceTasks>("client");
+        }
+
+        static void ReleaseAsyncClient(ITestServiceTasks client)
+        {
+            lock (_sync)
+                availableClients.Enqueue(client);
         }
     }
 }

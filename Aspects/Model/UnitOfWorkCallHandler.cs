@@ -79,6 +79,11 @@ namespace vm.Aspects.Model
         public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum optimistic concurrency retries.
+        /// </summary>
+        public int MaxOptimisticConcurrencyRetries { get; set; } = 10;
+
+        /// <summary>
         /// Guards the registrations below.
         /// </summary>
         static object _sync = new object();
@@ -91,6 +96,11 @@ namespace vm.Aspects.Model
         protected override RepositoryData Prepare(
             IMethodInvocation input)
         {
+            var hasRepository = input.Target as IHasRepository;
+
+            if (hasRepository == null)
+                throw new InvalidOperationException($"Using this handler on services that do not implement {nameof(IHasRepository)} doesn't make sence. Either implement IHasRepository or remove this handler from the policies chain.");
+
             var data = new RepositoryData();
 
             if (!CreateTransactionScope)
@@ -119,48 +129,48 @@ namespace vm.Aspects.Model
         /// and disposes the IRepository instance.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <param name="result">The result.</param>
+        /// <param name="methodReturn">The result.</param>
         /// <param name="callData">The call data.</param>
         /// <returns>IMethodReturn.</returns>
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
-            IMethodReturn result,
+            IMethodReturn methodReturn,
             RepositoryData callData)
         {
-            Contract.Requires<ArgumentNullException>(input  != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
 
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            if (result.IsAsyncCall())
-                return result;
+            if (methodReturn.IsAsyncCall())
+                return methodReturn;        // return the task, do not clean-up yet
 
             try
             {
-                if (result.Exception != null)
-                {
-                    CleanUp(callData);
-                    return result;
-                }
+                if (methodReturn.Exception != null)
+                    return methodReturn;    // return the exception (and cleanup)
 
                 var hasRepository = input.Target as IHasRepository;
 
-                if (hasRepository == null)
-                {
-                    CleanUp(callData);
-                    return result;
-                }
-
+                // get the repository
                 callData.Repository = hasRepository.Repository ?? hasRepository.AsyncRepository;
+
+                if (callData.Repository == null)
+                    throw new InvalidOperationException($"{nameof(IHasRepository)} must return at least one non-null repository.");
+
+                // commit
                 CommitChanges(callData);
-                return result;
+                return methodReturn;
             }
             catch (Exception x)
             {
-                return input.CreateExceptionMethodReturn(ProcessException(input, x));
+                // wrap the exception in a new IMethodReturn
+                return input.CreateExceptionMethodReturn(
+                                ProcessException(input, x));
             }
             finally
             {
+                // and clean-up
                 CleanUp(callData);
             }
         }
@@ -179,38 +189,32 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             RepositoryData callData)
         {
-            var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
-
             try
             {
                 if (methodReturn.Exception != null)
-                {
-                    CleanUp(callData);
-                    return result;
-                }
+                    throw methodReturn.Exception;
 
+                var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
                 var hasRepository = input.Target as IHasRepository;
 
-                if (hasRepository == null)
-                {
-                    CleanUp(callData);
-                    return result;
-                }
-
-                callData.Repository =
                 callData.AsyncRepository = hasRepository.AsyncRepository;
 
-                if (callData.AsyncRepository == null)
+                if (callData.AsyncRepository != null)
                 {
-                    callData.Repository = hasRepository.Repository;
-
-                    CommitChanges(callData);
+                    await CommitChangesAsync(callData);
                     return result;
                 }
                 else
                 {
-                    await CommitChangesAsync(callData);
-                    return result;
+                    callData.Repository = hasRepository.Repository;
+
+                    if (callData.Repository != null)
+                    {
+                        CommitChanges(callData);
+                        return result;
+                    }
+                    else
+                        throw new InvalidOperationException($"{nameof(IHasRepository)} must return at least one non-null repository.");
                 }
             }
             catch (Exception x)
@@ -227,24 +231,27 @@ namespace vm.Aspects.Model
             RepositoryData callData)
         {
             var success = false;
+            var retries = 0;
 
             while (!success)
                 try
                 {
-                    callData.Repository?.CommitChanges();
+                    callData.Repository.CommitChanges();
                     callData.TransactionScope?.Complete();
                     success = true;
                 }
                 catch (DbUpdateConcurrencyException x)
                 {
                     // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
-                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins  ||
+                        retries >= MaxOptimisticConcurrencyRetries)
                         throw;
 
                     Facility.LogWriter.ExceptionWarning(x);
 
                     var entry = x.Entries.Single();
 
+                    WaitBeforeRetry();
                     entry.OriginalValues.SetValues(entry.GetDatabaseValues());
                 }
         }
@@ -253,26 +260,43 @@ namespace vm.Aspects.Model
             RepositoryData callData)
         {
             var success = false;
+            var retries = 0;
 
             while (!success)
                 try
                 {
-                    await callData.AsyncRepository?.CommitChangesAsync();
+                    await callData.AsyncRepository.CommitChangesAsync();
                     callData.TransactionScope?.Complete();
                     success = true;
                 }
                 catch (DbUpdateConcurrencyException x)
                 {
                     // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
-                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins  ||
+                        retries >= MaxOptimisticConcurrencyRetries)
                         throw;
 
                     Facility.LogWriter.ExceptionWarning(x);
 
                     var entry = x.Entries.Single();
 
+                    await WaitBeforeRetryAsync();
                     entry.OriginalValues.SetValues(await entry.GetDatabaseValuesAsync());
                 }
+        }
+
+        void WaitBeforeRetry()
+        {
+            var rand = new Random(DateTime.UtcNow.Millisecond);
+
+            Task.Delay(rand.Next(150)).Wait();
+        }
+
+        async Task WaitBeforeRetryAsync()
+        {
+            var rand = new Random(DateTime.UtcNow.Millisecond);
+
+            await Task.Delay(rand.Next(150));
         }
 
         void CleanUp(
@@ -289,8 +313,6 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentNullException>(input     != null, nameof(input));
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             var aggregateException = exception as AggregateException;
 

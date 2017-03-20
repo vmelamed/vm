@@ -35,18 +35,19 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="methodReturn">The method return.</param>
         /// <param name="callData">The call data.</param>
         /// <returns>Task{TResult}.</returns>
-        protected override Task<TResult> ContinueWith<TResult>(
+        protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,
             bool callData)
         {
-            var result = base.ContinueWith<TResult>(input, methodReturn, callData);
-
-            if (result.Exception == null)
-                return result;
-
-            return Task.FromException<TResult>(
-                            TransformException(result.Exception));
+            try
+            {
+                return await base.ContinueWith<TResult>(input, methodReturn, callData);
+            }
+            catch (Exception x)
+            {
+                throw TransformException(input, x);
+            }
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 return methodReturn;
 
             return input.CreateExceptionMethodReturn(
-                            TransformException(methodReturn.Exception));
+                            TransformException(input, methodReturn.Exception));
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
@@ -73,6 +74,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
         static FaultException TransformException(
+            IMethodInvocation input,
             Exception exception)
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
@@ -82,15 +84,36 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             if (factory == null)
                 return new WebFaultException<Fault>(
-                                new Fault() { Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}" },
+                                new Fault()
+                                {
+                                    Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}"
+                                },
                                 HttpStatusCode.InternalServerError);
 
+            FaultException newException;
             var fault = factory(exception);
 
-            return (FaultException)typeof(WebFaultException<>)
-                                .MakeGenericType(fault.GetType())
-                                .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
-                                .Invoke(new object[] { fault, fault.HttpStatusCode });
+            fault.HandlingInstanceId = Facility.GuidGenerator.NewGuid();
+
+            if (IsFaultSupported(input, fault.GetType()))
+                newException = (FaultException)typeof(WebFaultException<>)
+                                 .MakeGenericType(fault.GetType())
+                                 .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
+                                 .Invoke(new object[] { fault, fault.HttpStatusCode });
+            else
+                newException = (FaultException)new WebFaultException(HttpStatusCode.InternalServerError)
+                                    .PopulateData(
+                                        new SortedDictionary<string, string>
+                                        {
+                                            ["Fault"] = fault.DumpString()
+                                        });
+
+            Facility.LogWriter.LogError($"ServiceExceptionHandlingCallHandler caught:");
+            Facility.LogWriter.ExceptionError(exception, new Dictionary<string, object> { ["HandlingInstanceId:"] = fault.HandlingInstanceId });
+            Facility.LogWriter.LogError($"ServiceExceptionHandlingCallHandler throws:");
+            Facility.LogWriter.ExceptionError(exception, new Dictionary<string, object> { ["HandlingInstanceId:"] = fault.HandlingInstanceId });
+
+            return newException;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

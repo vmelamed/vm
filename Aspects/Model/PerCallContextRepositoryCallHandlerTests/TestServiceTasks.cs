@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
@@ -17,12 +17,16 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     [ServiceBehavior(
         InstanceContextMode = InstanceContextMode.PerCall,
         ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class TestServiceTasks : ITestServiceTasks
+    public class TestServiceTasks : ITestServiceTasks, IHasRepository
     {
+        static int _entities;
+        static int _values;
         static Random _random = new Random(DateTime.UtcNow.Millisecond);
         Lazy<IRepositoryAsync> _repository;
 
-        IRepositoryAsync Repository => _repository.Value;
+        public IRepository Repository => _repository.Value;
+
+        public IRepositoryAsync AsyncRepository => _repository.Value;
 
         public TestServiceTasks(
             Lazy<IRepositoryAsync> repository)
@@ -33,21 +37,25 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         #region ITestServiceTasks
         public async Task AddNewEntityAsync()
         {
-            Debug.WriteLine($"Method {nameof(AddNewEntityAsync)} using service with repository #{((TestRepository)Repository).Id}");
-
             await Task.Run(
-                () => Repository.Add(CreateEntity(_random.Next(5))));
+                () => AsyncRepository.Add(CreateEntity(_random.Next(5))));
         }
         public async Task<int> CountOfEntitiesAsync()
-            => await Repository
+            => await AsyncRepository
                         .Entities<Entity>()
                         .CountAsync()
                         ;
 
+        public Task<int> CountOfValuesAsync()
+            => Repository
+                    .Values<Value>()
+                    .CountAsync()
+                    ;
+
         public async Task<ICollection<Entity>> GetEntitiesAsync(
             int skip,
             int take)
-            => await Repository
+            => await AsyncRepository
                         .Entities<Entity>()
                         .FetchAlso(e => e.ValuesList)
                         .OrderBy(e => e.Id)
@@ -58,23 +66,36 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         public async Task UpdateEntitiesAsync()
         {
-            Debug.WriteLine($"Method {nameof(UpdateEntitiesAsync)} using service with repository #{((TestRepository)Repository).Id}");
+            var countOfEntities = await CountOfEntitiesAsync();
 
-            var n = _random.Next(await CountOfEntitiesAsync() - 1);
+            var n = countOfEntities > 0 ? _random.Next(countOfEntities-1) : 0;
             var e = (await GetEntitiesAsync(n, 1)).First();
 
-            UpdateEntity(e, Math.Min(_random.Next(e.ValuesList.Count()-1), 0));
+            UpdateEntity(e, _random.Next(Math.Max(e.ValuesList.Count()-1, 0)));
+        }
+
+        public Task<EntitiesAndValuesCountsDto> GetCountsAsync()
+        {
+            var counts = new EntitiesAndValuesCountsDto
+            {
+                Entities = _entities,
+                Values   = _values,
+            };
+
+            Interlocked.Exchange(ref _entities, 0);
+            Interlocked.Exchange(ref _values, 0);
+
+            return Task.FromResult(counts);
         }
         #endregion
 
         Entity CreateEntity(
             int numValues)
         {
-            var e = Repository.CreateEntity<Entity>();
+            var e = AsyncRepository.CreateEntity<Entity>();
 
-            e.Id           = Repository.GetStoreId<Entity, long>();
+            e.Id           = AsyncRepository.GetStoreId<Entity, long>();
             e.UniqueId     = Facility.GuidGenerator.NewGuid();
-            e.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
             e.CreatedOn    =
             e.UpdatedOn    = Facility.Clock.UtcNow;
 
@@ -85,18 +106,19 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 e.ValuesList.Add(v);
                 v.Entity = e;
             }
+            Interlocked.Increment(ref _entities);
 
             return e;
         }
 
         Value CreateValue()
         {
-            var v = Repository.CreateValue<Value>();
+            var v = AsyncRepository.CreateValue<Value>();
 
-            v.Id           = Repository.GetStoreId<Value, long>();
-            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
+            v.Id           = AsyncRepository.GetStoreId<Value, long>();
             v.CreatedOn    =
             v.UpdatedOn    = Facility.Clock.UtcNow;
+            Interlocked.Increment(ref _values);
 
             return v;
         }
@@ -135,7 +157,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         void UpdateValue(
             Value v)
         {
-            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
             v.UpdatedOn    = Facility.Clock.UtcNow;
         }
     }

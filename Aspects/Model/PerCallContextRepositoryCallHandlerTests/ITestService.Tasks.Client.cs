@@ -1,11 +1,13 @@
-using System;
 using System.Collections.Generic;
+using System.ServiceModel;
+using vm.Aspects.Wcf.Bindings;
+using System.Threading.Tasks;
+using System;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
-using System.Threading.Tasks;
 using vm.Aspects.Wcf;
 using vm.Aspects.Wcf.Clients;
 
@@ -159,7 +161,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ServiceTasksClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="T:TestServiceTasksClient{TContract}" /> class.
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -224,9 +226,15 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         public async Task<int> CountOfEntitiesAsync(
             ) => await Proxy.CountOfEntitiesAsync();
 
+        public async Task<int> CountOfValuesAsync(
+            ) => await Proxy.CountOfValuesAsync();
+
         public async Task<ICollection<Entity>> GetEntitiesAsync(
             int skip,
             int take) => await Proxy.GetEntitiesAsync(skip, take);
+
+        public async Task<EntitiesAndValuesCountsDto> GetCountsAsync(
+            ) => await Proxy.GetCountsAsync();
         #endregion
     }
 }

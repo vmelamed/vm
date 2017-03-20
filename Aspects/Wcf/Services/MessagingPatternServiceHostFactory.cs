@@ -118,11 +118,11 @@ namespace vm.Aspects.Wcf.Services
 
         /// <summary>
         /// Gets a registration lifetime manager for a service.
-        /// If not set explicitly in the inheriting classes, defaults to <see cref="TransientLifetimeManager"/> (per-call).
+        /// If not set explicitly in the inheriting classes, defaults to <see cref="HierarchicalLifetimeManager"/> (per-call).
         /// </summary>
         /// <returns>Service's lifetime manager</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will dispose it.")]
-        protected virtual LifetimeManager ServiceLifetimeManager => new TransientLifetimeManager();
+        protected virtual LifetimeManager ServiceLifetimeManager => new HierarchicalLifetimeManager();
         #endregion
 
         #region Constructors

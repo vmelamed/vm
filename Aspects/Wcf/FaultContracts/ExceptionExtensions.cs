@@ -17,10 +17,9 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <param name="exception">The exception that needs to be populated.</param>
         /// <param name="data">The data.</param>
         /// <returns>Exception.</returns>
-        public static TException PopulateData<TException>(
-            this TException exception,
+        public static Exception PopulateData(
+            this Exception exception,
             IDictionary<string, string> data)
-            where TException : Exception
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Requires<ArgumentNullException>(data      != null, nameof(data));
@@ -40,10 +39,9 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <param name="fault">The fault that needs to be populated.</param>
         /// <param name="data">The data.</param>
         /// <returns>Fault.</returns>
-        public static TFault PopulateData<TFault>(
-            this TFault fault,
+        public static Fault PopulateData(
+            this Fault fault,
             IDictionary data)
-            where TFault : Fault
         {
             Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
             Contract.Requires<ArgumentNullException>(data  != null, nameof(data));

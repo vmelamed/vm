@@ -33,6 +33,22 @@ namespace vm.Aspects.Policies
         /// Gets or sets the caller's principal identity name.
         /// </summary>
         public string IdentityName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the return value.
+        /// </summary>
+        public object ReturnValue { get; set; }
+
+        /// <summary>
+        /// Gets or sets the output values.
+        /// </summary>
+        public IParameterCollection OutputValues { get; set; }
+
+        /// <summary>
+        /// Gets or sets the exception.
+        /// </summary>
+        /// <value>The exception.</value>
+        public Exception Exception { get; set; }
     }
 
     /// <summary>
@@ -159,9 +175,7 @@ namespace vm.Aspects.Policies
         {
             Contract.Ensures(Contract.Result<CallData>() != null);
 
-            var callData = new CallData();
-
-            return InitializeCallData(callData, input);
+            return InitializeCallData(new CallData(), input);
         }
 
         /// <summary>
@@ -179,9 +193,6 @@ namespace vm.Aspects.Policies
 
             if (IncludeCallStack)
                 callData.CallStack = Environment.StackTrace;
-
-            if (IncludeCallTime)
-                callData.CallTimer = new Stopwatch();
 
             if (IncludePrincipal)
             {
@@ -207,22 +218,25 @@ namespace vm.Aspects.Policies
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() == null);
 
-            if (!LogBeforeCall  ||  !LogWriter.IsLoggingEnabled())
-                return null;
+            if (LogBeforeCall  &&  LogWriter.IsLoggingEnabled())
+            {
 
-            var entry = NewLogEntry(StartCallCategory);
+                var entry = CreateLogEntry(StartCallCategory);
 
-            if (!LogWriter.ShouldLog(entry))
-                return null;
+                if (LogWriter.ShouldLog(entry))
+                {
+                    Action logBeforeCall = () => Facility
+                                                    .ExceptionManager
+                                                    .Process(
+                                                        () => LogBeforeCallData(entry, input, callData),
+                                                        ExceptionPolicyProvider.LogAndSwallow);
 
-            Action logBeforeCall = () => Facility.ExceptionManager.Process(
-                                                () => LogBeforeCallData(entry, input, callData),
-                                                ExceptionPolicyProvider.LogAndSwallow);
-
-            if (LogAsynchronously)
-                Task.Run(logBeforeCall);
-            else
-                logBeforeCall();
+                    if (LogAsynchronously)
+                        Task.Run(logBeforeCall);
+                    else
+                        logBeforeCall();
+                }
+            }
 
             return null;
         }
@@ -239,29 +253,47 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             CallData callData)
         {
-            if (LogWriter.IsLoggingEnabled() && LogAfterCall && IncludeCallTime)
-                callData.CallTimer.Start();
+            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            return base.DoInvoke(input, getNext, callData);
+            var takeTime = LogAfterCall && IncludeCallTime  &&  LogWriter.IsLoggingEnabled();
+
+            if (takeTime)
+            {
+                callData.CallTimer = new Stopwatch();
+                callData.CallTimer.Start();
+            }
+
+            var methodReturn = base.DoInvoke(input, getNext, callData);
+
+            if (takeTime)
+                callData.CallTimer.Stop();
+
+            return methodReturn;
         }
 
         /// <summary>
-        /// Posts the invoke.
+        /// Process the output from the call so far and optionally modify the output.
         /// </summary>
-        /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <param name="callData">The additional audit data about the call.</param>
-        /// <param name="methodReturn">Object representing the return value from the target.</param>
-        /// <returns>Object representing the return value from the target.</returns>
-        protected virtual IMethodReturn PostInvoke(
+        /// <param name="input">The input.</param>
+        /// <param name="methodReturn">The method return.</param>
+        /// <param name="callData">The per-call data.</param>
+        /// <returns>IMethodReturn.</returns>
+        protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
-            CallData callData,
-            IMethodReturn methodReturn)
+            IMethodReturn methodReturn,
+            CallData callData)
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             // async methods are always dumped in ContinueWith
-            if (!methodReturn.IsAsyncCall())
-                LogPostInvoke(input, methodReturn, callData);
+            if (methodReturn.IsAsyncCall())
+                return methodReturn;
+
+            callData.ReturnValue  = methodReturn.ReturnValue;
+            callData.OutputValues = methodReturn.Outputs;
+            callData.Exception    = methodReturn.Exception;
+
+            LogPostInvoke(input, callData);
 
             return methodReturn;
         }
@@ -280,9 +312,24 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             CallData callData)
         {
-            var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
+            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
 
-            LogPostInvoke(input, methodReturn, callData);
+            TResult result = default(TResult);
+
+            try
+            {
+                result               = await base.ContinueWith<TResult>(input, methodReturn, callData);
+                callData.ReturnValue = result;
+            }
+            catch (Exception x)
+            {
+                callData.Exception = x;
+            }
+
+            LogPostInvoke(input, callData);
+
+            if (callData.Exception != null)
+                throw callData.Exception;
 
             return result;
         }
@@ -292,39 +339,36 @@ namespace vm.Aspects.Policies
         /// Does the actual post-invoke logging.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <param name="methodReturn">The method return.</param>
         /// <param name="callData">The call data.</param>
         protected virtual void LogPostInvoke(
             IMethodInvocation input,
-            IMethodReturn methodReturn,
             CallData callData)
         {
-            callData.CallTimer.Stop();
+            if (LogAfterCall && LogWriter.IsLoggingEnabled())
+            {
+                var entry = CreateLogEntry(EndCallCategory);
 
-            if (!LogAfterCall || !LogWriter.IsLoggingEnabled())
-                return;
+                if (LogWriter.ShouldLog(entry))
+                {
+                    Action logAfterCall = () => Facility
+                                                .ExceptionManager
+                                                .Process(
+                                                    () => LogAfterCallData(entry, input, callData),
+                                                    ExceptionPolicyProvider.LogAndSwallow);
 
-            Action<LogEntry> logAfterCall = e => Facility.ExceptionManager
-                                                         .Process(
-                                                            () => LogAfterCallData(e, input, callData, methodReturn),
-                                                            ExceptionPolicyProvider.LogAndSwallow);
-
-            var entry = NewLogEntry(EndCallCategory);
-
-            if (!LogWriter.ShouldLog(entry))
-                return;
-
-            if (LogAsynchronously)
-                Task.Run(() => logAfterCall(entry));
-            else
-                logAfterCall(entry);
+                    if (LogAsynchronously)
+                        Task.Run(() => logAfterCall());
+                    else
+                        logAfterCall();
+                }
+            }
         }
 
         /// <summary>
         /// Creates a new log entry.
         /// </summary>
         /// <returns>LogEntry.</returns>
-        LogEntry NewLogEntry(string category) =>
+        LogEntry CreateLogEntry(string category) =>
             new LogEntry
             {
                 Categories = new[] { category },
@@ -332,6 +376,7 @@ namespace vm.Aspects.Policies
                 EventId    = EventId,
                 Priority   = Priority,
                 Title      = Title,
+                ActivityId = LogWriterFacades.GetActivityId(),
             };
 
         /// <summary>
@@ -396,23 +441,20 @@ namespace vm.Aspects.Policies
         /// <param name="entry">The entry.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
-        /// <param name="methodReturn">Object representing the return value from the target.</param>
         void LogAfterCallData(
             LogEntry entry,
             IMethodInvocation input,
-            CallData callData,
-            IMethodReturn methodReturn)
+            CallData callData)
         {
             Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
                 writer.Indent(2);
 
-                DoDumpAfterCall(writer, input, callData, methodReturn);
+                DoDumpAfterCall(writer, input, callData);
 
                 writer.Unindent(2);
                 writer.WriteLine();
@@ -433,17 +475,15 @@ namespace vm.Aspects.Policies
         protected virtual void DoDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
-            CallData callData,
-            IMethodReturn methodReturn)
+            CallData callData)
         {
             Contract.Requires<ArgumentNullException>(writer       != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
             Contract.Requires<ArgumentNullException>(callData     != null, nameof(callData));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
 
             DumpMethod(writer, input);
-            DumpParametersAfterCall(writer, input);
-            DumpResult(writer, input, methodReturn);
+            DumpParametersAfterCall(writer, input, callData);
+            DumpResult(writer, input, callData);
             DumpTime(writer, callData);
             if (!LogBeforeCall)
             {
@@ -465,7 +505,7 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
 
-            if (!IncludeCallTime  ||  callData.CallTimer == null)
+            if (callData.CallTimer == null)
                 return;
 
             writer.WriteLine();
@@ -542,12 +582,15 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
+        /// <param name="callData">The call data.</param>
         protected void DumpParametersAfterCall(
             TextWriter writer,
-            IMethodInvocation input)
+            IMethodInvocation input,
+            CallData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(input    != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
 
             if (!IncludeParameters)
                 return;
@@ -557,12 +600,14 @@ namespace vm.Aspects.Policies
             writer.Indent(2);
 
             // dump the parameters
+            int outValueIndex = 0;
+
             for (var i = 0; i<input.Inputs.Count; i++)
             {
                 var pi = input.Inputs.GetParameterInfo(i);
 
                 if (!LogBeforeCall || pi.IsOut || pi.ParameterType.IsByRef)
-                    DumpOutputParameter(writer, pi, input.Inputs[i]);
+                    DumpOutputParameter(writer, pi, input.Inputs[i], callData.OutputValues[outValueIndex++]);
 
                 if (i != input.Inputs.Count-1)
                     writer.Write(",");
@@ -602,17 +647,16 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="pi">The reflection structure representing an output parameter.</param>
-        /// <param name="value">The value of the output parameter.</param>
+        /// <param name="inValue">The input value of the ref/output parameter.</param>
+        /// <param name="outValue">The output value of the ref/output parameter.</param>
         protected static void DumpOutputParameter(
             TextWriter writer,
             ParameterInfo pi,
-            object value)
+            object inValue,
+            object outValue = null)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
             Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
-
-            if (pi.ParameterType == typeof(Task))
-                return;
 
             writer.WriteLine();
             writer.Write(
@@ -621,7 +665,12 @@ namespace vm.Aspects.Policies
                 pi.ParameterType.Name,
                 pi.Name);
 
-            value.DumpText(writer, 2, null, pi.GetCustomAttribute<DumpAttribute>(true));
+            var dumpAttribute = pi.GetCustomAttribute<DumpAttribute>(true);
+
+            inValue.DumpText(writer, 2, null, dumpAttribute);
+            writer.WriteLine();
+            writer.Write("output value = ");
+            outValue.DumpText(writer, 2, null, dumpAttribute);
         }
 
         /// <summary>
@@ -666,24 +715,24 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
-        /// <param name="methodReturn">Object representing the return value from the target.</param>
+        /// <param name="callData">The call data.</param>
         protected void DumpResult(
             TextWriter writer,
             IMethodInvocation input,
-            IMethodReturn methodReturn)
+            CallData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
+            Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(input    != null, nameof(input));
+            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
 
             writer.WriteLine();
-            if (IncludeException && methodReturn.Exception != null)
+            if (IncludeException && callData.Exception != null)
             {
                 writer.Write("THROWS EXCEPTION: ");
-                methodReturn.Exception.DumpText(writer, 2);
+                callData.Exception.DumpText(writer, 2);
             }
             else
-            if (IncludeReturnValue && methodReturn.ReturnValue!=null)
+            if (IncludeReturnValue  &&  callData.ReturnValue!=null)
             {
                 var methodInfo = input.MethodBase as MethodInfo;
 
@@ -691,7 +740,7 @@ namespace vm.Aspects.Policies
                     return;
 
                 writer.Write("RETURN VALUE: ");
-                methodReturn.ReturnValue.DumpText(
+                callData.ReturnValue.DumpText(
                     writer,
                     2,
                     null,

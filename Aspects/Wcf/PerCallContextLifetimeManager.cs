@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using Microsoft.Practices.Unity;
 using System.Runtime.Remoting.Messaging;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf
@@ -11,31 +10,23 @@ namespace vm.Aspects.Wcf
     /// </summary>
     public class PerCallContextLifetimeManager : LifetimeManager
     {
-        readonly string _key = Facility.GuidGenerator.NewGuid().ToString("N");
-
         /// <summary>
         /// Gets the key of the object stored in the call context.
         /// </summary>
-        public string Key => _key;
+        public string Key => Facility.GuidGenerator.NewGuid().ToString("N");
 
         /// <summary>
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue()
-        {
-            object value;
-
-            value = CallContext.LogicalGetData(Key);
-
-            return value;
-        }
+        public override object GetValue() => CallContext.LogicalGetData(Key);
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.
         /// </summary>
         /// <param name="newValue">The object being stored.</param>
-        public override void SetValue(object newValue)
+        public override void SetValue(
+            object newValue)
         {
             if (newValue == null)
                 RemoveValue();
@@ -52,10 +43,8 @@ namespace vm.Aspects.Wcf
 
             CallContext.LogicalSetData(Key, null);
             CallContext.FreeNamedDataSlot(Key);
-            Contract.Assume(CallContext.LogicalGetData(Key) == null);
 
-            if (value != null)
-                value.Dispose();
+            value?.Dispose();
         }
     }
 }

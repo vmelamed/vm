@@ -18,6 +18,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         int CountOfEntities();
 
         [OperationContract]
+        int CountOfValues();
+
+        [OperationContract]
         ICollection<Entity> GetEntities(int skip, int take);
+
+        [OperationContract]
+        EntitiesAndValuesCountsDto GetCounts();
     }
 }

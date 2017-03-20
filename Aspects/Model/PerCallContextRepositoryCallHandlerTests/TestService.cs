@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Wcf.Behaviors;
@@ -17,6 +18,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         ConcurrencyMode = ConcurrencyMode.Multiple)]
     public partial class TestService : ITestService, IHasRepository
     {
+        static int _entities;
+        static int _values;
         static Random _random = new Random(DateTime.UtcNow.Millisecond);
         Lazy<IRepository> _repository;
 
@@ -46,6 +49,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                     .Count()
                     ;
 
+        public int CountOfValues()
+            => Repository
+                    .Values<Value>()
+                    .Count()
+                    ;
+
         public ICollection<Entity> GetEntities(
             int skip,
             int take)
@@ -65,6 +74,20 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             UpdateEntity(e, _random.Next(5));
         }
+
+        public EntitiesAndValuesCountsDto GetCounts()
+        {
+            var counts = new EntitiesAndValuesCountsDto
+            {
+                Entities = _entities,
+                Values   = _values,
+            };
+
+            Interlocked.Exchange(ref _entities, 0);
+            Interlocked.Exchange(ref _values, 0);
+
+            return counts;
+        }
         #endregion
 
         Entity CreateEntity(
@@ -74,7 +97,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             e.Id           = Repository.GetStoreId<Entity, long>();
             e.UniqueId     = Facility.GuidGenerator.NewGuid();
-            e.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
             e.CreatedOn    =
             e.UpdatedOn    = Facility.Clock.UtcNow;
 
@@ -85,6 +107,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 e.ValuesList.Add(v);
                 v.Entity = e;
             }
+            Interlocked.Increment(ref _entities);
 
             return e;
         }
@@ -94,9 +117,9 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             var v = Repository.CreateValue<Value>();
 
             v.Id           = Repository.GetStoreId<Value, long>();
-            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
             v.CreatedOn    =
             v.UpdatedOn    = Facility.Clock.UtcNow;
+            Interlocked.Increment(ref _values);
 
             return v;
         }
@@ -135,7 +158,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         void UpdateValue(
             Value v)
         {
-            v.RepositoryId = ((TestRepository)Repository).Id.ToString("N");
             v.UpdatedOn    = Facility.Clock.UtcNow;
         }
     }
