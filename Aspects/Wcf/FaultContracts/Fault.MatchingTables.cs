@@ -326,7 +326,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                     {
                     }
 
-            return fault.PopulateData(exception.Data);
+            return fault.PopulateFaultData(exception.Data);
         }
 
         static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);

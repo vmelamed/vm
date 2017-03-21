@@ -35,10 +35,9 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 {
                     interception
                         .AddPolicy(PolicyName)
-                        .AddMatchingRule<TagAttributeMatchingRule>(
-                                new InjectionConstructor(PolicyName, false))
+                        .AddMatchingRule<TagAttributeMatchingRule>(new InjectionConstructor(PolicyName, false))
 
-                        .AddCallHandler<MarkActivityCallHandler>()
+                        .AddCallHandler<MarkActivityCallHandler>(new ContainerControlledLifetimeManager())
                         .AddCallHandler<ServiceExceptionHandlingCallHandler>(new ContainerControlledLifetimeManager())
                         .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(Facility.LogWriter))
                         .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor())

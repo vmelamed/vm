@@ -1,7 +1,9 @@
-﻿namespace vm.Aspects.Model
+﻿using System.Data.Entity.Infrastructure;
+
+namespace vm.Aspects.Model
 {
     /// <summary>
-    /// OptimisticConcurrencyStrategy defines the strategies for handling optimistic concurrency exceptions (<see cref="OptimisticConcurrencyException"/>)
+    /// OptimisticConcurrencyStrategy defines the strategies for handling optimistic concurrency exceptions (<see cref="DbUpdateConcurrencyException"/>)
     /// </summary>
     public enum OptimisticConcurrencyStrategy
     {

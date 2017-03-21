@@ -434,7 +434,6 @@ namespace vm.Aspects.Policies
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
-        /// <param name="methodReturn">Object representing the return value from the target.</param>
         protected virtual void DoDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
@@ -562,15 +561,22 @@ namespace vm.Aspects.Policies
             writer.Write("(");
             writer.Indent(2);
 
-            // dump the parameters
-            int outValueIndex = 0;
+            var outValueIndex = 0;
 
+            // dump the parameters
             for (var i = 0; i<input.Inputs.Count; i++)
             {
                 var pi = input.Inputs.GetParameterInfo(i);
 
                 if (!LogBeforeCall || pi.IsOut || pi.ParameterType.IsByRef)
-                    DumpOutputParameter(writer, pi, input.Inputs[i], callData.OutputValues[outValueIndex++]);
+                {
+                    var outValue = callData.OutputValues != null  &&
+                                   outValueIndex < callData.OutputValues.Count
+                                        ? callData.OutputValues[outValueIndex++]
+                                        : null;
+
+                    DumpOutputParameter(writer, pi, input.Inputs[i], outValue);
+                }
 
                 if (i != input.Inputs.Count-1)
                     writer.Write(",");
@@ -597,7 +603,11 @@ namespace vm.Aspects.Policies
             writer.WriteLine();
             writer.Write(
                 "{0}{1} {2}{3}",
-                pi.IsOut ? "out " : (pi.ParameterType.IsByRef ? "ref " : string.Empty),
+                pi.IsOut
+                    ? "out "
+                    : (pi.ParameterType.IsByRef
+                        ? "ref "
+                        : string.Empty),
                 pi.ParameterType.Name,
                 pi.Name,
                 !pi.IsOut ? " = " : string.Empty);
@@ -624,16 +634,16 @@ namespace vm.Aspects.Policies
             writer.WriteLine();
             writer.Write(
                 "{0}{1} {2} = ",
-                pi.IsOut ? "out " : (pi.ParameterType.IsByRef ? "ref " : string.Empty),
+                pi.IsOut
+                    ? "out "
+                    : (pi.ParameterType.IsByRef
+                        ? "ref "
+                        : string.Empty),
                 pi.ParameterType.Name,
-                pi.Name);
+                pi.Name,
+                (pi.IsOut || pi.ParameterType.IsByRef) ? " = " : string.Empty);
 
-            var dumpAttribute = pi.GetCustomAttribute<DumpAttribute>(true);
-
-            inValue.DumpText(writer, 2, null, dumpAttribute);
-            writer.WriteLine();
-            writer.Write("output value = ");
-            outValue.DumpText(writer, 2, null, dumpAttribute);
+            outValue.DumpText(writer, 5, null, pi.GetCustomAttribute<DumpAttribute>(true));
         }
 
         /// <summary>

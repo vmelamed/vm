@@ -101,7 +101,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                  .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
                                  .Invoke(new object[] { fault, fault.HttpStatusCode });
             else
-                newException = (FaultException)new WebFaultException(HttpStatusCode.InternalServerError)
+                newException = new WebFaultException(HttpStatusCode.InternalServerError)
                                     .PopulateData(
                                         new SortedDictionary<string, string>
                                         {

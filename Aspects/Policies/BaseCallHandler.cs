@@ -58,7 +58,6 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Prepares per call data specific to the handler.
         /// </summary>
-        /// <typeparam name="T">The type of the data.</typeparam>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
         protected virtual T Prepare(IMethodInvocation input)
@@ -201,19 +200,27 @@ namespace vm.Aspects.Policies
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-            if (getNext == null)
-                throw new ArgumentNullException(nameof(getNext));
+            try
+            {
+                if (input == null)
+                    throw new ArgumentNullException(nameof(input));
+                if (getNext == null)
+                    throw new ArgumentNullException(nameof(getNext));
 
-            var callData = Prepare(input);
+                var callData = Prepare(input);
 
-            var methodReturn = PreInvoke(input, callData);
+                var methodReturn = PreInvoke(input, callData);
 
-            if (methodReturn == null)
-                methodReturn = DoInvoke(input, getNext, callData);
+                if (methodReturn == null)
+                    methodReturn = DoInvoke(input, getNext, callData);
 
-            return PostInvoke(input, methodReturn, callData);
+                return PostInvoke(input, methodReturn, callData);
+            }
+            catch (Exception x)
+            {
+                return input.CreateExceptionMethodReturn(
+                                new InvalidOperationException("Call handlers cannot throw exceptions. Caught in "+GetType().FullName, x));
+            }
         }
         #endregion
     }

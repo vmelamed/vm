@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Model.EFRepository;
-using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -26,7 +25,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         public TestRepository()
-            : base("TestPCCRCHT", new HiLoStoreIdProvider())
+            : base()
         {
         }
 
@@ -61,12 +60,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             modelBuilder
                 .Configurations
-
-                // TODO TRY THIS: .AddFromAssembly(Assembly.GetAssembly(GetType()))
-
-                .Add(new EntityMap())
-                .Add(new ValueMap())
-                ;
+                    .AddFromAssembly(Assembly.GetAssembly(GetType()));
         }
     }
 }

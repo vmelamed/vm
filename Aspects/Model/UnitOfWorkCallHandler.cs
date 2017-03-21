@@ -53,10 +53,8 @@ namespace vm.Aspects.Model
         protected override UnitOfWorkData Prepare(
             IMethodInvocation input)
         {
-            var hasRepository = input.Target as IHasRepository;
-
-            if (hasRepository == null)
-                throw new InvalidOperationException($"Using this handler on services that do not implement {nameof(IHasRepository)} doesn't make sence. Either implement IHasRepository or remove this handler from the policies chain.");
+            if (!(input.Target is IHasRepository))
+                throw new InvalidOperationException($"{nameof(UnitOfWorkCallHandler)} can be used only with services that implement {nameof(IHasRepository)}. Either implement it in {input.Target.GetType().Name} or remove this handler from the pipeline.");
 
             var data = new UnitOfWorkData();
 
@@ -94,9 +92,6 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             UnitOfWorkData callData)
         {
-            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
-
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
             if (methodReturn.IsAsyncCall())
@@ -107,13 +102,13 @@ namespace vm.Aspects.Model
                 if (methodReturn.Exception != null)
                     return methodReturn;    // return the exception (and cleanup)
 
-                var hasRepository = input.Target as IHasRepository;
+                var hasRepository = (IHasRepository)input.Target;
 
                 // get the repository
                 callData.Repository = hasRepository.Repository ?? hasRepository.AsyncRepository;
 
                 if (callData.Repository == null)
-                    throw new InvalidOperationException($"{nameof(IHasRepository)} must return at least one non-null repository.");
+                    throw new InvalidOperationException(nameof(IHasRepository)+" must return at least one non-null repository.");
 
                 // commit
                 CommitChanges(callData);
@@ -152,7 +147,7 @@ namespace vm.Aspects.Model
                     throw methodReturn.Exception;
 
                 var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
-                var hasRepository = input.Target as IHasRepository;
+                var hasRepository = (IHasRepository)input.Target;
 
                 callData.AsyncRepository = hasRepository.AsyncRepository;
 
@@ -171,7 +166,7 @@ namespace vm.Aspects.Model
                         return result;
                     }
                     else
-                        throw new InvalidOperationException($"{nameof(IHasRepository)} must return at least one non-null repository.");
+                        throw new InvalidOperationException(nameof(IHasRepository)+" must return at least one non-null repository.");
                 }
             }
             catch (Exception x)

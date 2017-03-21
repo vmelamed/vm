@@ -95,28 +95,26 @@ namespace vm.Aspects.Model.EFRepository
             IStoreIdProvider storeIdProvider)
         {
             if (storeIdProvider != null)
-                StoreIdProvider = storeIdProvider;
-            else
             {
-                try
-                {
-                    StoreIdProvider = ServiceLocator.Current?.GetInstance<IStoreIdProvider>();
+                StoreIdProvider = storeIdProvider;
+                return;
+            }
 
-                    if (StoreIdProvider == null)
-                        StoreIdProvider = new SqlStoreIdProvider();
-                }
-                catch (InvalidOperationException)
-                {
-                    StoreIdProvider = new SqlStoreIdProvider();
-                }
-                catch (ActivationException)
-                {
-                    StoreIdProvider = new SqlStoreIdProvider();
-                }
-                catch (ResolutionFailedException)
-                {
-                    StoreIdProvider = new SqlStoreIdProvider();
-                }
+            try
+            {
+                StoreIdProvider = ServiceLocator.Current?.GetInstance<IStoreIdProvider>() ?? new HiLoStoreIdProvider();
+            }
+            catch (InvalidOperationException)
+            {
+                StoreIdProvider = new HiLoStoreIdProvider();
+            }
+            catch (ActivationException)
+            {
+                StoreIdProvider = new HiLoStoreIdProvider();
+            }
+            catch (ResolutionFailedException)
+            {
+                StoreIdProvider = new HiLoStoreIdProvider();
             }
         }
 

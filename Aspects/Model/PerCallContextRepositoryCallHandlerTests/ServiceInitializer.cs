@@ -1,5 +1,7 @@
 ﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -10,8 +12,19 @@ using vm.Aspects.Wcf.Services;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
-    public class ServiceInitializer : IInitializeService
+    public sealed class ServiceInitializer : IInitializeService, IDisposable
     {
+        IRepositoryAsync _repository;
+
+        public ServiceInitializer(
+            [Dependency("transient")]
+            IRepositoryAsync repository)
+        {
+            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+
+            _repository = repository;
+        }
+
         public bool IsInitialized { get; private set; }
 
         public bool Initialize(
@@ -74,6 +87,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
                 throw;
             }
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            _repository.Dispose();
         }
     }
 }
