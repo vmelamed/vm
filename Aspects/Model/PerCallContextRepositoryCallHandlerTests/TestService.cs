@@ -33,8 +33,6 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         #region IHasRepository
         IRepository IHasRepository.Repository => Repository;
-
-        public IRepositoryAsync AsyncRepository => null;
         #endregion
 
         #region IService

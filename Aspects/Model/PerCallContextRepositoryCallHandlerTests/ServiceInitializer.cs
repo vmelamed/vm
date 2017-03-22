@@ -14,11 +14,11 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
     public sealed class ServiceInitializer : IInitializeService, IDisposable
     {
-        IRepositoryAsync _repository;
+        IRepository _repository;
 
         public ServiceInitializer(
             [Dependency("transient")]
-            IRepositoryAsync repository)
+            IRepository repository)
         {
             Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
 
@@ -47,7 +47,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                     // the initialization function:
                     async () =>
                     {
-                        using (var repository = ServiceLocator.Current.GetInstance<IRepositoryAsync>("transient"))
+                        using (var repository = ServiceLocator.Current.GetInstance<IRepository>("transient"))
                             await repository.InitializeAsync();
 
                         return IsInitialized = true;

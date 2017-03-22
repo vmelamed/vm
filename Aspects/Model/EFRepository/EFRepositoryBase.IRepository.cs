@@ -14,11 +14,12 @@ namespace vm.Aspects.Model.EFRepository
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = vm.Aspects.Model.Repository.EntityState;
 
-    public partial class EFRepositoryBase : IRepositoryAsync
+    public partial class EFRepositoryBase : IRepository
     {
         readonly object _initializeSync = new object();
         volatile bool _isInitialized;
 
+        #region IRepository
         /// <summary>
         /// Initializes the repository.
         /// </summary>
@@ -453,7 +454,6 @@ namespace vm.Aspects.Model.EFRepository
             return this;
         }
 
-        #region IRepositoryAsync
         /// <summary>
         /// Initializes the repository asynchronously.
         /// </summary>
@@ -487,7 +487,7 @@ namespace vm.Aspects.Model.EFRepository
         /// Asynchronously saves the changes buffered in the repository's context.
         /// </summary>
         /// <returns><c>this</c></returns>
-        public async Task<IRepositoryAsync> CommitChangesAsync()
+        public async Task<IRepository> CommitChangesAsync()
         {
             await SaveChangesAsync();
             return this;

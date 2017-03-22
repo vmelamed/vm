@@ -105,10 +105,10 @@ namespace vm.Aspects.Model
                 var hasRepository = (IHasRepository)input.Target;
 
                 // get the repository
-                callData.Repository = hasRepository.Repository ?? hasRepository.AsyncRepository;
+                callData.Repository = hasRepository.Repository;
 
                 if (callData.Repository == null)
-                    throw new InvalidOperationException(nameof(IHasRepository)+" must return at least one non-null repository.");
+                    throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
 
                 // commit
                 CommitChanges(callData);
@@ -149,25 +149,13 @@ namespace vm.Aspects.Model
                 var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
                 var hasRepository = (IHasRepository)input.Target;
 
-                callData.AsyncRepository = hasRepository.AsyncRepository;
+                callData.Repository = hasRepository.Repository;
 
-                if (callData.AsyncRepository != null)
-                {
-                    await CommitChangesAsync(callData);
-                    return result;
-                }
-                else
-                {
-                    callData.Repository = hasRepository.Repository;
+                if (callData.Repository == null)
+                    throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
 
-                    if (callData.Repository != null)
-                    {
-                        CommitChanges(callData);
-                        return result;
-                    }
-                    else
-                        throw new InvalidOperationException(nameof(IHasRepository)+" must return at least one non-null repository.");
-                }
+                await CommitChangesAsync(callData);
+                return result;
             }
             catch (Exception x)
             {
@@ -217,7 +205,7 @@ namespace vm.Aspects.Model
             while (!success)
                 try
                 {
-                    await callData.AsyncRepository.CommitChangesAsync();
+                    await callData.Repository.CommitChangesAsync();
                     callData.TransactionScope?.Complete();
                     success = true;
                 }
@@ -255,7 +243,6 @@ namespace vm.Aspects.Model
             UnitOfWorkData callData)
         {
             callData.Repository?.Dispose();
-            callData.AsyncRepository?.Dispose();
             callData.TransactionScope?.Dispose();
         }
 

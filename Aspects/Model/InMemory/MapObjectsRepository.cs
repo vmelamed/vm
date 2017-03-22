@@ -16,7 +16,7 @@ namespace vm.Aspects.Model.InMemory
     /// The internal store is a <see cref="T:IDictionary{type, List{BaseEntity}}"/> map where the entities are placed in lists mapped to their types.
     /// The entities of related types (base and derived) are kept in a common list.
     /// </summary>
-    public sealed partial class MapObjectsRepository : IRepositoryAsync
+    public sealed partial class MapObjectsRepository : IRepository
     {
         /// <summary>
         /// Synchronizes multi-threaded access to the underlying objects container
@@ -532,38 +532,7 @@ namespace vm.Aspects.Model.InMemory
         /// </summary>
         /// <returns><c>this</c></returns>
         public IRepository CommitChanges() => this;
-        #endregion
 
-        #region IDisposable Members
-        /// <summary>
-        /// The flag will be set just before the object is disposed.
-        /// </summary>
-        /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
-        /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
-        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
-        /// </remarks>
-        int _disposed;
-
-        /// <summary>
-        /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
-        /// </summary>
-        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            // if it is disposed or in a process of disposing - return.
-            if (Interlocked.Exchange(ref _disposed, 1) != 0)
-                return;
-
-            GC.SuppressFinalize(this);
-        }
-        #endregion
-
-        #region IRepositoryAsync Members
         /// <summary>
         /// Initializes the repository asynchronously.
         /// </summary>
@@ -598,7 +567,36 @@ namespace vm.Aspects.Model.InMemory
         /// Asynchronously saves the changes buffered in the repository's context/session.
         /// </summary>
         /// <returns><c>this</c></returns>
-        public Task<IRepositoryAsync> CommitChangesAsync() => Task.FromResult(CommitChanges() as IRepositoryAsync);
+        public Task<IRepository> CommitChangesAsync() => Task.FromResult(CommitChanges());
+        #endregion
+
+        #region IDisposable Members
+        /// <summary>
+        /// The flag will be set just before the object is disposed.
+        /// </summary>
+        /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
+        /// <remarks>
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
+        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
+        /// </remarks>
+        int _disposed;
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
+        /// </summary>
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            // if it is disposed or in a process of disposing - return.
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
+            GC.SuppressFinalize(this);
+        }
         #endregion
     }
 }

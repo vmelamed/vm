@@ -100,8 +100,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
                 if (contextValue == null)
                 {
-                    if (!attribute.Optional &&
-                        !attributes.Any(a => a.CustomDataContextType==attribute.CustomDataContextType && a.Optional))
+                    if (!attribute.IsOptional &&
+                        !attributes.Any(a => a.CustomDataContextType==attribute.CustomDataContextType && a.IsOptional))
                         return input.CreateExceptionMethodReturn(new InvalidOperationException($"The expected {attribute.CustomDataContextType.Name} custom context object (message header) is not present."));
                 }
                 else

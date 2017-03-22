@@ -11,10 +11,5 @@ namespace vm.Aspects.Model
         /// Gets the synchronous repository.
         /// </summary>
         IRepository Repository { get; }
-
-        /// <summary>
-        /// Gets the asynchronous repository.
-        /// </summary>
-        IRepositoryAsync AsyncRepository { get; }
     }
 }

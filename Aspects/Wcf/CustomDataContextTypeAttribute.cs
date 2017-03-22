@@ -47,6 +47,6 @@ namespace vm.Aspects.Wcf
         /// Gets or sets a value indicating whether custom context header is required or optional.
         /// The default is false, i.e. required.
         /// </summary>
-        public bool Optional { get; set; }
+        public bool IsOptional { get; set; }
     }
 }

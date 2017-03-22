@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using vm.Aspects.Model.EFRepository;
-using vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests.Migrations;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -29,19 +28,14 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 bool isTest)
             {
                 container
-                    .RegisterTypeIfNot<IDatabaseInitializer<TestRepository>, MigrateDatabaseToLatestVersion<TestRepository, Configuration>>(registrations)
+                    //.RegisterTypeIfNot<IDatabaseInitializer<TestRepository>, MigrateDatabaseToLatestVersion<TestRepository, Configuration>>(registrations)
+                    .RegisterTypeIfNot<IDatabaseInitializer<TestRepository>, DropCreateDatabaseAlways<TestRepository>>(registrations)
 
                     // SYNCHRONOUS repositories registration
                     // the repository used by the services
                     .RegisterTypeIfNot<IRepository, TestRepository>(registrations, new HierarchicalLifetimeManager())
                     // a transient repository used by tests and anything else.
                     .RegisterTypeIfNot<IRepository, TestRepository>(registrations, "transient")
-
-                    // ASYNCHRONOUS repositories registration
-                    // the repository used by the services
-                    .RegisterTypeIfNot<IRepositoryAsync, TestRepository>(registrations, new HierarchicalLifetimeManager())
-                    // a transient repository used by tests and anything else.
-                    .RegisterTypeIfNot<IRepositoryAsync, TestRepository>(registrations, "transient")
 
                     .UnsafeRegister(EFRepositoryBase.Registrar<TestRepository>(), registrations, isTest)
                     ;

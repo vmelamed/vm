@@ -26,8 +26,10 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
                 sw.Start();
 
-                //RunSync();
-                RunAsync().Wait();
+                if (args.Length > 0  &&  args[0].StartsWith("a"))
+                    RunAsync().Wait();
+                else
+                    RunSync();
 
                 sw.Stop();
                 Console.WriteLine($@"Test duration: {sw.Elapsed:d\.hh\.mm\.ss\.fffffff}");

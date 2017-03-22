@@ -333,10 +333,10 @@ namespace vm.Aspects.Model.EFRepository
         public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
-        /// Disposes the context. The underlying <see cref="T:System.Data.Entity.Core.Objects.ObjectContext" /> is also disposed if it was created
-        /// is by this context or ownership was passed to this context when this context was created.
-        /// The connection to the database (<see cref="T:System.Data.Common.DbConnection" /> object) is also disposed if it was created
-        /// is by this context or ownership was passed to this context when this context was created.
+        /// Disposes the context. The underlying <see cref="T:System.Data.Entity.Core.Objects.ObjectContext" /> is also disposed
+        /// if it was created by this context or ownership was passed to this context when this context was created.
+        /// The connection to the database (<see cref="T:System.Data.Common.DbConnection" /> object) is also disposed
+        /// if it was created by this context or ownership was passed to this context when this context was created.
         /// </summary>
         /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources.</param>
         [SuppressMessage("Microsoft.Usage", "CA2215:Dispose methods should call base class dispose")]
@@ -346,9 +346,6 @@ namespace vm.Aspects.Model.EFRepository
             // if it is disposed or in a process of disposing - return.
             if (Interlocked.Exchange(ref _disposed, 1) != 0)
                 return;
-
-            if (disposing)
-                StoreIdProvider?.Dispose();
 
             base.Dispose(disposing);
         }

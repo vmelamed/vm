@@ -10,8 +10,8 @@ using vm.Aspects.Model.Repository;
 namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 {
     /// <summary>
-    /// Class HiLoStoreIdProvider. Implements <see cref="T:IStoreUniqueId"/> for <see cref="EFRepositoryBase"/> 
-    /// using Hi-Lo generators <see cref="T:HiLoIdentityGenerator"/> - one for each data set.
+    /// Class HiLoStoreIdProvider. Implements <see cref="IStoreUniqueId{T}"/> for <see cref="EFRepositoryBase"/> 
+    /// using Hi-Lo generators <see cref="HiLoIdentityGenerator"/> - one for each data set.
     /// </summary>
     public sealed class HiLoStoreIdProvider : IStoreIdProvider,
         IStoreUniqueId<long>,

@@ -102,7 +102,7 @@ namespace vm.Aspects.Model.EFRepository
                     .RegisterTypeIfNot<IStoreIdProvider, HiLoStoreIdProvider>(registrations, new ContainerControlledLifetimeManager())
 
                     // from time to time this HiLo generator needs a factory-method that will return a fresh transient repository. The default method resolves the repository from the container, registered below.
-                    .RegisterInstanceIfNot<Func<IRepository>>(registrations, HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, HiLoStoreIdProvider.DefaultGeneratorsRepositoryFactory)
+                    .RegisterInstanceIfNot<Func<IRepository>>(registrations, HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, () => DIContainer.Root.Resolve<IRepository>(HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName))
                     .RegisterTypeIfNot(registrations, typeof(IRepository), typeof(T), HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, new TransientLifetimeManager())
 
                     // If you enable migrations, register a database initializer:
