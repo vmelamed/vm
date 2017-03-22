@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmDumperVersion=1.6.19
+set vmDumperVersion=1.6.21
 set Configuration=Release
 pushd
 

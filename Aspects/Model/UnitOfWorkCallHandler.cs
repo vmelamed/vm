@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
+﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
@@ -25,11 +26,6 @@ namespace vm.Aspects.Model
     public class UnitOfWorkCallHandler : BaseCallHandler<UnitOfWorkData>
     {
         /// <summary>
-        /// Gets or sets the resolve name of the repository registered in the current call context.
-        /// </summary>
-        public string RepositoryResolveName { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether to create explicitly transaction scope.
         /// The use of this property must be very well justified.
         /// </summary>
@@ -39,6 +35,13 @@ namespace vm.Aspects.Model
         /// Gets or sets the optimistic concurrency strategy.
         /// </summary>
         public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to dispose the repository in the clean-up phase.
+        /// If the lifetime of the repository is controlled outside of this handler (e.g. with <see cref="HierarchicalLifetimeManager"/>),
+        /// do not dispose the repository here.
+        /// </summary>
+        public bool DisposeRepository { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum optimistic concurrency retries.
@@ -242,7 +245,9 @@ namespace vm.Aspects.Model
         void CleanUp(
             UnitOfWorkData callData)
         {
-            callData.Repository?.Dispose();
+            if (DisposeRepository)
+                callData.Repository?.Dispose();
+
             callData.TransactionScope?.Dispose();
         }
 

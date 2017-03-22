@@ -46,7 +46,6 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Requires(v != null);
             Contract.Requires(v is string);
-            Contract.Requires(w != null);
             Contract.Requires(max >= 0);
 
             var stringValue = (string)v;
@@ -57,22 +56,76 @@ namespace vm.Aspects.Diagnostics
             w.Write(stringValue);
         }
 
+        static IDictionary<Type,Func<object,ulong>> _castsToUlong = new Dictionary<Type,Func<object,ulong>>()
+        {
+            [typeof(byte)]    = v => (byte)v,
+            [typeof(sbyte)]   = v => (uint)(sbyte)v & 0xFF,
+            [typeof(char)]    = v => (char)v,
+            [typeof(short)]   = v => (uint)(short)v & 0xFFFF,
+            [typeof(ushort)]  = v => (ushort)v,
+            [typeof(int)]     = v => (uint)(int)v & 0xFFFFFFFF,
+            [typeof(uint)]    = v => (uint)v,
+            [typeof(long)]    = v => (ulong)(long)v,
+            [typeof(ulong)]   = v => (ulong)v,
+        };
+
         static void DumpEnumValue(
             object v,
             TextWriter w,
             int max)
         {
             Contract.Requires(v != null);
-            Contract.Requires(w != null);
 
             var type = v.GetType();
 
+            if (type.GetCustomAttribute<FlagsAttribute>() == null)
+            {
+                w.Write(
+                    DumpFormat.Enum,
+                    type.Name,
+                    type.Namespace,
+                    type.AssemblyQualifiedName,
+                    v.ToString());
+                return;
+            }
+
+            var names  = type.GetEnumNames();
+            var values = type.GetEnumValues();
+            var castToUlong = _castsToUlong[type.GetEnumUnderlyingType()];
+            var ulongValue = castToUlong(v);
+            var nameLookup = new Dictionary<ulong, string>(values.Length);
+
+            for (var i = 0; i<values.Length; i++)
+                nameLookup[castToUlong(values.GetValue(i))] = names[i];
+
             w.Write(
-                DumpFormat.Enum,
+                DumpFormat.EnumFlagsPrefix,
                 type.Name,
                 type.Namespace,
-                type.AssemblyQualifiedName,
-                v.ToString());
+                type.AssemblyQualifiedName);
+
+            var first = true;
+
+            for (ulong flag = 1; flag <= castToUlong(values.GetValue(values.Length-1)); flag <<= 1)
+                if ((ulongValue & flag) != 0)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        w.Write(DumpFormat.EnumFlagsSeparator);
+                    w.Write(
+                        DumpFormat.EnumFlag,
+                        type.Name,
+                        type.Namespace,
+                        type.AssemblyQualifiedName,
+                        nameLookup[flag]);
+                }
+
+            w.Write(
+                DumpFormat.EnumFlagsSuffix,
+                type.Name,
+                type.Namespace,
+                type.AssemblyQualifiedName);
         }
 
         /// <summary>

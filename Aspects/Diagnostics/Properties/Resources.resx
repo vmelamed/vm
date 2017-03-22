@@ -144,6 +144,18 @@
   <data name="EnumDumpFormat" xml:space="preserve">
     <value>{0}.{3}</value>
   </data>
+  <data name="EnumFlagDumpFormat" xml:space="preserve">
+    <value>{3}</value>
+  </data>
+  <data name="EnumFlagsDumpBeginFormat" xml:space="preserve">
+    <value>{0} (</value>
+  </data>
+  <data name="EnumFlagsDumpEndFormat" xml:space="preserve">
+    <value>)</value>
+  </data>
+  <data name="EnumFlagsSeparator" xml:space="preserve">
+    <value> | </value>
+  </data>
   <data name="GenericParamFormat" xml:space="preserve">
     <value>{0}</value>
   </data>

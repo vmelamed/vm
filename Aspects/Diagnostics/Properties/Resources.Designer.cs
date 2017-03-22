@@ -142,6 +142,42 @@ namespace vm.Aspects.Diagnostics.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {3}.
+        /// </summary>
+        internal static string EnumFlagDumpFormat {
+            get {
+                return ResourceManager.GetString("EnumFlagDumpFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (.
+        /// </summary>
+        internal static string EnumFlagsDumpBeginFormat {
+            get {
+                return ResourceManager.GetString("EnumFlagsDumpBeginFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ).
+        /// </summary>
+        internal static string EnumFlagsDumpEndFormat {
+            get {
+                return ResourceManager.GetString("EnumFlagsDumpEndFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  | .
+        /// </summary>
+        internal static string EnumFlagsSeparator {
+            get {
+                return ResourceManager.GetString("EnumFlagsSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
         internal static string GenericParamFormat {

@@ -48,7 +48,16 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             Two,
             All,
         }
-
+        
+        [Flags]
+        enum TestFlags
+        {
+            One = 1 << 0,
+            Two = 1 << 1,
+            Four = 1 << 2,
+            Eight = 1 << 3,
+        }
+        
         #region basic values and corresponding strings
         object[] basicValues =
         {
@@ -1471,13 +1480,14 @@ Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         class Object90
         {
             public TestEnum Prop { get; set; }
+            public TestFlags Flags { get; set; }
         }
 
         class Object9
         {
             public Object9()
             {
-                Object90 = new Object90 { Prop=TestEnum.One };
+                Object90 = new Object90 { Prop=TestEnum.One, Flags = TestFlags.Two | TestFlags.Four };
                 Prop91 = 0;
                 Prop92 = 1;
                 Prop93 = 4;
@@ -1532,6 +1542,7 @@ Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
                 var expected = @"
 Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+    Flags                    = TestFlags (Two | Four)
     Prop                     = TestEnum.One
   Prop91                   = 0
   Prop92                   = 1

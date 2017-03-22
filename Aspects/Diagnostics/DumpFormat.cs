@@ -34,6 +34,10 @@ namespace vm.Aspects.Diagnostics
             Type                  = Resources.TypeDumpFormat;
             TypeInfo              = Resources.TypeInfoFormat;
             Value                 = Resources.ValueFormat;
+            EnumFlagsPrefix       = Resources.EnumFlagsDumpBeginFormat;
+            EnumFlag              = Resources.EnumFlagDumpFormat;
+            EnumFlagsSeparator    = Resources.EnumFlagsSeparator;
+            EnumFlagsSuffix       = Resources.EnumFlagsDumpEndFormat;
         }
 
         /// <summary>
@@ -56,6 +60,34 @@ namespace vm.Aspects.Diagnostics
         /// Default: &quot;{0}.{3}&quot;
         /// </summary>
         public static string Enum { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dump format for enum flag values.
+        /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type and 3 - the value.
+        /// Default: &quot;{3}&quot;
+        /// </summary>
+        public static string EnumFlag { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dump format to prefix the list of enum flags (<see cref="Enum"/>) separated by <see cref="EnumFlagsSeparator"/>.
+        /// </summary>
+        /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
+        /// Default: &quot;{0}: (&quot;
+        public static string EnumFlagsPrefix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dump format to prefix the list of enum flags (<see cref="Enum"/>) separated by &quot; | &quot;.
+        /// </summary>
+        /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
+        /// Default: &quot; | &quot;
+        public static string EnumFlagsSeparator { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dump format to prefix the list of enum flags
+        /// </summary>
+        /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
+        /// Default: &quot;)&quot;
+        public static string EnumFlagsSuffix { get; set; }
 
         /// <summary>
         /// Gets or sets the dump format for generic parameters.
@@ -164,6 +196,10 @@ namespace vm.Aspects.Diagnostics
             Contract.Invariant(!string.IsNullOrEmpty(Type));
             Contract.Invariant(!string.IsNullOrEmpty(TypeInfo));
             Contract.Invariant(!string.IsNullOrEmpty(Value));
+            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagsPrefix));
+            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagsSeparator));
+            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagsSuffix));
+            Contract.Invariant(!string.IsNullOrEmpty(EnumFlag));
         }
 
     }
