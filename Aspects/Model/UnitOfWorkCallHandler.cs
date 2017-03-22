@@ -4,7 +4,6 @@ using System;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using vm.Aspects.Exceptions;
@@ -32,11 +31,6 @@ namespace vm.Aspects.Model
         public bool CreateTransactionScope { get; set; }
 
         /// <summary>
-        /// Gets or sets the optimistic concurrency strategy.
-        /// </summary>
-        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether to dispose the repository in the clean-up phase.
         /// If the lifetime of the repository is controlled outside of this handler (e.g. with <see cref="HierarchicalLifetimeManager"/>),
         /// do not dispose the repository here.
@@ -44,9 +38,29 @@ namespace vm.Aspects.Model
         public bool DisposeRepository { get; set; }
 
         /// <summary>
+        /// Gets or sets the optimistic concurrency strategy.
+        /// </summary>
+        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultOptimisticConcurrencyStrategy;
+
+        /// <summary>
         /// Gets or sets the maximum optimistic concurrency retries.
         /// </summary>
-        public int MaxOptimisticConcurrencyRetries { get; set; } = 10;
+        public int MaxOptimisticConcurrencyRetries { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMaxOptimisticConcurrencyRetries;
+
+        /// <summary>
+        /// The minimum delay before the retry after an optimistic concurrency exception.
+        /// </summary>
+        public int MinDelayBeforeRetry { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMinDelayBeforeRetry;
+
+        /// <summary>
+        /// The maximum delay before the retry after an optimistic concurrency exception.
+        /// </summary>
+        public int MaxDelayBeforeRetry { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMaxDelayBeforeRetry;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to log a warning for the exception.
+        /// </summary>
+        public bool LogExceptionWarnings { get; set; } = false;
 
         /// <summary>
         /// Prepares per-call data specific to the handler.
@@ -59,25 +73,32 @@ namespace vm.Aspects.Model
             if (!(input.Target is IHasRepository))
                 throw new InvalidOperationException($"{nameof(UnitOfWorkCallHandler)} can be used only with services that implement {nameof(IHasRepository)}. Either implement it in {input.Target.GetType().Name} or remove this handler from the pipeline.");
 
-            var data = new UnitOfWorkData();
-
-            if (!CreateTransactionScope)
-                return data;
-
-            if (Transaction.Current != null)
+            if (CreateTransactionScope  &&  Transaction.Current != null)
             {
-                Debug.WriteLine(
-                    "WARNING: Did not create transaction scope. The method {0} is called in the context of an existing transaction {1}/{2}. Is this intended!",
+                Facility.LogWriter.LogInfo(
+                    "WARNING: The method {0} is called in the context of an existing transaction {1}/{2} and a new transaction scope is requested. Is this intended?",
                     input.MethodBase.Name,
                     Transaction.Current.TransactionInformation.LocalIdentifier,
                     Transaction.Current.TransactionInformation.DistributedIdentifier);
-
-                return data;
+                Debug.WriteLine(
+                    "WARNING: The method {0} is called in the context of an existing transaction {1}/{2} and a new transaction scope is requested. Is this intended?",
+                    input.MethodBase.Name,
+                    Transaction.Current.TransactionInformation.LocalIdentifier,
+                    Transaction.Current.TransactionInformation.DistributedIdentifier);
             }
 
-            data.TransactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            return data;
+            return new UnitOfWorkData
+            {
+                ExceptionHandler = new OptimisticConcurrencyExceptionHandler(
+                                            OptimisticConcurrencyStrategy,
+                                            MaxOptimisticConcurrencyRetries,
+                                            MinDelayBeforeRetry,
+                                            MaxDelayBeforeRetry,
+                                            LogExceptionWarnings),
+                TransactionScope = CreateTransactionScope
+                                            ? new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)
+                                            : null,
+            };
         }
 
         /// <summary>
@@ -174,7 +195,6 @@ namespace vm.Aspects.Model
             UnitOfWorkData callData)
         {
             var success = false;
-            var retries = 0;
 
             while (!success)
                 try
@@ -185,17 +205,7 @@ namespace vm.Aspects.Model
                 }
                 catch (DbUpdateConcurrencyException x)
                 {
-                    // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
-                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins  ||
-                        retries >= MaxOptimisticConcurrencyRetries)
-                        throw;
-
-                    Facility.LogWriter.ExceptionWarning(x);
-
-                    var entry = x.Entries.Single();
-
-                    WaitBeforeRetry();
-                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    callData.ExceptionHandler.HandleDbUpdateConcurrencyException(x);
                 }
         }
 
@@ -203,7 +213,6 @@ namespace vm.Aspects.Model
             UnitOfWorkData callData)
         {
             var success = false;
-            var retries = 0;
 
             while (!success)
                 try
@@ -214,32 +223,8 @@ namespace vm.Aspects.Model
                 }
                 catch (DbUpdateConcurrencyException x)
                 {
-                    // see https://msdn.microsoft.com/en-us/data/jj592904.aspx
-                    if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins  ||
-                        retries >= MaxOptimisticConcurrencyRetries)
-                        throw;
-
-                    Facility.LogWriter.ExceptionWarning(x);
-
-                    var entry = x.Entries.Single();
-
-                    await WaitBeforeRetryAsync();
-                    entry.OriginalValues.SetValues(await entry.GetDatabaseValuesAsync());
+                    await callData.ExceptionHandler.HandleDbUpdateConcurrencyExceptionAsync(x);
                 }
-        }
-
-        void WaitBeforeRetry()
-        {
-            var rand = new Random(DateTime.UtcNow.Millisecond);
-
-            Task.Delay(rand.Next(150)).Wait();
-        }
-
-        async Task WaitBeforeRetryAsync()
-        {
-            var rand = new Random(DateTime.UtcNow.Millisecond);
-
-            await Task.Delay(rand.Next(150));
         }
 
         void CleanUp(

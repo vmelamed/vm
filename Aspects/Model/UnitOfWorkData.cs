@@ -11,11 +11,16 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Gets or sets the transaction scope.
         /// </summary>
-        public TransactionScope TransactionScope { get; set; }
+        internal TransactionScope TransactionScope { get; set; }
 
         /// <summary>
         /// Gets or sets the synchronous repository.
         /// </summary>
-        public IRepository Repository { get; set; }
+        internal IRepository Repository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the exception handler.
+        /// </summary>
+        internal OptimisticConcurrencyExceptionHandler ExceptionHandler { get; set; }
     }
 }
