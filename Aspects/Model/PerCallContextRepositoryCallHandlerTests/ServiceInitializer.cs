@@ -82,7 +82,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             {
                 Exception y;
 
-                if (Facility.ExceptionManager.HandleException(x, ExceptionPolicyProvider.LogAndRethrow, out y)  &&  y != null)
+                if (Facility.ExceptionManager.HandleException(x, ExceptionPolicyProvider.LogAndRethrowPolicyName, out y)  &&  y != null)
                     throw y;
 
                 throw;

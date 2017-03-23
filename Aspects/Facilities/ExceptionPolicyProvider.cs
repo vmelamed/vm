@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Facilities
 {
@@ -43,11 +43,11 @@ namespace vm.Aspects.Facilities
         /// <summary>
         /// The name of the log and swallow policy.
         /// </summary>
-        public const string LogAndSwallow = "Log and Swallow";
+        public const string LogAndSwallowPolicyName = "Log and Swallow";
         /// <summary>
         /// The name of the log and swallow policy.
         /// </summary>
-        public const string LogAndRethrow = "Log and Rethrow";
+        public const string LogAndRethrowPolicyName = "Log and Rethrow";
 
         /// <summary>
         /// Class ExceptionHandlingPoliciesRegistrar. Registers the two exception handling policies.
@@ -87,41 +87,41 @@ namespace vm.Aspects.Facilities
         public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries =>
             new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                [LogAndSwallow] =   new List<ExceptionPolicyEntry>
-                                    {
-                                        new ExceptionPolicyEntry(
-                                            typeof(Exception),
-                                            PostHandlingAction.None,
-                                            new IExceptionHandler[]
+                [LogAndSwallowPolicyName] = new List<ExceptionPolicyEntry>
                                             {
-                                                new LoggingExceptionHandler(
-                                                        LogWriterFacades.Exception,
-                                                        1000,
-                                                        TraceEventType.Error,
-                                                        RegistrationName,
-                                                        1,
-                                                        typeof(DumpExceptionFormatter),
-                                                        Facility.LogWriter),
-                                            }),
-                                    },
+                                                new ExceptionPolicyEntry(
+                                                    typeof(Exception),
+                                                    PostHandlingAction.None,
+                                                    new IExceptionHandler[]
+                                                    {
+                                                        new LoggingExceptionHandler(
+                                                                LogWriterFacades.Exception,
+                                                                1000,
+                                                                TraceEventType.Error,
+                                                                RegistrationName,
+                                                                1,
+                                                                typeof(DumpExceptionFormatter),
+                                                                Facility.LogWriter),
+                                                    }),
+                                            },
 
-                [LogAndRethrow] =   new List<ExceptionPolicyEntry>
-                                    {
-                                        new ExceptionPolicyEntry(
-                                            typeof(Exception),
-                                            PostHandlingAction.NotifyRethrow,
-                                            new IExceptionHandler[]
+                [LogAndRethrowPolicyName] = new List<ExceptionPolicyEntry>
                                             {
-                                                new LoggingExceptionHandler(
-                                                        LogWriterFacades.Exception,
-                                                        2000,
-                                                        TraceEventType.Error,
-                                                        "vm.Aspects.Facilities",
-                                                        1,
-                                                        typeof(DumpExceptionFormatter),
-                                                        Facility.LogWriter),
-                                            }),
-                                    },
+                                                new ExceptionPolicyEntry(
+                                                    typeof(Exception),
+                                                    PostHandlingAction.NotifyRethrow,
+                                                    new IExceptionHandler[]
+                                                    {
+                                                        new LoggingExceptionHandler(
+                                                                LogWriterFacades.Exception,
+                                                                2000,
+                                                                TraceEventType.Error,
+                                                                "vm.Aspects.Facilities",
+                                                                1,
+                                                                typeof(DumpExceptionFormatter),
+                                                                Facility.LogWriter),
+                                                    }),
+                                            },
             };
         #endregion
 
@@ -138,25 +138,26 @@ namespace vm.Aspects.Facilities
             var policyEntries = new Dictionary<string, List<ExceptionPolicyEntry>>();
             List<ExceptionPolicyEntry> list;
 
-            foreach (var e in ServiceLocator.Current.GetAllInstances<IExceptionPolicyProvider>())
-                foreach (var d in e.ExceptionPolicyEntries)
-                    if (!policyEntries.TryGetValue(d.Key, out list))
+            // merge all policy definitions
+            foreach (var provider in ServiceLocator.Current.GetAllInstances<IExceptionPolicyProvider>())
+                foreach (var policyDefinition in provider.ExceptionPolicyEntries)
+                    if (!policyEntries.TryGetValue(policyDefinition.Key, out list))
                         // add a new policy
-                        policyEntries[d.Key] = d.Value.ToList();
+                        policyEntries[policyDefinition.Key] = policyDefinition.Value.ToList();
                     else
                     {
-                        var duplicates = list.Intersect(d.Value).ToList();
+                        var duplicates = list.Intersect(policyDefinition.Value).ToList();
 
                         if (duplicates.Any())
                         {
                             var message = new StringBuilder(
-                                                $"One of the exception policy providers brings duplicate exception entries to policy {d.Key}:\n{string.Join("\n  ", duplicates.Select(x => x.ExceptionType.FullName))}");
+                                                $"One of the exception policy providers brings duplicate exception entries to policy {policyDefinition.Key}:\n{string.Join("\n  ", duplicates.Select(x => x.ExceptionType.FullName))}");
 
                             throw new InvalidOperationException(message.ToString());
                         }
 
                         // add the entries to the existing policy
-                        list.AddRange(d.Value);
+                        list.AddRange(policyDefinition.Value);
                     }
 
             // create the exception manager

@@ -152,6 +152,9 @@ $@"
                     failed++;
                 }
 
+            if (client == null)
+                client = ServiceLocator.Current.GetInstance<ITestService>("client");
+
             var counts = client.GetCounts();
 
             Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");

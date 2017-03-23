@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             {
                 container
                     .RegisterInstanceIfNot<IWcfContextUtilities>(registrations, new WcfContextUtilities())
-                    .RegisterInstanceIfNot<IExceptionPolicyProvider>(registrations, "ServiceFaultFromExceptionHandlingPolicies", new ServiceFaultFromExceptionHandlingPolicies());
+                    .RegisterInstanceIfNot<IExceptionPolicyProvider>(registrations, ServiceFaultFromExceptionHandlingPolicies.RegistrationName, new ServiceFaultFromExceptionHandlingPolicies());
             }
         }
 

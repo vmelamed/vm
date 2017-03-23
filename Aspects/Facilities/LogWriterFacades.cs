@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace vm.Aspects.Facilities
 {
@@ -49,26 +48,6 @@ namespace vm.Aspects.Facilities
         /// </summary>
         public const string Email          = "Email";
 
-
-        /// <summary>
-        /// The name of the call context slot for the activity identifier.
-        /// </summary>
-        public const string ActivityIdSlotName = "vm.Aspects.Facilities.ActivityId";
-
-        /// <summary>
-        /// Gets the current activity identifier (the GUID of the current call context).
-        /// </summary>
-        /// <returns>Guid.</returns>
-        public static Guid GetActivityId()
-        {
-            var aid = CallContext.LogicalGetData(ActivityIdSlotName);
-
-            if (aid is Guid)
-                return (Guid)aid;
-            else
-                return default(Guid);
-        }
-
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer.
         /// </summary>
@@ -98,7 +77,6 @@ namespace vm.Aspects.Facilities
             {
                 Categories         = new[] { category },
                 Severity           = severity,
-                ActivityId         = GetActivityId(),
                 ExtendedProperties = extendedProperties,
             };
 
@@ -166,7 +144,6 @@ namespace vm.Aspects.Facilities
             {
                 Categories         = new[] { category },
                 Severity           = severity,
-                ActivityId         = GetActivityId(),
                 ExtendedProperties = extendedProperties,
             };
 

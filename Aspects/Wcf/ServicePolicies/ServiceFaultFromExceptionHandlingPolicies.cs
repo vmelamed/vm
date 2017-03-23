@@ -17,6 +17,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <summary>
         /// The exception transformation policy name
         /// </summary>
+        public const string RegistrationName = "ServiceFaultFromExceptionHandlingPolicies";
+        /// <summary>
+        /// The exception transformation policy name
+        /// </summary>
         public const string PolicyName = "FaultException<> from Exception policy.";
         /// <summary>
         /// The title of the logged exceptions.
@@ -37,7 +41,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         static ExceptionPolicyEntry[] FaultFromExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3999;
+            int eventId = 3900;
 
             return new ExceptionPolicyEntry[]
             {

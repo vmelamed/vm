@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.Threading;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
+using vm.Aspects.Threading;
 using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -91,6 +92,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         Entity CreateEntity(
             int numValues)
         {
+            ThrowRandomException();
             var e = Repository.CreateEntity<Entity>();
 
             e.Id           = Repository.GetStoreId<Entity, long>();
@@ -112,6 +114,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         Value CreateValue()
         {
+            ThrowRandomException();
             var v = Repository.CreateValue<Value>();
 
             v.Id           = Repository.GetStoreId<Value, long>();
@@ -126,6 +129,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             Entity e,
             int numValues)
         {
+            ThrowRandomException();
             e.RepositoryId = Facility.GuidGenerator.NewGuid().ToString("N");
 
             UpdateValues(e, 0, e.ValuesList.Count()-1);
@@ -145,6 +149,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             int skip,
             int take)
         {
+            ThrowRandomException();
             foreach (var v in e.ValuesList
                                .OrderBy(v => v.Id)
                                .Skip(skip)
@@ -156,7 +161,54 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         void UpdateValue(
             Value v)
         {
+            ThrowRandomException();
             v.UpdatedOn    = Facility.Clock.UtcNow;
+        }
+
+
+        static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
+        static DateTime _when = default(DateTime);
+
+        static void ThrowRandomException()
+        {
+            using (_sync.UpgradableReaderLock())
+                if (_when == default(DateTime))
+                {
+                    using (_sync.WriterLock())
+                        _when = DateTime.Now.AddMilliseconds(_random.Next(1000));
+                    return;
+                }
+
+            using (_sync.UpgradableReaderLock())
+                if (_when < DateTime.Now)
+                {
+                    using (_sync.WriterLock())
+                    {
+                        _when = DateTime.Now.AddMilliseconds(_random.Next(2000));
+                        ThrowException();
+                    }
+                }
+        }
+
+        static void ThrowException()
+        {
+            var i = _random.Next(4);
+
+            switch (i)
+            {
+            case 0:
+                throw new OverflowException("This is a random exception.");
+
+            case 1:
+                throw new UnauthorizedAccessException("This is a random exception.");
+
+            case 2:
+                throw new InvalidOperationException("This is a random exception.");
+
+            default:
+                throw new Exception("This is a random exception.");
+            }
+
         }
     }
 }

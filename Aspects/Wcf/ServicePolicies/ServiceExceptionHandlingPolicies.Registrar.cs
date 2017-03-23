@@ -19,7 +19,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             {
                 container
                     .RegisterInstanceIfNot<IWcfContextUtilities>(registrations, new WcfContextUtilities())
-                    .RegisterInstanceIfNot<IExceptionPolicyProvider>(registrations, "vm.Aspects.Wcf.ServicePolicies", new ServiceExceptionHandlingPolicies());
+                    .RegisterInstanceIfNot<IExceptionPolicyProvider>(registrations, PolicyName, new ServiceExceptionHandlingPolicies());
             }
         }
 

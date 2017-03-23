@@ -1,6 +1,5 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
-using System.Runtime.Remoting.Messaging;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 
@@ -10,21 +9,25 @@ namespace vm.Aspects.Policies
     /// Marks the current call context with a GUID for use by the log entries.
     /// </summary>
     /// <seealso cref="BaseCallHandler{Guid}" />
-    public class MarkActivityCallHandler : BaseCallHandler<Guid>
+    public class ActivityTracerCallHandler : BaseCallHandler<Tracer>
     {
+        static object _sync = new object();
+        static TraceManager traceManager;
+
         /// <summary>
         /// Prepares per call data specific to the handler.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
-        protected override Guid Prepare(
+        protected override Tracer Prepare(
             IMethodInvocation input)
         {
-            var activityId = Facility.GuidGenerator.NewGuid();
+            if (traceManager == null)
+                lock (_sync)
+                    if (traceManager == null)
+                        traceManager = new TraceManager(Facility.LogWriter);
 
-            CallContext.LogicalSetData(LogWriterFacades.ActivityIdSlotName, activityId);
-
-            return activityId;
+            return traceManager.StartTrace(LogWriterFacades.General);
         }
 
         /// <summary>
@@ -32,21 +35,20 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="methodReturn">The method return.</param>
-        /// <param name="callData">The per-call data.</param>
+        /// <param name="tracer">The tracer.</param>
         /// <returns>IMethodReturn.</returns>
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            Guid callData)
+            Tracer tracer)
         {
-            try
+            if (!input.IsAsyncCall())
             {
-                return base.PostInvoke(input, methodReturn, callData);
+                traceManager.Dispose();
+                traceManager = null;
             }
-            finally
-            {
-                CallContext.LogicalSetData(LogWriterFacades.ActivityIdSlotName, default(Guid));
-            }
+
+            return base.PostInvoke(input, methodReturn, tracer);
         }
 
         /// <summary>
@@ -56,20 +58,21 @@ namespace vm.Aspects.Policies
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="input">The input.</param>
         /// <param name="methodReturn">The method return.</param>
-        /// <param name="callData">The call data.</param>
+        /// <param name="tracer">The call data.</param>
         /// <returns>Task{TResult}.</returns>
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            Guid callData)
+            Tracer tracer)
         {
             try
             {
-                return await base.ContinueWith<TResult>(input, methodReturn, callData);
+                return await base.ContinueWith<TResult>(input, methodReturn, tracer);
             }
             finally
             {
-                CallContext.LogicalSetData(LogWriterFacades.ActivityIdSlotName, default(Guid));
+                traceManager.Dispose();
+                traceManager = null;
             }
         }
     }

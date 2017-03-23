@@ -319,7 +319,7 @@
     <Compile Include="Policies\CallTraceData.cs" />
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
     <Compile Include="Policies\ICallHandlerExtensions.cs" />
-    <Compile Include="Policies\MarkActivityCallHandler.cs" />
+    <Compile Include="Policies\ActivityTracerCallHandler.cs" />
     <Compile Include="Policies\ParameterValidatingCallHandler.cs" />
     <Compile Include="Policies\PolicyDefinitionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

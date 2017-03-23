@@ -277,7 +277,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             {
                 isFound =_exceptionToFault.TryGetValue(exception.GetType(), out faultType);
                 if (!isFound  &&  !ExceptionToHttpStatusCode.TryGetValue(exception.GetType(), out httpCode))
-                    httpCode = ExceptionToHttpStatusCode[typeof(System.Exception)];
+                    httpCode = ExceptionToHttpStatusCode[typeof(Exception)];
             }
 
             var exceptionProperties = exception
@@ -292,10 +292,13 @@ namespace vm.Aspects.Wcf.FaultContracts
                     Message        = exception.Message,
                     HttpStatusCode = httpCode,
                     Data           = exceptionProperties
+                                        .Where(pi => pi.Name != nameof(Exception.Message)  &&
+                                                     pi.GetIndexParameters().Count() == 0)
                                         .ToDictionary(
                                             pi => pi.Name,
-                                            pi => pi.GetValue(exception).ToString()),
+                                            pi => pi.GetValue(exception)?.ToString()),
                 };
+
                 result.Data["Exception.Dump"] = exception.DumpString();
                 return result;
             };

@@ -18,18 +18,33 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="exception">The exception to handle.</param>
         /// <param name="handlingInstanceId">The unique ID attached to the handling chain for this handling instance.</param>
         /// <returns>Modified exception to pass to the next exceptionHandlerData in the chain.</returns>
-        public Exception HandleException(Exception exception, Guid handlingInstanceId)
+        public Exception HandleException(
+            Exception exception,
+            Guid handlingInstanceId)
         {
-            var factory = Fault.TryGetExceptionToFaultFactory(exception.GetType()) ?? Fault.TryGetExceptionToFaultFactory<Exception>();
+            var exceptionType = exception.GetType();
+            Func<Exception, Fault> factory = null;
+
+            // if we cannot find exact match go up the inheritance tree. finally we must stop at Exception.
+            while (factory == null)
+            {
+                factory = Fault.TryGetExceptionToFaultFactory(exceptionType);
+                if (factory == null)
+                    exceptionType = exceptionType.BaseType;
+                else
+                    break;
+            }
+
             var fault = factory(exception);
 
-            fault.Data["handlingInstanceId"] = handlingInstanceId.ToString();
+            exception.Data[nameof(fault.HandlingInstanceId)] = handlingInstanceId;
+            fault.HandlingInstanceId                         = handlingInstanceId;
 
             return (Exception)typeof(FaultException<>)
-                        .MakeGenericType(fault.GetType())
-                        .GetConstructor(new Type[] { fault.GetType(), typeof(string) })
-                        .Invoke(new object[] { fault, fault.Message })
-                        ;
+                                .MakeGenericType(fault.GetType())
+                                .GetConstructor(new Type[] { fault.GetType(), typeof(string) })
+                                .Invoke(new object[] { fault, fault.Message })
+                                ;
         }
     }
 }

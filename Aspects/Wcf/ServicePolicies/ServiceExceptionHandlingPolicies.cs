@@ -30,6 +30,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// </summary>
         public const string LogExceptionTitle = "vm.Aspects.Wcf";
 
+        /// <summary>
+        /// The policy name
+        /// </summary>
+        public const string PolicyName = "vm.Aspects.Wcf.ServicePolicies";
+
         #region IExceptionPolicyEntries Members
 
         /// <summary>
@@ -38,7 +43,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
         public IDictionary<string, IEnumerable<ExceptionPolicyEntry>> ExceptionPolicyEntries
             => new SortedList<string, IEnumerable<ExceptionPolicyEntry>>
             {
-                [ExceptionShielding.DefaultExceptionPolicy] = WcfExceptionShieldingPolicyEntries(),
+                [ExceptionShielding.DefaultExceptionPolicy]   = WcfExceptionShieldingPolicyEntries(),
+                [ServiceExceptionHandlingPolicies.PolicyName] = WcfExceptionShieldingPolicyEntries(),
             };
         #endregion
 

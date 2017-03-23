@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -75,18 +75,11 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
-                ClassMetadataRegistrar.RegisterMetadata();
-
-                ExceptionPolicyProvider.Registrar.UnsafeRegister(container, registrations);
-                LogConfigProvider.Registrar.UnsafeRegister(container, registrations);
-
-                container
-                    .RegisterInstanceIfNot<IClock>(registrations, new Clock())
-                    .RegisterInstanceIfNot<IGuidGenerator>(registrations, new GuidGenerator())
-                    .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
+                RegisterCommon(container, registrations)
+                    .UnsafeRegister(LogConfigProvider.Registrar, registrations)
                     .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
-                    .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
-                    .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
+
+                    .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations)
                     ;
             }
 
@@ -101,16 +94,28 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                RegisterCommon(container, registrations)
+                    .UnsafeRegister(LogConfigProvider.Registrar, registrations, true)
+                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null, true)))
+
+                    .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations, true)
+                    ;
+                ;
+            }
+
+            IUnityContainer RegisterCommon(
+                IUnityContainer container,
+                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            {
                 ClassMetadataRegistrar.RegisterMetadata();
 
-                ExceptionPolicyProvider.Registrar.UnsafeRegister(container, registrations, true);
-                LogConfigProvider.Registrar.UnsafeRegister(container, registrations, true);
-
-                container
+                return container
                     .RegisterInstanceIfNot<IClock>(registrations, new TestClock())
                     .RegisterInstanceIfNot<IGuidGenerator>(registrations, new TestGuidGenerator())
+                    .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
+
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
-                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, true)))
+                    
                     .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
                     ;
             }

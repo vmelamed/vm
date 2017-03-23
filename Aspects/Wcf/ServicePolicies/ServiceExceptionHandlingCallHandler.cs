@@ -27,6 +27,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
     public sealed class ServiceExceptionHandlingCallHandler : BaseCallHandler<bool>
     {
         /// <summary>
+        /// Gets or sets the name of the exception handling policy used by this handler.
+        /// </summary>
+        public string ExceptionHandlingPolicyName { get; set; } = ServiceFaultFromExceptionHandlingPolicies.PolicyName;
+
+        /// <summary>
         /// Gives the aspect a chance to do some final work after the main task is truly complete.
         /// The overriding implementations should begin by calling the base class' implementation first.
         /// </summary>
@@ -46,7 +51,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
             }
             catch (Exception x)
             {
-                throw TransformException(input, x);
+                var exceptionToThrow = TransformException(input, x);
+
+                if (exceptionToThrow != null)
+                    throw exceptionToThrow;
+
+                return default(TResult);
             }
         }
 
@@ -65,55 +75,58 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (methodReturn.Exception == null)
                 return methodReturn;
 
-            return input.CreateExceptionMethodReturn(
-                            TransformException(input, methodReturn.Exception));
+            var exceptionToThrow = TransformException(input, methodReturn.Exception);
+
+            if (exceptionToThrow != null)
+                return input.CreateExceptionMethodReturn(exceptionToThrow);
+
+            return input.CreateMethodReturn(
+                            input.ResultType()
+                                 .Default());
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
-        static FaultException TransformException(
+        FaultException TransformException(
             IMethodInvocation input,
             Exception exception)
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<FaultException>() != null);
 
-            var factory = Fault.TryGetExceptionToFaultFactory(exception.GetType());
+            FaultException exceptionToReturn;
+            Exception outException;
 
-            if (factory == null)
-                return new WebFaultException<Fault>(
-                                new Fault()
-                                {
-                                    Message = $"The service threw {exception.GetType().Name} which could not be converted to one of the supported fault contracts of the called method.\n{exception.DumpString()}"
-                                },
-                                HttpStatusCode.InternalServerError);
+            if (!Facility.ExceptionManager.HandleException(exception, ExceptionHandlingPolicyName, out outException))
+                return null;
 
-            FaultException newException;
-            var fault = factory(exception);
+            // try to get the fault, if any
+            var fault = (outException is FaultException  &&
+                         outException.GetType().IsGenericType)
+                            ? outException
+                                .GetType()
+                                .GetProperty(nameof(FaultException<Fault>.Detail))
+                                ?.GetValue(outException) as Fault
+                            : null;
 
-            fault.HandlingInstanceId = Facility.GuidGenerator.NewGuid();
-
-            if (IsFaultSupported(input, fault.GetType()))
-                newException = (FaultException)typeof(WebFaultException<>)
-                                 .MakeGenericType(fault.GetType())
-                                 .GetConstructor(new Type[] { fault.GetType(), typeof(HttpStatusCode) })
-                                 .Invoke(new object[] { fault, fault.HttpStatusCode });
+            if (IsFaultSupported(input, fault?.GetType()))
+                exceptionToReturn = (FaultException)outException;
             else
-                newException = new WebFaultException(HttpStatusCode.InternalServerError)
-                                    .PopulateData(
+            {
+                exceptionToReturn = new WebFaultException(HttpStatusCode.InternalServerError);
+
+                if (fault != null)
+                    exceptionToReturn.PopulateData(
                                         new SortedDictionary<string, string>
                                         {
-                                            ["Fault"] = fault.DumpString()
+                                            ["HandlingInstanceId"] = fault?.HandlingInstanceId.ToString(),
+                                            ["Fault"] = fault?.DumpString(),
                                         });
+            }
 
-            Facility.LogWriter.LogError($"ServiceExceptionHandlingCallHandler caught:");
-            Facility.LogWriter.ExceptionError(exception, new Dictionary<string, object> { ["HandlingInstanceId:"] = fault.HandlingInstanceId });
-            Facility.LogWriter.LogError($"ServiceExceptionHandlingCallHandler throws:");
-            Facility.LogWriter.ExceptionError(exception, new Dictionary<string, object> { ["HandlingInstanceId:"] = fault.HandlingInstanceId });
-
-            return newException;
+            return exceptionToReturn;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -122,6 +135,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Type faultType)
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+
+            if (faultType == null)
+                return false;
 
             IEnumerable<Type> contracts;
 

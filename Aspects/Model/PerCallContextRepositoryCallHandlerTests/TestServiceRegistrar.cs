@@ -37,11 +37,22 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                         .AddPolicy(PolicyName)
                         .AddMatchingRule<TagAttributeMatchingRule>(new InjectionConstructor(PolicyName, false))
 
-                        .AddCallHandler<MarkActivityCallHandler>(new ContainerControlledLifetimeManager())
-                        .AddCallHandler<ServiceExceptionHandlingCallHandler>(new ContainerControlledLifetimeManager())
-                        .AddCallHandler<ServiceCallTraceCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(Facility.LogWriter))
-                        .AddCallHandler<ServiceParameterValidatingCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor())
-                        .AddCallHandler<UnitOfWorkCallHandler>(/*new InjectionProperty(nameof(UnitOfWorkCallHandler.OptimisticConcurrencyStrategy), OptimisticConcurrencyStrategy.ClientWins)*/)
+                        .AddCallHandler<ActivityTracerCallHandler>(
+                                            new ContainerControlledLifetimeManager())
+                        .AddCallHandler<ServiceExceptionHandlingCallHandler>(
+                                            new ContainerControlledLifetimeManager(),
+                                            new InjectionProperty(
+                                                nameof(ServiceExceptionHandlingCallHandler.ExceptionHandlingPolicyName),
+                                                //ServiceFaultFromExceptionHandlingPolicies.PolicyName))
+                                                ExceptionPolicyProvider.LogAndSwallowPolicyName))
+                        .AddCallHandler<ServiceCallTraceCallHandler>(
+                                            new ContainerControlledLifetimeManager(),
+                                            new InjectionConstructor(Facility.LogWriter))
+                        .AddCallHandler<ServiceParameterValidatingCallHandler>(
+                                            new ContainerControlledLifetimeManager(),
+                                            new InjectionConstructor())
+                        .AddCallHandler<UnitOfWorkCallHandler>(
+                                            new ContainerControlledLifetimeManager())
                         ;
                 }
             }

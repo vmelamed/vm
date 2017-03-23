@@ -277,8 +277,8 @@ namespace vm.Aspects.Wcf.Services
 
                 DIContainer.Root
                         .UnsafeRegister(Facility.Registrar, registrations)
-                        .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
                         .UnsafeRegister(ServiceFaultFromExceptionHandlingPolicies.Registrar, registrations)
+                        .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
                         .UnsafeRegister(BindingConfigurator.Registrar, registrations)
                         ;
 

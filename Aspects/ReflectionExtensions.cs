@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Reflection;
+using System.Threading;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects
 {
@@ -121,5 +124,61 @@ namespace vm.Aspects
             return type.IsGenericType &&
                    type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
+
+        static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
+        static IDictionary<Type,object> _defaultValues = new Dictionary<Type,object>
+        {
+            [typeof(char)]           = '\x0',
+            [typeof(bool)]           = false,
+            [typeof(byte)]           = (byte)0,
+            [typeof(sbyte)]          = (sbyte)0,
+            [typeof(short)]          = (short)0,
+            [typeof(ushort)]         = (ushort)0u,
+            [typeof(int)]            = 0,
+            [typeof(uint)]           = 0U,
+            [typeof(long)]           = 0L,
+            [typeof(ulong)]          = 0UL,
+            [typeof(decimal)]        = 0M,
+            [typeof(float)]          = (float)0.0,
+            [typeof(double)]         = 0.0,
+            [typeof(DateTime)]       = default(DateTime),
+            [typeof(DateTimeOffset)] = default(DateTimeOffset),
+            [typeof(TimeSpan)]       = default(TimeSpan),
+            [typeof(Guid)]           = default(Guid),
+            [typeof(IntPtr)]         = IntPtr.Zero,
+            [typeof(UIntPtr)]        = UIntPtr.Zero,
+        };
+
+        /// <summary>
+        /// Gets the default value of the specified type - a runtime equivalent of default(T).
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>System.Object.</returns>
+        public static object Default(
+            this Type type)
+        {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
+            if (type == typeof(void)  ||  !type.IsValueType)
+                return null;
+
+            object value;
+
+            using (_sync.UpgradableReaderLock())
+                if (!_defaultValues.TryGetValue(type, out value))
+                {
+                    value = typeof(ReflectionExtensions)
+                                .GetMethod(nameof(GenericDefault), BindingFlags.Static|BindingFlags.NonPublic)
+                                .MakeGenericMethod(type)
+                                .Invoke(null, null);
+
+                    using (_sync.WriterLock())
+                        _defaultValues[type] = value;
+                }
+
+            return value;
+        }
+
+        static T GenericDefault<T>() => default(T);
     }
 }

@@ -192,7 +192,7 @@ namespace vm.Aspects.Policies
                                                     .ExceptionManager
                                                     .Process(
                                                         () => LogBeforeCallData(entry, input, callData),
-                                                        ExceptionPolicyProvider.LogAndSwallow);
+                                                        ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
                     if (LogAsynchronously)
                         Task.Run(logBeforeCall);
@@ -317,7 +317,7 @@ namespace vm.Aspects.Policies
                                                 .ExceptionManager
                                                 .Process(
                                                     () => LogAfterCallData(entry, input, callData),
-                                                    ExceptionPolicyProvider.LogAndSwallow);
+                                                    ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
                     if (LogAsynchronously)
                         Task.Run(() => logAfterCall());
@@ -339,7 +339,6 @@ namespace vm.Aspects.Policies
                 EventId    = EventId,
                 Priority   = Priority,
                 Title      = Title,
-                ActivityId = LogWriterFacades.GetActivityId(),
             };
 
         /// <summary>
