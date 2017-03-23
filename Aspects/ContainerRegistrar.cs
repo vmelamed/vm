@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects
@@ -169,7 +169,7 @@ namespace vm.Aspects
 
         /// <summary>
         /// The inheriting types should override this method if they need to register different configuration for unit testing purposes.
-        /// The default implementation calls <see cref="M:ContainerRegistrar.DoRegister"/>.
+        /// The default implementation calls <see cref="DoRegister"/>.
         /// The method is called from a synchronized context, i.e. does not need to be thread safe.
         /// </summary>
         /// <param name="container">The container where to register the defaults.</param>
@@ -213,11 +213,19 @@ namespace vm.Aspects
         }
 
         /// <summary>
+        /// Finalizes an instance of the <see cref="ContainerRegistrar"/> class.
+        /// </summary>
+        ~ContainerRegistrar()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
         /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~ContainerRegistrar"/>.
+        /// implicitly at the end of a <c>using</c> statement), or by the <see cref="~ContainerRegistrar"/>.
         /// </param>
         /// <remarks>
         /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, 

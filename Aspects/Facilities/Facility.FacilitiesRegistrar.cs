@@ -37,7 +37,7 @@ namespace vm.Aspects.Facilities
         internal class FacilitiesRegistrar : ContainerRegistrar
         {
             /// <summary>
-            /// Resets the <see cref="P:ContainerRegistrar.AreRegistered" /> property. Use for testing only.
+            /// Resets the <see cref="ContainerRegistrar.AreRegistered" /> property. Use for testing only.
             /// </summary>
             public override void Reset(
                 IUnityContainer container = null)
@@ -76,16 +76,14 @@ namespace vm.Aspects.Facilities
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
                 RegisterCommon(container, registrations)
-                    .UnsafeRegister(LogConfigProvider.Registrar, registrations)
-                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null)))
-
-                    .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations)
+                    .RegisterInstanceIfNot<IClock>(registrations, new Clock())
+                    .RegisterInstanceIfNot<IGuidGenerator>(registrations, new GuidGenerator())
                     ;
             }
 
             /// <summary>
             /// The inheriting types should override this method if they need to register different configuration for unit testing purposes.
-            /// The default implementation calls <see cref="M:ContainerRegistrar.DoRegister" />.
+            /// The default implementation calls <see cref="ContainerRegistrar.DoRegister" />.
             /// Not thread safe.
             /// </summary>
             /// <param name="container">The container where to register the defaults.</param>
@@ -94,29 +92,30 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
-                RegisterCommon(container, registrations)
-                    .UnsafeRegister(LogConfigProvider.Registrar, registrations, true)
-                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null, true)))
-
-                    .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations, true)
-                    ;
+                RegisterCommon(container, registrations, true)
+                    .RegisterInstanceIfNot<IClock>(registrations, new TestClock())
+                    .RegisterInstanceIfNot<IGuidGenerator>(registrations, new TestGuidGenerator())
                 ;
             }
 
             IUnityContainer RegisterCommon(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+                bool isTest = false)
             {
                 ClassMetadataRegistrar.RegisterMetadata();
 
                 return container
-                    .RegisterInstanceIfNot<IClock>(registrations, new TestClock())
-                    .RegisterInstanceIfNot<IGuidGenerator>(registrations, new TestGuidGenerator())
                     .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
-
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
-                    
                     .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
+                    .RegisterTypeIfNot<LogWriter>(
+                                            registrations,
+                                            new ContainerControlledLifetimeManager(),
+                                            new InjectionFactory(
+                                                    c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null, isTest)))
+                    .UnsafeRegister(LogConfigProvider.Registrar, registrations, isTest)
+                    .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations, isTest)
                     ;
             }
         }

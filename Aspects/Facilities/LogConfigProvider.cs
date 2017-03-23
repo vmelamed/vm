@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Facilities
 {
@@ -79,7 +79,7 @@ namespace vm.Aspects.Facilities
 
             /// <summary>
             /// The inheriting types should override this method if they need to register different configuration for unit testing purposes.
-            /// The default implementation calls <see cref="M:ContainerRegistrar.DoRegister" />.
+            /// The default implementation calls <see cref="ContainerRegistrar.DoRegister" />.
             /// </summary>
             /// <param name="container">The container where to register the defaults.</param>
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>

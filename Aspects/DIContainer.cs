@@ -287,7 +287,7 @@ namespace vm.Aspects
         }
 
         /// <summary>
-        /// Registers the types and instances of the <see cref="T:ContainerRegistrar"/> in the specified container.
+        /// Registers the types and instances of the <see cref="ContainerRegistrar"/> in the specified container.
         /// The method is thread safe.
         /// </summary>
         /// <param name="container">The container.</param>
@@ -319,7 +319,7 @@ namespace vm.Aspects
         }
 
         /// <summary>
-        /// Registers the types and instances of the <see cref="T:ContainerRegistrar"/> in the specified container.
+        /// Registers the types and instances of the <see cref="ContainerRegistrar"/> in the specified container.
         /// The method is <b>not</b> thread safe and should be called from a synchronized context.
         /// </summary>
         /// <param name="container">The container.</param>

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Practices.Unity;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -37,34 +37,6 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseMessageConfigurator>(registrations, RequestResponseMessageConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseMessageClientWindowsAuthenticationConfigurator>(registrations, RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseMessageClientCertificateAuthenticationConfigurator>(registrations, RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, RequestResponseTxConfigurator>(registrations, RequestResponseTxConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, StreamingConfigurator>(registrations, StreamingConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, StreamingNoSecurityConfigurator>(registrations, StreamingNoSecurityConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
-
-                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "http", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "https", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "https.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
-                    ;
-            }
-
-            protected override void DoTestRegister(
-                IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
-            {
-                container
-                    // the default messaging pattern is the ConfiguredBindingConfigurator - assumes that the binding is fully configured already.
-                    .RegisterTypeIfNot<BindingConfigurator, ConfiguredBindingConfigurator>(registrations)
-                    .RegisterTypeIfNot<BindingConfigurator, RequestResponseConfigurator>(registrations, RequestResponseConfigurator.PatternName)
-                    .RegisterTypeIfNot<BindingConfigurator, RequestResponseNoSecurityConfigurator>(registrations, RequestResponseNoSecurityConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseTxConfigurator>(registrations, RequestResponseTxConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, StreamingConfigurator>(registrations, StreamingConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, StreamingNoSecurityConfigurator>(registrations, StreamingNoSecurityConfigurator.PatternName)

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Collections.Generic;
 
 namespace vm.Aspects.Tests
 {
@@ -79,7 +79,7 @@ namespace vm.Aspects.Tests
 
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, Microsoft.Practices.Unity.ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
                 _ranRegistration = true;
             }
