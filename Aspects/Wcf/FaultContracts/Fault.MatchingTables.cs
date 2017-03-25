@@ -25,7 +25,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets the fault type corresponding to the given exception type.
         /// </summary>
         /// <param name="exceptionType">The type of exception.</param>
-        /// <returns>The corresponding type of fault or <see langword="null"/>.</returns>
+        /// <returns>The corresponding type of fault or <see langword="null"/> if cannot find a match.</returns>
         public static Type GetFaultTypeForException(
             Type exceptionType)
         {
@@ -44,7 +44,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets the exception type corresponding to the given fault type.
         /// </summary>
         /// <param name="faultType">The type of fault.</param>
-        /// <returns>The corresponding type of exception or <see langword="null"/>.</returns>
+        /// <returns>The corresponding type of exception or <see langword="null"/> if cannot find a match.</returns>
         public static Type GetExceptionTypeForFault(
             Type faultType)
         {
@@ -117,114 +117,6 @@ namespace vm.Aspects.Wcf.FaultContracts
         }
 
         /// <summary>
-        /// Tries to get the <paramref name="exceptionType"/> exception to fault factory.
-        /// </summary>
-        /// <param name="exceptionType">Type of the exception.</param>
-        /// <returns>The Exception to Fault factory delegate.</returns>
-        public static Func<Exception, Fault> TryGetExceptionToFaultFactory(
-            Type exceptionType)
-        {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
-
-            Func<Exception, Fault> factory;
-
-            if (_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
-                return factory;
-            else
-                return null;
-        }
-
-        /// <summary>
-        /// Gets the <paramref name="exceptionType"/> exception to fault factory and if it doesn't find one, throws an <see cref="ArgumentException"/>.
-        /// </summary>
-        /// <param name="exceptionType">Type of the exception.</param>
-        /// <returns>The Exception to Fault factory delegate.</returns>
-        public static Func<Exception, Fault> GetExceptionToFaultFactory(
-            Type exceptionType)
-        {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
-
-            Func<Exception, Fault> factory;
-
-            if (!_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
-                throw new ArgumentException($"Could not find an exception ({exceptionType.Name}) to fault factory.", nameof(exceptionType));
-
-            return factory;
-        }
-
-        /// <summary>
-        /// Tries to get the exception <typeparamref name="TException"/> to fault factory.
-        /// </summary>
-        /// <typeparam name="TException">The type of the exception.</typeparam>
-        /// <returns>Func&lt;Exception, Fault&gt;.</returns>
-        public static Func<Exception, Fault> TryGetExceptionToFaultFactory<TException>()
-            => TryGetExceptionToFaultFactory(typeof(TException));
-
-        /// <summary>
-        /// Gets the exception <typeparamref name="TException"/> to fault factory and if it doesn't find one, throws an <see cref="ArgumentException"/>.
-        /// </summary>
-        /// <typeparam name="TException">The type of the t exception.</typeparam>
-        /// <returns>Func&lt;Exception, Fault&gt;.</returns>
-        public static Func<Exception, Fault> GetExceptionToFaultFactory<TException>()
-            => GetExceptionToFaultFactory(typeof(TException));
-
-        /// <summary>
-        /// Tries to get the <paramref name="faultType"/> fault to exception factory.
-        /// </summary>
-        /// <param name="faultType">Type of the fault.</param>
-        /// <returns>The Fault to Exception factory delegate.</returns>
-        public static Func<Fault, Exception> TryGetFaultToExceptionFactory(
-            Type faultType)
-        {
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Exception or descendant type.");
-
-            Func<Fault, Exception> factory;
-
-            if (_faultToExceptionFactories.TryGetValue(faultType, out factory))
-                return factory;
-            else
-                return null;
-        }
-
-        /// <summary>
-        /// Gets the <paramref name="faultType"/> fault to exception factory and if it doesn't find one, throws <see cref="ArgumentException"/>.
-        /// </summary>
-        /// <param name="faultType">Type of the fault.</param>
-        /// <returns>The Fault to Exception factory delegate.</returns>
-        public static Func<Fault, Exception> GetFaultToExceptionFactory(
-            Type faultType)
-        {
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Fault or descendant type.");
-
-            Func<Fault, Exception> factory;
-
-            if (!_faultToExceptionFactories.TryGetValue(faultType, out factory))
-                throw new ArgumentException($"Could not find an exception ({faultType.Name}) to fault factory.", nameof(faultType));
-
-            return factory;
-        }
-
-        /// <summary>
-        /// Tries to get the <typeparamref name="TFault"/> fault to exception factory.
-        /// </summary>
-        /// <typeparam name="TFault">The type of the fault.</typeparam>
-        /// <returns>The Fault to Exception factory delegate.</returns>
-        public static Func<Fault, Exception> TryGetFaultToExceptionFactory<TFault>()
-            => TryGetFaultToExceptionFactory(typeof(TFault));
-
-        /// <summary>
-        /// Gets the <typeparamref name="TFault"/> fault to exception factory and if it doesn't find one, throws <see cref="ArgumentException"/>.
-        /// </summary>
-        /// <typeparam name="TFault">The type of the fault.</typeparam>
-        /// <returns>The Fault to Exception factory delegate.</returns>
-        public static Func<Fault, Exception> GetFaultToExceptionFactory<TFault>()
-            => GetFaultToExceptionFactory(typeof(TFault));
-
-        /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
         /// </summary>
         /// <param name="faultType">Type of the fault.</param>
@@ -248,7 +140,6 @@ namespace vm.Aspects.Wcf.FaultContracts
             }
         }
 
-
         /// <summary>
         /// Removes the fault to exception types mapping with the specified types.
         /// </summary>
@@ -256,6 +147,64 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <typeparam name="TFault">The type of the fault.</typeparam>
         public static void RemoveMappingFaultToException<TException, TFault>()
             => RemoveMappingFaultToException(typeof(TException), typeof(TFault));
+
+        // ----------------------------------------------------------------------
+
+        /// <summary>
+        /// Tries to get the <paramref name="exceptionType"/> exception to fault factory.
+        /// </summary>
+        /// <param name="exceptionType">Type of the exception.</param>
+        /// <returns>The Exception to Fault factory delegate or <see langword="null"/> if cannot find a match.</returns>
+        public static Func<Exception, Fault> GetExceptionToFaultFactory(
+            Type exceptionType)
+        {
+            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
+            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
+
+            Func<Exception, Fault> factory;
+
+            if (_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
+                return factory;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Tries to get the exception <typeparamref name="TException"/> to fault factory.
+        /// </summary>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <returns>Func{Exception, Fault} factory delegate or <see langword="null"/> if cannot find a match.</returns>
+        public static Func<Exception, Fault> GetExceptionToFaultFactory<TException>()
+            => GetExceptionToFaultFactory(typeof(TException));
+
+        /// <summary>
+        /// Tries to get the <paramref name="faultType"/> fault to exception factory.
+        /// </summary>
+        /// <param name="faultType">Type of the fault.</param>
+        /// <returns>The Fault to Exception factory delegate or <see langword="null"/> if cannot find a match.</returns>
+        public static Func<Fault, Exception> GetFaultToExceptionFactory(
+            Type faultType)
+        {
+            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
+            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Exception or descendant type.");
+
+            Func<Fault, Exception> factory;
+
+            if (_faultToExceptionFactories.TryGetValue(faultType, out factory))
+                return factory;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// Tries to get the <typeparamref name="TFault"/> fault to exception factory.
+        /// </summary>
+        /// <typeparam name="TFault">The type of the fault.</typeparam>
+        /// <returns>The Fault to Exception factory delegate or <see langword="null"/> if cannot find a match.</returns>
+        public static Func<Fault, Exception> GetFaultToExceptionFactory<TFault>()
+            => GetFaultToExceptionFactory(typeof(TFault));
+
+        // --------------------------------------------------------------------
 
         /// <summary>
         /// Factory for generating faults out of the corresponding exceptions.

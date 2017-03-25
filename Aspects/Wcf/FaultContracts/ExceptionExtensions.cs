@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.ServiceModel;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
@@ -57,6 +58,62 @@ namespace vm.Aspects.Wcf.FaultContracts
                 fault.Data[kv.Key?.ToString()] = kv.Value?.ToString();
 
             return fault;
+        }
+
+        /// <summary>
+        /// Tries to get an exception corresponding to a fault.
+        /// </summary>
+        /// <param name="fault">The fault.</param>
+        /// <returns>Exception or <see langword="null"/> if cannot find a match.</returns>
+        public static Exception ToException(
+            this Fault fault)
+        {
+            var factory = Fault.GetFaultToExceptionFactory(fault.GetType());
+
+            if (factory == null)
+                return null;
+            else
+                return factory(fault);
+        }
+
+        /// <summary>
+        /// Tries to get a fault corresponding to an exception.
+        /// </summary>
+        /// <param name="exception">The exception or <see langword="null"/> if not successful.</param>
+        /// <returns>Fault.</returns>
+        public static Fault ToFault(
+            this Exception exception)
+        {
+            var exceptionType = exception.GetType();
+            var factory = Fault.GetExceptionToFaultFactory(exceptionType);
+
+            if (factory != null)
+                return factory(exception);
+
+            if (exception is FaultException  &&  exceptionType.IsGenericType)
+            {
+                var fault = exceptionType.GetProperty(nameof(FaultException<Fault>.Detail)).GetValue(exception) as Fault;
+
+                return fault;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Extracts the fault (<see cref="FaultException{Fault}.Detail"/>) from the exception and converts it to the corresponding exception.
+        /// </summary>
+        /// <param name="exception">The exception corresponding to the fault.</param>
+        /// <returns>The new exception or the original (this) if not successful.</returns>
+        public static Exception ToException(
+            this FaultException exception)
+        {
+            var fault = exception.ToFault();
+
+            if (fault == null)
+                return exception;
+            else
+                return fault.ToException();
         }
     }
 }

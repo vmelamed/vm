@@ -361,7 +361,7 @@
     <Compile Include="ServicePolicies\ServiceCallTraceData.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.cs" />
-    <Compile Include="ServicePolicies\RestCallExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceCallExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />

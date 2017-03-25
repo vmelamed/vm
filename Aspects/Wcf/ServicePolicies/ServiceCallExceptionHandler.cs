@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -6,7 +7,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -15,8 +15,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
     /// Class RestCallExceptionHandler implements <see cref="IExceptionHandler"/> for <see cref="WebException"/>, <see cref="ProtocolException"/> and <see cref="AggregateException"/>,
     /// by possibly extracting the fault out of the response and converting it to a <see cref="FaultException"/>.
     /// </summary>
-    /// <seealso cref="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.IExceptionHandler" />
-    public class RestCallExceptionHandler : IExceptionHandler
+    /// <seealso cref="IExceptionHandler" />
+    public class ServiceCallExceptionHandler : IExceptionHandler
     {
         static readonly IReadOnlyDictionary<Type, Func<Exception, Type[], Exception>> _exceptionDispatcher = new ReadOnlyDictionary<Type, Func<Exception, Type[], Exception>>(
             new Dictionary<Type, Func<Exception, Type[], Exception>>
@@ -61,7 +61,14 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (_exceptionDispatcher.TryGetValue(exception.GetType(), out handler))
                 return handler(exception, expectedFaults);
             else
-                return exception;
+            {
+                var faultException = exception as FaultException;
+
+                if (faultException != null)
+                    return faultException.ToException();
+            }
+
+            return exception;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
@@ -129,7 +136,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                                         new FaultReasonText(responseText),
                                     }));
 
-            var exceptionFactory = Fault.TryGetFaultToExceptionFactory(fault.GetType());
+            var exceptionFactory = Fault.GetFaultToExceptionFactory(fault.GetType());
 
             if (exceptionFactory != null)
                 x = exceptionFactory(fault);
