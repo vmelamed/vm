@@ -52,7 +52,7 @@ namespace vm.Aspects
 
         /// <summary>
         /// Registers with code a number of types and instances (perhaps if they are not already registered by other means) 
-        /// in the specified Unity container. This method is thread safe but somewhat slower than <see cref="M:UnsafeRegister"/>.
+        /// in the specified Unity container. This method is thread safe but somewhat slower than <see cref="UnsafeRegister"/>.
         /// </summary>
         /// <param name="container">
         /// The container where to register the defaults. If <see langword="null"/>, defaults to <see cref="P:DIContainer.Root"/>.
@@ -190,7 +190,7 @@ namespace vm.Aspects
         /// </summary>
         /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
         /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="M:Dispose()"/>.
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
         /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
         /// </remarks>
         int _disposed;
@@ -203,7 +203,7 @@ namespace vm.Aspects
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
@@ -224,12 +224,12 @@ namespace vm.Aspects
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement), or by the <see cref="~ContainerRegistrar"/>.
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
+        /// implicitly at the end of a <c>using</c> statement), or by the finalizer.
         /// </param>
         /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, 
-        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="T:IDisposable"/> as well) 
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, 
+        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="IDisposable"/> as well) 
         /// and then it will release all unmanaged resources if any. If the parameter is <see langword="false"/> then 
         /// the method will only try to release the unmanaged resources.
         /// </remarks>

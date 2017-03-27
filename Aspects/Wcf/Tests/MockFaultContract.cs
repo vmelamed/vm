@@ -24,14 +24,14 @@ namespace vm.Aspects.Wcf.Tests
         private double someNumber;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MockFaultContract"/> class.
+        /// Initializes a new instance of the <see cref="MockFaultContract"/> class.
         /// </summary>
         public MockFaultContract()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:MockFaultContract"/> class.
+        /// Initializes a new instance of the <see cref="MockFaultContract"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         public MockFaultContract(string message)

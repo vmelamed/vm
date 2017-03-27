@@ -68,6 +68,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Exception ToException(
             this Fault fault)
         {
+            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+
             var factory = Fault.GetFaultToExceptionFactory(fault.GetType());
 
             if (factory == null)
@@ -84,6 +86,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Fault ToFault(
             this Exception exception)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
             var exceptionType = exception.GetType();
             var factory = Fault.GetExceptionToFaultFactory(exceptionType);
 
@@ -108,6 +112,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Exception ToException(
             this FaultException exception)
         {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+
             var fault = exception.ToFault();
 
             if (fault == null)

@@ -37,6 +37,7 @@ namespace vm.Aspects.Policies
         /// <param name="methodReturn">The method return.</param>
         /// <param name="tracer">The tracer.</param>
         /// <returns>IMethodReturn.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#")]
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
@@ -60,6 +61,7 @@ namespace vm.Aspects.Policies
         /// <param name="methodReturn">The method return.</param>
         /// <param name="tracer">The call data.</param>
         /// <returns>Task{TResult}.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#")]
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,

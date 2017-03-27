@@ -51,7 +51,7 @@ namespace vm.Aspects.Model
 
         #region IVisited<BaseDomainValue> Members
         /// <summary>
-        /// Throws <see cref="T:NotImplementedException"/> exception.
+        /// Throws <see cref="NotImplementedException"/> exception.
         /// </summary>
         /// <param name="visitor">The visitor.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
@@ -68,7 +68,7 @@ namespace vm.Aspects.Model
 
         #region IVisitedTasks<BaseDomainValue> Members
         /// <summary>
-        /// Throws <see cref="T:NotImplementedException"/> exception.
+        /// Throws <see cref="NotImplementedException"/> exception.
         /// </summary>
         /// <param name="visitor">The visitor.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>

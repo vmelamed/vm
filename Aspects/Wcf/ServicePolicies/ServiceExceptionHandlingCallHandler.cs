@@ -94,37 +94,44 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Exception exception)
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Ensures(Contract.Result<FaultException>() != null);
 
-            FaultException exceptionToReturn;
             Exception outException;
 
             if (!Facility.ExceptionManager.HandleException(exception, ExceptionHandlingPolicyName, out outException))
                 return null;
 
+            var faultException = outException as FaultException;
+
             // try to get the fault, if any
-            var fault = (outException is FaultException  &&
-                         outException.GetType().IsGenericType)
-                            ? outException
+            var fault = (faultException != null  &&
+                         faultException.GetType().IsGenericType)
+                            ? faultException
                                 .GetType()
                                 .GetProperty(nameof(FaultException<Fault>.Detail))
-                                ?.GetValue(outException) as Fault
+                                ?.GetValue(faultException) as Fault
                             : null;
 
-            if (IsFaultSupported(input, fault?.GetType()))
-                exceptionToReturn = (FaultException)outException;
-            else
-            {
-                exceptionToReturn = new WebFaultException(HttpStatusCode.InternalServerError);
+            // can we return the faultException as we got it
+            if (faultException != null)
+                if (fault == null  ||  IsFaultSupported(input, fault?.GetType()))
+                    return faultException;
 
-                if (fault != null)
-                    exceptionToReturn.PopulateData(
-                                        new SortedDictionary<string, string>
-                                        {
-                                            ["HandlingInstanceId"] = fault?.HandlingInstanceId.ToString(),
-                                            ["Fault"] = fault?.DumpString(),
-                                        });
-            }
+            // if not construct a generic one
+            var exceptionToReturn = new WebFaultException(HttpStatusCode.InternalServerError);
+
+            if (fault != null)
+                exceptionToReturn.PopulateData(
+                                    new SortedDictionary<string, string>
+                                    {
+                                        ["HandlingInstanceId"] = fault?.HandlingInstanceId.ToString(),
+                                        ["Fault"] = fault?.DumpString(),
+                                    });
+            else
+                exceptionToReturn.PopulateData(
+                                    new SortedDictionary<string, string>
+                                    {
+                                        ["Exception"] = exception.DumpString(),
+                                    });
 
             return exceptionToReturn;
         }

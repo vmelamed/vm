@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 
@@ -6,7 +7,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// Interface <c>IHashAlgorithmFactory</c> defines the behavior of an object factory which creates 
-    /// the underlying <see cref="T:HashAlgorithm"/> objects. The factory must implement a strategy for picking the
+    /// the underlying <see cref="HashAlgorithm"/> objects. The factory must implement a strategy for picking the
     /// hash algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
     [ContractClass(typeof(IHashAlgorithmFactoryContract))]
@@ -19,10 +20,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         void Initialize(string hashAlgorithmName);
 
         /// <summary>
-        /// Creates a <see cref="T:HashAlgorithm"/> instance.
+        /// Creates a <see cref="HashAlgorithm"/> instance.
         /// </summary>
-        /// <returns><see cref="T:HashAlgorithm"/> instance.</returns>
-        /// <exception cref="T:ActivationException">
+        /// <returns><see cref="HashAlgorithm"/> instance.</returns>
+        /// <exception cref="ActivationException">
         /// If the factory could not resolve the hash algorithm.
         /// </exception>
         HashAlgorithm Create();

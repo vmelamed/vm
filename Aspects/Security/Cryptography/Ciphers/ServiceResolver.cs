@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -43,7 +43,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// e.g. <c>BusinessKeyProperty == other.BusinessKeyProperty &amp;&amp; (some other properties equality...);</c>; otherwise, <c>false</c>.
             /// </returns>
             /// <remarks>
-            /// The <see cref="M:Equals"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
+            /// The <see cref="Equals(object)"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
             /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
             /// </remarks>
             public virtual bool Equals(TypeAndName other)
@@ -69,7 +69,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// <c>false</c>.
             /// </returns>
             /// <remarks>
-            /// The <see cref="M:Equals"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
+            /// The <see cref="Equals(TypeAndName)"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
             /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
             /// </remarks>
             public override bool Equals(object obj) => Equals(obj as TypeAndName);

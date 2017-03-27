@@ -17,8 +17,8 @@ namespace vm.Aspects.Model.EFRepository
         AllowMultiple = false)]
     public sealed class NumericAttribute : Attribute
     {
-        byte _precision;
-        byte _scale;
+        readonly byte _precision;
+        readonly byte _scale;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NumericAttribute" /> class.

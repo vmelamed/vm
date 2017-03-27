@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Security.Cryptography;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -31,13 +31,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <list type="number">
         ///     <item>
         ///         If the user passed hash algorithm name that is not <see langword="null"/>, empty or whitespace characters only, 
-        ///         it is used in creating the <see cref="T:HashAlgorithm"/> object; otherwise
+        ///         it is used in creating the <see cref="HashAlgorithm"/> object; otherwise
         ///     </item>
         ///     <item>
-        ///         Try to resolve the <see cref="T:HashAlgorithm"/> object directly from CSL; otherwise 
+        ///         Try to resolve the <see cref="HashAlgorithm"/> object directly from CSL; otherwise 
         ///     </item>
         ///     <item>
-        ///         Try to resolve the name of the hash algorithm from the CSL with resolve name <see cref="F:HashAlgorithmResolveName"/>; otherwise
+        ///         Try to resolve the name of the hash algorithm from the CSL with resolve name <see cref="HashAlgorithmName"/>; otherwise
         ///     </item>
         ///     <item>
         ///         Assume the default hash algorithm - <see cref="F:Algorithms.Hash.Default"/> - SHA256.
@@ -48,7 +48,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string hashAlgorithmName = null)
         {
             // 1. If the user passed hash algorithm name that is not null, empty or whitespace characters only, 
-            //    it will be used in creating the <see cref="T:HashAlgorithm"/> object.
+            //    it will be used in creating the <see cref="HashAlgorithm"/> object.
             if (!hashAlgorithmName.IsNullOrWhiteSpace())
                 _hashAlgorithmName = hashAlgorithmName;
             else
@@ -93,10 +93,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
-        /// Creates a <see cref="T:HashAlgorithm"/> instance.
+        /// Creates a <see cref="HashAlgorithm"/> instance.
         /// </summary>
-        /// <returns><see cref="T:HashAlgorithm"/> instance.</returns>
-        /// <exception cref="T:InvalidOperationException">
+        /// <returns><see cref="HashAlgorithm"/> instance.</returns>
+        /// <exception cref="InvalidOperationException">
         /// If the factory could not resolve the hash algorithm.
         /// </exception>
         public HashAlgorithm Create()

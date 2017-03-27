@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -201,11 +201,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
+        /// Passes the information whether this method is called by <see cref="IDisposable.Dispose()"/> (explicitly or
         /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~Signer()"/>.
         /// </param>
         /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, it will try to release all managed resources 
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="IDisposable.Dispose()"/>, it will try to release all managed resources 
         /// (usually aggregated objects which implement <see cref="IDisposable"/> as well) and then it will release all unmanaged resources if any.
         /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
         /// </remarks>

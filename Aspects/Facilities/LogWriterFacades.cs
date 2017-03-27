@@ -67,7 +67,8 @@ namespace vm.Aspects.Facilities
             params object[] args)
         {
             Contract.Requires<ArgumentNullException>(logger != null, nameof(logger));
-            Contract.Requires<ArgumentException>(category != null  &&  category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentException>(category   != null  &&  category.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(category)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(args   != null, nameof(args));
             Contract.Ensures(Contract.Result<LogWriter>() != null);
 
             if (!logger.IsLoggingEnabled())
@@ -84,7 +85,7 @@ namespace vm.Aspects.Facilities
                 return logger;
 
             if (!format.IsNullOrEmpty())
-                switch ((args?.Length).GetValueOrDefault())
+                switch (args.Length)
                 {
                 case 0:
                     entry.Message = format;

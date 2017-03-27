@@ -59,6 +59,8 @@
             <Word>api</Word>
             <Word>fqn</Word>
             <Word>etw</Word>
+            <Word>postprocess</Word>
+            <Word>preprocess</Word>
         </Recognized>
         <Unrecognized>
             <!-- 

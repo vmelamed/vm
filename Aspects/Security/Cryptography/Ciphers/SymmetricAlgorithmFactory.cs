@@ -30,7 +30,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string symmetricAlgorithmName = null)
         {
             // 1. If the user passed symmetric algorithm name that is not null, empty or whitespace characters only, 
-            //    it will be used in creating the <see cref="T:Symmetric"/> object.
+            //    it will be used in creating the <see cref="Symmetric"/> object.
             if (!symmetricAlgorithmName.IsNullOrWhiteSpace())
                 _symmetricAlgorithmName = symmetricAlgorithmName;
             else

@@ -15,12 +15,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
+using vm.Aspects.Model.Repository;
 using vm.Aspects.Validation;
 
 namespace vm.Aspects.Model.EFRepository
 {
     /// <summary>
-    /// Class EFRepositoryBase. Implements <see cref="T:IRepository"/> with Entity Framework <see cref="T:DbContext"/>.
+    /// Class EFRepositoryBase. Implements <see cref="IRepository"/> with Entity Framework <see cref="DbContext"/>.
     /// </summary>
     public abstract partial class EFRepositoryBase : DbContext, IIsDisposed
     {
@@ -63,7 +64,7 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         /// <param name="storeIdProvider">
         /// The injected store id provider. If <see langword="null"/>, the constructor will try to resolve it from the service locator and if that fails,
-        /// <see cref="T:SqlStoreIdentity"/> will be used.
+        /// <see cref="HiLoStoreIdProvider"/> will be used.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected EFRepositoryBase(
@@ -79,7 +80,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <param name="connectionString">The connection string.</param>
         /// <param name="storeIdProvider">
         /// The injected store id generator. If <see langword="null"/>, the constructor will try to resolve it from the service locator and if that fails,
-        /// <see cref="T:SqlStoreIdentity"/> will be used.
+        /// <see cref="HiLoStoreIdProvider"/> will be used.
         /// </param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected EFRepositoryBase(
@@ -163,10 +164,10 @@ namespace vm.Aspects.Model.EFRepository
 
         /// <summary>
         /// This method is called when the model for a derived context has been initialized, but
-        /// before it has been locked down and used to initialize the context.  Here we add the configuration of the <see cref="T:HiLoIdentityGenerator"/>. 
+        /// before it has been locked down and used to initialize the context.  Here we add the configuration of the <see cref="HiLoIdentityGenerator"/>. 
         /// It should be overridden in a derived class such that the model can be further configured before it is locked down.
         /// Note: in the overriding methods must always call <c>base.OnModelCreating(modelBuilder);</c> first to configure the
-        /// <see cref="T:HiLoIdentityGenerator"/>.
+        /// <see cref="HiLoIdentityGenerator"/>.
         /// </summary>
         /// <param name="modelBuilder">The builder that defines the model for the context being created.</param>
         protected override void OnModelCreating(
@@ -234,7 +235,7 @@ namespace vm.Aspects.Model.EFRepository
         }
 
         /// <summary>
-        /// Pre-processes the entries that are to be committed. E.g: lists all changes for post-processing.
+        /// Pre-processes the entries that were committed. E.g: refreshes object cache, adds audit data, logs, etc..
         /// </summary>
         protected virtual void PreprocessEntries()
         {

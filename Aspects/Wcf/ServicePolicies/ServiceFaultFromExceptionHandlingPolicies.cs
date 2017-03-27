@@ -8,7 +8,7 @@ using vm.Aspects.Facilities;
 namespace vm.Aspects.Wcf.ServicePolicies
 {
     /// <summary>
-    /// Class ServiceExceptionTransformationHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which adds a 
+    /// Class ServiceExceptionTransformationHandlingPolicies. Defines a registrar and implements <see cref="IExceptionPolicyProvider"/> which adds a 
     /// single programmatic mapping of exceptions to faults as defined in <see cref="FaultContracts.Fault"/>. <seealso cref="ServiceFaultFromExceptionHandler"/>
     /// These can be used instead of the WCF exception shielding mechanism. 
     /// </summary>

@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
+using vm.Aspects.Security.Cryptography.Ciphers.Algorithms;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// Interface <c>ISymmetricAlgorithmFactory</c> defines the behavior of an object factory which creates 
-    /// the underlying <see cref="T:Symmetric"/> objects. The factory must implement a strategy for picking the
+    /// the underlying <see cref="Symmetric"/> objects. The factory must implement a strategy for picking the
     /// symmetric algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
     [ContractClass(typeof(ISymmetricAlgorithmFactoryContract))]
@@ -19,10 +21,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         void Initialize(string symmetricAlgorithmName = null);
 
         /// <summary>
-        /// Creates a <see cref="T:Symmetric"/> instance.
+        /// Creates a <see cref="Symmetric"/> instance.
         /// </summary>
-        /// <returns><see cref="T:Symmetric"/> instance.</returns>
-        /// <exception cref="T:ActivationException">
+        /// <returns><see cref="Symmetric"/> instance.</returns>
+        /// <exception cref="ActivationException">
         /// If the factory could not resolve the symmetric algorithm.
         /// </exception>
         SymmetricAlgorithm Create();

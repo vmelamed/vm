@@ -312,7 +312,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
         /// </param>
         /// <returns>
-        /// A <see cref="T:Task"/> object which represents the process of asynchronous encryption.
+        /// A <see cref="Task"/> object which represents the process of asynchronous encryption.
         /// </returns>
         /// <exception cref="T:System.ArgumentNullException">
         /// Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
@@ -362,7 +362,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The output stream where to put the unencrypted data.
         /// </param>
         /// <returns>
-        /// A <see cref="T:Task"/> object which represents the process of asynchronous decryption.
+        /// A <see cref="Task"/> object which represents the process of asynchronous decryption.
         /// </returns>
         /// <exception cref="T:System.ArgumentNullException">
         /// Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
@@ -684,7 +684,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process.
+        /// A <see cref="Task"/> object representing the process.
         /// </returns>
         /// <remarks>
         /// The method is called by the GoF template-methods.

@@ -99,7 +99,7 @@ namespace vm.Aspects.Diagnostics
                 nameLookup[castToUlong(values.GetValue(i))] = names[i];
 
             w.Write(
-                DumpFormat.EnumFlagsPrefix,
+                DumpFormat.EnumFlagPrefix,
                 type.Name,
                 type.Namespace,
                 type.AssemblyQualifiedName);
@@ -112,7 +112,7 @@ namespace vm.Aspects.Diagnostics
                     if (first)
                         first = false;
                     else
-                        w.Write(DumpFormat.EnumFlagsSeparator);
+                        w.Write(DumpFormat.EnumFlagSeparator);
                     w.Write(
                         DumpFormat.EnumFlag,
                         type.Name,
@@ -122,7 +122,7 @@ namespace vm.Aspects.Diagnostics
                 }
 
             w.Write(
-                DumpFormat.EnumFlagsSuffix,
+                DumpFormat.EnumFlagSuffix,
                 type.Name,
                 type.Namespace,
                 type.AssemblyQualifiedName);

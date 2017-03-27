@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The interface <c>ICipherAsync</c> extends the <see cref="T:ICipherAsync"/> interface with asynchronous versions of
-    /// its <see cref="T:Stream"/> related methods.
+    /// The interface <c>ICipherAsync</c> extends the <see cref="ICipherAsync"/> interface with asynchronous versions of
+    /// its <see cref="Stream"/> related methods.
     /// </summary>
     [ContractClass(typeof(ICipherAsyncContract))]
     public interface ICipherAsync : ICipher
@@ -24,7 +24,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
         /// </param>
         /// <returns>
-        /// A <see cref="T:Task"/> object which represents the process of asynchronous encryption.
+        /// A <see cref="Task"/> object which represents the process of asynchronous encryption.
         /// </returns>
         /// <exception cref="T:System.ArgumentNullException">
         /// Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
@@ -55,7 +55,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The output stream where to put the unencrypted data.
         /// </param>
         /// <returns>
-        /// A <see cref="T:Task"/> object which represents the process of asynchronous decryption.
+        /// A <see cref="Task"/> object which represents the process of asynchronous decryption.
         /// </returns>
         /// <exception cref="T:System.ArgumentNullException">
         /// Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.

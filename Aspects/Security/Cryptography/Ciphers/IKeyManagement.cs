@@ -32,7 +32,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Asynchronously exports the symmetric key as a clear text.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
+        /// A <see cref="Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
         /// array of bytes of the symmetric key or <see langword="null"/> if the cipher does not have a symmetric key.
         /// </returns>
         Task<byte[]> ExportSymmetricKeyAsync();
@@ -42,7 +42,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
+        /// A <see cref="Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         Task ImportSymmetricKeyAsync(byte[] key);
     }

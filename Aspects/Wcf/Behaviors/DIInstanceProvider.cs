@@ -83,7 +83,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 // must inherit from MarshalByRefObject. Otherwise we cannot get a transparent proxy suitable for injecting policies/aspects!
                 if (_serviceContractType != null && serviceType.GetInterface(_serviceContractType.Name) == null  ||
                     _serviceContractType == null && !typeof(MarshalByRefObject).IsAssignableFrom(serviceType))
-                    throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.", nameof(serviceType));
+                    throw new ArgumentException("If no service interface is specified, the service type must be derived from System.MarshalByRefObject.");
 
                 return _serviceContractType!=null
                             ? container.Resolve(_serviceContractType, _serviceResolveName)

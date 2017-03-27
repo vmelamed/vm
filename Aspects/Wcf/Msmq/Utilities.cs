@@ -139,7 +139,8 @@ namespace vm.Aspects.Wcf.Msmq
             bool isTransactional,
             params string[] sendersReceivers)
         {
-            Contract.Requires<ArgumentException>(address != null  &&  address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(address != null, nameof(address));
+            Contract.Requires<ArgumentException>(address.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(address)+" cannot be empty string or consist of whitespace characters only.");
 
             Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));

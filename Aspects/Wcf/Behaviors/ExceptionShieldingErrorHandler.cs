@@ -32,7 +32,7 @@ namespace vm.Aspects.Wcf.Behaviors
         readonly IWcfContextUtilities _wcfContext;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ExceptionShieldingErrorHandler" /> class with
+        /// Initializes a new instance of the <see cref="ExceptionShieldingErrorHandler" /> class with
         /// the <see cref="ExceptionShielding.DefaultExceptionPolicy" /> value.
         /// </summary>
         /// <param name="wcfContext">The WCF contexts behavior.</param>
@@ -44,7 +44,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ExceptionShieldingErrorHandler"/> class.
+        /// Initializes a new instance of the <see cref="ExceptionShieldingErrorHandler"/> class.
         /// </summary>
         /// <param name="wcfContext">The WCF contexts behavior.</param>
         /// <param name="exceptionPolicyName">Name of the exception policy.</param>

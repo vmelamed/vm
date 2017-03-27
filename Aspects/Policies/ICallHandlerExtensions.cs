@@ -20,6 +20,7 @@ namespace vm.Aspects.Policies
             this IMethodInvocation input)
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            Contract.Ensures(Contract.Result<Type>() != null);
 
             return ((MethodInfo)input.MethodBase).ReturnType;
         }

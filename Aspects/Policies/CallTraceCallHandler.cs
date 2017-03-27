@@ -459,7 +459,7 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="callData">The additional audit data about the call.</param>
-        protected void DumpTime(
+        protected static void DumpTime(
             TextWriter writer,
             CallTraceData callData)
         {
@@ -574,7 +574,7 @@ namespace vm.Aspects.Policies
                                         ? callData.OutputValues[outValueIndex++]
                                         : null;
 
-                    DumpOutputParameter(writer, pi, input.Inputs[i], outValue);
+                    DumpOutputParameter(writer, pi, outValue);
                 }
 
                 if (i != input.Inputs.Count-1)
@@ -619,12 +619,10 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="pi">The reflection structure representing an output parameter.</param>
-        /// <param name="inValue">The input value of the ref/output parameter.</param>
         /// <param name="outValue">The output value of the ref/output parameter.</param>
         protected static void DumpOutputParameter(
             TextWriter writer,
             ParameterInfo pi,
-            object inValue,
             object outValue = null)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));

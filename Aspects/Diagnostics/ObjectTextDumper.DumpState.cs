@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Diagnostics.DumpImplementation;
@@ -75,6 +76,8 @@ namespace vm.Aspects.Diagnostics
             /// </returns>
             public bool SetToDefault()
             {
+                Contract.Requires<ArgumentNullException>(Type != null, nameof(Type));
+
                 var defaultProperty = DefaultProperty;
 
                 if (defaultProperty.IsNullOrWhiteSpace())

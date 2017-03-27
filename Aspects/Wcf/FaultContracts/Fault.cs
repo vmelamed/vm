@@ -103,7 +103,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Note that this method has dummy getter and also the property is not marked with DataMemberAttribute. By default the fault exception handler from 
         /// Enterprise Library will copy the properties of the exception to the fault's properties - property for property matched by name. Here the setter 
         /// will extract recursively the needed textual information from the inner exception(s) and will append it to the property 
-        /// <see cref="P:InnerExceptionsMessages"/>.
+        /// <see cref="InnerExceptionsMessages"/>.
         /// </remarks>
         public Exception InnerException
         {

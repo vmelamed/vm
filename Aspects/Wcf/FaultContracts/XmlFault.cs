@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using System.Xml;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
-    /// Class XmlFault. This class cannot be inherited. Corresponds to <see cref="T:XmlException"/>
+    /// Class XmlFault. This class cannot be inherited. Corresponds to <see cref="XmlException"/>
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(XmlFaultMetadata))]

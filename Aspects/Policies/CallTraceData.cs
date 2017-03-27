@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace vm.Aspects.Policies
 {
@@ -32,6 +33,7 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Gets or sets the output values.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IParameterCollection OutputValues { get; set; }
 
         /// <summary>

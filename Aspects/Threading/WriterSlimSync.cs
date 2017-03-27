@@ -24,7 +24,7 @@ namespace vm.Aspects.Threading
     /// ]]>
     /// </code>
     /// </example>
-    /// <seealso cref="T:ReaderSlimSync"/>, <seealso cref="T:WriterSlimSync"/>
+    /// <seealso cref="ReaderSlimSync"/>, <seealso cref="WriterSlimSync"/>
     public sealed class WriterSlimSync : IDisposable, IIsDisposed
     {
         readonly ReaderWriterLockSlim _readerWriterLock;

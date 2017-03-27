@@ -57,7 +57,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType != ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             Context = context;
@@ -111,7 +112,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                                                             identityType == ServiceIdentity.Rsa  ||
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
@@ -137,7 +139,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             Context = context;
         }
@@ -168,7 +171,8 @@ namespace vm.Aspects.Wcf.Clients
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             Context = context;
@@ -197,7 +201,8 @@ namespace vm.Aspects.Wcf.Clients
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                                                             identityType == ServiceIdentity.Rsa  ||
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
@@ -226,7 +231,8 @@ namespace vm.Aspects.Wcf.Clients
         {
             Contract.Requires<ArgumentNullException>(context != null, nameof(context));
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             Context = context;
         }

@@ -210,10 +210,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         #region Initialization of the symmetric key overrides
         /// <summary>
-        /// Here it just sets the flag <see cref="P:IsSymmetricKeyInitialized"/> to satisfy the contract.
+        /// Here it just sets the flag <see cref="SymmetricKeyCipherBase.IsSymmetricKeyInitialized"/> to satisfy the contract.
         /// The real initialization can occur only when the first crypto operation really starts. If encrypting
         /// the key and the salt need to be generated. If decrypting the salt needs to read from the crypto package
-        /// and passed-on to the key generation method <see cref="M:InitializeSymmetricKeyInternal"/>.
+        /// and passed-on to the key generation method <see cref="InitializeSymmetricKeyInternal"/>.
         /// </summary>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
         protected override void InitializeSymmetricKey()
@@ -234,7 +234,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// If not yet initialized, the method initializes the symmetric key by deriving it from the password and generating new salt bytes.
         /// </summary>
-        /// <param name="generateSalt">if set to <see langword="true" /> the method will generate salt otherwise will reuse <see cref="F:_salt"/>.</param>
+        /// <param name="generateSalt">if set to <see langword="true" /> the method will generate salt otherwise will reuse <see cref="_salt"/>.</param>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
         void InitializeSymmetricKeyInternal(
             bool generateSalt)
@@ -410,9 +410,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Performs the actual job of disposing the object. Here it disposes the password if it is not disposed yet.
         /// </summary>
-        /// <param name="disposing">Passes the information whether this method is called by <see cref="M:Dispose()" /> (explicitly or
+        /// <param name="disposing">Passes the information whether this method is called by <see cref="IDisposable.Dispose()" /> (explicitly or
         /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~SymmetricCipher()" />.</param>
-        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="M:Dispose()" />, it will try to release all managed resources
+        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="IDisposable.Dispose()" />, it will try to release all managed resources
         /// (usually aggregated objects which implement <see cref="IDisposable" /> as well) and then it will release all unmanaged resources if any.
         /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.</remarks>
         protected override void Dispose(bool disposing)

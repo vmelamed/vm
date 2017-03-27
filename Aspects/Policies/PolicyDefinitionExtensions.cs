@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 namespace vm.Aspects.Policies
@@ -15,6 +16,7 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="policyDefinition">The policy definition.</param>
         /// <returns>PolicyDefinition.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will do it")]
         public static PolicyDefinition AddSingletonCallHandler<T>(
             this PolicyDefinition policyDefinition)
             where T : ICallHandler

@@ -121,7 +121,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="keyLocation">The key location.</param>
-        /// <returns>A <see cref="T:Task"/> object representing the process of putting the key in the file.</returns>
+        /// <returns>A <see cref="Task"/> object representing the process of putting the key in the file.</returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the <paramref name="key"/> is <see langword="null"/> or if the <paramref name="keyLocation"/> is <see langword="null"/>,
         /// empty or consists of whitespace characters only.
@@ -168,7 +168,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="keyLocation">The key location.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the task of getting the key.
+        /// A <see cref="Task"/> object representing the task of getting the key.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the <paramref name="keyLocation"/> is <see langword="null"/>, empty or consists of whitespace characters only.

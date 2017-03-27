@@ -5,11 +5,12 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using vm.Aspects.Model.InMemory;
+using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.Repository
 {
     /// <summary>
-    /// Class OrmBridge implements a bridge to repository/ORM specific functions leveraging a class implementing <see cref="T:IOrmSpecific"/>.
+    /// Class OrmBridge implements a bridge to repository/ORM specific functions leveraging a class implementing <see cref="IOrmSpecifics"/>.
     /// The methods are implemented as extension methods of the related classes.
     /// </summary>
     public static class OrmBridge
@@ -32,7 +33,7 @@ namespace vm.Aspects.Model.Repository
         }
 
         /// <summary>
-        /// Gets the object implementing <see cref="T:IOrmSpecifics"/>. If not found in the service locator, defaults to <see cref="ObjectsRepositorySpecifics"/>.
+        /// Gets the object implementing <see cref="IOrmSpecifics"/>. If not found in the service locator, defaults to <see cref="ObjectsRepositorySpecifics"/>.
         /// </summary>
         static IOrmSpecifics OrmSpecifics
         {

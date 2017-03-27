@@ -6,7 +6,7 @@
             <IntPtr xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
                     xmlns:x="http://www.w3.org/2001/XMLSchema"
                     xmlns="http://schemas.datacontract.org/2004/07/System">
-                <value i:type="x:long"
+                <value i:type="long"
                        xmlns="">5</value>
             </IntPtr>
         </custom>

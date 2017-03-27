@@ -490,7 +490,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="dataStream">The unencrypted input stream.</param>
         /// <param name="encryptedStream">The output stream where to write the crypto package which will contain the encrypted data
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc. This cipher requires that the encrypted stream is seek-able.</param>
-        /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous encryption.</returns>
+        /// <returns>A <see cref="Task" /> object which represents the process of asynchronous encryption.</returns>
         /// <exception cref="System.ArgumentException">The encrypted stream must be seek-able.</exception>
         public override Task EncryptAsync(
             Stream dataStream,
@@ -509,7 +509,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedStream">The input crypto package stream which contains the encrypted data
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc. This cipher requires that the encrypted stream is seek-able.</param>
         /// <param name="dataStream">The output stream where to put the unencrypted data.</param>
-        /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous decryption.</returns>
+        /// <returns>A <see cref="Task" /> object which represents the process of asynchronous decryption.</returns>
         /// <exception cref="System.ArgumentException">The encrypted stream must be seek-able.</exception>
         public override Task DecryptAsync(
             Stream encryptedStream,
@@ -529,7 +529,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process.
+        /// A <see cref="Task"/> object representing the process.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.ArgumentException">Thrown when the encrypted stream <paramref name="encryptedStream"/> cannot be written to.</exception>

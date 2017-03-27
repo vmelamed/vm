@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -67,6 +68,7 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "will do later")]
         protected override UnitOfWorkData Prepare(
             IMethodInvocation input)
         {
@@ -111,6 +113,7 @@ namespace vm.Aspects.Model
         /// <param name="methodReturn">The result.</param>
         /// <param name="callData">The call data.</param>
         /// <returns>IMethodReturn.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
@@ -191,7 +194,7 @@ namespace vm.Aspects.Model
             }
         }
 
-        void CommitChanges(
+        static void CommitChanges(
             UnitOfWorkData callData)
         {
             var success = false;
@@ -236,7 +239,7 @@ namespace vm.Aspects.Model
             callData.TransactionScope?.Dispose();
         }
 
-        Exception ProcessException(
+        static Exception ProcessException(
             IMethodInvocation input,
             Exception exception)
         {

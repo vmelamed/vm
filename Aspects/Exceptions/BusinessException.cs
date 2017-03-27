@@ -16,7 +16,7 @@ namespace vm.Aspects.Exceptions
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:BusinessException"/> class.
+        /// Initializes a new instance of the <see cref="BusinessException"/> class.
         /// </summary>
         public BusinessException()
             : this(null, null)
@@ -24,7 +24,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a <see cref="T:BusinessException"/> with a custom <paramref name="message"/>.
+        /// Initializes a <see cref="BusinessException"/> with a custom <paramref name="message"/>.
         /// </summary>
         /// <param name="message">The custom message.</param>
         public BusinessException(string message)
@@ -33,7 +33,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a <see cref="T:BusinessException"/> with an inner exception which lead to generating this one.
+        /// Initializes a <see cref="BusinessException"/> with an inner exception which lead to generating this one.
         /// </summary>
         /// <param name="innerException">The exception which lead to generating this one.</param>
         public BusinessException(Exception innerException)
@@ -42,7 +42,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a <see cref="T:BusinessException"/> with a custom <paramref name="message"/> and
+        /// Initializes a <see cref="BusinessException"/> with a custom <paramref name="message"/> and
         /// an inner exception which lead to generating this one.
         /// </summary>
         /// <param name="message">The custom message.</param>

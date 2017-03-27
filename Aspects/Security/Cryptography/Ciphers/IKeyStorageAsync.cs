@@ -7,7 +7,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// The interface <c>IKeyStorageAsync</c> extends <c>IKeyStorage</c> with asynchronous versions of the methods 
-    /// <see cref="M:PutKey"/> and <see cref="M:GetKey"/>.
     /// </summary>
     [ContractClass(typeof(IKeyStorageAsyncContract))]
     public interface IKeyStorageAsync : IKeyStorage

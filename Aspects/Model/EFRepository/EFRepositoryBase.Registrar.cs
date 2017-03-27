@@ -21,6 +21,7 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
+    [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Yes, it is a big class and yet it's not a God class")]
     public abstract partial class EFRepositoryBase
     {
         /// <summary>
@@ -84,7 +85,8 @@ namespace vm.Aspects.Model.EFRepository
                     ;
             }
 
-            void DoRegisterCommon(
+            [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+            static void DoRegisterCommon(
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations,
                 bool isTest)

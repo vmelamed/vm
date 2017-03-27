@@ -27,7 +27,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
         #region ValidationAttribute Members
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ValidatingBehaviorAttribute"/> class.
+        /// Initializes a new instance of the <see cref="ValidatingBehaviorAttribute"/> class.
         /// </summary>
         public ValidatingBehaviorAttribute()
             : this(string.Empty)

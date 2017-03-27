@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using vm.Aspects.Exceptions;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
-    /// Class ObjectFault. Corresponds to <see cref="T:ObjectException"/>
+    /// Class ObjectFault. Corresponds to <see cref="ObjectException"/>
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}: ObjectIdentifier: {ObjectIdentifier} (Type: {ObjectType})")]

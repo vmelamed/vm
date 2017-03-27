@@ -16,7 +16,7 @@ namespace vm.Aspects.Model.EFRepository
         AllowMultiple = false)]
     public sealed class StringAttribute : Attribute
     {
-        int _length;
+        readonly int _length;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringAttribute"/> class.

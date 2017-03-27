@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// Interface <c>IHasherAsync</c> extends <see cref="T:IHasher"/> with 
-    /// asynchronous versions of its <see cref="T:Stream"/> related methods.
+    /// Interface <c>IHasherAsync</c> extends <see cref="IHasher"/> with 
+    /// asynchronous versions of its <see cref="Stream"/> related methods.
     /// </summary>
     [ContractClass(typeof(IHasherAsyncContract))]
     public interface IHasherAsync : IHasher

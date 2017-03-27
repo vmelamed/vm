@@ -13,6 +13,7 @@ namespace vm.Aspects.Wcf
         /// <summary>
         /// Gets the key of the object stored in the call context.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string Key => Facility.GuidGenerator.NewGuid().ToString("N");
 
         /// <summary>

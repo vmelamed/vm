@@ -67,7 +67,7 @@ namespace vm.Aspects.Model.Repository
         BaseDomainValue CreateValue(Type valueType);
 
         /// <summary>
-        /// Creates a <see cref="T:Value"/> derived object of type <typeparamref name="T"/>.
+        /// Creates a <see cref="BaseDomainValue"/> derived object of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">
         /// The type of the object to be created.

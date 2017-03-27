@@ -26,14 +26,13 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Func<Exception, Fault> factory = null;
 
             // if we cannot find exact match go up the inheritance tree. finally we must stop at Exception.
-            while (factory == null)
+            do
             {
                 factory = Fault.GetExceptionToFaultFactory(exceptionType);
                 if (factory == null)
                     exceptionType = exceptionType.BaseType;
-                else
-                    break;
             }
+            while (factory == null);
 
             var fault = factory(exception);
 

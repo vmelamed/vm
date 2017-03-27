@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Transactions;
@@ -82,7 +83,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <summary>
         /// The default generators repository factory delegate.
         /// </summary>
-        public readonly static Func<IRepository> DefaultGeneratorsRepositoryFactory = () => DIContainer.Root.Resolve<IRepository>(HiLoGeneratorsRepositoryResolveName);
+        public static Func<IRepository> DefaultGeneratorsRepositoryFactory { get; } = () => DIContainer.Root.Resolve<IRepository>(HiLoGeneratorsRepositoryResolveName);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HiLoStoreIdProvider" /> class.
@@ -116,7 +117,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
             Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
 
             var provider = this as IStoreUniqueId<TId>;
@@ -263,6 +263,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             return id;
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "will do on the way back.")]
         HiLoIdentityGenerator GetOrCreateFreshGenerator(
             string entitySetName)
         {

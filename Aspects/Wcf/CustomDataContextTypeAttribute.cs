@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
+using vm.Aspects.Wcf.Clients;
+using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Wcf
 {
@@ -12,7 +14,7 @@ namespace vm.Aspects.Wcf
     /// Specifies the type of the custom context data that is expected in the 
     /// messages' headers of each call to the type that this attribute is applied to.
     /// In other words the attribute makes sense only when applied to service or operation contracts.
-    /// (Use <see cref="T:ContextLightClient"/> and <see cref="T:CustomContext"/>.)
+    /// (Use <see cref="ContextLightClient{T,S}"/> and <see cref="CustomDataContext{T}"/>.)
     /// </summary>
     [Serializable]
     [AttributeUsage(

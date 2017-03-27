@@ -5,12 +5,13 @@ using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
+using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Wcf.DataContracts
 {
     /// <summary>
     /// Messages (contracts) base class. Standardizes on <see cref="T:vm.Aspects.Validation.IValidatable"/>.
-    /// This is just another type of DTO. Prefer <see cref="T:DataTransferObject"/> where possible.
+    /// This is just another type of DTO. Prefer <see cref="DataTransferObject"/> where possible.
     /// </summary>
     [MessageContract(WrapperNamespace = "urn:service:vm.Aspects.Wcf.DataContracts")]
     public abstract class DataMessageObject : IValidatable
@@ -54,7 +55,7 @@ namespace vm.Aspects.Wcf.DataContracts
         public override string ToString() => this.DumpString();
 
         /// <summary>
-        /// Accepts the visitor which implements the <see cref="T:IDataTransferObjectVisitor"/> interface. See the G4 visitor pattern.
+        /// Accepts the visitor which implements the <see cref="IVisitor{T}"/> interface. See the G4 visitor pattern.
         /// Here it serves as a catch all - throws <see cref="System.NotImplementedException"/>.
         /// </summary>
         /// <param name="visitor">The visitor.</param>

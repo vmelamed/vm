@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The class <c>NullCipher</c> is a development- and test-friendly convenience class which implements trivially the <see cref="T:ICipherAsync"/> interface:
+    /// The class <c>NullCipher</c> is a development- and test-friendly convenience class which implements trivially the <see cref="ICipherAsync"/> interface:
     /// copies the source data blindly into the output target.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
@@ -104,7 +104,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="dataStream">The unencrypted input stream.</param>
         /// <param name="encryptedStream">The output stream where to write the crypto package which will contain the encrypted data
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc.</param>
-        /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous encryption.</returns>
+        /// <returns>A <see cref="Task" /> object which represents the process of asynchronous encryption.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// dataStream
         /// or
@@ -125,7 +125,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="encryptedStream">The input crypto package stream which contains the encrypted data
         /// as well as some other crypto artifacts, e.g. initialization vector, hash, etc.</param>
         /// <param name="dataStream">The output stream where to put the unencrypted data.</param>
-        /// <returns>A <see cref="T:Task" /> object which represents the process of asynchronous decryption.</returns>
+        /// <returns>A <see cref="Task" /> object which represents the process of asynchronous decryption.</returns>
         /// <exception cref="System.ArgumentNullException">
         /// dataStream
         /// or

@@ -81,7 +81,7 @@ namespace vm.Aspects.Cache
         /// <param name="objectFactory">The object factory.</param>
         /// <param name="lazy">
         /// If set to <see langword="true" /> the objects in the pool will be created only if there are no available objects to lend and 
-        /// the total number of lent objects is less than the property <see cref="P:PoolSize"/>. Otherwise all objects in the pool will be created
+        /// the total number of lent objects is less than the property <see cref="PoolSize"/>. Otherwise all objects in the pool will be created
         /// immediately in this method.
         /// </param>
         public ObjectPool(
@@ -102,7 +102,7 @@ namespace vm.Aspects.Cache
         /// <param name="objectFactory">The object factory.</param>
         /// <param name="lazy">
         /// If set to <see langword="true" /> the objects in the pool will be created only if there are no available objects to lend and 
-        /// the total number of lent objects is less than the property <see cref="P:PoolSize"/>. Otherwise all objects in the pool will be created
+        /// the total number of lent objects is less than the property <see cref="PoolSize"/>. Otherwise all objects in the pool will be created
         /// immediately in this method.
         /// </param>
         /// <returns>This IObjectPool{T}.</returns>
@@ -265,7 +265,7 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
@@ -278,12 +278,12 @@ namespace vm.Aspects.Cache
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
         /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~ObjectPool"/>.
         /// </param>
         /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, 
-        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="T:IDisposable"/> as well) 
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, 
+        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="IDisposable"/> as well) 
         /// and then it will release all unmanaged resources if any. If the parameter is <c>false</c> then 
         /// the method will only try to release the unmanaged resources.
         /// </remarks>

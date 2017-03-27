@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.ServiceModel;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -21,8 +22,8 @@ namespace vm.Aspects.Wcf.Bindings
         /// <param name="name">The name of the pattern.</param>
         /// <param name="restful">
         /// If set to <see langword="true" />  when the messages are transmitted over HTTP or HTTPS protocols, a REST-ful style of messaging is preferred.
-        /// I.e. <see cref="T:WebHttpBinding"/> over <seealso cref="T:WSHttpBinding"/> or <see cref="T:BasicHttpBinding"/>. Otherwise, <seealso cref="T:WSHttpBinding"/>
-        /// will be used over HTTPS protocol and <see cref="T:BasicHttpBinding"/> for HTTP.
+        /// I.e. <see cref="WebHttpBinding"/> over <seealso cref="WSHttpBinding"/> or <see cref="BasicHttpBinding"/>. Otherwise, <seealso cref="WSHttpBinding"/>
+        /// will be used over HTTPS protocol and <see cref="BasicHttpBinding"/> for HTTP.
         /// </param>
         public MessagingPatternAttribute(
             string name,
@@ -41,7 +42,7 @@ namespace vm.Aspects.Wcf.Bindings
 
         /// <summary>
         /// Gets a value indicating that when the messages are transmitted over HTTP protocol, a REST-ful style of messaging is preferred.
-        /// I.e. <see cref="T:WebHttpBinding"/> over <seealso cref="T:WSHttpBinding"/>.
+        /// I.e. <see cref="WebHttpBinding"/> over <seealso cref="WSHttpBinding"/>.
         /// </summary>
         public bool Restful { get; }
     }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Permissions;
 
@@ -17,6 +19,7 @@ namespace vm.Aspects.Policies
         /// <param name="input">The input.</param>
         /// <param name="_">ignored</param>
         /// <returns>IMethodReturn.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
             bool _)
@@ -35,6 +38,7 @@ namespace vm.Aspects.Policies
                     {
                         return input.CreateExceptionMethodReturn(x);
                     }
+
             return null;
         }
     }

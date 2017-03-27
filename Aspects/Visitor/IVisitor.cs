@@ -5,8 +5,8 @@ namespace vm.Aspects.Visitor
     /// Interface IVisitor defines the behavior of the visitor role from the G4 visitor design pattern.
     /// </summary>
     /// <typeparam name="TVisited">The type of the visited object.</typeparam>
-    /// <seealso cref="T:IVisited{TVisited}"/>
-    /// <seealso cref="T:CatchallVisitor"/>
+    /// <seealso cref="IVisited{TVisited}"/>
+    /// <seealso cref="CatchallVisitor"/>
     public interface IVisitor<in TVisited> where TVisited : class
     {
         /// <summary>
@@ -15,7 +15,7 @@ namespace vm.Aspects.Visitor
         /// <param name="visited">The visited object.</param>
         /// <returns>The visited object.</returns>
         /// <remarks>
-        /// This method is supposed to be invoked by the visited object from within its <see cref="M:IVisited{T}.Accept"/> method.
+        /// This method is supposed to be invoked by the visited object from within its <see cref="IVisited{T}.Accept"/> method.
         /// Therefore it is recommended that all implementations of the interface are explicit (<c>void IVisitor&lt;A&gt;.Visit(A visited) {...}</c>).
         /// It is here where the concrete processing logic should take place.
         /// Note that the <typeparamref name="TVisited"/> is qualified with <c>in</c> modifier, i.e. the type parameter is contravariant and

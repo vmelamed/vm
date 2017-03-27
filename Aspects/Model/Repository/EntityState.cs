@@ -1,7 +1,7 @@
 ﻿namespace vm.Aspects.Model.Repository
 {
     /// <summary>
-    /// Enum EntityState. Characterizes the state of an object with regards to its persistence in <see cref="T:IRepository"/>.
+    /// Enum EntityState. Characterizes the state of an object with regards to its persistence in <see cref="IRepository"/>.
     /// </summary>
     public enum EntityState
     {

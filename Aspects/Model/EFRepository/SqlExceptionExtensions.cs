@@ -5,7 +5,7 @@ using System.Linq;
 namespace vm.Aspects.Model.EFRepository
 {
     /// <summary>
-    /// Class SqlExceptionExtensions. Extension methods for categorizing instances of <see cref="T:SqlException"/>.
+    /// Class SqlExceptionExtensions. Extension methods for categorizing instances of <see cref="SqlException"/>.
     /// </summary>
     public static class SqlExceptionExtensions
     {

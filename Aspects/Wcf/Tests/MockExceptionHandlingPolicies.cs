@@ -11,7 +11,7 @@ using vm.Aspects.Facilities;
 namespace vm.Aspects.Wcf.Tests
 {
     /// <summary>
-    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which add a number of mappings of exceptions to faults 
+    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="IExceptionPolicyProvider"/> which add a number of mappings of exceptions to faults 
     /// which will be used by the WCF exception shielding mechanism. 
     /// </summary>
     public partial class MockExceptionHandlingPolicies : IExceptionPolicyProvider

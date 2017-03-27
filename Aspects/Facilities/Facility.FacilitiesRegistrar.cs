@@ -5,6 +5,7 @@ using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
@@ -98,7 +99,8 @@ namespace vm.Aspects.Facilities
                 ;
             }
 
-            IUnityContainer RegisterCommon(
+            [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will do it")]
+            static IUnityContainer RegisterCommon(
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations,
                 bool isTest = false)

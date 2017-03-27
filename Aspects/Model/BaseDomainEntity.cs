@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Properties;
 using vm.Aspects.Validation;
@@ -16,13 +16,13 @@ namespace vm.Aspects.Model
     /// Class BaseDomainEntity represents the very basic tenets of a domain entity as they are defined in DDD.
     /// </para><para>
     /// The domain entity has an immutable identity. This is reflected by the fact that <see cref="BaseDomainEntity"/> inherits  <see cref="T:IEquatable{BaseDomainEntity}"/>
-    /// and the property <see cref="P:HasIdentity"/>. The latter should reflect the fact that when domain entity instances are created 
+    /// and the property <see cref="HasIdentity"/>. The latter should reflect the fact that when domain entity instances are created 
     /// they may not have identity until some business logic assigns them one (e.g. assigns value/s to the entity's property/s which define its identity).
     /// Once the identity of the entity is assigned it should never change or at least may change very rarely preferably in controlled conditions. 
     /// The identity should remain immutable for the entire lifespan of the entity including the time when it is not loaded in memory and exists 
-    /// only as a persisted image (e.g. serialized in a binary file, XML document, database row(s) and columns). If the property <see cref="P:HasIdentity"/> returns
-    /// <see langword="false"/> then the method <see cref="M:Equals"/> should always return <see langword="false"/> regardless of the value of 
-    /// the comparand. Following the rules of .NET's for equality, the return value of the method <see cref="M:GetHashCode"/> should also be immutable.
+    /// only as a persisted image (e.g. serialized in a binary file, XML document, database row(s) and columns). If the property <see cref="HasIdentity"/> returns
+    /// <see langword="false"/> then the method <see cref="Equals"/> should always return <see langword="false"/> regardless of the value of 
+    /// the comparand. Following the rules of .NET's for equality, the return value of the method <see cref="object.GetHashCode"/> should also be immutable.
     /// </para><para>
     /// Another tenet of the domain entity is that once ready to be used in business logic or ready to be persisted, the entity must have a <bold>valid</bold>
     /// state, which is verified by the methods from the inherited interface <see cref="IValidatable"/>.
@@ -97,7 +97,7 @@ namespace vm.Aspects.Model
 
         /// <summary>
         /// Validates the current instance. Here checks if the instance has identity in if it does not, 
-        /// adds a new <see cref="T:ValidationResult"/> to the <see cref="T:ValidationResults"/> parameter.
+        /// adds a new <see cref="ValidationResult"/> to the <see cref="ValidationResults"/> parameter.
         /// </summary>
         /// <param name="results">The full set of validation results.</param>
         [SelfValidation]

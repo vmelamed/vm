@@ -33,7 +33,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// the class will try to:
         ///     <list type="number">
         ///         <item>
-        ///             resolve the <see cref="T:Symmetric"/> from the common service locator, 
+        ///             resolve the <see cref="Symmetric"/> from the common service locator, 
         ///             which gives the caller opportunity to plug-in their algorithm of choice, customized with their own parameters like key-length, mode, etc.;
         ///             and if not resolved will try to
         ///         </item>
@@ -162,7 +162,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
+        /// A <see cref="Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual async Task ImportSymmetricKeyAsync(
@@ -176,7 +176,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Asynchronously exports the symmetric key as a clear text.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
+        /// A <see cref="Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
         /// array of bytes of the symmetric key or <see langword="null"/> if the cipher does not have a symmetric key.
         /// </returns>
         public virtual async Task<byte[]> ExportSymmetricKeyAsync()
@@ -213,7 +213,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Asynchronously initializes the symmetric key for encryption.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronous initialization.
+        /// A <see cref="Task"/> object representing the process of asynchronous initialization.
         /// </returns>
         protected virtual async Task InitializeSymmetricKeyAsync()
         {
@@ -256,7 +256,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
         /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="M:Dispose()"/>.
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
         /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
         /// </remarks>
         int _disposed;

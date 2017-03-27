@@ -83,8 +83,6 @@ namespace vm.Aspects.Wcf.FaultContracts
             where TFault : Fault
             where TException : Exception
         {
-            Contract.Requires<ArgumentNullException>(exceptionFactory != null, nameof(exceptionFactory));
-
             using (_lock.UpgradableReaderLock())
             {
                 if (!force)
@@ -260,8 +258,6 @@ namespace vm.Aspects.Wcf.FaultContracts
                 if (xpi.Name!=nameof(Exception.Data)  &&  xpi.GetIndexParameters().Count() == 0)
                     try
                     {
-                        Contract.Assume(xpi != null);
-
                         var value = xpi.GetValue(exception);
 
                         if (value == null)

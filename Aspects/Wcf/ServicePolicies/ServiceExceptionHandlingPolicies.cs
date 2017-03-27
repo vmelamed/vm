@@ -20,7 +20,7 @@ using vm.Aspects.Wcf.FaultContracts;
 namespace vm.Aspects.Wcf.ServicePolicies
 {
     /// <summary>
-    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="T:IExceptionPolicyProvider"/> which adds a number of mappings of 
+    /// Class WcfExceptionHandlingPolicies. Defines a registrar and implements <see cref="IExceptionPolicyProvider"/> which adds a number of mappings of 
     /// exceptions to faults that will be used by the WCF exception shielding mechanism. 
     /// </summary>
     public partial class ServiceExceptionHandlingPolicies : IExceptionPolicyProvider

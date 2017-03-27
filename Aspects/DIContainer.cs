@@ -19,9 +19,9 @@ namespace vm.Aspects
     /// </summary>
     /// <remarks>
     /// The class loads a unity configuration section from a passed file or the current executable's configuration file.
-    /// Then it initializes the static member <see cref="P:Root"/> from the loaded configuration section. From this moment on
+    /// Then it initializes the static member <see cref="Root"/> from the loaded configuration section. From this moment on
     /// the container is initialized (<c>DIContainer.Root.IsInitialized == true</c>) and can be accessed through this static property.
-    /// Also the <see cref="M:Initialize"/> associates the Common Service Locator (CSL) with so initialized unity container.
+    /// Also the <see cref="Initialize"/> associates the Common Service Locator (CSL) with so initialized unity container.
     /// </remarks>
     /// <example>
     /// <code>
@@ -148,17 +148,17 @@ namespace vm.Aspects
         /// If the file is not found, the method will attempt to initialize the container from the application&quot;s configuration file (app.config or web.config).
         /// </remarks>
         /// <param name="configFileName">
-        /// The name of the configuration file. If not specified it defaults to <see cref="F:DefaultUnityConfigurationFileName"/> - &quot;unity.config&quot;.
+        /// The name of the configuration file. If not specified it defaults to <see cref="DefaultConfigurationFileName"/> - &quot;unity.config&quot;.
         /// </param>
         /// <param name="configSection">
-        /// The name od the configuration file section configuring unity. If not specified it defaults to <see cref="F:DefaultConfigurationSectionName"/> - &quot;unity&quot;.
+        /// The name od the configuration file section configuring unity. If not specified it defaults to <see cref="DefaultConfigurationSectionName"/> - &quot;unity&quot;.
         /// </param>
         /// <param name="containerName">
-        /// The name of the container configuration section. If not specified the default is <see cref="F:DefaultContainerName"/> - an empty string.
+        /// The name of the container configuration section. If not specified the default is <see cref="DefaultContainerName"/> - an empty string.
         /// </param>
         /// <param name="getConfigFileSection">
         /// Specifies a delegate that implements the strategy for finding the unity configuration, given the configuration file and section name.
-        /// If not specified, defaults to the internal default behavior as implemented in the private <see cref="M:GetUnityConfigurationSection"/>:
+        /// If not specified, defaults to the internal default behavior as implemented in the private <see cref="GetUnityConfigurationSection"/>:
         /// If the <paramref name="configFileName"/> is <see langword="null"/>, empty or consists of whitespace characters only 
         /// the method returns <see langword="null"/> and this method will attempt to find the section in the current executable configuration file (web.config or app.config derived);
         /// otherwise if <paramref name="configFileName"/> is not a rooted path (e.g. starting with C:\...) it is prepended with the path of the 

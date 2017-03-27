@@ -191,7 +191,7 @@ namespace vm.Aspects.Model.InMemory
         #endregion
 
         /// <summary>
-        /// Creates a <see cref="T:Value" /> derived object of type <typeparamref name="T" />.
+        /// Creates a <see cref="BaseDomainValue" /> derived object of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
         /// <returns>The created entity.</returns>
@@ -218,7 +218,7 @@ namespace vm.Aspects.Model.InMemory
         }
 
         /// <summary>
-        /// Creates a <see cref="T:Value" /> derived object of type <typeparamref name="T" />.
+        /// Creates a <see cref="BaseDomainValue" /> derived object of type <typeparamref name="T" />.
         /// </summary>
         /// <typeparam name="T">The type of the object to be created.</typeparam>
         /// <returns>The created entity.</returns>
@@ -244,6 +244,8 @@ namespace vm.Aspects.Model.InMemory
 
         static object CreateCollections(object instance)
         {
+            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
+
             foreach (var pi in instance
                                     .GetType()
                                     .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)

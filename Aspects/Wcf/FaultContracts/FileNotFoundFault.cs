@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.Serialization;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
-    /// Class FileNotFoundFault. This class cannot be inherited. Mirrors <see cref="T:FileNotFoundException"/>.
+    /// Class FileNotFoundFault. This class cannot be inherited. Mirrors <see cref="FileNotFoundException"/>.
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message}: ObjectIdentifier: {ObjectIdentifier} (Type: {ObjectType})")]

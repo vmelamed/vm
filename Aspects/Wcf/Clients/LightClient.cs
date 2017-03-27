@@ -43,7 +43,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityType, identity, messagingPattern)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             Proxy = ChannelFactory.CreateChannel();
@@ -96,7 +97,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityType, certificate, messagingPattern)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                                                             identityType == ServiceIdentity.Rsa  ||
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
@@ -119,7 +121,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityClaim, messagingPattern)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             Proxy = ChannelFactory.CreateChannel();
         }
@@ -153,7 +156,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(binding, remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             Proxy = ChannelFactory.CreateChannel();
@@ -183,7 +187,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(binding, remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(
                 identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                            identityType == ServiceIdentity.Rsa  ||
@@ -210,7 +215,8 @@ namespace vm.Aspects.Wcf.Clients
             : base(binding, remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             Proxy = ChannelFactory.CreateChannel();
         }

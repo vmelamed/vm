@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace vm.Aspects.Model
         /// </summary>
         public bool LogExceptionWarnings { get; set; }
 
-        Random _random = new Random(DateTime.Now.Millisecond);
+        readonly Random _random = new Random(DateTime.Now.Millisecond);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OptimisticConcurrencyExceptionHandler" /> class.
@@ -94,6 +95,7 @@ namespace vm.Aspects.Model
         /// Handles the database update concurrency exception.
         /// </summary>
         /// <param name="exception">The exception.</param>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "wrong requirement for exception")]
         public void HandleDbUpdateConcurrencyException(
             DbUpdateConcurrencyException exception)
         {

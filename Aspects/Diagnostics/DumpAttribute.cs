@@ -245,7 +245,7 @@ namespace vm.Aspects.Diagnostics
         /// Applies mostly to properties of basic types (primitives, enum, string, Guid, DateTime, DateTimeOffset, TimeSpan, Uri.)
         /// Gets or sets the format string that should be applied to the value for dumping. The default is &quot;{0}&quot;.
         /// For complex types the <see cref="ObjectTextDumper"/> recognizes special value for this property - &quot;ToString()&quot; in this case the returned value  
-        /// of the property's method <see cref="P:ToString"/> is inserted in the underlying text writer.
+        /// of the property's method <see cref="Object.ToString"/> is inserted in the underlying text writer.
         /// </summary>
         public string ValueFormat
         {
@@ -268,7 +268,7 @@ namespace vm.Aspects.Diagnostics
 
         /// <summary>
         /// Gets or sets the name of the dump method in the class specified by <see cref="DumpClass"/>. The dump method implements custom formatting of the property's value. 
-        /// The method must be static, public, have a return type of <see cref="T:String"/> and must take a single parameter of type or a base type of the property. 
+        /// The method must be static, public, have a return type of <see cref="String"/> and must take a single parameter of type or a base type of the property. 
         /// If the <see cref="DumpClass"/> is not specified then the <see cref="ObjectTextDumper"/> will look for a parameterless instance method by the same name in the
         /// property's class or a static method with parameter the type or a base type of the property in the property's class, base class or the metadata class.
         /// </summary>

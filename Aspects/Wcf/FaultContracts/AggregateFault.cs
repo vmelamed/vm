@@ -13,7 +13,7 @@ using vm.Aspects.Wcf.FaultContracts.Metadata;
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
-    /// Class AggregateFault. Mirrors <see cref="T:AggregateException"/>.
+    /// Class AggregateFault. Mirrors <see cref="AggregateException"/>.
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [DebuggerDisplay("{GetType().Name, nq}:: {Message} Parameter: {ParamName, nq}")]

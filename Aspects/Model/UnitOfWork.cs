@@ -57,7 +57,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default transaction scope factory
         /// </summary>
-        public Func<TransactionScope> DefaultTransactionScopeFactory = () => new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
+        public Func<TransactionScope> DefaultTransactionScopeFactory { get; } = () => new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
 
         /// <summary>
         /// Resolve constant for transient repositories.
@@ -67,7 +67,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default repository factory
         /// </summary>
-        public Func<IRepository> DefaultRepositoryFactory = () => ServiceLocator.Current.GetInstance<IRepository>(TransientRepository);
+        public Func<IRepository> DefaultRepositoryFactory { get; } = () => ServiceLocator.Current.GetInstance<IRepository>(TransientRepository);
 
         /// <summary>
         /// Gets or sets a value indicating whether to create explicitly transaction scope.
@@ -80,10 +80,9 @@ namespace vm.Aspects.Model
         /// </summary>
         public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
-        OptimisticConcurrencyExceptionHandler _concurrencyExceptionHandler;
-        Func<TransactionScope> _transactionScopeFactory;
-        Func<IRepository> _repositoryFactory;
-        Random _random = new Random(DateTime.Now.Millisecond);
+        readonly OptimisticConcurrencyExceptionHandler _concurrencyExceptionHandler;
+        readonly Func<TransactionScope> _transactionScopeFactory;
+        readonly Func<IRepository> _repositoryFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWork" /> class.
@@ -129,6 +128,8 @@ namespace vm.Aspects.Model
         public void ActionWork(
             Action<IRepository, int> logic)
         {
+            Contract.Requires<ArgumentNullException>(logic != null, nameof(logic));
+
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 
@@ -166,6 +167,8 @@ namespace vm.Aspects.Model
         public TResult FuncWork<TResult>(
             Func<IRepository, int, TResult> logic)
         {
+            Contract.Requires<ArgumentNullException>(logic != null, nameof(logic));
+
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 

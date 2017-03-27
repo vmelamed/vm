@@ -89,7 +89,7 @@ namespace vm.Aspects.Facilities
 
         /// <summary>
         /// Gets the start DateTime plus as many intervals as the calls made to this property.
-        /// Gets a predictable value useful for unit testing along with <see cref="P:NextTime"/>.
+        /// Gets a predictable value useful for unit testing along with <see cref="NextTime"/>.
         /// </summary>
         public DateTime UtcNow
         {

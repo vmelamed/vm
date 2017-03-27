@@ -219,7 +219,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="encryptedStream">The encrypted stream.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process.
+        /// A <see cref="Task"/> object representing the process.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="encryptedStream" /> is <see langword="null" />.</exception>
         /// <exception cref="System.ArgumentException">Thrown when <paramref name="encryptedStream" /> cannot be written to.</exception>

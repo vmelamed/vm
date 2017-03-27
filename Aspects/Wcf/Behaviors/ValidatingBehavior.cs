@@ -38,7 +38,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ValidatingBehavior"/> class.
+        /// Initializes a new instance of the <see cref="ValidatingBehavior"/> class.
         /// The <see cref="Enabled"/> property will be set as 'true'.
         /// </summary>
         public ValidatingBehavior()
@@ -47,7 +47,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ValidatingBehavior"/> class.
+        /// Initializes a new instance of the <see cref="ValidatingBehavior"/> class.
         /// The <see cref="Enabled"/> property will be set to 'true'.
         /// </summary>
         /// <param name="ruleset">The name of the validation ruleset to apply.</param>
@@ -58,7 +58,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ValidatingBehavior"/> class.
+        /// Initializes a new instance of the <see cref="ValidatingBehavior"/> class.
         /// </summary>
         /// <param name="enabled">if set to <see langword="true"/> [enabled].</param>
         public ValidatingBehavior(bool enabled)
@@ -67,7 +67,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:ValidatingBehavior"/> is enabled.
+        /// Gets or sets a value indicating whether this <see cref="ValidatingBehavior"/> is enabled.
         /// </summary>
         /// <value><see langword="true"/> if enabled; otherwise, <see langword="false"/>. The default value is true.</value>
         public bool Enabled { get; }

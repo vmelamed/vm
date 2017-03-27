@@ -12,7 +12,7 @@ using vm.Aspects.Wcf.Bindings;
 namespace vm.Aspects.Wcf
 {
     /// <summary>
-    /// Class ServiceTypeExtensions. Introduces several extension methods to <see cref="T:Type"/> assuming that it represents
+    /// Class ServiceTypeExtensions. Introduces several extension methods to <see cref="Type"/> assuming that it represents
     /// the type of a WCF service, client or interface.
     /// </summary>
     public static class WcfTypesExtensions
@@ -149,7 +149,7 @@ namespace vm.Aspects.Wcf
         }
 
         /// <summary>
-        /// Extracts the resolve name of the service (or related type) from <see cref="T:DIBehaviorAttribute"/> if applied,
+        /// Extracts the resolve name of the service (or related type) from <see cref="DIBehaviorAttribute"/> if applied,
         /// and if a name or attribute is not found tries to extract it from <see cref="ResolveNameAttribute"/> if applied.
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
@@ -168,7 +168,7 @@ namespace vm.Aspects.Wcf
         }
 
         /// <summary>
-        /// Extracts the messaging pattern of the service, client or interface (service contract) from <see cref="T:MessagingPatternrAttribute"/> if applied.
+        /// Extracts the messaging pattern of the service, client or interface (service contract) from <see cref="MessagingPatternAttribute"/> if applied.
         /// </summary>
         /// <param name="type">Type of the service, client or interface.</param>
         /// <returns>The resolve name if found, otherwise <see langword="null"/> - the default pattern request-response.</returns>

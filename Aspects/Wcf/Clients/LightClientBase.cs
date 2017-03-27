@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
@@ -10,7 +11,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
@@ -61,7 +61,8 @@ namespace vm.Aspects.Wcf.Clients
             string identity = null,
             string messagingPattern = null)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
@@ -135,7 +136,8 @@ namespace vm.Aspects.Wcf.Clients
             X509Certificate2 certificate,
             string messagingPattern = null)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                                                             identityType == ServiceIdentity.Rsa  ||
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
@@ -159,7 +161,8 @@ namespace vm.Aspects.Wcf.Clients
             Claim identityClaim,
             string messagingPattern = null)
         {
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
             BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
@@ -194,7 +197,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
@@ -225,7 +229,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(
                 identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                            identityType == ServiceIdentity.Rsa  ||
@@ -253,7 +258,8 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
+            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             Contract.Ensures(ChannelFactory != null);
 
@@ -378,7 +384,7 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         /// <value>0 - if the object is not disposed yet, any other value would mean that the object is already disposed.</value>
         /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="M:Dispose(bool)"/>.
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose(bool)"/>.
         /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
         /// </remarks>
         private int _disposed;
@@ -391,7 +397,7 @@ namespace vm.Aspects.Wcf.Clients
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="M:Dispose(bool)"/>.</remarks>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {

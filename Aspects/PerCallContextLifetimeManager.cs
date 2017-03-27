@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
-using System.Security.Permissions;
+using System.Security;
 using System.Threading;
 using vm.Aspects.Threading;
 
@@ -15,7 +15,7 @@ namespace vm.Aspects
     /// Usually you need to use something like the <see cref="T:vm.Aspects.Model.PerCallContextRepositoryCallHandler"/> that will dispose and remove the object from the call context.
     /// </summary>
     [DebuggerDisplay("{GetType().Name, nq}: {_key,nq}")]
-    [PermissionSet(SecurityAction.LinkDemand)]
+    [SecurityCritical]
     public class PerCallContextLifetimeManager<T> : LifetimeManager, IDisposable, IEquatable<PerCallContextLifetimeManager<T>>
     {
         /// <summary>
@@ -164,7 +164,6 @@ namespace vm.Aspects
         public static bool operator !=(PerCallContextLifetimeManager<T> left, PerCallContextLifetimeManager<T> right) => !(left==right);
         #endregion
 
-
         #region IDisposable pattern implementation
         /// <summary>
         /// The flag will be set just before the object is disposed.
@@ -184,6 +183,7 @@ namespace vm.Aspects
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
@@ -192,7 +192,37 @@ namespace vm.Aspects
                 return;
 
             // these will be called only if the instance is not disposed and is not in a process of disposing.
-            _sync.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // TODO: if there are no *unmanaged* resources in this class, remove the finalizer.
+        /// <summary>
+        /// Allows the object to attempt to free resources and perform other cleanup operations before it is reclaimed by garbage collection. 
+        /// </summary>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/> with parameter <see langword="false"/>.</remarks>
+        ~PerCallContextLifetimeManager()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Performs the actual job of disposing the object.
+        /// </summary>
+        /// <param name="disposing">
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
+        /// implicitly at the end of a <c>using</c> statement), or by the finalizer.
+        /// </param>
+        /// <remarks>
+        /// If the method is called with <paramref name="disposing"/>==<see langword="true"/>, i.e. from <see cref="Dispose()"/>, 
+        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="IDisposable"/> as well) 
+        /// and then it will release all unmanaged resources if any. If the parameter is <see langword="false"/> then 
+        /// the method will only try to release the unmanaged resources.
+        /// </remarks>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _sync.Dispose();
         }
         #endregion
     }

@@ -4,13 +4,13 @@ namespace vm.Aspects.Model
 {
     /// <summary>
     /// <para>
-    /// Interface IHasStoreId requires implementing a property <see cref="P:Id"/> in the implementing types, 
+    /// Interface IHasStoreId requires implementing a property <see cref="Id"/> in the implementing types, 
     /// e.g. domain entities or domain values. The property represents the store-wide unique identifier in some
     /// specific persistent object store e.g. database. In RDBMS it may map directly to the primary key of the database
     ///  table(s) or at least can participate in it.
     /// </para><para>
     /// This interface is a convenience that definitely leaks persistence concerns into the domain model. 
-    /// However it makes our live easier especially when working with O/RM-s. Technically the <see cref="P:Id"/> 
+    /// However it makes our live easier especially when working with O/RM-s. Technically the <see cref="Id"/> 
     /// can also serve as the entity's business key but this is rarely a good idea because:
     /// <list type="number">
     /// <item>
@@ -26,7 +26,7 @@ namespace vm.Aspects.Model
     /// </item>
     /// </list>
     /// </para><para>
-    /// If the property <see cref="P:Id"/> exposes both a getter and a setter, the implementing types 
+    /// If the property <see cref="Id"/> exposes both a getter and a setter, the implementing types 
     /// should make sure that once the property is assigned a value it becomes immutable.
     /// </para>
     /// </summary>

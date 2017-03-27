@@ -5,8 +5,8 @@ namespace vm.Aspects.Visitor
     /// Interface IVisited defines the behavior of the visited objects from the G4 visitor design pattern.
     /// </summary>
     /// <typeparam name="TVisited">The type of the visitor.</typeparam>
-    /// <seealso cref="T:IVisited{TVisited}"/>
-    /// <seealso cref="T:CatchallVisitor"/>
+    /// <seealso cref="IVisited{TVisited}"/>
+    /// <seealso cref="CatchallVisitor"/>
     public interface IVisited<TVisited> where TVisited : class
     {
         /// <summary>

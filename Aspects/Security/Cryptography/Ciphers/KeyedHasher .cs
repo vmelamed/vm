@@ -315,7 +315,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously importing the symmetric key.
+        /// A <see cref="Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         public virtual async Task ImportSymmetricKeyAsync(
             byte[] key)
@@ -328,7 +328,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Asynchronously exports the symmetric key as a clear text.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
+        /// A <see cref="Task"/> object representing the process of asynchronously exporting the symmetric key including the result -
         /// array of bytes of the symmetric key or <see langword="null"/> if the cipher does not have a symmetric key.
         /// </returns>
         public virtual async Task<byte[]> ExportSymmetricKeyAsync()
@@ -510,7 +510,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
         /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="M:Dispose()"/>.
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
         /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
         /// </remarks>
         int _disposed;
@@ -536,12 +536,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Performs the actual job of disposing the object.
         /// </summary>
         /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="M:Dispose()"/> (explicitly or
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
         /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~Hasher"/>.
         /// </param>
         /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:Dispose()"/>, 
-        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="T:IDisposable"/> as well) 
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, 
+        /// it will try to release all managed resources (usually aggregated objects which implement <see cref="IDisposable"/> as well) 
         /// and then it will release all unmanaged resources if any. If the parameter is <c>false</c> then 
         /// the method will only try to release the unmanaged resources.
         /// </remarks>

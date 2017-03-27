@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
@@ -193,7 +194,8 @@ namespace vm.Aspects.Policies
         /// <param name="getNext">Delegate to execute to get the next delegate in the handler
         /// chain.</param>
         /// <returns>Return value from the target.</returns>
-        /// <exception cref="System.ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         public virtual IMethodReturn Invoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
