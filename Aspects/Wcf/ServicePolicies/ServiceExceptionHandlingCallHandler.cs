@@ -28,6 +28,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
     {
         /// <summary>
         /// Gets or sets the name of the exception handling policy used by this handler.
+        /// The default value is <see cref="ServiceFaultFromExceptionHandlingPolicies.PolicyName"/>
         /// </summary>
         public string ExceptionHandlingPolicyName { get; set; } = ServiceFaultFromExceptionHandlingPolicies.PolicyName;
 
@@ -86,7 +87,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        static IDictionary<MethodBase, IEnumerable<Type>> _faultContracts = new Dictionary<MethodBase, IEnumerable<Type>>();
+        static IDictionary<MethodBase, ICollection<Type>> _faultContracts = new Dictionary<MethodBase, ICollection<Type>>();
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
         FaultException TransformException(
@@ -113,7 +114,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             // can we return the faultException as we got it
             if (faultException != null)
-                if (fault == null  ||  IsFaultSupported(input, fault?.GetType()))
+                if (fault == null  ||  IsFaultSupported(input, fault.GetType()))
                     return faultException;
 
             // if not construct a generic one
@@ -146,7 +147,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (faultType == null)
                 return false;
 
-            IEnumerable<Type> contracts;
+            ICollection<Type> contracts;
 
             using (_sync.UpgradableReaderLock())
             {

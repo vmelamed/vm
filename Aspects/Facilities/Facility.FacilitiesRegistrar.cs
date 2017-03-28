@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -15,22 +14,9 @@ namespace vm.Aspects.Facilities
     public static partial class Facility
     {
         /// <summary>
-        /// The facilities registrar instance.
-        /// </summary>
-        static readonly FacilitiesRegistrar _registrar = new FacilitiesRegistrar();
-
-        /// <summary>
         /// Gets the facilities registrar instance.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new FacilitiesRegistrar();
 
         /// <summary>
         /// Class FacilitiesRegistrar. Registers facilities of type IClock, IGuidGenerator, ValidatorFactory, LogWriter, ExceptionManager

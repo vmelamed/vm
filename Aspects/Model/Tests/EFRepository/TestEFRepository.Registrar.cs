@@ -30,8 +30,6 @@ namespace vm.Aspects.Model.EFRepository.Tests
             }
         }
 
-        static readonly ContainerRegistrar _registrar = new TestEFRepositoryRegistrar();
-
-        public static ContainerRegistrar Registrar => _registrar;
+        public static ContainerRegistrar Registrar { get; } = new TestEFRepositoryRegistrar();
     }
 }

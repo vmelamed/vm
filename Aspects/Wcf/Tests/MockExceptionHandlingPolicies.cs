@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Tests
@@ -46,12 +46,10 @@ namespace vm.Aspects.Wcf.Tests
             }
         }
 
-        static readonly MockExceptionHandlingPoliciesRegistrar _registrar = new MockExceptionHandlingPoliciesRegistrar();
-
         /// <summary>
         /// Gets the WCF exception handling policies registrar.
         /// </summary>
-        public static ContainerRegistrar Registrar => _registrar;
+        public static ContainerRegistrar Registrar { get; } = new MockExceptionHandlingPoliciesRegistrar();
 
 
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Refers to many exceptions that can be thrown.")]

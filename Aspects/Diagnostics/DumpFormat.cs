@@ -66,7 +66,7 @@ namespace vm.Aspects.Diagnostics
         /// Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type and 3 - the value.
         /// Default: &quot;{3}&quot;
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag", Justification = "It is about enum FlagsAttribute")]
         public static string EnumFlag { get; set; }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
         /// Default: &quot;{0}: (&quot;
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag", Justification = "It is about enum FlagsAttribute")]
         public static string EnumFlagPrefix { get; set; }
 
         /// <summary>
@@ -82,6 +82,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
         /// Default: &quot; | &quot;
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag", Justification = "It is about enum FlagsAttribute")]
         public static string EnumFlagSeparator { get; set; }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type, 
         /// Default: &quot;)&quot;
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag", Justification = "It is about enum FlagsAttribute")]
         public static string EnumFlagSuffix { get; set; }
 
         /// <summary>

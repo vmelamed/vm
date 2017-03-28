@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -62,14 +61,6 @@ namespace vm.Aspects.Wcf.Bindings
         /// <summary>
         /// Gets the registrar.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new BindingConfigurationsRegistrar();
     }
 }

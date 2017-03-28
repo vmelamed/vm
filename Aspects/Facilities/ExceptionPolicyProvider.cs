@@ -19,22 +19,9 @@ namespace vm.Aspects.Facilities
     public class ExceptionPolicyProvider : IExceptionPolicyProvider
     {
         /// <summary>
-        /// The registrar of the policies.
-        /// </summary>
-        static readonly ExceptionHandlingPoliciesRegistrar _registrar = new ExceptionHandlingPoliciesRegistrar();
-
-        /// <summary>
         /// Gets the registrar of the policies.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new ExceptionHandlingPoliciesRegistrar();
 
         /// <summary>
         /// The registration name for the facilities policy provider by the facilities.

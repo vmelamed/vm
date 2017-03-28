@@ -7,7 +7,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 {
     public partial class ServiceFaultFromExceptionHandlingPolicies
     {
-        private class PolicyRegistrar : ContainerRegistrar
+        class PolicyRegistrar : ContainerRegistrar
         {
             protected override void DoRegister(
                 IUnityContainer container,

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using System;
+using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -39,10 +41,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
             exception.Data[nameof(fault.HandlingInstanceId)] = handlingInstanceId;
             fault.HandlingInstanceId                         = handlingInstanceId;
 
-            return (Exception)typeof(FaultException<>)
-                                .MakeGenericType(fault.GetType())
-                                .GetConstructor(new Type[] { fault.GetType(), typeof(string) })
-                                .Invoke(new object[] { fault, fault.Message })
+            var faultType = fault.GetType();
+
+            return (Exception)typeof(WebFaultException<>)
+                                .MakeGenericType(faultType)
+                                .GetConstructor(new Type[] { faultType, typeof(HttpStatusCode) })
+                                .Invoke(new object[] { fault, fault.HttpStatusCode })
                                 ;
         }
     }

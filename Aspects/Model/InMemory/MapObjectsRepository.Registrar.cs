@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
-using vm.Aspects.Facilities;
+﻿using Microsoft.Practices.Unity;
+using System.Collections.Generic;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.InMemory
@@ -9,22 +7,9 @@ namespace vm.Aspects.Model.InMemory
     public sealed partial class MapObjectsRepository
     {
         /// <summary>
-        /// The objects repository registrar instance.
-        /// </summary>
-        static readonly MapObjectsRepositoryRegistrar _registrar = new MapObjectsRepositoryRegistrar();
-
-        /// <summary>
         /// Gets the facilities registrar instance.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new MapObjectsRepositoryRegistrar();
 
         /// <summary>
         /// Class ObjectRepositoryRegistrar. Registers the object repository related types.

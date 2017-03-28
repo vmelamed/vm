@@ -20,22 +20,9 @@ namespace vm.Aspects.Facilities
     public static class LogConfigProvider
     {
         /// <summary>
-        /// The log configuration default registrar.
-        /// </summary>
-        static readonly LogConfigurationsRegistrar _registrar = new LogConfigurationsRegistrar();
-
-        /// <summary>
         /// Gets the log configuration default registrar.
         /// </summary>
-        public static ContainerRegistrar Registrar
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
-                return _registrar;
-            }
-        }
+        public static ContainerRegistrar Registrar { get; } = new LogConfigurationsRegistrar();
 
         /// <summary>
         /// The resolve name for the test log configuration in the DI container - TestLogger.

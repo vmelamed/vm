@@ -62,9 +62,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// <summary>
         /// Adds a new fault to exception types mapping.
         /// </summary>
-        /// <typeparam name="TException">The type of the exception.</typeparam>
         /// <typeparam name="TFault">The type of the fault.</typeparam>
-        /// <param name="exceptionFactory">A factory delegate which should produce an exception object from a fault object.</param>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <param name="exceptionFactory">A factory delegate which should produce an exception object from a given fault object.</param>
+        /// <param name="httpStatusCode">The HTTP status code mapped to the fault-exception pair. The default is InternalServerError (500).</param>
         /// <param name="faultFactory">A factory delegate which should produce a fault object from an exception object.
         /// If <see langword="null" /> this method will assume a default factory which will create the fault object and
         /// will attempt to copy all exception's properties to the fault's properties with the same and type.
@@ -72,12 +73,15 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// with values converted to string (invoking <see cref="object.ToString()" />)</param>
         /// <param name="force">if set to <see langword="true" /> the mapping will be implemented even if the types participate in existing mappings,
         /// otherwise if the types are already mapped to, the method will throw <see cref="InvalidOperationException" />.</param>
+        /// <exception cref="System.InvalidOperationException">
+        /// </exception>
         /// <exception cref="InvalidOperationException">The type {exceptionType.Name} is already mapped to {faultType.Name}.
         /// or
         /// The type {faultType.Name} is already mapped to {exceptionType.Name}.</exception>
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Justification = "No choice here.")]
         public static void AddMappingFaultToException<TFault, TException>(
             Func<Fault, TException> exceptionFactory,
+            HttpStatusCode httpStatusCode = HttpStatusCode.InternalServerError,
             Func<Exception, TFault> faultFactory = null,
             bool force = false)
             where TFault : Fault
@@ -98,8 +102,10 @@ namespace vm.Aspects.Wcf.FaultContracts
 
                 using (_lock.WriterLock())
                 {
-                    _exceptionToFault[typeof(TException)] = typeof(TFault);
-                    _faultToException[typeof(TFault)]     = typeof(TException);
+                    _exceptionToFault[typeof(TException)]         = typeof(TFault);
+                    _faultToException[typeof(TFault)]             = typeof(TException);
+                    ExceptionToHttpStatusCode[typeof(TException)] = httpStatusCode;
+                    FaultToHttpStatusCode[typeof(TFault)]         = httpStatusCode;
 
                     if (faultFactory != null)
                         _exceptionToFaultFactories[typeof(TException)] = faultFactory;
@@ -438,63 +444,61 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Maps fault type to HTTP status code
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
-        public static readonly IReadOnlyDictionary<Type, HttpStatusCode> FaultToHttpStatusCode = new ReadOnlyDictionary<Type, HttpStatusCode>(
-            new Dictionary<Type, HttpStatusCode>
-            {
-                [typeof(Fault)]                             = HttpStatusCode.InternalServerError,
-                [typeof(AggregateFault)]                    = HttpStatusCode.InternalServerError,
-                [typeof(ArgumentFault)]                     = HttpStatusCode.BadRequest,
-                [typeof(ArgumentNullFault)]                 = HttpStatusCode.BadRequest,
-                [typeof(ArgumentValidationFault)]           = HttpStatusCode.BadRequest,
-                [typeof(BusinessFault)]                     = HttpStatusCode.BadRequest,
-                [typeof(DataFault)]                         = HttpStatusCode.InternalServerError,
-                [typeof(DbUpdateFault)]                     = HttpStatusCode.InternalServerError,
-                [typeof(DirectoryNotFoundFault)]            = HttpStatusCode.NotFound,
-                [typeof(FileNotFoundFault)]                 = HttpStatusCode.NotFound,
-                [typeof(FormatFault)]                       = HttpStatusCode.InternalServerError,
-                [typeof(InvalidOperationFault)]             = HttpStatusCode.Conflict,
-                [typeof(IOFault)]                           = HttpStatusCode.InternalServerError,
-                [typeof(NotImplementedFault)]               = HttpStatusCode.NotImplemented,
-                [typeof(ObjectNotFoundFault)]               = HttpStatusCode.NotFound,
-                [typeof(ObjectIdentifierNotUniqueFault)]    = HttpStatusCode.BadRequest,
-                [typeof(PathTooLongFault)]                  = HttpStatusCode.BadRequest,
-                [typeof(RepeatableOperationFault)]          = HttpStatusCode.GatewayTimeout,
-                [typeof(SerializationFault)]                = HttpStatusCode.BadRequest,
-                [typeof(UnauthorizedAccessFault)]           = HttpStatusCode.Unauthorized,
-                [typeof(XmlFault)]                          = HttpStatusCode.InternalServerError,
-                [typeof(AuthenticationFault)]               = HttpStatusCode.Unauthorized,
-            });
+        public static readonly IDictionary<Type, HttpStatusCode> FaultToHttpStatusCode = new Dictionary<Type, HttpStatusCode>
+        {
+            [typeof(Fault)]                             = HttpStatusCode.InternalServerError,
+            [typeof(AggregateFault)]                    = HttpStatusCode.InternalServerError,
+            [typeof(ArgumentFault)]                     = HttpStatusCode.BadRequest,
+            [typeof(ArgumentNullFault)]                 = HttpStatusCode.BadRequest,
+            [typeof(ArgumentValidationFault)]           = HttpStatusCode.BadRequest,
+            [typeof(BusinessFault)]                     = HttpStatusCode.BadRequest,
+            [typeof(DataFault)]                         = HttpStatusCode.InternalServerError,
+            [typeof(DbUpdateFault)]                     = HttpStatusCode.InternalServerError,
+            [typeof(DirectoryNotFoundFault)]            = HttpStatusCode.NotFound,
+            [typeof(FileNotFoundFault)]                 = HttpStatusCode.NotFound,
+            [typeof(FormatFault)]                       = HttpStatusCode.InternalServerError,
+            [typeof(InvalidOperationFault)]             = HttpStatusCode.Conflict,
+            [typeof(IOFault)]                           = HttpStatusCode.InternalServerError,
+            [typeof(NotImplementedFault)]               = HttpStatusCode.NotImplemented,
+            [typeof(ObjectNotFoundFault)]               = HttpStatusCode.NotFound,
+            [typeof(ObjectIdentifierNotUniqueFault)]    = HttpStatusCode.BadRequest,
+            [typeof(PathTooLongFault)]                  = HttpStatusCode.BadRequest,
+            [typeof(RepeatableOperationFault)]          = HttpStatusCode.GatewayTimeout,
+            [typeof(SerializationFault)]                = HttpStatusCode.BadRequest,
+            [typeof(UnauthorizedAccessFault)]           = HttpStatusCode.Unauthorized,
+            [typeof(XmlFault)]                          = HttpStatusCode.InternalServerError,
+            [typeof(AuthenticationFault)]               = HttpStatusCode.Unauthorized,
+        };
 
         /// <summary>
         /// Maps exception type to HTTP status code
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "No, really, it is read only.")]
-        public static readonly IReadOnlyDictionary<Type, HttpStatusCode> ExceptionToHttpStatusCode = new ReadOnlyDictionary<Type, HttpStatusCode>(
-            new Dictionary<Type, HttpStatusCode>
-            {
-                [typeof(Exception)]                         = HttpStatusCode.InternalServerError,
-                [typeof(AggregateException)]                = HttpStatusCode.InternalServerError,
-                [typeof(ArgumentException)]                 = HttpStatusCode.BadRequest,
-                [typeof(ArgumentNullException)]             = HttpStatusCode.BadRequest,
-                [typeof(ArgumentValidationException)]       = HttpStatusCode.BadRequest,
-                [typeof(BusinessException)]                 = HttpStatusCode.BadRequest,
-                [typeof(DataException)]                     = HttpStatusCode.InternalServerError,
-                [typeof(DirectoryNotFoundException)]        = HttpStatusCode.NotFound,
-                [typeof(FileNotFoundException)]             = HttpStatusCode.NotFound,
-                [typeof(FormatException)]                   = HttpStatusCode.InternalServerError,
-                [typeof(InvalidOperationException)]         = HttpStatusCode.Conflict,
-                [typeof(IOException)]                       = HttpStatusCode.InternalServerError,
-                [typeof(NotImplementedException)]           = HttpStatusCode.NotImplemented,
-                [typeof(ObjectNotFoundException)]           = HttpStatusCode.NotFound,
-                [typeof(ObjectIdentifierNotUniqueException)]= HttpStatusCode.BadRequest,
-                [typeof(PathTooLongException)]              = HttpStatusCode.BadRequest,
-                [typeof(RepeatableOperationException)]      = HttpStatusCode.GatewayTimeout,
-                [typeof(SerializationException)]            = HttpStatusCode.BadRequest,
-                [typeof(UnauthorizedAccessException)]       = HttpStatusCode.Unauthorized,
-                [typeof(ValidationException)]               = HttpStatusCode.BadRequest,
-                [typeof(XmlException)]                      = HttpStatusCode.InternalServerError,
-                [typeof(AuthenticationException)]           = HttpStatusCode.Unauthorized,
-            });
+        public static readonly IDictionary<Type, HttpStatusCode> ExceptionToHttpStatusCode = new Dictionary<Type, HttpStatusCode>
+        {
+            [typeof(Exception)]                         = HttpStatusCode.InternalServerError,
+            [typeof(AggregateException)]                = HttpStatusCode.InternalServerError,
+            [typeof(ArgumentException)]                 = HttpStatusCode.BadRequest,
+            [typeof(ArgumentNullException)]             = HttpStatusCode.BadRequest,
+            [typeof(ArgumentValidationException)]       = HttpStatusCode.BadRequest,
+            [typeof(BusinessException)]                 = HttpStatusCode.BadRequest,
+            [typeof(DataException)]                     = HttpStatusCode.InternalServerError,
+            [typeof(DirectoryNotFoundException)]        = HttpStatusCode.NotFound,
+            [typeof(FileNotFoundException)]             = HttpStatusCode.NotFound,
+            [typeof(FormatException)]                   = HttpStatusCode.InternalServerError,
+            [typeof(InvalidOperationException)]         = HttpStatusCode.Conflict,
+            [typeof(IOException)]                       = HttpStatusCode.InternalServerError,
+            [typeof(NotImplementedException)]           = HttpStatusCode.NotImplemented,
+            [typeof(ObjectNotFoundException)]           = HttpStatusCode.NotFound,
+            [typeof(ObjectIdentifierNotUniqueException)]= HttpStatusCode.BadRequest,
+            [typeof(PathTooLongException)]              = HttpStatusCode.BadRequest,
+            [typeof(RepeatableOperationException)]      = HttpStatusCode.GatewayTimeout,
+            [typeof(SerializationException)]            = HttpStatusCode.BadRequest,
+            [typeof(UnauthorizedAccessException)]       = HttpStatusCode.Unauthorized,
+            [typeof(ValidationException)]               = HttpStatusCode.BadRequest,
+            [typeof(XmlException)]                      = HttpStatusCode.InternalServerError,
+            [typeof(AuthenticationException)]           = HttpStatusCode.Unauthorized,
+        };
 
         /// <summary>
         /// Maps HTTP status codes to a string descriptions.

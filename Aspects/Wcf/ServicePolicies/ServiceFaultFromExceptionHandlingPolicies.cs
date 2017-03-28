@@ -46,21 +46,21 @@ namespace vm.Aspects.Wcf.ServicePolicies
             return new ExceptionPolicyEntry[]
             {
                 new ExceptionPolicyEntry(
-                            typeof(Exception),
-                            PostHandlingAction.ThrowNewException,
-                            new IExceptionHandler[]
-                            {
-                                new LoggingExceptionHandler(
-                                        LogWriterFacades.Exception,
-                                        eventId,
-                                        TraceEventType.Error,
-                                        logExceptionTitle,
-                                        1,
-                                        typeof(DumpExceptionFormatter),
-                                        Facility.LogWriter),
+                        typeof(Exception),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[]
+                        {
+                            new LoggingExceptionHandler(
+                                    LogWriterFacades.Exception,
+                                    eventId,
+                                    TraceEventType.Error,
+                                    logExceptionTitle,
+                                    1,
+                                    typeof(DumpExceptionFormatter),
+                                    Facility.LogWriter),
 
-                                new ServiceFaultFromExceptionHandler(),
-                           })
+                            new ServiceFaultFromExceptionHandler(),
+                        })
             };
         }
     }
