@@ -109,9 +109,9 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentException>(minDelayBeforeRetry             >= 0, nameof(minDelayBeforeRetry)+" cannot be negative");
             Contract.Requires<ArgumentException>(maxDelayBeforeRetry             >= 0, nameof(maxDelayBeforeRetry)+" cannot be negative");
 
-            _repositoryFactory              = repositoryFactory ?? DefaultRepositoryFactory;
-            _transactionScopeFactory        = transactionScopeFactory ?? DefaultTransactionScopeFactory;
-            CreateTransactionScope          = createTransactionScope;
+            _repositoryFactory       = repositoryFactory ?? DefaultRepositoryFactory;
+            _transactionScopeFactory = transactionScopeFactory ?? DefaultTransactionScopeFactory;
+            CreateTransactionScope   = createTransactionScope;
 
             _concurrencyExceptionHandler = new OptimisticConcurrencyExceptionHandler(
                 optimisticConcurrencyStrategy,
