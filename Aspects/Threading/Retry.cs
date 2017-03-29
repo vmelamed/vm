@@ -11,10 +11,6 @@ namespace vm.Aspects.Threading
     /// Hint: if the operation does not have return value (i.e. has void return value) use some primitive type, e.g. <see cref="bool"/>.</typeparam>
     public class Retry<T>
     {
-        readonly int _maxRetries;
-        readonly int _minDelay;
-        readonly int _maxDelay;
-
         readonly Func<int, T> _operation;
         readonly Func<T, int, bool> _isFailure;
         readonly Func<T, int, bool> _isSuccess;
@@ -31,15 +27,6 @@ namespace vm.Aspects.Threading
         /// <summary>
         /// Initializes a new instance of the <see cref="Retry{T}"/> class.
         /// </summary>
-        /// <param name="maxRetries">
-        /// The maximum number to retry.
-        /// </param>
-        /// <param name="minDelay">
-        /// The minimum delay before retry in milliseconds.
-        /// </param>
-        /// <param name="maxDelay">
-        /// The maximum delay before retry in milliseconds.
-        /// </param>
         /// <param name="operation">
         /// The operation to be tried one or more times.
         /// </param>
@@ -55,27 +42,17 @@ namespace vm.Aspects.Threading
         /// Note that <paramref name="isFailure"/> is always called before <paramref name="isSuccess"/>.
         /// </param>
         /// <param name="epilogue">
-        /// Caller supplied lambda to be run after the operation was attempted unsuccessfully <paramref name="maxRetries"/> times.
+        /// Caller supplied lambda to be run after the operation was attempted unsuccessfully the maximum number of retries.
         /// Hint: based on the result from the last operation, the lambda may throw exception.
         /// </param>
         public Retry(
-            int maxRetries,
-            int minDelay,
-            int maxDelay,
             Func<int, T> operation,
             Func<T, int, bool> isFailure = null,
             Func<T, int, bool> isSuccess = null,
             Func<T, int, T> epilogue = null)
         {
-            Contract.Requires<ArgumentException>(maxRetries > 1, "Please specify more than one retries.");
-            Contract.Requires<ArgumentException>(minDelay >= 0, "Please specify non-negative minimum delay before retrying.");
-            Contract.Requires<ArgumentException>(maxDelay >= 0, "Please specify non-negative maximum delay before retrying.");
-            Contract.Requires<ArgumentException>(maxDelay >= minDelay, "The maximum delay cannot be less than the minimum delay.");
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
 
-            _maxRetries = maxRetries;
-            _minDelay   = minDelay;
-            _maxDelay   = maxDelay;
             _operation  = operation;
             _isSuccess  = isSuccess ?? _defaultSuccess;
             _isFailure  = isFailure ?? _defaultFailure;
@@ -85,9 +62,26 @@ namespace vm.Aspects.Threading
         /// <summary>
         /// Starts retrying the operation.
         /// </summary>
+        /// <param name="maxRetries">
+        /// The maximum number to retry.
+        /// </param>
+        /// <param name="minDelay">
+        /// The minimum delay before retry in milliseconds.
+        /// </param>
+        /// <param name="maxDelay">
+        /// The maximum delay before retry in milliseconds.
+        /// </param>
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
-        public T Start()
+        public T Start(
+            int maxRetries,
+            int minDelay,
+            int maxDelay)
         {
+            Contract.Requires<ArgumentException>(maxRetries > 1, "Please specify more than one retries.");
+            Contract.Requires<ArgumentException>(minDelay >= 0, "Please specify non-negative minimum delay before retrying.");
+            Contract.Requires<ArgumentException>(maxDelay >= 0, "Please specify non-negative maximum delay before retrying.");
+            Contract.Requires<ArgumentException>(maxDelay >= minDelay, "The maximum delay cannot be less than the minimum delay.");
+
             var result  = default(T);
             var retries = 0;
             var first   = true;
@@ -97,8 +91,8 @@ namespace vm.Aspects.Threading
                 if (first)
                     first = false;
                 else
-                if (_minDelay > 0  ||  _maxDelay > 0)
-                    Task.Delay(_minDelay + Random.Next(_maxDelay-_minDelay)).Wait();
+                if (minDelay > 0  ||  maxDelay > 0)
+                    Task.Delay(minDelay + Random.Next(maxDelay-minDelay)).Wait();
 
                 result = _operation(retries);
 
@@ -110,7 +104,7 @@ namespace vm.Aspects.Threading
 
                 retries++;
             }
-            while (retries < _maxRetries);
+            while (retries < maxRetries);
 
             return _epilogue(result, retries);
         }
