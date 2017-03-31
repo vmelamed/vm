@@ -11,6 +11,15 @@ namespace vm.Aspects.Threading
     /// Hint: if the operation does not have return value (i.e. has void return value) use some primitive type, e.g. <see cref="bool"/>.</typeparam>
     public class Retry<T>
     {
+        /// <summary>
+        /// The default maximum number of retries.
+        /// </summary>
+        public const int DefaultMaxRetries = 5;
+        /// <summary>
+        /// The default minimum delay between retries.
+        /// </summary>
+        public const int DefaultMinDelay = 50;
+
         readonly Func<int, T> _operation;
         readonly Func<T, int, bool> _isFailure;
         readonly Func<T, int, bool> _isSuccess;
@@ -53,10 +62,10 @@ namespace vm.Aspects.Threading
         {
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
 
-            _operation  = operation;
-            _isSuccess  = isSuccess ?? _defaultSuccess;
-            _isFailure  = isFailure ?? _defaultFailure;
-            _epilogue   = epilogue  ?? _defaultEpilogue;
+            _operation = operation;
+            _isSuccess = isSuccess ?? _defaultSuccess;
+            _isFailure = isFailure ?? _defaultFailure;
+            _epilogue  = epilogue  ?? _defaultEpilogue;
         }
 
         /// <summary>
@@ -73,14 +82,16 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
         public T Start(
-            int maxRetries,
-            int minDelay,
-            int maxDelay)
+            int maxRetries = DefaultMaxRetries,
+            int minDelay = DefaultMinDelay,
+            int maxDelay = 0)
         {
-            Contract.Requires<ArgumentException>(maxRetries > 1, "Please specify more than one retries.");
-            Contract.Requires<ArgumentException>(minDelay >= 0, "Please specify non-negative minimum delay before retrying.");
-            Contract.Requires<ArgumentException>(maxDelay >= 0, "Please specify non-negative maximum delay before retrying.");
-            Contract.Requires<ArgumentException>(maxDelay >= minDelay, "The maximum delay cannot be less than the minimum delay.");
+            Contract.Requires<ArgumentException>(maxRetries > 1, "The retries must be more than one.");
+            Contract.Requires<ArgumentException>(minDelay >= 0, "The minimum delay before retrying must be a non-negative number.");
+            Contract.Requires<ArgumentException>(maxDelay == 0  ||  maxDelay >= minDelay, "The maximum delay must be 0 or equal to or greater than the minimum delay.");
+
+            if (maxDelay == 0)
+                maxDelay = minDelay;
 
             var result  = default(T);
             var retries = 0;
