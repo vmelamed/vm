@@ -54,6 +54,7 @@ namespace vm.Aspects.Validation.Tests
             TestValidator("123456780", true);
             TestValidator("021100361", true);
             TestValidator("056073573", true);
+            TestValidator("021000021", true);
         }
 
         [ExpectedException(typeof(ArgumentException))]
