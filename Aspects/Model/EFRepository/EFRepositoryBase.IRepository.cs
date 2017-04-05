@@ -111,6 +111,12 @@ namespace vm.Aspects.Model.EFRepository
         }
 
         /// <summary>
+        /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
+        /// See also <seealso cref="CommitChanges"/> and <seealso cref="CommitChangesAsync"/>.
+        /// </summary>
+        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
+
+        /// <summary>
         /// Gets a unique store id for the specified type of objects.
         /// </summary>
         /// <typeparam name="T">The type of object for which to get a unique ID.</typeparam>
@@ -218,7 +224,7 @@ namespace vm.Aspects.Model.EFRepository
             var entry = ChangeTracker.Entries<T>()
                                      .FirstOrDefault(e => ReferenceEquals(e.Entity, entity));
 
-            if (state == EntityState.Modified && modifiedProperties.Length > 0)
+            if (state == EntityState.Modified && modifiedProperties.Any())
             {
                 entry.State = EFEntityState.Unchanged;
                 foreach (var property in modifiedProperties)
@@ -450,7 +456,29 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository CommitChanges()
         {
-            SaveChanges();
+            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.None)
+            {
+                SaveChanges();
+                return this;
+            }
+
+            while (true)
+                try
+                {
+                    SaveChanges();
+                    return this;
+                }
+                catch (AggregateException x)
+                {
+                    if (x.InnerExceptions.Count() > 1)
+                        throw x;
+
+                    var ex = x.InnerExceptions.First();
+                }
+                catch (Exception x)
+                {
+                }
+
             return this;
         }
 

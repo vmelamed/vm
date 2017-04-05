@@ -31,7 +31,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default maximum delay before the retry after an optimistic concurrency exception.
         /// </summary>
-        public const int DefaultMaxDelayBeforeRetry = 200;
+        public const int DefaultMaxDelayBeforeRetry = 100;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy.
@@ -82,7 +82,7 @@ namespace vm.Aspects.Model
         {
             Contract.Requires<ArgumentException>(maxOptimisticConcurrencyRetries >= 0, nameof(maxOptimisticConcurrencyRetries)+" cannot be negative");
             Contract.Requires<ArgumentException>(minDelayBeforeRetry             >= 0, nameof(minDelayBeforeRetry)+" cannot be negative");
-            Contract.Requires<ArgumentException>(maxDelayBeforeRetry             >= 0, nameof(maxDelayBeforeRetry)+" cannot be negative");
+            Contract.Requires<ArgumentException>(maxDelayBeforeRetry             >= minDelayBeforeRetry, nameof(maxDelayBeforeRetry)+" must be greater than "+nameof(minDelayBeforeRetry));
 
             OptimisticConcurrencyStrategy   = optimisticConcurrencyStrategy;
             MaxOptimisticConcurrencyRetries = maxOptimisticConcurrencyRetries;
@@ -150,7 +150,7 @@ namespace vm.Aspects.Model
 
         async Task WaitBeforeRetryAsync()
         {
-            await Task.Delay(MinDelayBeforeRetry + _random.Next(MaxDelayBeforeRetry));
+            await Task.Delay(MinDelayBeforeRetry + _random.Next(MaxDelayBeforeRetry-MinDelayBeforeRetry));
         }
     }
 }

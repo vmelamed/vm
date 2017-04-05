@@ -66,6 +66,12 @@ namespace vm.Aspects.Model.InMemory
         public bool IsInitialized => _isInitialized;
 
         /// <summary>
+        /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
+        /// Here it really doesn't matter as all in memory operations are synchronized and concurrency conflicts will not happen.
+        /// </summary>
+        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
+
+        /// <summary>
         /// Initializes the repository.
         /// </summary>
         /// <returns>IRepository.</returns>

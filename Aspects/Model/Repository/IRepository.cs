@@ -25,6 +25,11 @@ namespace vm.Aspects.Model.Repository
         bool IsInitialized { get; }
 
         /// <summary>
+        /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
+        /// </summary>
+        OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
+
+        /// <summary>
         /// Gets a unique store id for the specified type of objects.
         /// </summary>
         /// <typeparam name="T">The type of object for which to get a unique ID.</typeparam>
@@ -305,6 +310,8 @@ namespace vm.Aspects.Model.Repository
         {
             get { throw new NotImplementedException(); }
         }
+
+        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
         public TId GetStoreId<T, TId>()
             where T : IHasStoreId<TId>

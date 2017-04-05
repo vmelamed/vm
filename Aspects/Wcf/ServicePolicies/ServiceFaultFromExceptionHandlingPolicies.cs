@@ -17,7 +17,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <summary>
         /// The exception transformation policy name
         /// </summary>
-        public const string RegistrationName = "ServiceFaultFromExceptionHandlingPolicies";
+        public const string RegistrationName = nameof(ServiceFaultFromExceptionHandlingPolicies);
         /// <summary>
         /// The exception transformation policy name
         /// </summary>

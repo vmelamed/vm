@@ -258,6 +258,8 @@
     <Compile Include="BaseDomainValue.cs" />
     <Compile Include="CachedAttribute.cs" />
     <Compile Include="CacheKeyAttribute.cs" />
+    <Compile Include="EFRepository\EFRepositoryExceptionHandler.cs" />
+    <Compile Include="EFRepository\OptimisticConcurrencyExceptionHandlingPolicies.cs" />
     <Compile Include="OptimisticConcurrencyExceptionHandler.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainEntity.Metadata.cs">

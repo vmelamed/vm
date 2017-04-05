@@ -110,6 +110,8 @@ namespace vm.Aspects.Model.EFRepository
                     // If you enable migrations, register a database initializer:
                     //
                     //.RegisterTypeIfNot<IDatabaseInitializer<EFRepositoryBase-derived>, MigrateDatabaseToLatestVersion<EFRepositoryBase-derived, Configuration>>(new InjectionConstructor(true))
+
+                    .UnsafeRegister(OptimisticConcurrencyExceptionHandlingPolicies.Registrar, registrations, isTest)
                     ;
             }
         }
