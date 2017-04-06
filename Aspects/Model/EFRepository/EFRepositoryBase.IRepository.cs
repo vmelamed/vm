@@ -7,8 +7,10 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
+    using Facilities;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
+    using System.Data.Entity.Infrastructure;
     using System.Reflection;
     using System.Security;
     using EFEntityState = System.Data.Entity.EntityState;
@@ -449,40 +451,6 @@ namespace vm.Aspects.Model.EFRepository
         public IQueryable<T> DetachedValues<T>() where T : BaseDomainValue => Set<T>().AsNoTracking();
 
         /// <summary>
-        /// Saves the changes buffered in the repository's context.
-        /// </summary>
-        /// <returns>
-        ///   <c>this</c>
-        /// </returns>
-        public IRepository CommitChanges()
-        {
-            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.None)
-            {
-                SaveChanges();
-                return this;
-            }
-
-            while (true)
-                try
-                {
-                    SaveChanges();
-                    return this;
-                }
-                catch (AggregateException x)
-                {
-                    if (x.InnerExceptions.Count() > 1)
-                        throw x;
-
-                    var ex = x.InnerExceptions.First();
-                }
-                catch (Exception x)
-                {
-                }
-
-            return this;
-        }
-
-        /// <summary>
         /// Initializes the repository asynchronously.
         /// </summary>
         /// <returns>this</returns>
@@ -510,6 +478,52 @@ namespace vm.Aspects.Model.EFRepository
             where T : BaseDomainEntity, IHasBusinessKey<TKey>
             where TKey : IEquatable<TKey> => Set<T>().FirstOrDefaultAsync(e => e.Key.Equals(key));
 
+        /// <summary>
+        /// Saves the changes buffered in the repository's context.
+        /// </summary>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
+        public IRepository CommitChanges()
+        {
+            var succeeded = false;
+            var retries = 0;
+
+            while (!succeeded)
+                try
+                {
+                    SaveChanges();
+                    succeeded = true;
+                }
+                catch (Exception x)
+                {
+                    Exception newException;
+                    var rethrow = Facility.ExceptionManager.HandleException(x, OptimisticConcurrencyStrategy.ToString(), out newException);
+
+                    if (rethrow)
+                    {
+                        if (newException != null)
+                            throw newException;
+                        else
+                            throw;
+                    }
+
+                    if (retries++ >= MaxNumberOfRetries)
+                        throw;
+
+                    var ex = x as DbUpdateConcurrencyException;
+
+                    if (ex != null)
+                    {
+                        var entry = ex.Entries.Single();
+
+                        DelayBeforeRetryAsync().Wait();
+                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    }
+                }
+
+            return this;
+        }
 
         /// <summary>
         /// Asynchronously saves the changes buffered in the repository's context.
@@ -517,9 +531,75 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns><c>this</c></returns>
         public async Task<IRepository> CommitChangesAsync()
         {
-            await SaveChangesAsync();
+            var succeeded = false;
+            var retries = 0;
+
+            while (!succeeded)
+                try
+                {
+                    await SaveChangesAsync();
+                    succeeded = true;
+                }
+                catch (Exception x)
+                {
+                    Exception newException;
+                    var rethrow = Facility.ExceptionManager.HandleException(x, OptimisticConcurrencyStrategy.ToString(), out newException);
+
+                    if (rethrow)
+                    {
+                        if (newException != null)
+                            throw newException;
+                        else
+                            throw;
+                    }
+
+                    if (retries++ >= MaxNumberOfRetries)
+                        throw;
+
+                    var ex = x as DbUpdateConcurrencyException;
+
+                    if (ex != null)
+                    {
+                        var entry = ex.Entries.Single();
+
+                        await DelayBeforeRetryAsync();
+                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    }
+                }
+
             return this;
         }
         #endregion
+
+        /// <summary>
+        /// Gets or sets the maximum number of <see cref="CommitChanges"/> retries.
+        /// </summary>
+        public int MaxNumberOfRetries { get; set; } = 10;
+        /// <summary>
+        /// Gets or sets the minimum wait before <see cref="CommitChanges"/> retry.
+        /// </summary>
+        public int MinWaitBeforeRetry { get; set; } = 50;
+        /// <summary>
+        /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry.
+        /// </summary>
+        public int MaxWaitBeforeRetry { get; set; } = 150;
+
+        readonly Lazy<Random> _random = new Lazy<Random>(() => new Random(unchecked((int)DateTime.Now.Ticks)));
+
+        Random Random => _random.Value;
+
+        async Task DelayBeforeRetryAsync()
+        {
+            if (MinWaitBeforeRetry <= 0)
+                return;
+
+            if (MaxWaitBeforeRetry < MinWaitBeforeRetry)
+                MaxWaitBeforeRetry = MinWaitBeforeRetry;
+
+            if (MaxWaitBeforeRetry == MinWaitBeforeRetry)
+                await Task.Delay(MinWaitBeforeRetry);
+            else
+                await Task.Delay(MinWaitBeforeRetry + Random.Next(MaxWaitBeforeRetry-MinWaitBeforeRetry));
+        }
     }
 }

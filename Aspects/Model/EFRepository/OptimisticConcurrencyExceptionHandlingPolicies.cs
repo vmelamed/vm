@@ -1,8 +1,8 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using vm.Aspects.Exceptions;
@@ -30,7 +30,7 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         public const string StoreWinsPolicyName = nameof(OptimisticConcurrencyStrategy.StoreWins);
         /// <summary>
-        /// The client wins policy name. The <see cref="DbUpdateConcurrencyException"/>-s are swalen, 
+        /// The client wins policy name. The <see cref="DbUpdateConcurrencyException"/>-s are swallowed, 
         /// some of the DB related exceptions are wrapped in <see cref="RepeatableOperationException"/> and 
         /// the rest of the exceptions are rethrown.
         /// </summary>
@@ -57,26 +57,24 @@ namespace vm.Aspects.Model.EFRepository
         static ExceptionPolicyEntry[] NoneExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3800;
+            int eventId = 3500;
 
             return new ExceptionPolicyEntry[]
             {
+                // basically log warning and rethrow
                 new ExceptionPolicyEntry(
-                        typeof(OptimisticConcurrencyException),
+                        typeof(Exception),
                         PostHandlingAction.NotifyRethrow,
                         new IExceptionHandler[]
                         {
                             new LoggingExceptionHandler(
                                     LogWriterFacades.Exception,
                                     eventId++,
-                                    TraceEventType.Warning,
-                                    logExceptionTitle,
+                                    TraceEventType.Information, // the exceptions are logged as Information so that they are easy to suppress.
+                                    logExceptionTitle,          // They should be handled properly by the higher on the stack callers.
                                     1,
                                     typeof(DumpExceptionFormatter),
                                     Facility.LogWriter),
-
-                            new EFRepositoryExceptionHandler(
-                                    OptimisticConcurrencyStrategy.None),
                         })
             };
         }
@@ -84,21 +82,38 @@ namespace vm.Aspects.Model.EFRepository
         static ExceptionPolicyEntry[] ClientWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3700;
+            int eventId = 3600;
 
             return new ExceptionPolicyEntry[]
             {
                 new ExceptionPolicyEntry(
-                        typeof(OptimisticConcurrencyException),
+                        typeof(DbUpdateConcurrencyException),
                         PostHandlingAction.None,
                         new IExceptionHandler[]
                         {
                             new LoggingExceptionHandler(
                                     LogWriterFacades.Exception,
                                     eventId++,
-                                    TraceEventType.Warning,
-                                    logExceptionTitle,
-                                    1,
+                                    TraceEventType.Information, // the DbUpdateConcurrencyException-s are logged as Information so that they are easy to suppress.
+                                    logExceptionTitle,          // the exception is handled locally in the repository by repeating the operation and enforcing the client values
+                                    2,
+                                    typeof(DumpExceptionFormatter),
+                                    Facility.LogWriter),
+
+                            // do not even call the handler for DbUpdateConcurrencyException
+                        }),
+
+                new ExceptionPolicyEntry(
+                        typeof(Exception),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[]
+                        {
+                            new LoggingExceptionHandler(
+                                    LogWriterFacades.Exception,
+                                    eventId++,
+                                    TraceEventType.Warning,     // all other exceptions are logged as warnings, some of them will be wrapped and thrown as RepeatableOperationException the rest will be rethrown
+                                    logExceptionTitle,          // callers higher on the stack should handle them properly
+                                    2,
                                     typeof(DumpExceptionFormatter),
                                     Facility.LogWriter),
 
@@ -111,21 +126,21 @@ namespace vm.Aspects.Model.EFRepository
         static ExceptionPolicyEntry[] StoreWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3750;
+            int eventId = 3700;
 
             return new ExceptionPolicyEntry[]
             {
                 new ExceptionPolicyEntry(
-                        typeof(OptimisticConcurrencyException),
-                        PostHandlingAction.NotifyRethrow,
+                        typeof(Exception),
+                        PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
                             new LoggingExceptionHandler(
                                     LogWriterFacades.Exception,
                                     eventId++,
-                                    TraceEventType.Warning,
-                                    logExceptionTitle,
-                                    1,
+                                    TraceEventType.Warning,     // all exceptions are logged as warnings, some of them will be wrapped and thrown as RepeatableOperationException the rest will be rethrown
+                                    logExceptionTitle,          // callers higher on the stack should handle them properly
+                                    2,
                                     typeof(DumpExceptionFormatter),
                                     Facility.LogWriter),
 

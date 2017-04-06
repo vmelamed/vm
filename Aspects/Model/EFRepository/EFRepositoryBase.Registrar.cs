@@ -32,7 +32,7 @@ namespace vm.Aspects.Model.EFRepository
         public static ContainerRegistrar Registrar<T>() where T : EFRepositoryBase
             => new EFRepositoryBaseRegistrar<T>();
 
-        class EFRepositoryBaseRegistrar<T> : ContainerRegistrar
+        class EFRepositoryBaseRegistrar<T> : ContainerRegistrar where T : EFRepositoryBase
         {
             /// <summary>
             /// Does the actual work of the registration.
@@ -108,8 +108,7 @@ namespace vm.Aspects.Model.EFRepository
                     .RegisterTypeIfNot(registrations, typeof(IRepository), typeof(T), HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, new TransientLifetimeManager())
 
                     // If you enable migrations, register a database initializer:
-                    //
-                    //.RegisterTypeIfNot<IDatabaseInitializer<EFRepositoryBase-derived>, MigrateDatabaseToLatestVersion<EFRepositoryBase-derived, Configuration>>(new InjectionConstructor(true))
+                    //.RegisterTypeIfNot<IDatabaseInitializer<T>, MigrateDatabaseToLatestVersion<T, Configuration>>(new InjectionConstructor(true))
 
                     .UnsafeRegister(OptimisticConcurrencyExceptionHandlingPolicies.Registrar, registrations, isTest)
                     ;

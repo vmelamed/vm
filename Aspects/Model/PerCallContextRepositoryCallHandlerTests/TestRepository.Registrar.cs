@@ -31,13 +31,24 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                     //.RegisterTypeIfNot<IDatabaseInitializer<TestRepository>, MigrateDatabaseToLatestVersion<TestRepository, Configuration>>(registrations)
                     .RegisterTypeIfNot<IDatabaseInitializer<TestRepository>, DropCreateDatabaseAlways<TestRepository>>(registrations)
 
-                    // SYNCHRONOUS repositories registration
-                    // the repository used by the services
-                    .RegisterTypeIfNot<IRepository, TestRepository>(registrations, new HierarchicalLifetimeManager())
-                    // a transient repository used by tests and anything else.
-                    .RegisterTypeIfNot<IRepository, TestRepository>(registrations, "transient")
-
                     .UnsafeRegister(EFRepositoryBase.Registrar<TestRepository>(), registrations, isTest)
+
+                    // repositories registration
+                    // the repository used by the services
+                    .RegisterTypeIfNot<IRepository, TestRepository>(
+                                        registrations,
+                                        new HierarchicalLifetimeManager(),
+                                        new InjectionProperty(
+                                                nameof(IRepository.OptimisticConcurrencyStrategy),
+                                                OptimisticConcurrencyStrategy.ClientWins))
+
+                    // a transient repository used by tests and anything else.
+                    .RegisterTypeIfNot<IRepository, TestRepository>(
+                                        registrations,
+                                        "transient",
+                                        new InjectionProperty(
+                                                nameof(IRepository.OptimisticConcurrencyStrategy),
+                                                OptimisticConcurrencyStrategy.ClientWins))
                     ;
 
                 return container;

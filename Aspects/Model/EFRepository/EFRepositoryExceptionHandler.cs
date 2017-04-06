@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using System;
-using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 
@@ -19,6 +19,7 @@ namespace vm.Aspects.Model.EFRepository
         public EFRepositoryExceptionHandler(
             OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins)
         {
+            OptimisticConcurrencyStrategy = optimisticConcurrencyStrategy;
         }
 
         /// <summary>
@@ -37,18 +38,20 @@ namespace vm.Aspects.Model.EFRepository
             Exception exception,
             Guid handlingInstanceId)
         {
-            var spec = new EFSpecifics();
+            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.None)
+                return exception;
 
-            if (exception is OptimisticConcurrencyException  &&
-                OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.ClientWins)
+            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.ClientWins  &&
+                exception is DbUpdateConcurrencyException)
                 return null;
 
+            // The strategy is StoreWins or the exception is not 
             if (exception.IsTransient())
             {
                 var ex = new RepeatableOperationException(exception);
 
                 ex.Data["HandlingInstanceId"] = handlingInstanceId;
-                throw ex;
+                return ex;
             }
 
             return exception;
