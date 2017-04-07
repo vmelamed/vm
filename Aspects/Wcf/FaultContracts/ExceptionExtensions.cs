@@ -37,6 +37,27 @@ namespace vm.Aspects.Wcf.FaultContracts
         }
 
         /// <summary>
+        /// Populates the <see cref="Exception.Data" /> dictionary with data from a corresponding (e.g. from <see cref="Fault" />) dictionary and the dump the fault.
+        /// </summary>
+        /// <typeparam name="TException">The type of the exception.</typeparam>
+        /// <param name="exception">The exception that needs to be populated.</param>
+        /// <param name="fault">The fault.</param>
+        /// <returns>Exception.</returns>
+        public static TException PopulateData<TException>(
+            this TException exception,
+            Fault fault)
+            where TException : Exception
+        {
+            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            Contract.Requires<ArgumentNullException>(fault     != null, nameof(fault));
+            Contract.Ensures(Contract.Result<Exception>() != null);
+
+            exception.PopulateData(fault.Data);
+            exception.Data[$"{fault.GetType().Name}.Dump"] = fault.DumpString();
+            return exception;
+        }
+
+        /// <summary>
         /// Populates the <see cref="Fault.Data"/> dictionary with data from a corresponding (e.g. from <see cref="Exception"/>) dictionary.
         /// </summary>
         /// <param name="fault">The fault that needs to be populated.</param>

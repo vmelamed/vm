@@ -113,28 +113,35 @@ namespace vm.Aspects.Wcf.ServicePolicies
                             : null;
 
             // can we return the faultException as we got it
-            if (faultException != null)
-                if (fault == null  ||  IsFaultSupported(input, fault.GetType()))
-                    return faultException;
+            if (fault != null  &&  IsFaultSupported(input, fault.GetType()))
+                return faultException;
 
-            // if not construct a generic one
+            // if the base fault is supported one with all fields copied either to properties or to the Data collection.
+            // Send it with status code 500 to indicate that the fault must be added to the protocol
+            if (IsFaultSupported(input, typeof(Fault)))
+            {
+                fault = Fault.FaultFactory<Exception>(exception);
+                return new WebFaultException<Fault>(fault, HttpStatusCode.InternalServerError);
+            }
+
+            // otherwise construct base WebFaultException with some debug data in the Data property that will be dumped in the logs
             var exceptionToReturn = new WebFaultException(HttpStatusCode.InternalServerError);
 
             if (fault != null)
-                exceptionToReturn.PopulateData(
+                return exceptionToReturn
+                            .PopulateData(
                                     new SortedDictionary<string, string>
                                     {
-                                        ["HandlingInstanceId"] = fault?.HandlingInstanceId.ToString(),
-                                        ["Fault"] = fault?.DumpString(),
-                                    });
-            else
-                exceptionToReturn.PopulateData(
-                                    new SortedDictionary<string, string>
-                                    {
-                                        ["Exception"] = exception.DumpString(),
+                                        ["HandlingInstanceId"] = fault.HandlingInstanceId.ToString(),
+                                        ["Fault"]              = fault.DumpString(),
                                     });
 
-            return exceptionToReturn;
+            return exceptionToReturn
+                        .PopulateData(
+                                new SortedDictionary<string, string>
+                                {
+                                    ["Exception"]          = exception.DumpString(),
+                                });
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
+using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Threading;
 
@@ -222,43 +223,42 @@ namespace vm.Aspects.Wcf.FaultContracts
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
             Contract.Ensures(Contract.Result<Fault>() != null);
 
-            Type faultType;
-            var isFound = false;
-            var httpCode = HttpStatusCode.InternalServerError;
-
-            using (_lock.ReaderLock())
-            {
-                isFound =_exceptionToFault.TryGetValue(exception.GetType(), out faultType);
-                if (!isFound  &&  !ExceptionToHttpStatusCode.TryGetValue(exception.GetType(), out httpCode))
-                    httpCode = ExceptionToHttpStatusCode[typeof(Exception)];
-            }
-
             var exceptionProperties = exception
                                         .GetType()
                                         .GetProperties(BindingFlags.Public|BindingFlags.Instance)
-                                        .Where(pi => pi.GetGetMethod() != null  &&  pi.Name!=nameof(Exception.StackTrace));
+                                        .Where(pi => pi.GetGetMethod() != null  &&
+                                                     pi.GetIndexParameters().Count() == 0  &&
+                                                     pi.Name != nameof(Exception.StackTrace))   // do not copy the stack trace to the fault
+                                        ;
+
+            var isFound = false;
+            Type faultType;
+
+            using (_lock.ReaderLock())
+                isFound =_exceptionToFault.TryGetValue(typeof(TException), out faultType);
+
+            Fault fault;
 
             if (!isFound)
             {
-                var result = new Fault
+                fault = new Fault
                 {
                     Message        = exception.Message,
-                    HttpStatusCode = httpCode,
+                    HttpStatusCode = HttpStatusCode.InternalServerError,
                     Data           = exceptionProperties
-                                        .Where(pi => pi.Name != nameof(Exception.Message)  &&
-                                                     pi.GetIndexParameters().Count() == 0)
+                                        .Where(pi => pi.Name != nameof(Exception.Message))
                                         .ToDictionary(
                                             pi => pi.Name,
                                             pi => pi.GetValue(exception)?.ToString()),
                 };
 
-                result.Data[$"{nameof(Exception)}.Dump"] = exception.DumpString(0, typeof(ExceptionDumpNoStackMetadata));
-                return result;
+                fault.Data[$"{nameof(Exception)}.Dump"] = exception.DumpString(0, typeof(ExceptionDumpNoStackMetadata));
+                return fault;
             };
 
-            Fault fault = (Fault)faultType
-                                    .GetConstructor(Type.EmptyTypes)
-                                    .Invoke(null);
+            fault = (Fault)faultType
+                            .GetConstructor(Type.EmptyTypes)
+                            .Invoke(null);
 
             foreach (var xpi in exceptionProperties)
                 if (xpi.Name!=nameof(Exception.Data)  &&  xpi.GetIndexParameters().Count() == 0)
@@ -396,48 +396,48 @@ namespace vm.Aspects.Wcf.FaultContracts
 
         static IDictionary<Type, Func<Fault, Exception>> _faultToExceptionFactories = new Dictionary<Type, Func<Fault, Exception>>
         {
-            [typeof(Fault)]                                 = f => { CheckFault<Fault>(f); return new Exception(f.Message).PopulateData(f.Data); },
-            [typeof(AggregateFault)]                        = f => { CheckFault<Fault>(f); return new AggregateException(f.Message).PopulateData(f.Data); },
+            [typeof(Fault)]                                 = f => { CheckFault<Fault>(f); return new Exception(f.Message).PopulateData(f); },
+            [typeof(AggregateFault)]                        = f => { CheckFault<Fault>(f); return new AggregateException(f.Message).PopulateData(f); },
             [typeof(ArgumentFault)]                         = f =>
                                                             {
                                                                 CheckFault<ArgumentFault>(f);
 
-                                                                var x = new ArgumentException(f.Message, ((ArgumentFault)f).ParamName).PopulateData(f.Data);
+                                                                var x = new ArgumentException(f.Message, ((ArgumentFault)f).ParamName);
                                                                 x.Data["InnerExceptionMessages"] = f.InnerExceptionsMessages;
-                                                                return x;
+                                                                return x.PopulateData(f);
                                                             },
-            [typeof(ArgumentNullFault)]                     = f => { CheckFault<Fault>(f); return new ArgumentNullException(((ArgumentNullFault)f).ParamName, f.Message).PopulateData(f.Data); },
-            [typeof(ArgumentValidationFault)]               = f => { CheckFault<Fault>(f); return new ArgumentValidationException(((ArgumentValidationFault)f).ValidationResults, ((ArgumentValidationFault)f).ParamName).PopulateData(f.Data); },
-            [typeof(BusinessFault)]                         = f => { CheckFault<Fault>(f); return new BusinessException(f.Message).PopulateData(f.Data); },
-            [typeof(DataFault)]                             = f => { CheckFault<Fault>(f); return new DataException(f.Message).PopulateData(f.Data); },
-            [typeof(DirectoryNotFoundFault)]                = f => { CheckFault<Fault>(f); return new DirectoryNotFoundException(f.Message).PopulateData(f.Data); },
-            [typeof(FileNotFoundFault)]                     = f => { CheckFault<Fault>(f); return new FileNotFoundException(f.Message, ((FileNotFoundFault)f).FileName).PopulateData(f.Data); },
-            [typeof(FormatFault)]                           = f => { CheckFault<Fault>(f); return new FormatException(f.Message).PopulateData(f.Data); },
-            [typeof(InvalidOperationFault)]                 = f => { CheckFault<Fault>(f); return new InvalidOperationException(f.Message).PopulateData(f.Data); },
-            [typeof(IOFault)]                               = f => { CheckFault<Fault>(f); return new IOException(f.Message).PopulateData(f.Data); },
-            [typeof(NotImplementedFault)]                   = f => { CheckFault<Fault>(f); return new NotImplementedException(f.Message).PopulateData(f.Data); },
+            [typeof(ArgumentNullFault)]                     = f => { CheckFault<Fault>(f); return new ArgumentNullException(((ArgumentNullFault)f).ParamName, f.Message).PopulateData(f); },
+            [typeof(ArgumentValidationFault)]               = f => { CheckFault<Fault>(f); return new ArgumentValidationException(((ArgumentValidationFault)f).ValidationResults, ((ArgumentValidationFault)f).ParamName).PopulateData(f); },
+            [typeof(BusinessFault)]                         = f => { CheckFault<Fault>(f); return new BusinessException(f.Message).PopulateData(f); },
+            [typeof(DataFault)]                             = f => { CheckFault<Fault>(f); return new DataException(f.Message).PopulateData(f); },
+            [typeof(DirectoryNotFoundFault)]                = f => { CheckFault<Fault>(f); return new DirectoryNotFoundException(f.Message).PopulateData(f); },
+            [typeof(FileNotFoundFault)]                     = f => { CheckFault<Fault>(f); return new FileNotFoundException(f.Message, ((FileNotFoundFault)f).FileName).PopulateData(f); },
+            [typeof(FormatFault)]                           = f => { CheckFault<Fault>(f); return new FormatException(f.Message).PopulateData(f); },
+            [typeof(InvalidOperationFault)]                 = f => { CheckFault<Fault>(f); return new InvalidOperationException(f.Message).PopulateData(f); },
+            [typeof(IOFault)]                               = f => { CheckFault<Fault>(f); return new IOException(f.Message).PopulateData(f); },
+            [typeof(NotImplementedFault)]                   = f => { CheckFault<Fault>(f); return new NotImplementedException(f.Message).PopulateData(f); },
             [typeof(ObjectNotFoundFault)]                   = f =>
                                                             {
                                                                 CheckFault<ObjectNotFoundFault>(f);
 
-                                                                var x = new ObjectNotFoundException(((ObjectNotFoundFault)f).ObjectIdentifier,null,f.Message).PopulateData(f.Data);
+                                                                var x = new ObjectNotFoundException(((ObjectNotFoundFault)f).ObjectIdentifier,null,f.Message);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
-                                                                return x;
+                                                                return x.PopulateData(f);
                                                             },
             [typeof(ObjectIdentifierNotUniqueFault)]        = f =>
                                                             {
                                                                 CheckFault<Fault>(f);
 
-                                                                var x = new ObjectIdentifierNotUniqueException(((ObjectIdentifierNotUniqueFault)f).ObjectIdentifier,null,f.Message).PopulateData(f.Data);
+                                                                var x = new ObjectIdentifierNotUniqueException(((ObjectIdentifierNotUniqueFault)f).ObjectIdentifier,null,f.Message);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
-                                                                return x;
+                                                                return x.PopulateData(f);
                                                             },
-            [typeof(PathTooLongFault)]                      = f => { CheckFault<Fault>(f); return new PathTooLongException(f.Message).PopulateData(f.Data); },
-            [typeof(RepeatableOperationFault)]              = f => { CheckFault<Fault>(f); return new RepeatableOperationException(f.Message).PopulateData(f.Data); },
-            [typeof(SerializationFault)]                    = f => { CheckFault<Fault>(f); return new SerializationException(f.Message).PopulateData(f.Data); },
-            [typeof(UnauthorizedAccessFault)]               = f => { CheckFault<Fault>(f); return new UnauthorizedAccessException(f.Message).PopulateData(f.Data); },
-            [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f.Data); },
-            [typeof(AuthenticationFault)]                   = f => { CheckFault<Fault>(f); return new AuthenticationException(f.Message).PopulateData(f.Data); },
+            [typeof(PathTooLongFault)]                      = f => { CheckFault<Fault>(f); return new PathTooLongException(f.Message).PopulateData(f); },
+            [typeof(RepeatableOperationFault)]              = f => { CheckFault<Fault>(f); return new RepeatableOperationException(f.Message).PopulateData(f); },
+            [typeof(SerializationFault)]                    = f => { CheckFault<Fault>(f); return new SerializationException(f.Message).PopulateData(f); },
+            [typeof(UnauthorizedAccessFault)]               = f => { CheckFault<Fault>(f); return new UnauthorizedAccessException(f.Message).PopulateData(f); },
+            [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f); },
+            [typeof(AuthenticationFault)]                   = f => { CheckFault<Fault>(f); return new AuthenticationException(f.Message).PopulateData(f); },
         };
 
         /// <summary>
