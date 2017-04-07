@@ -82,7 +82,7 @@ namespace vm.Aspects.Model.EFRepository
         static ExceptionPolicyEntry[] ClientWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3600;
+            int eventId = 3510;
 
             return new ExceptionPolicyEntry[]
             {
@@ -126,7 +126,7 @@ namespace vm.Aspects.Model.EFRepository
         static ExceptionPolicyEntry[] StoreWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
-            int eventId = 3700;
+            int eventId = 3520;
 
             return new ExceptionPolicyEntry[]
             {

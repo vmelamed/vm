@@ -219,6 +219,7 @@
     <Compile Include="ExternalMetadata\ConfigurationErrorsExceptionDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\ConstantExpressionDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\CultureInfoDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ExceptionDumpNoStackMetadata.cs" />
     <Compile Include="ExternalMetadata\ExceptionDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\ExpressionDumpMetadata.cs" />
     <Compile Include="ExternalMetadata\LambdaExpressionDumpMetadata.cs" />

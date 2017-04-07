@@ -236,7 +236,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             var exceptionProperties = exception
                                         .GetType()
                                         .GetProperties(BindingFlags.Public|BindingFlags.Instance)
-                                        .Where(pi => pi.GetGetMethod() != null);
+                                        .Where(pi => pi.GetGetMethod() != null  &&  pi.Name!=nameof(Exception.StackTrace));
 
             if (!isFound)
             {
@@ -252,7 +252,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                                             pi => pi.GetValue(exception)?.ToString()),
                 };
 
-                result.Data["Exception.Dump"] = exception.DumpString();
+                result.Data[$"{nameof(Exception)}.Dump"] = exception.DumpString(0, typeof(ExceptionDumpNoStackMetadata));
                 return result;
             };
 
@@ -274,7 +274,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                         if (fpi != null  &&  fpi.CanWrite)
                             fpi.SetValue(fault, value);
                         else
-                            fault.Data[$"Exception.{xpi.Name}"] = value.ToString();
+                            fault.Data[$"{nameof(Exception)}.{xpi.Name}"] = value.ToString();
                     }
                     catch (AmbiguousMatchException)
                     {

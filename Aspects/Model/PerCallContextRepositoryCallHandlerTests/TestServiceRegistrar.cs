@@ -43,8 +43,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                                             new ContainerControlledLifetimeManager(),
                                             new InjectionProperty(
                                                 nameof(ServiceExceptionHandlingCallHandler.ExceptionHandlingPolicyName),
-                                                //ServiceFaultFromExceptionHandlingPolicies.PolicyName))
-                                                ExceptionPolicyProvider.LogAndSwallowPolicyName))
+                                                ServiceFaultFromExceptionHandlingPolicies.PolicyName))
+                                                //ExceptionPolicyProvider.LogAndSwallowPolicyName))
                         .AddCallHandler<ServiceCallTraceCallHandler>(
                                             new ContainerControlledLifetimeManager(),
                                             new InjectionConstructor(Facility.LogWriter))
