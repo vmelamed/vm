@@ -1,5 +1,4 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using System;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
@@ -67,14 +65,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
                             PostHandlingAction.ThrowNewException,
                             new IExceptionHandler[]
                             {
-                                new LoggingExceptionHandler(
-                                        LogWriterFacades.Exception,
-                                        eventId,
-                                        TraceEventType.Error,
-                                        logExceptionTitle,
-                                        1,
-                                        typeof(DumpExceptionFormatter),
-                                        Facility.LogWriter),
+                                ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
+                                    eventId),
 
                                 new FaultContractExceptionHandler(
                                         typeof(TFault),

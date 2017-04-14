@@ -1,13 +1,10 @@
-﻿using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Policies;
@@ -23,40 +20,13 @@ namespace vm.Aspects.Model
     /// the application developer does not need to worry about saving changes in the repository, committing and rolling-back transactions, 
     /// error handling, repository disposal, etc.
     /// </summary>
-    public class UnitOfWorkCallHandler : BaseCallHandler<UnitOfWorkData>
+    public class UnitOfWorkCallHandler : BaseCallHandler<TransactionScope>
     {
         /// <summary>
         /// Gets or sets a value indicating whether to create explicitly transaction scope.
         /// The use of this property must be very well justified.
         /// </summary>
         public bool CreateTransactionScope { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to dispose the repository in the clean-up phase.
-        /// If the lifetime of the repository is controlled outside of this handler (e.g. with <see cref="HierarchicalLifetimeManager"/>),
-        /// do not dispose the repository here.
-        /// </summary>
-        public bool DisposeRepository { get; set; }
-
-        /// <summary>
-        /// Gets or sets the optimistic concurrency strategy.
-        /// </summary>
-        public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultOptimisticConcurrencyStrategy;
-
-        /// <summary>
-        /// Gets or sets the maximum optimistic concurrency retries.
-        /// </summary>
-        public int MaxOptimisticConcurrencyRetries { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMaxOptimisticConcurrencyRetries;
-
-        /// <summary>
-        /// The minimum delay before the retry after an optimistic concurrency exception.
-        /// </summary>
-        public int MinDelayBeforeRetry { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMinDelayBeforeRetry;
-
-        /// <summary>
-        /// The maximum delay before the retry after an optimistic concurrency exception.
-        /// </summary>
-        public int MaxDelayBeforeRetry { get; set; } = OptimisticConcurrencyExceptionHandler.DefaultMaxDelayBeforeRetry;
 
         /// <summary>
         /// Gets or sets a value indicating whether to log a warning for the exception.
@@ -69,7 +39,7 @@ namespace vm.Aspects.Model
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "will do later")]
-        protected override UnitOfWorkData Prepare(
+        protected override TransactionScope Prepare(
             IMethodInvocation input)
         {
             if (!(input.Target is IHasRepository))
@@ -89,18 +59,9 @@ namespace vm.Aspects.Model
                     Transaction.Current.TransactionInformation.DistributedIdentifier);
             }
 
-            return new UnitOfWorkData
-            {
-                ExceptionHandler = new OptimisticConcurrencyExceptionHandler(
-                                            OptimisticConcurrencyStrategy,
-                                            MaxOptimisticConcurrencyRetries,
-                                            MinDelayBeforeRetry,
-                                            MaxDelayBeforeRetry,
-                                            LogExceptionWarnings),
-                TransactionScope = CreateTransactionScope
-                                            ? new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)
-                                            : null,
-            };
+            return CreateTransactionScope
+                                ? new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)
+                                : null;
         }
 
         /// <summary>
@@ -111,13 +72,13 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="methodReturn">The result.</param>
-        /// <param name="callData">The call data.</param>
+        /// <param name="transactionScope">The call data.</param>
         /// <returns>IMethodReturn.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            UnitOfWorkData callData)
+            TransactionScope transactionScope)
         {
             Contract.Ensures(Contract.Result<IMethodReturn>() != null);
 
@@ -132,25 +93,25 @@ namespace vm.Aspects.Model
                 var hasRepository = (IHasRepository)input.Target;
 
                 // get the repository
-                callData.Repository = hasRepository.Repository;
+                var repository = hasRepository.Repository;
 
-                if (callData.Repository == null)
+                if (repository == null)
                     throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
 
                 // commit
-                CommitChanges(callData);
+                repository.CommitChanges();
+                transactionScope?.Complete();
+
                 return methodReturn;
             }
             catch (Exception x)
             {
-                // wrap the exception in a new IMethodReturn
-                return input.CreateExceptionMethodReturn(
-                                ProcessException(input, x));
+                return input.CreateExceptionMethodReturn(x);
             }
             finally
             {
                 // and clean-up
-                CleanUp(callData);
+                transactionScope?.Dispose();
             }
         }
 
@@ -161,103 +122,34 @@ namespace vm.Aspects.Model
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="input">The input.</param>
         /// <param name="methodReturn">The method return.</param>
-        /// <param name="callData">The call data.</param>
+        /// <param name="transactionScope">The call data.</param>
         /// <returns>Task{TResult}.</returns>
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,
-            UnitOfWorkData callData)
+            TransactionScope transactionScope)
         {
             try
             {
                 if (methodReturn.Exception != null)
                     throw methodReturn.Exception;
 
-                var result = await base.ContinueWith<TResult>(input, methodReturn, callData);
+                var result = await base.ContinueWith<TResult>(input, methodReturn, transactionScope);
                 var hasRepository = (IHasRepository)input.Target;
 
-                callData.Repository = hasRepository.Repository;
+                var repository = hasRepository.Repository;
 
-                if (callData.Repository == null)
+                if (repository == null)
                     throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
 
-                await CommitChangesAsync(callData);
+                await repository.CommitChangesAsync();
+                transactionScope?.Complete();
                 return result;
-            }
-            catch (Exception x)
-            {
-                throw ProcessException(input, x);
             }
             finally
             {
-                CleanUp(callData);
+                transactionScope?.Dispose();
             }
-        }
-
-        static void CommitChanges(
-            UnitOfWorkData callData)
-        {
-            var success = false;
-
-            while (!success)
-                try
-                {
-                    callData.Repository.CommitChanges();
-                    callData.TransactionScope?.Complete();
-                    success = true;
-                }
-                catch (DbUpdateConcurrencyException x)
-                {
-                    callData.ExceptionHandler.HandleDbUpdateConcurrencyException(x);
-                }
-        }
-
-        async Task CommitChangesAsync(
-            UnitOfWorkData callData)
-        {
-            var success = false;
-
-            while (!success)
-                try
-                {
-                    await callData.Repository.CommitChangesAsync();
-                    callData.TransactionScope?.Complete();
-                    success = true;
-                }
-                catch (DbUpdateConcurrencyException x)
-                {
-                    await callData.ExceptionHandler.HandleDbUpdateConcurrencyExceptionAsync(x);
-                }
-        }
-
-        void CleanUp(
-            UnitOfWorkData callData)
-        {
-            if (DisposeRepository)
-                callData.Repository?.Dispose();
-
-            callData.TransactionScope?.Dispose();
-        }
-
-        static Exception ProcessException(
-            IMethodInvocation input,
-            Exception exception)
-        {
-            Contract.Requires<ArgumentNullException>(input     != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            var aggregateException = exception as AggregateException;
-
-            if (aggregateException != null  &&  aggregateException.InnerExceptions.Count == 1)
-                exception = aggregateException.InnerExceptions[0];
-
-            if (exception.IsTransient()  ||  exception.IsOptimisticConcurrency())
-                exception = new RepeatableOperationException(exception);
-
-            // add more info to the exception
-            exception.Data.Add("ServiceMethod", input.Target.GetType().ToString()+'.'+input.MethodBase.Name);
-
-            return exception;
         }
     }
 }

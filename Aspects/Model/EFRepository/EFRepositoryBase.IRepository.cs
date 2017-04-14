@@ -12,6 +12,7 @@ namespace vm.Aspects.Model.EFRepository
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
     using System.Data.Entity.Infrastructure;
+    using System.Diagnostics;
     using System.Reflection;
     using System.Security;
     using Threading;
@@ -509,7 +510,9 @@ namespace vm.Aspects.Model.EFRepository
                                 throw;
                         }
 
-                        if (i == MaxNumberOfRetries)
+                        Debug.Assert(exception is DbUpdateConcurrencyException);
+
+                        if (i == MaxNumberOfRetries-1)
                             throw new RepeatableOperationException(exception);
 
                         var cx = exception as DbUpdateConcurrencyException;
@@ -570,7 +573,7 @@ namespace vm.Aspects.Model.EFRepository
                                 throw;
                         }
 
-                        if (i == MaxNumberOfRetries)
+                        if (i == MaxNumberOfRetries-1)
                             throw new RepeatableOperationException(exception);
 
                         var cx = exception as DbUpdateConcurrencyException;
@@ -586,8 +589,8 @@ namespace vm.Aspects.Model.EFRepository
                         return false;
                     }
                 },
-                async (r, i) => false,   // it never really fails - only throws exceptions
-                async (r, i) => r)
+                (r, i) => Task.FromResult(false),   // it never really fails - only throws exceptions
+                (r, i) => Task.FromResult(r))
                 .StartAsync(
                     MaxNumberOfRetries,
                     MinWaitBeforeRetry,
@@ -598,15 +601,15 @@ namespace vm.Aspects.Model.EFRepository
         #endregion
 
         /// <summary>
-        /// Gets or sets the maximum number of <see cref="CommitChanges"/> retries.
+        /// Gets or sets the maximum number of <see cref="CommitChanges"/> retries on optimistic concurrency exception.
         /// </summary>
         public int MaxNumberOfRetries { get; set; } = 10;
         /// <summary>
-        /// Gets or sets the minimum wait before <see cref="CommitChanges"/> retry.
+        /// Gets or sets the minimum wait before <see cref="CommitChanges"/> retry after optimistic concurrency exception.
         /// </summary>
         public int MinWaitBeforeRetry { get; set; } = 50;
         /// <summary>
-        /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry.
+        /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry after optimistic concurrency exception.
         /// </summary>
         public int MaxWaitBeforeRetry { get; set; } = 150;
 
