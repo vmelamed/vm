@@ -7,12 +7,15 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
+    using Exceptions;
     using Facilities;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
     using System.Data.Entity.Infrastructure;
+    using System.Diagnostics;
     using System.Reflection;
     using System.Security;
+    using Threading;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = vm.Aspects.Model.Repository.EntityState;
 
@@ -486,101 +489,127 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository CommitChanges()
         {
-            var succeeded = false;
-            var retries = 0;
-
-            while (!succeeded)
-                try
+            new Retry<bool>(
+                i =>
                 {
-                    SaveChanges();
-                    succeeded = true;
-                }
-                catch (Exception x)
-                {
-                    Exception newException;
-                    var rethrow = Facility.ExceptionManager.HandleException(x, OptimisticConcurrencyStrategy.ToString(), out newException);
-
-                    if (rethrow)
+                    try
                     {
-                        if (newException != null)
-                            throw newException;
-                        else
-                            throw;
+                        SaveChanges();
+                        return true;
                     }
-
-                    if (retries++ >= MaxNumberOfRetries)
-                        throw;
-
-                    var ex = x as DbUpdateConcurrencyException;
-
-                    if (ex != null)
+                    catch (Exception exception)
                     {
-                        var entry = ex.Entries.Single();
+                        Exception newException;
+                        var rethrow = Facility.ExceptionManager.HandleException(exception, OptimisticConcurrencyStrategy.ToString(), out newException);
 
-                        DelayBeforeRetryAsync().Wait();
-                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                        if (rethrow)
+                        {
+                            if (newException != null)
+                                throw newException;
+                            else
+                                throw;
+                        }
+
+                        Debug.Assert(exception is DbUpdateConcurrencyException);
+
+                        if (i == MaxNumberOfRetries-1)
+                            throw new RepeatableOperationException(exception);
+
+                        var cx = exception as DbUpdateConcurrencyException;
+
+                        if (cx != null)
+                        {
+                            var entry = cx.Entries.Single();
+
+                            entry.OriginalValues.SetValues(
+                                entry.GetDatabaseValues());
+                        }
+
+                        return false;
                     }
-                }
+                },
+                (r, i) => false,   // it never really fails - only throws exceptions
+                (r, i) => r)
+                .Start(
+                    MaxNumberOfRetries,
+                    MinWaitBeforeRetry,
+                    MaxWaitBeforeRetry);
 
             return this;
         }
 
         /// <summary>
-        /// Asynchronously saves the changes buffered in the repository's context.
+        /// Saves the changes buffered in the repository's context asynchronously.
         /// </summary>
-        /// <returns><c>this</c></returns>
+        /// <returns>
+        ///   <c>this</c>
+        /// </returns>
         public async Task<IRepository> CommitChangesAsync()
         {
-            var succeeded = false;
-            var retries = 0;
-
-            while (!succeeded)
-                try
+            await new RetryTasks<bool>(
+                async i =>
                 {
-                    await SaveChangesAsync();
-                    succeeded = true;
-                }
-                catch (Exception x)
-                {
-                    Exception newException;
-                    var rethrow = Facility.ExceptionManager.HandleException(x, OptimisticConcurrencyStrategy.ToString(), out newException);
-
-                    if (rethrow)
+                    try
                     {
-                        if (newException != null)
-                            throw newException;
-                        else
-                            throw;
+                        await SaveChangesAsync();
+                        return true;
                     }
-
-                    if (retries++ >= MaxNumberOfRetries)
-                        throw;
-
-                    var ex = x as DbUpdateConcurrencyException;
-
-                    if (ex != null)
+                    catch (Exception exception)
                     {
-                        var entry = ex.Entries.Single();
+                        var ex = exception;
+                        var aex = ex as AggregateException;
 
-                        await DelayBeforeRetryAsync();
-                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                        if (aex?.InnerExceptions.Count() == 1)
+                            ex = aex.InnerExceptions.First();
+
+                        Exception newException;
+                        var rethrow = Facility.ExceptionManager.HandleException(ex, OptimisticConcurrencyStrategy.ToString(), out newException);
+
+                        if (rethrow)
+                        {
+                            if (newException != null)
+                                throw newException;
+                            else
+                                throw;
+                        }
+
+                        if (i == MaxNumberOfRetries-1)
+                            throw new RepeatableOperationException(exception);
+
+                        var cx = exception as DbUpdateConcurrencyException;
+
+                        if (cx != null)
+                        {
+                            var entry = cx.Entries.Single();
+
+                            entry.OriginalValues.SetValues(
+                                await entry.GetDatabaseValuesAsync());
+                        }
+
+                        return false;
                     }
-                }
+                },
+                (r, i) => Task.FromResult(false),   // it never really fails - only throws exceptions
+                (r, i) => Task.FromResult(r))
+                .StartAsync(
+                    MaxNumberOfRetries,
+                    MinWaitBeforeRetry,
+                    MaxWaitBeforeRetry);
 
             return this;
         }
         #endregion
 
         /// <summary>
-        /// Gets or sets the maximum number of <see cref="CommitChanges"/> retries.
+        /// Gets or sets the maximum number of <see cref="CommitChanges"/> retries on optimistic concurrency exception.
         /// </summary>
         public int MaxNumberOfRetries { get; set; } = 10;
         /// <summary>
-        /// Gets or sets the minimum wait before <see cref="CommitChanges"/> retry.
+        /// Gets or sets the minimum wait before <see cref="CommitChanges"/> retry after optimistic concurrency exception.
         /// </summary>
         public int MinWaitBeforeRetry { get; set; } = 50;
         /// <summary>
-        /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry.
+        /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry after optimistic concurrency exception.
         /// </summary>
         public int MaxWaitBeforeRetry { get; set; } = 150;
 

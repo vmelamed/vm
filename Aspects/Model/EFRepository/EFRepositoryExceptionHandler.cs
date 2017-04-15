@@ -41,6 +41,7 @@ namespace vm.Aspects.Model.EFRepository
             if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.None)
                 return exception;
 
+            // the exception is handled locally in the repository by repeating the operation and enforcing the client values
             if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.ClientWins  &&
                 exception is DbUpdateConcurrencyException)
                 return null;

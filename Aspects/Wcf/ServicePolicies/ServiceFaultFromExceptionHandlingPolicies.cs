@@ -1,8 +1,6 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -50,14 +48,9 @@ namespace vm.Aspects.Wcf.ServicePolicies
                         PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
-                            new LoggingExceptionHandler(
-                                    LogWriterFacades.Exception,
-                                    eventId,
-                                    TraceEventType.Error,
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
                                     logExceptionTitle,
-                                    1,
-                                    typeof(DumpExceptionFormatter),
-                                    Facility.LogWriter),
+                                    eventId),
 
                             new ServiceFaultFromExceptionHandler(),
                         })

@@ -37,6 +37,27 @@ namespace vm.Aspects.Facilities
         public const string LogAndRethrowPolicyName = "Log and Rethrow";
 
         /// <summary>
+        /// Creates a logging exception handler.
+        /// </summary>
+        /// <param name="exceptionTitle">The exception title.</param>
+        /// <param name="eventId">The event identifier.</param>
+        /// <param name="eventType">Type of the event.</param>
+        /// <param name="priority">The priority.</param>
+        /// <returns>LoggingExceptionHandler.</returns>
+        public static LoggingExceptionHandler CreateLoggingExceptionHandler(
+            string exceptionTitle,
+            int eventId,
+            TraceEventType eventType = TraceEventType.Error,
+            int priority = 1) => new LoggingExceptionHandler(
+                                        LogWriterFacades.Exception,
+                                        eventId++,
+                                        eventType,
+                                        exceptionTitle,
+                                        priority,
+                                        typeof(DumpExceptionFormatter),
+                                        Facility.LogWriter);
+
+        /// <summary>
         /// Class ExceptionHandlingPoliciesRegistrar. Registers the two exception handling policies.
         /// </summary>
         private class ExceptionHandlingPoliciesRegistrar : ContainerRegistrar
@@ -81,14 +102,9 @@ namespace vm.Aspects.Facilities
                                                     PostHandlingAction.None,
                                                     new IExceptionHandler[]
                                                     {
-                                                        new LoggingExceptionHandler(
-                                                                LogWriterFacades.Exception,
-                                                                1000,
-                                                                TraceEventType.Error,
+                                                        CreateLoggingExceptionHandler(
                                                                 RegistrationName,
-                                                                1,
-                                                                typeof(DumpExceptionFormatter),
-                                                                Facility.LogWriter),
+                                                                1000),
                                                     }),
                                             },
 
@@ -99,14 +115,9 @@ namespace vm.Aspects.Facilities
                                                     PostHandlingAction.NotifyRethrow,
                                                     new IExceptionHandler[]
                                                     {
-                                                        new LoggingExceptionHandler(
-                                                                LogWriterFacades.Exception,
-                                                                2000,
-                                                                TraceEventType.Error,
-                                                                "vm.Aspects.Facilities",
-                                                                1,
-                                                                typeof(DumpExceptionFormatter),
-                                                                Facility.LogWriter),
+                                                        CreateLoggingExceptionHandler(
+                                                                RegistrationName,
+                                                                1100),
                                                     }),
                                             },
             };

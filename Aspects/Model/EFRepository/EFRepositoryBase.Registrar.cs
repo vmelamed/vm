@@ -107,7 +107,7 @@ namespace vm.Aspects.Model.EFRepository
                     .RegisterInstanceIfNot<Func<IRepository>>(registrations, HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, () => DIContainer.Root.Resolve<IRepository>(HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName))
                     .RegisterTypeIfNot(registrations, typeof(IRepository), typeof(T), HiLoStoreIdProvider.HiLoGeneratorsRepositoryResolveName, new TransientLifetimeManager())
 
-                    // If you enable migrations, register a database initializer:
+                    // In the descendant classes, if you enable migrations, register a database initializer:
                     //.RegisterTypeIfNot<IDatabaseInitializer<T>, MigrateDatabaseToLatestVersion<T, Configuration>>(new InjectionConstructor(true))
 
                     .UnsafeRegister(OptimisticConcurrencyExceptionHandlingPolicies.Registrar, registrations, isTest)

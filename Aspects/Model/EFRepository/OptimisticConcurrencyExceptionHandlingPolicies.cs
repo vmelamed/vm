@@ -1,5 +1,4 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects.Model.EFRepository
 {
@@ -61,20 +61,32 @@ namespace vm.Aspects.Model.EFRepository
 
             return new ExceptionPolicyEntry[]
             {
+                // log and unwrap
+                new ExceptionPolicyEntry(
+                        typeof(AggregateException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[]
+                        {
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
+                                    eventId++,
+                                    TraceEventType.Information),
+
+                            new UnwrapAggregateExceptionHandler(
+                                    OptimisticConcurrencyStrategy.None.ToString()),
+                        }
+                    ),
+
                 // basically log warning and rethrow
                 new ExceptionPolicyEntry(
                         typeof(Exception),
                         PostHandlingAction.NotifyRethrow,
                         new IExceptionHandler[]
                         {
-                            new LoggingExceptionHandler(
-                                    LogWriterFacades.Exception,
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Information, // the exceptions are logged as Information so that they are easy to suppress.
-                                    logExceptionTitle,          // They should be handled properly by the higher on the stack callers.
-                                    1,
-                                    typeof(DumpExceptionFormatter),
-                                    Facility.LogWriter),
+                                    TraceEventType.Information),
                         })
             };
         }
@@ -86,21 +98,33 @@ namespace vm.Aspects.Model.EFRepository
 
             return new ExceptionPolicyEntry[]
             {
+                // log and unwrap
+                new ExceptionPolicyEntry(
+                        typeof(AggregateException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[]
+                        {
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
+                                    eventId++,
+                                    TraceEventType.Information),
+
+                            new UnwrapAggregateExceptionHandler(
+                                    OptimisticConcurrencyStrategy.ClientWins.ToString()),
+                        }
+                    ),
+
                 new ExceptionPolicyEntry(
                         typeof(DbUpdateConcurrencyException),
                         PostHandlingAction.None,
                         new IExceptionHandler[]
                         {
-                            new LoggingExceptionHandler(
-                                    LogWriterFacades.Exception,
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Information, // the DbUpdateConcurrencyException-s are logged as Information so that they are easy to suppress.
-                                    logExceptionTitle,          // the exception is handled locally in the repository by repeating the operation and enforcing the client values
-                                    2,
-                                    typeof(DumpExceptionFormatter),
-                                    Facility.LogWriter),
+                                    TraceEventType.Information),
 
-                            // do not even call the handler for DbUpdateConcurrencyException
+                            // do not call the handler for DbUpdateConcurrencyException
                         }),
 
                 new ExceptionPolicyEntry(
@@ -108,14 +132,10 @@ namespace vm.Aspects.Model.EFRepository
                         PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
-                            new LoggingExceptionHandler(
-                                    LogWriterFacades.Exception,
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Warning,     // all other exceptions are logged as warnings, some of them will be wrapped and thrown as RepeatableOperationException the rest will be rethrown
-                                    logExceptionTitle,          // callers higher on the stack should handle them properly
-                                    2,
-                                    typeof(DumpExceptionFormatter),
-                                    Facility.LogWriter),
+                                    TraceEventType.Warning),
 
                             new EFRepositoryExceptionHandler(
                                     OptimisticConcurrencyStrategy.ClientWins),
@@ -130,19 +150,31 @@ namespace vm.Aspects.Model.EFRepository
 
             return new ExceptionPolicyEntry[]
             {
+                // log and unwrap
+                new ExceptionPolicyEntry(
+                        typeof(AggregateException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[]
+                        {
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
+                                    eventId++,
+                                    TraceEventType.Information),
+
+                            new UnwrapAggregateExceptionHandler(
+                                    OptimisticConcurrencyStrategy.StoreWins.ToString()),
+                        }
+                    ),
+
                 new ExceptionPolicyEntry(
                         typeof(Exception),
                         PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
-                            new LoggingExceptionHandler(
-                                    LogWriterFacades.Exception,
+                            ExceptionPolicyProvider.CreateLoggingExceptionHandler(
+                                    logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Warning,     // all exceptions are logged as warnings, some of them will be wrapped and thrown as RepeatableOperationException the rest will be rethrown
-                                    logExceptionTitle,          // callers higher on the stack should handle them properly
-                                    2,
-                                    typeof(DumpExceptionFormatter),
-                                    Facility.LogWriter),
+                                    TraceEventType.Warning),
 
                             new EFRepositoryExceptionHandler(
                                     OptimisticConcurrencyStrategy.StoreWins),

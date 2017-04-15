@@ -260,7 +260,6 @@
     <Compile Include="CacheKeyAttribute.cs" />
     <Compile Include="EFRepository\EFRepositoryExceptionHandler.cs" />
     <Compile Include="EFRepository\OptimisticConcurrencyExceptionHandlingPolicies.cs" />
-    <Compile Include="OptimisticConcurrencyExceptionHandler.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainEntity.Metadata.cs">
       <DependentUpon>DomainEntity.cs</DependentUpon>
@@ -284,7 +283,6 @@
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
     <Compile Include="UnitOfWork.cs" />
-    <Compile Include="UnitOfWorkData.cs" />
     <None Include="EncryptedParts.cs" />
     <Compile Include="EFRepository\StringAttribute.cs" />
     <Compile Include="GlobalSuppressions.cs" />

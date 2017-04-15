@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.ServiceLocation;
 using System;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -27,7 +26,7 @@ namespace vm.Aspects.Model
     /// {
     ///     var count = new UnitOfWork()
     ///                         .FuncWork(
-    ///                             (r,_) =>
+    ///                             (r) =>
     ///                             {
     ///                                 var foo = r.Entities<Foo>.First(f => f.Id == fooId);
     ///                                 
@@ -41,7 +40,7 @@ namespace vm.Aspects.Model
     /// {
     ///     var count = await new UnitOfWork()
     ///                             .FuncWorkAsync(
-    ///                                 (r,_) =>
+    ///                                 (r) =>
     ///                                 {
     ///                                     var foo = await r.Entities<Foo>.FirstAsync(f => f.Id == fooId);
     ///                                     
@@ -80,7 +79,6 @@ namespace vm.Aspects.Model
         /// </summary>
         public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
-        readonly OptimisticConcurrencyExceptionHandler _concurrencyExceptionHandler;
         readonly Func<TransactionScope> _transactionScopeFactory;
         readonly Func<IRepository> _repositoryFactory;
 
@@ -88,68 +86,36 @@ namespace vm.Aspects.Model
         /// Initializes a new instance of the <see cref="UnitOfWork" /> class.
         /// </summary>
         /// <param name="repositoryFactory">The repository factory.</param>
-        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy.</param>
         /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
-        /// <param name="createTransactionScope">if set to <see langword="true" /> the <see cref="ActionWork" /> and <see cref="FuncWork" /> will create a transaction scope for the unit of work.</param>
-        /// <param name="maxOptimisticConcurrencyRetries">The maximum optimistic concurrency retries.</param>
-        /// <param name="minDelayBeforeRetry">The minimum delay before retry.</param>
-        /// <param name="maxDelayBeforeRetry">The maximum delay before retry.</param>
-        /// <param name="logExceptionWarnings">if set to <see langword="true" /> will log a warning for concurrency exceptions.</param>
+        /// <param name="createTransactionScope">if set to <see langword="true" /> the <see cref="WorkAction" /> and <see cref="WorkFunc" /> will create a transaction scope for the unit of work.</param>
         public UnitOfWork(
             Func<IRepository> repositoryFactory = null,
-            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyExceptionHandler.DefaultOptimisticConcurrencyStrategy,
             Func<TransactionScope> transactionScopeFactory = null,
-            bool createTransactionScope = false,
-            int maxOptimisticConcurrencyRetries = OptimisticConcurrencyExceptionHandler.DefaultMaxOptimisticConcurrencyRetries,
-            int minDelayBeforeRetry = OptimisticConcurrencyExceptionHandler.DefaultMinDelayBeforeRetry,
-            int maxDelayBeforeRetry = OptimisticConcurrencyExceptionHandler.DefaultMaxDelayBeforeRetry,
-            bool logExceptionWarnings = true)
+            bool createTransactionScope = false)
         {
-            Contract.Requires<ArgumentException>(maxOptimisticConcurrencyRetries >= 0, nameof(maxOptimisticConcurrencyRetries)+" cannot be negative");
-            Contract.Requires<ArgumentException>(minDelayBeforeRetry             >= 0, nameof(minDelayBeforeRetry)+" cannot be negative");
-            Contract.Requires<ArgumentException>(maxDelayBeforeRetry             >= 0, nameof(maxDelayBeforeRetry)+" cannot be negative");
-
             _repositoryFactory       = repositoryFactory ?? DefaultRepositoryFactory;
             _transactionScopeFactory = transactionScopeFactory ?? DefaultTransactionScopeFactory;
             CreateTransactionScope   = createTransactionScope;
-
-            _concurrencyExceptionHandler = new OptimisticConcurrencyExceptionHandler(
-                optimisticConcurrencyStrategy,
-                maxOptimisticConcurrencyRetries,
-                minDelayBeforeRetry,
-                maxDelayBeforeRetry,
-                logExceptionWarnings);
         }
 
         /// <summary>
         /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
         /// </summary>
-        /// <param name="logic">The action to be performed within the unit of work.</param>
-        public void ActionWork(
-            Action<IRepository, int> logic)
+        /// <param name="work">The action to be performed within the unit of work.</param>
+        public void WorkAction(
+            Action<IRepository> work)
         {
-            Contract.Requires<ArgumentNullException>(logic != null, nameof(logic));
+            Contract.Requires<ArgumentNullException>(work != null, nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 
             try
             {
-                var success = false;
+                work(repository);
 
-                _concurrencyExceptionHandler.Attempts = 0;
-                while (!success)
-                    try
-                    {
-                        logic(repository, _concurrencyExceptionHandler.Attempts);
-                        repository.CommitChanges();
-                        transactionScope?.Complete();
-                        success = true;
-                    }
-                    catch (DbUpdateConcurrencyException x)
-                    {
-                        _concurrencyExceptionHandler.HandleDbUpdateConcurrencyException(x);
-                    }
+                repository.CommitChanges();
+                transactionScope?.Complete();
             }
             finally
             {
@@ -162,71 +128,47 @@ namespace vm.Aspects.Model
         /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="logic">The function to be performed within the unit of work.</param>
+        /// <param name="work">The function to be performed within the unit of work.</param>
         /// <returns>TResult.</returns>
-        public TResult FuncWork<TResult>(
-            Func<IRepository, int, TResult> logic)
+        public TResult WorkFunc<TResult>(
+            Func<IRepository, TResult> work)
         {
-            Contract.Requires<ArgumentNullException>(logic != null, nameof(logic));
+            Contract.Requires<ArgumentNullException>(work != null, nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 
             try
             {
-                TResult result = default(TResult);
-                var success    = false;
+                var result = work(repository);
 
-                _concurrencyExceptionHandler.Attempts = 0;
-                while (!success)
-                    try
-                    {
-                        result = logic(repository, _concurrencyExceptionHandler.Attempts);
-                        repository.CommitChanges();
-                        transactionScope?.Complete();
-                        return result;
-                    }
-                    catch (DbUpdateConcurrencyException x)
-                    {
-                        _concurrencyExceptionHandler.HandleDbUpdateConcurrencyException(x);
-                    }
+                repository.CommitChanges();
+                transactionScope?.Complete();
+                return result;
             }
             finally
             {
                 repository.Dispose();
                 transactionScope?.Dispose();
             }
-
-            return default(TResult);
         }
 
         /// <summary>
         /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
         /// </summary>
-        /// <param name="logic">The async action to be performed within the unit of work.</param>
-        public async Task ActionWorkAsync(
-            Func<IRepository, int, Task> logic)
+        /// <param name="work">The async action to be performed within the unit of work.</param>
+        public async Task WorkActionAsync(
+            Func<IRepository, Task> work)
         {
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 
             try
             {
-                var success = false;
+                await work(repository);
 
-                _concurrencyExceptionHandler.Attempts = 0;
-                while (!success)
-                    try
-                    {
-                        await logic(repository, _concurrencyExceptionHandler.Attempts);
-                        await repository.CommitChangesAsync();
-                        transactionScope?.Complete();
-                        return;
-                    }
-                    catch (DbUpdateConcurrencyException x)
-                    {
-                        await _concurrencyExceptionHandler.HandleDbUpdateConcurrencyExceptionAsync(x);
-                    }
+                await repository.CommitChangesAsync();
+                transactionScope?.Complete();
             }
             finally
             {
@@ -239,40 +181,28 @@ namespace vm.Aspects.Model
         /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="logic">The async function to be performed within the unit of work.</param>
+        /// <param name="work">The async function to be performed within the unit of work.</param>
         /// <returns>TResult.</returns>
-        public async Task<TResult> FuncWorkAsync<TResult>(
-            Func<IRepository, int, Task<TResult>> logic)
+        public async Task<TResult> WorkFuncAsync<TResult>(
+            Func<IRepository, Task<TResult>> work)
         {
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory();
 
             try
             {
-                TResult result = default(TResult);
-                var success    = false;
+                var result = await work(repository);
 
-                _concurrencyExceptionHandler.Attempts = 0;
-                while (!success)
-                    try
-                    {
-                        result = await logic(repository, _concurrencyExceptionHandler.Attempts);
-                        await repository.CommitChangesAsync();
-                        transactionScope?.Complete();
-                        return result;
-                    }
-                    catch (DbUpdateConcurrencyException x)
-                    {
-                        await _concurrencyExceptionHandler.HandleDbUpdateConcurrencyExceptionAsync(x);
-                    }
+                await repository.CommitChangesAsync();
+                transactionScope?.Complete();
+
+                return result;
             }
             finally
             {
                 repository.Dispose();
                 transactionScope?.Dispose();
             }
-
-            return default(TResult);
         }
     }
 }
