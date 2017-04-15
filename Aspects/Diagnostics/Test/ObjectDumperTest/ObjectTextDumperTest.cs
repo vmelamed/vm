@@ -122,11 +122,12 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestDumpedBasicValue()
         {
-            var target = GetDumperInstanceAccessor();
-
-            Assert.IsFalse((bool)target.Invoke("DumpedBasicValue", this, null));
-            foreach (var v in basicValues)
-                Assert.IsTrue((bool)target.Invoke("DumpedBasicValue", v, null));
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                Assert.IsFalse(w.DumpedBasicValue(this, null));
+                foreach (var v in basicValues)
+                    Assert.IsTrue(w.DumpedBasicValue(v, null));
+            }
         }
 
         void TestDumpedBasicValueText(
@@ -139,7 +140,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             {
                 var target = GetDumperInstanceAccessor(w, indentValue);
 
-                Assert.IsTrue((bool)target.Invoke("DumpedBasicValue", value, dumpAttribute));
+                Assert.IsTrue(w.DumpedBasicValue(value, dumpAttribute));
 
                 var actual = w.GetStringBuilder().ToString();
 

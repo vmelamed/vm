@@ -106,7 +106,7 @@ namespace vm.Aspects
         {
             Contract.Requires(type != null, "type");
 
-            return ObjectTextDumper.DumpBasicValues.ContainsKey(type) || type.IsEnum;
+            return WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
         }
 
         /// <summary>

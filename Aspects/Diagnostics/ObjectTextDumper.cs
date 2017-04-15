@@ -170,45 +170,39 @@ namespace vm.Aspects.Diagnostics
             Contract.Ensures(Contract.OldValue(_indentLevel) == _indentLevel, "The indent level was not preserved.");
 
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
-            var callerHasPermission = true;
+            var revertPermission = false;
 
             try
             {
-                // make sure all callers on the stack have the permission to reflect on the object
+                // assert the permission and dump
                 reflectionPermission.Demand();
-            }
-            catch (SecurityException)
-            {
-                callerHasPermission = false;
-            }
-
-            try
-            {
-                if (!callerHasPermission)
-                {
-                    _writer.WriteLine();
-                    DumpReflectionNotPermitted(value);
-                    return this;
-                }
+                revertPermission = true;
 
                 // assert the permission and dump
                 reflectionPermission.Assert();
                 _maxDepth = int.MinValue;
 
-                if (!DumpedBasicValue(value, dumpAttribute))
+                if (!_writer.DumpedBasicValue(value, dumpAttribute))
                 {
                     _writer.Indent(_indentLevel, _indentLength)
                            .WriteLine();
 
                     DumpObjectOfNonBasicValue(value, dumpMetadata, dumpAttribute);
                 }
-
-                return this;
+            }
+            catch (SecurityException)
+            {
+                _writer.WriteLine();
+                _writer.Write(Resources.CallerDoesNotHavePermissionFormat, value?.ToString() ?? DumpUtilities.Null);
+            }
+            catch (Exception x)
+            {
+                _writer.WriteLine($"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}");
             }
             finally
             {
                 // revert the permission assert
-                if (callerHasPermission)
+                if (revertPermission)
                     CodeAccessPermission.RevertAssert();
 
                 // restore the original indent
@@ -219,6 +213,8 @@ namespace vm.Aspects.Diagnostics
                 // clear the dumped properties register
                 _dumpedVirtualProperties.Clear();
             }
+
+            return this;
         }
         #endregion
 
@@ -233,21 +229,12 @@ namespace vm.Aspects.Diagnostics
             _writer.Unindent(--_indentLevel, _indentLength);
         }
 
-        void DumpReflectionNotPermitted(
-            object v)
-        {
-            // the caller does not have the permission - just call ToString() on the object.
-            _writer.Write(
-                Resources.CallerDoesNotHavePermissionFormat,
-                v!=null ? v.ToString() : DumpUtilities.Null);
-        }
-
         void DumpObject(
             object obj,
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            if (DumpedBasicValue(obj, dumpAttribute))
+            if (_writer.DumpedBasicValue(obj, dumpAttribute))
                 return;
 
             DumpObjectOfNonBasicValue(obj, dumpMetadata, dumpAttribute);
@@ -442,10 +429,10 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Requires(state != null);
 
-            return DumpedRootClass(state)                  ||     // stop the recursion at System.Object or at max depth
-                   DumpedDefaultProperty(state)            ||     // stop if classDump.Recurse is false
-                   DumpedDelegate(state)                   ||     // stop at delegates
-                   DumpedMemberInfoValue(state.Instance);         // stop at MemberInfo
+            return DumpedRootClass(state)                  ||           // stop the recursion at System.Object or at max depth
+                   DumpedDefaultProperty(state)            ||           // stop if classDump.Recurse is false
+                   DumpedDelegate(state)                   ||           // stop at delegates
+                   _writer.Dumped(state.Instance as MemberInfo);        // stop at MemberInfo
         }
 
         bool DumpedCollectionObject(
@@ -536,25 +523,11 @@ namespace vm.Aspects.Diagnostics
                 state.CurrentPropertyDumpAttribute.LabelFormat,
                 state.CurrentProperty.Name);
 
-            // dump the property value using caller's customization (ValueFormat, DumpClass, DumpMethod) if any.
-            if (DumpedPropertyCustom(state, value, type))
-                return;
-
-            // dump primitive values, including string and DateTime
-            if (DumpedBasicValue(value, state.CurrentPropertyDumpAttribute))
-                return;
-
-            Contract.Assume(value!=null, "The null value should have been dumped by now.");
-
-            if (DumpedDelegate(value))
-                return;
-
-            // dump a member which is a reflection object
-            if (DumpedMemberInfoValue(value))
-                return;
-
-            // dump sequences (array, collection, etc. IEnumerable)
-            if (DumpedSequenceProperty(state, value))
+            if (DumpedPropertyCustom(state, value, type)                             ||     // dump the property value using caller's customization (ValueFormat, DumpClass, DumpMethod) if any.
+                _writer.DumpedBasicValue(value, state.CurrentPropertyDumpAttribute)  ||
+                _writer.Dumped(value as Delegate)                                    ||
+                _writer.Dumped(value as MemberInfo)                                  ||
+                DumpedSequenceProperty(state, value))                                       // dump sequences (array, collection, etc. IEnumerable)
                 return;
 
             // dump a property representing an associated class or struct object
@@ -733,27 +706,7 @@ namespace vm.Aspects.Diagnostics
                 state.Type == typeof(Delegate))
                 return true;
 
-            return DumpedDelegate(state.Instance);
-        }
-
-        bool DumpedDelegate(object value)
-        {
-            var d = value as Delegate;
-
-            if (d == null)
-                return false;   // if it is null delegate, it will be dumped as basic value <null>
-
-            _writer.Write(
-                DumpFormat.Delegate,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.Name : string.Empty,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.Namespace : string.Empty,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.AssemblyQualifiedName : string.Empty,
-                d.Method.Name,
-                d.Target==null
-                    ? Resources.ClassMethodDesignator
-                    : Resources.InstanceMethodDesignator);
-
-            return true;
+            return _writer.Dumped((Delegate)state.Instance);
         }
 
         bool DumpedSequenceProperty(
@@ -834,6 +787,7 @@ namespace vm.Aspects.Diagnostics
 
             _writer.WriteLine();
             _writer.Write("{");
+
             Indent();
 
             foreach (var kv in sequence)
@@ -852,6 +806,7 @@ namespace vm.Aspects.Diagnostics
                 _writer.Write("[");
                 DumpObject(key);
                 _writer.Write("] = ");
+
                 Indent();
                 DumpObject(value);
                 _writer.Write(";");
@@ -859,6 +814,7 @@ namespace vm.Aspects.Diagnostics
             }
 
             Unindent();
+
             _writer.WriteLine();
             _writer.Write("}");
 

@@ -11,13 +11,17 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
     public class ClassMetadataCacheTest
     {
         static PrivateType ClassMetadataCacheAccessor = new PrivateType(typeof(ClassMetadataResolver));
-        static int initialCacheSize = TypesDumpData.Count();
 
         static Dictionary<Type, ClassDumpData> TypesDumpData => (Dictionary<Type, ClassDumpData>)ClassMetadataCacheAccessor.GetStaticProperty("TypesDumpData", null);
+        static void Reset() => ClassMetadataCacheAccessor.InvokeStatic("ResetClassDumpData", null);
 
         [TestMethod]
         public void TestSetClassDumpData_NullArg2n3()
         {
+            Reset();
+            ClassMetadataRegistrar.RegisterMetadata();
+            var initialCacheSize = TypesDumpData.Count();
+
             ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null, true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
@@ -29,6 +33,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData_NullArg2()
         {
+            Reset();
+            ClassMetadataRegistrar.RegisterMetadata();
+            var initialCacheSize = TypesDumpData.Count();
+
             ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
@@ -40,17 +48,25 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestSetClassDumpData_NullArg3()
         {
+            Reset();
+            ClassMetadataRegistrar.RegisterMetadata();
+            var initialCacheSize = TypesDumpData.Count();
+
             ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
             Assert.AreEqual(
-                new ClassDumpData(typeof(ClassMetadataResolver), new DumpAttribute()),
+                new ClassDumpData(typeof(ClassMetadataResolver), null),
                 TypesDumpData[typeof(ClassMetadataCacheTest)]);
         }
 
         [TestMethod]
         public void TestSetClassDumpData()
         {
+            Reset();
+            ClassMetadataRegistrar.RegisterMetadata();
+            var initialCacheSize = TypesDumpData.Count();
+
             ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, TypesDumpData.Count());
