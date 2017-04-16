@@ -1,57 +1,72 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
 {
     static class WriterExtensions
     {
-        static IDictionary<Type,Func<object,ulong>> _castsToUlong = new Dictionary<Type,Func<object,ulong>>()
-        {
-            [typeof(byte)]    = v => (ulong)(byte)v,
-            [typeof(sbyte)]   = v => (ulong)(sbyte)v & 0xFF,
-            [typeof(char)]    = v => (ulong)(char)v,
-            [typeof(short)]   = v => (ulong)(short)v & 0xFFFF,
-            [typeof(ushort)]  = v => (ulong)(ushort)v,
-            [typeof(int)]     = v => (ulong)(int)v & 0xFFFFFFFF,
-            [typeof(uint)]    = v => (ulong)(uint)v,
-            [typeof(long)]    = v => (ulong)(long)v,
-            [typeof(ulong)]   = v => (ulong)v,
-        };
+        static readonly IReadOnlyDictionary<Type,Func<object,ulong>> _castsToUlong = new ReadOnlyDictionary<Type,Func<object,ulong>>(
+            new Dictionary<Type,Func<object,ulong>>()
+            {
+                [typeof(byte)]           = v => (ulong)(byte)v,
+                [typeof(sbyte)]          = v => (ulong)(sbyte)v & 0xFF,
+                [typeof(char)]           = v => (ulong)(char)v,
+                [typeof(short)]          = v => (ulong)(short)v & 0xFFFF,
+                [typeof(ushort)]         = v => (ulong)(ushort)v,
+                [typeof(int)]            = v => (ulong)(int)v & 0xFFFFFFFF,
+                [typeof(uint)]           = v => (ulong)(uint)v,
+                [typeof(long)]           = v => (ulong)(long)v,
+                [typeof(ulong)]          = v => (ulong)v,
+            });
 
-        static readonly IDictionary<Type, Action<TextWriter, object, int>> _dumpBasicValues = new Dictionary<Type, Action<TextWriter, object, int>>
-        {
-            { typeof(DBNull),           (w, v, max) => w.Write("DBNull") },
-            { typeof(bool),             (w, v, max) => w.Write((bool)v) },
-            { typeof(byte),             (w, v, max) => w.Write((byte)v) },
-            { typeof(sbyte),            (w, v, max) => w.Write((sbyte)v) },
-            { typeof(char),             (w, v, max) => w.Write((char)v) },
-            { typeof(short),            (w, v, max) => w.Write((short)v) },
-            { typeof(int),              (w, v, max) => w.Write((int)v) },
-            { typeof(long),             (w, v, max) => w.Write((long)v) },
-            { typeof(ushort),           (w, v, max) => w.Write((ushort)v) },
-            { typeof(uint),             (w, v, max) => w.Write((uint)v) },
-            { typeof(ulong),            (w, v, max) => w.Write((ulong)v) },
-            { typeof(float),            (w, v, max) => w.Write((float)v) },
-            { typeof(double),           (w, v, max) => w.Write((double)v) },
-            { typeof(decimal),          (w, v, max) => w.Write((decimal)v) },
-            { typeof(DateTime),         (w, v, max) => w.Write($"{v:o}") },
-            { typeof(DateTimeOffset),   (w, v, max) => w.Write($"{v:o}") },
-            { typeof(TimeSpan),         (w, v, max) => w.Write(v.ToString()) },
-            { typeof(Uri),              (w, v, max) => w.Write(v.ToString()) },
-            { typeof(Guid),             (w, v, max) => w.Write(v.ToString()) },
-            { typeof(IntPtr),           (w, v, max) => w.Write($"0x{v:x16}") },
-            { typeof(UIntPtr),          (w, v, max) => w.Write($"0x{v:x16}") },
-            { typeof(string),           (w, v, max) => w.Dumped((string)v, max) },
-        };
+        static readonly IReadOnlyDictionary<Type, Action<TextWriter, object, int>> _dumpBasicValues = new ReadOnlyDictionary<Type, Action<TextWriter, object, int>>(
+            new Dictionary<Type, Action<TextWriter, object, int>>
+            {
+                [typeof(DBNull)]         = (w, v, max) => w.Write("DBNull"),
+                [typeof(bool)]           = (w, v, max) => w.Write((bool)v),
+                [typeof(byte)]           = (w, v, max) => w.Write((byte)v),
+                [typeof(sbyte)]          = (w, v, max) => w.Write((sbyte)v),
+                [typeof(char)]           = (w, v, max) => w.Write((char)v),
+                [typeof(short)]          = (w, v, max) => w.Write((short)v),
+                [typeof(int)]            = (w, v, max) => w.Write((int)v),
+                [typeof(long)]           = (w, v, max) => w.Write((long)v),
+                [typeof(ushort)]         = (w, v, max) => w.Write((ushort)v),
+                [typeof(uint)]           = (w, v, max) => w.Write((uint)v),
+                [typeof(ulong)]          = (w, v, max) => w.Write((ulong)v),
+                [typeof(float)]          = (w, v, max) => w.Write((float)v),
+                [typeof(double)]         = (w, v, max) => w.Write((double)v),
+                [typeof(decimal)]        = (w, v, max) => w.Write((decimal)v),
+                [typeof(DateTime)]       = (w, v, max) => w.Write($"{v:o}"),
+                [typeof(DateTimeOffset)] = (w, v, max) => w.Write($"{v:o}"),
+                [typeof(TimeSpan)]       = (w, v, max) => w.Write(v.ToString()),
+                [typeof(Uri)]            = (w, v, max) => w.Write(v.ToString()),
+                [typeof(Guid)]           = (w, v, max) => w.Write(v.ToString()),
+                [typeof(IntPtr)]         = (w, v, max) => w.Write($"0x{v:x16}"),
+                [typeof(UIntPtr)]        = (w, v, max) => w.Write($"0x{v:x16}"),
+                [typeof(string)]         = (w, v, max) => w.Dumped((string)v, max),
+            });
 
-        public static IDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
+        /// <summary>
+        /// Matches the name space of the types within System
+        /// </summary>
+        static readonly Regex _systemNameSpace = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
+
+        public static bool IsFromSystem(
+            this Type type) => _systemNameSpace.IsMatch(type.Namespace);
+
+        public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         public static bool Dumped(
@@ -60,7 +75,6 @@ namespace vm.Aspects.Diagnostics
             int max)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires(max >= 0);
 
             if (@string == null)
                 return false;
@@ -427,6 +441,202 @@ namespace vm.Aspects.Diagnostics
             }
 
             writer.Write(Resources.MethodParameterListEnd);
+
+            return true;
+        }
+
+
+        public static bool DumpedDictionary(
+            this TextWriter writer,
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute,
+            Action<object> dumpObject,
+            Action indent,
+            Action unindent)
+        {
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+
+            var sequenceType = sequence.GetType();
+
+            if (!sequenceType.IsGenericType)
+                return false;
+
+            var dictionaryType = sequenceType
+                                    .GetInterfaces()
+                                    .FirstOrDefault(t => t.IsGenericType  &&
+                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+
+            if (dictionaryType == null)
+                return false;
+
+            var typeArguments = dictionaryType.GetGenericArguments();
+
+            Contract.Assume(typeArguments.Length == 2);
+
+            var keyType = typeArguments[0];
+            var valueType = typeArguments[1];
+
+            if (!keyType.IsBasicType())
+                return false;
+
+            var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
+
+            writer.Write(
+                DumpFormat.SequenceTypeName,
+                sequenceType.GetTypeName(),
+                ((ICollection)sequence).Count.ToString(CultureInfo.InvariantCulture));
+
+            // how many items to dump max?
+            var max = dumpAttribute.MaxLength;
+
+            if (max < 0)
+                max = int.MaxValue;
+            else
+            {
+                if (max == 0)        // limit sequences of primitive types (can be very big)
+                {
+                    max = DumpAttribute.DefaultMaxElements;
+                }
+            }
+
+            writer.Write(
+                    DumpFormat.SequenceType,
+                    sequenceType.GetTypeName(),
+                    sequenceType.Namespace,
+                    sequenceType.AssemblyQualifiedName);
+
+            // stop the recursion if dump.Recurse is false
+            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
+                return true;
+
+            var n = 0;
+
+            writer.WriteLine();
+            writer.Write("{");
+
+            indent();
+
+            foreach (var kv in sequence)
+            {
+                Contract.Assume(kv.GetType() == keyValueType);
+
+                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
+                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
+
+                writer.WriteLine();
+                if (n++ >= max)
+                {
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    break;
+                }
+                writer.Write("[");
+                dumpObject(key);
+                writer.Write("] = ");
+
+                indent();
+                dumpObject(value);
+                writer.Write(";");
+                unindent();
+            }
+
+            unindent();
+
+            writer.WriteLine();
+            writer.Write("}");
+
+            return true;
+        }
+
+        public static bool DumpedSequence(
+            this TextWriter writer,
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute,
+            bool enumerateCustom,
+            Action<object> dumpObject,
+            Action indent,
+            Action unindent)
+        {
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            Contract.Requires(sequence != null);
+
+            var sequenceType = sequence.GetType();
+
+            if (!sequenceType.IsArray && !sequenceType.IsFromSystem())
+            {
+                if (!enumerateCustom  ||  dumpAttribute.Enumerate != ShouldDump.Dump)
+                    return false;
+
+                writer.WriteLine();
+            }
+
+            var collection = sequence as ICollection;
+            var elementsType = sequenceType.IsArray
+                                    ? new Type[] { sequenceType.GetElementType() }
+                                    : sequenceType.IsGenericType
+                                        ? sequenceType.GetGenericArguments()
+                                        : new Type[] { typeof(object) };
+
+            writer.Write(
+                DumpFormat.SequenceTypeName,
+                sequenceType.IsArray
+                        ? elementsType[0].GetTypeName()
+                        : sequenceType.GetTypeName(),
+                collection != null
+                        ? collection.Count.ToString(CultureInfo.InvariantCulture)
+                        : string.Empty);
+
+            // how many items to dump max?
+            var max = dumpAttribute.MaxLength;
+
+            if (max < 0)
+                max = int.MaxValue;
+            else
+            {
+                if (max == 0)        // limit sequences of primitive types (can be very big)
+                {
+                    max = DumpAttribute.DefaultMaxElements;
+                }
+            }
+
+            if (sequenceType == typeof(byte[]))
+            {
+                // dump no more than max elements from the sequence:
+                var array = (byte[])sequence;
+                var length = Math.Min(max, array.Length);
+
+                writer.Write(BitConverter.ToString(array, 0, length));
+                if (length < array.Length)
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+
+                return true;
+            }
+
+            writer.Write(
+                DumpFormat.SequenceType,
+                sequenceType.GetTypeName(),
+                sequenceType.Namespace,
+                sequenceType.AssemblyQualifiedName);
+
+            // stop the recursion if dump.Recurse is false
+            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
+                return true;
+
+            var n = 0;
+
+            indent();
+
+            foreach (var item in sequence)
+            {
+                writer.WriteLine();
+                if (n++ >= max)
+                {
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    break;
+                }
+                dumpObject(item);
+            }
+
+            unindent();
 
             return true;
         }
