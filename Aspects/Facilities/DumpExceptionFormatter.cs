@@ -75,7 +75,7 @@ namespace vm.Aspects.Facilities
                         "{0}{1,-16} : {2}",
                         Writer.NewLine,
                         key,
-                        additionalInformation[key].ToString());
+                        additionalInformation[key]?.ToString());
             Writer.Unindent(1);
 
             Writer.WriteLine();

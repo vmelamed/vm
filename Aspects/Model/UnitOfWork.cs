@@ -54,11 +54,6 @@ namespace vm.Aspects.Model
     public class UnitOfWork
     {
         /// <summary>
-        /// The default transaction scope factory
-        /// </summary>
-        public Func<TransactionScope> DefaultTransactionScopeFactory { get; } = () => new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
-
-        /// <summary>
         /// Resolve constant for transient repositories.
         /// </summary>
         public const string TransientRepository = "transient";
@@ -66,7 +61,19 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default repository factory
         /// </summary>
-        public Func<IRepository> DefaultRepositoryFactory { get; } = () => ServiceLocator.Current.GetInstance<IRepository>(TransientRepository);
+        public static readonly Func<OptimisticConcurrencyStrategy, IRepository> DefaultRepositoryFactory =
+            s =>
+            {
+                var r = ServiceLocator.Current.GetInstance<IRepository>(TransientRepository);
+                r.OptimisticConcurrencyStrategy = s;
+                return r;
+            };
+
+        /// <summary>
+        /// The default transaction scope factory
+        /// </summary>
+        public static readonly Func<TransactionScope> DefaultTransactionScopeFactory =
+            () => new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
 
         /// <summary>
         /// Gets or sets a value indicating whether to create explicitly transaction scope.
@@ -79,23 +86,26 @@ namespace vm.Aspects.Model
         /// </summary>
         public OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
 
+        readonly Func<OptimisticConcurrencyStrategy,IRepository> _repositoryFactory;
         readonly Func<TransactionScope> _transactionScopeFactory;
-        readonly Func<IRepository> _repositoryFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWork" /> class.
         /// </summary>
+        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
         /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> the <see cref="WorkAction" /> and <see cref="WorkFunc" /> will create a transaction scope for the unit of work.</param>
         public UnitOfWork(
-            Func<IRepository> repositoryFactory = null,
+            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy,
+            Func<OptimisticConcurrencyStrategy, IRepository> repositoryFactory = null,
             Func<TransactionScope> transactionScopeFactory = null,
             bool createTransactionScope = false)
         {
-            _repositoryFactory       = repositoryFactory ?? DefaultRepositoryFactory;
-            _transactionScopeFactory = transactionScopeFactory ?? DefaultTransactionScopeFactory;
-            CreateTransactionScope   = createTransactionScope;
+            _repositoryFactory             = repositoryFactory ?? DefaultRepositoryFactory;
+            _transactionScopeFactory       = transactionScopeFactory ?? DefaultTransactionScopeFactory;
+            CreateTransactionScope         = createTransactionScope;
+            OptimisticConcurrencyStrategy  = optimisticConcurrencyStrategy;
         }
 
         /// <summary>
@@ -108,7 +118,7 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(work != null, nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
-            var repository       = _repositoryFactory();
+            var repository       = _repositoryFactory(OptimisticConcurrencyStrategy);
 
             try
             {
@@ -136,7 +146,7 @@ namespace vm.Aspects.Model
             Contract.Requires<ArgumentNullException>(work != null, nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
-            var repository       = _repositoryFactory();
+            var repository       = _repositoryFactory(OptimisticConcurrencyStrategy);
 
             try
             {
@@ -161,7 +171,7 @@ namespace vm.Aspects.Model
             Func<IRepository, Task> work)
         {
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
-            var repository       = _repositoryFactory();
+            var repository       = _repositoryFactory(OptimisticConcurrencyStrategy);
 
             try
             {
@@ -187,7 +197,7 @@ namespace vm.Aspects.Model
             Func<IRepository, Task<TResult>> work)
         {
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
-            var repository       = _repositoryFactory();
+            var repository       = _repositoryFactory(OptimisticConcurrencyStrategy);
 
             try
             {

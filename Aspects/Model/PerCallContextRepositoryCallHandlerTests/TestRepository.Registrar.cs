@@ -40,7 +40,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                                         new HierarchicalLifetimeManager(),
                                         new InjectionProperty(
                                                 nameof(IRepository.OptimisticConcurrencyStrategy),
-                                                OptimisticConcurrencyStrategy.ClientWins))
+                                                Program.OptimisticConcurrencyStrategy))
 
                     // a transient repository used by tests and anything else.
                     .RegisterTypeIfNot<IRepository, TestRepository>(
@@ -48,7 +48,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                                         "transient",
                                         new InjectionProperty(
                                                 nameof(IRepository.OptimisticConcurrencyStrategy),
-                                                OptimisticConcurrencyStrategy.ClientWins))
+                                                Program.OptimisticConcurrencyStrategy))
                     ;
 
                 return container;

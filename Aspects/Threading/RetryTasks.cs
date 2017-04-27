@@ -5,33 +5,64 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Threading
 {
     /// <summary>
-    /// Asynchronously tries to execute an operation one or more times with random delays between attempts until the operation succeeds, fails or runs out of tries.
+    /// Tries to execute asynchronously an operation one or more times with random delays between attempts until the operation succeeds, fails or runs out of tries.
     /// </summary>
     /// <typeparam name="T">The result of the operation.
-    /// Hint: if the operation does not have return value (i.e. has void return value) use some primitive type, e.g. <see cref="bool"/>.</typeparam>
+    /// Hint: if the operation does not have a natural return value for type T (i.e. returns <c>Task</c>), use some primitive type instead, e.g. <see cref="bool"/> (<c>Task&lt;bool&gt;</c>).</typeparam>
     public class RetryTasks<T>
     {
         /// <summary>
         /// The default maximum number of retries.
         /// </summary>
-        public const int DefaultMaxRetries = 5;
+        public const int DefaultMaxRetries = 10;
         /// <summary>
         /// The default minimum delay between retries.
         /// </summary>
         public const int DefaultMinDelay = 50;
+        /// <summary>
+        /// The default maximum delay between retries.
+        /// </summary>
+        public const int DefaultMaxDelay = 150;
+
+        /// <summary>
+        /// The default delegate testing if the operation has failed. It returns <see langword="true"/> if the operation raised an exception, otherwise <see langword="false"/>.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation is:
+        /// <code>
+        /// <![CDATA[public readonly static Func<T, Exception, int, Task<bool>> DefaultIsFailure = (r,x,i) => Task.FromResult(x != null);]]>
+        /// </code>
+        /// </remarks>
+        public readonly static Func<T, Exception, int, Task<bool>> DefaultIsFailure = (r,x,i) => Task.FromResult(x != null);
+        /// <summary>
+        /// The default delegate testing if the operation has succeeded. It returns <see langword="true"/> if the operation didn't raise an exception, otherwise <see langword="false"/>.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation is:
+        /// <code>
+        /// <![CDATA[public readonly static Func<T, Exception, int, Task<bool>> DefaultIsSuccess = (r,x,i) => Task.FromResult(x == null);]]>
+        /// </code>
+        /// </remarks>
+        public readonly static Func<T, Exception, int, Task<bool>> DefaultIsSuccess = (r,x,i) => Task.FromResult(x == null);
+        /// <summary>
+        /// The default epilogue delegate throws the raised exception or returns the result of the operation.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation is:
+        /// <code>
+        /// <![CDATA[public readonly static Func<T, Exception, int, Task<T>> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return Task.FromResult(r); };]]>
+        /// </code>
+        /// </remarks>
+        public readonly static Func<T, Exception, int, Task<T>> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return Task.FromResult(r); };
 
         readonly Func<int, Task<T>> _operationAsync;
-        readonly Func<T, int, Task<bool>> _isFailureAsync;
-        readonly Func<T, int, Task<bool>> _isSuccessAsync;
-        readonly Func<T, int, Task<T>> _epilogueAsync;
+        readonly Func<T, Exception, int, Task<bool>> _isFailureAsync;
+        readonly Func<T, Exception, int, Task<bool>> _isSuccessAsync;
+        readonly Func<T, Exception, int, Task<T>> _epilogueAsync;
 
         readonly Lazy<Random> _random = new Lazy<Random>(() => new Random(unchecked((int)DateTime.Now.Ticks)));
 
         Random Random => _random.Value;
-
-        readonly static Func<T, int, Task<bool>> _defaultFailure  = (_,__) => Task.FromResult(false);
-        readonly static Func<T, int, Task<bool>> _defaultSuccess  = (_,__) => Task.FromResult(true);
-        readonly static Func<T, int, Task<T>>    _defaultEpilogue = (_,__) => Task.FromResult(default(T));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryTasks{T}"/> class.
@@ -40,32 +71,32 @@ namespace vm.Aspects.Threading
         /// The asynchronous operation to be tried one or more times.
         /// </param>
         /// <param name="isFailureAsync">
-        /// Caller supplied asynchronous lambda which determines if the most recent operation failed.
-        /// If <see langword="null"/> the default returns <see langword="false"/> - the operation is considered not failure (not success either).
+        /// Caller supplied delegate which determines if the operation failed. 
+        /// If <see langword="null"/> the object will invoke <see cref="DefaultIsFailure"/>.
         /// Note that <paramref name="isFailureAsync"/> is always called before <paramref name="isSuccessAsync"/>.
-        /// Hint: based on the result from the last operation, the lambda may throw exception.
+        /// The operation will be retried if <paramref name="isFailureAsync"/> and <paramref name="isSuccessAsync"/> return <see langword="false"/>.
         /// </param>
         /// <param name="isSuccessAsync">
-        /// Caller supplied asynchronous lambda which determines if the most recent operation succeeded.
-        /// If <see langword="null"/> the default returns <see langword="true"/> - the operation is considered successful the first time.
+        /// Caller supplied lambda which determines if the most recent operation succeeded.
+        /// If <see langword="null"/> the default returns <see langword="true"/>, which means that the operation is considered succeeded the first time.
         /// Note that <paramref name="isFailureAsync"/> is always called before <paramref name="isSuccessAsync"/>.
+        /// The operation will be retried if <paramref name="isFailureAsync"/> and <paramref name="isSuccessAsync"/> return <see langword="false"/>.
         /// </param>
         /// <param name="epilogueAsync">
         /// Caller supplied lambda to be run after the operation was attempted unsuccessfully the maximum number of retries.
-        /// Hint: based on the result from the last operation, the lambda may throw exception.
         /// </param>
         public RetryTasks(
             Func<int, Task<T>> operationAsync,
-            Func<T, int, Task<bool>> isFailureAsync = null,
-            Func<T, int, Task<bool>> isSuccessAsync = null,
-            Func<T, int, Task<T>> epilogueAsync = null)
+            Func<T, Exception, int, Task<bool>> isFailureAsync = null,
+            Func<T, Exception, int, Task<bool>> isSuccessAsync = null,
+            Func<T, Exception, int, Task<T>> epilogueAsync = null)
         {
             Contract.Requires<ArgumentNullException>(operationAsync != null, nameof(operationAsync));
 
             _operationAsync = operationAsync;
-            _isSuccessAsync = isSuccessAsync ?? _defaultSuccess;
-            _isFailureAsync = isFailureAsync ?? _defaultFailure;
-            _epilogueAsync  = epilogueAsync  ?? _defaultEpilogue;
+            _isSuccessAsync = isSuccessAsync ?? DefaultIsSuccess;
+            _isFailureAsync = isFailureAsync ?? DefaultIsFailure;
+            _epilogueAsync  = epilogueAsync  ?? DefaultEpilogue;
         }
 
         /// <summary>
@@ -94,6 +125,7 @@ namespace vm.Aspects.Threading
             if (maxDelay == 0)
                 maxDelay = minDelay;
 
+            Exception exception;
             var result  = default(T);
             var retries = 0;
             var first   = true;
@@ -103,22 +135,35 @@ namespace vm.Aspects.Threading
                 if (first)
                     first = false;
                 else
+                {
                     if (minDelay > 0  ||  maxDelay > 0)
                         await Task.Delay(minDelay + Random.Next(maxDelay-minDelay));
+                }
 
-                result = await _operationAsync(retries);
+                try
+                {
+                    exception = null;
+                    result = await _operationAsync(retries);
+                }
+                catch (Exception x)
+                {
+                    exception = x;
+                }
 
-                if (await _isFailureAsync(result, retries))
-                    return default(T);
+                if (await _isFailureAsync(result, exception, retries))
+                    if (exception != null)
+                        throw exception;
+                    else
+                        return result;
 
-                if (await _isSuccessAsync(result, retries))
+                if (await _isSuccessAsync(result, exception, retries))
                     return result;
 
                 retries++;
             }
             while (retries < maxRetries);
 
-            return await _epilogueAsync(result, retries);
+            return await _epilogueAsync(result, exception, retries);
         }
     }
 }

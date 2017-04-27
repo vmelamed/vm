@@ -282,6 +282,8 @@
     <Compile Include="EFRepository\ObjectContextExtensions.cs" />
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
+    <Compile Include="RetryUnitOfWork.cs" />
+    <Compile Include="RetryUnitOfWorkTasks.cs" />
     <Compile Include="UnitOfWork.cs" />
     <None Include="EncryptedParts.cs" />
     <Compile Include="EFRepository\StringAttribute.cs" />
