@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security;
 using System.Security.Policy;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust;
 
@@ -48,7 +48,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             Two,
             All,
         }
-        
+
         [Flags]
         enum TestFlags
         {
@@ -57,7 +57,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             Four = 1 << 2,
             Eight = 1 << 3,
         }
-        
+
         #region basic values and corresponding strings
         object[] basicValues =
         {
@@ -122,11 +122,12 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestDumpedBasicValue()
         {
-            var target = GetDumperInstanceAccessor();
-
-            Assert.IsFalse((bool)target.Invoke("DumpedBasicValue", this, null));
-            foreach (var v in basicValues)
-                Assert.IsTrue((bool)target.Invoke("DumpedBasicValue", v, null));
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                Assert.IsFalse(w.DumpedBasicValue(this, null));
+                foreach (var v in basicValues)
+                    Assert.IsTrue(w.DumpedBasicValue(v, null));
+            }
         }
 
         void TestDumpedBasicValueText(
@@ -139,7 +140,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             {
                 var target = GetDumperInstanceAccessor(w, indentValue);
 
-                Assert.IsTrue((bool)target.Invoke("DumpedBasicValue", value, dumpAttribute));
+                Assert.IsTrue(w.DumpedBasicValue(value, dumpAttribute));
 
                 var actual = w.GetStringBuilder().ToString();
 
@@ -1146,12 +1147,12 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
             {
                 var target = new ObjectTextDumper(w);
                 var expected = @"
-Expression<Func<Int32, Int32>> (System.Linq.Expressions.Expression`1[[System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+Expression<Func<int, int>> (System.Linq.Expressions.Expression`1[[System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
   NodeType                 = ExpressionType.Lambda
   Name                     = <null>
   ReturnType               = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   Parameters               = TrueReadOnlyCollection<ParameterExpression>[1]: (System.Runtime.CompilerServices.TrueReadOnlyCollection`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
-    PrimitiveParameterExpression<Int32> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+    PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
       NodeType                 = ExpressionType.Parameter
       Name                     = a
       IsByRef                  = False
@@ -1237,7 +1238,7 @@ Object6 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object6,
                 var target = new ObjectTextDumper(w);
                 var expected = @"
 Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Array                    = Int32[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  Array                    = int[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
@@ -1268,7 +1269,7 @@ Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7,
                 };
                 var expected = @"
 Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Array                    = Int32[18]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  Array                    = int[18]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
@@ -1330,15 +1331,15 @@ Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7,
                 var target = new ObjectTextDumper(w);
                 var expected = @"
 Object8 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Array                    = Int32[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  Array                    = int[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
     ... dumped the first 3 elements.
-  Array2                   = Int32[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
-  Array3                   = Byte[18]: 00-01-02-03-04-05-00-01-02-03-04-05-00-01-02-03-04-05
-  Array4                   = Byte[18]: 00-01-02-03-04-05-00-01-02-03... dumped the first 10 elements.
-  Array5                   = Byte[18]: 00-01-02... dumped the first 3 elements.
+  Array2                   = int[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  Array3                   = byte[18]: 00-01-02-03-04-05-00-01-02-03-04-05-00-01-02-03-04-05
+  Array4                   = byte[18]: 00-01-02-03-04-05-00-01-02-03... dumped the first 10 elements.
+  Array5                   = byte[18]: 00-01-02... dumped the first 3 elements.
   Array6                   = ArrayList[18]: (System.Collections.ArrayList, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
@@ -1378,7 +1379,7 @@ Object8 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8,
                 var target = new ObjectTextDumper(w);
                 var expected = @"
 Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  List                     = List<Int32>[6]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  List                     = List<int>[6]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
@@ -1409,7 +1410,7 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
                 };
                 var expected = @"
 Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  List                     = List<Int32>[18]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
@@ -1459,12 +1460,12 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
                 var target = new ObjectTextDumper(w);
                 var expected = @"
 Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  List                     = Int32[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  List                     = int[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     0
     1
     2
     ... dumped the first 3 elements.
-  List2                    = Int32[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+  List2                    = int[6]: (System.Int32[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
   Property1                = Property1
   Property2                = Property2";
 
@@ -1649,7 +1650,7 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperT
                 var expected = @"
 ObjectWithMyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithMyEnumerable, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   MyEnumerable             = MyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+MyEnumerable, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-    List                     = List<Int32>[3]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+    List                     = List<int>[3]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
       0
       1
       3
@@ -1829,7 +1830,7 @@ NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Neste
                 var test = new List<string> { "one", "two", "three" };
                 var target = new ObjectTextDumper(w);
                 var expected = @"
-List<String>[3]: (System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+List<string>[3]: (System.Collections.Generic.List`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
   one
   two
   three";
@@ -1856,7 +1857,7 @@ List<String>[3]: (System.Collections.Generic.List`1[[System.String, mscorlib, Ve
                 };
                 var target = new ObjectTextDumper(w);
                 var expected = @"
-Dictionary<String, Int32>[3]: (System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
 {
   [one] = 1;
   [two] = 2;
@@ -1885,7 +1886,7 @@ Dictionary<String, Int32>[3]: (System.Collections.Generic.Dictionary`2[[System.S
                 };
                 var target = new ObjectTextDumper(w);
                 var expected = @"
-Dictionary<Int32, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
 {
   [1] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
       Property1                = one
@@ -1951,7 +1952,7 @@ Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived,
         {
             dynamic test = new { IntProperty = 10, StringProperty = "hello", DoubleProperty = Math.PI, };
             var expected = @"
-<>f__AnonymousType0<Int32, String, Double> (<>f__AnonymousType0`3[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   DoubleProperty           = 3.14159265358979
   IntProperty              = 10
   StringProperty           = hello";
@@ -1980,13 +1981,13 @@ Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived,
 
             var expected = @"
 ExpandoObject[]: (System.Dynamic.ExpandoObject, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
-  KeyValuePair<String, Object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
     Key                      = IntProperty
     Value                    = 10
-  KeyValuePair<String, Object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
     Key                      = StringProperty
     Value                    = hello
-  KeyValuePair<String, Object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
     Key                      = DoubleProperty
     Value                    = 3.14159265358979";
 

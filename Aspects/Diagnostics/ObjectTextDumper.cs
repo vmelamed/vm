@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using System.Text.RegularExpressions;
 using System.Threading;
 using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.Properties;
@@ -23,11 +21,6 @@ namespace vm.Aspects.Diagnostics
     public sealed partial class ObjectTextDumper : IDisposable
     {
         #region Fields
-        /// <summary>
-        /// The dump writer.
-        /// </summary>
-        readonly TextWriter _writer;
-
         /// <summary>
         /// Flag that the current writer is actually our DumpWriter.
         /// </summary>
@@ -47,36 +40,10 @@ namespace vm.Aspects.Diagnostics
         /// The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
         /// </summary>
         int _maxDepth = int.MinValue;
-
-        /// <summary>
-        /// The binding flags determining which properties to be dumped
-        /// </summary>
-        readonly BindingFlags _propertiesBindingFlags;
-
-        /// <summary>
-        /// The binding flags determining which fields to be dumped
-        /// </summary>
-        readonly BindingFlags _fieldsBindingFlags;
-
         /// <summary>
         /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
         /// </summary>
         readonly HashSet<DumpedObject> _dumpedObjects = new HashSet<DumpedObject>();
-
-        /// <summary>
-        /// Contains references to all dumped virtual properties to avoid dumping them more than once in the derived classes.
-        /// </summary>
-        readonly HashSet<DumpedProperty> _dumpedVirtualProperties = new HashSet<DumpedProperty>();
-
-        /// <summary>
-        /// Matches the name space of the types within System
-        /// </summary>
-        static readonly Regex _systemNameSpace = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
-
-        /// <summary>
-        /// Matches a type name with hexadecimal suffix.
-        /// </summary>
-        static readonly Regex _hexadecimalSuffix = new Regex(@"_[0-9A-F]{64}", RegexOptions.Compiled);
         #endregion
 
         static BindingFlags defaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly;
@@ -102,6 +69,28 @@ namespace vm.Aspects.Diagnostics
             get { return defaultFieldsBindingFlags; }
             set { defaultFieldsBindingFlags = value; }
         }
+
+        #region Internal properties for access by the DumpState
+        /// <summary>
+        /// The binding flags determining which properties to be dumped
+        /// </summary>
+        internal BindingFlags PropertiesBindingFlags { get; }
+
+        /// <summary>
+        /// The binding flags determining which fields to be dumped
+        /// </summary>
+        internal BindingFlags FieldsBindingFlags { get; }
+
+        /// <summary>
+        /// The dump writer.
+        /// </summary>
+        internal TextWriter Writer { get; }
+
+        /// <summary>
+        /// Contains references to all dumped virtual properties to avoid dumping them more than once in the derived classes.
+        /// </summary>
+        internal readonly HashSet<DumpedProperty> DumpedVirtualProperties = new HashSet<DumpedProperty>();
+        #endregion
 
         #region Constructor
         /// <summary>
@@ -130,16 +119,16 @@ namespace vm.Aspects.Diagnostics
             if (writer.GetType() == typeof(StringWriter))
             {
                 // wrap the writer in DumpTextWriter
-                _writer = new DumpTextWriter((StringWriter)writer, maxDumpLength);
+                Writer = new DumpTextWriter((StringWriter)writer, maxDumpLength);
                 _isDumpWriter = true;
             }
             else
-                _writer = writer;
+                Writer = writer;
 
-            _indentLevel            = indentLevel > 0 ? indentLevel : 0;
-            _indentLength           = indentLength > 0 ? indentLength : 2;
-            _propertiesBindingFlags = propertiesBindingFlags;
-            _fieldsBindingFlags     = fieldsBindingFlags;
+            _indentLevel           = indentLevel  >= 0 ? indentLevel : 0;
+            _indentLength          = indentLength >= 2 ? indentLength : 2;
+            PropertiesBindingFlags = propertiesBindingFlags;
+            FieldsBindingFlags     = fieldsBindingFlags;
         }
         #endregion
 
@@ -170,84 +159,71 @@ namespace vm.Aspects.Diagnostics
             Contract.Ensures(Contract.OldValue(_indentLevel) == _indentLevel, "The indent level was not preserved.");
 
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
-            var callerHasPermission = true;
+            var revertPermission = false;
 
             try
             {
-                // make sure all callers on the stack have the permission to reflect on the object
+                // assert the permission and dump
                 reflectionPermission.Demand();
-            }
-            catch (SecurityException)
-            {
-                callerHasPermission = false;
-            }
-
-            try
-            {
-                if (!callerHasPermission)
-                {
-                    _writer.WriteLine();
-                    DumpReflectionNotPermitted(value);
-                    return this;
-                }
+                revertPermission = true;
 
                 // assert the permission and dump
                 reflectionPermission.Assert();
                 _maxDepth = int.MinValue;
 
-                if (!DumpedBasicValue(value, dumpAttribute))
+                if (!Writer.DumpedBasicValue(value, dumpAttribute))
                 {
-                    _writer.Indent(_indentLevel, _indentLength)
+                    Writer.Indent(_indentLevel, _indentLength)
                            .WriteLine();
 
                     DumpObjectOfNonBasicValue(value, dumpMetadata, dumpAttribute);
                 }
-
-                return this;
+            }
+            catch (SecurityException)
+            {
+                Writer.WriteLine();
+                Writer.Write(Resources.CallerDoesNotHavePermissionFormat, value?.ToString() ?? DumpUtilities.Null);
+            }
+            catch (Exception x)
+            {
+                Writer.WriteLine($"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}");
             }
             finally
             {
                 // revert the permission assert
-                if (callerHasPermission)
+                if (revertPermission)
                     CodeAccessPermission.RevertAssert();
 
                 // restore the original indent
-                _writer.Unindent(_indentLevel, _indentLength);
+                Writer.Unindent(_indentLevel, _indentLength);
 
                 // clear the dumped objects register
                 _dumpedObjects.Clear();
                 // clear the dumped properties register
-                _dumpedVirtualProperties.Clear();
+                DumpedVirtualProperties.Clear();
             }
+
+            return this;
         }
         #endregion
 
+        internal void Indent()
+        {
+            Writer.Indent(++_indentLevel, _indentLength);
+        }
+
+        internal void Unindent()
+        {
+            Writer.Unindent(--_indentLevel, _indentLength);
+        }
+
         #region Private methods
-        void Indent()
-        {
-            _writer.Indent(++_indentLevel, _indentLength);
-        }
-
-        void Unindent()
-        {
-            _writer.Unindent(--_indentLevel, _indentLength);
-        }
-
-        void DumpReflectionNotPermitted(
-            object v)
-        {
-            // the caller does not have the permission - just call ToString() on the object.
-            _writer.Write(
-                Resources.CallerDoesNotHavePermissionFormat,
-                v!=null ? v.ToString() : DumpUtilities.Null);
-        }
-
-        void DumpObject(
+        internal void DumpObject(
             object obj,
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            if (DumpedBasicValue(obj, dumpAttribute))
+            if (Writer.DumpedBasicValue(obj, dumpAttribute))
                 return;
 
             DumpObjectOfNonBasicValue(obj, dumpMetadata, dumpAttribute);
@@ -277,26 +253,20 @@ namespace vm.Aspects.Diagnostics
 
             if (_maxDepth < 0)
             {
-                _writer.Write(Resources.DumpReachedMaxDepth);
+                Writer.Write(Resources.DumpReachedMaxDepth);
                 return;
             }
 
             _maxDepth--;
 
-            using (var state = new DumpState(
-                                        obj,
-                                        type,
-                                        classDumpData,
-                                        dumpAttribute,
-                                        _propertiesBindingFlags,
-                                        _fieldsBindingFlags))
+            using (var state = new DumpState(this, obj, classDumpData))
                 if (!DumpedAlready(state))     // the object has been dumped already (block circular and repeating references)
                 {
                     // this object will be dumped below.
                     // Add it to the dumped objects so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                     _dumpedObjects.Add(new DumpedObject(obj, type));
 
-                    if (!DumpedCollectionObject(state))
+                    if (!DumpedCollectionObject(state, false))
                     {
                         Stack<DumpState> statesWithRemainingProperties = new Stack<DumpState>();
                         Queue<DumpState> statesWithTailProperties = new Queue<DumpState>();
@@ -340,13 +310,7 @@ namespace vm.Aspects.Diagnostics
             if (IsAtDumpTreeLeaf(state))
                 return true;
 
-            var baseDumpState = new DumpState(
-                                         state.Instance,
-                                         state.Type.BaseType,
-                                         ClassMetadataResolver.GetClassDumpData(state.Type.BaseType),
-                                         state.InstanceDumpAttribute,
-                                         _propertiesBindingFlags,
-                                         _fieldsBindingFlags);
+            var baseDumpState = state.GetBaseTypeDumpState();
 
             // 1. dump the properties of the base class with non-negative order 
             DumpTopProperties(baseDumpState, statesWithRemainingProperties);
@@ -360,7 +324,7 @@ namespace vm.Aspects.Diagnostics
                     statesWithRemainingProperties.Push(state);
                     return false;
                 }
-                DumpProperty(state);
+                state.DumpProperty();
             }
 
             state.Dispose();
@@ -390,7 +354,7 @@ namespace vm.Aspects.Diagnostics
                         break;
                     }
 
-                    DumpProperty(state);
+                    state.DumpProperty();
                 }
                 while (state.MoveNext());
 
@@ -409,7 +373,7 @@ namespace vm.Aspects.Diagnostics
             foreach (var state in statesWithTailProperties)
                 using (state)
                     do
-                        DumpProperty(state);
+                        state.DumpProperty();
                     while (state.MoveNext());
         }
 
@@ -442,15 +406,16 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Requires(state != null);
 
-            return DumpedRootClass(state)                  ||     // stop the recursion at System.Object or at max depth
-                   DumpedDefaultProperty(state)            ||     // stop if classDump.Recurse is false
-                   DumpedDelegate(state)                   ||     // stop at delegates
-                   DumpedMemberInfoValue(state.Instance);         // stop at MemberInfo
+            // Stop the recursion if: 
+            return state.DumpedRootClass()                  ||  // at System.Object or at max depth
+                   state.DumpedDefaultProperty()            ||  // classDump.Recurse is false
+                   state.DumpedDelegate()                   ||  // at delegates
+                   state.DumpedMemberInfo();                    // at MemberInfo values
         }
 
         bool DumpedCollectionObject(
             DumpState state,
-            bool enumerateCustom = false)
+            bool enumerateCustom)
         {
             Contract.Requires(state != null);
 
@@ -459,225 +424,21 @@ namespace vm.Aspects.Diagnostics
             if (sequence == null)
                 return false;
 
-            if (DumpedDictionary(
-                        sequence,
-                        state.ClassDumpData.DumpAttribute))
-                return true;
-
-            return DumpedSequenceObject(
+            if (Writer.DumpedDictionary(
                         sequence,
                         state.ClassDumpData.DumpAttribute,
-                        enumerateCustom);
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "It's OK in the dumper")]
-        void DumpProperty(
-            DumpState state)
-        {
-            Contract.Requires(state!=null);
-
-            // should we dump it at all?
-            if (!state.CurrentProperty.CanRead()  ||
-                state.CurrentPropertyDumpAttribute.Skip == ShouldDump.Skip)
-                return;
-
-            var isVirtual = state.CurrentProperty.IsVirtual().GetValueOrDefault();
-
-            if (isVirtual)
-            {
-                // don't dump virtual properties that were already dumped
-                if (_dumpedVirtualProperties.Contains(new DumpedProperty(state.Instance, state.CurrentProperty.Name)))
-                    return;
-
-                // or will be dumped by the base classes
-                if (state.CurrentPropertyDumpAttribute.IsDefaultAttribute() &&
-                    PropertyDumpResolver.PropertyHasNonDefaultDumpAttribute(state.CurrentProperty))
-                    return;
-            }
-
-            // can't dump indexers
-            var pi = state.CurrentProperty as PropertyInfo;
-            var fi = state.CurrentProperty as FieldInfo;
-
-            if (pi != null  &&
-                pi.GetIndexParameters().Length > 0)
-                return;
-
-            object value = null;
-            Type type = null;
-
-            try
-            {
-                type = pi != null
-                            ? pi.PropertyType
-                            : fi.FieldType;
-                value = pi != null
-                            ? pi.GetValue(state.Instance, null)
-                            : fi.GetValue(state.Instance);
-            }
-            catch (Exception x)
-            {
-                // this should not happen but...
-                value = $"<{x.Message}>";
-            }
-
-            // should we dump a null value of the current property
-            if (value == null  &&
-                (state.CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
-                 state.CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && state.DumpNullValues==ShouldDump.Skip))
-                return;
-
-            if (isVirtual)
-                _dumpedVirtualProperties.Add(new DumpedProperty(state.Instance, state.CurrentProperty.Name));
-
-            // write the property header
-            _writer.WriteLine();
-            _writer.Write(
-                state.CurrentPropertyDumpAttribute.LabelFormat,
-                state.CurrentProperty.Name);
-
-            // dump the property value using caller's customization (ValueFormat, DumpClass, DumpMethod) if any.
-            if (DumpedPropertyCustom(state, value, type))
-                return;
-
-            // dump primitive values, including string and DateTime
-            if (DumpedBasicValue(value, state.CurrentPropertyDumpAttribute))
-                return;
-
-            Contract.Assume(value!=null, "The null value should have been dumped by now.");
-
-            if (DumpedDelegate(value))
-                return;
-
-            // dump a member which is a reflection object
-            if (DumpedMemberInfoValue(value))
-                return;
-
-            // dump sequences (array, collection, etc. IEnumerable)
-            if (DumpedSequenceProperty(state, value))
-                return;
-
-            // dump a property representing an associated class or struct object
-            DumpObjectOfNonBasicValue(
-                value,
-                null,
-                state.CurrentPropertyDumpAttribute.IsDefaultAttribute()
-                    ? null
-                    : state.CurrentPropertyDumpAttribute);
-        }
-
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "It's OK.")]
-        bool DumpedPropertyCustom(
-            DumpState state,
-            object value,
-            Type type)
-        {
-            Contract.Requires<ArgumentNullException>(state != null, nameof(state));
-
-            if (value==null)
-                return false;
-
-            // did they specify DumpAttribute.ValueFormat="ToString"?
-            if (state.CurrentPropertyDumpAttribute.ValueFormat == Resources.ValueFormatToString)
-            {
-                _writer.Write(value.ToString());
+                        o => DumpObject(o),
+                        Indent,
+                        Unindent))
                 return true;
-            }
 
-            // did they specify DumpAttribute.DumpMethod?
-            var dumpMethodName = state.CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass = state.CurrentPropertyDumpAttribute.DumpClass;
-
-            if (dumpClass==null  &&  dumpMethodName.IsNullOrWhiteSpace())
-                return false;
-
-            if (dumpMethodName.IsNullOrWhiteSpace())
-                dumpMethodName = "Dump";
-
-            MethodInfo dumpMethod = null;   // best match
-            MethodInfo dumpMethod2 = null;  // second best
-
-            // try the external class if specified
-            if (dumpClass != null)
-            {
-                foreach (var mi in dumpClass.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                            .Where(mi => mi.Name == dumpMethodName  &&
-                                                            mi.ReturnType == typeof(string)  &&
-                                                            mi.GetParameters().Count() == 1))
-                {
-                    if (mi.GetParameters()[0].ParameterType == type)
-                    {
-                        // exact match
-                        dumpMethod = mi;
-                        break;
-                    }
-
-                    if (mi.GetParameters()[0].ParameterType.IsAssignableFrom(type))
-                        // candidate
-                        dumpMethod = mi;
-                }
-
-                if (dumpMethod != null)
-                    _writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
-                else
-                    _writer.Write($"*** Could not find a public, static, method {dumpMethodName}, with return type of System.String, with a single parameter of type {type.FullName} in the class {dumpClass.FullName}.");
-
-                return true;
-            }
-
-            // try the property's class or base class, or metadata class
-            foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-                                   .Where(mi => mi.Name == dumpMethodName  &&
-                                                mi.ReturnType == typeof(string))
-                                   .Union(type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                                .Where(mi => mi.Name == dumpMethodName  &&
-                                                             mi.ReturnType == typeof(string)  &&
-                                                             mi.GetParameters().Count() == 1))
-                                   .Union(state.ClassDumpData.Metadata.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                                                        .Where(mi => mi.Name == dumpMethodName  &&
-                                                                                     mi.ReturnType == typeof(string)  &&
-                                                                                     mi.GetParameters().Count() == 1)))
-            {
-                // found an instance method
-                if (!mi.IsStatic && mi.GetParameters().Count() == 0)
-                {
-                    dumpMethod = mi;
-                    break;
-                }
-
-                if (mi.IsStatic)
-                {
-                    if (mi.GetParameters()[0].ParameterType == type)
-                        dumpMethod = mi;
-                    else
-                        if (mi.GetParameters()[0].ParameterType.IsAssignableFrom(type))
-                        dumpMethod2 = mi;
-                }
-            }
-
-            if (dumpMethod != null)
-            {
-                if (dumpMethod.IsStatic)
-                    _writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
-                else
-                    _writer.Write((string)dumpMethod.Invoke(value, null));
-
-                return true;
-            }
-
-            if (dumpMethod2 != null)
-            {
-                if (dumpMethod2.IsStatic)
-                    _writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
-                else
-                    _writer.Write((string)dumpMethod2.Invoke(value, null));
-
-                return true;
-            }
-
-            _writer.Write($"*** Could not find a public instance method with name {dumpMethodName} and no parameters or static method with a single parameter of type {type.FullName}, with return type of System.String in the class {type.FullName}.");
-
-            return true;
+            return Writer.DumpedSequence(
+                        sequence,
+                        state.ClassDumpData.DumpAttribute,
+                        enumerateCustom,
+                        o => DumpObject(o),
+                        Indent,
+                        Unindent);
         }
 
         bool DumpedAlready(DumpState state)
@@ -690,338 +451,16 @@ namespace vm.Aspects.Diagnostics
             if (!_dumpedObjects.Contains(new DumpedObject(state.Instance, type)))
                 return false;
 
-            _writer.Write(
+            Writer.Write(
                 DumpFormat.CyclicalReference,
-                GetTypeName(type),
+                type.GetTypeName(),
                 type.Namespace,
                 type.AssemblyQualifiedName);
 
             if (state.SetToDefault())
-                DumpProperty(state);
+                state.DumpProperty();
 
             return true;
-        }
-
-        bool DumpedRootClass(DumpState state)
-        {
-            Contract.Requires(state != null);
-
-            if (state.Type!=typeof(object))
-                return false;
-
-            var type = state.Instance.GetType();
-
-            _writer.Write(
-                DumpFormat.Type,
-                GetTypeName(type),
-                type.Namespace,
-                type.AssemblyQualifiedName);
-            Indent();
-
-            return true;
-        }
-
-        bool DumpedDelegate(DumpState state)
-        {
-            Contract.Requires(state != null);
-
-            if (!typeof(Delegate).IsAssignableFrom(state.Type))
-                return false;
-
-            // it will be dumped at the descendant level
-            if (state.Type == typeof(MulticastDelegate) ||
-                state.Type == typeof(Delegate))
-                return true;
-
-            return DumpedDelegate(state.Instance);
-        }
-
-        bool DumpedDelegate(object value)
-        {
-            var d = value as Delegate;
-
-            if (d == null)
-                return false;   // if it is null delegate, it will be dumped as basic value <null>
-
-            _writer.Write(
-                DumpFormat.Delegate,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.Name : string.Empty,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.Namespace : string.Empty,
-                d.Method.DeclaringType!=null ? d.Method.DeclaringType.AssemblyQualifiedName : string.Empty,
-                d.Method.Name,
-                d.Target==null
-                    ? Resources.ClassMethodDesignator
-                    : Resources.InstanceMethodDesignator);
-
-            return true;
-        }
-
-        bool DumpedSequenceProperty(
-            DumpState state,
-            object value)
-        {
-            var sequence = value as IEnumerable;
-
-            if (sequence == null)
-                return false;
-
-            if (DumpedDictionary(
-                        sequence,
-                        state.ClassDumpData.DumpAttribute))
-                return true;
-
-            return DumpedSequenceObject(sequence, state.CurrentPropertyDumpAttribute);
-        }
-
-        bool DumpedDictionary(
-            IEnumerable sequence,
-            DumpAttribute dumpAttribute)
-        {
-            var sequenceType = sequence.GetType();
-
-            if (!sequenceType.IsGenericType)
-                return false;
-
-            var dictionaryType = sequenceType
-                                    .GetInterfaces()
-                                    .FirstOrDefault(t => t.IsGenericType  &&
-                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
-
-            if (dictionaryType == null)
-                return false;
-
-            var typeArguments = dictionaryType.GetGenericArguments();
-
-            Contract.Assume(typeArguments.Length == 2);
-
-            var keyType = typeArguments[0];
-            var valueType = typeArguments[1];
-
-            if (!keyType.IsBasicType())
-                return false;
-
-            var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
-
-            _writer.Write(
-                DumpFormat.SequenceTypeName,
-                GetTypeName(sequenceType),
-                ((ICollection)sequence).Count.ToString(CultureInfo.InvariantCulture));
-
-            // how many items to dump max?
-            var max = dumpAttribute.MaxLength;
-
-            if (max < 0)
-                max = int.MaxValue;
-            else
-            {
-                if (max == 0)        // limit sequences of primitive types (can be very big)
-                {
-                    max = DumpAttribute.DefaultMaxElements;
-                }
-            }
-
-            _writer.Write(
-                    DumpFormat.SequenceType,
-                    GetTypeName(sequenceType),
-                    sequenceType.Namespace,
-                    sequenceType.AssemblyQualifiedName);
-
-            // stop the recursion if dump.Recurse is false
-            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
-                return true;
-
-            var n = 0;
-
-            _writer.WriteLine();
-            _writer.Write("{");
-            Indent();
-
-            foreach (var kv in sequence)
-            {
-                Contract.Assume(kv.GetType() == keyValueType);
-
-                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
-                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
-
-                _writer.WriteLine();
-                if (n++ >= max)
-                {
-                    _writer.Write(DumpFormat.SequenceDumpTruncated, max);
-                    break;
-                }
-                _writer.Write("[");
-                DumpObject(key);
-                _writer.Write("] = ");
-                Indent();
-                DumpObject(value);
-                _writer.Write(";");
-                Unindent();
-            }
-
-            Unindent();
-            _writer.WriteLine();
-            _writer.Write("}");
-
-            return true;
-        }
-
-        bool DumpedSequenceObject(
-            IEnumerable sequence,
-            DumpAttribute dumpAttribute,
-            bool enumerateCustom = false)
-        {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-            Contract.Requires(sequence != null);
-
-            var sequenceType = sequence.GetType();
-
-            if (!sequenceType.IsArray &&
-                !_systemNameSpace.IsMatch(sequenceType.Namespace))
-            {
-                if (!enumerateCustom)
-                    return false;
-
-                if (dumpAttribute.Enumerate != ShouldDump.Dump)
-                    return false;
-
-                _writer.WriteLine();
-            }
-
-            var collection = sequence as ICollection;
-            var elementsType = sequenceType.IsArray
-                                    ? new Type[] { sequenceType.GetElementType() }
-                                    : sequenceType.IsGenericType
-                                        ? sequenceType.GetGenericArguments()
-                                        : new Type[] { typeof(object) };
-
-            _writer.Write(
-                DumpFormat.SequenceTypeName,
-                sequenceType.IsArray
-                        ? GetTypeName(elementsType[0])
-                        : GetTypeName(sequenceType),
-                collection != null
-                        ? collection.Count.ToString(CultureInfo.InvariantCulture)
-                        : string.Empty);
-
-            // how many items to dump max?
-            var max = dumpAttribute.MaxLength;
-
-            if (max < 0)
-                max = int.MaxValue;
-            else
-            {
-                if (max == 0)        // limit sequences of primitive types (can be very big)
-                {
-                    max = DumpAttribute.DefaultMaxElements;
-                }
-            }
-
-            if (sequenceType == typeof(byte[]))
-            {
-                // dump no more than max elements from the sequence:
-                var array = (byte[])sequence;
-                var length = Math.Min(max, array.Length);
-
-                _writer.Write(BitConverter.ToString(array, 0, length));
-                if (length < array.Length)
-                    _writer.Write(DumpFormat.SequenceDumpTruncated, max);
-
-                return true;
-            }
-
-            _writer.Write(
-                DumpFormat.SequenceType,
-                GetTypeName(sequenceType),
-                sequenceType.Namespace,
-                sequenceType.AssemblyQualifiedName);
-
-            // stop the recursion if dump.Recurse is false
-            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
-                return true;
-
-            var n = 0;
-
-            Indent();
-
-            foreach (var item in sequence)
-            {
-                _writer.WriteLine();
-                if (n++ >= max)
-                {
-                    _writer.Write(DumpFormat.SequenceDumpTruncated, max);
-                    break;
-                }
-                DumpObject(item);
-            }
-
-            Unindent();
-
-            return true;
-        }
-
-        bool DumpedDefaultProperty(
-            DumpState state)
-        {
-            Contract.Requires(state != null);
-            Contract.Requires(state.RecurseDump != ShouldDump.Default);
-
-            if (state.RecurseDump == ShouldDump.Dump)
-                return false;
-
-            var type = state.Instance.GetType();
-
-            _writer.Write(
-                        DumpFormat.Type,
-                        GetTypeName(type),
-                        type.Namespace,
-                        type.AssemblyQualifiedName);
-
-            Indent();
-
-            if (state.SetToDefault())
-                DumpProperty(state);
-
-            Unindent();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the name of a type. In case the type is a EF dynamic proxy it will return only the first portion of the name, e.g.
-        /// from the name "SomeTypeName_CFFF21E2EAC773F63711A0F93BE77F1CBC891DE8F0E5FFC46E7C4BB2E4BCC8D3" it will return only "SomeTypeName"
-        /// </summary>
-        /// <param name="type">The object which type name needs to be retrieved.</param>
-        /// <returns>The type name.</returns>
-        static string GetTypeName(
-            Type type)
-        {
-            Contract.Requires(type != null);
-
-            string typeName = type.Name;
-
-            if (typeName.Length > 65 &&
-                _hexadecimalSuffix.IsMatch(typeName.Substring(typeName.Length - 65-1)))
-                typeName = type.BaseType.Name.Substring(0, typeName.Length-65);
-
-            if (type.IsGenericType)
-            {
-                var tickIndex = typeName.IndexOf('`');
-
-                if (tickIndex > -1)
-                    typeName = typeName.Substring(0, tickIndex);
-
-                typeName = $"{typeName}<{string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t)))}>";
-            }
-
-            if (type.IsArray)
-            {
-                var bracketIndex = typeName.IndexOf('[');
-
-                if (bracketIndex > -1)
-                    typeName = typeName.Substring(0, bracketIndex);
-            }
-
-            return typeName;
         }
         #endregion
 
@@ -1073,7 +512,7 @@ namespace vm.Aspects.Diagnostics
 
             if (disposing && _isDumpWriter)
                 // if the writer wraps foreign StringWriter, it is smart enough not to dispose it
-                _writer.Dispose();
+                Writer.Dispose();
         }
         #endregion
 
@@ -1082,11 +521,11 @@ namespace vm.Aspects.Diagnostics
         [ContractInvariantMethod]
         void Invariant()
         {
-            Contract.Invariant(_writer!=null, "The text writer cannot be null at any time.");
+            Contract.Invariant(Writer!=null, "The text writer cannot be null at any time.");
             Contract.Invariant(_indentLength>=0, "The length of the indent cannot be negative.");
             Contract.Invariant(_indentLevel>=0, "The the indent level cannot be negative.");
             Contract.Invariant(_dumpedObjects!=null);
-            Contract.Invariant(_dumpedVirtualProperties!=null);
+            Contract.Invariant(DumpedVirtualProperties!=null);
         }
     }
 }

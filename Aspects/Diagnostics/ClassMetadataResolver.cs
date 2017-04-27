@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace vm.Aspects.Diagnostics
 {
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using MetadataTypeAttribute = System.ComponentModel.DataAnnotations.MetadataTypeAttribute;
 
@@ -28,6 +29,17 @@ namespace vm.Aspects.Diagnostics
         /// Gets or sets the cache of dump metadata (buddy class) defined explicitly either in the initializer above or by calling SetMetadataType.
         /// </summary>
         static Dictionary<Type, ClassDumpData> TypesDumpData => _typesDumpData;
+
+        /// <summary>
+        /// Resets the class dump.
+        /// </summary>
+        [Conditional("TEST")]
+        public static void ResetClassDumpData()
+        {
+            _typesDumpDataSync.EnterWriteLock();
+            _typesDumpData.Clear();
+            _typesDumpDataSync.ExitWriteLock();
+        }
 
         /// <summary>
         /// Adds buddy type and dump attribute for classes which we do not have access to, e.g. Exception.

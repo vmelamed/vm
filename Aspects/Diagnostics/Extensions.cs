@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -8,7 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Text.RegularExpressions;
 using vm.Aspects.Diagnostics;
+using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects
 {
@@ -17,6 +20,11 @@ namespace vm.Aspects
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Matches a type name with hexadecimal suffix.
+        /// </summary>
+        static readonly Regex _hexadecimalSuffix = new Regex(@"_[0-9A-F]{64}", RegexOptions.Compiled);
+
         /// <summary>
         /// Dumps the specified <paramref name="value"/> to a text writer.
         /// </summary>
@@ -106,7 +114,7 @@ namespace vm.Aspects
         {
             Contract.Requires(type != null, "type");
 
-            return ObjectTextDumper.DumpBasicValues.ContainsKey(type) || type.IsEnum;
+            return WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
         }
 
         /// <summary>
@@ -218,5 +226,69 @@ namespace vm.Aspects
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
         [Pure]
         public static bool IsNullOrEmpty(this string value) => value?.Any() ?? true;
+
+        static readonly IReadOnlyDictionary<Type, string> _cSharpTypeName = new ReadOnlyDictionary<Type, string>(
+            new Dictionary<Type, string>
+            {
+                [typeof(bool)]    = "bool",
+                [typeof(byte)]    = "byte",
+                [typeof(sbyte)]   = "sbyte",
+                [typeof(char)]    = "char",
+                [typeof(short)]   = "short",
+                [typeof(int)]     = "int",
+                [typeof(long)]    = "long",
+                [typeof(ushort)]  = "ushort",
+                [typeof(uint)]    = "uint",
+                [typeof(ulong)]   = "ulong",
+                [typeof(float)]   = "float",
+                [typeof(double)]  = "double",
+                [typeof(decimal)] = "decimal",
+                [typeof(string)]  = "string",
+                [typeof(object)]  = "object",
+            });
+
+        /// <summary>
+        /// Gets the name of a type. In case the type is a EF dynamic proxy it will return only the first portion of the name, e.g.
+        /// from the name "SomeTypeName_CFFF21E2EAC773F63711A0F93BE77F1CBC891DE8F0E5FFC46E7C4BB2E4BCC8D3" it will return only "SomeTypeName"
+        /// </summary>
+        /// <param name="type">The object which type name needs to be retrieved.</param>
+        /// <returns>The type name.</returns>
+        [Pure]
+        internal static string GetTypeName(
+            this Type type)
+        {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
+            string typeName;
+
+            if (_cSharpTypeName.TryGetValue(type, out typeName))
+                return typeName;
+
+            typeName = type.Name;
+
+            if (typeName.Length > 65 &&
+                _hexadecimalSuffix.IsMatch(typeName.Substring(typeName.Length - 65-1)))
+                typeName = type.BaseType.Name.Substring(0, typeName.Length-65);
+
+            if (type.IsGenericType)
+            {
+                var tickIndex = typeName.IndexOf('`');
+
+                if (tickIndex > -1)
+                    typeName = typeName.Substring(0, tickIndex);
+
+                typeName = $"{typeName}<{string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t)))}>";
+            }
+
+            if (type.IsArray)
+            {
+                var bracketIndex = typeName.IndexOf('[');
+
+                if (bracketIndex > -1)
+                    typeName = typeName.Substring(0, bracketIndex);
+            }
+
+            return typeName;
+        }
     }
 }

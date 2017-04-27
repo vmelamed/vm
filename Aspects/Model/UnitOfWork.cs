@@ -123,7 +123,6 @@ namespace vm.Aspects.Model
             try
             {
                 work(repository);
-
                 repository.CommitChanges();
                 transactionScope?.Complete();
             }
@@ -151,7 +150,6 @@ namespace vm.Aspects.Model
             try
             {
                 var result = work(repository);
-
                 repository.CommitChanges();
                 transactionScope?.Complete();
                 return result;
@@ -176,7 +174,6 @@ namespace vm.Aspects.Model
             try
             {
                 await work(repository);
-
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
             }
@@ -202,7 +199,6 @@ namespace vm.Aspects.Model
             try
             {
                 var result = await work(repository);
-
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
 

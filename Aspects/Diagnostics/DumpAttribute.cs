@@ -37,10 +37,10 @@ namespace vm.Aspects.Diagnostics
     /// </remarks>
     [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification = "The display positional parameter is equal to Skip named parameter.")]
     [AttributeUsage(
-        AttributeTargets.Struct|
-        AttributeTargets.Class |
-        AttributeTargets.Field |
-        AttributeTargets.Property |
+        AttributeTargets.Struct    |
+        AttributeTargets.Class     |
+        AttributeTargets.Field     |
+        AttributeTargets.Property  |
         AttributeTargets.Parameter |
         AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
     public sealed class DumpAttribute : Attribute, IEquatable<DumpAttribute>, ICloneable
@@ -50,13 +50,12 @@ namespace vm.Aspects.Diagnostics
         /// The default dump attribute applied to instances and properties with no <c>DumpAttribute</c> specified.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible", Justification = "We want it visible so the users can redefine its default property values.")]
-        public static DumpAttribute Default = new DumpAttribute { _isDefault = true };
+        public static DumpAttribute Default { get; } = new DumpAttribute();
         #endregion
 
         string _maskValue;
         string _labelFormat;
         string _valueFormat;
-        bool? _isDefault;
 
         #region Default values for some properties
         /// <summary>
@@ -122,13 +121,15 @@ namespace vm.Aspects.Diagnostics
         public ShouldDump DumpNullValues { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the element should be recursively dumped. Default value is <c>RecurseDump.Dump</c> - recurse into.
+        /// Gets or sets a value indicating whether the element should be recursively dumped.
+        /// Default value is <c>RecurseDump.Dump</c> - recurse into.
         /// <para>
-        /// When applied to a class with value of <c>RecurseDump.Skip</c> it will suppress dumping the class's properties with exception of 
-        /// the property specified by the property <see cref="DefaultProperty"/> of this attribute.
+        /// When applied to a class with value of <c>RecurseDump.Skip</c> it will suppress dumping 
+        /// the class's properties with exception of the property specified by the property 
+        /// <see cref="DefaultProperty"/> of this attribute.
         /// </para><para>
-        /// When applied to a property of non-sequence type with a value of <c>RecurseDump.Skip</c> it will suppress dumping of the associated 
-        /// instance.
+        /// When applied to a property of non-sequence type with a value of <c>RecurseDump.Skip</c>
+        /// it will suppress dumping of the associated instance.
         /// </para><para>
         /// When applied to a property of sequence type the attribute will suppress dumping the sequence's items.
         /// </para>
@@ -139,8 +140,8 @@ namespace vm.Aspects.Diagnostics
         public ShouldDump RecurseDump { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the only property (the representative property) which should be dumped if <see cref="RecurseDump"/> is set to
-        /// <c>RecurseDump.Skip</c>.
+        /// Gets or sets the name of the only property (the representative property) which should be dumped
+        /// if <see cref="RecurseDump"/> is set to <c>RecurseDump.Skip</c>.
         /// </summary>
         /// <remarks>
         /// Applicable to classes and struct-s only.
@@ -216,11 +217,11 @@ namespace vm.Aspects.Diagnostics
         }
 
         /// <summary>
-        /// If the property is of string type, gets or sets the maximum number of characters to be dumped from the value. Non-positive numbers, 
-        /// (including 0 - the default) will dump the entire string no matter how long the string might be. 
+        /// If the property is of string type, gets or sets the maximum number of characters to be dumped from the value.
+        /// Non-positive numbers (including 0 - the default) will dump the entire string no matter how long the string might be. 
         /// <para>
-        /// For arrays the default value of 0 means to dump no-more than the first 10 (ten) elements.
-        /// A negative value (e.g. -1) will dump all elements and positive value will dump no more than the first <c>MaxLength</c>.
+        /// For arrays the default value of 0 means to dump no-more than the first <seealso cref="DefaultMaxElements"/> (ten) elements.
+        /// A negative value (e.g. -1) will dump all elements and positive value will dump no more than the first <c>MaxLength</c> elements.
         /// </para>
         /// </summary>
         /// <remarks>
@@ -257,8 +258,8 @@ namespace vm.Aspects.Diagnostics
         /// Gets or sets a dump class which has a method that implements custom formatting of the property's value. 
         /// The <see cref="ObjectTextDumper"/> searches for a method specified by the attribute property <see cref="DumpMethod"/> 
         /// in the class specified by this property and invokes it in order to output the text 
-        /// representation of the property to which it is applied. If <see cref="DumpMethod"/> is not specified the <see cref="ObjectTextDumper"/> 
-        /// assumes that the name of the dump method is &quot;Dump&quot;.
+        /// representation of the property to which it is applied. If <see cref="DumpMethod"/> is not specified
+        /// the <see cref="ObjectTextDumper"/> assumes that the name of the dump method is &quot;Dump&quot;.
         /// </summary>
         /// <seealso cref="DumpMethod"/>
         /// <remarks>
@@ -281,13 +282,13 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// When overridden in a derived class, indicates whether the value of this instance is the default value for the derived class.
         /// </summary>
-        /// <returns>true if this instance is the default attribute for the class; otherwise, false.</returns>
+        /// <returns><see langword="true"/> if this instance is the default attribute for the class; otherwise, <see langword="false"/>.</returns>
         public override bool IsDefaultAttribute()
-        {
-            if (!_isDefault.HasValue)
-                _isDefault = this == Default;
-            return _isDefault.Value;
-        }
+            => this == Default;
+
+        #region ICloneable Members
+        object ICloneable.Clone() => Clone();
+        #endregion
 
         /// <summary>
         /// Clones this instance.
@@ -299,23 +300,19 @@ namespace vm.Aspects.Diagnostics
 
             return new DumpAttribute
             {
+                Order           = Order,
                 DumpNullValues  = DumpNullValues,
+                Skip            = Skip,
                 RecurseDump     = RecurseDump,
                 DefaultProperty = DefaultProperty,
-                MaxDepth        = MaxDepth,
-                Order           = Order,
-                Skip            = Skip,
                 Mask            = Mask,
                 MaskValue       = MaskValue,
                 MaxLength       = MaxLength,
+                MaxDepth        = MaxDepth,
                 LabelFormat     = LabelFormat,
                 ValueFormat     = ValueFormat,
             };
         }
-
-        #region ICloneable Members
-        object ICloneable.Clone() => Clone();
-        #endregion
 
         #region Identity rules implementation.
         // Two attributes are equal if their properties are equal by value.
@@ -337,16 +334,16 @@ namespace vm.Aspects.Diagnostics
             if (ReferenceEquals(other, null))
                 return false;
 
-            return Order           == other.Order &&
-                   DumpNullValues  == other.DumpNullValues &&
-                   Skip            == other.Skip &&
-                   RecurseDump     == other.RecurseDump &&
-                   DefaultProperty == other.DefaultProperty &&
-                   Mask            == other.Mask &&
-                   MaskValue       == other.MaskValue &&
-                   MaxLength       == other.MaxLength &&
-                   MaxDepth        == other.MaxDepth &&
-                   LabelFormat     == other.LabelFormat &&
+            return Order           == other.Order            &&
+                   DumpNullValues  == other.DumpNullValues   &&
+                   Skip            == other.Skip             &&
+                   RecurseDump     == other.RecurseDump      &&
+                   DefaultProperty == other.DefaultProperty  &&
+                   Mask            == other.Mask             &&
+                   MaskValue       == other.MaskValue        &&
+                   MaxLength       == other.MaxLength        &&
+                   MaxDepth        == other.MaxDepth         &&
+                   LabelFormat     == other.LabelFormat      &&
                    ValueFormat     == other.ValueFormat;
         }
         #endregion
@@ -375,9 +372,9 @@ namespace vm.Aspects.Diagnostics
             hashCode = Constants.HashMultiplier * hashCode + DumpNullValues.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + Skip.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + RecurseDump.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty!=null ? DefaultProperty.GetHashCode() : 0);
+            hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty?.GetHashCode() ?? 0);
             hashCode = Constants.HashMultiplier * hashCode + Mask.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + MaskValue.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + (MaskValue?.GetHashCode() ?? 0);
             hashCode = Constants.HashMultiplier * hashCode + MaxLength.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + MaxDepth.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + LabelFormat.GetHashCode();

@@ -29,7 +29,7 @@ namespace vm.Aspects.Diagnostics
         /// <param name="indentSize">Size of the indent.</param>
         /// <returns>The <paramref name="writer" /> object.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="writer" /> is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static TextWriter Indent(
             this TextWriter writer,
             int indentLevel,
@@ -42,8 +42,9 @@ namespace vm.Aspects.Diagnostics
 
             if (dumpWriter != null)
             {
-                dumpWriter.Indent     = indentLevel;
-                dumpWriter.IndentSize = indentSize;
+                dumpWriter.Indent = indentLevel;
+                if (indentSize > 0)
+                    dumpWriter.IndentSize = indentSize;
 
                 return dumpWriter;
             }
@@ -64,7 +65,7 @@ namespace vm.Aspects.Diagnostics
         /// <param name="indentSize">Size of the indent.</param>
         /// <returns>The <paramref name="writer" /> object.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="writer" /> is <c>null</c>.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public static TextWriter Unindent(
             this TextWriter writer,
             int indentLevel,
@@ -77,8 +78,9 @@ namespace vm.Aspects.Diagnostics
 
             if (dumpWriter != null)
             {
-                dumpWriter.Indent     = indentLevel;
-                dumpWriter.IndentSize = indentSize;
+                dumpWriter.Indent = indentLevel;
+                if (indentSize > 0)
+                    dumpWriter.IndentSize = indentSize;
 
                 return dumpWriter;
             }
