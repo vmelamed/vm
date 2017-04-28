@@ -134,7 +134,7 @@ namespace vm.Aspects
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + _key.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + (_key?.GetHashCode() ?? 0);
 
             return hashCode;
         }

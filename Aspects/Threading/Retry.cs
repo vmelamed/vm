@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 
@@ -12,50 +13,6 @@ namespace vm.Aspects.Threading
     /// </typeparam>
     public class Retry<T>
     {
-        /// <summary>
-        /// The default maximum number of retries.
-        /// </summary>
-        public const int DefaultMaxRetries = 10;
-        /// <summary>
-        /// The default minimum delay between retries.
-        /// </summary>
-        public const int DefaultMinDelay = 50;
-        /// <summary>
-        /// The default maximum delay between retries.
-        /// </summary>
-        public const int DefaultMaxDelay = 150;
-
-        /// <summary>
-        /// The default delegate testing if the operation has failed. It returns <see langword="true"/> if the operation raised an exception, otherwise <see langword="false"/>.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static Func<T, Exception, int, bool> DefaultIsFailure = (r,x,i) => x != null;]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, bool> DefaultIsFailure = (r,x,i) => x != null;
-        /// <summary>
-        /// The default delegate testing if the operation has succeeded. It returns <see langword="true"/> if the operation didn't raise an exception, otherwise <see langword="false"/>.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static new Func<T, Exception, int, bool> DefaultIsSuccess = (r,x,i) => x == null;]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, bool> DefaultIsSuccess = (r,x,i) => x == null;
-        /// <summary>
-        /// The default epilogue delegate throws the raised exception or returns the result of the operation.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static Func<T, Exception, int, T> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return r; };]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, T> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return r; };
-
         readonly Func<int, T> _operation;
         readonly Func<T, Exception, int, bool> _isFailure;
         readonly Func<T, Exception, int, bool> _isSuccess;
@@ -73,7 +30,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailure">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="DefaultIsFailure"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.DefaultIsFailure"/>.
         /// Note that <paramref name="isFailure"/> is always called before <paramref name="isSuccess"/>.
         /// The operation will be retried if <paramref name="isFailure"/> and <paramref name="isSuccess"/> return <see langword="false"/>.
         /// </param>
@@ -95,9 +52,9 @@ namespace vm.Aspects.Threading
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
 
             _operation = operation;
-            _isSuccess = isSuccess ?? DefaultIsSuccess;
-            _isFailure = isFailure ?? DefaultIsFailure;
-            _epilogue  = epilogue  ?? DefaultEpilogue;
+            _isSuccess = isSuccess ?? RetryConstants.DefaultIsSuccess;
+            _isFailure = isFailure ?? RetryConstants.DefaultIsFailure;
+            _epilogue  = epilogue  ?? RetryConstants.DefaultEpilogue;
         }
 
         /// <summary>
@@ -113,10 +70,11 @@ namespace vm.Aspects.Threading
         /// The maximum delay before retrying the operation in milliseconds.
         /// </param>
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public T Start(
-            int maxRetries = DefaultMaxRetries,
-            int minDelay = DefaultMinDelay,
-            int maxDelay = DefaultMaxDelay)
+            int maxRetries = RetryConstants.DefaultMaxRetries,
+            int minDelay = RetryConstants.DefaultMinDelay,
+            int maxDelay = RetryConstants.DefaultMaxDelay)
         {
             Contract.Requires<ArgumentException>(maxRetries > 1, "The retries must be more than one.");
             Contract.Requires<ArgumentException>(minDelay >= 0, "The minimum delay before retrying must be a non-negative number.");

@@ -488,35 +488,47 @@ namespace vm.Aspects.Model.EFRepository
         public IRepository CommitChanges()
         {
             new Retry<bool>(
-                i => Facility.ExceptionManager.Process(
-                        () =>
+                i =>
+                {
+                    try
+                    {
+                        try
                         {
-                            try
+                            SaveChanges();
+                            return true;
+                        }
+                        catch (DbUpdateConcurrencyException cx)
+                        {
+                            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.ClientWins  &&
+                                i+1 < MaxNumberOfRetries)
                             {
-                                SaveChanges();
-                                return true;
+                                // prepare to retry the commit by ignoring what's in the DB
+                                var entry = cx.Entries.FirstOrDefault();
+
+                                entry?.OriginalValues?.SetValues(
+                                    entry.GetDatabaseValues());
                             }
-                            catch (DbUpdateConcurrencyException cx)
-                            {
-                                if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.ClientWins  &&
-                                    i+1 < MaxNumberOfRetries)
-                                {
-                                    // prepare to retry the commit by ignoring what's in the DB
-                                    var entry = cx.Entries.FirstOrDefault();
 
-                                    entry?.OriginalValues?.SetValues(
-                                        entry.GetDatabaseValues());
-                                }
+                            // rethrow for the exception manager to process it (log it).
+                            throw;
+                        }
+                    }
+                    catch (Exception x)
+                    {
+                        var policyName = (i+1 >= MaxNumberOfRetries  &&  OptimisticConcurrencyStrategy==OptimisticConcurrencyStrategy.ClientWins
+                                                ? OptimisticConcurrencyStrategy.StoreWins       // the last time do not swallow the DbUpdateConcurrencyException-s 
+                                                : OptimisticConcurrencyStrategy).ToString();
+                        Exception toThrow;
 
-                                // rethrow for the exception manager to process it (log it).
+                        if (Facility.ExceptionManager.HandleException(x, policyName, out toThrow))
+                            if (toThrow != null)
+                                throw toThrow;
+                            else
                                 throw;
-                            }
-                        },
-                        (i+1 < MaxNumberOfRetries
-                                ? OptimisticConcurrencyStrategy
-                                : OptimisticConcurrencyStrategy==OptimisticConcurrencyStrategy.ClientWins
-                                        ? OptimisticConcurrencyStrategy.StoreWins       // the last time do not swallow the DbUpdateConcurrencyException-s
-                                        : OptimisticConcurrencyStrategy).ToString()),
+
+                        return false;
+                    }
+                },
                 (r, x, i) => x != null,     // if there's an exception - CommitChanges failed.
                 (r, x, i) => r)             // If SaveChanges threw DbUpdateConcurrencyException and the strategy is ClientWins, the exception will be swallowed by the exception manager - not failure or success but we can retry.
                 .Start(
@@ -602,10 +614,7 @@ namespace vm.Aspects.Model.EFRepository
                 },
                 (r, x, i) => Task.FromResult(x != null  &&  r),
                 (r, x, i) => Task.FromResult(r))
-                .StartAsync(
-                    MaxNumberOfRetries,
-                    MinWaitBeforeRetry,
-                    MaxWaitBeforeRetry);
+                .StartAsync();
 
             return this;
         }
@@ -623,23 +632,5 @@ namespace vm.Aspects.Model.EFRepository
         /// Gets or sets the maximum wait before <see cref="CommitChanges"/> retry after optimistic concurrency exception.
         /// </summary>
         public int MaxWaitBeforeRetry { get; set; } = 150;
-
-        readonly Lazy<Random> _random = new Lazy<Random>(() => new Random(unchecked((int)DateTime.Now.Ticks)));
-
-        Random Random => _random.Value;
-
-        async Task DelayBeforeRetryAsync()
-        {
-            if (MinWaitBeforeRetry <= 0)
-                return;
-
-            if (MaxWaitBeforeRetry < MinWaitBeforeRetry)
-                MaxWaitBeforeRetry = MinWaitBeforeRetry;
-
-            if (MaxWaitBeforeRetry == MinWaitBeforeRetry)
-                await Task.Delay(MinWaitBeforeRetry);
-            else
-                await Task.Delay(MinWaitBeforeRetry + Random.Next(MaxWaitBeforeRetry-MinWaitBeforeRetry));
-        }
     }
 }

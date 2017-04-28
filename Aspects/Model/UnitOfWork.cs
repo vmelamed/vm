@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.ServiceLocation;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -61,6 +62,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default repository factory
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly Func<OptimisticConcurrencyStrategy, IRepository> DefaultRepositoryFactory =
             s =>
             {
@@ -72,6 +74,7 @@ namespace vm.Aspects.Model
         /// <summary>
         /// The default transaction scope factory
         /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly Func<TransactionScope> DefaultTransactionScopeFactory =
             () => new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
 

@@ -11,50 +11,6 @@ namespace vm.Aspects.Threading
     /// Hint: if the operation does not have a natural return value for type T (i.e. returns <c>Task</c>), use some primitive type instead, e.g. <see cref="bool"/> (<c>Task&lt;bool&gt;</c>).</typeparam>
     public class RetryTasks<T>
     {
-        /// <summary>
-        /// The default maximum number of retries.
-        /// </summary>
-        public const int DefaultMaxRetries = 10;
-        /// <summary>
-        /// The default minimum delay between retries.
-        /// </summary>
-        public const int DefaultMinDelay = 50;
-        /// <summary>
-        /// The default maximum delay between retries.
-        /// </summary>
-        public const int DefaultMaxDelay = 150;
-
-        /// <summary>
-        /// The default delegate testing if the operation has failed. It returns <see langword="true"/> if the operation raised an exception, otherwise <see langword="false"/>.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static Func<T, Exception, int, Task<bool>> DefaultIsFailure = (r,x,i) => Task.FromResult(x != null);]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, Task<bool>> DefaultIsFailure = (r,x,i) => Task.FromResult(x != null);
-        /// <summary>
-        /// The default delegate testing if the operation has succeeded. It returns <see langword="true"/> if the operation didn't raise an exception, otherwise <see langword="false"/>.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static Func<T, Exception, int, Task<bool>> DefaultIsSuccess = (r,x,i) => Task.FromResult(x == null);]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, Task<bool>> DefaultIsSuccess = (r,x,i) => Task.FromResult(x == null);
-        /// <summary>
-        /// The default epilogue delegate throws the raised exception or returns the result of the operation.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is:
-        /// <code>
-        /// <![CDATA[public readonly static Func<T, Exception, int, Task<T>> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return Task.FromResult(r); };]]>
-        /// </code>
-        /// </remarks>
-        public readonly static Func<T, Exception, int, Task<T>> DefaultEpilogue = (r,x,i) => { if (x!=null) throw x; return Task.FromResult(r); };
-
         readonly Func<int, Task<T>> _operationAsync;
         readonly Func<T, Exception, int, Task<bool>> _isFailureAsync;
         readonly Func<T, Exception, int, Task<bool>> _isSuccessAsync;
@@ -72,7 +28,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailureAsync">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="DefaultIsFailure"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.DefaultIsFailureAsync"/>.
         /// Note that <paramref name="isFailureAsync"/> is always called before <paramref name="isSuccessAsync"/>.
         /// The operation will be retried if <paramref name="isFailureAsync"/> and <paramref name="isSuccessAsync"/> return <see langword="false"/>.
         /// </param>
@@ -94,9 +50,9 @@ namespace vm.Aspects.Threading
             Contract.Requires<ArgumentNullException>(operationAsync != null, nameof(operationAsync));
 
             _operationAsync = operationAsync;
-            _isSuccessAsync = isSuccessAsync ?? DefaultIsSuccess;
-            _isFailureAsync = isFailureAsync ?? DefaultIsFailure;
-            _epilogueAsync  = epilogueAsync  ?? DefaultEpilogue;
+            _isSuccessAsync = isSuccessAsync ?? RetryConstants.DefaultIsSuccessAsync;
+            _isFailureAsync = isFailureAsync ?? RetryConstants.DefaultIsFailureAsync;
+            _epilogueAsync  = epilogueAsync  ?? RetryConstants.DefaultEpilogueAsync;
         }
 
         /// <summary>
@@ -114,9 +70,9 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
         public async Task<T> StartAsync(
-            int maxRetries = DefaultMaxRetries,
-            int minDelay = DefaultMinDelay,
-            int maxDelay = 0)
+            int maxRetries = RetryConstants.DefaultMaxRetries,
+            int minDelay = RetryConstants.DefaultMinDelay,
+            int maxDelay = RetryConstants.DefaultMaxDelay)
         {
             Contract.Requires<ArgumentException>(maxRetries > 1, "The retries must be more than one.");
             Contract.Requires<ArgumentException>(minDelay >= 0, "The minimum delay before retrying must be a non-negative number.");

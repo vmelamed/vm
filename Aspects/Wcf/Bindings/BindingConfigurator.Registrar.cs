@@ -56,8 +56,6 @@ namespace vm.Aspects.Wcf.Bindings
             }
         }
 
-        static BindingConfigurationsRegistrar _registrar = new BindingConfigurationsRegistrar();
-
         /// <summary>
         /// Gets the registrar.
         /// </summary>

@@ -321,9 +321,8 @@ namespace vm.Aspects
                 // there are more segments in this prerelease and all segments of the other prerelease were compared?
                 if (i <  thisPrerelease.Length  &&  i >= otherPrerelease.Length)
                     return 1;
-
-                // all segments of this prerelease were compared and there are more segments in the other prerelease?
-                if (i >= thisPrerelease.Length  &&  i <  otherPrerelease.Length)
+                else
+                    // all segments of this prerelease were compared and there are more segments in the other prerelease?
                     return -1;
             }
             while (true);

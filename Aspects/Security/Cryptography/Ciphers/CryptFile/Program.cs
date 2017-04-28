@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -55,6 +56,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         private static bool ParseArguments(string[] args)
         {
+            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
+
             if (args.Length == 0)
             {
                 Usage();
@@ -233,6 +236,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static byte[] ParseHexValue(string argument)
         {
+            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
+            Contract.Requires<ArgumentException>(argument.Length == 0  ||  argument.Length >= 2);
+
             var hexValue = new byte[(argument.Length+1)/2];
 
             for (var i = 0; i<argument.Length; i += 2)

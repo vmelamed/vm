@@ -74,6 +74,7 @@ namespace vm.Aspects.Model
         /// <param name="methodReturn">The result.</param>
         /// <param name="transactionScope">The call data.</param>
         /// <returns>IMethodReturn.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#", Justification = "better discriptive name")]
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,
@@ -124,6 +125,7 @@ namespace vm.Aspects.Model
         /// <param name="methodReturn">The method return.</param>
         /// <param name="transactionScope">The call data.</param>
         /// <returns>Task{TResult}.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#")]
         protected override async Task<TResult> ContinueWith<TResult>(
             IMethodInvocation input,
             IMethodReturn methodReturn,

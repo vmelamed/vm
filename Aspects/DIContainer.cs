@@ -415,8 +415,6 @@ namespace vm.Aspects
 
             var registrations = container.GetRegistrationsSnapshot();
 
-            Contract.Assume(registrations != null);
-
             writer.WriteLine($"Container has {registrations.Count()} Registrations:");
 
             foreach (var item in registrations
