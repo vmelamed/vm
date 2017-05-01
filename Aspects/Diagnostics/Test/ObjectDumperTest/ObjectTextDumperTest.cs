@@ -1371,6 +1371,14 @@ Object8 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8,
             public List<int> List { get; set; }
         }
 
+        abstract class MetaObject7_1
+        {
+            public string Property1 { get; set; }
+            public string Property2 { get; set; }
+            [Dump(MaxLength = -1)]
+            public List<int> List { get; set; }
+        }
+
         [TestMethod]
         public void TestDumpObject7_1_1()
         {
@@ -1426,6 +1434,49 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
   Property2                = Property2";
 
                 target.Dump(test);
+
+                var actual = w.GetStringBuilder().ToString();
+
+                TestContext.WriteLine("{0}", actual);
+                Assert.AreEqual(expected, actual);
+            }
+        }
+
+        [TestMethod]
+        public void TestDumpObject7_1_3()
+        {
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var target = new ObjectTextDumper(w);
+                var test = new Object7_1
+                {
+                    List = new List<int> { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, },
+                };
+                var expected = @"
+Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+    0
+    1
+    2
+    3
+    4
+    5
+    0
+    1
+    2
+    3
+    4
+    5
+    0
+    1
+    2
+    3
+    4
+    5
+  Property1                = Property1
+  Property2                = Property2";
+
+                target.Dump(test, typeof(MetaObject7_1));
 
                 var actual = w.GetStringBuilder().ToString();
 
@@ -2218,6 +2269,37 @@ Object13 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
             }
 
             DumpAttribute.Default.Skip = ShouldDump.Dump;
+        }
+
+        public class DavidATest
+        {
+            public int A { get; } = 10;
+            public int[] Array { get; } = new[] { 1, 2, 3 };
+            public int B { get; } = 6;
+        }
+
+        [TestMethod]
+        public void TestArrayIndentationCreep()
+        {
+            var expected = @"
+Object13 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object13, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Prop2                    = <null>
+  Prop3                    = <null>";
+            var test = new DavidATest();
+
+            using (var w = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var target = new ObjectTextDumper(w);
+
+                target.Dump(test);
+                target.Dump(test);
+
+                var actual = w.GetStringBuilder().ToString();
+
+                TestContext.WriteLine("{0}", actual);
+                Debug.WriteLine("{0}", actual, null);
+                Assert.AreEqual(expected, actual);
+            }
         }
     }
 }
