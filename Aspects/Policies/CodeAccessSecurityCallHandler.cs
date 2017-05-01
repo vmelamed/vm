@@ -17,12 +17,12 @@ namespace vm.Aspects.Policies
         /// For various reasons it may cut the pipeline short by returning non-<see langword="null" />, e.g. due to an invalid parameter.
         /// </summary>
         /// <param name="input">The input.</param>
-        /// <param name="_">ignored</param>
+        /// <param name="callData">ignored</param>
         /// <returns>IMethodReturn.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PreInvoke(
             IMethodInvocation input,
-            bool _)
+            bool callData)
         {
             foreach (var a in input
                                 .MethodBase

@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
+using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects.Model.EFRepository
@@ -54,6 +55,15 @@ namespace vm.Aspects.Model.EFRepository
             };
         #endregion
 
+        /// <summary>
+        /// <see cref="AggregateException"/>-s are logged and those with a single inner exception, processes the inner exception.
+        /// <see cref="DbUpdateConcurrencyException"/> are logged as info and swallowed.
+        /// Exceptions for which <see cref="IOrmSpecifics.IsTransient"/> is <see langword="true"/> are logged as warnings and 
+        /// rethrown wrapped in a new <see cref="RepeatableOperationException"/>;
+        /// The rest of the exceptions are re-thrown.
+        /// </summary>
+        /// <param name="logExceptionTitle">The log exception title.</param>
+        /// <returns>ExceptionPolicyEntry[].</returns>
         static ExceptionPolicyEntry[] NoneExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
@@ -64,7 +74,7 @@ namespace vm.Aspects.Model.EFRepository
                 // log and unwrap
                 new ExceptionPolicyEntry(
                         typeof(AggregateException),
-                        PostHandlingAction.NotifyRethrow,
+                        PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
@@ -72,12 +82,11 @@ namespace vm.Aspects.Model.EFRepository
                                     eventId++,
                                     TraceEventType.Information),
 
-                            new UnwrapAggregateExceptionHandler(
-                                    OptimisticConcurrencyStrategy.None.ToString()),
+                            new UnwrapAggregateExceptionHandler(OptimisticConcurrencyStrategy.None.ToString()),
                         }
                     ),
 
-                // basically log warning and rethrow
+                // log and rethrow
                 new ExceptionPolicyEntry(
                         typeof(Exception),
                         PostHandlingAction.NotifyRethrow,
@@ -86,11 +95,20 @@ namespace vm.Aspects.Model.EFRepository
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
                                     logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Information),
+                                    TraceEventType.Error),
                         })
             };
         }
 
+        /// <summary>
+        /// <see cref="AggregateException"/>-s are logged and those with a single inner exception, processes the inner exception.
+        /// <see cref="DbUpdateConcurrencyException"/> are logged as info and swallowed.
+        /// Exceptions for which <see cref="IOrmSpecifics.IsTransient"/> is <see langword="true"/> are logged as warnings and 
+        /// rethrown wrapped in a new <see cref="RepeatableOperationException"/>;
+        /// The rest of the exceptions are re-thrown.
+        /// </summary>
+        /// <param name="logExceptionTitle">The log exception title.</param>
+        /// <returns>ExceptionPolicyEntry[].</returns>
         static ExceptionPolicyEntry[] ClientWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
@@ -109,11 +127,11 @@ namespace vm.Aspects.Model.EFRepository
                                     eventId++,
                                     TraceEventType.Information),
 
-                            new UnwrapAggregateExceptionHandler(
-                                    OptimisticConcurrencyStrategy.ClientWins.ToString()),
+                            new UnwrapAggregateExceptionHandler(OptimisticConcurrencyStrategy.ClientWins.ToString()),
                         }
                     ),
 
+                // log and swallow but the caller must decide how to proceed, e.g. retry or something else
                 new ExceptionPolicyEntry(
                         typeof(DbUpdateConcurrencyException),
                         PostHandlingAction.None,
@@ -122,11 +140,10 @@ namespace vm.Aspects.Model.EFRepository
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
                                     logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Information),
-
-                            // do not call the handler for DbUpdateConcurrencyException
+                                    TraceEventType.Warning),
                         }),
 
+                // log, possibly wrap in RepeatableOperationException and (re)throw
                 new ExceptionPolicyEntry(
                         typeof(Exception),
                         PostHandlingAction.ThrowNewException,
@@ -135,14 +152,21 @@ namespace vm.Aspects.Model.EFRepository
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
                                     logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Warning),
+                                    TraceEventType.Error),
 
-                            new EFRepositoryExceptionHandler(
-                                    OptimisticConcurrencyStrategy.ClientWins),
+                            new EFRepositoryExceptionHandler(),
                         })
             };
         }
 
+        /// <summary>
+        /// Flattens <see cref="AggregateException"/>-s and after that,
+        /// Exceptions for which <see cref="IOrmSpecifics.IsTransient"/> is <see langword="true"/> are logged as warnings and rethrown
+        /// wrapped in a new <see cref="RepeatableOperationException"/>;
+        /// the rest of the exceptions are logged and re-thrown.
+        /// </summary>
+        /// <param name="logExceptionTitle">The log exception title.</param>
+        /// <returns>ExceptionPolicyEntry[].</returns>
         static ExceptionPolicyEntry[] StoreWinsExceptionPolicyEntries(
             string logExceptionTitle = LogExceptionTitle)
         {
@@ -166,6 +190,7 @@ namespace vm.Aspects.Model.EFRepository
                         }
                     ),
 
+                // log, possibly wrap in RepeatableOperationException and throw
                 new ExceptionPolicyEntry(
                         typeof(Exception),
                         PostHandlingAction.ThrowNewException,
@@ -174,10 +199,9 @@ namespace vm.Aspects.Model.EFRepository
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
                                     logExceptionTitle,
                                     eventId++,
-                                    TraceEventType.Warning),
+                                    TraceEventType.Error),
 
-                            new EFRepositoryExceptionHandler(
-                                    OptimisticConcurrencyStrategy.StoreWins),
+                            new EFRepositoryExceptionHandler(),
                         })
             };
         }

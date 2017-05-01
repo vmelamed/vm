@@ -1,7 +1,9 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
@@ -129,7 +131,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             Entity e,
             int numValues)
         {
-            ThrowRandomException();
+            ThrowRandomException(e);
             e.RepositoryId = Facility.GuidGenerator.NewGuid().ToString("N");
 
             UpdateValues(e, 0, e.ValuesList.Count()-1);
@@ -149,19 +151,19 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             int skip,
             int take)
         {
-            ThrowRandomException();
             foreach (var v in e.ValuesList
                                .OrderBy(v => v.Id)
                                .Skip(skip)
                                .Take(take)
                                .ToList())
-                UpdateValue(v);
+                UpdateValue(e, v);
         }
 
         void UpdateValue(
+            Entity e,
             Value v)
         {
-            ThrowRandomException();
+            ThrowRandomException(e, v);
             v.UpdatedOn    = Facility.Clock.UtcNow;
         }
 
@@ -169,30 +171,32 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
         static DateTime _when = default(DateTime);
 
-        static void ThrowRandomException()
+        static void ThrowRandomException(
+            Entity e = null,
+            Value v = null)
         {
             using (_sync.UpgradableReaderLock())
                 if (_when == default(DateTime))
                 {
                     using (_sync.WriterLock())
-                        _when = DateTime.Now.AddMilliseconds(_random.Next(1000));
+                        _when = DateTime.Now.AddMilliseconds(_random.Next(500));
                     return;
                 }
 
             using (_sync.UpgradableReaderLock())
                 if (_when < DateTime.Now)
-                {
                     using (_sync.WriterLock())
                     {
                         _when = DateTime.Now.AddMilliseconds(_random.Next(2000));
-                        ThrowException();
+                        ThrowException(e, v);
                     }
-                }
         }
 
-        static void ThrowException()
+        static void ThrowException(
+            Entity e,
+            Value v)
         {
-            var i = _random.Next(4);
+            var i = _random.Next(e!=null ? 5 : 4);
 
             switch (i)
             {
@@ -205,10 +209,47 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             case 2:
                 throw new InvalidOperationException("This is a random exception.");
 
-            default:
+            case 3:
                 throw new Exception("This is a random exception.");
-            }
 
+            case 4:
+                UpdateCurrentRecord(e, v);
+                break;
+            }
+        }
+
+        static void UpdateCurrentRecord(
+            Entity e,
+            Value v)
+        {
+            if (e == null)
+                return;
+
+            try
+            {
+                using (var repository = ServiceLocator.Current.GetInstance<IRepository>())
+                {
+                    var ent = repository
+                                .Entities<Entity>()
+                                .Where(x => x.Id == e.Id)
+                                .FetchAlso(x => x.ValuesList)
+                                .FirstOrDefault();
+
+                    if (v == null)
+                        ent.RepositoryId = Facility.GuidGenerator.NewGuid().ToString("N");
+                    else
+                        ent.ValuesList
+                            .FirstOrDefault(y => y.RepositoryId == v.RepositoryId)
+                            .RepositoryId = Facility.GuidGenerator.NewGuid().ToString("N");
+
+                    repository.CommitChanges();
+                }
+            }
+            catch (Exception x)
+            {
+                Debug.WriteLine("Exception in UpdateCurrentRecord");
+                Debug.WriteLine(x.DumpString(2));
+            }
         }
     }
 }

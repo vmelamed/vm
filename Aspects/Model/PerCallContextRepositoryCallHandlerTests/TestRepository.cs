@@ -22,6 +22,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 #if DEBUG
             //Database.Log = s => Debug.Write(s);
 #endif
+            OptimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.ClientWins;
         }
 
         public TestRepository()

@@ -240,6 +240,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             EFRepositoryBase efRepository)
         {
+            Contract.Requires<ArgumentNullException>(objectsType != null, nameof(objectsType));
             Contract.Requires<ArgumentNullException>(efRepository != null, nameof(efRepository));
 
             long id = -1L;

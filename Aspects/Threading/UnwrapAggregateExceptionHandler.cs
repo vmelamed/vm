@@ -34,31 +34,43 @@ namespace vm.Aspects.Threading
             Exception exception,
             Guid handlingInstanceId)
         {
-            var innerException     = exception;
-            var aggregateException = innerException as AggregateException;
+            var innerException = Unwrap(exception as AggregateException);
 
-            while (aggregateException != null)
-            {
-                if (aggregateException.InnerExceptions.Count() == 1)
-                    // unwrap
-                    innerException = aggregateException.InnerExceptions[0];
-                else
-                    // cannot be unwrapped to a single exception - return the original exception
-                    return exception;
-
-                aggregateException = innerException as AggregateException;
-            }
-
-            if (innerException == exception)
+            if (innerException == null  ||  innerException == exception)
                 return exception;
 
             Exception newException;
 
-            // call the exception handler on the inner exception
-            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException)  &&  newException != null)
+            // pass the inner exception to the requested exception handler
+            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException)  &&
+                newException != null)
                 return newException;
 
             return innerException;
+        }
+
+        /// <summary>
+        /// Gets the single inner exception wrapped in one or more <see cref="AggregateException"/>-s.
+        /// If there are more than one inner exceptions - returns the original argument.
+        /// </summary>
+        /// <param name="exception">The exception to be unwrapped.</param>
+        /// <returns>The single inner exception or the argument.</returns>
+        public static Exception Unwrap(
+            AggregateException exception)
+        {
+            Exception x = exception;
+
+            for (var ax = exception; ax != null; ax = x as AggregateException)
+            {
+                if (ax.InnerExceptions.Count() != 1)
+                    // cannot be unwrapped to a single exception - return the original exception
+                    return exception;
+
+                // unwrap
+                x = ax.InnerExceptions[0];
+            }
+
+            return x;
         }
     }
 }

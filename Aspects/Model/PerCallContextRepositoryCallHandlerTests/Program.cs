@@ -14,19 +14,27 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 {
     class Program
     {
+        public static OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
+
         static void Main(string[] args)
         {
             try
             {
                 var sw = new Stopwatch();
 
-                StartServices();
+                OptimisticConcurrencyStrategy = args.Any(a => a.StartsWith("cl"))
+                                                    ? OptimisticConcurrencyStrategy.ClientWins
+                                                    : args.Any(a => a.StartsWith("st"))
+                                                        ? OptimisticConcurrencyStrategy.StoreWins
+                                                        : OptimisticConcurrencyStrategy.None;
+
                 Register();
+                StartServices();
                 Initialize();
 
                 sw.Start();
 
-                if (args.Length > 0  &&  args[0].StartsWith("a"))
+                if (args.Any(a => a.StartsWith("a")))
                     RunAsync().Wait();
                 else
                     RunSync();

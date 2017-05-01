@@ -48,7 +48,11 @@ namespace vm.Aspects.Facilities
             string exceptionTitle,
             int eventId,
             TraceEventType eventType = TraceEventType.Error,
-            int priority = 1) => new LoggingExceptionHandler(
+            int priority = 1)
+        {
+            Contract.Ensures(Contract.Result<LoggingExceptionHandler>() != null);
+
+            return new LoggingExceptionHandler(
                                         LogWriterFacades.Exception,
                                         eventId++,
                                         eventType,
@@ -56,6 +60,7 @@ namespace vm.Aspects.Facilities
                                         priority,
                                         typeof(DumpExceptionFormatter),
                                         Facility.LogWriter);
+        }
 
         /// <summary>
         /// Class ExceptionHandlingPoliciesRegistrar. Registers the two exception handling policies.
