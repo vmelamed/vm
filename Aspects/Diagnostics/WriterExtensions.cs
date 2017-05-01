@@ -69,7 +69,7 @@ namespace vm.Aspects.Diagnostics
         public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             string @string,
             int max)
@@ -106,11 +106,11 @@ namespace vm.Aspects.Diagnostics
                 return;
             }
 
-            var names  = type.GetEnumNames();
-            var values = type.GetEnumValues();
+            var names       = type.GetEnumNames();
+            var values      = type.GetEnumValues();
             var castToUlong = _castsToUlong[type.GetEnumUnderlyingType()];
-            var ulongValue = castToUlong(v);
-            var nameLookup = new Dictionary<ulong, string>(values.Length);
+            var ulongValue  = castToUlong(v);
+            var nameLookup  = new Dictionary<ulong, string>(values.Length);
 
             for (var i = 0; i<values.Length; i++)
                 nameLookup[castToUlong(values.GetValue(i))] = names[i];
@@ -279,7 +279,7 @@ namespace vm.Aspects.Diagnostics
             [typeof(MethodInfo)]        = (w,mi) => w.Dumped((MethodInfo)mi),
         };
 
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             Type type)
         {
@@ -297,7 +297,7 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             EventInfo eventInfo)
         {
@@ -319,7 +319,7 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             FieldInfo fieldInfo)
         {
@@ -341,7 +341,7 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             PropertyInfo propertyInfo)
         {
@@ -389,7 +389,7 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
-        public static bool Dumped(
+        static bool Dumped(
             this TextWriter writer,
             MethodInfo methodInfo)
         {
@@ -445,10 +445,9 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
-
         public static bool DumpedDictionary(
             this TextWriter writer,
-            IEnumerable sequence,
+            ICollection sequence,
             DumpAttribute dumpAttribute,
             Action<object> dumpObject,
             Action indent,
@@ -473,7 +472,7 @@ namespace vm.Aspects.Diagnostics
 
             Contract.Assume(typeArguments.Length == 2);
 
-            var keyType = typeArguments[0];
+            var keyType   = typeArguments[0];
             var valueType = typeArguments[1];
 
             if (!keyType.IsBasicType())
@@ -484,20 +483,7 @@ namespace vm.Aspects.Diagnostics
             writer.Write(
                 DumpFormat.SequenceTypeName,
                 sequenceType.GetTypeName(),
-                ((ICollection)sequence).Count.ToString(CultureInfo.InvariantCulture));
-
-            // how many items to dump max?
-            var max = dumpAttribute.MaxLength;
-
-            if (max < 0)
-                max = int.MaxValue;
-            else
-            {
-                if (max == 0)        // limit sequences of primitive types (can be very big)
-                {
-                    max = DumpAttribute.DefaultMaxElements;
-                }
-            }
+                sequence.Count.ToString(CultureInfo.InvariantCulture));
 
             writer.Write(
                     DumpFormat.SequenceType,
@@ -509,19 +495,17 @@ namespace vm.Aspects.Diagnostics
             if (dumpAttribute.RecurseDump==ShouldDump.Skip)
                 return true;
 
+            // how many items to dump max?
+            var max = dumpAttribute.GetMaxToDump(sequence.Count);
             var n = 0;
 
             writer.WriteLine();
             writer.Write("{");
-
             indent();
 
             foreach (var kv in sequence)
             {
                 Contract.Assume(kv.GetType() == keyValueType);
-
-                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
-                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
 
                 writer.WriteLine();
                 if (n++ >= max)
@@ -529,6 +513,10 @@ namespace vm.Aspects.Diagnostics
                     writer.Write(DumpFormat.SequenceDumpTruncated, max);
                     break;
                 }
+
+                var key   = keyValueType.GetProperty("Key").GetValue(kv, null);
+                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
+
                 writer.Write("[");
                 dumpObject(key);
                 writer.Write("] = ");
@@ -540,14 +528,13 @@ namespace vm.Aspects.Diagnostics
             }
 
             unindent();
-
             writer.WriteLine();
             writer.Write("}");
 
             return true;
         }
 
-        public static bool DumpedSequence(
+        public static bool DumpedCollection(
             this TextWriter writer,
             IEnumerable sequence,
             DumpAttribute dumpAttribute,
@@ -586,26 +573,14 @@ namespace vm.Aspects.Diagnostics
                         : string.Empty);
 
             // how many items to dump max?
-            var max = dumpAttribute.MaxLength;
+            var max = dumpAttribute.GetMaxToDump();
+            var bytes = sequence as byte[];
 
-            if (max < 0)
-                max = int.MaxValue;
-            else
-            {
-                if (max == 0)        // limit sequences of primitive types (can be very big)
-                {
-                    max = DumpAttribute.DefaultMaxElements;
-                }
-            }
-
-            if (sequenceType == typeof(byte[]))
+            if (bytes != null)
             {
                 // dump no more than max elements from the sequence:
-                var array = (byte[])sequence;
-                var length = Math.Min(max, array.Length);
-
-                writer.Write(BitConverter.ToString(array, 0, length));
-                if (length < array.Length)
+                writer.Write(BitConverter.ToString(bytes, 0, max));
+                if (max < bytes.Length)
                     writer.Write(DumpFormat.SequenceDumpTruncated, max);
 
                 return true;
@@ -618,25 +593,25 @@ namespace vm.Aspects.Diagnostics
                 sequenceType.AssemblyQualifiedName);
 
             // stop the recursion if dump.Recurse is false
-            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
-                return true;
-
-            var n = 0;
-
-            indent();
-
-            foreach (var item in sequence)
+            if (dumpAttribute.RecurseDump!=ShouldDump.Skip)
             {
-                writer.WriteLine();
-                if (n++ >= max)
-                {
-                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
-                    break;
-                }
-                dumpObject(item);
-            }
+                var n = 0;
 
-            unindent();
+                indent();
+
+                foreach (var item in sequence)
+                {
+                    writer.WriteLine();
+                    if (n++ >= max)
+                    {
+                        writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                        break;
+                    }
+                    dumpObject(item);
+                }
+
+                unindent();
+            }
 
             return true;
         }

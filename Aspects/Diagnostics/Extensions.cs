@@ -164,7 +164,8 @@ namespace vm.Aspects
         /// <param name="mi">The <see cref="PropertyInfo"/> object.</param>
         /// <returns><c>true</c> if the specified <see cref="PropertyInfo"/> object represents a virtual property; otherwise, <c>false</c>.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="mi"/> is <see langword="null"/>.</exception>
-        internal static bool? IsVirtual(this MemberInfo mi)
+        internal static bool? IsVirtual(
+            this MemberInfo mi)
         {
             Contract.Requires(mi != null, "pi");
 
@@ -193,7 +194,8 @@ namespace vm.Aspects
         /// <param name="mi">The <see cref="PropertyInfo"/> object.</param>
         /// <returns><c>true</c> if the specified <see cref="PropertyInfo"/> object represents a virtual property that can be read; otherwise, <c>false</c>.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="mi"/> is <see langword="null"/>.</exception>
-        internal static bool CanRead(this MemberInfo mi)
+        internal static bool CanRead(
+            this MemberInfo mi)
         {
             Contract.Requires(mi != null, "pi");
 
@@ -289,6 +291,21 @@ namespace vm.Aspects
             }
 
             return typeName;
+        }
+
+        internal static int GetMaxToDump(
+            this DumpAttribute dumpAttribute,
+            int length = int.MaxValue)
+        {
+            var max = dumpAttribute.MaxLength;
+
+            if (max < 0)
+                return length;
+
+            if (max == 0)        // limit sequences of primitive types (can be very big)
+                return DumpAttribute.DefaultMaxElements;
+
+            return Math.Min(max, length);
         }
     }
 }

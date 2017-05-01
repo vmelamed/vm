@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -22,28 +21,24 @@ namespace vm.Aspects.Diagnostics
     {
         #region Fields
         /// <summary>
-        /// Flag that the current writer is actually our DumpWriter.
+        /// Flag that the current writer is actually our DumpTextWriter.
         /// </summary>
         readonly bool _isDumpWriter;
 
         /// <summary>
         /// The current indent.
         /// </summary>
-        int _indentLevel;
+        internal int _indentLevel;
 
         /// <summary>
         /// The number of spaces in a single indent.
         /// </summary>
-        readonly int _indentLength;
+        internal readonly int _indentLength;
 
         /// <summary>
         /// The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
         /// </summary>
-        int _maxDepth = int.MinValue;
-        /// <summary>
-        /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
-        /// </summary>
-        readonly HashSet<DumpedObject> _dumpedObjects = new HashSet<DumpedObject>();
+        internal int _maxDepth = int.MinValue;
         #endregion
 
         static BindingFlags defaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly;
@@ -87,9 +82,19 @@ namespace vm.Aspects.Diagnostics
         internal TextWriter Writer { get; }
 
         /// <summary>
+        /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
+        /// </summary>
+        internal HashSet<DumpedObject> DumpedObjects { get; } = new HashSet<DumpedObject>();
+
+        /// <summary>
         /// Contains references to all dumped virtual properties to avoid dumping them more than once in the derived classes.
         /// </summary>
-        internal readonly HashSet<DumpedProperty> DumpedVirtualProperties = new HashSet<DumpedProperty>();
+        internal HashSet<DumpedProperty> DumpedVirtualProperties { get; } = new HashSet<DumpedProperty>();
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to use the dump script cache.
+        /// </summary>
+        public bool UseDumpScriptCache { get; set; } = true;
         #endregion
 
         #region Constructor
@@ -157,6 +162,7 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null)
         {
             Contract.Ensures(Contract.OldValue(_indentLevel) == _indentLevel, "The indent level was not preserved.");
+            Contract.Ensures(Contract.Result<ObjectTextDumper>() != null);
 
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission = false;
@@ -171,13 +177,7 @@ namespace vm.Aspects.Diagnostics
                 reflectionPermission.Assert();
                 _maxDepth = int.MinValue;
 
-                if (!Writer.DumpedBasicValue(value, dumpAttribute))
-                {
-                    Writer.Indent(_indentLevel, _indentLength)
-                           .WriteLine();
-
-                    DumpObjectOfNonBasicValue(value, dumpMetadata, dumpAttribute);
-                }
+                DumpObject(value, dumpMetadata, dumpAttribute, true);
             }
             catch (SecurityException)
             {
@@ -198,7 +198,7 @@ namespace vm.Aspects.Diagnostics
                 Writer.Unindent(_indentLevel, _indentLength);
 
                 // clear the dumped objects register
-                _dumpedObjects.Clear();
+                DumpedObjects.Clear();
                 // clear the dumped properties register
                 DumpedVirtualProperties.Clear();
             }
@@ -207,41 +207,26 @@ namespace vm.Aspects.Diagnostics
         }
         #endregion
 
-        internal void Indent()
-        {
-            Writer.Indent(++_indentLevel, _indentLength);
-        }
+        internal void Indent() => Writer.Indent(++_indentLevel, _indentLength);
 
-        internal void Unindent()
-        {
-            Writer.Unindent(--_indentLevel, _indentLength);
-        }
+        internal void Unindent() => Writer.Unindent(--_indentLevel, _indentLength);
 
         #region Private methods
         internal void DumpObject(
             object obj,
             Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute dumpAttribute = null,
+            bool topLevelObject = false)
         {
             if (Writer.DumpedBasicValue(obj, dumpAttribute))
                 return;
 
-            DumpObjectOfNonBasicValue(obj, dumpMetadata, dumpAttribute);
-        }
-
-        void DumpObjectOfNonBasicValue(
-            object obj,
-            Type dumpMetadata,
-            DumpAttribute dumpAttribute)
-        {
-            Contract.Requires(obj != null);
-
-            var type = obj.GetType();
             ClassDumpData classDumpData;
+            var objectType = obj.GetType();
 
             if (dumpMetadata==null)
             {
-                classDumpData = ClassMetadataResolver.GetClassDumpData(type);
+                classDumpData = ClassMetadataResolver.GetClassDumpData(objectType);
                 if (dumpAttribute != null)
                     classDumpData.DumpAttribute = dumpAttribute;
             }
@@ -257,22 +242,29 @@ namespace vm.Aspects.Diagnostics
                 return;
             }
 
-            _maxDepth--;
+            if (UseDumpScriptCache  &&
+                DumpScriptCache.FoundAndExecuted(this, obj, classDumpData))
+                return;
 
-            using (var state = new DumpState(this, obj, classDumpData))
-                if (!DumpedAlready(state))     // the object has been dumped already (block circular and repeating references)
+            using (var state = new DumpState(this, obj, classDumpData, UseDumpScriptCache))
+            {
+                if (topLevelObject)
+                    Writer.Indent(_indentLevel, _indentLength)
+                          .WriteLine();
+
+                if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
                 {
                     // this object will be dumped below.
-                    // Add it to the dumped objects so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
-                    _dumpedObjects.Add(new DumpedObject(obj, type));
+                    // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
+                    DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                    if (!DumpedCollectionObject(state, false))
+                    if (!state.DumpedCollectionObject(false))
                     {
                         Stack<DumpState> statesWithRemainingProperties = new Stack<DumpState>();
                         Queue<DumpState> statesWithTailProperties = new Queue<DumpState>();
 
                         // dump all properties with non-negative order in class inheritance descending order (base classes' properties first)
-                        if (!DumpTopProperties(state, statesWithRemainingProperties))
+                        if (!DumpedTopProperties(state, statesWithRemainingProperties))
                         {
                             // dump all properties with negative order in class ascending order (derived classes' properties first)
                             DumpRemainingProperties(statesWithRemainingProperties, statesWithTailProperties);
@@ -281,14 +273,16 @@ namespace vm.Aspects.Diagnostics
                             DumpTailProperties(statesWithTailProperties);
 
                             // if the object implements IEnumerable and the state allows it - dump the elements.
-                            DumpedCollectionObject(state, true);
-
-                            Unindent();
+                            state.DumpedCollectionObject(true);
                         }
+
+                        Unindent();
                     }
                 }
 
-            _maxDepth++;
+                if (UseDumpScriptCache)
+                    DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+            }
         }
 
         /// <summary>
@@ -303,17 +297,17 @@ namespace vm.Aspects.Diagnostics
         /// <item>should not be dumped marked with <c>DumpAttribute(false)</c></item>
         /// </list>
         /// ; otherwise <c>false</c>.</returns>
-        bool DumpTopProperties(
+        bool DumpedTopProperties(
             DumpState state,
             Stack<DumpState> statesWithRemainingProperties)
         {
-            if (IsAtDumpTreeLeaf(state))
+            if (state.IsAtDumpTreeLeaf())
                 return true;
 
             var baseDumpState = state.GetBaseTypeDumpState();
 
             // 1. dump the properties of the base class with non-negative order 
-            DumpTopProperties(baseDumpState, statesWithRemainingProperties);
+            DumpedTopProperties(baseDumpState, statesWithRemainingProperties);
 
             // 2. dump the non-negative order properties of the current class
             while (state.MoveNext())
@@ -375,92 +369,6 @@ namespace vm.Aspects.Diagnostics
                     do
                         state.DumpProperty();
                     while (state.MoveNext());
-        }
-
-        /// <summary>
-        /// The dumping traverses depth-first a dump tree consisting of the object's properties its base classes' properties and the properties' 
-        /// properties etc. This method determines if the recursion reached a leaf in the dump tree and that it should stop drilling down and return to 
-        /// dump other branches of the dump tree. Recursion stops when:
-        /// <list type="bullet">
-        /// <item>
-        /// The current examined type is <see cref="object"/>. The method dumps the object contained in <paramref name="state"/>-s type name.
-        /// </item>
-        /// <item>
-        /// The current examined base class has <see cref="DumpAttribute"/> with property <see cref="DumpAttribute.RecurseDump"/> set to <see cref="ShouldDump.Skip"/>. 
-        /// If the attribute also defines the property <see cref="DumpAttribute.DefaultProperty"/> it will dump that property only as a representing
-        /// property of the entire class.
-        /// </item>
-        /// <item>
-        /// The examined object is a delegate. The method will dump the delegate type.
-        /// </item>
-        /// <item>
-        /// The method determines that the current object has already been dumped (discovers circular reference). The method will dump a short 
-        /// reference text.
-        /// </item>
-        /// </list>
-        /// The current base class has class dump attribute with  examined is System.Object
-        /// </summary>
-        /// <param name="state">The current dump state.</param>
-        /// <returns><c>true</c> if the recursion should stop; otherwise <c>false</c>.</returns>
-        bool IsAtDumpTreeLeaf(DumpState state)
-        {
-            Contract.Requires(state != null);
-
-            // Stop the recursion if: 
-            return state.DumpedRootClass()                  ||  // at System.Object or at max depth
-                   state.DumpedDefaultProperty()            ||  // classDump.Recurse is false
-                   state.DumpedDelegate()                   ||  // at delegates
-                   state.DumpedMemberInfo();                    // at MemberInfo values
-        }
-
-        bool DumpedCollectionObject(
-            DumpState state,
-            bool enumerateCustom)
-        {
-            Contract.Requires(state != null);
-
-            var sequence = state.Instance as IEnumerable;
-
-            if (sequence == null)
-                return false;
-
-            if (Writer.DumpedDictionary(
-                        sequence,
-                        state.ClassDumpData.DumpAttribute,
-                        o => DumpObject(o),
-                        Indent,
-                        Unindent))
-                return true;
-
-            return Writer.DumpedSequence(
-                        sequence,
-                        state.ClassDumpData.DumpAttribute,
-                        enumerateCustom,
-                        o => DumpObject(o),
-                        Indent,
-                        Unindent);
-        }
-
-        bool DumpedAlready(DumpState state)
-        {
-            Contract.Requires(state!=null);
-
-            var type = state.Instance.GetType();
-
-            // stop the recursion at circular references
-            if (!_dumpedObjects.Contains(new DumpedObject(state.Instance, type)))
-                return false;
-
-            Writer.Write(
-                DumpFormat.CyclicalReference,
-                type.GetTypeName(),
-                type.Namespace,
-                type.AssemblyQualifiedName);
-
-            if (state.SetToDefault())
-                state.DumpProperty();
-
-            return true;
         }
         #endregion
 
@@ -524,7 +432,7 @@ namespace vm.Aspects.Diagnostics
             Contract.Invariant(Writer!=null, "The text writer cannot be null at any time.");
             Contract.Invariant(_indentLength>=0, "The length of the indent cannot be negative.");
             Contract.Invariant(_indentLevel>=0, "The the indent level cannot be negative.");
-            Contract.Invariant(_dumpedObjects!=null);
+            Contract.Invariant(DumpedObjects!=null);
             Contract.Invariant(DumpedVirtualProperties!=null);
         }
     }

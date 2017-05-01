@@ -206,12 +206,16 @@
     <Compile Include="DefaultServiceLocator.cs" />
     <Compile Include="DumpAttribute.cs" />
     <Compile Include="DumpFormat.cs" />
+    <Compile Include="DumpImplementation\DumpScript.Loops.cs" />
+    <Compile Include="DumpImplementation\DumpScript.WriteOverloads.cs" />
     <Compile Include="DumpImplementation\DumpedObject.cs" />
     <Compile Include="DumpImplementation\DumpedProperty.cs" />
+    <Compile Include="DumpImplementation\DumpScriptCache.cs" />
     <Compile Include="DumpImplementation\DumpTextWriter.cs" />
     <Compile Include="DumpImplementation\MemberDumpOrder.cs" />
     <Compile Include="DumpImplementation\PropertyDumpResolver.cs" />
-    <Compile Include="DumpState.cs" />
+    <Compile Include="DumpImplementation\DumpScript.cs" />
+    <Compile Include="DumpImplementation\DumpState.cs" />
     <Compile Include="DumpUtilities.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExternalMetadata\ArgumentExceptionDumpMetadata.cs" />

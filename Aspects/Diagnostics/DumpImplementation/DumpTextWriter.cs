@@ -148,7 +148,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (value == '\n')
                 _mustIndent = true;
             else
-                if (_mustIndent && value != '\r')   // we don't want to insert indentation blank strings on empty lines                
+            if (_mustIndent && value != '\r')   // we don't want to insert indentation blank strings on empty lines                
             {
                 _writer.Write(GetIndent());
                 _mustIndent = false;
