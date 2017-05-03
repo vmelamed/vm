@@ -34,10 +34,10 @@ namespace vm.Aspects.Diagnostics
             Type                  = Resources.TypeDumpFormat;
             TypeInfo              = Resources.TypeInfoFormat;
             Value                 = Resources.ValueFormat;
-            EnumFlagPrefix       = Resources.EnumFlagsDumpBeginFormat;
+            EnumFlagPrefix        = Resources.EnumFlagsDumpBeginFormat;
             EnumFlag              = Resources.EnumFlagDumpFormat;
-            EnumFlagSeparator    = Resources.EnumFlagsSeparator;
-            EnumFlagSuffix       = Resources.EnumFlagsDumpEndFormat;
+            EnumFlagSeparator     = Resources.EnumFlagsSeparator;
+            EnumFlagSuffix        = Resources.EnumFlagsDumpEndFormat;
         }
 
         /// <summary>

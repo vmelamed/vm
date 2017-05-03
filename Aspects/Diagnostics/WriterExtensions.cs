@@ -106,11 +106,11 @@ namespace vm.Aspects.Diagnostics
                 return;
             }
 
-            var names       = type.GetEnumNames();
-            var values      = type.GetEnumValues();
+            var names = type.GetEnumNames();
+            var values = type.GetEnumValues();
             var castToUlong = _castsToUlong[type.GetEnumUnderlyingType()];
-            var ulongValue  = castToUlong(v);
-            var nameLookup  = new Dictionary<ulong, string>(values.Length);
+            var ulongValue = castToUlong(v);
+            var nameLookup = new Dictionary<ulong, string>(values.Length);
 
             for (var i = 0; i<values.Length; i++)
                 nameLookup[castToUlong(values.GetValue(i))] = names[i];
@@ -240,23 +240,26 @@ namespace vm.Aspects.Diagnostics
             if (memberInfo == null)
                 return false;
 
-            writer.Write(
-                DumpFormat.MemberInfoMemberType,
-                memberInfo.MemberType.ToString());
-
             Func<TextWriter, MemberInfo, bool> dump = null;
             Type miType = memberInfo.GetType();
 
             do
             {
                 if (_memberInfoDumpers.TryGetValue(miType, out dump))
+                {
+                    writer.Write(
+                        DumpFormat.MemberInfoMemberType,
+                        memberInfo.MemberType.ToString());
                     return dump(writer, memberInfo);
-
+                }
                 miType = miType.BaseType;
             }
             while (miType != typeof(MemberInfo));
 
             // last resort:
+            writer.Write(
+                DumpFormat.MemberInfoMemberType,
+                memberInfo.MemberType.ToString());
             writer.Write(memberInfo.Name);
             return true;
         }
@@ -472,7 +475,7 @@ namespace vm.Aspects.Diagnostics
 
             Contract.Assume(typeArguments.Length == 2);
 
-            var keyType   = typeArguments[0];
+            var keyType = typeArguments[0];
             var valueType = typeArguments[1];
 
             if (!keyType.IsBasicType())
@@ -510,21 +513,18 @@ namespace vm.Aspects.Diagnostics
                 writer.WriteLine();
                 if (n++ >= max)
                 {
-                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max, sequence.Count);
                     break;
                 }
 
-                var key   = keyValueType.GetProperty("Key").GetValue(kv, null);
+                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
                 var value = keyValueType.GetProperty("Value").GetValue(kv, null);
 
                 writer.Write("[");
                 dumpObject(key);
                 writer.Write("] = ");
 
-                indent();
                 dumpObject(value);
-                writer.Write(";");
-                unindent();
             }
 
             unindent();
@@ -556,7 +556,7 @@ namespace vm.Aspects.Diagnostics
                 writer.WriteLine();
             }
 
-            var collection = sequence as ICollection;
+            var collection   = sequence as ICollection;
             var elementsType = sequenceType.IsArray
                                     ? new Type[] { sequenceType.GetElementType() }
                                     : sequenceType.IsGenericType
@@ -573,7 +573,8 @@ namespace vm.Aspects.Diagnostics
                         : string.Empty);
 
             // how many items to dump max?
-            var max = dumpAttribute.GetMaxToDump();
+            var count = collection?.Count ?? 0;
+            var max   = dumpAttribute.GetMaxToDump(count);
             var bytes = sequence as byte[];
 
             if (bytes != null)
@@ -581,7 +582,7 @@ namespace vm.Aspects.Diagnostics
                 // dump no more than max elements from the sequence:
                 writer.Write(BitConverter.ToString(bytes, 0, max));
                 if (max < bytes.Length)
-                    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max, count);
 
                 return true;
             }
@@ -604,7 +605,7 @@ namespace vm.Aspects.Diagnostics
                     writer.WriteLine();
                     if (n++ >= max)
                     {
-                        writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                        writer.Write(DumpFormat.SequenceDumpTruncated, max, count);
                         break;
                     }
                     dumpObject(item);

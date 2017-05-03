@@ -19,7 +19,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         static readonly PropertyInfo _piDictionaryEntryKey    = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Key), BindingFlags.Public|BindingFlags.Instance);
         static readonly PropertyInfo _piDictionaryEntryValue  = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Value), BindingFlags.Public|BindingFlags.Instance);
 
-        internal Expression ForEachInDictionary(
+        internal static Expression ForEachInDictionary(
             ParameterExpression dictionaryEntry,
             Expression dictionary,
             Expression body,
@@ -65,7 +65,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     ));
         }
 
-        internal Expression ForEachInEnumerable(
+        internal static Expression ForEachInEnumerable(
             ParameterExpression entry,
             Expression sequence,
             Expression body,

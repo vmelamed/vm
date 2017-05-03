@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace vm.Aspects.Diagnostics.DumpImplementation
@@ -14,15 +13,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         #region IComparer<MemberInfo> Members
 
         public int Compare(
-            MemberInfo x, 
+            MemberInfo x,
             MemberInfo y)
         {
             if (x == null)
                 throw new ArgumentNullException(nameof(x));
             if (y == null)
                 throw new ArgumentNullException(nameof(y));
-            if (!(x.DeclaringType.IsAssignableFrom(y.DeclaringType) ||
-                  y.DeclaringType.IsAssignableFrom(x.DeclaringType)))
+            if (!x.DeclaringType.IsAssignableFrom(y.DeclaringType) &&
+                !y.DeclaringType.IsAssignableFrom(x.DeclaringType))
                 throw new InvalidOperationException("Cannot compare the order weights of properties from unrelated classes.");
 
             // get the order of each property:
@@ -46,7 +45,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
                 var xpi = x as PropertyInfo;
                 var ypi = y as PropertyInfo;
-                
+
                 // if the orders are the same - dump fields before properties in alphabetical order:
                 if (xpi==null ^ ypi==null)
                 {

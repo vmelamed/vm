@@ -73,16 +73,17 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(objectTextDumper != null, nameof(objectTextDumper));
             Contract.Requires<ArgumentNullException>(obj              != null, nameof(obj));
 
-            Action<object, ClassDumpData, ObjectTextDumper> dumpScript;
+            var lookup = new ScriptLookup(obj.GetType(), classDumpData, objectTextDumper);
+            Action<object, ClassDumpData, ObjectTextDumper> script;
 
             _sync.EnterReadLock();
-            var found = _cache.TryGetValue(new ScriptLookup(obj.GetType(), classDumpData, objectTextDumper), out dumpScript);
+            var found = _cache.TryGetValue(lookup, out script);
             _sync.ExitReadLock();
 
             if (!found)
                 return false;
 
-            dumpScript(obj, classDumpData, objectTextDumper);
+            script(obj, classDumpData, objectTextDumper);
             return true;
         }
 
@@ -96,11 +97,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(objectType       != null, nameof(objectType));
             Contract.Requires<ArgumentNullException>(_dumpScript      != null, nameof(_dumpScript));
 
-            Action<object, ClassDumpData, ObjectTextDumper> script = _dumpScript.GetScript();
+            var lookup = new ScriptLookup(objectType, classDumpData, objectTextDumper);
+            var script = _dumpScript.GetScript();
 
             _sync.EnterWriteLock();
-            _cache[new ScriptLookup(objectType, classDumpData, objectTextDumper)] = script;
+            _cache[lookup] = script;
             _sync.ExitWriteLock();
+
         }
 
         internal static void Reset()

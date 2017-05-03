@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
@@ -19,6 +20,15 @@ namespace vm.Aspects.Diagnostics
     /// </summary>
     public sealed partial class ObjectTextDumper : IDisposable
     {
+        /// <summary>
+        /// The default initial indent level
+        /// </summary>
+        public const int DefaultIndentLevel  = 0;
+        /// <summary>
+        /// The default initial indent size
+        /// </summary>
+        public const int DefaultIndentSize = 2;
+
         #region Fields
         /// <summary>
         /// Flag that the current writer is actually our DumpTextWriter.
@@ -33,7 +43,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The number of spaces in a single indent.
         /// </summary>
-        internal readonly int _indentLength;
+        internal int _indentSize;
 
         /// <summary>
         /// The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
@@ -41,29 +51,28 @@ namespace vm.Aspects.Diagnostics
         internal int _maxDepth = int.MinValue;
         #endregion
 
-        static BindingFlags defaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly;
+        /// <summary>
+        /// The initial default properties binding flags.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
+        public const BindingFlags InitialDefaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+        /// <summary>
+        /// The initial default fields binding flags
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
+        public const BindingFlags InitialDefaultFieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance;
 
         /// <summary>
         /// The default binding flags determining which properties to be dumped
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public static BindingFlags DefaultPropertiesBindingFlags
-        {
-            get { return defaultPropertiesBindingFlags; }
-            set { defaultPropertiesBindingFlags = value; }
-        }
-
-        static BindingFlags defaultFieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly;
+        public static BindingFlags DefaultPropertiesBindingFlags { get; set; } = InitialDefaultPropertiesBindingFlags;
 
         /// <summary>
         /// The default binding flags determining which fields to be dumped
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public static BindingFlags DefaultFieldsBindingFlags
-        {
-            get { return defaultFieldsBindingFlags; }
-            set { defaultFieldsBindingFlags = value; }
-        }
+        public static BindingFlags DefaultFieldsBindingFlags { get; set; } = InitialDefaultFieldsBindingFlags;
 
         #region Internal properties for access by the DumpState
         /// <summary>
@@ -104,7 +113,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// <param name="writer">The text writer where to dump the object to.</param>
         /// <param name="indentLevel">The initial indent level.</param>
-        /// <param name="indentLength">The length of the indent.</param>
+        /// <param name="indentSize">The length of the indent.</param>
         /// <param name="maxDumpLength">Maximum length of the dump text.</param>
         /// <param name="propertiesBindingFlags">The binding flags of the properties.</param>
         /// <param name="fieldsBindingFlags">The binding flags of the fields.</param>
@@ -113,11 +122,11 @@ namespace vm.Aspects.Diagnostics
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public ObjectTextDumper(
             TextWriter writer,
-            int indentLevel = 0,
-            int indentLength = 2,
+            int indentLevel = DefaultIndentLevel,
+            int indentSize = DefaultIndentSize,
             int maxDumpLength = DumpTextWriter.DefaultMaxLength,
-            BindingFlags propertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly,
-            BindingFlags fieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)
+            BindingFlags propertiesBindingFlags = BindingFlags.Default,
+            BindingFlags fieldsBindingFlags = BindingFlags.Default)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
 
@@ -130,10 +139,10 @@ namespace vm.Aspects.Diagnostics
             else
                 Writer = writer;
 
-            _indentLevel           = indentLevel  >= 0 ? indentLevel : 0;
-            _indentLength          = indentLength >= 2 ? indentLength : 2;
-            PropertiesBindingFlags = propertiesBindingFlags;
-            FieldsBindingFlags     = fieldsBindingFlags;
+            _indentLevel           = indentLevel >= DefaultIndentLevel ? indentLevel : DefaultIndentLevel;
+            _indentSize            = indentSize  >= DefaultIndentSize ? indentSize : DefaultIndentSize;
+            PropertiesBindingFlags = (propertiesBindingFlags==BindingFlags.Default ? DefaultPropertiesBindingFlags : propertiesBindingFlags) | BindingFlags.DeclaredOnly;
+            FieldsBindingFlags     = (fieldsBindingFlags==BindingFlags.Default ? DefaultFieldsBindingFlags : fieldsBindingFlags) | BindingFlags.DeclaredOnly;
         }
         #endregion
 
@@ -156,6 +165,7 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The <paramref name="value"/> parameter.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public ObjectTextDumper Dump(
             object value,
             Type dumpMetadata = null,
@@ -165,7 +175,7 @@ namespace vm.Aspects.Diagnostics
             Contract.Ensures(Contract.Result<ObjectTextDumper>() != null);
 
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
-            var revertPermission = false;
+            var revertPermission     = false;
 
             try
             {
@@ -186,7 +196,10 @@ namespace vm.Aspects.Diagnostics
             }
             catch (Exception x)
             {
-                Writer.WriteLine($"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}");
+                var message = $"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}";
+
+                Writer.WriteLine(message);
+                Debug.WriteLine(message);
             }
             finally
             {
@@ -194,22 +207,22 @@ namespace vm.Aspects.Diagnostics
                 if (revertPermission)
                     CodeAccessPermission.RevertAssert();
 
-                // restore the original indent
-                Writer.Unindent(_indentLevel, _indentLength);
-
                 // clear the dumped objects register
                 DumpedObjects.Clear();
                 // clear the dumped properties register
                 DumpedVirtualProperties.Clear();
+                // prepare our writer for a new dump
+                if (_isDumpWriter)
+                    ((DumpTextWriter)Writer).Reset();
             }
 
             return this;
         }
         #endregion
 
-        internal void Indent() => Writer.Indent(++_indentLevel, _indentLength);
+        internal void Indent() => Writer.Indent(++_indentLevel, _indentSize);
 
-        internal void Unindent() => Writer.Unindent(--_indentLevel, _indentLength);
+        internal void Unindent() => Writer.Unindent(--_indentLevel, _indentSize);
 
         #region Private methods
         internal void DumpObject(
@@ -242,28 +255,30 @@ namespace vm.Aspects.Diagnostics
                 return;
             }
 
-            if (UseDumpScriptCache  &&
-                DumpScriptCache.FoundAndExecuted(this, obj, classDumpData))
+            if (topLevelObject)
+                Writer.Indent(_indentLevel, _indentSize)
+                      .WriteLine();
+
+            var buildScript = UseDumpScriptCache  &&  !obj.IsDynamicObject();
+
+            if (buildScript  &&  DumpScriptCache.FoundAndExecuted(this, obj, classDumpData))
                 return;
 
-            using (var state = new DumpState(this, obj, classDumpData, UseDumpScriptCache))
+            using (var state = new DumpState(this, obj, classDumpData, buildScript))
             {
-                if (topLevelObject)
-                    Writer.Indent(_indentLevel, _indentLength)
-                          .WriteLine();
-
                 if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
                 {
                     // this object will be dumped below.
                     // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                     DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                    if (!state.DumpedCollectionObject(false))
+                    if (!state.DumpedCollection(false))   // custom collections are dumped after dumping all other properties (see below)
                     {
                         Stack<DumpState> statesWithRemainingProperties = new Stack<DumpState>();
                         Queue<DumpState> statesWithTailProperties = new Queue<DumpState>();
 
-                        // dump all properties with non-negative order in class inheritance descending order (base classes' properties first)
+                        // recursively dump all properties with non-negative order in class inheritance descending order (base classes' properties first)
+                        // and if there are more properties  to be dumped put them in the stack 
                         if (!DumpedTopProperties(state, statesWithRemainingProperties))
                         {
                             // dump all properties with negative order in class ascending order (derived classes' properties first)
@@ -273,16 +288,20 @@ namespace vm.Aspects.Diagnostics
                             DumpTailProperties(statesWithTailProperties);
 
                             // if the object implements IEnumerable and the state allows it - dump the elements.
-                            state.DumpedCollectionObject(true);
+                            state.DumpedCollection(true);
                         }
 
-                        Unindent();
+                        // we are done dumping
+                        state.Unindent();
                     }
                 }
 
-                if (UseDumpScriptCache)
+                if (buildScript  &&  state.DumpScript!= null)
                     DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
             }
+
+            if (topLevelObject)
+                Writer.Unindent(_indentLevel, _indentSize);
         }
 
         /// <summary>
@@ -301,8 +320,15 @@ namespace vm.Aspects.Diagnostics
             DumpState state,
             Stack<DumpState> statesWithRemainingProperties)
         {
-            if (state.IsAtDumpTreeLeaf())
+            if (state.DumpedDelegate()    ||
+                state.DumpedMemberInfo()  ||
+                state.DumpedRootClass())
+            {
+                // we reached the root of the hierarchy, indent and while unwinding the stack dump the properties from each descending class
+                state.Indent();
+                state.Dispose();
                 return true;
+            }
 
             var baseDumpState = state.GetBaseTypeDumpState();
 
@@ -312,16 +338,22 @@ namespace vm.Aspects.Diagnostics
             // 2. dump the non-negative order properties of the current class
             while (state.MoveNext())
             {
+                // if we reached a negative order property,
                 if (state.CurrentPropertyDumpAttribute.Order < 0)
                 {
-                    // if we reached a negative order property - set the flag that there are more to be dumped and suspend the dumping at this level
+                    // put the state in the stack of states with remaining properties to be dumped
+                    // and suspend the dumping at this inheritance level
                     statesWithRemainingProperties.Push(state);
                     return false;
                 }
+                // otherwise dump the property
                 state.DumpProperty();
             }
 
+            // if we are here all properties have been dumped (no negative order properties) 
+            // and we do not need the state anymore.
             state.Dispose();
+
             return false;
         }
 
@@ -330,29 +362,39 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// <param name="statesWithRemainingProperties">The stack containing the states which have remaining properties.</param>
         /// <param name="statesWithTailProperties">The queue containing the states which have tail properties.</param>
-        void DumpRemainingProperties(
+        static void DumpRemainingProperties(
             Stack<DumpState> statesWithRemainingProperties,
             Queue<DumpState> statesWithTailProperties)
         {
             Contract.Requires(statesWithRemainingProperties != null);
 
+            bool isTailProperty;
+
             while (statesWithRemainingProperties.Any())
             {
+                // pop the highest inheritance tree dump state from the stack
                 var state = statesWithRemainingProperties.Pop();
 
                 do
                 {
-                    if (state.CurrentPropertyDumpAttribute.Order == int.MinValue)
+                    isTailProperty = state.CurrentPropertyDumpAttribute.Order == int.MinValue;
+
+                    if (isTailProperty)
                     {
+                        // the properties with order int.MinValue are to be dumped last (at the dump tail)
+                        // put the state in the tail queue and suspend the dumping again
                         statesWithTailProperties.Enqueue(state);
                         break;
                     }
 
+                    // otherwise dump the current property
                     state.DumpProperty();
                 }
                 while (state.MoveNext());
 
-                state.Dispose();
+                // if all properties have been dumped (no int.MinValue order properties) we do not need the state anymore.
+                if (!isTailProperty)
+                    state.Dispose();
             }
         }
 
@@ -360,7 +402,8 @@ namespace vm.Aspects.Diagnostics
         /// Dumps the properties with order int.MinValue
         /// </summary>
         /// <param name="statesWithTailProperties">The bottom properties collection (usually a queue).</param>
-        void DumpTailProperties(IEnumerable<DumpState> statesWithTailProperties)
+        static void DumpTailProperties(
+            IEnumerable<DumpState> statesWithTailProperties)
         {
             Contract.Requires(statesWithTailProperties != null);
 
@@ -412,6 +455,7 @@ namespace vm.Aspects.Diagnostics
         /// (usually aggregated objects which implement <see cref="IDisposable"/> as well) and then it will release all unmanaged resources if any.
         /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
         /// </remarks>
+        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Writer>k__BackingField", Justification = "We don't necessarily")]
         void Dispose(bool disposing)
         {
             // if it is disposed or in a process of disposing - return.
@@ -430,7 +474,7 @@ namespace vm.Aspects.Diagnostics
         void Invariant()
         {
             Contract.Invariant(Writer!=null, "The text writer cannot be null at any time.");
-            Contract.Invariant(_indentLength>=0, "The length of the indent cannot be negative.");
+            Contract.Invariant(_indentSize>=0, "The length of the indent cannot be negative.");
             Contract.Invariant(_indentLevel>=0, "The the indent level cannot be negative.");
             Contract.Invariant(DumpedObjects!=null);
             Contract.Invariant(DumpedVirtualProperties!=null);

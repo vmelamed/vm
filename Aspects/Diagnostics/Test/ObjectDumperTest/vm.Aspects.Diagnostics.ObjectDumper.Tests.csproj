@@ -215,6 +215,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyDumpCacheTest.cs" />
     <Compile Include="PropertyDumpOrderComparerTest.cs" />
+    <Compile Include="ObjectTextDumperTest.TestData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectDumper.csproj">

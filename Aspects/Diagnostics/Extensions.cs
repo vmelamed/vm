@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -115,6 +116,24 @@ namespace vm.Aspects
             Contract.Requires(type != null, "type");
 
             return WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is dynamic.
+        /// </summary>
+        /// <param name="obj">The object to be tested.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified object is dynamic; otherwise, <c>false</c>.
+        /// </returns>
+        internal static bool IsDynamicObject(
+            this object obj)
+        {
+            if (ReferenceEquals(obj, null))
+                return false;
+
+            // TODO: we need a better test here
+            return obj is DynamicObject  ||
+                   obj is ExpandoObject;
         }
 
         /// <summary>

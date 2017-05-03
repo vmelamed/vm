@@ -18,10 +18,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         // the default maximum length of the dump
         public const int DefaultMaxLength = 4 * 1024 * 1024;
 
+        public const int DefaultIndentSize = 4;
+
         readonly StringWriter _writer;
         readonly bool _isOwnWriter;
         int _indent;
-        int _indentSize = 4;
+        int _indentSize = DefaultIndentSize;
         bool _mustIndent;
         int _maxLength;
         int _currentLength;
@@ -165,6 +167,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 indent = _indents[_indent] = new string(' ', _indent*_indentSize);
 
             return indent;
+        }
+
+        public DumpTextWriter Reset()
+        {
+            _mustIndent        = false;
+            _currentLength     = 0;
+            _maxLengthExceeded = false;
+
+            return this;
         }
 
         protected override void Dispose(bool disposing)

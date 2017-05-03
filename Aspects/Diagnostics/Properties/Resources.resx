@@ -224,7 +224,7 @@ The dump exceeded the maximum length of {0} characters. Either increase the valu
     <value>System(\..+)?</value>
   </data>
   <data name="SequenceDumpTruncatedFormat" xml:space="preserve">
-    <value>... dumped the first {0} elements.</value>
+    <value>... dumped the first {0}/{1} elements.</value>
   </data>
   <data name="SequenceParamListBegin" xml:space="preserve">
     <value>&lt;</value>

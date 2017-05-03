@@ -377,7 +377,7 @@ namespace vm.Aspects.Diagnostics.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ... dumped the first {0} elements..
+        ///   Looks up a localized string similar to ... dumped the first {0}/{1} elements..
         /// </summary>
         internal static string SequenceDumpTruncatedFormat {
             get {
