@@ -247,6 +247,26 @@ namespace vm.Aspects
         [Pure]
         public static bool IsNullOrEmpty(this string value) => value?.Any() ?? true;
 
+#if DOTNET40
+        static IDictionary<Type, string> _cSharpTypeName = new Dictionary<Type, string>
+        {
+            [typeof(bool)]    = "bool",
+            [typeof(byte)]    = "byte",
+            [typeof(sbyte)]   = "sbyte",
+            [typeof(char)]    = "char",
+            [typeof(short)]   = "short",
+            [typeof(int)]     = "int",
+            [typeof(long)]    = "long",
+            [typeof(ushort)]  = "ushort",
+            [typeof(uint)]    = "uint",
+            [typeof(ulong)]   = "ulong",
+            [typeof(float)]   = "float",
+            [typeof(double)]  = "double",
+            [typeof(decimal)] = "decimal",
+            [typeof(string)]  = "string",
+            [typeof(object)]  = "object",
+        };
+#else
         static readonly IReadOnlyDictionary<Type, string> _cSharpTypeName = new ReadOnlyDictionary<Type, string>(
             new Dictionary<Type, string>
             {
@@ -266,6 +286,7 @@ namespace vm.Aspects
                 [typeof(string)]  = "string",
                 [typeof(object)]  = "object",
             });
+#endif
 
         /// <summary>
         /// Gets the name of a type. In case the type is a EF dynamic proxy it will return only the first portion of the name, e.g.

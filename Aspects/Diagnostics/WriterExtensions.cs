@@ -17,6 +17,48 @@ namespace vm.Aspects.Diagnostics
 {
     static class WriterExtensions
     {
+#if DOTNET40
+        static IDictionary<Type,Func<object,ulong>> _castsToUlong = new Dictionary<Type,Func<object,ulong>>()
+        {
+            [typeof(byte)]           = v => (ulong)(byte)v,
+            [typeof(sbyte)]          = v => (ulong)(sbyte)v & 0xFF,
+            [typeof(char)]           = v => (ulong)(char)v,
+            [typeof(short)]          = v => (ulong)(short)v & 0xFFFF,
+            [typeof(ushort)]         = v => (ulong)(ushort)v,
+            [typeof(int)]            = v => (ulong)(int)v & 0xFFFFFFFF,
+            [typeof(uint)]           = v => (ulong)(uint)v,
+            [typeof(long)]           = v => (ulong)(long)v,
+            [typeof(ulong)]          = v => (ulong)v,
+        };
+
+        static IDictionary<Type, Action<TextWriter, object, int>> _dumpBasicValues = new Dictionary<Type, Action<TextWriter, object, int>>
+        {
+            [typeof(DBNull)]         = (w, v, max) => w.Write("DBNull"),
+            [typeof(bool)]           = (w, v, max) => w.Write((bool)v),
+            [typeof(byte)]           = (w, v, max) => w.Write((byte)v),
+            [typeof(sbyte)]          = (w, v, max) => w.Write((sbyte)v),
+            [typeof(char)]           = (w, v, max) => w.Write((char)v),
+            [typeof(short)]          = (w, v, max) => w.Write((short)v),
+            [typeof(int)]            = (w, v, max) => w.Write((int)v),
+            [typeof(long)]           = (w, v, max) => w.Write((long)v),
+            [typeof(ushort)]         = (w, v, max) => w.Write((ushort)v),
+            [typeof(uint)]           = (w, v, max) => w.Write((uint)v),
+            [typeof(ulong)]          = (w, v, max) => w.Write((ulong)v),
+            [typeof(float)]          = (w, v, max) => w.Write((float)v),
+            [typeof(double)]         = (w, v, max) => w.Write((double)v),
+            [typeof(decimal)]        = (w, v, max) => w.Write((decimal)v),
+            [typeof(DateTime)]       = (w, v, max) => w.Write($"{v:o}"),
+            [typeof(DateTimeOffset)] = (w, v, max) => w.Write($"{v:o}"),
+            [typeof(TimeSpan)]       = (w, v, max) => w.Write(v.ToString()),
+            [typeof(Uri)]            = (w, v, max) => w.Write(v.ToString()),
+            [typeof(Guid)]           = (w, v, max) => w.Write(v.ToString()),
+            [typeof(IntPtr)]         = (w, v, max) => w.Write($"0x{v:x16}"),
+            [typeof(UIntPtr)]        = (w, v, max) => w.Write($"0x{v:x16}"),
+            [typeof(string)]         = (w, v, max) => w.Dumped((string)v, max),
+        };
+
+        public static IDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
+#else
         static readonly IReadOnlyDictionary<Type,Func<object,ulong>> _castsToUlong = new ReadOnlyDictionary<Type,Func<object,ulong>>(
             new Dictionary<Type,Func<object,ulong>>()
             {
@@ -58,6 +100,9 @@ namespace vm.Aspects.Diagnostics
                 [typeof(string)]         = (w, v, max) => w.Dumped((string)v, max),
             });
 
+        public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
+#endif
+
         /// <summary>
         /// Matches the name space of the types within System
         /// </summary>
@@ -65,8 +110,6 @@ namespace vm.Aspects.Diagnostics
 
         public static bool IsFromSystem(
             this Type type) => _systemNameSpace.IsMatch(type.Namespace);
-
-        public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static bool Dumped(
@@ -264,12 +307,11 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
+#if DOTNET40
         public static IDictionary<Type, Func<TextWriter, MemberInfo, bool>> _memberInfoDumpers = new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
         {
             [typeof(Type)]              = (w,mi) => w.Dumped((Type)mi),
-            [typeof(TypeInfo)]          = (w,mi) => w.Dumped((Type)mi),
 
-            [typeof(EventInfo)]         = (w,mi) => w.Dumped((EventInfo)mi),
             [typeof(EventInfo)]         = (w,mi) => w.Dumped((EventInfo)mi),
             [typeof(ComAwareEventInfo)] = (w,mi) => w.Dumped((EventInfo)mi),
 
@@ -281,6 +323,25 @@ namespace vm.Aspects.Diagnostics
 
             [typeof(MethodInfo)]        = (w,mi) => w.Dumped((MethodInfo)mi),
         };
+#else
+        public static IReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>> _memberInfoDumpers = new ReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>>(
+            new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
+            {
+                [typeof(Type)]              = (w,mi) => w.Dumped((Type)mi),
+                [typeof(TypeInfo)]          = (w,mi) => w.Dumped((Type)mi),
+
+                [typeof(EventInfo)]         = (w,mi) => w.Dumped((EventInfo)mi),
+                [typeof(ComAwareEventInfo)] = (w,mi) => w.Dumped((EventInfo)mi),
+
+                [typeof(FieldInfo)]         = (w,mi) => w.Dumped((FieldInfo)mi),
+                [typeof(FieldBuilder)]      = (w,mi) => w.Dumped((FieldInfo)mi),
+
+                [typeof(PropertyInfo)]      = (w,mi) => w.Dumped((PropertyInfo)mi),
+                [typeof(PropertyBuilder)]   = (w,mi) => w.Dumped((PropertyInfo)mi),
+
+                [typeof(MethodInfo)]        = (w,mi) => w.Dumped((MethodInfo)mi),
+            });
+#endif
 
         static bool Dumped(
             this TextWriter writer,
