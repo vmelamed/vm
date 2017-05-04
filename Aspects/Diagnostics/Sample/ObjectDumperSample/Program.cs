@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using vm.Aspects;
 using vm.Aspects.Diagnostics;
 
@@ -102,7 +103,18 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Sample
                 }
             };
 
+            var sw = new Stopwatch();
+
+            sw.Start();
             Console.WriteLine(anObject);
+            sw.Stop();
+            Console.WriteLine("First time dumped in {0}", sw.Elapsed);
+
+            sw.Reset();
+            sw.Start();
+            Console.WriteLine(anObject);
+            sw.Stop();
+            Console.WriteLine("Second time dumped in {0}", sw.Elapsed);
 
             Console.ReadKey(true);
         }

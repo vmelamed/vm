@@ -6,7 +6,7 @@ using System.Security;
 
 [assembly: AssemblyProduct("vm.Aspects")]
 [assembly: AssemblyCompany("vm")]
-[assembly: AssemblyCopyright("Copyright © vm 2013-2016")]
+[assembly: AssemblyCopyright("Copyright © vm 2013-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 #if DEBUG

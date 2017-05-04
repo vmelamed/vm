@@ -74,6 +74,11 @@ namespace vm.Aspects.Diagnostics
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public static BindingFlags DefaultFieldsBindingFlags { get; set; } = InitialDefaultFieldsBindingFlags;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to use the dump script cache.
+        /// </summary>
+        public static bool UseDumpScriptCache { get; set; } = true;
+
         #region Internal properties for access by the DumpState
         /// <summary>
         /// The binding flags determining which properties to be dumped
@@ -99,11 +104,6 @@ namespace vm.Aspects.Diagnostics
         /// Contains references to all dumped virtual properties to avoid dumping them more than once in the derived classes.
         /// </summary>
         internal HashSet<DumpedProperty> DumpedVirtualProperties { get; } = new HashSet<DumpedProperty>();
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to use the dump script cache.
-        /// </summary>
-        public bool UseDumpScriptCache { get; set; } = true;
         #endregion
 
         #region Constructor

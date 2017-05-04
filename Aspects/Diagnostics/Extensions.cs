@@ -131,9 +131,8 @@ namespace vm.Aspects
             if (ReferenceEquals(obj, null))
                 return false;
 
-            // TODO: we need a better test here
-            return obj is DynamicObject  ||
-                   obj is ExpandoObject;
+            // TODO: we need a better test here (http://stackoverflow.com/questions/43769230/how-to-find-out-if-an-object-is-a-dynamic-object)
+            return obj is IDynamicMetaObjectProvider;
         }
 
         /// <summary>

@@ -206,56 +206,93 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         ////    type.GetTypeName(),
         ////    type.Namespace,
         ////    type.AssemblyQualifiedName);
-        public DumpScript DumpSeenAlready()
-            => AddWrite(
+        public Expression DumpSeenAlready()
+            => Write(
                     DumpFormat.CyclicalReference,
-                    Expression.Call(
-                        _miGetTypeName,
-                        _instanceType),
-                    Expression.Property(
-                        _instanceType,
-                        _piNamespace),
-                    Expression.Property(
-                        _instanceType,
-                        _piAssemblyQualifiedName)
-                    );
+                    Expression.Call(_miGetTypeName, _instanceType),
+                    Expression.Property(_instanceType, _piNamespace),
+                    Expression.Property(_instanceType, _piAssemblyQualifiedName));
+
+        ////_dumper.Writer.Write(
+        ////    DumpFormat.CyclicalReference,
+        ////    type.GetTypeName(),
+        ////    type.Namespace,
+        ////    type.AssemblyQualifiedName);
+        public DumpScript AddDumpSeenAlready()
+            => Add(DumpSeenAlready());
+
+        ////_dumper.Writer.Write(
+        ////    DumpFormat.SequenceType,
+        ////    sequenceType.GetTypeName(),
+        ////    sequenceType.Namespace,
+        ////    sequenceType.AssemblyQualifiedName);
+        public Expression DumpSequenceType(
+            Expression type)
+            => Write(
+                    DumpFormat.SequenceType,
+                    Expression.Call(_miGetTypeName, type),
+                    Expression.Property(type, _piNamespace),
+                    Expression.Property(type, _piAssemblyQualifiedName));
+
+        ////_dumper.Writer.Write(
+        ////    DumpFormat.SequenceType,
+        ////    sequenceType.GetTypeName(),
+        ////    sequenceType.Namespace,
+        ////    sequenceType.AssemblyQualifiedName);
+        public DumpScript AddDumpSequenceType(
+            Expression type)
+            => Add(DumpSequenceType(type));
+
+        public Expression DumpSequenceTypeName(
+            Expression sequence,
+            Expression sequenceType)
+            => Write(
+                DumpFormat.SequenceTypeName,
+                Expression.Call(_miGetTypeName, sequenceType),
+                Expression.Call(Expression.Property(sequence, _piCollectionCount), _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)));
+
+        public DumpScript AddDumpSequenceTypeName(
+            Expression sequence,
+            Expression sequenceType)
+            => Add(DumpSequenceTypeName(sequence, sequenceType));
 
         ////_dumper.Writer.Write(
         ////    DumpFormat.Type,
         ////    type.GetTypeName(),
         ////    type.Namespace,
         ////    type.AssemblyQualifiedName);
-        public DumpScript DumpType(
+        public Expression DumpType(
             Expression type)
-            => AddWrite(
+            => Write(
                     DumpFormat.Type,
-                    Expression.Call(
-                        _miGetTypeName,
-                        type),
-                    Expression.Property(
-                        type,
-                        _piNamespace),
-                    Expression.Property(
-                        type,
-                        _piAssemblyQualifiedName)
-                    );
+                    Expression.Call(_miGetTypeName, type),
+                    Expression.Property(type, _piNamespace),
+                    Expression.Property(type, _piAssemblyQualifiedName));
+
+        ////_dumper.Writer.Write(
+        ////    DumpFormat.Type,
+        ////    type.GetTypeName(),
+        ////    type.Namespace,
+        ////    type.AssemblyQualifiedName);
+        public DumpScript AddDumpType(
+            Expression type)
+            => Add(DumpType(type));
 
         ////_dumper.Writer.Write(
         ////    DumpFormat.Type,
         ////    _instanceType.GetTypeName(),
         ////    _instanceType.Namespace,
         ////    _instanceType.AssemblyQualifiedName);
-        public DumpScript DumpType() => DumpType(_instanceType);
+        public DumpScript AddDumpType()
+            => AddDumpType(_instanceType);
 
         //// _dumper.Writer.Dumped((Delegate)Instance);
         public Expression DumpedDelegate(
             Expression expression)
             => Expression.Call(
-                        _miDumpedDelegate,
-                        _writer,
-                        Expression.Convert(
-                            expression,
-                            typeof(Delegate)));
+                    _miDumpedDelegate,
+                    _writer,
+                    Expression.Convert(expression, typeof(Delegate)));
 
         public DumpScript AddDumpedDelegate(
             Expression expression)
@@ -276,9 +313,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             => Add(Expression.Call(
                         _miDumpedMemberInfo,
                         _writer,
-                        Expression.TypeAs(
-                            expression,
-                            typeof(MemberInfo))));
+                        Expression.TypeAs(expression, typeof(MemberInfo))));
 
         //// _dumper.Writer.Dumped(Instance as MemberInfo);
         public DumpScript DumpedMemberInfo()
@@ -322,26 +357,20 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             Expression.Call(
                                 _writer,
                                 _miWrite1,
-                                Expression.Call(
-                                    MemberValue(mi),
-                                    _miToString)));
+                                Expression.Call(MemberValue(mi), _miToString)));
 
             if (dumpMethod.IsStatic)
                 //// Writer.Write(dumpMethod(value));
                 return Add(Expression.Call(
                         _writer,
                         _miWrite1,
-                        Expression.Call(
-                            dumpMethod,
-                            MemberValue(mi))));
+                        Expression.Call(dumpMethod, MemberValue(mi))));
             else
                 //// Writer.Write(value.dumpMethod());
                 return Add(Expression.Call(
                         _writer,
                         _miWrite1,
-                        Expression.Call(
-                            MemberValue(mi),
-                            dumpMethod)));
+                        Expression.Call(MemberValue(mi), dumpMethod)));
         }
 
         internal DumpScript DumpedDictionary(
@@ -367,12 +396,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             //// dictionary.GetType()
             var dictionaryType = Expression.Call(dictionary, _miGetType);
 
-            //// Writer.Write(DumpFormat.SequenceTypeName, _instance.Property.GetType(), ((IDictionary)_instance.Property).Count);
-            AddWrite(
-                DumpFormat.SequenceTypeName,
-                Expression.Call(_miGetTypeName, dictionaryType),
-                Expression.Call(Expression.Property(dictionary, _piCollectionCount), _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)));
-            DumpType(dictionaryType);
+            //// writer.Write(DumpFormat.SequenceTypeName, dictionaryType.GetTypeName(), dictionary.Count.ToString(CultureInfo.InvariantCulture));
+            //// writer.Write(DumpFormat.SequenceType, dictionaryType.GetTypeName(), dictionaryType.Namespace, dictionaryType.AssemblyQualifiedName);
+            AddDumpSequenceTypeName(dictionary, dictionaryType);
+            AddDumpSequenceType(dictionaryType);
 
             if (dumpAttribute.RecurseDump==ShouldDump.Skip)
                 return this;
@@ -416,7 +443,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             // if (n++ >= max) {
                             Expression.IfThen
                             (
-                                Expression.LessThanOrEqual(Expression.PostDecrementAssign(n), max),
+                                Expression.GreaterThanOrEqual(Expression.PostDecrementAssign(n), max),
                                 Expression.Block
                                 (
                                     // Writer.Write(DumpFormat.SequenceDumpTruncated, max);

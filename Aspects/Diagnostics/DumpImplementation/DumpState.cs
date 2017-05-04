@@ -75,11 +75,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 {
                     var pi = ObjectType.GetProperty(defaultProperty);
 
-                    if (pi != null)
-                        Enumerator = (new MemberInfo[] { pi }).AsEnumerable().GetEnumerator();
-                    else
-                        Enumerator = (new MemberInfo[] { }).AsEnumerable().GetEnumerator();
-
+                    Enumerator = pi != null
+                                    ? (new MemberInfo[] { pi }).AsEnumerable().GetEnumerator()
+                                    : (new MemberInfo[] { }).AsEnumerable().GetEnumerator();
                     return;
                 }
             }
@@ -242,7 +240,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 type.Namespace,
                 type.AssemblyQualifiedName);
 
-            DumpScript?.DumpSeenAlready();
+            DumpScript?.AddDumpSeenAlready();
         }
 
         public void DumpType()
@@ -255,7 +253,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 type.Namespace,
                 type.AssemblyQualifiedName);
 
-            DumpScript?.DumpType();
+            DumpScript?.AddDumpType();
         }
 
         internal void IncrementMaxDepth()
