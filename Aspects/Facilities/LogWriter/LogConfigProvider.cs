@@ -15,7 +15,7 @@ using System.IO;
 namespace vm.Aspects.Facilities
 {
     /// <summary>
-    /// Class LogConfigurations. Exposes the registrar for the log configurations to be registered as defaults.
+    /// Class LogConfigProvider. Exposes the registrar for the log configurations to be registered as defaults.
     /// </summary>
     public static class LogConfigProvider
     {

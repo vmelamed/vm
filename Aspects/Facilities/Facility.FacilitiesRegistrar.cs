@@ -1,11 +1,11 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -101,7 +101,7 @@ namespace vm.Aspects.Facilities
                                             registrations,
                                             new ContainerControlledLifetimeManager(),
                                             new InjectionFactory(
-                                                    c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, null, isTest)))
+                                                    c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, isTest)))
                     .UnsafeRegister(LogConfigProvider.Registrar, registrations, isTest)
                     .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations, isTest)
                     ;

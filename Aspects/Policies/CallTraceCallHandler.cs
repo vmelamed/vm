@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -9,6 +7,8 @@ using System.Reflection;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 
@@ -181,7 +181,6 @@ namespace vm.Aspects.Policies
         {
             if (LogBeforeCall  &&  LogWriter.IsLoggingEnabled())
             {
-
                 var entry = CreateLogEntry(StartCallCategory);
 
                 if (LogWriter.ShouldLog(entry))
@@ -564,15 +563,16 @@ namespace vm.Aspects.Policies
             for (var i = 0; i<input.Inputs.Count; i++)
             {
                 var pi = input.Inputs.GetParameterInfo(i);
+                var hasOutValue = pi.IsOut || pi.ParameterType.IsByRef;
 
-                if (!LogBeforeCall || pi.IsOut || pi.ParameterType.IsByRef)
+                if (!LogBeforeCall || hasOutValue)
                 {
                     var outValue = callData.OutputValues != null  &&
                                    outValueIndex < callData.OutputValues.Count
                                         ? callData.OutputValues[outValueIndex++]
                                         : null;
 
-                    DumpOutputParameter(writer, pi, outValue);
+                    DumpOutputParameter(writer, pi, input.Inputs[i], hasOutValue, outValue);
                 }
 
                 if (i != input.Inputs.Count-1)
@@ -602,14 +602,13 @@ namespace vm.Aspects.Policies
                 "{0}{1} {2}{3}",
                 pi.IsOut
                     ? "out "
-                    : (pi.ParameterType.IsByRef
-                        ? "ref "
-                        : string.Empty),
+                    : (pi.ParameterType.IsByRef ? "ref " : string.Empty),
                 pi.ParameterType.Name,
                 pi.Name,
                 !pi.IsOut ? " = " : string.Empty);
 
-            value.DumpText(writer, 5, null, pi.GetCustomAttribute<DumpAttribute>(true));
+            if (!pi.IsOut)  // don't dump out parameters!
+                value.DumpText(writer, 5, null, pi.GetCustomAttribute<DumpAttribute>(true));
         }
 
         /// <summary>
@@ -617,10 +616,14 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="pi">The reflection structure representing an output parameter.</param>
+        /// <param name="inValue">The value of the parameter on input.</param>
+        /// <param name="hasOutValue">The parameter has output value.</param>
         /// <param name="outValue">The output value of the ref/output parameter.</param>
         protected static void DumpOutputParameter(
             TextWriter writer,
             ParameterInfo pi,
+            object inValue,
+            bool hasOutValue,
             object outValue = null)
         {
             Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
@@ -629,16 +632,21 @@ namespace vm.Aspects.Policies
             writer.WriteLine();
             writer.Write(
                 "{0}{1} {2} = ",
-                pi.IsOut
-                    ? "out "
-                    : (pi.ParameterType.IsByRef
-                        ? "ref "
-                        : string.Empty),
+                pi.IsOut ? "out "
+                         : (pi.ParameterType.IsByRef ? "ref " : string.Empty),
                 pi.ParameterType.Name,
                 pi.Name,
-                (pi.IsOut || pi.ParameterType.IsByRef) ? " = " : string.Empty);
+                !pi.IsOut ? " = " : string.Empty);
 
-            outValue.DumpText(writer, 5, null, pi.GetCustomAttribute<DumpAttribute>(true));
+            var dumpAttribute = pi.GetCustomAttribute<DumpAttribute>(true);
+
+            if (!pi.IsOut)  // don't dump out parameters!
+                inValue.DumpText(writer, 5, null, dumpAttribute);
+            if (hasOutValue)
+            {
+                writer.Write(" -> ");
+                outValue.DumpText(writer, 5, null, dumpAttribute);
+            }
         }
 
         /// <summary>
