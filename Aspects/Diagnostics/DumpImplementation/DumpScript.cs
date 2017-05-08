@@ -668,6 +668,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             MemberInfo mi,
             Type dumpMetadata,
             DumpAttribute dumpAttribute)
-            => Add(Expression.Call(_dumper, _miDumperDumpObject, MemberValue(mi), Expression.Constant(dumpMetadata, typeof(Type)), Expression.Constant(dumpAttribute, typeof(DumpAttribute)), _false));
+            => Add(Expression.Call(
+                    _dumper,
+                    _miDumperDumpObject,
+                    Expression.Convert(MemberValue(mi), typeof(object)),
+                    Expression.Constant(dumpMetadata, typeof(Type)),
+                    Expression.Constant(dumpAttribute, typeof(DumpAttribute)),
+                    _false));
     }
 }
