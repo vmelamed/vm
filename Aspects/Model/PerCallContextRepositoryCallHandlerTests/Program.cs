@@ -1,13 +1,13 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -79,25 +79,24 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
         static void Register()
         {
-            var registrations = DIContainer.Root.GetRegistrationsSnapshot();
+            lock (DIContainer.Root)
+            {
+                var registrations = DIContainer.Root.GetRegistrationsSnapshot();
 
-            DIContainer.Root
-                .RegisterTypeIfNot<ITestService, TestServiceClient>(registrations, "client", new InjectionFactory(c => new TestServiceClient("net.tcp://localhost:14808/TestService.svc", ServiceIdentity.None, "")))
-                .RegisterTypeIfNot<ITestServiceTasks, TestServiceTasks>(registrations, "client", new InjectionFactory(c => new TestServiceTasksClient("net.tcp://localhost:14808/TestServiceTasks.svc", ServiceIdentity.None, "")))
-                ;
+                DIContainer.Root
+                    .RegisterTypeIfNot<ITestService, TestServiceClient>(registrations, "client", new InjectionFactory(c => new TestServiceClient("net.tcp://localhost:14808/TestService.svc", ServiceIdentity.None, "")))
+                    .RegisterTypeIfNot<ITestServiceTasks, TestServiceTasks>(registrations, "client", new InjectionFactory(c => new TestServiceTasksClient("net.tcp://localhost:14808/TestServiceTasks.svc", ServiceIdentity.None, "")))
+                    ;
 
-            var interception = DIContainer.Root
-                                    .AddNewExtension<Interception>()
-                                    .Configure<Interception>()
-                                    ;
+                DIContainer.Root
+                    .Configure<Interception>()
+                    .AddPolicy(nameof(TestService))
+                    .AddMatchingRule<TagAttributeMatchingRule>(
+                            new InjectionConstructor(nameof(TestService), false))
 
-            interception
-                .AddPolicy(nameof(TestService))
-                .AddMatchingRule<TagAttributeMatchingRule>(
-                        new InjectionConstructor(nameof(TestService), false))
-
-                .AddCallHandler<UnitOfWorkCallHandler>()
-                ;
+                    .AddCallHandler<UnitOfWorkCallHandler>()
+                    ;
+            }
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {

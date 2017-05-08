@@ -68,13 +68,9 @@ namespace vm.Aspects.Wcf.TestServer
             DumpFormat.SequenceTypeName = "";
             DumpFormat.TypeInfo         = "{1}.{0}";
 
-            var interception = container
-                                    .AddNewExtension<Interception>()
-                                    .Configure<Interception>()
-                                    ;
-
             if (!registrations.ContainsKey(new RegistrationLookup(typeof(InjectionPolicy), "ServicePolicy")))
-                interception
+                container
+                    .Configure<Interception>()
                     .AddPolicy("ServicePolicy")
                     .AddMatchingRule<TagAttributeMatchingRule>(
                             new InjectionConstructor("ServicePolicy", false))
