@@ -197,11 +197,11 @@ namespace vm.Aspects
             foreach (var accessor in pi.GetAccessors())
                 if (isVirtual.HasValue)
                 {
-                    if (isVirtual.Value != accessor.IsVirtual)
+                    if (isVirtual.Value != (accessor.IsVirtual  &&  !accessor.IsFinal))
                         return null;
                 }
                 else
-                    isVirtual = accessor.IsVirtual;
+                    isVirtual = (accessor.IsVirtual  &&  !accessor.IsFinal);
 
             return isVirtual;
         }
@@ -299,6 +299,8 @@ namespace vm.Aspects
             this Type type)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            Contract.Ensures(Contract.Result<string>() != null);
+            Contract.Ensures(Contract.Result<string>().Length > 0);
 
             string typeName;
 
@@ -336,6 +338,9 @@ namespace vm.Aspects
             this DumpAttribute dumpAttribute,
             int length = int.MaxValue)
         {
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            Contract.Ensures(Contract.Result<int>() >= 0);
+
             var max = dumpAttribute.MaxLength;
 
             if (max < 0)

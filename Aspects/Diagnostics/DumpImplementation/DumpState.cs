@@ -12,8 +12,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
     class DumpState : IEnumerator<MemberInfo>
     {
         #region fileds
-        ObjectTextDumper _dumper;
-        bool _isTopLevelClass;
+        readonly ObjectTextDumper _dumper;
+        readonly bool _isTopLevelClass;
         /// <summary>
         /// The current field or property's property info object
         /// </summary>
@@ -35,7 +35,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(dumper        != null, nameof(dumper));
             Contract.Requires<ArgumentNullException>(instance      != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(classDumpData != null, nameof(classDumpData));
 
             // let's not create script if we don't need it or are not doing anything here.
             if (buildScript  &&  ObjectType != typeof(object))
@@ -55,7 +54,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(instance              != null, nameof(instance));
             Contract.Requires<ArgumentNullException>(type                  != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(classDumpData         != null, nameof(classDumpData));
             Contract.Requires<ArgumentNullException>(instanceDumpAttribute != null, nameof(instanceDumpAttribute));
             Contract.Requires<ArgumentNullException>(dumper                != null, nameof(dumper));
 
@@ -110,7 +108,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <summary>
         /// Gets or sets the current type (maybe base type) of the instance being dumped.
         /// </summary>
-        public Type ObjectType { get; private set; }
+        public Type ObjectType { get; }
 
         /// <summary>
         /// Gets or sets the dump attribute applied to the instance .
@@ -118,7 +116,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <value>
         /// The instance dump attribute.
         /// </value>
-        public DumpAttribute InstanceDumpAttribute { get; private set; }
+        public DumpAttribute InstanceDumpAttribute { get; }
 
         /// <summary>
         /// Gets or sets the class dump data pair - the metadata type and the class dump attribute.
@@ -154,7 +152,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         #endregion
 
         #region IEnumerator<MemberInfo> Members
-        public IEnumerator<MemberInfo> Enumerator { get; private set; }
+        public IEnumerator<MemberInfo> Enumerator { get; }
 
         /// <summary>
         /// Gets the element in the collection at the current position of the enumerator.
@@ -363,11 +361,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             var pi = CurrentProperty as PropertyInfo;
             var fi = CurrentProperty as FieldInfo;
 
-            if (pi != null  &&
-                pi.GetIndexParameters().Length > 0)
+            if (pi != null  &&  pi.GetIndexParameters().Length > 0)
                 return;
 
-            Type type = null;
+            Type type    = null;
             object value = null;
 
             try
@@ -431,14 +428,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 return;
 
             // dump a property representing an associated class or struct object
-            _dumper.DumpObject(
-                value,
-                null,
-                !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null);
-            DumpScript.DumpObject(
-                CurrentProperty,
-                null,
-                !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null);
+            var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
+
+            _dumper.DumpObject(value, null, currentPropertyDumpAttribute);
+            DumpScript.DumpObject(CurrentProperty, null, currentPropertyDumpAttribute);
         }
 
         public bool DumpedCollection(

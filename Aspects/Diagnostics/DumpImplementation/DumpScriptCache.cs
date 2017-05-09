@@ -59,7 +59,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left==right);
             #endregion
-
         };
 
         readonly static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
@@ -98,7 +97,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(_dumpScript      != null, nameof(_dumpScript));
 
             var lookup = new ScriptLookup(objectType, classDumpData, objectTextDumper);
-            var script = _dumpScript.GetScript();
+            var script = _dumpScript.GetScriptAction();
 
             _sync.EnterWriteLock();
             _cache[lookup] = script;

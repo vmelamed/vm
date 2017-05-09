@@ -881,6 +881,44 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
         }
 
         [TestMethod]
+        public void TestDumpObject9_1null()
+        {
+            ActAndAssert(
+                nameof(TestDumpObject9_1),
+                @"
+Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+    Flags                    = TestFlags (Two | Four)
+    Prop                     = TestEnum.One
+  Prop91                   = 0
+  Prop92                   = 1
+  Prop911                  = 2
+  Prop912                  = 3
+  Prop913                  = 6
+  Prop914                  = 7
+  InheritedObject90        = Object90 (see above)
+  Prop93                   = 4
+  Prop94                   = 5",
+                new Object91());
+
+            ActAndAssert(
+                nameof(TestDumpObject9_1),
+                @"
+Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Object90                 = <null>
+  Prop91                   = 0
+  Prop92                   = 1
+  Prop911                  = 2
+  Prop912                  = 3
+  Prop913                  = 6
+  Prop914                  = 7
+  InheritedObject90        = <null>
+  Prop93                   = 4
+  Prop94                   = 5",
+                new Object91() { Object90 = null });
+        }
+
+        [TestMethod]
         public void TestDumpObjectWithDelegates()
         {
             ActAndAssert(
@@ -1231,6 +1269,71 @@ DavidATest (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+David
     3
   B                        = 6",
                 new DavidATest());
+        }
+
+        [TestMethod]
+        public void TestObjectWithNullCollection()
+        {
+            ActAndAssert(
+                nameof(TestObjectWithNullCollection),
+                @"
+Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Collection               = <null>
+  Property11               = 0
+  Property12               = <null>",
+                new Object14());
+            ActAndAssert(
+                nameof(TestObjectWithNullCollection),
+                @"
+Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Collection               = <null>
+  Property11               = 0
+  Property12               = <null>",
+                new Object14());
+        }
+
+        [TestMethod]
+        public void TestObjectWithNotNullCollection()
+        {
+            ActAndAssert(
+                nameof(TestObjectWithNotNullCollection),
+                @"
+Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+    Object14_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+      Property1                = 0
+      Property2                = zero
+    Object14_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+      Property1                = 1
+      Property2                = one
+  Property11               = 1
+  Property12               = one.two",
+                new Object14
+                {
+                    Property11 = 1,
+                    Property12 = "one.two",
+                    Collection = new List<Object14_1>
+                    {
+                        new Object14_1
+                        {
+                            Property1 = 0,
+                            Property2 = "zero"
+                        },
+                        new Object14_1
+                        {
+                            Property1 = 1,
+                            Property2 = "one"
+                        },
+                    }
+                });
+            ActAndAssert(
+                nameof(TestObjectWithNotNullCollection),
+                @"
+Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Collection               = <null>
+  Property11               = 0
+  Property12               = <null>",
+                new Object14());
         }
     }
 }

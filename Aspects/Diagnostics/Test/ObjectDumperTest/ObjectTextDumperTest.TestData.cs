@@ -799,5 +799,18 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public int[] Array { get; } = new[] { 1, 2, 3 };
             public int B { get; } = 6;
         }
+
+        public class Object14_1
+        {
+            public int Property1 { get; set; }
+            public string Property2 { get; set; }
+        }
+
+        public class Object14
+        {
+            public int Property11 { get; set; }
+            public string Property12 { get; set; }
+            public ICollection<Object14_1> Collection { get; set; }
+        }
     }
 }

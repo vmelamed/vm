@@ -39,6 +39,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
             Contract.Requires((mi is PropertyInfo) || (mi is FieldInfo), "The parameter can be only "+nameof(PropertyInfo)+" or "+nameof(FieldInfo)+" type.");
+            Contract.Ensures(Contract.Result<DumpAttribute>() != null);
 
             var lookup = Tuple.Create(mi, metadata);
             DumpAttribute dumpAttribute;
@@ -71,7 +72,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     else
                         // hidden property(?) - take the property from the most derived class:
                         if (miMeta.DeclaringType.IsAssignableFrom(f.DeclaringType))
-                            miMeta = f;
+                        miMeta = f;
 
                 //// if not found in the properties - search in the fields
                 //if (miMeta == null)
@@ -113,8 +114,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             return dumpAttribute;
         }
 
-        public static bool PropertyHasNonDefaultDumpAttribute(MemberInfo memberInfo)
+        public static bool PropertyHasNonDefaultDumpAttribute(
+            MemberInfo memberInfo)
         {
+            Contract.Requires<ArgumentNullException>(memberInfo != null, nameof(memberInfo));
+
             try
             {
                 SyncPropertiesDumpData.EnterWriteLock();

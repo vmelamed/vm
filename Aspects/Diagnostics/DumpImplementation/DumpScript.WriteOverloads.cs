@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -214,6 +215,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Expression format,
             params Expression[] parameters)
         {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
             var allParameters = new Expression[parameters.Length+1];
 
             allParameters[0] = format;
@@ -229,21 +232,33 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         public DumpScript AddWrite(
             Expression format,
             params Expression[] parameters)
-            => Add(Write(format, parameters));
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
+            return Add(Write(format, parameters));
+        }
 
         // -----------------------------
 
         public Expression Write(
             string format,
             params Expression[] parameters)
-            => Write(
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
+            return Write(
                     Expression.Constant(format),
                     parameters);
+        }
 
         public DumpScript AddWrite(
             string format,
             params Expression[] parameters)
-            => Add(Write(format, parameters));
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
+            return Add(Write(format, parameters));
+        }
 
         // -------------------------------
 
@@ -251,6 +266,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             string format,
             params object[] parameters)
         {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
             var allParameters = new Expression[parameters.Length+1];
 
             allParameters[0] = Expression.Constant(format);
@@ -266,6 +283,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         public DumpScript AddWrite(
             string format,
             params object[] parameters)
-        => Add(Write(format, parameters));
+        {
+            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+
+            return Add(Write(format, parameters));
+        }
     }
 }

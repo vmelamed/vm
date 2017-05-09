@@ -31,11 +31,6 @@ namespace vm.Aspects.Diagnostics
 
         #region Fields
         /// <summary>
-        /// Flag that the current writer is actually our DumpTextWriter.
-        /// </summary>
-        readonly bool _isDumpWriter;
-
-        /// <summary>
         /// The current indent.
         /// </summary>
         internal int _indentLevel;
@@ -43,7 +38,12 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The number of spaces in a single indent.
         /// </summary>
-        internal int _indentSize;
+        internal readonly int _indentSize;
+
+        /// <summary>
+        /// Flag that the current writer is actually our DumpTextWriter.
+        /// </summary>
+        readonly bool _isDumpWriter;
 
         /// <summary>
         /// The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
@@ -174,6 +174,7 @@ namespace vm.Aspects.Diagnostics
             Contract.Ensures(Contract.OldValue(_indentLevel) == _indentLevel, "The indent level was not preserved.");
             Contract.Ensures(Contract.Result<ObjectTextDumper>() != null);
 
+            var originalIndentLevel = _indentLevel;
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission     = false;
 
@@ -200,6 +201,7 @@ namespace vm.Aspects.Diagnostics
 
                 Writer.WriteLine(message);
                 Debug.WriteLine(message);
+                _indentLevel = originalIndentLevel;
             }
             finally
             {
