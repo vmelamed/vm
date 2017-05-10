@@ -121,7 +121,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             try
             {
-                SyncPropertiesDumpData.EnterWriteLock();
+                SyncPropertiesDumpData.EnterReadLock();
                 return _propertyDumpMap.Any(
                             kv => kv.Key.Item1.Name == memberInfo.Name  &&
                                   kv.Key.Item1.DeclaringType.IsAssignableFrom(memberInfo.DeclaringType)   &&
@@ -129,7 +129,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             }
             finally
             {
-                SyncPropertiesDumpData.ExitWriteLock();
+                SyncPropertiesDumpData.ExitReadLock();
             }
         }
     }
