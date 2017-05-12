@@ -99,11 +99,6 @@ namespace vm.Aspects.Diagnostics
         /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
         /// </summary>
         internal HashSet<DumpedObject> DumpedObjects { get; } = new HashSet<DumpedObject>();
-
-        /// <summary>
-        /// Contains references to all dumped virtual properties to avoid dumping them more than once in the derived classes.
-        /// </summary>
-        internal HashSet<DumpedProperty> DumpedVirtualProperties { get; } = new HashSet<DumpedProperty>();
         #endregion
 
         #region Constructor
@@ -141,8 +136,8 @@ namespace vm.Aspects.Diagnostics
 
             _indentLevel           = indentLevel >= DefaultIndentLevel ? indentLevel : DefaultIndentLevel;
             _indentSize            = indentSize  >= DefaultIndentSize ? indentSize : DefaultIndentSize;
-            PropertiesBindingFlags = (propertiesBindingFlags==BindingFlags.Default ? DefaultPropertiesBindingFlags : propertiesBindingFlags) | BindingFlags.DeclaredOnly;
-            FieldsBindingFlags     = (fieldsBindingFlags==BindingFlags.Default ? DefaultFieldsBindingFlags : fieldsBindingFlags) | BindingFlags.DeclaredOnly;
+            PropertiesBindingFlags = propertiesBindingFlags==BindingFlags.Default ? DefaultPropertiesBindingFlags : propertiesBindingFlags;
+            FieldsBindingFlags     = fieldsBindingFlags==BindingFlags.Default ? DefaultFieldsBindingFlags : fieldsBindingFlags;
         }
         #endregion
 
@@ -211,8 +206,6 @@ namespace vm.Aspects.Diagnostics
 
                 // clear the dumped objects register
                 DumpedObjects.Clear();
-                // clear the dumped properties register
-                DumpedVirtualProperties.Clear();
                 // prepare our writer for a new dump
                 if (_isDumpWriter)
                     ((DumpTextWriter)Writer).Reset();
@@ -322,6 +315,9 @@ namespace vm.Aspects.Diagnostics
             DumpState state,
             Stack<DumpState> statesWithRemainingProperties)
         {
+            Contract.Requires<ArgumentNullException>(state                         != null, nameof(state));
+            Contract.Requires<ArgumentNullException>(statesWithRemainingProperties != null, nameof(statesWithRemainingProperties));
+
             if (state.DumpedDelegate()    ||
                 state.DumpedMemberInfo()  ||
                 state.DumpedRootClass())
@@ -368,7 +364,8 @@ namespace vm.Aspects.Diagnostics
             Stack<DumpState> statesWithRemainingProperties,
             Queue<DumpState> statesWithTailProperties)
         {
-            Contract.Requires(statesWithRemainingProperties != null);
+            Contract.Requires<ArgumentNullException>(statesWithRemainingProperties != null, nameof(statesWithRemainingProperties));
+            Contract.Requires<ArgumentNullException>(statesWithTailProperties      != null, nameof(statesWithTailProperties));
 
             bool isTailProperty;
 
@@ -407,7 +404,7 @@ namespace vm.Aspects.Diagnostics
         static void DumpTailProperties(
             IEnumerable<DumpState> statesWithTailProperties)
         {
-            Contract.Requires(statesWithTailProperties != null);
+            Contract.Requires<ArgumentNullException>(statesWithTailProperties != null, nameof(statesWithTailProperties));
 
             foreach (var state in statesWithTailProperties)
                 using (state)
@@ -479,7 +476,6 @@ namespace vm.Aspects.Diagnostics
             Contract.Invariant(_indentSize>=0, "The length of the indent cannot be negative.");
             Contract.Invariant(_indentLevel>=0, "The the indent level cannot be negative.");
             Contract.Invariant(DumpedObjects!=null);
-            Contract.Invariant(DumpedVirtualProperties!=null);
         }
     }
 }

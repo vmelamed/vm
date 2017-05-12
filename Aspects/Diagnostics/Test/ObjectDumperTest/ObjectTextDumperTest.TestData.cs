@@ -812,5 +812,41 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public string Property12 { get; set; }
             public ICollection<Object14_1> Collection { get; set; }
         }
+
+        public class BaseClass
+        {
+            public BaseClass()
+            {
+                Property = 0;
+                VirtualProperty1 = 1;
+                VirtualProperty2 = 2;
+            }
+            public int Property { get; set; }
+            public virtual int VirtualProperty1 { get; set; }
+            public virtual int VirtualProperty2 { get; set; }
+        }
+
+        public class Descendant1 : BaseClass
+        {
+        }
+
+        public class Descendant2 : Descendant1
+        {
+            public Descendant2()
+            {
+                VirtualProperty1 = 21;
+            }
+            public override int VirtualProperty1 { get; set; }
+        }
+
+        public class Descendant3 : Descendant2
+        {
+            public Descendant3()
+            {
+                VirtualProperty2 = 32;
+            }
+
+            public override int VirtualProperty2 { get; set; }
+        }
     }
 }

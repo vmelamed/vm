@@ -652,22 +652,22 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
                 nameof(TestDumpExpression),
                 @"
 Expression<Func<int, int>> (System.Linq.Expressions.Expression`1[[System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
-  NodeType                 = ExpressionType.Lambda
-  Type                     = (TypeInfo): System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   Name                     = <null>
   ReturnType               = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   Parameters               = TrueReadOnlyCollection<ParameterExpression>[1]: (System.Runtime.CompilerServices.TrueReadOnlyCollection`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
-      NodeType                 = ExpressionType.Parameter
-      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       Name                     = a
       IsByRef                  = False
+      NodeType                 = ExpressionType.Parameter
+      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       CanReduce                = False
   Body                     = ConstantExpression (System.Linq.Expressions.ConstantExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+    Value                    = 5
     NodeType                 = ExpressionType.Constant
     Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-    Value                    = 5
     CanReduce                = False
+  NodeType                 = ExpressionType.Lambda
+  Type                     = (TypeInfo): System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   TailCall                 = False
   CanReduce                = False",
                 expression);
@@ -1096,8 +1096,8 @@ Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.
                 @"
 Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   IntProperty              = 0
-  StringProperty           = StringProperty
-  IntProperty              = 5",
+  IntProperty              = 5
+  StringProperty           = StringProperty",
                 new Derived
                 {
                     StringProperty = "StringProperty",
@@ -1334,6 +1334,97 @@ Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
   Property11               = 0
   Property12               = <null>",
                 new Object14());
+        }
+
+        [TestMethod]
+        public void TestVirtualPropertiesVariations()
+        {
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+BaseClass (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+BaseClass, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 0
+  VirtualProperty1         = 1
+  VirtualProperty2         = 2",
+                new BaseClass());
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 0
+  VirtualProperty1         = 1
+  VirtualProperty2         = 2",
+                new Descendant1());
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 0
+  VirtualProperty2         = 2
+  VirtualProperty1         = 21",
+                new Descendant2());
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant3, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 0
+  VirtualProperty1         = 21
+  VirtualProperty2         = 32",
+                new Descendant3());
+
+
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+BaseClass (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+BaseClass, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 0
+  VirtualProperty1         = 1
+  VirtualProperty2         = 2",
+                new BaseClass
+                {
+                    Property         = 0,
+                    VirtualProperty1 = 1,
+                    VirtualProperty2 = 2,
+                });
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 10
+  VirtualProperty1         = 11
+  VirtualProperty2         = 12",
+                new Descendant1
+                {
+                    Property         = 10,
+                    VirtualProperty1 = 11,
+                    VirtualProperty2 = 12,
+                });
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 20
+  VirtualProperty2         = 22
+  VirtualProperty1         = 21",
+                new Descendant2
+                {
+                    Property         = 20,
+                    VirtualProperty1 = 21,
+                    VirtualProperty2 = 22,
+                });
+            ActAndAssert(
+                nameof(TestVirtualPropertiesVariations),
+                @"
+Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant3, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property                 = 30
+  VirtualProperty1         = 31
+  VirtualProperty2         = 32",
+                new Descendant3
+                {
+                    Property         = 30,
+                    VirtualProperty1 = 31,
+                    VirtualProperty2 = 32,
+                });
         }
     }
 }

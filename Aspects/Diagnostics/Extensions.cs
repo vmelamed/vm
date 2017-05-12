@@ -113,7 +113,7 @@ namespace vm.Aspects
         internal static bool IsBasicType(
             this Type type)
         {
-            Contract.Requires(type != null, "type");
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             return WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
         }
@@ -148,7 +148,7 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires(attributeProvider != null, "attributeProvider");
+            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
 
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return null;
@@ -168,7 +168,7 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires(attributeProvider != null, "attributeProvider");
+            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
 
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return new T[0];
@@ -179,31 +179,15 @@ namespace vm.Aspects
         /// <summary>
         /// Determines whether the specified <see cref="PropertyInfo"/> object represents a virtual property.
         /// </summary>
-        /// <param name="mi">The <see cref="PropertyInfo"/> object.</param>
+        /// <param name="pi">The <see cref="PropertyInfo"/> object.</param>
         /// <returns><c>true</c> if the specified <see cref="PropertyInfo"/> object represents a virtual property; otherwise, <c>false</c>.</returns>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="mi"/> is <see langword="null"/>.</exception>
-        internal static bool? IsVirtual(
-            this MemberInfo mi)
+        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="pi"/> is <see langword="null"/>.</exception>
+        internal static bool IsVirtual(
+            this PropertyInfo pi)
         {
-            Contract.Requires(mi != null, "pi");
+            Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
 
-            var pi = mi as PropertyInfo;
-
-            if (pi == null)
-                return false;
-
-            bool? isVirtual = null;
-
-            foreach (var accessor in pi.GetAccessors())
-                if (isVirtual.HasValue)
-                {
-                    if (isVirtual.Value != (accessor.IsVirtual  &&  !accessor.IsFinal))
-                        return null;
-                }
-                else
-                    isVirtual = (accessor.IsVirtual  &&  !accessor.IsFinal);
-
-            return isVirtual;
+            return pi.GetMethod.IsVirtual  &&  !pi.GetMethod.IsFinal;
         }
 
         /// <summary>
@@ -215,7 +199,7 @@ namespace vm.Aspects
         internal static bool CanRead(
             this MemberInfo mi)
         {
-            Contract.Requires(mi != null, "pi");
+            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
             if (mi is FieldInfo)
                 return true;

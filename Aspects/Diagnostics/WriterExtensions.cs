@@ -109,7 +109,12 @@ namespace vm.Aspects.Diagnostics
         static readonly Regex _systemNameSpace = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
 
         public static bool IsFromSystem(
-            this Type type) => _systemNameSpace.IsMatch(type.Namespace);
+            this Type type)
+        {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
+            return _systemNameSpace.IsMatch(type.Namespace);
+        }
 
         [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         static bool Dumped(
@@ -311,6 +316,7 @@ namespace vm.Aspects.Diagnostics
         public static IDictionary<Type, Func<TextWriter, MemberInfo, bool>> _memberInfoDumpers = new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
         {
             [typeof(Type)]              = (w,mi) => w.Dumped((Type)mi),
+            [typeof(TypeInfo)]          = (w,mi) => w.Dumped((Type)mi),
 
             [typeof(EventInfo)]         = (w,mi) => w.Dumped((EventInfo)mi),
             [typeof(ComAwareEventInfo)] = (w,mi) => w.Dumped((EventInfo)mi),
@@ -517,7 +523,12 @@ namespace vm.Aspects.Diagnostics
             Action indent,
             Action unindent)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(writer        != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            Contract.Requires<ArgumentNullException>(dumpObject    != null, nameof(dumpObject));
+            Contract.Requires<ArgumentNullException>(indent        != null, nameof(indent));
+            Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
 
             var sequenceType = sequence.GetType();
 
@@ -604,8 +615,12 @@ namespace vm.Aspects.Diagnostics
             Action indent,
             Action unindent)
         {
+            Contract.Requires<ArgumentNullException>(writer        != null, nameof(writer));
+            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-            Contract.Requires(sequence != null);
+            Contract.Requires<ArgumentNullException>(dumpObject    != null, nameof(dumpObject));
+            Contract.Requires<ArgumentNullException>(indent        != null, nameof(indent));
+            Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
 
             var sequenceType = sequence.GetType();
 
