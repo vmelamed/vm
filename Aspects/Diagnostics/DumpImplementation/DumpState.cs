@@ -435,6 +435,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             }
 
             DumpScript?.AddDumpPropertyOrCollectionValue(CurrentProperty, CurrentPropertyDumpAttribute);
+            DumpScript?.EndDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute, ClassDumpData);
         }
 
         public bool DumpedCollection(

@@ -24,6 +24,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         static readonly MethodInfo _miGetElementType          = typeof(Type).GetMethod(nameof(Type.GetElementType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly MethodInfo _miGetGenericArguments     = typeof(Type).GetMethod(nameof(Type.GetGenericArguments), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
 
+        static readonly PropertyInfo _piDumperWriter          = typeof(ObjectTextDumper).GetProperty(nameof(ObjectTextDumper.Writer), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly FieldInfo _fiDumperIndentLevel        = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentLevel), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly FieldInfo _fiDumperIndentLength       = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentSize), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly FieldInfo _fiDumperMaxDepth           = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._maxDepth), BindingFlags.NonPublic|BindingFlags.Instance);
+
         static readonly MethodInfo _miReferenceEquals         = typeof(object).GetMethod(nameof(object.ReferenceEquals), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(object), typeof(object) }, null);
         static readonly MethodInfo _miGetType                 = typeof(object).GetMethod(nameof(object.GetType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly MethodInfo _miToString                = typeof(object).GetMethod(nameof(object.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
@@ -102,24 +107,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(dumper       != null, nameof(dumper));
             Contract.Requires<ArgumentNullException>(instanceType != null, nameof(instanceType));
 
-            _writer                 = Expression.Property(
-                                                    _dumper,
-                                                    typeof(ObjectTextDumper)
-                                                        .GetProperty(nameof(ObjectTextDumper.Writer), BindingFlags.NonPublic|BindingFlags.Instance));
-            _indentLevel            = Expression.Field(
-                                                    _dumper,
-                                                    typeof(ObjectTextDumper)
-                                                        .GetField(nameof(ObjectTextDumper._indentLevel), BindingFlags.NonPublic|BindingFlags.Instance));
-            _indentLength           = Expression.Field(
-                                                    _dumper,
-                                                    typeof(ObjectTextDumper)
-                                                        .GetField(nameof(ObjectTextDumper._indentSize), BindingFlags.NonPublic|BindingFlags.Instance));
-            _maxDepth               = Expression.Field(
-                                                    _dumper,
-                                                    typeof(ObjectTextDumper)
-                                                        .GetField(nameof(ObjectTextDumper._maxDepth), BindingFlags.NonPublic|BindingFlags.Instance));
+            _instance     = Expression.Parameter(instanceType, nameof(_instance));
 
-            _instance               = Expression.Parameter(instanceType, nameof(_instance));
+            _writer       = Expression.Property(_dumper, _piDumperWriter);
+            _indentLevel  = Expression.Field(_dumper, _fiDumperIndentLevel);
+            _indentLength = Expression.Field(_dumper, _fiDumperIndentLength);
+            _maxDepth     = Expression.Field(_dumper, _fiDumperMaxDepth);
 
             Add
             (

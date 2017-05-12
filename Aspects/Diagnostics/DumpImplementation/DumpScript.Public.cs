@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -39,6 +40,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         DumpScript Close()
         {
+            Contract.Requires<InvalidOperationException>(!_scripts.Any(), "Not all scripts were poped from the stack of scripts.");
+
             if (_isClosed)
                 return this;
 
@@ -122,6 +125,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
+            var blockBody = EndScriptSegment();
             var da = Expression.Constant(dumpAttribute);
 
             Add
@@ -155,7 +159,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     //// { dumpProperty }
                     Expression.Block
                     (
-                        EndScriptSegment()
+                        blockBody
                     )
                 )
             );
