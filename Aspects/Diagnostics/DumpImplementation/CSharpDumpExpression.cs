@@ -24,6 +24,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         bool NeedsSemicolon { get; set; } = true;
 
+        bool PrintedText { get; set; } = true;
+
         public bool ShortenNamesOfGeneratedClasses { get; set; } = false;
 
         public bool DumpDebugInfo { get; set; } = false;
@@ -107,82 +109,84 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             public int Weight;
             public bool LeftAssociative;
             public bool IsPostfix;
+            public bool IsChecked;
             public string Operator;
         }
 
         static readonly IReadOnlyDictionary<ExpressionType, ExpressionMetadata> _metadata = new ReadOnlyDictionary<ExpressionType, ExpressionMetadata>(
             new Dictionary<ExpressionType, ExpressionMetadata>
             {
-                [ExpressionType.Constant]               = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, Operator = "" },
-                [ExpressionType.Parameter]              = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, Operator = "" },
+                [ExpressionType.Constant]               = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
+                [ExpressionType.Parameter]              = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
 
-                [ExpressionType.MemberAccess]           = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "." },
-                [ExpressionType.Invoke]                 = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "" },
-                [ExpressionType.Index]                  = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "" },
-                [ExpressionType.ArrayIndex]             = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "" },
-                [ExpressionType.PostIncrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "++" },
-                [ExpressionType.PostDecrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "--" },
-                [ExpressionType.New]                    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  Operator = "new " },
+                [ExpressionType.MemberAccess]           = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "." },
+                [ExpressionType.Invoke]                 = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
+                [ExpressionType.Call]                   = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
+                [ExpressionType.Index]                  = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
+                [ExpressionType.ArrayIndex]             = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
+                [ExpressionType.PostIncrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "++" },
+                [ExpressionType.PostDecrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "--" },
+                [ExpressionType.New]                    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "new " },
 
-                [ExpressionType.NegateChecked]          = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "-" },
-                [ExpressionType.Negate]                 = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "-" },
-                [ExpressionType.UnaryPlus]              = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "+" },
-                [ExpressionType.Not]                    = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "!" },
-                [ExpressionType.OnesComplement]         = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "~" },
-                [ExpressionType.PreIncrementAssign]     = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "++" },
-                [ExpressionType.PreDecrementAssign]     = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "--" },
-                [ExpressionType.ConvertChecked]         = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "" },
-                [ExpressionType.Convert]                = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, Operator = "" },
+                [ExpressionType.NegateChecked]          = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = "-" },
+                [ExpressionType.Negate]                 = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "-" },
+                [ExpressionType.UnaryPlus]              = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "+" },
+                [ExpressionType.Not]                    = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "!" },
+                [ExpressionType.OnesComplement]         = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "~" },
+                [ExpressionType.PreIncrementAssign]     = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "++" },
+                [ExpressionType.PreDecrementAssign]     = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "--" },
+                [ExpressionType.ConvertChecked]         = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = "" },
+                [ExpressionType.Convert]                = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
 
-                [ExpressionType.MultiplyChecked]        = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, Operator = " * " },
-                [ExpressionType.Multiply]               = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, Operator = " * " },
-                [ExpressionType.Divide]                 = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, Operator = " / " },
-                [ExpressionType.Modulo]                 = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, Operator = " % " },
+                [ExpressionType.MultiplyChecked]        = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = " * " },
+                [ExpressionType.Multiply]               = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " * " },
+                [ExpressionType.Divide]                 = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " / " },
+                [ExpressionType.Modulo]                 = new ExpressionMetadata { Weight = 12, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " % " },
 
-                [ExpressionType.AddChecked]             = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, Operator = " + " },
-                [ExpressionType.Add]                    = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, Operator = " + " },
-                [ExpressionType.SubtractChecked]        = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, Operator = " - " },
-                [ExpressionType.Subtract]               = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, Operator = " - " },
+                [ExpressionType.AddChecked]             = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = " + " },
+                [ExpressionType.Add]                    = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " + " },
+                [ExpressionType.SubtractChecked]        = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = " - " },
+                [ExpressionType.Subtract]               = new ExpressionMetadata { Weight = 11, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " - " },
 
-                [ExpressionType.LeftShift]              = new ExpressionMetadata { Weight = 10, LeftAssociative =  true, IsPostfix = false, Operator = " << " },
-                [ExpressionType.RightShift]             = new ExpressionMetadata { Weight = 10, LeftAssociative =  true, IsPostfix = false, Operator = " >> " },
+                [ExpressionType.LeftShift]              = new ExpressionMetadata { Weight = 10, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " << " },
+                [ExpressionType.RightShift]             = new ExpressionMetadata { Weight = 10, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " >> " },
 
-                [ExpressionType.GreaterThan]            = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " > " },
-                [ExpressionType.GreaterThanOrEqual]     = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " >= " },
-                [ExpressionType.LessThan]               = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " < " },
-                [ExpressionType.LessThanOrEqual]        = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " <= " },
-                [ExpressionType.TypeAs]                 = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " as " },
-                [ExpressionType.TypeIs]                 = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, Operator = " is " },
+                [ExpressionType.GreaterThan]            = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " > " },
+                [ExpressionType.GreaterThanOrEqual]     = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " >= " },
+                [ExpressionType.LessThan]               = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " < " },
+                [ExpressionType.LessThanOrEqual]        = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " <= " },
+                [ExpressionType.TypeAs]                 = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " as " },
+                [ExpressionType.TypeIs]                 = new ExpressionMetadata { Weight =  9, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " is " },
 
-                [ExpressionType.Equal]                  = new ExpressionMetadata { Weight =  8, LeftAssociative =  true, IsPostfix = false, Operator = " == " },
-                [ExpressionType.NotEqual]               = new ExpressionMetadata { Weight =  8, LeftAssociative =  true, IsPostfix = false, Operator = " != " },
+                [ExpressionType.Equal]                  = new ExpressionMetadata { Weight =  8, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " == " },
+                [ExpressionType.NotEqual]               = new ExpressionMetadata { Weight =  8, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " != " },
 
-                [ExpressionType.And]                    = new ExpressionMetadata { Weight =  7, LeftAssociative =  true, IsPostfix = false, Operator = " & " },
+                [ExpressionType.And]                    = new ExpressionMetadata { Weight =  7, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " & " },
 
-                [ExpressionType.ExclusiveOr]            = new ExpressionMetadata { Weight =  6, LeftAssociative =  true, IsPostfix = false, Operator = " ^ " },
+                [ExpressionType.ExclusiveOr]            = new ExpressionMetadata { Weight =  6, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " ^ " },
 
-                [ExpressionType.Or]                     = new ExpressionMetadata { Weight =  5, LeftAssociative =  true, IsPostfix = false, Operator = " | " },
+                [ExpressionType.Or]                     = new ExpressionMetadata { Weight =  5, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " | " },
 
-                [ExpressionType.AndAlso]                = new ExpressionMetadata { Weight =  4, LeftAssociative =  true, IsPostfix = false, Operator = " && " },
+                [ExpressionType.AndAlso]                = new ExpressionMetadata { Weight =  4, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " && " },
 
-                [ExpressionType.OrElse]                 = new ExpressionMetadata { Weight =  3, LeftAssociative =  true, IsPostfix = false, Operator = " || " },
+                [ExpressionType.OrElse]                 = new ExpressionMetadata { Weight =  3, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = " || " },
 
-                [ExpressionType.Conditional]            = new ExpressionMetadata { Weight =  2, LeftAssociative =  true, IsPostfix = false, Operator = " ? " },
+                [ExpressionType.Conditional]            = new ExpressionMetadata { Weight =  2, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
 
-                [ExpressionType.Assign]                 = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " = " },
-                [ExpressionType.MultiplyAssignChecked]  = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " *= " },
-                [ExpressionType.MultiplyAssign]         = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " *= " },
-                [ExpressionType.DivideAssign]           = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " /= " },
-                [ExpressionType.ModuloAssign]           = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " %= " },
-                [ExpressionType.AddAssign]              = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " += " },
-                [ExpressionType.AddAssignChecked]       = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " += " },
-                [ExpressionType.SubtractAssign]         = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " -= " },
-                [ExpressionType.SubtractAssignChecked]  = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " -= " },
-                [ExpressionType.LeftShiftAssign]        = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " <<= " },
-                [ExpressionType.RightShiftAssign]       = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " >>= " },
-                [ExpressionType.AndAssign]              = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " &= " },
-                [ExpressionType.OrAssign]               = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " |= " },
-                [ExpressionType.ExclusiveOrAssign]      = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, Operator = " ^= " },
+                [ExpressionType.Assign]                 = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " = " },
+                [ExpressionType.MultiplyAssignChecked]  = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked =  true, Operator = " *= " },
+                [ExpressionType.MultiplyAssign]         = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " *= " },
+                [ExpressionType.DivideAssign]           = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " /= " },
+                [ExpressionType.ModuloAssign]           = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " %= " },
+                [ExpressionType.AddAssign]              = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " += " },
+                [ExpressionType.AddAssignChecked]       = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked =  true, Operator = " += " },
+                [ExpressionType.SubtractAssign]         = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " -= " },
+                [ExpressionType.SubtractAssignChecked]  = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked =  true, Operator = " -= " },
+                [ExpressionType.LeftShiftAssign]        = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " <<= " },
+                [ExpressionType.RightShiftAssign]       = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " >>= " },
+                [ExpressionType.AndAssign]              = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " &= " },
+                [ExpressionType.OrAssign]               = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " |= " },
+                [ExpressionType.ExclusiveOrAssign]      = new ExpressionMetadata { Weight =  1, LeftAssociative = false, IsPostfix = false, IsChecked = false, Operator = " ^= " },
             });
 
         Expression Visit(
@@ -230,6 +234,14 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 _writer.Write(';');
             else
                 NeedsSemicolon = true;
+        }
+
+        void NewLine()
+        {
+            if (PrintedText)
+                _writer.WriteLine();
+            else
+                PrintedText = true;
         }
 
         protected override Expression VisitParameter(
@@ -287,7 +299,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (_dumpBasicValues.TryGetValue(node.Type, out writeValue))
                 writeValue(_writer, node.Value);
             else
-                _writer.Write("[\"{0}\"]", node.Value.ToString());
+                _writer.Write("[object: \"{0}\"]", node.Value.ToString());
             return node;
         }
 
@@ -424,45 +436,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             _writer.Write("new {0} ", node.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
 
-            var inits = node.Initializers.Count;
-
-            if (inits > 1)
-            {
-                _writer.WriteLine();
-                _writer.WriteLine('{');
-                Indent();
-            }
-
-            var first = true;
-
-            foreach (var i in node.Initializers)
-            {
-                if (inits > 1)
-                {
-                    if (first)
-                        first = false;
-                    else
-                        _writer.WriteLine(",");
-                }
-
-                VisitElementInit(i);
-            }
-
-            if (inits > 1)
-            {
-                Unindent();
-                _writer.Write('}');
-            }
-
+            VisitElementInits(node.Initializers);
             return node;
         }
 
         void VisitElementInits(
             ReadOnlyCollection<ElementInit> elementInits)
         {
-            var inits = elementInits.Count;
+            Contract.Requires<ArgumentNullException>(elementInits != null, nameof(elementInits));
 
-            if (inits > 1)
+            var manyInits = elementInits.Count > 1;
+
+            if (manyInits)
             {
                 _writer.WriteLine();
                 _writer.WriteLine('{');
@@ -473,7 +458,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             foreach (var i in elementInits)
             {
-                if (inits > 1)
+                if (manyInits)
                 {
                     if (first)
                         first = false;
@@ -484,7 +469,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 VisitElementInit(i);
             }
 
-            if (inits > 1)
+            if (manyInits)
             {
                 Unindent();
                 _writer.Write('}');
@@ -514,7 +499,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
            Expression node)
         {
             Debugger.Break();
-            // TODO: figure it out!
+            // TODO: what?
             return node;
         }
 
@@ -522,8 +507,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             LoopExpression node)
         {
             // TODO: handle the various loops here?
+            NewLine();
+            _writer.Write("while (true)");
+            NewLine();
             Visit(node.Body);
-            return base.VisitLoop(node);
+            return node;
         }
 
         protected override Expression VisitMember(
@@ -607,6 +595,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 if (node.NodeType == ExpressionType.Convert)
                     _writer.Write("({0})", node.Type.GetTypeName());
                 else
+                if (node.NodeType == ExpressionType.TypeAs  ||
+                    node.NodeType == ExpressionType.TypeIs)
+                {
+                    _writer.Write(node.Operand);
+                    _writer.Write("{0}{1}", meta.Operator, node.Type.GetTypeName());
+                }
+                else
                     _writer.Write(meta.Operator);
             }
             Visit(node.Operand, meta);
@@ -637,7 +632,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         protected override LabelTarget VisitLabelTarget(
             LabelTarget node)
         {
-            _writer.Write("{0}:", node.Name);
+            if (!node.Name.IsNullOrWhiteSpace())
+                _writer.Write("{0}:", node.Name);
+            else
+                PrintedText = false;
+            NeedsSemicolon = false;
             return node;
         }
 
@@ -657,23 +656,16 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             }
             _writer.Write(") => ");
 
-            if (node.NodeType != ExpressionType.Loop   &&
+            if (node.NodeType != ExpressionType.Loop    &&
+                node.NodeType != ExpressionType.Try     &&
+                node.NodeType != ExpressionType.Switch  &&
                 (node.NodeType != ExpressionType.Conditional || node.Type != typeof(void)))
-            {
                 Visit(node.Body);
-                return node;
-            }
             else
             {
-                _writer.WriteLine();
-                _writer.WriteLine('{');
-                Indent();
-                Visit(node.Body);
-                Semicolon();
-                Unindent();
-                _writer.Write('}');
+                NewLine();
+                Visit(Expression.Block(node.Body));
             }
-
             return node;
         }
 
@@ -763,20 +755,22 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         protected override Expression VisitDynamic(
             DynamicExpression node)
         {
-            _writer.Write("/* TODO: dynamic expression() */");
+            // TODO:
+            _writer.Write("/* dynamic_expression(); */");
+            NeedsSemicolon = false;
             return node;
         }
 
         protected override Expression VisitBlock(
             BlockExpression node)
         {
-            _writer.WriteLine();
             _writer.Write('{');
+            PrintedText = true;
             Indent();
 
             foreach (var v in node.Variables)
             {
-                _writer.WriteLine();
+                NewLine();
                 _writer.Write(v.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
                 if (v.Type.IsArray)
                     _writer.Write("[]");
@@ -785,21 +779,22 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             }
 
             if (node.Variables.Any())
-                _writer.WriteLine();
+                NewLine();
 
             foreach (var e in node.Expressions)
                 if (e.NodeType != ExpressionType.DebugInfo || DumpDebugInfo)
                 {
-                    _writer.WriteLine();
+                    NewLine();
                     Visit(e);
                     Semicolon();
                 }
 
-            _writer.WriteLine();
+            NewLine();
 
             Unindent();
             _writer.Write('}');
             NeedsSemicolon = false;
+            PrintedText    = true;
 
             return node;
         }
@@ -807,51 +802,65 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         protected override Expression VisitConditional(
             ConditionalExpression node)
         {
-            ExpressionMetadata meta;
-
-            _metadata.TryGetValue(node.NodeType, out meta);
-
             if (node.Type != typeof(void))
             {
                 // test ? a : b
+                ExpressionMetadata meta;
+
+                _metadata.TryGetValue(node.NodeType, out meta);
                 Visit(node.Test, meta);
                 _writer.Write(" ? ");
                 Visit(node.IfTrue, meta);
                 _writer.Write(" : ");
                 Visit(node.IfFalse, meta);
+                return node;
+            }
+
+            Expression nd;
+
+            // if (test)
+            nd = node.Test;
+            _writer.Write("if (");
+            Visit(nd);
+            _writer.Write(')');
+            PrintedText = true;
+
+            // then:
+            VisitThenOrElse(node.IfTrue);
+
+            if (node.IfFalse.NodeType != ExpressionType.Default  ||
+                node.IfFalse.Type     != typeof(void))
+            {
+                // else:
+                Semicolon();
+                _writer.WriteLine();
+                _writer.Write("else");
+                VisitThenOrElse(node.IfFalse);
+            }
+
+            return node;
+        }
+
+        void VisitThenOrElse(
+            Expression node)
+        {
+            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+
+            NewLine();
+            if (node.NodeType != ExpressionType.Block  &&
+                node.NodeType != ExpressionType.Loop   &&
+                (node.NodeType != ExpressionType.Conditional || node.Type != typeof(void)))
+            {
+                Indent();
+                Visit(node);
+                Unindent();
             }
             else
             {
-                // if (test) a; else b;
-                _writer.Write("if (");
-                Visit(node.Test);
-                _writer.Write(')');
-                if (node.IfTrue.NodeType != ExpressionType.Block)
-                {
-                    _writer.WriteLine();
-                    Indent();
-                    Visit(node.IfTrue);
-                    Unindent();
-                }
-                else
-                    Visit(node.IfTrue);
-                if (node.IfFalse.NodeType != ExpressionType.Default  ||  node.IfFalse.Type != typeof(void))
-                {
-                    Semicolon();
-                    _writer.WriteLine();
-                    _writer.Write("else");
-                    if (node.IfFalse.NodeType != ExpressionType.Block)
-                    {
-                        _writer.WriteLine();
-                        Indent();
-                        Visit(node.IfFalse);
-                        Unindent();
-                    }
-                    else
-                        Visit(node.IfFalse);
-                }
+                if (node.NodeType != ExpressionType.Block)
+                    node = Expression.Block(node);
+                Visit(node);
             }
-            return node;
         }
 
         protected override Expression VisitMethodCall(
