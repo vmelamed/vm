@@ -8,10 +8,12 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
 using vm.Aspects.Diagnostics;
+using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects
@@ -99,6 +101,24 @@ namespace vm.Aspects
             {
                 value.DumpText(writer, indentLevel, dumpMetadata, dumpAttribute);
                 return writer.GetStringBuilder().ToString();
+            }
+        }
+
+        /// <summary>
+        /// Dumps a LINQ expression as a C# text.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns>The C# text.</returns>
+        public static string DumpCSharpText(
+            this Expression expression)
+        {
+            if (expression == null)
+                return DumpUtilities.Null;
+
+            using (var visitor = new CSharpDumpExpression())
+            {
+                visitor.Visit(expression);
+                return visitor.DumpText;
             }
         }
 
@@ -277,10 +297,12 @@ namespace vm.Aspects
         /// from the name "SomeTypeName_CFFF21E2EAC773F63711A0F93BE77F1CBC891DE8F0E5FFC46E7C4BB2E4BCC8D3" it will return only "SomeTypeName"
         /// </summary>
         /// <param name="type">The object which type name needs to be retrieved.</param>
+        /// <param name="shortenEfTypes">if set to <c>true</c> the method will shorten EF dynamically generated types.</param>
         /// <returns>The type name.</returns>
         [Pure]
         internal static string GetTypeName(
-            this Type type)
+            this Type type,
+            bool shortenEfTypes = true)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
             Contract.Ensures(Contract.Result<string>() != null);
@@ -293,7 +315,8 @@ namespace vm.Aspects
 
             typeName = type.Name;
 
-            if (typeName.Length > 65 &&
+            if (shortenEfTypes       &&
+                typeName.Length > 65 &&
                 _hexadecimalSuffix.IsMatch(typeName.Substring(typeName.Length - 65-1)))
                 typeName = type.BaseType.Name.Substring(0, typeName.Length-65);
 
@@ -304,16 +327,11 @@ namespace vm.Aspects
                 if (tickIndex > -1)
                     typeName = typeName.Substring(0, tickIndex);
 
-                typeName = $"{typeName}<{string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t)))}>";
+                typeName = $"{typeName}<{string.Join(Resources.GenericParamSeparator, type.GetGenericArguments().Select(t => GetTypeName(t, shortenEfTypes)))}>";
             }
 
             if (type.IsArray)
-            {
-                var bracketIndex = typeName.IndexOf('[');
-
-                if (bracketIndex > -1)
-                    typeName = typeName.Substring(0, bracketIndex);
-            }
+                return GetTypeName(type.GetElementType(), shortenEfTypes);
 
             return typeName;
         }

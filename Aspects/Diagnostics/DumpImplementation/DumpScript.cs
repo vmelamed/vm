@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace vm.Aspects.Diagnostics.DumpImplementation
 {
@@ -34,7 +35,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         static readonly MethodInfo _miToString                = typeof(object).GetMethod(nameof(object.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly MethodInfo _miIntToString1            = typeof(int).GetMethod(nameof(int.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(IFormatProvider) }, null);
 
-        static readonly MethodInfo _miGetTypeName             = typeof(Extensions).GetMethod(nameof(Extensions.GetTypeName), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(Type) }, null);
+        static readonly MethodInfo _miGetTypeName             = typeof(Extensions).GetMethod(nameof(Extensions.GetTypeName), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(Type), typeof(bool) }, null);
         static readonly MethodInfo _miGetMaxToDump            = typeof(Extensions).GetMethod(nameof(Extensions.GetMaxToDump), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(DumpAttribute), typeof(int) }, null);
 
         //static readonly MethodInfo _miDispose                 = typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), BindingFlags.Public|BindingFlags.Instance);
@@ -100,9 +101,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// </summary>
         /// <param name="dumper">The dumper.</param>
         /// <param name="instanceType">Type of the instance.</param>
+        /// <param name="callerFile">The caller file.</param>
+        /// <param name="callerLine">The caller line.</param>
         public DumpScript(
             ObjectTextDumper dumper,
-            Type instanceType)
+            Type instanceType,
+            [CallerFilePath] string callerFile = null,
+            [CallerLineNumber] int callerLine = 0)
         {
             Contract.Requires<ArgumentNullException>(dumper       != null, nameof(dumper));
             Contract.Requires<ArgumentNullException>(instanceType != null, nameof(instanceType));
@@ -116,6 +121,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             Add
             (
+                callerFile,
+                callerLine,
                 //// if (ReferenceEqual(_instance,null)) { Writer.Write("<null>"); return; }
                 Expression.IfThen
                 (
@@ -182,7 +189,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         Expression DumpSeenAlready()
             => Write(
                     DumpFormat.CyclicalReference,
-                    Expression.Call(_miGetTypeName, _instanceType),
+                    Expression.Call(_miGetTypeName, _instanceType, _false),
                     Expression.Property(_instanceType, _piNamespace),
                     Expression.Property(_instanceType, _piAssemblyQualifiedName));
 
@@ -200,7 +207,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             return Write(
                         DumpFormat.Type,
-                        Expression.Call(_miGetTypeName, type),
+                        Expression.Call(_miGetTypeName, type, _false),
                         Expression.Property(type, _piNamespace),
                         Expression.Property(type, _piAssemblyQualifiedName));
         }
@@ -217,7 +224,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             return Write(
                         DumpFormat.SequenceType,
-                        Expression.Call(_miGetTypeName, sequenceType),
+                        Expression.Call(_miGetTypeName, sequenceType, _false),
                         Expression.Property(sequenceType, _piNamespace),
                         Expression.Property(sequenceType, _piAssemblyQualifiedName));
         }
@@ -231,7 +238,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             return Write(
                 DumpFormat.SequenceTypeName,
-                Expression.Call(_miGetTypeName, sequenceType),
+                Expression.Call(_miGetTypeName, sequenceType, _false),
                 Expression.Call(Expression.Property(sequence, _piCollectionCount), _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)));
         }
 
@@ -354,7 +361,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (dumpAttribute.RecurseDump==ShouldDump.Skip)
             {
                 //// return true;
-                Add(Expression.Constant(true));
+                _script.Add(Expression.Constant(true));
                 return Expression.Block(EndScriptSegment());
             }
 
@@ -370,7 +377,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             var @break = Expression.Label();
 
-            Add
+            _script.Add
             (
                 //// if (ReferenceEqual(dictionary,null)) return false; else {
                 Expression.IfThenElse
@@ -432,7 +439,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                         //// return true; }
                         Expression.Assign(_tempBool, Expression.Constant(true))
                     )
-                ),
+                )
+            );
+            _script.Add
+            (
                 Expression.IsTrue(_tempBool)
             );
 
@@ -547,8 +557,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             Expression.Condition
                             (
                                 Expression.Property(collectionType, _piIsArray),
-                                Expression.Call(_miGetTypeName, Expression.ArrayIndex(elementsType, _zero)),
-                                Expression.Call(_miGetTypeName, collectionType)
+                                Expression.Call(_miGetTypeName, Expression.ArrayIndex(elementsType, _zero), _false),
+                                Expression.Call(_miGetTypeName, collectionType, _false)
                             ),
                             Expression.Condition
                             (
@@ -588,7 +598,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                 Write
                                 (
                                     DumpFormat.SequenceType,
-                                    Expression.Call(_miGetTypeName, collectionType),
+                                    Expression.Call(_miGetTypeName, collectionType, _false),
                                     Expression.Property(collectionType, _piNamespace),
                                     Expression.Property(collectionType, _piAssemblyQualifiedName)
                                 ),

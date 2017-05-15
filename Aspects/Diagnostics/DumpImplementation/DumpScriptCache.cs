@@ -102,7 +102,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             _sync.EnterWriteLock();
             _cache[lookup] = script;
             _sync.ExitWriteLock();
-
         }
 
         internal static void Reset()

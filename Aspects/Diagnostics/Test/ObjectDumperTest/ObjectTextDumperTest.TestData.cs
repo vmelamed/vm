@@ -651,8 +651,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 set { }
             }
 
+#pragma warning disable 67, 618
             public event EventHandler Event;
             public int member;
+#pragma warning restore 67, 618
         }
 
         class ObjectWithMemberInfos

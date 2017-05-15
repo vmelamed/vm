@@ -342,14 +342,22 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 CurrentType == typeof(Delegate))
                 return true;
 
-            DumpScript?.AddDumpedDelegate();
-            return _dumper.Writer.Dumped((Delegate)Instance);
+            var dumped = _dumper.Writer.Dumped((Delegate)Instance);
+
+            if (dumped)
+                DumpScript?.AddDumpedDelegate();
+
+            return dumped;
         }
 
         public bool DumpedMemberInfo()
         {
-            DumpScript?.AddDumpedMemberInfo();
-            return _dumper.Writer.Dumped(Instance as MemberInfo);
+            var dumped = _dumper.Writer.Dumped(Instance as MemberInfo);
+
+            if (dumped)
+                DumpScript?.AddDumpedMemberInfo();
+
+            return dumped;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -508,6 +516,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             return false;
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Diagnostics.DumpImplementation.DumpScript.AddWrite(System.String,System.String,System.Int32)")]
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Diagnostics.DumpImplementation.DumpScript.AddWrite(System.String)")]
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "It's OK.")]
         bool DumpedPropertyCustom(

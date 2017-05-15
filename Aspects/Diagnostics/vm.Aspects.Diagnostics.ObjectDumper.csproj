@@ -206,8 +206,10 @@
     <Compile Include="DefaultServiceLocator.cs" />
     <Compile Include="DumpAttribute.cs" />
     <Compile Include="DumpFormat.cs" />
+    <Compile Include="DumpImplementation\CSharpDumpExpression.cs" />
     <Compile Include="DumpImplementation\DumpScript.Public.cs" />
     <Compile Include="DumpImplementation\DumpScript.Loops.cs" />
+    <Compile Include="DumpImplementation\DumpScript.PublicWriteOverloads.cs" />
     <Compile Include="DumpImplementation\DumpScript.WriteOverloads.cs" />
     <Compile Include="DumpImplementation\DumpedObject.cs" />
     <Compile Include="DumpImplementation\DumpedProperty.cs" />
