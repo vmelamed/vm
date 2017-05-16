@@ -112,6 +112,9 @@ namespace vm.Aspects
         public static string DumpCSharpText(
             this Expression expression)
         {
+            Contract.Ensures(Contract.Result<string>() != null);
+            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+
             if (expression == null)
                 return DumpUtilities.Null;
 

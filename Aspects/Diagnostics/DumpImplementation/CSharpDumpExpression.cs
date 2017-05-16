@@ -244,6 +244,17 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 PrintedText = true;
         }
 
+        string GetTypeName(
+            Type type)
+        {
+            var s = type.GetTypeName(ShortenNamesOfGeneratedClasses);
+
+            if (type.IsArray)
+                s += "[]";
+
+            return s;
+        }
+
         protected override Expression VisitParameter(
             ParameterExpression node)
         {
@@ -299,14 +310,17 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (_dumpBasicValues.TryGetValue(node.Type, out writeValue))
                 writeValue(_writer, node.Value);
             else
-                _writer.Write("[object: \"{0}\"]", node.Value.ToString());
+            if (node.Type.IsEnum)
+                _writer.Write("{0}.{1}", GetTypeName(node.Type), node.Value.ToString());
+            else
+                _writer.Write("[{0}: \"{1}\"]", GetTypeName(node.Type), node.Value.ToString());
             return node;
         }
 
         protected override Expression VisitNew(
             NewExpression node)
         {
-            _writer.Write("new {0}(", node.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
+            _writer.Write("new {0}(", GetTypeName(node.Type));
 
             var first = true;
 
@@ -434,7 +448,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         protected override Expression VisitListInit(
             ListInitExpression node)
         {
-            _writer.Write("new {0} ", node.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
+            _writer.Write("new {0} ", GetTypeName(node.Type));
 
             VisitElementInits(node.Initializers);
             return node;
@@ -579,7 +593,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             ExpressionMetadata meta = _metadata[node.NodeType];
 
             Visit(node.Expression, node);
-            _writer.Write("{0}{1}", meta.Operator, node.TypeOperand.GetTypeName());
+            _writer.Write("{0}{1}", meta.Operator, GetTypeName(node.TypeOperand));
             return node;
         }
 
@@ -593,13 +607,14 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (!meta.IsPostfix)
             {
                 if (node.NodeType == ExpressionType.Convert)
-                    _writer.Write("({0})", node.Type.GetTypeName());
+                    _writer.Write("({0})", GetTypeName(node.Type));
                 else
                 if (node.NodeType == ExpressionType.TypeAs  ||
                     node.NodeType == ExpressionType.TypeIs)
                 {
                     _writer.Write(node.Operand);
-                    _writer.Write("{0}{1}", meta.Operator, node.Type.GetTypeName());
+                    _writer.Write("{0}{1}", meta.Operator, GetTypeName(node.Type));
+                    return node;
                 }
                 else
                     _writer.Write(meta.Operator);
@@ -652,19 +667,26 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     first = false;
                 else
                     _writer.Write(", ");
-                _writer.Write("{0} {1}", p.Type.GetTypeName(ShortenNamesOfGeneratedClasses), p.Name);
+                _writer.Write("{0} {1}", GetTypeName(p.Type), p.Name);
             }
             _writer.Write(") => ");
+            PrintedText = true;
 
-            if (node.NodeType != ExpressionType.Loop    &&
-                node.NodeType != ExpressionType.Try     &&
-                node.NodeType != ExpressionType.Switch  &&
-                (node.NodeType != ExpressionType.Conditional || node.Type != typeof(void)))
+            if (node.Body.NodeType != ExpressionType.Block   &&
+                node.Body.NodeType != ExpressionType.Loop    &&
+                node.Body.NodeType != ExpressionType.Try     &&
+                node.Body.NodeType != ExpressionType.Switch  &&
+                (node.Body.NodeType != ExpressionType.Conditional || node.Body.Type != typeof(void)))
+            {
                 Visit(node.Body);
+            }
             else
             {
                 NewLine();
-                Visit(Expression.Block(node.Body));
+                if (node.Body.NodeType == ExpressionType.Block)
+                    Visit(node.Body);
+                else
+                    Visit(Expression.Block(node.Body));
             }
             return node;
         }
@@ -748,7 +770,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         protected override Expression VisitDefault(
             DefaultExpression node)
         {
-            _writer.Write("default({0})", node.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
+            _writer.Write("default({0})", GetTypeName(node.Type));
             return node;
         }
 
@@ -771,7 +793,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             foreach (var v in node.Variables)
             {
                 NewLine();
-                _writer.Write(v.Type.GetTypeName(ShortenNamesOfGeneratedClasses));
+                _writer.Write(GetTypeName(v.Type));
                 if (v.Type.IsArray)
                     _writer.Write("[]");
                 _writer.Write(" {0}", v.Name);
@@ -873,7 +895,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 if (node.Method.GetCustomAttribute<ExtensionAttribute>() != null)
                     Visit(node.Arguments[i++]);
                 else
-                    _writer.Write(node.Method.DeclaringType.GetTypeName(ShortenNamesOfGeneratedClasses));
+                    _writer.Write(GetTypeName(node.Method.DeclaringType));
             }
             else
                 Visit(node.Object, node);
@@ -938,7 +960,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             if (node.Test != null  &&  node.Test != typeof(void))
             {
-                _writer.Write(" ({0}", node.Test.GetTypeName(ShortenNamesOfGeneratedClasses));
+                _writer.Write(" ({0}", GetTypeName(node.Test));
                 if (node.Variable != null)
                     _writer.Write(" {0}", node.Variable.Name);
                 _writer.Write(") ");
