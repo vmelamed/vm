@@ -50,6 +50,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         static readonly MethodInfo _miIsMatch                 = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.IsFromSystem), BindingFlags.Public|BindingFlags.Static, null, new[] { typeof(Type) }, null);
         static readonly MethodInfo _miDumpedBasicValue        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedBasicValue), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(object), typeof(DumpAttribute) }, null);
+        static readonly MethodInfo _miDumpedBasicNullable     = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedBasicNullable), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(object), typeof(DumpAttribute) }, null);
         static readonly MethodInfo _miDumpedDelegate          = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.Dumped), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(Delegate) }, null);
         static readonly MethodInfo _miDumpedMemberInfo        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.Dumped), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(MemberInfo) }, null);
         //static readonly MethodInfo _miDumpedDictionary        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedDictionary), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(Action<object>), typeof(Action), typeof(Action) }, null);
@@ -73,6 +74,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         readonly ParameterExpression _classDumpData         = Expression.Parameter(typeof(ClassDumpData),    nameof(_classDumpData));
         readonly ParameterExpression _dumper                = Expression.Parameter(typeof(ObjectTextDumper), nameof(_dumper));
         readonly ParameterExpression _tempBool              = Expression.Parameter(typeof(bool),             nameof(_tempBool));
+        readonly ParameterExpression _tempDumpAttribute     = Expression.Parameter(typeof(DumpAttribute),    nameof(_tempDumpAttribute));
 
         // helpful expressions inside the dump script:
         readonly Expression _writer;
@@ -138,7 +140,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 ////_instanceDumpAttribute = _classDumpData.DumpAttribute;
                 Expression.Assign(_instance, Expression.Convert(_instanceAsObject, instanceType)),
                 Expression.Assign(_instanceType, Expression.Call(_instance, _miGetType)),
-                Expression.Assign(_instanceDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute)))
+                Expression.Assign(_instanceDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute))),
+                Expression.Assign(_tempDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute)))
             );
         }
 
@@ -298,30 +301,44 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         // ====================== Dumping basic values:
 
         Expression DumpedBasicValue(
-            MemberInfo mi,
-            DumpAttribute dumpAttribute)
+            MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
             return Expression.Call(
                         _miDumpedBasicValue,
                         _writer,
                         Expression.Convert(MemberValue(mi), typeof(object)),
-                        Expression.Constant(dumpAttribute));
+                        _tempDumpAttribute);
         }
 
-        Expression DumpedBasicValue(
-            DumpAttribute dumpAttribute)
-        {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-
-            return Expression.Call(
+        Expression DumpedBasicValue()
+            => Expression.Call(
                         _miDumpedBasicValue,
                         _writer,
                         Expression.Convert(_instance, typeof(object)),
-                        Expression.Constant(dumpAttribute));
+                        _tempDumpAttribute);
+
+        // ====================== Dumping basic values:
+
+        Expression DumpedBasicNullable(
+            MemberInfo mi)
+        {
+            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+
+            return Expression.Call(
+                        _miDumpedBasicNullable,
+                        _writer,
+                        Expression.Convert(MemberValue(mi), typeof(object)),
+                        _tempDumpAttribute);
         }
+
+        Expression DumpedBasicNullable()
+            => Expression.Call(
+                        _miDumpedBasicNullable,
+                        _writer,
+                        Expression.Convert(_instance, typeof(object)),
+                        _tempDumpAttribute);
 
         // ===================
 
@@ -441,10 +458,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     )
                 )
             );
-            _script.Add
-            (
-                Expression.IsTrue(_tempBool)
-            );
 
             return Expression.Block(EndScriptSegment());
         }
@@ -513,6 +526,70 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             var @break = Expression.Label();
 
+            BeginScriptSegment();
+
+            Add
+            (
+                ////writer.Write(
+                ////    DumpFormat.SequenceType,
+                ////    sequenceType.GetTypeName(),
+                ////    sequenceType.Namespace,
+                ////    sequenceType.AssemblyQualifiedName);
+                Write
+                (
+                    DumpFormat.SequenceType,
+                    Expression.Call(_miGetTypeName, collectionType, _false),
+                    Expression.Property(collectionType, _piNamespace),
+                    Expression.Property(collectionType, _piAssemblyQualifiedName)
+                ),
+                null, 0
+            );
+
+            if (dumpAttribute.RecurseDump != ShouldDump.Skip)
+                Add
+                (
+                    ////indent();
+                    ////foreach (var item in sequence)
+                    ////{
+                    ////    writer.WriteLine();
+                    ////    if (n++ >= max)
+                    ////    {
+                    ////        writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                    ////        break;
+                    ////    }
+                    ////    dumpObject(item);
+                    ////}
+                    ////unindent();
+                    Expression.Block
+                    (
+                        Indent(),
+                        ForEachInEnumerable
+                        (
+                            item,
+                            collection,
+                            Expression.Block
+                            (
+                                WriteLine(),
+                                Expression.IfThen
+                                (
+                                    Expression.GreaterThanOrEqual(Expression.PostIncrementAssign(n), max),
+                                    Expression.Block
+                                    (
+                                        Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object))),
+                                        Expression.Break(@break)
+                                    )
+                                ),
+                                Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _false)
+                            ),
+                            @break
+                        ),
+                        Unindent()
+                    ),
+                    null, 0
+                );
+
+            var dumpingLoop = EndScriptSegment();
+
             //// if (ReferenceEqual(collection,null)) Writer.Write("<null>"); else {
             return Expression.Block
             (
@@ -525,7 +602,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                         //// var max = dumpAttribute.GetMaxToDump(sequence.Count); var n = 0; var bytes = collection as byte[]; var count = collection.Count;
                         new[] { n, max, bytes, count },
                         Expression.Assign(n, _zero),
-                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, Expression.Constant(dumpAttribute, typeof(DumpAttribute)), Expression.Property(collection, _piCollectionCount))),
+                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, Expression.Property(collection, _piCollectionCount))),
                         Expression.Assign(bytes, Expression.TypeAs(collection, typeof(byte[]))),
                         Expression.Assign(count, Expression.Property(collection, _piCollectionCount)),
 
@@ -587,77 +664,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                     Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object)))
                                 )
                             ),
+
                             ////else {
                             Expression.Block
                             (
-                                ////writer.Write(
-                                ////    DumpFormat.SequenceType,
-                                ////    sequenceType.GetTypeName(),
-                                ////    sequenceType.Namespace,
-                                ////    sequenceType.AssemblyQualifiedName);
-                                Write
-                                (
-                                    DumpFormat.SequenceType,
-                                    Expression.Call(_miGetTypeName, collectionType, _false),
-                                    Expression.Property(collectionType, _piNamespace),
-                                    Expression.Property(collectionType, _piAssemblyQualifiedName)
-                                ),
-
-                                ////if (dumpAttribute.RecurseDump!=ShouldDump.Skip) {
-                                Expression.IfThen
-                                (
-                                    Expression.NotEqual
-                                    (
-                                        Expression.Property(Expression.Constant(dumpAttribute), _piRecurseDump),
-                                        Expression.Constant(ShouldDump.Skip)
-                                    ),
-
-                                    ////indent();
-                                    ////foreach (var item in sequence)
-                                    ////{
-                                    ////    writer.WriteLine();
-                                    ////    if (n++ >= max)
-                                    ////    {
-                                    ////        writer.Write(DumpFormat.SequenceDumpTruncated, max);
-                                    ////        break;
-                                    ////    }
-                                    ////    dumpObject(item);
-                                    ////}
-                                    ////unindent();
-                                    Expression.Block
-                                    (
-                                        Indent(),
-                                        ForEachInEnumerable
-                                        (
-                                            item,
-                                            collection,
-                                            Expression.Block
-                                            (
-                                                WriteLine(),
-                                                Expression.IfThen
-                                                (
-                                                    Expression.GreaterThanOrEqual(Expression.PostIncrementAssign(n), max),
-                                                    Expression.Block
-                                                    (
-                                                        Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object))),
-                                                        Expression.Break(@break)
-                                                    )
-                                                ),
-                                                Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _false)
-                                            ),
-                                            @break
-                                        ),
-                                        Unindent()
-                                    )
-                                )
+                                dumpingLoop
                             )
                         //// }
                         ),
                         //// return true; }
                         Expression.Assign(_tempBool, Expression.Constant(true))
                     )
-                ),
-                Expression.IsTrue(_tempBool)
+                )
             );
         }
 
@@ -694,33 +712,71 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
+            var pi = mi as PropertyInfo;
+            var fi = pi != null ? null : mi as FieldInfo;
+            var type = pi?.PropertyType ??  fi.FieldType;
+
+            if (type.IsBasicType())
+                return DumpedBasicValue(mi);
+
+            if (type.IsGenericType  &&
+                type.GetGenericTypeDefinition() == typeof(Nullable<>)  &&
+                type.GetGenericArguments()[0].IsBasicType())
+                return DumpedBasicNullable(mi);
+
+            if (typeof(Delegate).IsAssignableFrom(type))
+                return DumpedDelegate(mi);
+
+            if (typeof(MemberInfo).IsAssignableFrom(type))
+                return DumpedMemberInfo(mi);
+
+            if (typeof(IDictionary).IsAssignableFrom(type))
+                return DumpedDictionary(mi, dumpAttribute);
+
+            if (typeof(ICollection).IsAssignableFrom(type))
+                return DumpedCollection(mi, dumpAttribute);
+
+            if (type != typeof(object))
+                DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? (Expression)_tempDumpAttribute : Expression.Convert(_null, typeof(DumpAttribute)));
+
             return Expression.IfThen
+            (
+                Expression.Not
+                (
+                    Expression.OrElse
                     (
-                        Expression.Not
+                        DumpedBasicValue(mi),
+                        Expression.OrElse
                         (
-                            Expression.OrElse(
-                                DumpedBasicValue(mi, dumpAttribute),
-                                Expression.OrElse(
-                                    DumpedDelegate(mi),
-                                    Expression.OrElse(
-                                        DumpedMemberInfo(mi),
-                                        Expression.OrElse
-                                        (
-                                            DumpedDictionary(mi, dumpAttribute),
-                                            DumpedCollection(mi, dumpAttribute)
-                                        )
-                                    )
-                                )
+                            DumpedDelegate(mi),
+                            DumpedMemberInfo(mi)
+                        )
+                    )
+                ),
+                Expression.Block
+                (
+                    DumpedDictionary(mi, dumpAttribute),
+                    Expression.IfThen
+                    (
+                        Expression.Not(_tempBool),
+                        Expression.Block
+                        (
+                            DumpedCollection(mi, dumpAttribute),
+                            Expression.IfThen
+                            (
+                                Expression.Not(_tempBool),
+                                DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? (Expression)_tempDumpAttribute : Expression.Convert(_null, typeof(DumpAttribute)))
                             )
-                        ),
-                        DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? dumpAttribute : null)
-                    );
+                        )
+                    )
+                )
+            );
         }
 
         internal Expression DumpObject(
             MemberInfo mi,
             Type dumpMetadata,
-            DumpAttribute dumpAttribute)
+            Expression dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
@@ -729,7 +785,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     _miDumperDumpObject,
                     Expression.Convert(MemberValue(mi), typeof(object)),
                     Expression.Constant(dumpMetadata, typeof(Type)),
-                    Expression.Constant(dumpAttribute, typeof(DumpAttribute)),
+                    dumpAttribute,
                     _false);
         }
     }

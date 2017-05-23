@@ -431,9 +431,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 return;
             }
 
-            if (!(_dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)  ||
-                  _dumper.Writer.Dumped(value as Delegate)                              ||
-                  _dumper.Writer.Dumped(value as MemberInfo)                            ||
+            if (!(_dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
+                  _dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
+                  _dumper.Writer.Dumped(value as Delegate)                                 ||
+                  _dumper.Writer.Dumped(value as MemberInfo)                               ||
                   DumpedCollection(value)))
             {
                 // dump a property representing an associated class or struct object

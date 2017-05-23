@@ -1,50 +1,32 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
-using System.Diagnostics.Contracts;
-using System.Text.RegularExpressions;
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation
 {
     /// <summary>
-    /// Validates credit card account numbers
+    /// Validates the target element if it is a valid sequence of digits, e.g. credit card number.
     /// </summary>
     [ConfigurationElementType(typeof(CustomValidatorData))]
-    public class CreditCardNumberValidator : ValueValidator<string>
+    public class LuhnValidator : ValueValidator<string>
     {
-        readonly Regex _creditCardRegularExpression;
+        readonly Regex _numberExpression = new Regex("\\d+");
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CreditCardNumberValidator" /> class.
+        /// Initializes a new instance of the <see cref="LuhnValidator" /> class.
         /// </summary>
-        /// <param name="creditCardRegularExpression">The credit card number regular expression (e.g. pick one from the RegularExpression class).</param>
-        public CreditCardNumberValidator(
-            Regex creditCardRegularExpression)
-            : this(creditCardRegularExpression, null, null, false)
-        {
-            Contract.Requires<ArgumentNullException>(creditCardRegularExpression != null, nameof(creditCardRegularExpression));
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreditCardNumberValidator" /> class.
-        /// </summary>
-        /// <param name="creditCardRegularExpression">The credit card number regular expression (e.g. pick one from the RegularExpression class).</param>
         /// <param name="messageTemplate">The validation message template.</param>
         /// <param name="tag">The tag.</param>
         /// <param name="negated">if set to <see langword="true" /> the validation rule will be negated.</param>
-        public CreditCardNumberValidator(
-            Regex creditCardRegularExpression,
-            string messageTemplate,
-            string tag,
-            bool negated)
+        public LuhnValidator(
+            string messageTemplate = null,
+            string tag = null,
+            bool negated = false)
             : base(messageTemplate, tag, negated)
         {
-            Contract.Requires<ArgumentNullException>(creditCardRegularExpression != null, nameof(creditCardRegularExpression));
-
-            _creditCardRegularExpression = creditCardRegularExpression;
         }
 
         /// <summary>
@@ -61,7 +43,7 @@ namespace vm.Aspects.Validation
             ValidationResults validationResults)
         {
             var isValid = !string.IsNullOrWhiteSpace(objectToValidate)  &&
-                          _creditCardRegularExpression.IsMatch(objectToValidate, 0);
+                          _numberExpression.IsMatch(objectToValidate, 0);
 
             if (isValid)
             {
@@ -83,6 +65,8 @@ namespace vm.Aspects.Validation
                     }
                     else
                         checkSum += digitNumber;
+
+                    times2 = !times2;
                 }
 
                 isValid = checkSum % 10 == 0;
@@ -98,11 +82,11 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the default negated message template.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate => Resources.ExValidCcNumber;
+        protected override string DefaultNegatedMessageTemplate => Resources.ExValidLuhnNumber;
 
         /// <summary>
         /// Gets the default non negated message template.
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate => Resources.ExNotValidCcNumber;
+        protected override string DefaultNonNegatedMessageTemplate => Resources.ExNotValidLuhnNumber;
     }
 }

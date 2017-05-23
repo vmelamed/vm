@@ -226,7 +226,8 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             bool topLevelObject = false)
         {
-            if (Writer.DumpedBasicValue(obj, dumpAttribute))
+            if (Writer.DumpedBasicValue(obj, dumpAttribute)  ||
+                Writer.DumpedBasicNullable(obj, dumpAttribute))
                 return;
 
             ClassDumpData classDumpData;

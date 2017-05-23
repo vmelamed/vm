@@ -127,7 +127,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             var lambda = Expression.Lambda<Action<object, ClassDumpData, ObjectTextDumper>>(
                             Expression.Block
                             (
-                                new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool },
+                                new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool, _tempDumpAttribute },
                                 _script
                             ),
                             new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper });
@@ -176,11 +176,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
             AddDebugInfo(callerFile, callerLine);
-
+            Add(Expression.Assign(_tempDumpAttribute, Expression.Constant(dumpAttribute)), callerFile, callerLine);
             BeginScriptSegment();
             AddWriteLine();
             AddWrite(
-                Expression.PropertyOrField(Expression.Constant(dumpAttribute), nameof(DumpAttribute.LabelFormat)),
+                Expression.Constant(dumpAttribute.LabelFormat),
                 Expression.Constant(mi.Name));
 
             return this;
@@ -195,10 +195,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            var blockBody = EndScriptSegment();
-            var da = Expression.Constant(dumpAttribute);
+            var blockBody   = EndScriptSegment();
             var isReference = true;
-            var pi = mi as PropertyInfo;
+            var pi          = mi as PropertyInfo;
 
             if (pi != null)
                 isReference = !pi.PropertyType.IsValueType;
@@ -226,12 +225,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                 Expression.OrElse
                                 (
                                     Expression.Equal(
-                                        Expression.PropertyOrField(da, nameof(DumpAttribute.DumpNullValues)),
+                                        Expression.Constant(dumpAttribute.DumpNullValues),
                                         Expression.Constant(ShouldDump.Skip)),
 
                                     Expression.AndAlso(
                                         Expression.Equal(
-                                            Expression.PropertyOrField(da, nameof(DumpAttribute.DumpNullValues)),
+                                            Expression.Constant(dumpAttribute.DumpNullValues),
                                             Expression.Constant(ShouldDump.Default)),
                                         Expression.Equal(
                                             Expression.Call(Expression.Constant(classDumpData), _miDumpNullValues, _instanceDumpAttribute),
@@ -350,7 +349,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedBasicValue(mi, dumpAttribute), callerFile, callerLine);
+            return Add(DumpedBasicValue(mi), callerFile, callerLine);
         }
 
         public DumpScript AddDumpedBasicValue(
@@ -360,7 +359,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedBasicValue(dumpAttribute), callerFile, callerLine);
+            return Add(DumpedBasicValue(), callerFile, callerLine);
         }
 
         // =============== Add Dumping the a property or field with custom method
@@ -443,13 +442,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         public DumpScript AddDumpObject(
             MemberInfo mi,
             Type dumpMetadata,
-            DumpAttribute dumpAttribute,
             [CallerFilePath] string callerFile = null,
             [CallerLineNumber] int callerLine = 0)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Add(DumpObject(mi, dumpMetadata, dumpAttribute), callerFile, callerLine);
+            return Add(DumpObject(mi, dumpMetadata, _tempDumpAttribute), callerFile, callerLine);
         }
     }
 }

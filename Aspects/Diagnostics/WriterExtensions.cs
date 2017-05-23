@@ -257,6 +257,40 @@ namespace vm.Aspects.Diagnostics
             return true;
         }
 
+        public static bool DumpedBasicNullable(
+            this TextWriter writer,
+            object value,
+            DumpAttribute dumpAttribute)
+        {
+            if (value == null)
+            {
+                writer.Write(DumpUtilities.Null);
+                return true;
+            }
+
+            var type = value.GetType();
+
+            if (type.IsBasicType())
+                return writer.DumpedBasicValue(value, dumpAttribute);
+
+            if (!type.IsGenericType  ||
+                type.GetGenericTypeDefinition() != typeof(Nullable<>)  ||
+                !type.GetGenericArguments()[0].IsBasicType())
+                return false;
+
+            var hasValue = (bool)type.InvokeMember(nameof(Nullable<int>.HasValue), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, new object[] { });
+
+            if (!hasValue)
+            {
+                writer.Write(DumpUtilities.Null);
+                return true;
+            }
+
+            var val = type.InvokeMember(nameof(Nullable<int>.Value), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, new object[] { });
+
+            return writer.DumpedBasicValue(value, dumpAttribute);
+        }
+
         public static bool Dumped(
             this TextWriter writer,
             Delegate @delegate)

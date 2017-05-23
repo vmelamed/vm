@@ -171,11 +171,11 @@
   <data name="ExNotEmptyGuid" xml:space="preserve">
     <value>The target Guid value is not equal to the default Guid value of '00000000-0000-0000-0000-000000000000'.</value>
   </data>
-  <data name="ExNotValidCcNumber" xml:space="preserve">
-    <value>The target string is not a valid credit card number.</value>
+  <data name="ExNotValidLuhnNumber" xml:space="preserve">
+    <value>The target string is not a valid number according to the Luhn algorithm.</value>
   </data>
-  <data name="ExValidCcNumber" xml:space="preserve">
-    <value>The target string is a valid credit card number.</value>
+  <data name="ExValidLuhnNumber" xml:space="preserve">
+    <value>The target string is a valid number according to the Luhn algorithm.</value>
   </data>
   <data name="ExNotGuidType" xml:space="preserve">
     <value>The type of the target element is not System.Guid.</value>

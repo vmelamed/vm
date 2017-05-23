@@ -247,6 +247,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         string GetTypeName(
             Type type)
         {
+            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+
             var s = type.GetTypeName(ShortenNamesOfGeneratedClasses);
 
             if (type.IsArray)

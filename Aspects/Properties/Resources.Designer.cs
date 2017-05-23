@@ -178,11 +178,11 @@ namespace vm.Aspects.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The target string is not a valid credit card number..
+        ///   Looks up a localized string similar to The target string is not a valid number according to the Luhn algorithm..
         /// </summary>
-        internal static string ExNotValidCcNumber {
+        internal static string ExNotValidLuhnNumber {
             get {
-                return ResourceManager.GetString("ExNotValidCcNumber", resourceCulture);
+                return ResourceManager.GetString("ExNotValidLuhnNumber", resourceCulture);
             }
         }
         
@@ -241,11 +241,11 @@ namespace vm.Aspects.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The target string is a valid credit card number..
+        ///   Looks up a localized string similar to The target string is a valid number according to the Luhn algorithm..
         /// </summary>
-        internal static string ExValidCcNumber {
+        internal static string ExValidLuhnNumber {
             get {
-                return ResourceManager.GetString("ExValidCcNumber", resourceCulture);
+                return ResourceManager.GetString("ExValidLuhnNumber", resourceCulture);
             }
         }
         
