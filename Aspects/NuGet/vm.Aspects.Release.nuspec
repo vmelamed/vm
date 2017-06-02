@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.104-beta7</version>
+        <version>1.0.104-beta8</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -45,7 +45,7 @@
                         version="6.0.1304.0" />
 
             <dependency id="EntityFramework"
-                        version="6.2.0" />
+                        version="6.2.0-beta1" />
 
             <dependency id="AspectObjectDumper"
                         version="1.7.0-beta3" />
