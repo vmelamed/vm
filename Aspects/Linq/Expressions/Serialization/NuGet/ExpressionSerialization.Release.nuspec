@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.104</version>
+        <version>1.0.105-beta</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -24,9 +24,11 @@
             - anonymous types;
             - arrays and generic sequences of the above;
             - The XML documents are validated against a schema:  urn:schemas-vm-com:Aspects.Expression
+
+            -- targets .NET 4.6.2
         </description>
         <releaseNotes>
-            Includes builds for .NET 4.5.2 and 4.6.2.
+            Includes builds for 4.6.2.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
@@ -37,11 +39,6 @@
         <tags>.net LINQ expression tree serialization XML aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Linq.Expressions.Serialization.dll"
-              target="lib\net452"/>
-        <file src="..\bin\ReleaseDOTNET452\vm.Aspects.Linq.Expressions.Serialization.xml"
-              target="lib\net452"/>
-
         <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Linq.Expressions.Serialization.dll"
               target="lib\net462"/>
         <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Linq.Expressions.Serialization.xml"

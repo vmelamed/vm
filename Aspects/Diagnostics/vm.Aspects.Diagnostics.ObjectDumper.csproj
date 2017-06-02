@@ -263,7 +263,10 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="NuGet\ObjectDumper.nuspec">
+    <None Include="NuGet\ObjectDumper.Debug.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NuGet\ObjectDumper.Release.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="NuGet\PublishObjectDumper.cmd" />

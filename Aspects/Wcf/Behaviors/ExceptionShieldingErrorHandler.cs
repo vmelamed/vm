@@ -362,11 +362,11 @@ namespace vm.Aspects.Wcf.Behaviors
                 if (Facility.LogWriter.IsLoggingEnabled())
                     Facility.LogWriter.Write(exception, new Dictionary<string, object> { ["HandlingInstance ID:"] = handlingInstanceId });
                 else
-                    Trace.TraceError("Unhandled error occurred while consuming this service. Error ID: {0}", handlingInstanceId, exception.DumpString(1));
+                    Trace.TraceError("Unhandled error occurred while consuming this service. Error ID: {0}\n{1}", handlingInstanceId, exception.DumpString(1));
             }
             catch (Exception x)
             {
-                Trace.TraceError("Unhandled error occurred while logging the original exception. Error ID: {0}", handlingInstanceId, x.ToString());
+                Trace.TraceError("Unhandled error occurred while logging the original exception. Error ID: {0}\n{1}", handlingInstanceId, x.ToString());
             }
 
             return handlingInstanceId;

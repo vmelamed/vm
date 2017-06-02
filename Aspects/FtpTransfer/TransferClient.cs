@@ -149,7 +149,7 @@ namespace vm.Aspects.FtpTransfer
             string fileName)
         {
             Contract.Requires<ArgumentException>(method != null  &&  method.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(method)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(Configuration.Link != null  ||  !fileName.IsNullOrWhiteSpace(), "Invalid configuration or parameter "+nameof(fileName));
+            Contract.Requires<ArgumentException>(Configuration.Link != null  ||  (fileName!=null && fileName.Any(c => !char.IsWhiteSpace(c))), "Invalid configuration or parameter "+nameof(fileName));
 
             var fileUrl = Configuration.Link;
 

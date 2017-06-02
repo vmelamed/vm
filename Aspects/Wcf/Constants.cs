@@ -68,7 +68,7 @@ namespace vm.Aspects.Wcf
         /// The default transaction timeout - 10 min
         /// or read it from the config file (see below).
         /// </summary>
-        static readonly string defaultTransactionTimeout = "00:10:00";
+        const string defaultTransactionTimeout = "00:10:00";
 #endif
 
         /// <summary>

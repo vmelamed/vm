@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>vm.Aspects</id>
+        <version>1.0.104-beta6</version>
+        <authors>Val Melamed</authors>
+        <owners>Val Melamed</owners>
+        <summary>
+            Services framework leveraging Unity, WCF, Entity Framework.
+        </summary>
+        <description>
+            A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.
+            Supports only .NET 4.6.2.
+        </description>
+        <releaseNotes>
+            NOTE: This is a pre-release version and contains code and symbols built in Debug configuration of the project(s).
+
+            Built with AspectObjectDumper 1.7.0-beta3.
+        </releaseNotes>
+        <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright © vm 2013-2016</copyright>
+        <dependencies>
+            <dependency id="System.Diagnostics.Tracing"
+                        version="4.3.0" />
+
+            <dependency id="CommonServiceLocator"
+                        version="1.3" />
+
+            <dependency id="Unity"
+                        version="4.0.1" />
+            <dependency id="Unity.Interception"
+                        version="4.0.1" />
+
+            <dependency id="EnterpriseLibrary.Common"
+                        version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.ExceptionHandling"
+                        version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.ExceptionHandling.WCF"
+                        version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.ExceptionHandling.Logging"
+                        version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.Logging"
+                        version="6.0.1304.0" />
+            <dependency id="EnterpriseLibrary.Validation"
+                        version="6.0.1304.0" />
+
+            <dependency id="EntityFramework"
+                        version="6.2.0" />
+
+            <dependency id="AspectObjectDumper"
+                        version="1.7.0-beta3" />
+        </dependencies>
+        <tags></tags>
+    </metadata>
+    <files>
+        <file src="..\bin\DebugDOTNET462\vm.Aspects.dll"
+              target="lib\net462"/>
+        <file src="..\bin\DebugDOTNET462\vm.Aspects.xml"
+              target="lib\net462"/>
+        <file src="..\Model\bin\DebugDOTNET462\vm.Aspects.Model.dll"
+              target="lib\net462"/>
+        <file src="..\Model\bin\DebugDOTNET462\vm.Aspects.Model.xml"
+              target="lib\net462"/>
+        <file src="..\Wcf\bin\DebugDOTNET462\vm.Aspects.Wcf.dll"
+              target="lib\net462"/>
+        <file src="..\Wcf\bin\DebugDOTNET462\vm.Aspects.Wcf.xml"
+              target="lib\net462"/>
+        <file src="..\Parsers\bin\DebugDOTNET462\vm.Aspects.Parsers.dll"
+              target="lib\net462"/>
+        <file src="..\Parsers\bin\DebugDOTNET462\vm.Aspects.Parsers.xml"
+              target="lib\net462"/>
+        <file src="..\FtpTransfer\bin\DebugDOTNET462\vm.Aspects.FtpTransfer.dll"
+              target="lib\net462"/>
+        <file src="..\FtpTransfer\bin\DebugDOTNET462\vm.Aspects.FtpTransfer.xml"
+              target="lib\net462"/>
+        <file src="..\bin\DebugDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
+              target="lib\net462"/>
+        <file src="..\bin\DebugDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
+              target="lib\net462"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
+    </files>
+</package>

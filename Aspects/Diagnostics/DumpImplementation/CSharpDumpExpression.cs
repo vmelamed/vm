@@ -460,6 +460,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         void VisitElementInits(
             ReadOnlyCollection<ElementInit> elementInits)
         {
+            Contract.Requires<ArgumentNullException>(elementInits != null, nameof(elementInits));
+
             var inits = elementInits.Count;
 
             if (inits > 1)

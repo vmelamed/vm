@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Common;
@@ -11,7 +9,10 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Globalization;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -30,7 +31,11 @@ namespace vm.Aspects.Model.EFRepository
         /// <typeparam name="T">The type of the actual repository derived from <see cref="EFRepositoryBase"/>.</typeparam>
         /// <returns>A <see cref="ContainerRegistrar"/> derived repository instance.</returns>
         public static ContainerRegistrar Registrar<T>() where T : EFRepositoryBase
-            => new EFRepositoryBaseRegistrar<T>();
+        {
+            Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
+
+            return new EFRepositoryBaseRegistrar<T>();
+        }
 
         class EFRepositoryBaseRegistrar<T> : ContainerRegistrar where T : EFRepositoryBase
         {
