@@ -48,7 +48,7 @@ namespace vm.Aspects.Validation.Tests
 
             try
             {
-                Helper.TestValidator<string>(TestContext, new CreditCardNumberValidatorAttribute(), cc, isValid);
+                Helper.TestValidator<string>(TestContext, new LuhnValidatorAttribute(), cc, isValid);
             }
             catch (UnitTestAssertException)
             {
