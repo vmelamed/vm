@@ -288,7 +288,7 @@ namespace vm.Aspects.Diagnostics
 
             var val = type.InvokeMember(nameof(Nullable<int>.Value), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, new object[] { });
 
-            return writer.DumpedBasicValue(value, dumpAttribute);
+            return writer.DumpedBasicValue(val, dumpAttribute);
         }
 
         public static bool Dumped(
