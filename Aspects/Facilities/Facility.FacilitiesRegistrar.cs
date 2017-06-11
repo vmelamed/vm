@@ -97,11 +97,7 @@ namespace vm.Aspects.Facilities
                     .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
                     .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
-                    .RegisterTypeIfNot<LogWriter>(
-                                            registrations,
-                                            new ContainerControlledLifetimeManager(),
-                                            new InjectionFactory(
-                                                    c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, isTest)))
+                    .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, isTest)))
                     .UnsafeRegister(LogConfigProvider.Registrar, registrations, isTest)
                     .UnsafeRegister(ExceptionPolicyProvider.Registrar, registrations, isTest)
                     ;

@@ -587,14 +587,17 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                                    .Where(mi => mi.Name == dumpMethodName  &&
                                                 mi.ReturnType == typeof(string))
-                                   .Union(type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                                .Where(mi => mi.Name == dumpMethodName  &&
-                                                             mi.ReturnType == typeof(string)  &&
-                                                             mi.GetParameters().Count() == 1))
-                                   .Union(ClassDumpData.Metadata.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                                                        .Where(mi => mi.Name == dumpMethodName  &&
-                                                                                     mi.ReturnType == typeof(string)  &&
-                                                                                     mi.GetParameters().Count() == 1)))
+                                   .Union(
+                               type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                   .Where(mi => mi.Name == dumpMethodName  &&
+                                                mi.ReturnType == typeof(string)  &&
+                                                mi.GetParameters().Count() == 1))
+                                   .Union(
+                               ClassDumpData.Metadata
+                                   .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                   .Where(mi => mi.Name == dumpMethodName  &&
+                                                mi.ReturnType == typeof(string)  &&
+                                                mi.GetParameters().Count() == 1)))
             {
                 // found an instance method
                 if (!mi.IsStatic && mi.GetParameters().Count() == 0)

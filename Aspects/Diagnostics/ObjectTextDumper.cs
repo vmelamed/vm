@@ -219,7 +219,7 @@ namespace vm.Aspects.Diagnostics
 
         internal void Unindent() => Writer.Unindent(--_indentLevel, _indentSize);
 
-        #region Private methods
+        #region Internal methods
         internal void DumpObject(
             object obj,
             Type dumpMetadata = null,
