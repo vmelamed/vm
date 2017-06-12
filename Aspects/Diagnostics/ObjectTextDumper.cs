@@ -303,7 +303,7 @@ namespace vm.Aspects.Diagnostics
                     // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                     DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                    if (!state.DumpedCollection(false))   // custom collections are dumped after dumping all other properties (see below *  )
+                    if (!state.DumpedCollection(classDumpData.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below *  )
                     {
                         Stack<DumpState> statesWithRemainingProperties = new Stack<DumpState>();
                         Queue<DumpState> statesWithTailProperties = new Queue<DumpState>();
@@ -319,7 +319,7 @@ namespace vm.Aspects.Diagnostics
                             DumpTailProperties(statesWithTailProperties);
 
                             // * if the object implements IEnumerable and the state allows it - dump the elements.
-                            state.DumpedCollection(true);
+                            state.DumpedCollection(classDumpData.DumpAttribute, true);
                         }
 
                         // we are done dumping

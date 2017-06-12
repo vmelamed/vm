@@ -644,7 +644,6 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             IEnumerable sequence,
             DumpAttribute dumpAttribute,
-            bool enumerateCustom,
             Action<object> dumpObject,
             Action indent,
             Action unindent)
@@ -657,15 +656,6 @@ namespace vm.Aspects.Diagnostics
             Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
 
             var sequenceType = sequence.GetType();
-
-            if (!sequenceType.IsArray && !sequenceType.IsFromSystem())
-            {
-                if (!enumerateCustom  ||  dumpAttribute.Enumerate != ShouldDump.Dump)
-                    return false;
-
-                writer.WriteLine();
-            }
-
             var collection   = sequence as ICollection;
             var elementsType = sequenceType.IsArray
                                     ? new Type[] { sequenceType.GetElementType() }

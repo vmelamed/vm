@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Security;
 using System.Security.Policy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust;
 
@@ -31,7 +30,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         public static void ClassInitialize(
             TestContext testContext)
         {
-            ObjectTextDumper.UseDumpScriptCache = true;
+            ObjectTextDumper.UseDumpScriptCache = false;
         }
 
         // Use ClassCleanup to run code after all tests in a class have run
@@ -973,11 +972,11 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperT
                 @"
 ObjectWithMyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithMyEnumerable, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   MyEnumerable             = MyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+MyEnumerable, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-    List                     = List<int>[3]: (System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+    Property                 = foo
+    MyEnumerable[]: (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+MyEnumerable, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393)
       0
       1
       3
-    Property                 = <null>
   Stuff                    = stuff",
                 new ObjectWithMyEnumerable());
         }

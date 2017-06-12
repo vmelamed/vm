@@ -452,12 +452,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     CurrentPropertyDumpAttribute.LabelFormat,
                     CurrentProperty.Name);
 
-                if (!DumpedPropertyCustom(value, type)                                        ||    // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
-                    !_dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
-                    !_dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
-                    !_dumper.Writer.Dumped(value as Delegate)                                 ||
-                    !_dumper.Writer.Dumped(value as MemberInfo)                               ||
-                    !DumpedCollection(value))
+                if (!(DumpedPropertyCustom(value, type)                                        ||    // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
+                      _dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
+                      _dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
+                      _dumper.Writer.Dumped(value as Delegate)                                 ||
+                      _dumper.Writer.Dumped(value as MemberInfo)                               ||
+                      DumpedCollection(value, CurrentPropertyDumpAttribute)))
                 {
                     // dump a property representing an associated class or struct object
                     var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
@@ -478,90 +478,96 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         }
 
         public bool DumpedCollection(
+            DumpAttribute dumpAttribute,
             bool enumerateCustom)
-        {
-            if (CanDumpAsDictionary(Instance))
-            {
-                if (IsInDumpingMode)
-                    _dumper.Writer.DumpedDictionary(
-                                        Instance as ICollection,
-                                        ClassDumpData.DumpAttribute,
-                                        o => _dumper.DumpObject(o, null, null, this),
-                                        _dumper.Indent,
-                                        _dumper.Unindent);
-                else
-                    DumpScript.AddDumpedDictionary(ClassDumpData.DumpAttribute);
-
-                return true;
-            }
-
-            var sequence = Instance as IEnumerable;
-
-            if (sequence != null)
-            {
-                if (IsInDumpingMode)
-                    _dumper.Writer.DumpedCollection(
-                                        sequence,
-                                        ClassDumpData.DumpAttribute,
-                                        enumerateCustom,
-                                        o => _dumper.DumpObject(o, null, null, this),
-                                        _dumper.Indent,
-                                        _dumper.Unindent);
-                else
-                    DumpScript.AddDumpedCollection(ClassDumpData.DumpAttribute);
-
-                return true;
-            }
-
-            return false;
-        }
+            => DumpedCollection(Instance, dumpAttribute, enumerateCustom, true);
 
         bool DumpedCollection(
-            object currentPropertyValue)
+            object value,
+            DumpAttribute dumpAttribute,
+            bool enumerateCustom = false,
+            bool newLineForCustom = false)
         {
-            if (CanDumpAsDictionary(currentPropertyValue))
-            {
-                if (IsInDumpingMode)
-                    _dumper.Writer.DumpedDictionary(
-                                        currentPropertyValue as IDictionary,
-                                        ClassDumpData.DumpAttribute,
-                                        o => _dumper.DumpObject(o, null, null, this),
-                                        _dumper.Indent,
-                                        _dumper.Unindent);
-                else
-                    DumpScript?.AddDumpedDictionary(CurrentProperty, ClassDumpData.DumpAttribute);
+            var sequence = value as IEnumerable;
 
-                return true;
-            }
+            if (sequence == null)
+                return false;
 
-            var sequence = currentPropertyValue as IEnumerable;
-
-            if (sequence != null)
-            {
-                if (IsInDumpingMode)
-                    _dumper.Writer.DumpedCollection(
-                                        sequence,
-                                        CurrentPropertyDumpAttribute,
-                                        false,
-                                        o => _dumper.DumpObject(o, null, null, this),
-                                        _dumper.Indent,
-                                        _dumper.Unindent);
-                else
-                    DumpScript?.AddDumpedCollection(CurrentProperty, CurrentPropertyDumpAttribute);
-
-                return true;
-            }
-
-            return false;
+            return DumpedDictionary(value, dumpAttribute, enumerateCustom)  ||
+                   DumpedSequence(sequence, dumpAttribute, enumerateCustom, newLineForCustom);
         }
 
-
-        bool CanDumpAsDictionary(object value)
+        bool DumpedSequence(
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute,
+            bool enumerateCustom = false,
+            bool newLineForCustom = false)
         {
-            var type = value.GetType();
+            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            if (!type.IsGenericType  ||
-                !typeof(IDictionary).IsAssignableFrom(type))
+            var sequenceType = sequence.GetType();
+            var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
+            var dumpCustom   = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
+
+
+            if (isCustom  &&  !dumpCustom)
+                return false;
+
+            if (IsInDumpingMode)
+            {
+                if (isCustom  &&  newLineForCustom)
+                    _dumper.Writer.WriteLine();
+                return _dumper.Writer.DumpedCollection(
+                                            sequence,
+                                            dumpAttribute,
+                                            o => _dumper.DumpObject(o, null, null, this),
+                                            _dumper.Indent,
+                                            _dumper.Unindent);
+            }
+            else
+            {
+                if (isCustom  &&  newLineForCustom)
+                    DumpScript.AddWriteLine();
+                DumpScript.AddDumpedCollection(CurrentProperty, dumpAttribute);
+                return true;
+            }
+        }
+
+        bool DumpedDictionary(
+            object value,
+            DumpAttribute dumpAttribute,
+            bool enumerateCustom = false)
+        {
+            Contract.Requires<ArgumentNullException>(value         != null, nameof(value));
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+
+            var dictionary = value as IDictionary;
+
+            if (!CanDumpAsDictionary(dictionary))
+                return false;
+
+            if (IsInDumpingMode)
+                _dumper.Writer.DumpedDictionary(
+                                    dictionary,
+                                    dumpAttribute,
+                                    o => _dumper.DumpObject(o, null, null, this),
+                                    _dumper.Indent,
+                                    _dumper.Unindent);
+            else
+                DumpScript.AddDumpedDictionary(CurrentProperty, dumpAttribute);
+
+            return true;
+        }
+
+        bool CanDumpAsDictionary(IDictionary dictionary)
+        {
+            if (dictionary == null)
+                return false;
+
+            var type = dictionary.GetType();
+
+            if (!type.IsGenericType)
                 return false;
 
             var dictionaryType = type

@@ -605,9 +605,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public Func<int, bool> DelegateProp3 { get; set; }
         }
 
+        [Dump(Enumerate = ShouldDump.Dump)]
         class MyEnumerable : IEnumerable
         {
-            [Dump(true)]
+            [Dump(false)]
             List<int> List { get; }
 
             public MyEnumerable()
@@ -627,7 +628,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public ObjectWithMyEnumerable()
             {
                 Stuff = "stuff";
-                MyEnumerable = new MyEnumerable();
+                MyEnumerable = new MyEnumerable() { Property = "foo" };
             }
 
             public string Stuff { get; set; }
