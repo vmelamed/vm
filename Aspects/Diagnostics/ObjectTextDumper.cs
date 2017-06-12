@@ -16,6 +16,19 @@ using vm.Aspects.Diagnostics.Properties;
 namespace vm.Aspects.Diagnostics
 {
     /// <summary>
+    /// Delegate Script is the type of the generated dump script that can be cached and reused.
+    /// </summary>
+    /// <param name="instance">The instance being dumped.</param>
+    /// <param name="classDumpData">The data containing the metadata type and the dump attribute.</param>
+    /// <param name="dumper">The dumper which has the current writer.</param>
+    /// <param name="dumpState">The current state of the dump.</param>
+    internal delegate void Script(
+        object instance,
+        ClassDumpData classDumpData,
+        ObjectTextDumper dumper,
+        DumpState dumpState);
+
+    /// <summary>
     /// Class ObjectTextDumper. This class cannot be inherited. The main class which dumps the requested object.
     /// </summary>
     public sealed partial class ObjectTextDumper : IDisposable
@@ -183,7 +196,7 @@ namespace vm.Aspects.Diagnostics
                 reflectionPermission.Assert();
                 _maxDepth = int.MinValue;
 
-                DumpObject(value, dumpMetadata, dumpAttribute, true);
+                DumpObject(value, dumpMetadata, dumpAttribute);
             }
             catch (SecurityException)
             {
@@ -224,12 +237,12 @@ namespace vm.Aspects.Diagnostics
             object obj,
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null,
-            bool topLevelObject = false)
+            DumpState parentState = null)
         {
-            if (Writer.DumpedBasicValue(obj, dumpAttribute)  ||
-                Writer.DumpedBasicNullable(obj, dumpAttribute))
+            if (Writer.DumpedBasicValue(obj, dumpAttribute)  ||  Writer.DumpedBasicNullable(obj, dumpAttribute))    // incl. null
                 return;
 
+            // resolve the class metadata and the dump attribute
             ClassDumpData classDumpData;
             var objectType = obj.GetType();
 
@@ -242,6 +255,7 @@ namespace vm.Aspects.Diagnostics
             else
                 classDumpData = new ClassDumpData(dumpMetadata, dumpAttribute);
 
+            // if we're too deep - stop here.
             if (_maxDepth == int.MinValue)
                 _maxDepth = classDumpData.DumpAttribute.MaxDepth;
 
@@ -251,14 +265,35 @@ namespace vm.Aspects.Diagnostics
                 return;
             }
 
-            if (topLevelObject)
+            // slow dump vs. run script?
+            bool isTopLevelObject = parentState == null;
+            var buildScript       = UseDumpScriptCache  &&  !obj.IsDynamicObject();
+            Script script         = null;
+
+            if (buildScript)
+            {
+                // does the script exist or is it in process of building
+                if (DumpScriptCache.TryFind(this, obj, classDumpData, out script))
+                {
+                    if (script != null  &&  (isTopLevelObject  ||  parentState.IsInDumpingMode))
+                    {
+                        if (isTopLevelObject)
+                            Writer.Indent(_indentLevel, _indentSize)
+                                  .WriteLine();
+
+                        script(obj, classDumpData, this, null);
+                    }
+
+                    return;
+                }
+
+                DumpScriptCache.BuildingScriptFor(this, objectType, classDumpData);
+            }
+
+            // the script does not exist -> build it
+            if (!buildScript  &&  isTopLevelObject)
                 Writer.Indent(_indentLevel, _indentSize)
                       .WriteLine();
-
-            var buildScript = UseDumpScriptCache  &&  !obj.IsDynamicObject();
-
-            if (buildScript  &&  DumpScriptCache.FoundAndExecuted(this, obj, classDumpData))
-                return;
 
             using (var state = new DumpState(this, obj, classDumpData, buildScript))
             {
@@ -268,7 +303,7 @@ namespace vm.Aspects.Diagnostics
                     // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                     DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                    if (!state.DumpedCollection(false))   // custom collections are dumped after dumping all other properties (see below)
+                    if (!state.DumpedCollection(false))   // custom collections are dumped after dumping all other properties (see below *  )
                     {
                         Stack<DumpState> statesWithRemainingProperties = new Stack<DumpState>();
                         Queue<DumpState> statesWithTailProperties = new Queue<DumpState>();
@@ -283,7 +318,7 @@ namespace vm.Aspects.Diagnostics
                             // dump all properties with Order=int.MinValue in ascending order (derived classes' properties first)
                             DumpTailProperties(statesWithTailProperties);
 
-                            // if the object implements IEnumerable and the state allows it - dump the elements.
+                            // * if the object implements IEnumerable and the state allows it - dump the elements.
                             state.DumpedCollection(true);
                         }
 
@@ -292,12 +327,26 @@ namespace vm.Aspects.Diagnostics
                     }
                 }
 
-                if (buildScript  &&  state.DumpScript!= null)
-                    DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+                if (buildScript  &&  state.DumpScript != null)
+                    script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
             }
 
-            if (topLevelObject)
-                Writer.Unindent(_indentLevel, _indentSize);
+            if (!buildScript)
+            {
+                if (isTopLevelObject)
+                    Writer.Unindent(_indentLevel, _indentSize);
+            }
+            else
+            {
+                if (script != null  &&  (isTopLevelObject  ||  parentState.IsInDumpingMode))
+                {
+                    if (isTopLevelObject)
+                        Writer.Indent(_indentLevel, _indentSize)
+                              .WriteLine();
+
+                    script(obj, classDumpData, this, null);
+                }
+            }
         }
 
         /// <summary>

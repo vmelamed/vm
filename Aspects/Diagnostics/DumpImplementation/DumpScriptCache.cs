@@ -62,31 +62,34 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         };
 
         readonly static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
-        readonly static IDictionary<ScriptLookup, Action<object, ClassDumpData, ObjectTextDumper>> _cache = new Dictionary<ScriptLookup, Action<object, ClassDumpData, ObjectTextDumper>>();
+        readonly static IDictionary<ScriptLookup, Script> _cache = new Dictionary<ScriptLookup, Script>();
+        readonly static ISet<ScriptLookup> _buildingNow = new HashSet<ScriptLookup>();
 
-        internal static bool FoundAndExecuted(
+        internal static bool TryFind(
             ObjectTextDumper objectTextDumper,
             object obj,
-            ClassDumpData classDumpData)
+            ClassDumpData classDumpData,
+            out Script script)
         {
             Contract.Requires<ArgumentNullException>(objectTextDumper != null, nameof(objectTextDumper));
             Contract.Requires<ArgumentNullException>(obj              != null, nameof(obj));
 
+            script = null;
+
             var lookup = new ScriptLookup(obj.GetType(), classDumpData, objectTextDumper);
-            Action<object, ClassDumpData, ObjectTextDumper> script;
 
             _sync.EnterReadLock();
+
             var found = _cache.TryGetValue(lookup, out script);
-            _sync.ExitReadLock();
 
             if (!found)
-                return false;
+                found = _buildingNow.Contains(lookup);
 
-            script(obj, classDumpData, objectTextDumper);
-            return true;
+            _sync.ExitReadLock();
+            return found;
         }
 
-        internal static void Add(
+        internal static Script Add(
             ObjectTextDumper objectTextDumper,
             Type objectType,
             ClassDumpData classDumpData,
@@ -100,14 +103,34 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             var script = _dumpScript.GetScriptAction();
 
             _sync.EnterWriteLock();
+
             _cache[lookup] = script;
+            _buildingNow.Remove(lookup);
+
             _sync.ExitWriteLock();
+
+            return script;
         }
 
         internal static void Reset()
         {
             _sync.EnterWriteLock();
+
             _cache.Clear();
+            _buildingNow.Clear();
+
+            _sync.ExitWriteLock();
+        }
+
+        internal static void BuildingScriptFor(
+            ObjectTextDumper objectTextDumper,
+            Type objectType,
+            ClassDumpData classDumpData)
+        {
+            _sync.EnterWriteLock();
+
+            _buildingNow.Add(new ScriptLookup(objectType, classDumpData, objectTextDumper));
+
             _sync.ExitWriteLock();
         }
     }

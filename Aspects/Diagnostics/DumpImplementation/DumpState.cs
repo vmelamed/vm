@@ -14,6 +14,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         #region fileds
         readonly ObjectTextDumper _dumper;
         readonly bool _isTopLevelClass;
+        readonly bool _isDynamic;
         /// <summary>
         /// The current field or property's property info object
         /// </summary>
@@ -45,7 +46,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             // let's not create script if we don't need it or are not doing anything here.
             if (buildScript  &&  CurrentType != typeof(object))
-                DumpScript = new DumpScript(dumper, instance.GetType());
+                DumpScript = new DumpScript(instance.GetType());
 
             DecrementMaxDepth();
         }
@@ -72,6 +73,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             InstanceDumpAttribute = instanceDumpAttribute;
             DumpScript            = dumpScript;
             _isTopLevelClass      = isTopLevelClass;
+            _isDynamic            = instance.IsDynamicObject();
 
             if (_isTopLevelClass)
             {
@@ -88,17 +90,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 }
             }
 
-            Enumerator            = CurrentType
-                                        .GetProperties(_dumper.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
-                                        .Union<MemberInfo>(
-                                    CurrentType
-                                        .GetFields(_dumper.FieldsBindingFlags | BindingFlags.DeclaredOnly))
-                                        .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
-                                        .OrderBy(p => p, ServiceResolver
-                                                            .Default
-                                                            .GetInstance<IMemberInfoComparer>()
-                                                            .SetMetadata(ClassDumpData.Metadata))
-                                        .GetEnumerator();
+            Enumerator = CurrentType.GetProperties(_dumper.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
+                         .Union<MemberInfo>(
+                         CurrentType.GetFields(_dumper.FieldsBindingFlags | BindingFlags.DeclaredOnly))
+                            .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
+                            .OrderBy(p => p, ServiceResolver
+                                                .Default
+                                                .GetInstance<IMemberInfoComparer>()
+                                                .SetMetadata(ClassDumpData.Metadata))
+                            .GetEnumerator();
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -111,6 +111,16 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     InstanceDumpAttribute,
                     DumpScript,
                     false);
+
+        /// <summary>
+        /// Gets a value indicating whether the state is in a slow dumping mode (no dump script generated - all is dumped via reflection).
+        /// </summary>
+        public bool IsInDumpingMode => DumpScript == null;
+
+        /// <summary>
+        /// Gets a value indicating whether the state is in a building dump script mode.
+        /// </summary>
+        public bool IsInScriptingMode => DumpScript != null;
 
         /// <summary>
         /// Gets or sets the currently dumped instance.
@@ -150,7 +160,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// </summary>
         public DumpAttribute CurrentPropertyDumpAttribute => _currentDumpAttribute;
 
-        #region Calculated properties
         /// <summary>
         /// Calculates whether null property values of the current instance should be dumped.
         /// </summary>
@@ -166,7 +175,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// Gets the representative property of the current type that should not be dumped recursively.
         /// </summary>
         public string DefaultProperty => ClassDumpData.DefaultProperty(InstanceDumpAttribute);
-        #endregion
 
         #region IEnumerator<MemberInfo> Members
         public IEnumerator<MemberInfo> Enumerator { get; }
@@ -247,52 +255,66 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         public void DumpSeenAlready()
         {
-            var type = Instance.GetType();
+            if (IsInDumpingMode)
+            {
+                var type = Instance.GetType();
 
-            _dumper.Writer.Write(
-                DumpFormat.CyclicalReference,
-                type.GetTypeName(),
-                type.Namespace,
-                type.AssemblyQualifiedName);
-
-            DumpScript?.AddDumpSeenAlready();
+                _dumper.Writer.Write(
+                    DumpFormat.CyclicalReference,
+                    type.GetTypeName(),
+                    type.Namespace,
+                    type.AssemblyQualifiedName);
+            }
+            else
+                DumpScript.AddDumpSeenAlready();
         }
 
         public void DumpType()
         {
-            var type = Instance.GetType();
+            if (IsInDumpingMode)
+            {
+                var type = Instance.GetType();
 
-            _dumper.Writer.Write(
-                DumpFormat.Type,
-                type.GetTypeName(),
-                type.Namespace,
-                type.AssemblyQualifiedName);
-
-            DumpScript?.AddDumpType();
+                _dumper.Writer.Write(
+                    DumpFormat.Type,
+                    type.GetTypeName(),
+                    type.Namespace,
+                    type.AssemblyQualifiedName);
+            }
+            else
+                DumpScript.AddDumpType();
         }
 
         internal void IncrementMaxDepth()
         {
-            _dumper._maxDepth++;
-            DumpScript?.AddIncrementMaxDepth();
+            if (IsInDumpingMode)
+                _dumper._maxDepth++;
+            else
+                DumpScript.AddIncrementMaxDepth();
         }
 
         internal void DecrementMaxDepth()
         {
-            _dumper._maxDepth--;
-            DumpScript?.AddDecrementMaxDepth();
+            if (IsInDumpingMode)
+                _dumper._maxDepth--;
+            else
+                DumpScript.AddDecrementMaxDepth();
         }
 
         internal void Indent()
         {
-            _dumper.Indent();
-            DumpScript?.AddIndent();
+            if (IsInDumpingMode)
+                _dumper.Indent();
+            else
+                DumpScript.AddIndent();
         }
 
         internal void Unindent()
         {
-            _dumper.Unindent();
-            DumpScript?.AddUnindent();
+            if (IsInDumpingMode)
+                _dumper.Unindent();
+            else
+                DumpScript.AddUnindent();
         }
 
         /// <summary>
@@ -319,9 +341,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// The current base class has class dump attribute with  examined is System.Object
         /// </summary>
         /// <returns><c>true</c> if the recursion should stop; otherwise <c>false</c>.</returns>
-        public bool IsAtDumpTreeLeaf() => DumpedRootClass()       ||  // Stop the recursion if: at System.Object
-                                          DumpedDelegate()        ||  // at delegates
-                                          DumpedMemberInfo();         // at MemberInfo values
+        public bool IsAtDumpTreeLeaf() => DumpedRootClass()  ||  // Stop the recursion if: at System.Object
+                                          DumpedDelegate()   ||  // at delegates
+                                          DumpedMemberInfo();    // at MemberInfo values
 
         public bool DumpedRootClass()
         {
@@ -342,22 +364,30 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 CurrentType == typeof(Delegate))
                 return true;
 
-            var dumped = _dumper.Writer.Dumped((Delegate)Instance);
+            if (Instance == null)
+                return false;
 
-            if (dumped)
+            if (IsInDumpingMode)
+                _dumper.Writer.Dumped((Delegate)Instance);
+            else
                 DumpScript?.AddDumpedDelegate();
 
-            return dumped;
+            return true;
         }
 
         public bool DumpedMemberInfo()
         {
-            var dumped = _dumper.Writer.Dumped(Instance as MemberInfo);
+            var mi = Instance as MemberInfo;
 
-            if (dumped)
+            if (mi == null)
+                return false;
+
+            if (IsInDumpingMode)
+                _dumper.Writer.Dumped(Instance as MemberInfo);
+            else
                 DumpScript?.AddDumpedMemberInfo();
 
-            return dumped;
+            return true;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -368,10 +398,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (!CurrentProperty.CanRead()  ||  CurrentPropertyDumpAttribute.Skip == ShouldDump.Skip)
                 return;
 
-            // don't dump virtual properties that are not implemented in the current class or
-            // are overridden in a descendent class
-            if (CurrentProperty is PropertyInfo  &&
-                ((PropertyInfo)CurrentProperty).IsVirtual())
+            // don't dump virtual properties that are not implemented in the current class or are overridden in a descendent class
+            if (CurrentProperty is PropertyInfo  &&  ((PropertyInfo)CurrentProperty).IsVirtual())
             {
                 var instanceProperty = InstanceType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags);
 
@@ -416,66 +444,72 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                  CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip))
                 return;
 
-            // write the property header
-            _dumper.Writer.WriteLine();
-            _dumper.Writer.Write(
-                CurrentPropertyDumpAttribute.LabelFormat,
-                CurrentProperty.Name);
-
-            DumpScript?.BeginDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute);
-
-            // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
-            if (DumpedPropertyCustom(value, type))
+            if (IsInDumpingMode)
             {
-                DumpScript?.EndDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute, ClassDumpData);
-                return;
-            }
+                // write the property header
+                _dumper.Writer.WriteLine();
+                _dumper.Writer.Write(
+                    CurrentPropertyDumpAttribute.LabelFormat,
+                    CurrentProperty.Name);
 
-            if (!(_dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
-                  _dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
-                  _dumper.Writer.Dumped(value as Delegate)                                 ||
-                  _dumper.Writer.Dumped(value as MemberInfo)                               ||
-                  DumpedCollection(value)))
+                if (!DumpedPropertyCustom(value, type)                                        ||    // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
+                    !_dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
+                    !_dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
+                    !_dumper.Writer.Dumped(value as Delegate)                                 ||
+                    !_dumper.Writer.Dumped(value as MemberInfo)                               ||
+                    !DumpedCollection(value))
+                {
+                    // dump a property representing an associated class or struct object
+                    var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
+
+                    _dumper.DumpObject(value, null, currentPropertyDumpAttribute, this);
+                }
+            }
+            else
             {
-                // dump a property representing an associated class or struct object
-                var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
+                // write the property header
+                DumpScript.BeginDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute);
 
-                _dumper.DumpObject(value, null, currentPropertyDumpAttribute);
+                if (!DumpedPropertyCustom(value, type))                                             // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
+                    DumpScript.AddDumpPropertyOrCollectionValue(CurrentProperty, CurrentPropertyDumpAttribute);
+
+                DumpScript.EndDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute, ClassDumpData);
             }
-
-            DumpScript?.AddDumpPropertyOrCollectionValue(CurrentProperty, CurrentPropertyDumpAttribute);
-            DumpScript?.EndDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute, ClassDumpData);
         }
 
         public bool DumpedCollection(
             bool enumerateCustom)
         {
-            var dictionary = Instance as IDictionary;
-
-            if (dictionary != null  &&
-                _dumper.Writer.DumpedDictionary(
-                                        dictionary,
-                                        ClassDumpData.DumpAttribute,
-                                        o => _dumper.DumpObject(o),
-                                        _dumper.Indent,
-                                        _dumper.Unindent))
+            if (CanDumpAsDictionary(Instance))
             {
-                DumpScript?.AddDumpedDictionary(ClassDumpData.DumpAttribute);
+                if (IsInDumpingMode)
+                    _dumper.Writer.DumpedDictionary(
+                                        Instance as ICollection,
+                                        ClassDumpData.DumpAttribute,
+                                        o => _dumper.DumpObject(o, null, null, this),
+                                        _dumper.Indent,
+                                        _dumper.Unindent);
+                else
+                    DumpScript.AddDumpedDictionary(ClassDumpData.DumpAttribute);
+
                 return true;
             }
 
             var sequence = Instance as IEnumerable;
 
-            if (sequence != null  &&
-                _dumper.Writer.DumpedCollection(
+            if (sequence != null)
+            {
+                if (IsInDumpingMode)
+                    _dumper.Writer.DumpedCollection(
                                         sequence,
                                         ClassDumpData.DumpAttribute,
                                         enumerateCustom,
-                                        o => _dumper.DumpObject(o),
+                                        o => _dumper.DumpObject(o, null, null, this),
                                         _dumper.Indent,
-                                        _dumper.Unindent))
-            {
-                DumpScript?.AddDumpedCollection(ClassDumpData.DumpAttribute);
+                                        _dumper.Unindent);
+                else
+                    DumpScript.AddDumpedCollection(ClassDumpData.DumpAttribute);
+
                 return true;
             }
 
@@ -485,36 +519,67 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         bool DumpedCollection(
             object currentPropertyValue)
         {
-            var dictionary = currentPropertyValue as IDictionary;
-
-            if (dictionary != null  &&
-                _dumper.Writer.DumpedDictionary(
-                                        dictionary,
-                                        ClassDumpData.DumpAttribute,
-                                        o => _dumper.DumpObject(o),
-                                        _dumper.Indent,
-                                        _dumper.Unindent))
+            if (CanDumpAsDictionary(currentPropertyValue))
             {
-                DumpScript?.AddDumpedDictionary(CurrentProperty, ClassDumpData.DumpAttribute);
+                if (IsInDumpingMode)
+                    _dumper.Writer.DumpedDictionary(
+                                        currentPropertyValue as IDictionary,
+                                        ClassDumpData.DumpAttribute,
+                                        o => _dumper.DumpObject(o, null, null, this),
+                                        _dumper.Indent,
+                                        _dumper.Unindent);
+                else
+                    DumpScript?.AddDumpedDictionary(CurrentProperty, ClassDumpData.DumpAttribute);
+
                 return true;
             }
 
             var sequence = currentPropertyValue as IEnumerable;
 
-            if (sequence != null  &&
-                _dumper.Writer.DumpedCollection(
+            if (sequence != null)
+            {
+                if (IsInDumpingMode)
+                    _dumper.Writer.DumpedCollection(
                                         sequence,
                                         CurrentPropertyDumpAttribute,
                                         false,
-                                        o => _dumper.DumpObject(o),
+                                        o => _dumper.DumpObject(o, null, null, this),
                                         _dumper.Indent,
-                                        _dumper.Unindent))
-            {
-                DumpScript?.AddDumpedCollection(CurrentProperty, CurrentPropertyDumpAttribute);
+                                        _dumper.Unindent);
+                else
+                    DumpScript?.AddDumpedCollection(CurrentProperty, CurrentPropertyDumpAttribute);
+
                 return true;
             }
 
             return false;
+        }
+
+
+        bool CanDumpAsDictionary(object value)
+        {
+            var type = value.GetType();
+
+            if (!type.IsGenericType  ||
+                !typeof(IDictionary).IsAssignableFrom(type))
+                return false;
+
+            var dictionaryType = type
+                                    .GetInterfaces()
+                                    .FirstOrDefault(t => t.IsGenericType  &&
+                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+
+            if (dictionaryType == null)
+                return false;
+
+            var typeArguments = dictionaryType.GetGenericArguments();
+
+            Contract.Assume(typeArguments.Length == 2);
+
+            var keyType   = typeArguments[0];
+            var valueType = typeArguments[1];
+
+            return keyType.IsBasicType();
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Diagnostics.DumpImplementation.DumpScript.AddWrite(System.String,System.String,System.Int32)")]
@@ -524,28 +589,31 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             object value,
             Type type)
         {
-            if (value==null)
+            if (value == null)
                 return false;
 
             // did they specify DumpAttribute.ValueFormat="ToString"?
             if (CurrentPropertyDumpAttribute.ValueFormat == Resources.ValueFormatToString)
             {
-                _dumper.Writer.Write(value.ToString());
-                DumpScript?.AddCustomDumpPropertyOrField(CurrentProperty, null);
+                if (IsInDumpingMode)
+                    _dumper.Writer.Write(value.ToString());
+                else
+                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, null);
+
                 return true;
             }
 
             // did they specify DumpAttribute.DumpMethod?
             var dumpMethodName = CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass = CurrentPropertyDumpAttribute.DumpClass;
+            var dumpClass      = CurrentPropertyDumpAttribute.DumpClass;
 
-            if (dumpClass==null  &&  dumpMethodName.IsNullOrWhiteSpace())
+            if (dumpClass == null  &&  dumpMethodName.IsNullOrWhiteSpace())
                 return false;
 
             if (dumpMethodName.IsNullOrWhiteSpace())
                 dumpMethodName = "Dump";
 
-            MethodInfo dumpMethod = null;   // best match
+            MethodInfo dumpMethod  = null;  // best match
             MethodInfo dumpMethod2 = null;  // second best
 
             // try the external class if specified
@@ -570,16 +638,21 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
                 if (dumpMethod != null)
                 {
-                    _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
-                    DumpScript?.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
+                    if (DumpScript == null)
+                        _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
+                    else
+                        DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
                 }
                 else
                 {
                     var message0 = $"*** Could not find a public, static, method {dumpMethodName}, with return type of System.String, with a single parameter of type {type.FullName} in the class {dumpClass.FullName}.";
 
-                    _dumper.Writer.Write(message0);
-                    DumpScript?.AddWrite(message0);
+                    if (DumpScript == null)
+                        _dumper.Writer.Write(message0);
+                    else
+                        DumpScript.AddWrite(message0);
                 }
+
                 return true;
             }
 
@@ -587,12 +660,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                                    .Where(mi => mi.Name == dumpMethodName  &&
                                                 mi.ReturnType == typeof(string))
-                                   .Union(
+                               .Union(
                                type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                                    .Where(mi => mi.Name == dumpMethodName  &&
                                                 mi.ReturnType == typeof(string)  &&
                                                 mi.GetParameters().Count() == 1))
-                                   .Union(
+                               .Union(
                                ClassDumpData.Metadata
                                    .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                                    .Where(mi => mi.Name == dumpMethodName  &&
@@ -623,30 +696,40 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             if (dumpMethod != null)
             {
-                if (dumpMethod.IsStatic)
-                    _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
+                if (IsInDumpingMode)
+                {
+                    if (dumpMethod.IsStatic)
+                        _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
+                    else
+                        _dumper.Writer.Write((string)dumpMethod.Invoke(value, null));
+                }
                 else
-                    _dumper.Writer.Write((string)dumpMethod.Invoke(value, null));
+                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
 
-                DumpScript?.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
                 return true;
             }
 
             if (dumpMethod2 != null)
             {
-                if (dumpMethod2.IsStatic)
-                    _dumper.Writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
+                if (IsInDumpingMode)
+                {
+                    if (dumpMethod2.IsStatic)
+                        _dumper.Writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
+                    else
+                        _dumper.Writer.Write((string)dumpMethod2.Invoke(value, null));
+                }
                 else
-                    _dumper.Writer.Write((string)dumpMethod2.Invoke(value, null));
+                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod2);
 
-                DumpScript?.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod2);
                 return true;
             }
 
             var message = $"*** Could not find a public instance method with name {dumpMethodName} and no parameters or static method with a single parameter of type {type.FullName}, with return type of System.String in the class {type.FullName}.";
 
-            _dumper.Writer.Write(message);
-            DumpScript?.AddWrite(message);
+            if (IsInDumpingMode)
+                _dumper.Writer.Write(message);
+            else
+                DumpScript.AddWrite(message);
 
             return true;
         }

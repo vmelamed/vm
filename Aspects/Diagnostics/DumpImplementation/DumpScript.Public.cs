@@ -119,25 +119,25 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         }
         #endregion
 
-        public Expression<Action<object, ClassDumpData, ObjectTextDumper>> GetScriptExpression(
+        public Expression<Script> GetScriptExpression(
             [CallerFilePath] string callerFile = null,
             [CallerLineNumber] int callerLine = 0)
         {
             Close(callerFile, callerLine);
-            var lambda = Expression.Lambda<Action<object, ClassDumpData, ObjectTextDumper>>(
+            var lambda = Expression.Lambda<Script>(
                             Expression.Block
                             (
                                 new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool, _tempDumpAttribute },
                                 _script
                             ),
-                            new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper });
+                            new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper, _dumpState });
 
             Debug.WriteLine(lambda.DumpCSharpText());
 
             return lambda;
         }
 
-        public Action<object, ClassDumpData, ObjectTextDumper> GetScriptAction()
+        public Script GetScriptAction()
             => GetScriptExpression().Compile();
 
         //// Writer.Indent();

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security;
 using System.Security.Policy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.DumpImplementation;
 using vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust;
 
@@ -20,6 +21,36 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
     public partial class ObjectTextDumperTest
     {
         public TestContext TestContext { get; set; }
+
+        #region Additional test attributes
+        //
+        // You can use the following additional attributes as you write your tests:
+        //
+        // Use ClassInitialize to run code before running the first test in the class
+        [ClassInitialize]
+        public static void ClassInitialize(
+            TestContext testContext)
+        {
+            ObjectTextDumper.UseDumpScriptCache = true;
+        }
+
+        // Use ClassCleanup to run code after all tests in a class have run
+        //[ClassCleanup]
+        //public static void ClassCleanup()
+        //{
+        //}
+        //
+        // Use TestInitialize to run code before running each test 
+        //[TestInitialize()]
+        //public void TestInitialize()
+        //{
+        //}
+        //
+        // Use TestCleanup to run code after each test has run
+        // [TestCleanup()]
+        // public void MyTestCleanup() { }
+        //
+        #endregion
 
         PrivateObject GetDumperInstanceAccessor(int indentLevel = 0, int indentLength = 2) => new PrivateObject(
                                                                                                     typeof(ObjectTextDumper),

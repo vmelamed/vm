@@ -13,40 +13,42 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 {
     partial class DumpScript
     {
-        static readonly PropertyInfo _piNamespace             = typeof(Type).GetProperty(nameof(Type.Namespace), BindingFlags.Public|BindingFlags.Instance);
-        static readonly PropertyInfo _piAssemblyQualifiedName = typeof(Type).GetProperty(nameof(Type.AssemblyQualifiedName), BindingFlags.Public|BindingFlags.Instance);
-        static readonly PropertyInfo _piIsArray               = typeof(Type).GetProperty(nameof(Type.IsArray), BindingFlags.Public|BindingFlags.Instance);
-        static readonly PropertyInfo _piIsGenericType         = typeof(Type).GetProperty(nameof(Type.IsGenericType), BindingFlags.Public|BindingFlags.Instance);
-
-        static readonly PropertyInfo _piArrayLength           = typeof(Array).GetProperty(nameof(Array.Length), BindingFlags.Public|BindingFlags.Instance);
-
-        static readonly PropertyInfo _piRecurseDump           = typeof(DumpAttribute).GetProperty(nameof(DumpAttribute.RecurseDump), BindingFlags.Public|BindingFlags.Instance);
-
-        static readonly MethodInfo _miGetElementType          = typeof(Type).GetMethod(nameof(Type.GetElementType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
-        static readonly MethodInfo _miGetGenericArguments     = typeof(Type).GetMethod(nameof(Type.GetGenericArguments), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
-
-        static readonly PropertyInfo _piDumperWriter          = typeof(ObjectTextDumper).GetProperty(nameof(ObjectTextDumper.Writer), BindingFlags.NonPublic|BindingFlags.Instance);
-        static readonly FieldInfo _fiDumperIndentLevel        = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentLevel), BindingFlags.NonPublic|BindingFlags.Instance);
-        static readonly FieldInfo _fiDumperIndentLength       = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentSize), BindingFlags.NonPublic|BindingFlags.Instance);
-        static readonly FieldInfo _fiDumperMaxDepth           = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._maxDepth), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly MethodInfo _miIntToString1            = typeof(int).GetMethod(nameof(int.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(IFormatProvider) }, null);
 
         static readonly MethodInfo _miReferenceEquals         = typeof(object).GetMethod(nameof(object.ReferenceEquals), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(object), typeof(object) }, null);
         static readonly MethodInfo _miGetType                 = typeof(object).GetMethod(nameof(object.GetType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly MethodInfo _miToString                = typeof(object).GetMethod(nameof(object.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
-        static readonly MethodInfo _miIntToString1            = typeof(int).GetMethod(nameof(int.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(IFormatProvider) }, null);
+
+        //static readonly MethodInfo _miDispose                 = typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), BindingFlags.Public|BindingFlags.Instance);
+
+        static readonly PropertyInfo _piArrayLength           = typeof(Array).GetProperty(nameof(Array.Length), BindingFlags.Public|BindingFlags.Instance);
+
+        static readonly MethodInfo _miBitConverterToString    = typeof(BitConverter).GetMethod(nameof(BitConverter.ToString), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(byte[]), typeof(int), typeof(int) }, null);
+
+        static readonly PropertyInfo _piRecurseDump           = typeof(DumpAttribute).GetProperty(nameof(DumpAttribute.RecurseDump), BindingFlags.Public|BindingFlags.Instance);
+
+        static readonly MethodInfo _miDumpNullValues          = typeof(ClassDumpData).GetMethod(nameof(ClassDumpData.DumpNullValues), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(DumpAttribute) }, null);
+
+        static readonly PropertyInfo _piNamespace             = typeof(Type).GetProperty(nameof(Type.Namespace), BindingFlags.Public|BindingFlags.Instance);
+        static readonly PropertyInfo _piAssemblyQualifiedName = typeof(Type).GetProperty(nameof(Type.AssemblyQualifiedName), BindingFlags.Public|BindingFlags.Instance);
+        static readonly PropertyInfo _piIsArray               = typeof(Type).GetProperty(nameof(Type.IsArray), BindingFlags.Public|BindingFlags.Instance);
+        static readonly PropertyInfo _piIsGenericType         = typeof(Type).GetProperty(nameof(Type.IsGenericType), BindingFlags.Public|BindingFlags.Instance);
+        static readonly MethodInfo _miGetElementType          = typeof(Type).GetMethod(nameof(Type.GetElementType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
+        static readonly MethodInfo _miGetGenericArguments     = typeof(Type).GetMethod(nameof(Type.GetGenericArguments), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
+
+        static readonly FieldInfo _fiDumperIndentLevel        = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentLevel), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly FieldInfo _fiDumperIndentLength       = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentSize), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly FieldInfo _fiDumperMaxDepth           = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._maxDepth), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly PropertyInfo _piDumperWriter          = typeof(ObjectTextDumper).GetProperty(nameof(ObjectTextDumper.Writer), BindingFlags.NonPublic|BindingFlags.Instance);
+        static readonly MethodInfo _miIndent                  = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Indent), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[0], null);
+        static readonly MethodInfo _miUnindent                = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Unindent), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[0], null);
+        static readonly MethodInfo _miDumperDumpObject        = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.DumpObject), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[] { typeof(object), typeof(Type), typeof(DumpAttribute), typeof(DumpState) }, null);
 
         static readonly MethodInfo _miGetTypeName             = typeof(Extensions).GetMethod(nameof(Extensions.GetTypeName), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(Type), typeof(bool) }, null);
         static readonly MethodInfo _miGetMaxToDump            = typeof(Extensions).GetMethod(nameof(Extensions.GetMaxToDump), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(DumpAttribute), typeof(int) }, null);
 
-        //static readonly MethodInfo _miDispose                 = typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), BindingFlags.Public|BindingFlags.Instance);
-
         //static readonly MethodInfo _miIndent3                 = typeof(DumpUtilities).GetMethod(nameof(DumpUtilities.Indent), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(int), typeof(int) }, null);
         static readonly MethodInfo _miUnindent3               = typeof(DumpUtilities).GetMethod(nameof(DumpUtilities.Unindent), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(int), typeof(int) }, null);
-
-        static readonly MethodInfo _miIndent                  = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Indent), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[0], null);
-        static readonly MethodInfo _miUnindent                = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Unindent), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[0], null);
-
-        static readonly MethodInfo _miDumperDumpObject        = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.DumpObject), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[] { typeof(object), typeof(Type), typeof(DumpAttribute), typeof(bool) }, null);
 
         static readonly MethodInfo _miIsMatch                 = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.IsFromSystem), BindingFlags.Public|BindingFlags.Static, null, new[] { typeof(Type) }, null);
         static readonly MethodInfo _miDumpedBasicValue        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedBasicValue), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(object), typeof(DumpAttribute) }, null);
@@ -56,10 +58,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         //static readonly MethodInfo _miDumpedDictionary        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedDictionary), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(Action<object>), typeof(Action), typeof(Action) }, null);
         //static readonly MethodInfo _miDumpedSequence          = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedCollection), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(bool), typeof(Action<object>), typeof(Action), typeof(Action) }, null);
 
-        static readonly MethodInfo _miDumpNullValues          = typeof(ClassDumpData).GetMethod(nameof(ClassDumpData.DumpNullValues), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(DumpAttribute) }, null);
-
-        static readonly MethodInfo _miBitConverterToString    = typeof(BitConverter).GetMethod(nameof(BitConverter.ToString), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(byte[]), typeof(int), typeof(int) }, null);
-
         static readonly ConstantExpression _zero              = Expression.Constant(0, typeof(int));
         static readonly ConstantExpression _null              = Expression.Constant(null);
         static readonly ConstantExpression _empty             = Expression.Constant(string.Empty);
@@ -68,13 +66,14 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         // parameters to the dump script:
         readonly ParameterExpression _instance;
-        readonly ParameterExpression _instanceType          = Expression.Parameter(typeof(Type),             nameof(_instanceType));
-        readonly ParameterExpression _instanceAsObject      = Expression.Parameter(typeof(object),           nameof(_instanceAsObject));
-        readonly ParameterExpression _instanceDumpAttribute = Expression.Parameter(typeof(DumpAttribute),    nameof(_instanceDumpAttribute));
-        readonly ParameterExpression _classDumpData         = Expression.Parameter(typeof(ClassDumpData),    nameof(_classDumpData));
-        readonly ParameterExpression _dumper                = Expression.Parameter(typeof(ObjectTextDumper), nameof(_dumper));
-        readonly ParameterExpression _tempBool              = Expression.Parameter(typeof(bool),             nameof(_tempBool));
-        readonly ParameterExpression _tempDumpAttribute     = Expression.Parameter(typeof(DumpAttribute),    nameof(_tempDumpAttribute));
+        readonly ParameterExpression _instanceType            = Expression.Parameter(typeof(Type),             nameof(_instanceType));
+        readonly ParameterExpression _instanceAsObject        = Expression.Parameter(typeof(object),           nameof(_instanceAsObject));
+        readonly ParameterExpression _instanceDumpAttribute   = Expression.Parameter(typeof(DumpAttribute),    nameof(_instanceDumpAttribute));
+        readonly ParameterExpression _classDumpData           = Expression.Parameter(typeof(ClassDumpData),    nameof(_classDumpData));
+        readonly ParameterExpression _dumper                  = Expression.Parameter(typeof(ObjectTextDumper), nameof(_dumper));
+        readonly ParameterExpression _dumpState               = Expression.Parameter(typeof(DumpState),        nameof(_dumpState));
+        readonly ParameterExpression _tempBool                = Expression.Parameter(typeof(bool),             nameof(_tempBool));
+        readonly ParameterExpression _tempDumpAttribute       = Expression.Parameter(typeof(DumpAttribute),    nameof(_tempDumpAttribute));
 
         // helpful expressions inside the dump script:
         readonly Expression _writer;
@@ -101,21 +100,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// <summary>
         /// Initializes a new instance of the <see cref="DumpScript" /> class.
         /// </summary>
-        /// <param name="dumper">The dumper.</param>
         /// <param name="instanceType">Type of the instance.</param>
         /// <param name="callerFile">The caller file.</param>
         /// <param name="callerLine">The caller line.</param>
         public DumpScript(
-            ObjectTextDumper dumper,
             Type instanceType,
             [CallerFilePath] string callerFile = null,
             [CallerLineNumber] int callerLine = 0)
         {
-            Contract.Requires<ArgumentNullException>(dumper       != null, nameof(dumper));
             Contract.Requires<ArgumentNullException>(instanceType != null, nameof(instanceType));
 
             _instance     = Expression.Parameter(instanceType, nameof(_instance));
-
+            _dumpState    = Expression.Parameter(typeof(DumpState), nameof(_dumpState));
             _writer       = Expression.Property(_dumper, _piDumperWriter);
             _indentLevel  = Expression.Field(_dumper, _fiDumperIndentLevel);
             _indentLength = Expression.Field(_dumper, _fiDumperIndentLength);
@@ -138,6 +134,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 ////_instance              = (<actual instance type>)_instanceAsObject;
                 ////_instanceType          = _instance.GetType();
                 ////_instanceDumpAttribute = _classDumpData.DumpAttribute;
+                ////_dumpState             = dumpState;
                 Expression.Assign(_instance, Expression.Convert(_instanceAsObject, instanceType)),
                 Expression.Assign(_instanceType, Expression.Call(_instance, _miGetType)),
                 Expression.Assign(_instanceDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute))),
@@ -439,12 +436,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                 //// Writer.Write("[");
                                 Write("["),
                                 //// _dumper.DumpObject(kv.Key);
-                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryKey), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _false),
+                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryKey), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState),
                                 // Writer.Write("] = ");
                                 Write("] = "),
 
                                 //// _dumper.DumpObject(kv.Value);
-                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryValue), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _false)
+                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryValue), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState)
                             // }
                             ),
                             @break
@@ -579,7 +576,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                         Expression.Break(@break)
                                     )
                                 ),
-                                Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _false)
+                                Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState)
                             ),
                             @break
                         ),
@@ -780,13 +777,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Expression.Call(
-                    _dumper,
-                    _miDumperDumpObject,
-                    Expression.Convert(MemberValue(mi), typeof(object)),
-                    Expression.Constant(dumpMetadata, typeof(Type)),
-                    dumpAttribute,
-                    _false);
+            return Expression.Call(_dumper, _miDumperDumpObject, Expression.Convert(MemberValue(mi), typeof(object)), Expression.Constant(dumpMetadata, typeof(Type)), dumpAttribute, _dumpState);
         }
     }
 }

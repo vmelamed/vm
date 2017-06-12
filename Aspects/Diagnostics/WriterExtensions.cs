@@ -581,7 +581,7 @@ namespace vm.Aspects.Diagnostics
 
             Contract.Assume(typeArguments.Length == 2);
 
-            var keyType = typeArguments[0];
+            var keyType   = typeArguments[0];
             var valueType = typeArguments[1];
 
             if (!keyType.IsBasicType())
