@@ -1,55 +1,35 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace vm.Aspects.Diagnostics.DumpImplementation
 {
     partial class DumpScript
     {
         #region Public methods helpers:
-        DumpScript AddDebugInfo(
-            string callerFile,
-            int callerLine)
-        {
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
-
-            if (!callerFile.IsNullOrWhiteSpace()  &&  callerLine > 0)
-                _script.Add(Expression.DebugInfo(Expression.SymbolDocument(callerFile), callerLine, 1, callerLine, 1));
-            return this;
-        }
-
         DumpScript Add(
-            Expression expression1,
-            string callerFile,
-            int callerLine)
+            Expression expression1)
         {
             Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
             Contract.Ensures(Contract.Result<DumpScript>() != null);
 
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression1);
             return this;
         }
 
         DumpScript Add(
             Expression expression1,
-            Expression expression2,
-            string callerFile,
-            int callerLine)
+            Expression expression2)
         {
             Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
             Contract.Requires<ArgumentNullException>(expression2 != null, nameof(expression2));
             Contract.Ensures(Contract.Result<DumpScript>() != null);
 
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression1);
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression2);
             return this;
         }
@@ -58,28 +38,21 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         DumpScript Add(
             Expression expression1,
             Expression expression2,
-            Expression expression3,
-            string callerFile,
-            int callerLine)
+            Expression expression3)
         {
             Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
             Contract.Requires<ArgumentNullException>(expression2 != null, nameof(expression2));
             Contract.Requires<ArgumentNullException>(expression3 != null, nameof(expression2));
             Contract.Ensures(Contract.Result<DumpScript>() != null);
 
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression1);
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression2);
-            AddDebugInfo(callerFile, callerLine);
             _script.Add(expression3);
             return this;
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         DumpScript Add(
-            string callerFile,
-            int callerLine,
             params Expression[] expressions)
         {
             Contract.Requires<ArgumentNullException>(expressions != null, nameof(expressions));
@@ -87,20 +60,17 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             for (var i = 0; i<expressions.Length; i++)
             {
-                AddDebugInfo(callerFile, callerLine);
                 _script.Add(expressions[i]);
             }
             return this;
         }
 
-        DumpScript Close(
-            string callerFile,
-            int callerLine)
+        DumpScript Close()
         {
             Contract.Ensures(Contract.Result<DumpScript>() != null);
 
             if (_scripts.Any())
-                throw new InvalidOperationException($"Not all scripts were popped from the stack of scripts. {callerFile}: {callerLine}");
+                throw new InvalidOperationException("Not all scripts were popped from the stack of scripts.");
 
             if (_isClosed)
                 return this;
@@ -110,73 +80,37 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             (
                 //// Writer.Unindent(_indentLevel, _indentLength); WriteLine();
                 Expression.Call(_miUnindent3, _writer, _indentLevel, _indentLength),
-                Expression.Label(_return),
-                callerFile,
-                callerLine
+                Expression.Label(_return)
             );
 
             return this;
         }
         #endregion
 
-        public Expression<Script> GetScriptExpression(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-        {
-            Close(callerFile, callerLine);
-            var lambda = Expression.Lambda<Script>(
-                            Expression.Block
-                            (
-                                new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool, _tempDumpAttribute },
-                                _script
-                            ),
-                            new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper, _dumpState });
-
-            Debug.WriteLine(lambda.DumpCSharpText());
-
-            return lambda;
-        }
-
-        public Script GetScriptAction()
-            => GetScriptExpression().Compile();
-
         //// Writer.Indent();
-        public DumpScript AddIndent(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Indent(), callerFile, callerLine);
+        public DumpScript AddIndent()
+            => Add(Indent());
 
         //// Writer.Indent(--_dumper._indentLevel, _dumper._indentLength);
-        public DumpScript AddUnindent(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Unindent(), callerFile, callerLine);
+        public DumpScript AddUnindent()
+            => Add(Unindent());
 
-        public DumpScript AddDecrementMaxDepth(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DecrementMaxDepth(), callerFile, callerLine);
+        public DumpScript AddDecrementMaxDepth()
+            => Add(DecrementMaxDepth());
 
-        public DumpScript AddIncrementMaxDepth(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(IncrementMaxDepth(), callerFile, callerLine);
+        public DumpScript AddIncrementMaxDepth()
+            => Add(IncrementMaxDepth());
 
-        public DumpScript AddDumpSeenAlready(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpSeenAlready(), callerFile, callerLine);
+        public DumpScript AddDumpSeenAlready()
+            => Add(DumpSeenAlready());
 
         public DumpScript BeginDumpProperty(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            AddDebugInfo(callerFile, callerLine);
-            Add(Expression.Assign(_tempDumpAttribute, Expression.Constant(dumpAttribute)), callerFile, callerLine);
+            Add(Expression.Assign(_tempDumpAttribute, Expression.Constant(dumpAttribute)));
             BeginScriptSegment();
             AddWriteLine();
             AddWrite(
@@ -188,54 +122,44 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         public DumpScript EndDumpProperty(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            ClassDumpData classDumpData,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            bool dontDumpNulls)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
             var blockBody   = EndScriptSegment();
             var isReference = true;
+            var isNullable  = false;
             var pi          = mi as PropertyInfo;
 
             if (pi != null)
+            {
                 isReference = !pi.PropertyType.IsValueType;
+                isNullable  = !isReference  &&  pi.PropertyType.IsGenericType  &&  pi.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)  &&  pi.PropertyType.GetGenericArguments()[0].IsBasicType();
+            }
             else
             {
                 var fi = mi as FieldInfo;
 
                 if (fi != null)
+                {
                     isReference = !fi.FieldType.IsValueType;
+                    isNullable  = !isReference  &&  fi.FieldType.IsGenericType  &&  fi.FieldType.GetGenericTypeDefinition() == typeof(Nullable<>)  &&  fi.FieldType.GetGenericArguments()[0].IsBasicType();
+                }
             }
 
             if (isReference)
+            {
                 Add
                 (
                     ////// should we dump a null value of the current property
-                    ////if (!(value == null  &&
-                    ////      (CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
-                    ////      CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip)))
+                    ////if (!(value == null  &&  dontDumpNulls))
                     Expression.IfThen(
                         Expression.Not
                         (
                             Expression.AndAlso
                             (
-                                Expression.Call(_miReferenceEquals, MemberValue(mi), _null),
-                                Expression.OrElse
-                                (
-                                    Expression.Equal(
-                                        Expression.Constant(dumpAttribute.DumpNullValues),
-                                        Expression.Constant(ShouldDump.Skip)),
-
-                                    Expression.AndAlso(
-                                        Expression.Equal(
-                                            Expression.Constant(dumpAttribute.DumpNullValues),
-                                            Expression.Constant(ShouldDump.Default)),
-                                        Expression.Equal(
-                                            Expression.Call(Expression.Constant(classDumpData), _miDumpNullValues, _instanceDumpAttribute),
-                                            Expression.Constant(ShouldDump.Default)))
-                                )
+                                Expression.Constant(dontDumpNulls),
+                                Expression.Call(_miReferenceEquals, MemberValue(mi), _null)
                             )
                         ),
                         //// { dumpProperty }
@@ -243,10 +167,33 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                         (
                             blockBody
                         )
-                    ),
-                    callerFile,
-                    callerLine
+                    )
                 );
+            }
+            else
+            if (isNullable)
+            {
+                Add
+                (
+                    ////// should we dump a null value of the current property
+                    ////if (!(!value.HasValue  &&  dontDumpNulls))
+                    Expression.IfThen(
+                        Expression.Not
+                        (
+                            Expression.AndAlso
+                            (
+                                Expression.Constant(dontDumpNulls),
+                                Expression.Call(MemberValue(mi), _miEqualsObject, _null)
+                            )
+                        ),
+                        //// { dumpProperty }
+                        Expression.Block
+                        (
+                            blockBody
+                        )
+                    )
+                );
+            }
             else
                 Add
                 (
@@ -254,10 +201,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     Expression.Block
                     (
                         blockBody
-                    ),
-                    callerFile,
-                    callerLine
+                    )
                 );
+
             return this;
         }
 
@@ -269,17 +215,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         ////    sequenceType.Namespace,
         ////    sequenceType.AssemblyQualifiedName);
         public DumpScript AddDumpSequenceType(
-            Expression type,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpSequenceType(type), callerFile, callerLine);
+            Expression type)
+            => Add(DumpSequenceType(type));
 
         public DumpScript AddDumpSequenceTypeName(
             Expression sequence,
-            Expression sequenceType,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpSequenceTypeName(sequence, sequenceType), callerFile, callerLine);
+            Expression sequenceType)
+            => Add(DumpSequenceTypeName(sequence, sequenceType));
 
         ////_dumper.Writer.Write(
         ////    DumpFormat.Type,
@@ -287,167 +229,142 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         ////    type.Namespace,
         ////    type.AssemblyQualifiedName);
         public DumpScript AddDumpType(
-            Expression type,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpType(type), callerFile, callerLine);
+            Expression type)
+            => Add(DumpType(type));
 
         ////_dumper.Writer.Write(
         ////    DumpFormat.Type,
         ////    _instanceType.GetTypeName(),
         ////    _instanceType.Namespace,
         ////    _instanceType.AssemblyQualifiedName);
-        public DumpScript AddDumpType(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => AddDumpType(_instanceType, callerFile, callerLine);
+        public DumpScript AddDumpType()
+            => AddDumpType(_instanceType);
 
         // ============== Add Dumping delegates:
 
         //// _dumper.Writer.Dumped((Delegate)Instance);
-        public DumpScript AddDumpedDelegate(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpedDelegate(), callerFile, callerLine);
+        public DumpScript AddDumpedDelegate()
+            => Add(DumpedDelegate());
 
         //// _dumper.Writer.Dumped((Delegate)_instance.property);
         public DumpScript AddDumpedDelegate(
-            MemberInfo mi,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            MemberInfo mi)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Add(DumpedDelegate(mi), callerFile, callerLine);
+            return Add(DumpedDelegate(mi));
         }
 
         // ================ Add Dumping MemberInfo-s:
 
         public DumpScript AddDumpedMemberInfo(
-            MemberInfo mi,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            MemberInfo mi)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Add(DumpedMemberInfo(mi), callerFile, callerLine);
+            return Add(DumpedMemberInfo(mi));
         }
 
-        public DumpScript AddDumpedMemberInfo(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(DumpedMemberInfo(), callerFile, callerLine);
+        public DumpScript AddDumpedMemberInfo()
+            => Add(DumpedMemberInfo());
 
         // ================ Add Dumping basic values
 
         public DumpScript AddDumpedBasicValue(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedBasicValue(mi), callerFile, callerLine);
+            return Add(DumpedBasicValue(mi));
         }
 
         public DumpScript AddDumpedBasicValue(
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedBasicValue(), callerFile, callerLine);
+            return Add(DumpedBasicValue());
         }
 
         // =============== Add Dumping the a property or field with custom method
 
         public DumpScript AddCustomDumpPropertyOrField(
             MemberInfo mi,
-            MethodInfo dumpMethod,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            MethodInfo dumpMethod)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Add(CustomDumpPropertyOrField(mi, dumpMethod), callerFile, callerLine);
+            return Add(CustomDumpPropertyOrField(mi, dumpMethod));
         }
 
         // =========================
 
         public DumpScript AddDumpedDictionary(
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedDictionary(Expression.Convert(_instance, typeof(IDictionary)), dumpAttribute), callerFile, callerLine);
+            return Add(DumpedDictionary(Expression.Convert(_instance, typeof(IDictionary)), dumpAttribute));
         }
 
         public DumpScript AddDumpedDictionary(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedDictionary(mi, dumpAttribute), callerFile, callerLine);
+            return Add(DumpedDictionary(mi, dumpAttribute));
         }
 
         // ===================================
 
         public DumpScript AddDumpedCollection(
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedCollection(dumpAttribute), callerFile, callerLine);
+            return Add(DumpedCollection(dumpAttribute));
         }
 
         public DumpScript AddDumpedCollection(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpedCollection(mi, dumpAttribute), callerFile, callerLine);
+            return Add(DumpedCollection(mi, dumpAttribute));
         }
 
         // ========================== Add dumping of a property
 
         public DumpScript AddDumpPropertyOrCollectionValue(
             MemberInfo mi,
-            DumpAttribute dumpAttribute,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            DumpAttribute dumpAttribute)
         {
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            return Add(DumpPropertyOrCollectionValue(mi, dumpAttribute), callerFile, callerLine);
+            var ex = DumpPropertyOrCollectionValue(mi, dumpAttribute);
+
+            if (ex != null)
+                return Add(ex);
+
+            return this;
         }
 
         // ============================
 
         public DumpScript AddDumpObject(
             MemberInfo mi,
-            Type dumpMetadata,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            Type dumpMetadata)
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Add(DumpObject(mi, dumpMetadata, _tempDumpAttribute), callerFile, callerLine);
+            return Add(DumpObject(mi, dumpMetadata, _tempDumpAttribute));
         }
     }
 }

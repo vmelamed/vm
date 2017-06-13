@@ -14,7 +14,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         #region fileds
         readonly ObjectTextDumper _dumper;
         readonly bool _isTopLevelClass;
-        readonly bool _isDynamic;
         /// <summary>
         /// The current field or property's property info object
         /// </summary>
@@ -66,14 +65,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(dumper                != null, nameof(dumper));
 
             _dumper               = dumper;
+            _isTopLevelClass      = isTopLevelClass;
             Instance              = instance;
             InstanceType          = instance.GetType();
             CurrentType           = type;
             ClassDumpData         = classDumpData;
             InstanceDumpAttribute = instanceDumpAttribute;
             DumpScript            = dumpScript;
-            _isTopLevelClass      = isTopLevelClass;
-            _isDynamic            = instance.IsDynamicObject();
 
             if (_isTopLevelClass)
             {
@@ -370,7 +368,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (IsInDumpingMode)
                 _dumper.Writer.Dumped((Delegate)Instance);
             else
-                DumpScript?.AddDumpedDelegate();
+                DumpScript.AddDumpedDelegate();
 
             return true;
         }
@@ -385,7 +383,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (IsInDumpingMode)
                 _dumper.Writer.Dumped(Instance as MemberInfo);
             else
-                DumpScript?.AddDumpedMemberInfo();
+                DumpScript.AddDumpedMemberInfo();
 
             return true;
         }
@@ -438,14 +436,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 value = $"<{x.Message}>";
             }
 
-            // should we dump a null value of the current property
-            if (value == null  &&
-                (CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
-                 CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip))
-                return;
+            var dontDumpNulls = CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
+                                CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip;
 
             if (IsInDumpingMode)
             {
+                // should we dump a null value of the current property
+                if (value == null  &&  dontDumpNulls)
+                    return;
+
                 // write the property header
                 _dumper.Writer.WriteLine();
                 _dumper.Writer.Write(
@@ -457,7 +456,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                       _dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
                       _dumper.Writer.Dumped(value as Delegate)                                 ||
                       _dumper.Writer.Dumped(value as MemberInfo)                               ||
-                      DumpedCollection(value, CurrentPropertyDumpAttribute)))
+                      DumpedCollection(value, CurrentProperty, CurrentPropertyDumpAttribute)))
                 {
                     // dump a property representing an associated class or struct object
                     var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
@@ -473,17 +472,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 if (!DumpedPropertyCustom(value, type))                                             // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
                     DumpScript.AddDumpPropertyOrCollectionValue(CurrentProperty, CurrentPropertyDumpAttribute);
 
-                DumpScript.EndDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute, ClassDumpData);
+                DumpScript.EndDumpProperty(CurrentProperty, dontDumpNulls);
             }
         }
 
         public bool DumpedCollection(
             DumpAttribute dumpAttribute,
             bool enumerateCustom)
-            => DumpedCollection(Instance, dumpAttribute, enumerateCustom, true);
+            => DumpedCollection(Instance, null, dumpAttribute, enumerateCustom, true);
 
         bool DumpedCollection(
             object value,
+            MemberInfo mi,
             DumpAttribute dumpAttribute,
             bool enumerateCustom = false,
             bool newLineForCustom = false)
@@ -493,12 +493,45 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (sequence == null)
                 return false;
 
-            return DumpedDictionary(value, dumpAttribute, enumerateCustom)  ||
-                   DumpedSequence(sequence, dumpAttribute, enumerateCustom, newLineForCustom);
+            return DumpedDictionary(sequence, mi, dumpAttribute)  ||
+                   DumpedSequence(sequence, mi, dumpAttribute, enumerateCustom, newLineForCustom);
+        }
+
+        bool DumpedDictionary(
+            IEnumerable sequence,
+            MemberInfo mi,
+            DumpAttribute dumpAttribute)
+        {
+            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
+            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+
+            if (sequence.IsDynamicObject())
+                return false;
+
+            if (IsInDumpingMode)
+                return _dumper.Writer.DumpedDictionary(
+                                            sequence,
+                                            dumpAttribute,
+                                            o => _dumper.DumpObject(o, null, null, this),
+                                            _dumper.Indent,
+                                            _dumper.Unindent);
+            else
+            {
+                if (sequence.GetType().DictionaryTypeArguments() == null)
+                    return false;
+
+                if (mi != null)
+                    DumpScript.AddDumpedDictionary(mi, dumpAttribute);
+                else
+                    DumpScript.AddDumpedDictionary(dumpAttribute);
+            }
+
+            return true;
         }
 
         bool DumpedSequence(
             IEnumerable sequence,
+            MemberInfo mi,
             DumpAttribute dumpAttribute,
             bool enumerateCustom = false,
             bool newLineForCustom = false)
@@ -510,7 +543,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
             var dumpCustom   = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
 
-
             if (isCustom  &&  !dumpCustom)
                 return false;
 
@@ -518,6 +550,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             {
                 if (isCustom  &&  newLineForCustom)
                     _dumper.Writer.WriteLine();
+
                 return _dumper.Writer.DumpedCollection(
                                             sequence,
                                             dumpAttribute,
@@ -527,65 +560,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             }
             else
             {
-                if (isCustom  &&  newLineForCustom)
-                    DumpScript.AddWriteLine();
-                DumpScript.AddDumpedCollection(CurrentProperty, dumpAttribute);
+                if (mi != null)
+                    DumpScript.AddDumpedCollection(mi, dumpAttribute);
+                else
+                    DumpScript.AddDumpedCollection(dumpAttribute);
+
                 return true;
             }
-        }
-
-        bool DumpedDictionary(
-            object value,
-            DumpAttribute dumpAttribute,
-            bool enumerateCustom = false)
-        {
-            Contract.Requires<ArgumentNullException>(value         != null, nameof(value));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-
-            var dictionary = value as IDictionary;
-
-            if (!CanDumpAsDictionary(dictionary))
-                return false;
-
-            if (IsInDumpingMode)
-                _dumper.Writer.DumpedDictionary(
-                                    dictionary,
-                                    dumpAttribute,
-                                    o => _dumper.DumpObject(o, null, null, this),
-                                    _dumper.Indent,
-                                    _dumper.Unindent);
-            else
-                DumpScript.AddDumpedDictionary(CurrentProperty, dumpAttribute);
-
-            return true;
-        }
-
-        bool CanDumpAsDictionary(IDictionary dictionary)
-        {
-            if (dictionary == null)
-                return false;
-
-            var type = dictionary.GetType();
-
-            if (!type.IsGenericType)
-                return false;
-
-            var dictionaryType = type
-                                    .GetInterfaces()
-                                    .FirstOrDefault(t => t.IsGenericType  &&
-                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
-
-            if (dictionaryType == null)
-                return false;
-
-            var typeArguments = dictionaryType.GetGenericArguments();
-
-            Contract.Assume(typeArguments.Length == 2);
-
-            var keyType   = typeArguments[0];
-            var valueType = typeArguments[1];
-
-            return keyType.IsBasicType();
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Diagnostics.DumpImplementation.DumpScript.AddWrite(System.String,System.String,System.Int32)")]
@@ -718,12 +699,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (dumpMethod2 != null)
             {
                 if (IsInDumpingMode)
-                {
-                    if (dumpMethod2.IsStatic)
-                        _dumper.Writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
-                    else
-                        _dumper.Writer.Write((string)dumpMethod2.Invoke(value, null));
-                }
+                    _dumper.Writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
                 else
                     DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod2);
 

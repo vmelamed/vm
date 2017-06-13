@@ -9,13 +9,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
     partial class DumpScript
     {
         // Collection enumeration methods and properties:
-        static readonly PropertyInfo _piCollectionCount       = typeof(ICollection).GetProperty(nameof(ICollection.Count), BindingFlags.Public|BindingFlags.Instance|BindingFlags.FlattenHierarchy);
-        static readonly MethodInfo _miGetEnumerator           = typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator), BindingFlags.Public|BindingFlags.Instance|BindingFlags.FlattenHierarchy, null, new Type[0], null);
-        static readonly MethodInfo _miEnumeratorMoveNext      = typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext), BindingFlags.Public|BindingFlags.Instance|BindingFlags.FlattenHierarchy, null, new Type[0], null);
-        static readonly PropertyInfo _piEnumeratorCurrent     = typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current), BindingFlags.Public|BindingFlags.Instance|BindingFlags.FlattenHierarchy);
+        static readonly PropertyInfo _piCollectionCount       = typeof(ICollection).GetProperty(nameof(ICollection.Count), BindingFlags.Public|BindingFlags.Instance);
+        static readonly MethodInfo _miGetEnumerator           = typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
+        static readonly MethodInfo _miEnumeratorMoveNext      = typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
+        static readonly PropertyInfo _piEnumeratorCurrent     = typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current), BindingFlags.Public|BindingFlags.Instance);
 
         // Dictionary enumeration methods and properties:
-        static readonly MethodInfo _miGetDEnumerator          = typeof(IDictionary).GetMethod(nameof(IDictionary.GetEnumerator), BindingFlags.Public|BindingFlags.Instance|BindingFlags.FlattenHierarchy, null, new Type[0], null);
+        static readonly MethodInfo _miGetDEnumerator          = typeof(IDictionary).GetMethod(nameof(IDictionary.GetEnumerator), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly PropertyInfo _piDictionaryEntryKey    = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Key), BindingFlags.Public|BindingFlags.Instance);
         static readonly PropertyInfo _piDictionaryEntryValue  = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Value), BindingFlags.Public|BindingFlags.Instance);
 

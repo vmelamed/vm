@@ -98,7 +98,7 @@ namespace vm.Aspects.Model.Tests
             var test = target.CreateEntity<TestEntity>();
 
             Assert.IsNotNull(test);
-            Assert.IsTrue(test.GetType() == typeof(TestEntity) || 
+            Assert.IsTrue(test.GetType() == typeof(TestEntity) ||
                           typeof(TestEntity).IsAssignableFrom(test.GetType()));
         }
 
@@ -111,7 +111,7 @@ namespace vm.Aspects.Model.Tests
             var test = target.CreateValue<TestValue>();
 
             Assert.IsNotNull(test);
-            Assert.IsTrue(test.GetType() == typeof(TestValue) || 
+            Assert.IsTrue(test.GetType() == typeof(TestValue) ||
                           typeof(TestValue).IsAssignableFrom(test.GetType()));
         }
 
@@ -358,7 +358,7 @@ namespace vm.Aspects.Model.Tests
             }
             catch (InvalidOperationException x)
             {
-                TestContext.WriteLine(x.DumpString());
+                TestContext.WriteLine("{0}", x.DumpString());
 
                 // swallow InvalidOperationException here - it is expected from the InMemory repositories or from repositories with SqlStoreIdProvider
                 Assert.IsTrue(typeof(ListObjectsRepository).IsAssignableFrom(targetType) ||
@@ -368,7 +368,7 @@ namespace vm.Aspects.Model.Tests
             // Add here more similar exception handlers for expected exceptions from different types of repositories.
             catch (Exception x)
             {
-                TestContext.WriteLine(x.DumpString());
+                TestContext.WriteLine("{0}", x.DumpString());
             }
         }
 
@@ -522,7 +522,7 @@ namespace vm.Aspects.Model.Tests
             // Add here more similar exception handlers for expected exceptions from different types of repositories.
             catch (Exception x)
             {
-                TestContext.WriteLine(x.DumpString());
+                TestContext.WriteLine("{0}", x.DumpString());
                 throw;
             }
         }
@@ -667,7 +667,7 @@ namespace vm.Aspects.Model.Tests
                 entity = target.CreateEntity<TestEntity>();
 
                 entity.Id = id;
-                entity.Name = name;                 
+                entity.Name = name;
                 entity.StringProperty = "testValue";
 
                 target.Add(entity);

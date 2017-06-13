@@ -374,7 +374,7 @@ namespace vm.Aspects.Diagnostics
             hashCode = Constants.HashMultiplier * hashCode + RecurseDump.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty?.GetHashCode() ?? 0);
             hashCode = Constants.HashMultiplier * hashCode + Mask.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (MaskValue?.GetHashCode() ?? 0);
+            hashCode = Constants.HashMultiplier * hashCode + MaskValue.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + MaxLength.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + MaxDepth.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + LabelFormat.GetHashCode();

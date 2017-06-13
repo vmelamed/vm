@@ -50,12 +50,12 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             }
             catch (AssertFailedException x)
             {
-                TestContext.WriteLine(x.DumpString());
+                TestContext.WriteLine("{0}", x.DumpString());
                 throw;
             }
             catch (Exception x)
             {
-                TestContext.WriteLine(x.DumpString());
+                TestContext.WriteLine("{0}", x.DumpString());
                 Assert.AreEqual("System.Diagnostics.Contracts.__ContractsRuntime+ContractException", x.GetType().FullName);
             }
         }

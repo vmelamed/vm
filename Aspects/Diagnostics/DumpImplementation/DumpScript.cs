@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace vm.Aspects.Diagnostics.DumpImplementation
 {
@@ -18,6 +18,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         static readonly MethodInfo _miReferenceEquals         = typeof(object).GetMethod(nameof(object.ReferenceEquals), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(object), typeof(object) }, null);
         static readonly MethodInfo _miGetType                 = typeof(object).GetMethod(nameof(object.GetType), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
         static readonly MethodInfo _miToString                = typeof(object).GetMethod(nameof(object.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[0], null);
+        static readonly MethodInfo _miEqualsObject            = typeof(object).GetMethod(nameof(object.Equals), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(object) }, null);
 
         //static readonly MethodInfo _miDispose                 = typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), BindingFlags.Public|BindingFlags.Instance);
 
@@ -25,9 +26,9 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
         static readonly MethodInfo _miBitConverterToString    = typeof(BitConverter).GetMethod(nameof(BitConverter.ToString), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(byte[]), typeof(int), typeof(int) }, null);
 
-        static readonly PropertyInfo _piRecurseDump           = typeof(DumpAttribute).GetProperty(nameof(DumpAttribute.RecurseDump), BindingFlags.Public|BindingFlags.Instance);
+        //static readonly PropertyInfo _piRecurseDump           = typeof(DumpAttribute).GetProperty(nameof(DumpAttribute.RecurseDump), BindingFlags.Public|BindingFlags.Instance);
 
-        static readonly MethodInfo _miDumpNullValues          = typeof(ClassDumpData).GetMethod(nameof(ClassDumpData.DumpNullValues), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(DumpAttribute) }, null);
+        //static readonly MethodInfo _miDumpNullValues          = typeof(ClassDumpData).GetMethod(nameof(ClassDumpData.DumpNullValues), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(DumpAttribute) }, null);
 
         static readonly PropertyInfo _piNamespace             = typeof(Type).GetProperty(nameof(Type.Namespace), BindingFlags.Public|BindingFlags.Instance);
         static readonly PropertyInfo _piAssemblyQualifiedName = typeof(Type).GetProperty(nameof(Type.AssemblyQualifiedName), BindingFlags.Public|BindingFlags.Instance);
@@ -62,6 +63,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         static readonly ConstantExpression _null              = Expression.Constant(null);
         static readonly ConstantExpression _empty             = Expression.Constant(string.Empty);
         static readonly ConstantExpression _false             = Expression.Constant(false);
+        static readonly ConstantExpression _stringNull        = Expression.Constant(Properties.Resources.StringNull);
         //static readonly ConstantExpression _true              = Expression.Constant(true);
 
         // parameters to the dump script:
@@ -101,12 +103,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         /// Initializes a new instance of the <see cref="DumpScript" /> class.
         /// </summary>
         /// <param name="instanceType">Type of the instance.</param>
-        /// <param name="callerFile">The caller file.</param>
-        /// <param name="callerLine">The caller line.</param>
         public DumpScript(
-            Type instanceType,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
+            Type instanceType)
         {
             Contract.Requires<ArgumentNullException>(instanceType != null, nameof(instanceType));
 
@@ -119,8 +117,6 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
             Add
             (
-                callerFile,
-                callerLine,
                 //// if (ReferenceEqual(_instance,null)) { Writer.Write("<null>"); return; }
                 Expression.IfThen
                 (
@@ -141,6 +137,25 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 Expression.Assign(_tempDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute)))
             );
         }
+
+        public Expression<Script> GetScriptExpression()
+        {
+            Close();
+            var lambda = Expression.Lambda<Script>(
+                            Expression.Block
+                            (
+                                new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool, _tempDumpAttribute },
+                                _script
+                            ),
+                            new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper, _dumpState });
+
+            Debug.WriteLine(lambda.DumpCSharpText());
+
+            return lambda;
+        }
+
+        public Script GetScriptAction()
+            => GetScriptExpression().Compile();
 
         void BeginScriptSegment()
         {
@@ -239,7 +254,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             return Write(
                 DumpFormat.SequenceTypeName,
                 Expression.Call(_miGetTypeName, sequenceType, _false),
-                Expression.Call(Expression.Property(sequence, _piCollectionCount), _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)));
+                Expression.Call(
+                    sequence.Type.IsArray
+                        ? Expression.Property(sequence, _piArrayLength)
+                        : Expression.Property(sequence, _piCollectionCount),
+                    _miIntToString1,
+                    Expression.Constant(CultureInfo.InvariantCulture)));
         }
 
         // ==================== Dumping delegates:
@@ -250,10 +270,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(@delegate != null, nameof(@delegate));
 
-            return Expression.Call(
-                        _miDumpedDelegate,
-                        _writer,
-                        Expression.TypeAs(@delegate, typeof(Delegate)));
+            return Expression.IfThenElse
+                    (
+                        Expression.Call(_miReferenceEquals, @delegate, _null),
+                        Write(_stringNull),
+                        Expression.Call(
+                                _miDumpedDelegate,
+                                _writer,
+                                Expression.TypeAs(@delegate, typeof(Delegate)))
+                    );
         }
 
         //// _dumper.Writer.Dumped((Delegate)_instance.Property);
@@ -276,10 +301,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
 
-            return Expression.Call(
-                        _miDumpedMemberInfo,
-                        _writer,
-                        Expression.TypeAs(mi, typeof(MemberInfo)));
+            return Expression.IfThenElse
+                    (
+                        Expression.Call(_miReferenceEquals, mi, _null),
+                        Write(_stringNull),
+                        Expression.Call(
+                            _miDumpedMemberInfo,
+                            _writer,
+                            Expression.TypeAs(mi, typeof(MemberInfo)))
+                    );
         }
 
         //// _dumper.Writer.Dumped(Instance as MemberInfo);
@@ -359,7 +389,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Expression dictionary,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dictionary != null, nameof(dictionary));
+            Contract.Requires<ArgumentNullException>(dictionary    != null, nameof(dictionary));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
             //// dictionary.GetType()
@@ -397,7 +427,11 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 Expression.IfThenElse
                 (
                     Expression.Call(_miReferenceEquals, dictionary, _null),
-                    Expression.Assign(_tempBool, Expression.Constant(false)),
+                    Expression.Block
+                    (
+                        Expression.Assign(_tempBool, _false),
+                        Write(_stringNull)
+                    ),
                     Expression.Block
                     (
                         //// var kv; var n=0; var max = dumpAttribute.GetMaxToDump(sequence.Count); n = 0; WriteLine(); Write("{"); Indent();
@@ -466,8 +500,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
             return DumpedDictionary(
-                        //// (IDictionary)_instance
-                        Expression.TypeAs(_instance, typeof(IDictionary)),
+                        //// _instance
+                        _instance,
                         dumpAttribute);
         }
 
@@ -479,22 +513,36 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
             return DumpedDictionary(
-                    //// (IDictionary)_instance.Property
-                    Expression.TypeAs(MemberValue(mi), typeof(IDictionary)),
+                    //// _instance.Property
+                    MemberValue(mi),
                     dumpAttribute);
         }
 
         // ==============================
 
         Expression DumpedCollection(
-            Expression collection,
-            DumpAttribute dumpAttribute)
+            Expression sequence,
+            DumpAttribute dumpAttribute,
+            Expression expressionCount = null)
         {
-            Contract.Requires<ArgumentNullException>(collection    != null, nameof(collection));
+            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
-            //// _instance.GetType()
-            var collectionType = Expression.Call(collection, _miGetType);
+            ParameterExpression n;              // how many items left to be dumped?            
+            ParameterExpression max;            // max items to dump
+            ParameterExpression item;           // the iteration variable
+            ParameterExpression bytes;          // collection as byte[];
+            ParameterExpression isArray;        // flag that the sequence is an array of items
+            ParameterExpression sequenceType;   // the type of the sequence
+
+            n            = Expression.Parameter(typeof(int), nameof(n));
+            max          = Expression.Parameter(typeof(int), nameof(max));
+            item         = Expression.Parameter(typeof(object), nameof(item));
+            bytes        = Expression.Parameter(typeof(byte[]), nameof(bytes));
+            isArray      = Expression.Parameter(typeof(bool), nameof(isArray));
+            sequenceType = Expression.Parameter(typeof(Type), nameof(sequenceType));
+
+            var @break = Expression.Label();
 
             ////var elementsType = sequenceType.IsArray
             ////                        ? new Type[] { sequenceType.GetElementType() }
@@ -502,26 +550,13 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             ////                            ? sequenceType.GetGenericArguments()
             ////                            : new Type[] { typeof(object) };
             var elementsType = Expression.Condition(
-                                            Expression.Property(collectionType, _piIsArray),
-                                            Expression.NewArrayInit(typeof(Type), Expression.Call(collectionType, _miGetElementType)),
+                                            Expression.Property(sequenceType, _piIsArray),
+                                            Expression.NewArrayInit(typeof(Type), Expression.Call(sequenceType, _miGetElementType)),
                                             Expression.Condition(
-                                                Expression.Property(collectionType, _piIsGenericType),
-                                                Expression.Call(collectionType, _miGetGenericArguments),
+                                                Expression.Property(sequenceType, _piIsGenericType),
+                                                Expression.Call(sequenceType, _miGetGenericArguments),
                                                 Expression.NewArrayInit(typeof(Type), Expression.Constant(typeof(object)))));
-
-            ParameterExpression n;      // how many items left to be dumped?            
-            ParameterExpression max;    // max items to dump
-            ParameterExpression bytes;  // collection as byte[];
-            ParameterExpression item;   // the iteration variable
-            ParameterExpression count;  // count of items
-
-            n     = Expression.Parameter(typeof(int), nameof(n));
-            max   = Expression.Parameter(typeof(int), nameof(max));
-            bytes = Expression.Parameter(typeof(byte[]), nameof(bytes));
-            item  = Expression.Parameter(typeof(object), nameof(item));
-            count = Expression.Parameter(typeof(int), nameof(count));
-
-            var @break = Expression.Label();
+            var truncatedCount = expressionCount!=null ? (Expression)Expression.Convert(expressionCount, typeof(object)) : Expression.Constant(Properties.Resources.StringUnknown);
 
             BeginScriptSegment();
 
@@ -535,11 +570,10 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 Write
                 (
                     DumpFormat.SequenceType,
-                    Expression.Call(_miGetTypeName, collectionType, _false),
-                    Expression.Property(collectionType, _piNamespace),
-                    Expression.Property(collectionType, _piAssemblyQualifiedName)
-                ),
-                null, 0
+                    Expression.Call(_miGetTypeName, sequenceType, _false),
+                    Expression.Property(sequenceType, _piNamespace),
+                    Expression.Property(sequenceType, _piAssemblyQualifiedName)
+                )
             );
 
             if (dumpAttribute.RecurseDump != ShouldDump.Skip)
@@ -563,7 +597,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                         ForEachInEnumerable
                         (
                             item,
-                            collection,
+                            sequence,
                             Expression.Block
                             (
                                 WriteLine(),
@@ -572,7 +606,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                     Expression.GreaterThanOrEqual(Expression.PostIncrementAssign(n), max),
                                     Expression.Block
                                     (
-                                        Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object))),
+                                        Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), truncatedCount),
                                         Expression.Break(@break)
                                     )
                                 ),
@@ -581,8 +615,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             @break
                         ),
                         Unindent()
-                    ),
-                    null, 0
+                    )
                 );
 
             var dumpingLoop = EndScriptSegment();
@@ -592,16 +625,23 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             (
                 Expression.IfThenElse
                 (
-                    Expression.Call(_miReferenceEquals, collection, _null),
-                    Expression.Assign(_tempBool, Expression.Constant(false)),
+                    Expression.Call(_miReferenceEquals, sequence, _null),
                     Expression.Block
                     (
-                        //// var max = dumpAttribute.GetMaxToDump(sequence.Count); var n = 0; var bytes = collection as byte[]; var count = collection.Count;
-                        new[] { n, max, bytes, count },
+                        Expression.Assign(_tempBool, _false),
+                        Write(_stringNull)
+                    ),
+                    Expression.Block
+                    (
+                        //// var max = dumpAttribute.GetMaxToDump(sequence.Count); var n = 0; var bytes = collection as byte[]; var count = collection.Count();
+                        new[] { sequenceType, n, max, bytes, isArray },
+
+                        //// sequence.GetType()
+                        Expression.Assign(sequenceType, Expression.Call(sequence, _miGetType)),
                         Expression.Assign(n, _zero),
-                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, Expression.Property(collection, _piCollectionCount))),
-                        Expression.Assign(bytes, Expression.TypeAs(collection, typeof(byte[]))),
-                        Expression.Assign(count, Expression.Property(collection, _piCollectionCount)),
+                        Expression.Assign(isArray, Expression.Property(sequenceType, _piIsArray)),
+                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount!=null ? expressionCount : _zero)),
+                        Expression.Assign(bytes, Expression.TypeAs(sequence, typeof(byte[]))),
 
                         //// if (!(sequenceType.IsArray || sequenceType.IsFromSystem())) WriteLine();
                         Expression.IfThen
@@ -610,8 +650,8 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             (
                                 Expression.OrElse
                                 (
-                                    Expression.Property(collectionType, _piIsArray),
-                                    Expression.Call(_miIsMatch, collectionType)
+                                    Expression.Property(sequenceType, _piIsArray),
+                                    Expression.Call(_miIsMatch, sequenceType)
                                 )
                             ),
                             WriteLine()
@@ -630,16 +670,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                             DumpFormat.SequenceTypeName,
                             Expression.Condition
                             (
-                                Expression.Property(collectionType, _piIsArray),
+                                isArray,
                                 Expression.Call(_miGetTypeName, Expression.ArrayIndex(elementsType, _zero), _false),
-                                Expression.Call(_miGetTypeName, collectionType, _false)
+                                Expression.Call(_miGetTypeName, sequenceType, _false)
                             ),
-                            Expression.Condition
-                            (
-                                Expression.NotEqual(collection, _null),
-                                Expression.Call(Expression.Property(collection, _piCollectionCount), _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)),
-                                _empty
-                            )
+                            expressionCount != null
+                              ? (Expression)Expression.Condition
+                                (
+                                    Expression.NotEqual(sequence, _null),
+                                    Expression.Call(expressionCount, _miIntToString1, Expression.Constant(CultureInfo.InvariantCulture)),
+                                    _empty
+                                )
+                              : _empty
                         ),
 
                         ////if (bytes != null)
@@ -658,7 +700,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                                 Expression.IfThen
                                 (
                                     Expression.LessThan(max, Expression.Property(bytes, _piArrayLength)),
-                                    Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object)))
+                                    Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), truncatedCount)
                                 )
                             ),
 
@@ -681,10 +723,18 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         {
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
+            var piCount = _instance.Type.IsArray
+                            ? _piArrayLength
+                            : _instance.Type.GetProperty(nameof(ICollection.Count), BindingFlags.Public|BindingFlags.Instance);
+            var count = piCount != null
+                            ? Expression.Property(_instance, piCount)
+                            : null;
+
             return DumpedCollection(
-                        //// (ICollection)_instance
-                        Expression.TypeAs(_instance, typeof(ICollection)),
-                        dumpAttribute);
+                        //// _instance
+                        _instance,
+                        dumpAttribute,
+                        count);
         }
 
         Expression DumpedCollection(
@@ -694,10 +744,28 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
             Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
 
+            Expression count = null;
+
+            var type = (mi as PropertyInfo)?.PropertyType ?? (mi as FieldInfo)?.FieldType;
+
+            if (type != null)
+            {
+                if (type.IsArray)
+                    count = Expression.Property(MemberValue(mi), _piArrayLength);
+                else
+                {
+                    var piCount = type.GetProperty(nameof(ICollection.Count), BindingFlags.Public|BindingFlags.Instance);
+
+                    if (piCount != null)
+                        count = Expression.Property(MemberValue(mi), piCount);
+                }
+            }
+
             return DumpedCollection(
-                        //// (IDictionary)_instance.Property
-                        Expression.TypeAs(MemberValue(mi), typeof(ICollection)),
-                        dumpAttribute);
+                        //// _instance.Property
+                        MemberValue(mi),
+                        dumpAttribute,
+                        count);
         }
 
         // ================================ dump the value of a property
@@ -727,47 +795,15 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (typeof(MemberInfo).IsAssignableFrom(type))
                 return DumpedMemberInfo(mi);
 
-            if (typeof(IDictionary).IsAssignableFrom(type))
-                return DumpedDictionary(mi, dumpAttribute);
+            if (typeof(IEnumerable).IsAssignableFrom(type)  &&  (type.IsArray  ||  type.IsFromSystem()))
+            {
+                if (type.DictionaryTypeArguments() != null)
+                    return DumpedDictionary(mi, dumpAttribute);
 
-            if (typeof(ICollection).IsAssignableFrom(type))
                 return DumpedCollection(mi, dumpAttribute);
+            }
 
-            if (type != typeof(object))
-                DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? (Expression)_tempDumpAttribute : Expression.Convert(_null, typeof(DumpAttribute)));
-
-            return Expression.IfThen
-            (
-                Expression.Not
-                (
-                    Expression.OrElse
-                    (
-                        DumpedBasicValue(mi),
-                        Expression.OrElse
-                        (
-                            DumpedDelegate(mi),
-                            DumpedMemberInfo(mi)
-                        )
-                    )
-                ),
-                Expression.Block
-                (
-                    DumpedDictionary(mi, dumpAttribute),
-                    Expression.IfThen
-                    (
-                        Expression.Not(_tempBool),
-                        Expression.Block
-                        (
-                            DumpedCollection(mi, dumpAttribute),
-                            Expression.IfThen
-                            (
-                                Expression.Not(_tempBool),
-                                DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? (Expression)_tempDumpAttribute : Expression.Convert(_null, typeof(DumpAttribute)))
-                            )
-                        )
-                    )
-                )
-            );
+            return DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute() ? (Expression)_tempDumpAttribute : Expression.Convert(_null, typeof(DumpAttribute)));
         }
 
         internal Expression DumpObject(

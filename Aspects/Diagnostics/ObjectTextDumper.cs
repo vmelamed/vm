@@ -270,33 +270,34 @@ namespace vm.Aspects.Diagnostics
             var buildScript       = UseDumpScriptCache  &&  !obj.IsDynamicObject();
             Script script         = null;
 
-            if (buildScript)
-            {
-                // does the script exist or is it in process of building
-                if (DumpScriptCache.TryFind(this, obj, classDumpData, out script))
-                {
-                    if (script != null  &&  (isTopLevelObject  ||  parentState.IsInDumpingMode))
-                    {
-                        if (isTopLevelObject)
-                            Writer.Indent(_indentLevel, _indentSize)
-                                  .WriteLine();
-
-                        script(obj, classDumpData, this, null);
-                    }
-
-                    return;
-                }
-
-                DumpScriptCache.BuildingScriptFor(this, objectType, classDumpData);
-            }
-
-            // the script does not exist -> build it
-            if (!buildScript  &&  isTopLevelObject)
-                Writer.Indent(_indentLevel, _indentSize)
-                      .WriteLine();
-
             using (var state = new DumpState(this, obj, classDumpData, buildScript))
             {
+                if (buildScript)
+                {
+                    // does the script exist or is it in process of building
+                    if (DumpScriptCache.TryFind(this, obj, classDumpData, out script))
+                    {
+                        if (script != null)
+                        {
+                            if (isTopLevelObject)
+                                Writer.Indent(_indentLevel, _indentSize)
+                                      .WriteLine();
+
+                            script(obj, classDumpData, this, state);
+                        }
+
+                        return;
+                    }
+
+                    DumpScriptCache.BuildingScriptFor(this, objectType, classDumpData);
+                }
+                else
+                {
+                    if (isTopLevelObject)
+                        Writer.Indent(_indentLevel, _indentSize)
+                           .WriteLine();
+                }
+
                 if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
                 {
                     // this object will be dumped below.
@@ -329,22 +330,22 @@ namespace vm.Aspects.Diagnostics
 
                 if (buildScript  &&  state.DumpScript != null)
                     script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
-            }
 
-            if (!buildScript)
-            {
-                if (isTopLevelObject)
-                    Writer.Unindent(_indentLevel, _indentSize);
-            }
-            else
-            {
-                if (script != null  &&  (isTopLevelObject  ||  parentState.IsInDumpingMode))
+                if (!buildScript)
                 {
                     if (isTopLevelObject)
-                        Writer.Indent(_indentLevel, _indentSize)
-                              .WriteLine();
+                        Writer.Unindent(_indentLevel, _indentSize);
+                }
+                else
+                {
+                    if (script != null)
+                    {
+                        if (isTopLevelObject)
+                            Writer.Indent(_indentLevel, _indentSize)
+                                  .WriteLine();
 
-                    script(obj, classDumpData, this, null);
+                        script(obj, classDumpData, this, state);
+                    }
                 }
             }
         }

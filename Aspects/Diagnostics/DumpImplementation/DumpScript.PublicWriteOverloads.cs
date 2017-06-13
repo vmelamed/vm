@@ -7,93 +7,69 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 {
     partial class DumpScript
     {
-        public DumpScript AddWriteLine(
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(WriteLine(), callerFile, callerLine);
+        public DumpScript AddWriteLine()
+            => Add(WriteLine());
 
         public DumpScript AddWrite(
-            Expression text,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(text), callerFile, callerLine);
+            Expression text)
+            => Add(Write(text));
 
         public DumpScript AddWrite(
-            string text,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(text), callerFile, callerLine);
+            string text)
+            => Add(Write(text));
+
+        public DumpScript AddWrite(
+            Expression format,
+            Expression parameter1)
+            => Add(Write(format, parameter1));
+
+        public DumpScript AddWrite(
+            string format,
+            Expression parameter1)
+            => Add(Write(format, parameter1));
+
+        public DumpScript AddWrite(
+            string format,
+            object parameter1)
+            => Add(Write(format, parameter1));
 
         public DumpScript AddWrite(
             Expression format,
             Expression parameter1,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1), callerFile, callerLine);
+            Expression parameter2)
+            => Add(Write(format, parameter1, parameter2));
 
         public DumpScript AddWrite(
             string format,
             Expression parameter1,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1), callerFile, callerLine);
+            Expression parameter2)
+            => Add(Write(format, parameter1, parameter2));
 
         public DumpScript AddWrite(
             string format,
             object parameter1,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1), callerFile, callerLine);
+            object parameter2)
+            => Add(Write(format, parameter1, parameter2));
 
         public DumpScript AddWrite(
             Expression format,
             Expression parameter1,
             Expression parameter2,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2), callerFile, callerLine);
+            Expression parameter3)
+            => Add(Write(format, parameter1, parameter2, parameter3));
 
         public DumpScript AddWrite(
             string format,
             Expression parameter1,
             Expression parameter2,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2), callerFile, callerLine);
-
-        public DumpScript AddWrite(
-            string format,
-            object parameter1,
-            object parameter2,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2), callerFile, callerLine);
-
-        public DumpScript AddWrite(
-            Expression format,
-            Expression parameter1,
-            Expression parameter2,
-            Expression parameter3,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2, parameter3), callerFile, callerLine);
-
-        public DumpScript AddWrite(
-            string format,
-            Expression parameter1,
-            Expression parameter2,
-            Expression parameter3,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2, parameter3), callerFile, callerLine);
+            Expression parameter3)
+            => Add(Write(format, parameter1, parameter2, parameter3));
 
         public DumpScript AddWrite(
             string format,
             object parameter1,
             object parameter2,
-            object parameter3,
-            [CallerFilePath] string callerFile = null,
-            [CallerLineNumber] int callerLine = 0)
-            => Add(Write(format, parameter1, parameter2, parameter3), callerFile, callerLine);
+            object parameter3)
+            => Add(Write(format, parameter1, parameter2, parameter3));
     }
 }

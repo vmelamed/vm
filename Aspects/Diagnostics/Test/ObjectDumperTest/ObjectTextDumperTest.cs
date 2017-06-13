@@ -30,7 +30,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         public static void ClassInitialize(
             TestContext testContext)
         {
-            ObjectTextDumper.UseDumpScriptCache = false;
+            ObjectTextDumper.UseDumpScriptCache = true;
         }
 
         // Use ClassCleanup to run code after all tests in a class have run
@@ -52,12 +52,12 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         #endregion
 
         PrivateObject GetDumperInstanceAccessor(int indentLevel = 0, int indentLength = 2) => new PrivateObject(
-                                                                                                    typeof(ObjectTextDumper),
-                                                                                                    new StringWriter(CultureInfo.InvariantCulture),
-                                                                                                    indentLevel,
-                                                                                                    indentLength,
-                                                                                                    DumpTextWriter.DefaultMaxLength,
-                                                                                                    BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
+                                                                                                        typeof(ObjectTextDumper),
+                                                                                                        new StringWriter(CultureInfo.InvariantCulture),
+                                                                                                        indentLevel,
+                                                                                                        indentLength,
+                                                                                                        DumpTextWriter.DefaultMaxLength,
+                                                                                                        BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
 
         PrivateObject GetDumperInstanceAccessor(StringWriter w, int indentLevel = 0, int indentLength = 2) => new PrivateObject(
                                                                                                                         typeof(ObjectTextDumper),

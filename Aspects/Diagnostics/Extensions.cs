@@ -339,6 +339,34 @@ namespace vm.Aspects
             return typeName;
         }
 
+        /// <summary>
+        /// Gets the types of the key and the value of a generic dictionary or if <paramref name="sequenceType"/> is not generic dictionary returns <see langword="null"/>.
+        /// </summary>
+        /// <param name="sequenceType">Type of the sequence.</param>
+        /// <returns>Type[] - the types of the key (index 0) and the value (index 1) or <see langword="null"/> if <paramref name="sequenceType"/> is not generic dictionary.</returns>
+        public static Type[] DictionaryTypeArguments(
+            this Type sequenceType)
+        {
+            Contract.Requires<ArgumentNullException>(sequenceType != null, nameof(sequenceType));
+
+            var dictionaryType = sequenceType
+                                    .GetInterfaces()
+                                    .FirstOrDefault(t => t.IsGenericType  &&
+                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+
+            if (dictionaryType == null)
+                return null;
+
+            var typeArguments = dictionaryType.GetGenericArguments();
+
+            Contract.Assume(typeArguments.Length == 2);
+
+            if (!typeArguments[0].IsBasicType())
+                return null;
+
+            return typeArguments;
+        }
+
         internal static int GetMaxToDump(
             this DumpAttribute dumpAttribute,
             int length = int.MaxValue)

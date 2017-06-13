@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -551,7 +550,7 @@ namespace vm.Aspects.Diagnostics
 
         public static bool DumpedDictionary(
             this TextWriter writer,
-            ICollection sequence,
+            object sequence,
             DumpAttribute dumpAttribute,
             Action<object> dumpObject,
             Action indent,
@@ -564,35 +563,29 @@ namespace vm.Aspects.Diagnostics
             Contract.Requires<ArgumentNullException>(indent        != null, nameof(indent));
             Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
 
-            var sequenceType = sequence.GetType();
+            var sequenceType  = sequence.GetType();
+            var typeArguments = sequenceType.DictionaryTypeArguments();
 
-            if (!sequenceType.IsGenericType)
+            if (typeArguments == null)
                 return false;
-
-            var dictionaryType = sequenceType
-                                    .GetInterfaces()
-                                    .FirstOrDefault(t => t.IsGenericType  &&
-                                                         t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
-
-            if (dictionaryType == null)
-                return false;
-
-            var typeArguments = dictionaryType.GetGenericArguments();
 
             Contract.Assume(typeArguments.Length == 2);
 
             var keyType   = typeArguments[0];
             var valueType = typeArguments[1];
 
-            if (!keyType.IsBasicType())
-                return false;
+            int count = 0;
+            var piCount = sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);
+
+            if (piCount != null)
+                count = (int)piCount.GetValue(sequence);
 
             var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
 
             writer.Write(
                 DumpFormat.SequenceTypeName,
                 sequenceType.GetTypeName(),
-                sequence.Count.ToString(CultureInfo.InvariantCulture));
+                count.ToString(CultureInfo.InvariantCulture));
 
             writer.Write(
                     DumpFormat.SequenceType,
@@ -605,21 +598,21 @@ namespace vm.Aspects.Diagnostics
                 return true;
 
             // how many items to dump max?
-            var max = dumpAttribute.GetMaxToDump(sequence.Count);
+            var max = dumpAttribute.GetMaxToDump(count);
             var n = 0;
 
             writer.WriteLine();
             writer.Write("{");
             indent();
 
-            foreach (var kv in sequence)
+            foreach (var kv in (IEnumerable)sequence)
             {
                 Contract.Assume(kv.GetType() == keyValueType);
 
                 writer.WriteLine();
                 if (n++ >= max)
                 {
-                    writer.Write(DumpFormat.SequenceDumpTruncated, max, sequence.Count);
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max, count);
                     break;
                 }
 
@@ -656,24 +649,37 @@ namespace vm.Aspects.Diagnostics
             Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
 
             var sequenceType = sequence.GetType();
-            var collection   = sequence as ICollection;
             var elementsType = sequenceType.IsArray
                                     ? new Type[] { sequenceType.GetElementType() }
                                     : sequenceType.IsGenericType
                                         ? sequenceType.GetGenericArguments()
                                         : new Type[] { typeof(object) };
+            int count = 0;
+
+            if (sequenceType.IsArray)
+            {
+                var piLength = sequenceType.GetProperty(nameof(Array.Length), BindingFlags.Instance|BindingFlags.Public);
+
+                count = (int)piLength.GetValue(sequence);
+            }
+            else
+            {
+                var piCount = sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);
+
+                if (piCount != null)
+                    count = (int)piCount.GetValue(sequence);
+            }
 
             writer.Write(
                 DumpFormat.SequenceTypeName,
                 sequenceType.IsArray
                         ? elementsType[0].GetTypeName()
                         : sequenceType.GetTypeName(),
-                collection != null
-                        ? collection.Count.ToString(CultureInfo.InvariantCulture)
+                count > 0
+                        ? count.ToString(CultureInfo.InvariantCulture)
                         : string.Empty);
 
             // how many items to dump max?
-            var count = collection?.Count ?? 0;
             var max   = dumpAttribute.GetMaxToDump(count);
             var bytes = sequence as byte[];
 
