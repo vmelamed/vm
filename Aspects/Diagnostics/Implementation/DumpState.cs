@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -659,7 +660,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                 }
                 else
                 {
-                    var message0 = $"*** Could not find a public, static, method {dumpMethodName}, with return type of System.String, with a single parameter of type {type.FullName} in the class {dumpClass.FullName}.";
+                    var message0 = string.Format(CultureInfo.InvariantCulture, Resources.CouldNotFindCustomDumpers, dumpMethodName, type.FullName, dumpClass.FullName);
 
                     if (IsInDumpingMode)
                         _dumper.Writer.Write(message0);
@@ -724,7 +725,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return true;
             }
 
-            var message = $"*** Could not find a public instance method with name {dumpMethodName} and no parameters or static method with a single parameter of type {type.FullName}, with return type of System.String in the class {type.FullName}.";
+            var message = string.Format(CultureInfo.InvariantCulture, Resources.CouldNotFindCustomDumpers, dumpMethodName, type.FullName, type.FullName);
 
             if (IsInDumpingMode)
                 _dumper.Writer.Write(message);

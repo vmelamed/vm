@@ -262,4 +262,19 @@ The dump exceeded the maximum length of {0} characters. Either increase the valu
   <data name="ValueFormatToString" xml:space="preserve">
     <value>ToString()</value>
   </data>
+  <data name="CouldNotFindCustomDumpers" xml:space="preserve">
+    <value>*** Could not find a public, static, method {0}, with return type of System.String, with a single parameter of type {1} in the class {2}.</value>
+  </data>
+  <data name="DictionaryBegin" xml:space="preserve">
+    <value>{</value>
+  </data>
+  <data name="DictionaryEnd" xml:space="preserve">
+    <value>}</value>
+  </data>
+  <data name="DictionaryKeyBegin" xml:space="preserve">
+    <value>[</value>
+  </data>
+  <data name="DictionaryKeyEnd" xml:space="preserve">
+    <value>] = </value>
+  </data>
 </root>

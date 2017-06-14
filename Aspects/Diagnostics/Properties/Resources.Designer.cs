@@ -97,6 +97,15 @@ namespace vm.Aspects.Diagnostics.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to *** Could not find a public, static, method {0}, with return type of System.String, with a single parameter of type {1} in the class {2}..
+        /// </summary>
+        internal static string CouldNotFindCustomDumpers {
+            get {
+                return ResourceManager.GetString("CouldNotFindCustomDumpers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C#-like expression text:.
         /// </summary>
         internal static string CSharpDumpLabelFormat {
@@ -120,6 +129,42 @@ namespace vm.Aspects.Diagnostics.Properties {
         internal static string DelegateDumpFormat {
             get {
                 return ResourceManager.GetString("DelegateDumpFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {.
+        /// </summary>
+        internal static string DictionaryBegin {
+            get {
+                return ResourceManager.GetString("DictionaryBegin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to }.
+        /// </summary>
+        internal static string DictionaryEnd {
+            get {
+                return ResourceManager.GetString("DictionaryEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [.
+        /// </summary>
+        internal static string DictionaryKeyBegin {
+            get {
+                return ResourceManager.GetString("DictionaryKeyBegin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ] = .
+        /// </summary>
+        internal static string DictionaryKeyEnd {
+            get {
+                return ResourceManager.GetString("DictionaryKeyEnd", resourceCulture);
             }
         }
         

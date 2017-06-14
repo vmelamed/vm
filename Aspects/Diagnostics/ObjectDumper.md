@@ -197,7 +197,7 @@ MyClassDescendant (ObjectDumperSamples.MyClassDescendant, ObjectDumperSamples, V
   GuidProperty             = e6559163-6b53-4c9a-aaf5-8bf620d9155a
 ```
 Note that the property `DumpNullValues` can be applied also on a class level. Then any property with value `null` will be skipped in the dump output.
-### Mask the values of some (e.g. PII) properties
+### Mask the values of some properties (e.g. PII)
 ```csharp
         [Dump(Mask=true)]
         public string SSN { get; set }

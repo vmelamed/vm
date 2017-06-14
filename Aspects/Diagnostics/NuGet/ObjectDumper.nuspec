@@ -2,41 +2,40 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.7.0</version>
+        <version>1.7.1</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
-            Easy to integrate and easy to use component that dumps the value of a .NET object in a easy to read text form. Helpful for debugging and logging purposes.
+            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form. Helpful for debugging and logging purposes.
         </summary>
         <description>
             Features:
             * The dump output is separated from the targeted dump media by the familiar TextWriter interface.
-            * The programmer can dump the value of any type of object: primitive and  enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
+            * The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
             * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties.
             * The dump is recursive: the complex members of the dumped object are dumped indented.
             * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
             * Handles circular references.
             * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
-            - the order in which the properties are dumped;
-            - formatting of the property names and/or values;
-            - suppressing the dump of some uninteresting properties;
-            - masking the values of sensitive (e.g. PII) properties;
-            - the depth of the recursion into complex members;
-            - the maximum number of dumped elements of sequence properties.
+                - the order in which the properties are dumped;
+                - formatting of the property names and/or values;
+                - suppressing the dump of some uninteresting properties;
+                - masking the values of sensitive properties (e.g. PII);
+                - the depth of the recursion into complex members;
+                - the maximum number of dumped elements of sequence properties.
             * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute.
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes.
             * Built and tested with .NET 4.6.2.
+            For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
-            NOTE: This is a pre-release version and contains code and symbols built in Debug configuration of the project(s).
-
             As of 1.7.0 version the AspectObjectDumper supports only .NET v.4.6.2 and higher.
-            This version features a promising performance optimization which leverages LINQ expression trees.
+            This version features a promising performance optimization which leverages cache of generated LINQ expression trees.
             For each dumped type of object, the dumper uses reflection to iterate through its properties and fields, and the properties of the base classes and the aggregated objects.
-            Along the traversal however it also builds an expression tree that mirrors the dumping process of writing labels, accessing members, formatting and writing properties' values directly without reflection.
+            Along the traversal it builds an expression tree that represents the dumping process of writing labels, accessing members, formatting and writing properties' values directly without reflection.
             The so generated expression tree is then compiled and cached. Any subsequent calls to dump objects of the same type, retrieve the dumping code from an internal static cache and execute it.
-            The performance of the subsequent calls is about 50-100 times faster.
-            To suppress the LINQ expression tree generation, set the static property ObjectTextDumper.UseDumpScriptCache to false.
+            The performance of the subsequent calls is more than 100 times faster, usually less than one half of a millisecond.
+            Updated the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
@@ -49,9 +48,9 @@
         <tags>dump object .net diagnostics debug log aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\DebugDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net462"/>
-        <file src="..\bin\DebugDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.xml"
+        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net462"/>
 
         <file src="..\**\*.cs"

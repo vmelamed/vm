@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
@@ -461,7 +462,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                         Expression.Assign(max, Expression.Call(_miGetMaxToDump, Expression.Constant(dumpAttribute, typeof(DumpAttribute)), count)),
 
                         WriteLine(),
-                        Write("{"),
+                        Write(Resources.DictionaryBegin),
                         Indent(),
 
                         //// foreach (kv in dictionary)
@@ -488,11 +489,11 @@ namespace vm.Aspects.Diagnostics.Implementation
                                 ),
 
                                 //// Writer.Write("[");
-                                Write("["),
+                                Write(Resources.DictionaryKeyBegin),
                                 //// _dumper.DumpObject(kv.Key);
                                 Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryKey), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState),
                                 // Writer.Write("] = ");
-                                Write("] = "),
+                                Write(Resources.DictionaryKeyEnd),
 
                                 //// _dumper.DumpObject(kv.Value);
                                 Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryValue), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState)
@@ -503,7 +504,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
                         Unindent(),
                         WriteLine(),
-                        Write("}"),
+                        Write(Resources.DictionaryEnd),
                         //// return true; }
                         Expression.Assign(_tempBool, Expression.Constant(true))
                     )

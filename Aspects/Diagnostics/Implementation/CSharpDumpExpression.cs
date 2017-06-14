@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 
@@ -40,6 +41,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
+                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 return !IsDisposed ? _textWriter.GetStringBuilder().ToString() : null;
             }
