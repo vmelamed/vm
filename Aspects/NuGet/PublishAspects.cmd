@@ -1,57 +1,74 @@
-pushd
-if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmAspectsVersion=1.0.104-beta8
+f "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+set vmAspectsVersion=1.0.104
 
 cd %~dp0..
 del *.nupkg
+del /q bin\pack
 NuGet Update -self
-if /i .%1.==.debug. (
-	set Configuration=Debug
+if /i .%1.==.. (
+	set Configuration=Release
+	set suffix=
 ) else (
-	if /i .%1.==.release. (
-		set Configuration=Release
-	) else (
-		set Configuration=Release
-		if not .%1.==.. set ApiKey=%1
+	set Configuration=Debug
+	set suffix=%1
 	)
-)
-
-if not .%ApiKey%.==.. NuGet SetApiKey %ApiKey%
 
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
 set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration%;TargetFrameworkVersion=v%FrameworkVersion%;DefineConstants=%FrameworkVersionConst%;OutDir=bin\%Configuration%%FrameworkVersionConst% /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack /m
 
+del /q bin\pack
 msbuild vm.Aspects.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
 cd Model
+del /q bin\pack
 msbuild vm.Aspects.Model.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
 cd ..\Parsers
+del /q bin\pack
 msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
 cd ..\FtpTransfer
+del /q bin\pack
 msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
 cd ..\Wcf
+del /q bin\pack
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
+
 cd ..
 
 rem ------- Package -------
-NuGet Pack NuGet\vm.Aspects.%Configuration%.nuspec -symbols -Prop Configuration=%Configuration%
+
+if /i .%suffix%.==.. (
+NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -Prop Configuration=%Configuration% -symbols
+) else (
+NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+ren vm.Aspects.%vmAspectsVersion%.symbols.nupkg vm.Aspects.%vmAspectsVersion%-%suffix%.symbols.nupkg
+)
+
 if errorlevel 1 goto exit
+
 if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
+
+rem ------- Upload to NuGet.org -------
+
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
-if .%ApiKey%.==.. (
+
+if /i .%suffix%.==.. (
 NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org
 ) else (
-NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org -ApiKey %ApiKey%
+NuGet Push vm.Aspects.%vmAspectsVersion%-%suffix%.nupkg -source https://www.nuget.org
 )
 
 :exit
-popd
+cd nuget
 pause

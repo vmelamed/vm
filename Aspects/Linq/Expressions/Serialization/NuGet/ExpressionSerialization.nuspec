@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.105-beta</version>
+        <version>1.0.110</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -33,15 +33,15 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2016</copyright>
+        <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
         </dependencies>
         <tags>.net LINQ expression tree serialization XML aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Linq.Expressions.Serialization.dll"
+        <file src="..\bin\pack\vm.Aspects.Linq.Expressions.Serialization.dll"
               target="lib\net462"/>
-        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Linq.Expressions.Serialization.xml"
+        <file src="..\bin\pack\vm.Aspects.Linq.Expressions.Serialization.xml"
               target="lib\net462"/>
 
     </files>

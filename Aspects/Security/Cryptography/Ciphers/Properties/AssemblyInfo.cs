@@ -5,9 +5,9 @@
 // associated with an assembly.
 [assembly: AssemblyTitle("vm.Aspects.Security.Cryptography.Ciphers")]
 [assembly: AssemblyDescription("A set of cipher classes producing cipher-packages and encrypted and/or signed XML documents and elements.")]
-[assembly: AssemblyVersion("1.11.19")]
-[assembly: AssemblyFileVersion("1.11.19")]
-[assembly: AssemblyInformationalVersion("1.11.19")]
+[assembly: AssemblyVersion("1.11.20")]
+[assembly: AssemblyFileVersion("1.11.20")]
+[assembly: AssemblyInformationalVersion("1.11.20")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Security.Cryptography.Ciphers.Tests, " +

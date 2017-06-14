@@ -261,8 +261,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.7.0.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\packages\AspectObjectDumper.1.7.0-beta5\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.7.2.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectObjectDumper.1.7.2\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -384,10 +384,7 @@
     </None>
     <None Include="app.config" />
     <None Include="NuGet\PublishAspects.cmd" />
-    <None Include="NuGet\vm.Aspects.Debug.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuGet\vm.Aspects.Release.nuspec">
+    <None Include="NuGet\vm.Aspects.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="ObjectDumper.nuspec" />

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.7.1</version>
+        <version>1.7.2</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -48,9 +48,9 @@
         <tags>dump object .net diagnostics debug log aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\pack\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net462"/>
-        <file src="..\bin\ReleaseDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.xml"
+        <file src="..\bin\pack\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net462"/>
 
         <file src="..\**\*.cs"
