@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Security;
 using System.Security.Policy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Diagnostics.DumpImplementation;
+using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.ObjectDumper.Tests.PartialTrust;
 
 #pragma warning disable 67, 649
@@ -284,16 +284,20 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
                 // --------------------------
 
-                var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                if (ObjectTextDumper.UseDumpScriptCache)
+                {
+                    var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResult(expected, actual2, SecondDump);
+                    AssertResult(expected, actual2, SecondDump);
+                }
             }
-            using (var w = new StringWriter(CultureInfo.InvariantCulture))
-            {
-                var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+            if (ObjectTextDumper.UseDumpScriptCache)
+                using (var w = new StringWriter(CultureInfo.InvariantCulture))
+                {
+                    var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResult(expected, actual3, ThirdDump);
-            }
+                    AssertResult(expected, actual3, ThirdDump);
+                }
         }
 
         void ActAndAssert(
@@ -676,31 +680,73 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         [TestMethod]
         public void TestDumpExpression()
         {
-            Expression<Func<int, int>> expression = a => 5;
+            Expression<Func<int, int>> expression = a => 3*a + 5;
+
+            ClassMetadataRegistrar.RegisterMetadata();
 
             ActAndAssert(
                 nameof(TestDumpExpression),
                 @"
 Expression<Func<int, int>> (System.Linq.Expressions.Expression`1[[System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+  C#-like expression text:
+    (int a) => 3 * a + 5
+  NodeType                 = ExpressionType.Lambda
+  Type                     = (TypeInfo): System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   Name                     = <null>
   ReturnType               = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   Parameters               = TrueReadOnlyCollection<ParameterExpression>[1]: (System.Runtime.CompilerServices.TrueReadOnlyCollection`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
     PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+      NodeType                 = ExpressionType.Parameter
+      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       Name                     = a
       IsByRef                  = False
       NodeType                 = ExpressionType.Parameter
       Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       CanReduce                = False
-  Body                     = ConstantExpression (System.Linq.Expressions.ConstantExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
-    Value                    = 5
-    NodeType                 = ExpressionType.Constant
+  Body                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+    NodeType                 = ExpressionType.Add
     Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Left                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+      NodeType                 = ExpressionType.Multiply
+      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      Left                     = ConstantExpression (System.Linq.Expressions.ConstantExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+        NodeType                 = ExpressionType.Constant
+        Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+        Value                    = 3
+        NodeType                 = ExpressionType.Constant
+        CanReduce                = False
+      Right                    = PrimitiveParameterExpression<int> (see above)
+      IsLiftedLogical          = False
+      IsReferenceComparison    = False
+      NodeType                 = ExpressionType.Multiply
+      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      Method                   = <null>
+      Conversion               = <null>
+      IsLifted                 = False
+      IsLiftedToNull           = False
+      CanReduce                = False
+    Right                    = ConstantExpression (System.Linq.Expressions.ConstantExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089): 
+      NodeType                 = ExpressionType.Constant
+      Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      Value                    = 5
+      NodeType                 = ExpressionType.Constant
+      CanReduce                = False
+    IsLiftedLogical          = False
+    IsReferenceComparison    = False
+    NodeType                 = ExpressionType.Add
+    Type                     = (TypeInfo): System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+    Method                   = <null>
+    Conversion               = <null>
+    IsLifted                 = False
+    IsLiftedToNull           = False
     CanReduce                = False
   NodeType                 = ExpressionType.Lambda
   Type                     = (TypeInfo): System.Func`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
   TailCall                 = False
   CanReduce                = False",
                 expression);
+
+            ClassMetadataResolver.ResetClassDumpData();
         }
 
         [TestMethod]
@@ -1126,8 +1172,8 @@ Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.
                 @"
 Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   IntProperty              = 0
-  IntProperty              = 5
-  StringProperty           = StringProperty",
+  StringProperty           = StringProperty
+  IntProperty              = 5",
                 new Derived
                 {
                     StringProperty = "StringProperty",
@@ -1390,8 +1436,8 @@ Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
                 @"
 Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   Property                 = 0
-  VirtualProperty2         = 2
-  VirtualProperty1         = 21",
+  VirtualProperty1         = 21
+  VirtualProperty2         = 2",
                 new Descendant2());
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
@@ -1434,8 +1480,8 @@ Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
                 @"
 Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   Property                 = 20
-  VirtualProperty2         = 22
-  VirtualProperty1         = 21",
+  VirtualProperty1         = 21
+  VirtualProperty2         = 22",
                 new Descendant2
                 {
                     Property         = 20,

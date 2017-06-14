@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Diagnostics.DumpImplementation;
+using vm.Aspects.Diagnostics.Implementation;
 
 namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 {

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-//using System.Data;
-//using System.Data.Metadata.Edm;
-//using System.Data.SqlClient;
-//using System.Net;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Security;
 using System.Threading.Tasks;
 using vm.Aspects.Diagnostics.ExternalMetadata;
-//using Microsoft.Practices.EnterpriseLibrary.Validation;
-//using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 
 namespace vm.Aspects.Diagnostics
 {
@@ -43,6 +37,15 @@ namespace vm.Aspects.Diagnostics
                 .Register<BinaryExpression, BinaryExpressionDumpMetadata>()
                 .Register<ConstantExpression, ConstantExpressionDumpMetadata>()
 
+                // Do not extend the BCL dependency, but the client can call also:
+                //
+                //using System.Data;
+                //using System.Data.Metadata.Edm;
+                //using System.Data.SqlClient;
+                //using System.Net;
+                //using Microsoft.Practices.EnterpriseLibrary.Validation;
+                //using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+                //
                 //.Register<SqlException, SqlExceptionDumpMetadata>()
                 //.Register<SqlError, SqlErrorDumpMetadata>()
                 //.Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()

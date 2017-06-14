@@ -129,6 +129,9 @@
   <data name="Colon" xml:space="preserve">
     <value>: </value>
   </data>
+  <data name="CSharpDumpLabelFormat" xml:space="preserve">
+    <value>C#-like expression text:</value>
+  </data>
   <data name="CyclicalReferenceDesignator" xml:space="preserve">
     <value>{0} (see above)</value>
   </data>

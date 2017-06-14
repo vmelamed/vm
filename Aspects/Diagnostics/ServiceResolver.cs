@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
-using vm.Aspects.Diagnostics.DumpImplementation;
+using vm.Aspects.Diagnostics.Implementation;
 
 namespace vm.Aspects.Diagnostics
 {

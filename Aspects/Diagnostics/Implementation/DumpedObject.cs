@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     /// <summary>
     /// Stores pair of type and object which has already been dumped in the current call.

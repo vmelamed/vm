@@ -2,11 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.7.0-beta6</version>
+        <version>1.7.0</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
-            Easy to integrate and easy to use component that dumps the value of a .NET object in a easy to read text form. Helpful for debugging and logging purposes.
+            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form. Helpful for debugging and logging purposes.
         </summary>
         <description>
             Features:
@@ -28,7 +28,7 @@
             * Built and tested with .NET 4.6.2.
         </description>
         <releaseNotes>
-            As of 1.7.0-beta6 version the AspectObjectDumper supports only .NET v.4.6.2 and higher.
+            As of 1.7.0 version the AspectObjectDumper supports only .NET v.4.6.2 and higher.
             This version features a promising performance optimization which leverages LINQ expression trees.
             For each dumped type of object, the dumper uses reflection to iterate through its properties and fields, and the properties of the base classes and the aggregated objects.
             Along the traversal however it also builds an expression tree that mirrors the dumping process of writing labels, accessing members, formatting and writing properties' values directly without reflection.

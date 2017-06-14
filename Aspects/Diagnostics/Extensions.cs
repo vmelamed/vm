@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
 using vm.Aspects.Diagnostics;
-using vm.Aspects.Diagnostics.DumpImplementation;
+using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects
@@ -112,8 +112,8 @@ namespace vm.Aspects
         public static string DumpCSharpText(
             this Expression expression)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
             Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+            Contract.Ensures(Contract.Result<string>() != null);
 
             if (expression == null)
                 return DumpUtilities.Null;

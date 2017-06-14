@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {

@@ -38,6 +38,7 @@ namespace vm.Aspects.Diagnostics
             EnumFlag              = Resources.EnumFlagDumpFormat;
             EnumFlagSeparator     = Resources.EnumFlagsSeparator;
             EnumFlagSuffix        = Resources.EnumFlagsDumpEndFormat;
+            CSharpDumpLabel       = Resources.CSharpDumpLabelFormat;
         }
 
         /// <summary>
@@ -180,6 +181,11 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         public static string Value { get; set; }
 
+        /// <summary>
+        /// Gets or sets the C# expression dump label.
+        /// </summary>
+        public static string CSharpDumpLabel { get; set; }
+
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [ContractInvariantMethod]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
@@ -204,6 +210,7 @@ namespace vm.Aspects.Diagnostics
             Contract.Invariant(!string.IsNullOrEmpty(EnumFlagSeparator));
             Contract.Invariant(!string.IsNullOrEmpty(EnumFlagSuffix));
             Contract.Invariant(!string.IsNullOrEmpty(EnumFlag));
+            Contract.Invariant(!string.IsNullOrEmpty(CSharpDumpLabel));
         }
 
     }

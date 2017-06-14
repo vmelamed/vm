@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     /// <summary>
     /// Compares two PropertyInfo objects by the property Order of the dump attribute and then by Name.

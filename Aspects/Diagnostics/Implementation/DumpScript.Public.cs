@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {
@@ -239,6 +239,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
         ////    _instanceType.AssemblyQualifiedName);
         public DumpScript AddDumpType()
             => AddDumpType(_instanceType);
+
+        // ============== Add expression's C# text dump
+
+        public DumpScript AddDumpExpressionText(
+            string cSharpText)
+            => Add(DumpExpressionText(cSharpText));
 
         // ============== Add Dumping delegates:
 

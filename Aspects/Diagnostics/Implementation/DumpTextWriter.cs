@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using vm.Aspects.Diagnostics.Properties;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     [DebuggerDisplay("{GetType().Name, nq}: {_writer,nq}")]
     class DumpTextWriter : TextWriter

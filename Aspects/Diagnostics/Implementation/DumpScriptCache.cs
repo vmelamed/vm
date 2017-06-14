@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     static class DumpScriptCache
     {

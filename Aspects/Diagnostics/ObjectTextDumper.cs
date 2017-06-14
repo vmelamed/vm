@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Threading;
-using vm.Aspects.Diagnostics.DumpImplementation;
+using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
@@ -102,6 +102,11 @@ namespace vm.Aspects.Diagnostics
         /// The binding flags determining which fields to be dumped
         /// </summary>
         internal BindingFlags FieldsBindingFlags { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the currently dumped instance is sub-expression of a previously dumped expression.
+        /// </summary>
+        internal bool IsSubExpression { get; set; }
 
         /// <summary>
         /// The dump writer.
@@ -228,8 +233,14 @@ namespace vm.Aspects.Diagnostics
         }
         #endregion
 
+        /// <summary>
+        /// Increases the indentation of the writer by <see cref="_indentSize"/>.
+        /// </summary>
         internal void Indent() => Writer.Indent(++_indentLevel, _indentSize);
 
+        /// <summary>
+        /// Decreases the indentation of the writer by <see cref="_indentSize"/>.
+        /// </summary>
         internal void Unindent() => Writer.Unindent(--_indentLevel, _indentSize);
 
         #region Internal methods
@@ -264,6 +275,10 @@ namespace vm.Aspects.Diagnostics
                 Writer.Write(Resources.DumpReachedMaxDepth);
                 return;
             }
+
+            // save here the IsSubExpression flag as it will change if obj is Expression and IsSubExpression==false.
+            // but in the end of this method restore the value from this local variable. See below.
+            var isSubExpressionStore = IsSubExpression;
 
             // slow dump vs. run script?
             bool isTopLevelObject = parentState == null;
@@ -347,6 +362,9 @@ namespace vm.Aspects.Diagnostics
                         script(obj, classDumpData, this, state);
                     }
                 }
+
+                // restore here the IsSubExpression flag as it have changed if obj is Expression and IsSubExpression==false.
+                IsSubExpression = isSubExpressionStore;
             }
         }
 

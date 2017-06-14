@@ -6,10 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {
@@ -262,6 +263,25 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                     Expression.Constant(CultureInfo.InvariantCulture)));
         }
 
+        Expression DumpExpressionText(
+            string cSharpText)
+        {
+            Contract.Requires<ArgumentNullException>(cSharpText != null, nameof(cSharpText));
+            Contract.Requires<ArgumentException>(cSharpText.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(cSharpText)+" cannot be empty string or consist of whitespace characters only.");
+
+            return Expression.Block
+            (
+                Indent(),
+                WriteLine(),
+                Write(DumpFormat.CSharpDumpLabel),
+                Indent(),
+                WriteLine(),
+                Write(cSharpText),
+                Unindent(),
+                Unindent()
+            );
+        }
+
         // ==================== Dumping delegates:
 
         //// _dumper.Writer.Dumped((Delegate)Instance);
@@ -360,12 +380,12 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                         _tempDumpAttribute);
         }
 
-        Expression DumpedBasicNullable()
-            => Expression.Call(
-                        _miDumpedBasicNullable,
-                        _writer,
-                        Expression.Convert(_instance, typeof(object)),
-                        _tempDumpAttribute);
+        //Expression DumpedBasicNullable()
+        //    => Expression.Call(
+        //                _miDumpedBasicNullable,
+        //                _writer,
+        //                Expression.Convert(_instance, typeof(object)),
+        //                _tempDumpAttribute);
 
         // ===================
 

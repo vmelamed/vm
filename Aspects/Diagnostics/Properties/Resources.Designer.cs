@@ -97,6 +97,15 @@ namespace vm.Aspects.Diagnostics.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to C#-like expression text:.
+        /// </summary>
+        internal static string CSharpDumpLabelFormat {
+            get {
+                return ResourceManager.GetString("CSharpDumpLabelFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} (see above).
         /// </summary>
         internal static string CyclicalReferenceDesignator {

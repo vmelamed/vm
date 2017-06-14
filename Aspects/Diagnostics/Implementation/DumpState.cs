@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using vm.Aspects.Diagnostics.Properties;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     class DumpState : IEnumerator<MemberInfo>
     {
@@ -283,6 +284,33 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 DumpScript.AddDumpType();
         }
 
+        public void DumpExpressionCSharpText()
+        {
+            var expression = Instance as Expression;
+
+            if (expression == null  ||  _dumper.IsSubExpression)
+                return;
+
+            // this is the highest level expression. all
+            _dumper.IsSubExpression = true;
+
+            var cSharpText = expression.DumpCSharpText();
+
+            if (IsInDumpingMode)
+            {
+                _dumper.Indent();
+                _dumper.Writer.WriteLine();
+                _dumper.Writer.Write(DumpFormat.CSharpDumpLabel);
+                _dumper.Indent();
+                _dumper.Writer.WriteLine();
+                _dumper.Writer.Write(cSharpText);
+                _dumper.Unindent();
+                _dumper.Unindent();
+            }
+            else
+                DumpScript.AddDumpExpressionText(cSharpText);
+        }
+
         internal void IncrementMaxDepth()
         {
             if (IsInDumpingMode)
@@ -349,6 +377,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 return false;
 
             DumpType();
+            DumpExpressionCSharpText();
             return true;
         }
 
@@ -396,22 +425,20 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             if (!CurrentProperty.CanRead()  ||  CurrentPropertyDumpAttribute.Skip == ShouldDump.Skip)
                 return;
 
-            // don't dump virtual properties that are not implemented in the current class or are overridden in a descendent class
-            if (CurrentProperty is PropertyInfo  &&  ((PropertyInfo)CurrentProperty).IsVirtual())
-            {
-                var instanceProperty = InstanceType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags);
-
-                // dump only the most overridden property info
-                if (CurrentProperty.MetadataToken != instanceProperty.MetadataToken ||
-                    CurrentProperty.Module        != instanceProperty.Module)
-                    return;
-            }
-
-            // can't dump indexers
             var pi = CurrentProperty as PropertyInfo;
 
+            // can't dump indexers
             if (pi != null  &&  pi.GetIndexParameters().Length > 0)
                 return;
+
+            if (pi != null  &&  pi.IsVirtual())
+            {
+                // for virtual properties dump the instance value at the the least derived class level that declares the property for first time.
+                if (CurrentType.BaseType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags) != null)
+                    return;
+
+                pi = InstanceType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags);
+            }
 
             var fi       = CurrentProperty as FieldInfo;
             Type type    = null;
@@ -625,7 +652,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
 
                 if (dumpMethod != null)
                 {
-                    if (DumpScript == null)
+                    if (IsInDumpingMode)
                         _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
                     else
                         DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
@@ -634,7 +661,7 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
                 {
                     var message0 = $"*** Could not find a public, static, method {dumpMethodName}, with return type of System.String, with a single parameter of type {type.FullName} in the class {dumpClass.FullName}.";
 
-                    if (DumpScript == null)
+                    if (IsInDumpingMode)
                         _dumper.Writer.Write(message0);
                     else
                         DumpScript.AddWrite(message0);
@@ -685,23 +712,14 @@ namespace vm.Aspects.Diagnostics.DumpImplementation
             {
                 if (IsInDumpingMode)
                 {
-                    if (dumpMethod.IsStatic)
-                        _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
-                    else
-                        _dumper.Writer.Write((string)dumpMethod.Invoke(value, null));
+                    var text = dumpMethod.IsStatic
+                                    ? (string)dumpMethod.Invoke(null, new object[] { value })
+                                    : (string)dumpMethod.Invoke(value, null);
+
+                    _dumper.Writer.Write(text);
                 }
                 else
                     DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
-
-                return true;
-            }
-
-            if (dumpMethod2 != null)
-            {
-                if (IsInDumpingMode)
-                    _dumper.Writer.Write((string)dumpMethod2.Invoke(null, new object[] { value }));
-                else
-                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod2);
 
                 return true;
             }

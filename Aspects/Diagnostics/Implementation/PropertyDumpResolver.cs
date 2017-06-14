@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace vm.Aspects.Diagnostics.DumpImplementation
+namespace vm.Aspects.Diagnostics.Implementation
 {
     /// <summary>
     /// Primary responsibility of the class is to retrieve the DumpAttribute instance associated with a property to be dumped from the property's 

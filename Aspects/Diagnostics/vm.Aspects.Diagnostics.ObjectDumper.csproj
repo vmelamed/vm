@@ -206,27 +206,30 @@
     <Compile Include="DefaultServiceLocator.cs" />
     <Compile Include="DumpAttribute.cs" />
     <Compile Include="DumpFormat.cs" />
-    <Compile Include="DumpImplementation\CSharpDumpExpression.cs" />
-    <Compile Include="DumpImplementation\DumpScript.Loops.cs">
+    <Compile Include="Implementation\CSharpDumpExpression.cs" />
+    <Compile Include="Implementation\CSharpDumpExpression.Visitor.cs">
+      <DependentUpon>CSharpDumpExpression.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpScript.Loops.cs">
       <DependentUpon>DumpScript.cs</DependentUpon>
     </Compile>
-    <Compile Include="DumpImplementation\DumpScript.Public.cs">
+    <Compile Include="Implementation\DumpScript.Public.cs">
       <DependentUpon>DumpScript.cs</DependentUpon>
     </Compile>
-    <Compile Include="DumpImplementation\DumpScript.PublicWriteOverloads.cs">
+    <Compile Include="Implementation\DumpScript.PublicWriteOverloads.cs">
       <DependentUpon>DumpScript.cs</DependentUpon>
     </Compile>
-    <Compile Include="DumpImplementation\DumpedObject.cs" />
-    <Compile Include="DumpImplementation\DumpedProperty.cs" />
-    <Compile Include="DumpImplementation\DumpScript.WriteOverloads.cs">
+    <Compile Include="Implementation\DumpedObject.cs" />
+    <Compile Include="Implementation\DumpedProperty.cs" />
+    <Compile Include="Implementation\DumpScript.WriteOverloads.cs">
       <DependentUpon>DumpScript.cs</DependentUpon>
     </Compile>
-    <Compile Include="DumpImplementation\DumpScriptCache.cs" />
-    <Compile Include="DumpImplementation\DumpTextWriter.cs" />
-    <Compile Include="DumpImplementation\MemberDumpOrder.cs" />
-    <Compile Include="DumpImplementation\PropertyDumpResolver.cs" />
-    <Compile Include="DumpImplementation\DumpScript.cs" />
-    <Compile Include="DumpImplementation\DumpState.cs" />
+    <Compile Include="Implementation\DumpScriptCache.cs" />
+    <Compile Include="Implementation\DumpTextWriter.cs" />
+    <Compile Include="Implementation\MemberDumpOrder.cs" />
+    <Compile Include="Implementation\PropertyDumpResolver.cs" />
+    <Compile Include="Implementation\DumpScript.cs" />
+    <Compile Include="Implementation\DumpState.cs" />
     <Compile Include="DumpUtilities.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ExternalMetadata\ArgumentExceptionDumpMetadata.cs" />
@@ -278,6 +281,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="NuGet\PublishObjectDumper.cmd" />
+    <None Include="ObjectDumper.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
