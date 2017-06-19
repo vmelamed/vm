@@ -1,5 +1,5 @@
 f "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmAspectsVersion=1.0.104
+set vmAspectsVersion=1.0.105
 
 cd %~dp0..
 del *.nupkg
@@ -16,29 +16,29 @@ if /i .%1.==.. (
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
 set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
 
-del /q bin\pack
+del /q bin\pack%FrameworkVersionConst%
 msbuild vm.Aspects.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd Model
-del /q bin\pack
+del /q bin\pack%FrameworkVersionConst%
 msbuild vm.Aspects.Model.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Parsers
-del /q bin\pack
+del /q bin\pack%FrameworkVersionConst%
 msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\FtpTransfer
-del /q bin\pack
+del /q bin\pack%FrameworkVersionConst%
 msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Wcf
-del /q bin\pack
+del /q bin\pack%FrameworkVersionConst%
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

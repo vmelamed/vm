@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET461</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>

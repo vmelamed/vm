@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmDumperVersion=1.7.2
+set vmDumperVersion=1.7.3
 
 cd %~dp0..
 del *.nupkg
@@ -19,9 +19,18 @@ NuGet Update -self
 rem ------- build for .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
 set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
 
-del /q bin\pack\*.*
+del /q bin\pack%FrameworkVersionConst%\*.*
+msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- build for .NET 4.5.2 -------
+set FrameworkVersion=4.5.2
+set FrameworkVersionConst=DOTNET452
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
+
+del /q bin\pack%FrameworkVersionConst%\*.*
 msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

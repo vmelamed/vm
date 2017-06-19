@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.0.104</version>
+        <version>1.0.105</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -48,34 +48,34 @@
                         version="6.2.0-beta1" />
 
             <dependency id="AspectObjectDumper"
-                        version="1.7.2" />
+                        version="1.7.3" />
         </dependencies>
         <tags></tags>
     </metadata>
     <files>
-        <file src="..\bin\pack\vm.Aspects.dll"
+        <file src="..\bin\packDOTNET462\vm.Aspects.dll"
               target="lib\net462"/>
-        <file src="..\bin\pack\vm.Aspects.xml"
+        <file src="..\bin\packDOTNET462\vm.Aspects.xml"
               target="lib\net462"/>
-        <file src="..\Model\bin\pack\vm.Aspects.Model.dll"
+        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.dll"
               target="lib\net462"/>
-        <file src="..\Model\bin\pack\vm.Aspects.Model.xml"
+        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.xml"
               target="lib\net462"/>
-        <file src="..\Wcf\bin\pack\vm.Aspects.Wcf.dll"
+        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.dll"
               target="lib\net462"/>
-        <file src="..\Wcf\bin\pack\vm.Aspects.Wcf.xml"
+        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.xml"
               target="lib\net462"/>
-        <file src="..\Parsers\bin\pack\vm.Aspects.Parsers.dll"
+        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.dll"
               target="lib\net462"/>
-        <file src="..\Parsers\bin\pack\vm.Aspects.Parsers.xml"
+        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.xml"
               target="lib\net462"/>
-        <file src="..\FtpTransfer\bin\pack\vm.Aspects.FtpTransfer.dll"
+        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.dll"
               target="lib\net462"/>
-        <file src="..\FtpTransfer\bin\pack\vm.Aspects.FtpTransfer.xml"
+        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.xml"
               target="lib\net462"/>
-        <file src="..\bin\pack\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
+        <file src="..\bin\packDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
               target="lib\net462"/>
-        <file src="..\bin\pack\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
+        <file src="..\bin\packDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
               target="lib\net462"/>
 
         <file src="..\**\*.cs"
