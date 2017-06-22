@@ -1,9 +1,9 @@
-if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
 set vmDumperVersion=1.7.3
 
 cd %~dp0..
 del *.nupkg
-if /i .%1.==.. (
+if /i .%1. EQU .. (
 	set Configuration=Release
 	set suffix=
 ) else (
@@ -36,12 +36,13 @@ if errorlevel 1 goto exit
 
 rem ------- Package -------
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
 NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
-ren AspectObjectDumper.%vmDumperVersion%.symbols.nupkg AspectObjectDumper.%vmDumperVersion%-%suffix%.symbols.nupkg
 )
+
+if /i .%suffix%. NEQ .. ren AspectObjectDumper.%vmDumperVersion%.symbols.nupkg AspectObjectDumper.%vmDumperVersion%-%suffix%.symbols.nupkg
 
 if errorlevel 1 goto exit
 
@@ -53,7 +54,7 @@ rem ------- Upload to NuGet.org -------
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Push AspectObjectDumper.%vmDumperVersion%.nupkg -source https://www.nuget.org
 ) else (
 NuGet Push AspectObjectDumper.%vmDumperVersion%-%suffix%.nupkg -source https://www.nuget.org

@@ -1,9 +1,9 @@
-if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
 set vmCiphersVersion=1.11.20
 
 cd %~dp0..
 del *.nupkg
-if /i .%1.==.. (
+if /i .%1. EQU .. (
 	set Configuration=Release
 	set suffix=
 ) else (
@@ -38,12 +38,13 @@ msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 rem ------- Package -------
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
 NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
-ren Ciphers.%vmCiphersVersion%.symbols.nupkg Ciphers.%vmCiphersVersion%-%suffix%.symbols.nupkg
 )
+
+if /i .%suffix%. NEQ .. ren Ciphers.%vmCiphersVersion%.symbols.nupkg Ciphers.%vmCiphersVersion%-%suffix%.symbols.nupkg
 
 if errorlevel 1 goto exit
 
@@ -55,7 +56,7 @@ rem ------- Upload to NuGet.org -------
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Push Ciphers.%vmCiphersVersion%.nupkg -source https://www.nuget.org
 ) else (
 NuGet Push Ciphers.%vmCiphersVersion%-%suffix%.nupkg -source https://www.nuget.org

@@ -1,7 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
@@ -14,6 +11,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Validation;
@@ -138,8 +138,7 @@ namespace vm.Aspects.Model.EFRepository
                 instance = Set<T>().Create();
                 if (instance == null)
                     return false;
-                if (initialize != null)
-                    initialize(instance);
+                initialize?.Invoke(instance);
                 Set<T>().Add(instance);
                 remove = true;
                 CommitChanges();

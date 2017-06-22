@@ -1,9 +1,9 @@
-﻿if "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+﻿if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
 set vmExpressionSerializationVersion=1.0.110
 
 cd %~dp0..
 del *.nupkg
-if /i .%1.==.. (
+if /i .%1. EQU .. (
 	set Configuration=Release
 	set suffix=
 ) else (
@@ -27,12 +27,13 @@ if errorlevel 1 goto exit
 
 rem ------- Package -------
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
 NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
-ren AspectExpressionSerialization.%vmExpressionSerializationVersion%.symbols.nupkg AspectExpressionSerialization.%vmExpressionSerializationVersion%-%suffix%.symbols.nupkg
 )
+
+if /i .%suffix%. NEQ .. ren AspectExpressionSerialization.%vmExpressionSerializationVersion%.symbols.nupkg AspectExpressionSerialization.%vmExpressionSerializationVersion%-%suffix%.symbols.nupkg
 
 if errorlevel 1 goto exit
 
@@ -44,7 +45,7 @@ rem ------- Upload to NuGet.org -------
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Push AspectExpressionSerialization.%vmExpressionSerializationVersion%.nupkg -source https://www.nuget.org
 ) else (
 NuGet Push AspectExpressionSerialization.%vmExpressionSerializationVersion%-%suffix%.nupkg -source https://www.nuget.org

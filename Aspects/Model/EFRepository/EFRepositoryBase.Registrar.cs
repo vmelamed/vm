@@ -30,6 +30,7 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         /// <typeparam name="T">The type of the actual repository derived from <see cref="EFRepositoryBase"/>.</typeparam>
         /// <returns>A <see cref="ContainerRegistrar"/> derived repository instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will own it.")]
         public static ContainerRegistrar Registrar<T>() where T : EFRepositoryBase
         {
             Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);

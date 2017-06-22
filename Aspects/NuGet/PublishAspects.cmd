@@ -1,11 +1,11 @@
-f "%VSINSTALLDIR%"=="" call "%VS140COMNTOOLS%vsvars32.bat"
+f "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
 set vmAspectsVersion=1.0.105
 
 cd %~dp0..
 del *.nupkg
 del /q bin\pack
 NuGet Update -self
-if /i .%1.==.. (
+if /i .%1. EQU .. (
 	set Configuration=Release
 	set suffix=
 ) else (
@@ -46,12 +46,13 @@ cd ..
 
 rem ------- Package -------
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
 NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
-ren vm.Aspects.%vmAspectsVersion%.symbols.nupkg vm.Aspects.%vmAspectsVersion%-%suffix%.symbols.nupkg
 )
+
+if /i .%suffix%. NEQ .. ren vm.Aspects.%vmAspectsVersion%.symbols.nupkg vm.Aspects.%vmAspectsVersion%-%suffix%.symbols.nupkg
 
 if errorlevel 1 goto exit
 
@@ -63,7 +64,7 @@ rem ------- Upload to NuGet.org -------
 @echo Press any key to push to NuGet.org... > con:
 @pause > nul:
 
-if /i .%suffix%.==.. (
+if /i .%suffix%. EQU .. (
 NuGet Push vm.Aspects.%vmAspectsVersion%.nupkg -source https://www.nuget.org
 ) else (
 NuGet Push vm.Aspects.%vmAspectsVersion%-%suffix%.nupkg -source https://www.nuget.org

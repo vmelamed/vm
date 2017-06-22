@@ -61,6 +61,7 @@
             <Word>etw</Word>
             <Word>postprocess</Word>
             <Word>preprocess</Word>
+            <Word>luhn</Word>
         </Recognized>
         <Unrecognized>
             <!-- 
