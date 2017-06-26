@@ -380,7 +380,7 @@ namespace vm.Aspects
                 return length;
 
             if (max == 0)        // limit sequences of primitive types (can be very big)
-                return DumpAttribute.DefaultMaxElements;
+                return Math.Min(DumpAttribute.DefaultMaxElements, length);
 
             return Math.Min(max, length);
         }

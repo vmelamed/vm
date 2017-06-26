@@ -1502,5 +1502,16 @@ Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
                     VirtualProperty2 = 32,
                 });
         }
+
+        [TestMethod]
+        public void TestWrappedByteArray()
+        {
+            ActAndAssert(
+                nameof(TestWrappedByteArray),
+                @"
+WrappedByteArray (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+WrappedByteArray, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Bytes                    = byte[8]: 00-00-00-00-00-00-00-00",
+                new WrappedByteArray { Bytes = new byte[8] });
+        }
     }
 }

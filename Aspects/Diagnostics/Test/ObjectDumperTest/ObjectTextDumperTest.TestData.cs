@@ -851,5 +851,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
             public override int VirtualProperty2 { get; set; }
         }
+
+        public class WrappedByteArray
+        {
+            public byte[] Bytes;
+        }
     }
 }
