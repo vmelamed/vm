@@ -47,5 +47,6 @@
 </HelpConfigurations>
 <GeneralProperties>
   <SearchInheritedCommentsOnlyWithinProject>False</SearchInheritedCommentsOnlyWithinProject>
+  <GenerateCommentWYSIWYG_Off>True</GenerateCommentWYSIWYG_Off>
 </GeneralProperties>
 </GhostDoc>
