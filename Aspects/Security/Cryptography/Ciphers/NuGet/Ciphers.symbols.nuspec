@@ -33,19 +33,41 @@
     <files>
         <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net462"/>
+        <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+              target="lib\net462"/>
         <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net462"/>
         <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
               target="lib\net462"/>
+        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.pdb"
+              target="lib\net462"/>
         <file src="..\EncryptedKey\bin\pack\EncryptedKey.exe"
+              target="tools\net462"/>
+        <file src="..\EncryptedKey\bin\pack\EncryptedKey.pdb"
               target="tools\net462"/>
         <file src="..\ProtectedKey\bin\pack\ProtectedKey.exe"
               target="tools\net462"/>
+        <file src="..\ProtectedKey\bin\pack\ProtectedKey.pdb"
+              target="tools\net462"/>
         <file src="..\MacKey\bin\pack\MacKey.exe"
+              target="tools\net462"/>
+        <file src="..\MacKey\bin\pack\MacKey.pdb"
               target="tools\net462"/>
         <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net462"/>
+        <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+              target="tools\net462"/>
+        <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
+              target="tools\net462"/>
         <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net462"/>
+        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.pdb"
+              target="tools\net462"/>
+        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.xml"
+              target="tools\net462"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
+
     </files>
 </package>

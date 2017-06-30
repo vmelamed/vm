@@ -274,6 +274,9 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
+    <None Include="NuGet\ObjectDumper.symbols.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="NuGet\ObjectDumper.nuspec">
       <SubType>Designer</SubType>
     </None>

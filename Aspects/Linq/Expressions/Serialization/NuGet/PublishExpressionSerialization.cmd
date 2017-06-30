@@ -1,5 +1,5 @@
 ﻿if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmExpressionSerializationVersion=1.0.110
+set vmExpressionSerializationVersion=1.0.111
 
 cd %~dp0..
 del *.nupkg
@@ -28,9 +28,14 @@ if errorlevel 1 goto exit
 rem ------- Package -------
 
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -Prop Configuration=%Configuration%
 ) else (
-NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ExpressionSerialization.nuspec -version %vmExpressionSerializationVersion% -suffix %suffix% -Prop Configuration=%Configuration%
+)
+if /i .%suffix%. EQU .. (
+NuGet Pack NuGet\ExpressionSerialization.symbols.nuspec -version %vmExpressionSerializationVersion% -Prop Configuration=%Configuration% -symbols
+) else (
+NuGet Pack NuGet\ExpressionSerialization.symbols.nuspec -version %vmExpressionSerializationVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
 )
 
 if /i .%suffix%. NEQ .. ren AspectExpressionSerialization.%vmExpressionSerializationVersion%.symbols.nupkg AspectExpressionSerialization.%vmExpressionSerializationVersion%-%suffix%.symbols.nupkg

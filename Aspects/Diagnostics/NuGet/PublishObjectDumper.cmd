@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmDumperVersion=1.7.4
+set vmDumperVersion=1.7.5
 
 cd %~dp0..
 del *.nupkg
@@ -37,9 +37,14 @@ if errorlevel 1 goto exit
 rem ------- Package -------
 
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration%
 ) else (
-NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration%
+)
+if /i .%suffix%. EQU .. (
+NuGet Pack NuGet\ObjectDumper.symbols.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration% -symbols
+) else (
+NuGet Pack NuGet\ObjectDumper.symbols.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
 )
 
 if /i .%suffix%. NEQ .. ren AspectObjectDumper.%vmDumperVersion%.symbols.nupkg AspectObjectDumper.%vmDumperVersion%-%suffix%.symbols.nupkg

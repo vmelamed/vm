@@ -50,12 +50,19 @@
     <files>
         <file src="..\bin\packDOTNET452\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net452"/>
+        <file src="..\bin\packDOTNET452\vm.Aspects.Diagnostics.ObjectDumper.pdb"
+              target="lib\net452"/>
         <file src="..\bin\packDOTNET452\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net452"/>
 
         <file src="..\bin\packDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net462"/>
+        <file src="..\bin\packDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.pdb"
+              target="lib\net462"/>
         <file src="..\bin\packDOTNET462\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net462"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
     </files>
 </package>

@@ -284,6 +284,7 @@
     <None Include="Documents\IXmlCipher.cd" />
     <None Include="Documents\IXmlSigner.cd" />
     <None Include="Documents\ProtectedKey.EncryptMethodTemplate.sequencediagram" />
+    <None Include="NuGet\Ciphers.symbols.nuspec" />
     <None Include="NuGet\Ciphers.nuspec" />
     <None Include="NuGet\PublishCiphers.cmd" />
     <None Include="packages.config" />

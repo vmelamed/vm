@@ -41,7 +41,12 @@
     <files>
         <file src="..\bin\pack\vm.Aspects.Linq.Expressions.Serialization.dll"
               target="lib\net462"/>
+        <file src="..\bin\pack\vm.Aspects.Linq.Expressions.Serialization.pdb"
+              target="lib\net462"/>
         <file src="..\bin\pack\vm.Aspects.Linq.Expressions.Serialization.xml"
               target="lib\net462"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
     </files>
 </package>

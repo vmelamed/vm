@@ -47,9 +47,14 @@ cd ..
 rem ------- Package -------
 
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -Prop Configuration=%Configuration%
 ) else (
-NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\vm.Aspects.nuspec -version %vmAspectsVersion% -suffix %suffix% -Prop Configuration=%Configuration%
+)
+if /i .%suffix%. EQU .. (
+NuGet Pack NuGet\vm.Aspects.symbols.nuspec -version %vmAspectsVersion% -Prop Configuration=%Configuration% -symbols
+) else (
+NuGet Pack NuGet\vm.Aspects.symbols.nuspec -version %vmAspectsVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
 )
 
 if /i .%suffix%. NEQ .. ren vm.Aspects.%vmAspectsVersion%.symbols.nupkg vm.Aspects.%vmAspectsVersion%-%suffix%.symbols.nupkg

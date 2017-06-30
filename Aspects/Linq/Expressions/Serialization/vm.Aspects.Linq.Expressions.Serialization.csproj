@@ -236,6 +236,7 @@
     <None Include="Documents\Expression.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NuGet\ExpressionSerialization.symbols.nuspec" />
     <None Include="NuGet\ExpressionSerialization.nuspec" />
     <None Include="NuGet\PublishExpressionSerialization.cmd" />
     <None Include="packages.config" />

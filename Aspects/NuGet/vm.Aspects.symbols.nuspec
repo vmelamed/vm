@@ -55,21 +55,31 @@
     <files>
         <file src="..\bin\packDOTNET462\vm.Aspects.dll"
               target="lib\net462"/>
+        <file src="..\bin\packDOTNET462\vm.Aspects.pdb"
+              target="lib\net462"/>
         <file src="..\bin\packDOTNET462\vm.Aspects.xml"
               target="lib\net462"/>
         <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.dll"
+              target="lib\net462"/>
+        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.pdb"
               target="lib\net462"/>
         <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.xml"
               target="lib\net462"/>
         <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.dll"
               target="lib\net462"/>
+        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.pdb"
+              target="lib\net462"/>
         <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.xml"
               target="lib\net462"/>
         <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.dll"
               target="lib\net462"/>
+        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.pdb"
+              target="lib\net462"/>
         <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.xml"
               target="lib\net462"/>
         <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.dll"
+              target="lib\net462"/>
+        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.pdb"
               target="lib\net462"/>
         <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.xml"
               target="lib\net462"/>
@@ -77,5 +87,8 @@
               target="lib\net462"/>
         <file src="..\bin\packDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
               target="lib\net462"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
     </files>
 </package>
