@@ -55,7 +55,22 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            serviceHostBase.Authorization.ServiceAuthorizationManager = new OpenIdServiceAuthorizationManager(ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(_tokenValidationParametersResolveName));
+            ServiceAuthorizationManager manager = null;
+
+            try
+            {
+                manager = ServiceLocator.Current.GetInstance<ServiceAuthorizationManager>(_tokenValidationParametersResolveName);
+            }
+            catch (ActivationException) { }
+
+            if (manager == null)
+            {
+                manager = new OpenIdServiceAuthorizationManager(ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(_tokenValidationParametersResolveName));
+
+                DIContainer.Root.RegisterInstanceIfNot(_tokenValidationParametersResolveName, manager);
+            }
+
+            serviceHostBase.Authorization.ServiceAuthorizationManager = manager;
         }
 
         /// <summary>
