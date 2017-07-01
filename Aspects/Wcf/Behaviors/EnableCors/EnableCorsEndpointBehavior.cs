@@ -47,9 +47,10 @@ namespace vm.Aspects.Wcf.Behaviors
             EndpointDispatcher endpointDispatcher)
         {
             var operations = endpoint
-                                    .Contract
-                                    .Operations
-                                    .ToList();
+                                .Contract
+                                .Operations
+                                .ToList()
+                                ;
 
             if (!endpoint
                     .Contract
@@ -58,7 +59,8 @@ namespace vm.Aspects.Wcf.Behaviors
                 operations = operations
                                 .Where(od => od.OperationBehaviors
                                                .Any(ob => ob is EnableCorsAttribute))
-                                .ToList();
+                                .ToList()
+                                ;
 
             if (operations.Any())
                 endpointDispatcher

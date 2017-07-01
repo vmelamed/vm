@@ -1,11 +1,10 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Reflection;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -85,33 +84,35 @@ namespace vm.Aspects.Wcf.ServicePolicies
             IMethodInvocation input,
             bool callData)
         {
-            var attributes = input.MethodBase
-                                           .GetCustomAttributes<CustomDataContextTypeAttribute>(true)
-                                           .Union(
-                                                input.MethodBase
-                                                     .DeclaringType
-                                                     .GetCustomAttributes<CustomDataContextTypeAttribute>(true)).ToList();
+            var typeAttribute = input.MethodBase.DeclaringType.GetCustomAttribute<CustomDataContextTypeAttribute>(true);
+            var methodAttribute = input.MethodBase.GetCustomAttribute<CustomDataContextTypeAttribute>(true);
+
+            if (typeAttribute == null  &&  methodAttribute == null)
+                return base.PreInvoke(input, callData);
+
+            var type = methodAttribute?.CustomDataContextType ?? typeAttribute?.CustomDataContextType;
+
+            if (type == null)
+                return input.CreateExceptionMethodReturn(new InvalidOperationException($"CustomDataContextTypeAttribute was specified but the type of the context/header was not."));
+
+            var isOptional = (methodAttribute?.IsOptional) ?? (typeAttribute?.IsOptional).GetValueOrDefault();
 
             // validate the custom context if necessary
-            foreach (var attribute in attributes)
+            var contextType = typeof(CustomDataContext<>).MakeGenericType(type);
+            var contextValue = contextType.GetProperty("Current").GetValue(null, null);
+
+            if (contextValue == null)
             {
-                var contextType = typeof(CustomDataContext<>).MakeGenericType(attribute.CustomDataContextType);
-                var contextValue = contextType.GetProperty("Current").GetValue(null, null);
+                if (!isOptional)
+                    return input.CreateExceptionMethodReturn(new InvalidOperationException($"The expected {type.Name} custom context object (message header) is not present."));
+            }
+            else
+            {
+                var validator = CreateValidator(contextType);
+                var results   = validator.Validate(contextValue);
 
-                if (contextValue == null)
-                {
-                    if (!attribute.IsOptional &&
-                        !attributes.Any(a => a.CustomDataContextType==attribute.CustomDataContextType && a.IsOptional))
-                        return input.CreateExceptionMethodReturn(new InvalidOperationException($"The expected {attribute.CustomDataContextType.Name} custom context object (message header) is not present."));
-                }
-                else
-                {
-                    var validator = CreateValidator(contextType);
-                    var results = validator.Validate(contextValue);
-
-                    if (!results.IsValid)
-                        return input.CreateExceptionMethodReturn(new ArgumentValidationException(results, $"{attribute.CustomDataContextType.Name} context object (message header)"));
-                }
+                if (!results.IsValid)
+                    return input.CreateExceptionMethodReturn(new ArgumentValidationException(results, $"{type.Name} context object (message header)"));
             }
 
             return base.PreInvoke(input, callData);

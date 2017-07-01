@@ -390,7 +390,6 @@
     <None Include="NuGet\vm.Aspects.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ObjectDumper.nuspec" />
     <None Include="packages.config" />
     <None Include="vm.Aspects.Messages.reg" />
   </ItemGroup>
