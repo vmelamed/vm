@@ -450,6 +450,69 @@ namespace vm.Aspects
         }
 
         /// <summary>
+        /// Dumps the contents of a container as a delimiter (comma) separated values text to a <see cref="TextWriter" />.
+        /// </summary>
+        /// <param name="container">The container.</param>
+        /// <param name="writer">The text writer to dump the container to.</param>
+        /// <param name="delimiter">The delimiter to separate the values with.</param>
+        /// <param name="quot">The quotation mark in use for quoted values.</param>
+        public static void DumpDsv(
+            this IUnityContainer container,
+            TextWriter writer,
+            char delimiter = ',',
+            char quot = '\'')
+        {
+            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+
+            var registrations = container.GetRegistrationsSnapshot();
+
+            writer.WriteLine($"Container has {registrations.Count()} Registrations:");
+
+            foreach (var item in registrations
+                                    .Values
+                                    .OrderBy(i => i.RegisteredType.Name)
+                                    .ThenBy(i => i.MappedToType.Name)
+                                    .ThenBy(i => i.Name))
+            {
+                string regType = item.RegisteredType.IsGenericType
+                                    ? string.Format(
+                                                "{0}<{1}>",
+                                                item.RegisteredType.Name.Split('`')[0],
+                                                string.Join(", ", item.RegisteredType.GenericTypeArguments.Select(ta => ta.Name)))
+                                    : item.RegisteredType.Name;
+
+                string mapTo = item.MappedToType.IsGenericType
+                                        ? string.Format(
+                                                "{0}<{1}>",
+                                                item.MappedToType.Name.Split('`')[0],
+                                                string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
+                                        : item.MappedToType.Name;
+                if (mapTo == regType)
+                    mapTo = string.Empty;
+
+                var resolveName = item.Name ?? "[default]";
+
+                var lifetime = item.LifetimeManagerType.Name;
+                Contract.Assert(lifetime.Length > "LifetimeManager".Length);
+                lifetime = lifetime.Substring(0, lifetime.Length - "LifetimeManager".Length);
+
+                writer.WriteLine($"{QuoteIfNeeded(regType, delimiter, quot)}{delimiter}{QuoteIfNeeded(mapTo, delimiter, quot)}{delimiter}{QuoteIfNeeded(resolveName, delimiter, quot)}{delimiter}{QuoteIfNeeded(lifetime, delimiter, quot)}");
+            }
+        }
+
+        static string QuoteIfNeeded(
+            string token,
+            char delimiter,
+            char quot)
+        {
+            if (token.Contains(delimiter))
+                return $"{quot}{token.Replace(quot.ToString(), quot.ToString()+quot)}{quot}";
+
+            return token;
+        }
+
+        /// <summary>
         /// Dumps the contents of a container as a text to the VS output pane.
         /// </summary>
         /// <param name="container">

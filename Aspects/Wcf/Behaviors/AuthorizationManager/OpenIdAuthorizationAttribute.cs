@@ -17,9 +17,12 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Method,
         AllowMultiple = false,
         Inherited = false)]
-    public class OpenIdAuthorizationAttribute : Attribute, IServiceBehavior
+    public sealed class OpenIdAuthorizationAttribute : Attribute, IServiceBehavior
     {
-        string _tokenValidationParametersResolveName;
+        /// <summary>
+        /// Gets the DI resolve name of the token validation parameters.
+        /// </summary>
+        public string TokenValidationParametersResolveName { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdAuthorizationAttribute"/> class.
@@ -28,7 +31,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         public OpenIdAuthorizationAttribute(
             string tokenValidationParametersResolveName)
         {
-            _tokenValidationParametersResolveName = tokenValidationParametersResolveName;
+            TokenValidationParametersResolveName = tokenValidationParametersResolveName;
         }
 
         /// <summary>
@@ -59,15 +62,15 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 
             try
             {
-                manager = ServiceLocator.Current.GetInstance<ServiceAuthorizationManager>(_tokenValidationParametersResolveName);
+                manager = ServiceLocator.Current.GetInstance<ServiceAuthorizationManager>(TokenValidationParametersResolveName);
             }
             catch (ActivationException) { }
 
             if (manager == null)
             {
-                manager = new OpenIdServiceAuthorizationManager(ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(_tokenValidationParametersResolveName));
+                manager = new OpenIdServiceAuthorizationManager(ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(TokenValidationParametersResolveName));
 
-                DIContainer.Root.RegisterInstanceIfNot(_tokenValidationParametersResolveName, manager);
+                DIContainer.Root.RegisterInstanceIfNot(TokenValidationParametersResolveName, manager);
             }
 
             serviceHostBase.Authorization.ServiceAuthorizationManager = manager;

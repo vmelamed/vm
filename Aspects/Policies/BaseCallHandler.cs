@@ -103,12 +103,12 @@ namespace vm.Aspects.Policies
             var continueWith = GetContinueWith(input);
             var methodReturn = getNext().Invoke(input, getNext);
 
-            if (continueWith != null)
-                // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result
-                return input.CreateMethodReturn(
-                                continueWith.Invoke(this, new object[] { input, methodReturn, callData }));
-            else
+            if (continueWith == null)
                 return methodReturn;
+
+            // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result
+            return input.CreateMethodReturn(
+                                continueWith.Invoke(this, new object[] { input, methodReturn, callData }));
         }
 
         /// <summary>
@@ -133,6 +133,8 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Gives the aspect a chance to do some final work after the main task is truly complete.
         /// The overriding implementations should begin by calling the base class' implementation first.
+        /// Here we can throw exceptions, which will be the true result of a failed operation.
+        /// At the caller the exception should arrive wrapped in a <see cref="AggregateException"/>.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="input">The input.</param>
@@ -147,6 +149,10 @@ namespace vm.Aspects.Policies
             Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
             Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
             Contract.Ensures(Contract.Result<Task<TResult>>() != null);
+
+            // if the call already failed - throw the exception
+            if (methodReturn.Exception != null)
+                throw methodReturn.Exception;
 
             var taskResult = methodReturn.ReturnValue as Task<TResult>;
 
@@ -173,7 +179,7 @@ namespace vm.Aspects.Policies
         {
             Contract.Requires<ArgumentNullException>(input != null, nameof(input));
 
-            if (!input.IsAsyncCall() || !IsContinueWithOverridden)  // return directly the Task from the actual call. The caller will await it, i.e. there is no continue with here.
+            if (!input.IsAsyncCall() || !IsContinueWithOverridden)  // return directly the Task from the actual call. The caller will await it, i.e. there is no continue-with here.
                 return null;
 
             var resultType = input.ResultType();

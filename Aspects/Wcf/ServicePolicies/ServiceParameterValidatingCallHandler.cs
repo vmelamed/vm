@@ -99,7 +99,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             // validate the custom context if necessary
             var contextType = typeof(CustomDataContext<>).MakeGenericType(type);
-            var contextValue = contextType.GetProperty("Current").GetValue(null, null);
+            var contextValue = contextType.GetProperty("Current").GetValue(null);
 
             if (contextValue == null)
             {

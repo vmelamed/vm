@@ -44,7 +44,7 @@ namespace vm.Aspects.Wcf
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
 
                 if (_name == null)
                     Initialize();
@@ -170,9 +170,6 @@ namespace vm.Aspects.Wcf
                 // make sure the header is initialized.
                 Initialize();
 
-                if (OperationContext.Current == null)
-                    return null;
-
                 // find the header by namespace and name
                 if (_contextUtilities.HasWebOperationContext)
                 {
@@ -195,6 +192,7 @@ namespace vm.Aspects.Wcf
                     }
                 }
                 else
+                if (_contextUtilities.HasOperationContext)
                 {
                     var index = OperationContext.Current.IncomingMessageHeaders.FindHeader(_name, _namespace);
 
@@ -203,6 +201,8 @@ namespace vm.Aspects.Wcf
                     else
                         return null;
                 }
+                else
+                    return null;
             }
 
             set

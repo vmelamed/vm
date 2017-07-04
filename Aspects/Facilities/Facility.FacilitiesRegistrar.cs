@@ -32,6 +32,7 @@ namespace vm.Aspects.Facilities
                 Debug.Assert(container == null || container == DIContainer.Root, "The facilities registrar can register the facilities only in the root container.");
 
                 container = DIContainer.Root;
+
                 ExceptionPolicyProvider.Registrar.Reset(container);
                 LogConfigProvider.Registrar.Reset(container);
                 InitializeFacilities();
@@ -63,8 +64,8 @@ namespace vm.Aspects.Facilities
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
                 RegisterCommon(container, registrations)
-                    .RegisterInstanceIfNot<IClock>(registrations, new Clock())
-                    .RegisterInstanceIfNot<IGuidGenerator>(registrations, new GuidGenerator())
+                    .RegisterTypeIfNot<IClock, Clock>(registrations, new ContainerControlledLifetimeManager())
+                    .RegisterTypeIfNot<IGuidGenerator, GuidGenerator>(registrations, new ContainerControlledLifetimeManager())
                     ;
             }
 
@@ -94,8 +95,8 @@ namespace vm.Aspects.Facilities
                 ClassMetadataRegistrar.RegisterMetadata();
 
                 return container
-                    .RegisterInstanceIfNot<IConfigurationProvider>(registrations, new AppConfigProvider())
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)
+                    .RegisterTypeIfNot<IConfigurationProvider, AppConfigProvider>(registrations, new ContainerControlledLifetimeManager())
                     .RegisterTypeIfNot<ExceptionManager>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => ExceptionPolicyProvider.CreateExceptionManager()))
                     .RegisterTypeIfNot<LogWriter>(registrations, new ContainerControlledLifetimeManager(), new InjectionFactory(c => LogConfigProvider.CreateLogWriter(LogConfigProvider.LogConfigurationFileName, LogConfigProvider.TestLogConfigurationResolveName, isTest)))
                     .UnsafeRegister(LogConfigProvider.Registrar, registrations, isTest)
