@@ -21,9 +21,9 @@ namespace vm.Aspects.Model.InMemory
         /// </summary>
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         /// <summary>
-        /// Set to <see langword="true"/> if the underlying global structures are initialized.
+        /// The latch controls the initialization of the repository.
         /// </summary>
-        static bool _isInitialized;
+        static Latch _latch = new Latch();
         /// <summary>
         /// The objects container.
         /// </summary>
@@ -47,7 +47,6 @@ namespace vm.Aspects.Model.InMemory
         {
             _objects       = new List<DomainEntity<long, string>>();
             _longId        = 0L;
-            _isInitialized = true;
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace vm.Aspects.Model.InMemory
         /// <summary>
         /// Gets a value indicating whether the instance implementing the interface is initialized.
         /// </summary>
-        public bool IsInitialized => _isInitialized;
+        public bool IsInitialized => _latch.IsLatched;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
@@ -77,16 +76,8 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>IRepository.</returns>
         public IRepository Initialize()
         {
-            if (IsInitialized)
-                return this;
-
-            using (_sync.WriterLock())
-            {
-                if (IsInitialized)
-                    return this;
-
-                UnsafeReset();
-            }
+            if (_latch.Latched())
+                Reset();
 
             return this;
         }

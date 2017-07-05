@@ -21,6 +21,7 @@ using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.ServicePolicies;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects.Wcf.Services
 {
@@ -93,6 +94,12 @@ namespace vm.Aspects.Wcf.Services
     {
         Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
         Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
+        Latch _latch = new Latch();
+
+        /// <summary>
+        /// Provides access to the initialize latch for the inheritors.
+        /// </summary>
+        protected Latch InitLatch => _latch;
 
         #region Properties
         /// <summary>
@@ -254,58 +261,54 @@ namespace vm.Aspects.Wcf.Services
         /// <returns>IUnityContainer.</returns>
         public virtual IUnityContainer RegisterDefaults()
         {
-            if (AreRegistered)
-                return DIContainer.Root;
-
-            // container initialization:
-            DIContainer.Initialize();
-
-            lock (DIContainer.Root)
+            if (_latch.Latched())
             {
-                if (AreRegistered)
-                    return DIContainer.Root;
 
-                // ObjectDumper registrations
-                ClassMetadataRegistrar.RegisterMetadata()
-                    .Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
-                    .Register<ValidationResult, ValidationResultDumpMetadata>()
-                    .Register<ValidationResults, ValidationResultsDumpMetadata>()
-                    .Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
-                    ;
+                // container initialization:
+                DIContainer.Initialize();
 
-                var registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-                DIContainer.Root
-                        .UnsafeRegister(Facility.Registrar, registrations)
-                        .UnsafeRegister(ServiceFaultFromExceptionHandlingPolicies.Registrar, registrations)
-                        .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
-                        .UnsafeRegister(BindingConfigurator.Registrar, registrations)
+                lock (DIContainer.Root)
+                {
+                    // ObjectDumper registrations
+                    ClassMetadataRegistrar.RegisterMetadata()
+                        .Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
+                        .Register<ValidationResult, ValidationResultDumpMetadata>()
+                        .Register<ValidationResults, ValidationResultsDumpMetadata>()
+                        .Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
                         ;
 
-                // register the defaults of the inheriting classes
-                DoRegisterDefaults(DIContainer.Root, registrations);
+                    var registrations = DIContainer.Root.GetRegistrationsSnapshot();
 
-                ServiceResolveName = ObtainServiceResolveName();
+                    DIContainer.Root
+                            .UnsafeRegister(Facility.Registrar, registrations)
+                            .UnsafeRegister(ServiceFaultFromExceptionHandlingPolicies.Registrar, registrations)
+                            .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
+                            .UnsafeRegister(BindingConfigurator.Registrar, registrations)
+                            ;
 
-                // (re)register properly the service with the interceptor and the policy injection behavior, etc. whistles and blows,
-                // unless it was already registered before getting the registrations above.
-                DIContainer.Root
-                    .RegisterTypeIfNot<TContract, TService>(
-                        registrations,
-                        ServiceResolveName,
-                        ServiceLifetimeManager,
-                        new Interceptor<InterfaceInterceptor>(),
-                        new InterceptionBehavior<PolicyInjectionBehavior>());
+                    // register the defaults of the inheriting classes
+                    DoRegisterDefaults(DIContainer.Root, registrations);
 
-                AreRegistered = true;
-                return DIContainer.Root;
+                    ServiceResolveName = ObtainServiceResolveName();
+
+                    // (re)register properly the service with the interceptor and the policy injection behavior, etc. whistles and blows,
+                    // unless it was already registered before getting the registrations above.
+                    DIContainer.Root
+                        .RegisterTypeIfNot<TContract, TService>(
+                            registrations,
+                            ServiceResolveName,
+                            ServiceLifetimeManager,
+                            new Interceptor<InterfaceInterceptor>(),
+                            new InterceptionBehavior<PolicyInjectionBehavior>());
+                }
             }
+            return DIContainer.Root;
         }
 
         /// <summary>
         /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
         /// </summary>
-        public virtual bool AreRegistered { get; protected set; }
+        public virtual bool AreRegistered => _latch.IsLatched;
 
         /// <summary>
         /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.

@@ -11,6 +11,7 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects
 {
@@ -61,13 +62,13 @@ namespace vm.Aspects
         /// <summary>
         /// The flag indicating if the container is initialized
         /// </summary>
-        static volatile bool _isInitialized;
+        static Latch _latch = new Latch();
         #endregion
 
         /// <summary>
         /// Gets a value indicating whether this instance is initialized.
         /// </summary>
-        public static bool IsInitialized => _isInitialized;
+        public static bool IsInitialized => _latch.IsLatched;
 
         /// <summary>
         /// Gets the current default container.
@@ -175,55 +176,48 @@ namespace vm.Aspects
         {
             EnsuresContainerInitialized();
 
-            if (_isInitialized)
-                return _root;
-
-            lock (_root)
-            {
-                if (_isInitialized)
-                    return _root;
-
-                try
+            if (_latch.Latched())
+                lock (_root)
                 {
-                    var unityConfigSection = getConfigFileSection!=null
+                    try
+                    {
+                        var unityConfigSection = getConfigFileSection!=null
                                                 ? getConfigFileSection(configFileName, configSection)
                                                 : GetUnityConfigurationSection(configFileName, configSection);
 
-                    // file was not specified or does not exist - try loading from web/app.config then
-                    if (unityConfigSection == null)
-                        unityConfigSection = ConfigurationManager.GetSection(configSection) as UnityConfigurationSection;
+                        // file was not specified or does not exist - try loading from web/app.config then
+                        if (unityConfigSection == null)
+                            unityConfigSection = ConfigurationManager.GetSection(configSection) as UnityConfigurationSection;
 
-                    if (unityConfigSection != null)
-                        if (string.IsNullOrWhiteSpace(containerName))
-                            _root.LoadConfiguration(unityConfigSection);
-                        else
-                            _root.LoadConfiguration(unityConfigSection, containerName);
+                        if (unityConfigSection != null)
+                            if (string.IsNullOrWhiteSpace(containerName))
+                                _root.LoadConfiguration(unityConfigSection);
+                            else
+                                _root.LoadConfiguration(unityConfigSection, containerName);
 
-                    _isInitialized = true;
+                        // initialize the CSL with Unity service location
+                        if (!ServiceLocator.IsLocationProviderSet)
+                            ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
 
-                    // initialize the CSL with Unity service location
-                    if (!ServiceLocator.IsLocationProviderSet)
-                        ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
+                        // prepare for interception and policy injection (AOP)
+                        _root
+                            .AddNewExtension<Interception>()
+                            ;
+                    }
+                    catch (Exception x)
+                    {
+                        if (_root!=null)
+                            _root.DebugDump();
 
-                    // prepare for interception and policy injection (AOP)
-                    _root
-                        .AddNewExtension<Interception>()
-                        ;
+                        var dump = x.DumpString();
 
-                    return _root;
+                        Debug.WriteLine(dump);
+                        EventLog.WriteEntry("vm.Aspects", dump, EventLogEntryType.Error);
+                        throw;
+                    }
                 }
-                catch (Exception x)
-                {
-                    if (_root!=null)
-                        _root.DebugDump();
 
-                    var dump = x.DumpString();
-
-                    Debug.WriteLine(dump);
-                    EventLog.WriteEntry("vm.Aspects", dump, EventLogEntryType.Error);
-                    throw;
-                }
-            }
+            return _root;
         }
 
         /// <summary>
@@ -365,21 +359,16 @@ namespace vm.Aspects
         {
             EnsuresContainerInitialized();
 
-            if (_isInitialized)
-                return _root;
+            if (_latch.Latched())
+                lock (_root)
+                {
+                    // initialize the CSL with Unity service locator
+                    if (!ServiceLocator.IsLocationProviderSet)
+                        ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
 
-            lock (_root)
-            {
-                if (_isInitialized)
-                    return _root;
+                }
 
-                // initialize the CSL with Unity service locator
-                if (!ServiceLocator.IsLocationProviderSet)
-                    ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
-
-                _isInitialized = true;
-                return _root;
-            }
+            return _root;
         }
 
         /// <summary>
@@ -390,14 +379,13 @@ namespace vm.Aspects
         public static void Reset()
         {
             Contract.Ensures(_root != null);
-            Contract.Ensures(!_isInitialized);
 
             ServiceLocator.SetLocatorProvider(null);
 
             if (_root != null)
                 _root.Dispose();
             _root = new UnityContainer();
-            _isInitialized = false;
+            _latch.Reset();
         }
 
         /// <summary>
@@ -506,6 +494,8 @@ namespace vm.Aspects
             char delimiter,
             char quot)
         {
+            Contract.Requires<ArgumentNullException>(token != null, nameof(token));
+
             if (token.Contains(delimiter))
                 return $"{quot}{token.Replace(quot.ToString(), quot.ToString()+quot)}{quot}";
 

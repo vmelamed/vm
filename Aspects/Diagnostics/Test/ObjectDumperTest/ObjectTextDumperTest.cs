@@ -1311,7 +1311,7 @@ Object12 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
   Object11Property_31      = Dumped by Objec11.DumpMe: string value
   Object11Property_4       = Dumped by Objec11.DumpMeStatic: string value
   Object11Property_41      = Dumped by Objec11.DumpMeStatic: string value
-  Object11Property_51      = *** Could not find a public instance method with name DumpMeNoneSuch and no parameters or static method with a single parameter of type vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1, with return type of System.String in the class vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1.",
+  Object11Property_51      = *** Could not find a public, static, method DumpMeNoneSuch, with return type of System.String, with a single parameter of type vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1 in the class vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1.",
                 new Object12());
         }
 

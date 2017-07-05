@@ -112,7 +112,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                 var cert = certs.Count > 0 ? certs[0] : null;
 
                 if (cert == null)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Could not find the certificate. Did you run the certificate creation scripts?");
 
                 //Contract.Assume(cert!=null);
 

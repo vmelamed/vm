@@ -7,12 +7,12 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
-    using Facilities;
-    using Microsoft.Practices.ServiceLocation;
-    using Microsoft.Practices.Unity;
     using System.Data.Entity.Infrastructure;
     using System.Reflection;
     using System.Security;
+    using Facilities;
+    using Microsoft.Practices.ServiceLocation;
+    using Microsoft.Practices.Unity;
     using Threading;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = vm.Aspects.Model.Repository.EntityState;
@@ -20,7 +20,15 @@ namespace vm.Aspects.Model.EFRepository
     public partial class EFRepositoryBase : IRepository
     {
         readonly object _initializeSync = new object();
-        volatile bool _isInitialized;
+        /// <summary>
+        /// The latch controls the initialization of the repository.
+        /// </summary>
+        Latch _latch = new Latch();
+
+        /// <summary>
+        /// Provides access to the initialization latch for the inheritors.
+        /// </summary>
+        protected Latch InitLatch => _latch;
 
         #region IRepository
         /// <summary>
@@ -29,20 +37,14 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>this</returns>
         public virtual IRepository Initialize()
         {
-            if (_isInitialized)
-                return this;
+            if (InitLatch.Latched())
+                lock (_initializeSync)
+                {
+                    SetDatabaseInitializer();
 
-            lock (_initializeSync)
-            {
-                if (_isInitialized)
-                    return this;
-
-                SetDatabaseInitializer();
-
-                // and initialize the DB
-                Database.Initialize(false);
-                _isInitialized = true;
-            }
+                    // and initialize the DB
+                    Database.Initialize(false);
+                }
 
             return this;
         }
@@ -107,11 +109,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <value>
         /// 	<see langword="true"/> if this instance is initialized; otherwise, <see langword="false"/>.
         /// </value>
-        public virtual bool IsInitialized
-        {
-            get { return _isInitialized; }
-            protected set { _isInitialized = value; }
-        }
+        public virtual bool IsInitialized => InitLatch.IsLatched;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).

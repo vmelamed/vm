@@ -24,7 +24,7 @@ namespace vm.Aspects.Facilities
         internal class FacilitiesRegistrar : ContainerRegistrar
         {
             /// <summary>
-            /// Resets the <see cref="ContainerRegistrar.AreRegistered" /> property. Use for testing only.
+            /// Resets the <see cref="ContainerRegistrar.AreRegistered" /> method. Use for testing only.
             /// </summary>
             public override void Reset(
                 IUnityContainer container = null)

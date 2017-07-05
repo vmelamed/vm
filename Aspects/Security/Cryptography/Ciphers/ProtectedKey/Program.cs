@@ -145,7 +145,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetFile(string argument)
         {
-            Contract.Requires<ArgumentException>(argument!=null  &&  argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
+            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty string or consist of whitespace characters only.");
 
             var fileInfo = new FileInfo(argument);
 
@@ -183,9 +184,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
         {
             Contract.Requires<ArgumentException>(argument!=null  &&  argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(argument.Length == 0  ||  argument.Length >= 2);
-
-            if (argument == null)
-                return null;
 
             var hexValue = new byte[argument.Length/2];
 
