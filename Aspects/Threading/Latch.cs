@@ -31,7 +31,7 @@ namespace vm.Aspects.Threading
     /// ]]>
     /// </example>
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Not appropriate here.")]
-    public struct Latch
+    public sealed class Latch
     {
         int _latch;
 

@@ -20,15 +20,12 @@ namespace vm.Aspects.Model.EFRepository
     public partial class EFRepositoryBase : IRepository
     {
         readonly object _initializeSync = new object();
-        /// <summary>
-        /// The latch controls the initialization of the repository.
-        /// </summary>
-        Latch _latch = new Latch();
 
         /// <summary>
         /// Provides access to the initialization latch for the inheritors.
+        /// The latch controls the initialization of the repository.
         /// </summary>
-        protected Latch InitLatch => _latch;
+        protected Latch InitializeLatch { get; } = new Latch();
 
         #region IRepository
         /// <summary>
@@ -37,7 +34,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>this</returns>
         public virtual IRepository Initialize()
         {
-            if (InitLatch.Latched())
+            if (InitializeLatch.Latched())
                 lock (_initializeSync)
                 {
                     SetDatabaseInitializer();
@@ -109,7 +106,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <value>
         /// 	<see langword="true"/> if this instance is initialized; otherwise, <see langword="false"/>.
         /// </value>
-        public virtual bool IsInitialized => InitLatch.IsLatched;
+        public virtual bool IsInitialized => InitializeLatch.IsLatched;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).

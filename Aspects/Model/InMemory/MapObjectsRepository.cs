@@ -21,11 +21,11 @@ namespace vm.Aspects.Model.InMemory
         /// <summary>
         /// Synchronizes multi-threaded access to the underlying objects container
         /// </summary>
-        static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        static readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         /// <summary>
         /// Set to <see langword="true"/> if the underlying global structures are initialized.
         /// </summary>
-        static Latch _latch = new Latch();
+        static readonly Latch _latch = new Latch();
         /// <summary>
         /// The objects container.
         /// </summary>

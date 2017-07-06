@@ -62,7 +62,7 @@ namespace vm.Aspects
         /// <summary>
         /// The flag indicating if the container is initialized
         /// </summary>
-        static Latch _latch = new Latch();
+        static readonly Latch _latch = new Latch();
         #endregion
 
         /// <summary>

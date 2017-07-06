@@ -258,6 +258,7 @@ namespace vm.Aspects
         /// </summary>
         /// <param name="other">The other.</param>
         /// <returns>System.Int32.</returns>
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [Pure]
         public int CompareTo(SemanticVersion other)
         {
@@ -314,6 +315,10 @@ namespace vm.Aspects
 
                 i++;
 
+                // more segments to be compared?
+                if (i <  thisPrerelease.Length  &&  i <  otherPrerelease.Length)
+                    continue;
+
                 // all segments of the prereleases were compared?
                 if (i == thisPrerelease.Length  &&  i == otherPrerelease.Length)
                     return 0;
@@ -321,7 +326,8 @@ namespace vm.Aspects
                 // there are more segments in this prerelease and all segments of the other prerelease were compared?
                 if (i <  thisPrerelease.Length  &&  i >= otherPrerelease.Length)
                     return 1;
-                else
+
+                if (i >= thisPrerelease.Length  &&  i < otherPrerelease.Length)
                     // all segments of this prerelease were compared and there are more segments in the other prerelease?
                     return -1;
             }

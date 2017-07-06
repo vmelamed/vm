@@ -58,10 +58,10 @@ namespace vm.Aspects.Validation
                     {
                         digitNumber *= 2;
 
-                        if (digitNumber <= 8)
+                        if (digitNumber < 9)
                             checkSum += digitNumber;
                         else
-                            checkSum += 1 + digitNumber % 10;
+                            checkSum += digitNumber - 9;
                     }
                     else
                         checkSum += digitNumber;

@@ -35,7 +35,11 @@ namespace vm.Aspects.Validation.Tests
         //
         #endregion
 
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", ".\\TestCreditCardNumberValidator.csv", "TestCreditCardNumberValidator#csv", DataAccessMethod.Sequential)]
+        [DataSource(
+            "Microsoft.VisualStudio.TestTools.DataSource.CSV",
+            ".\\TestCreditCardNumberValidator.csv",
+            "TestCreditCardNumberValidator#csv",
+            DataAccessMethod.Sequential)]
         [TestMethod]
         public void ValidateTest()
         {

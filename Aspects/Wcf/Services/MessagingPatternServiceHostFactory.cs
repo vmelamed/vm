@@ -1,8 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -16,12 +12,16 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
+using vm.Aspects.Threading;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.ServicePolicies;
-using vm.Aspects.Threading;
 
 namespace vm.Aspects.Wcf.Services
 {
@@ -94,12 +94,11 @@ namespace vm.Aspects.Wcf.Services
     {
         Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
         Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
-        Latch _latch = new Latch();
 
         /// <summary>
         /// Provides access to the initialize latch for the inheritors.
         /// </summary>
-        protected Latch InitLatch => _latch;
+        protected Latch InitializeLatch { get; } = new Latch();
 
         #region Properties
         /// <summary>
@@ -261,7 +260,7 @@ namespace vm.Aspects.Wcf.Services
         /// <returns>IUnityContainer.</returns>
         public virtual IUnityContainer RegisterDefaults()
         {
-            if (_latch.Latched())
+            if (InitializeLatch.Latched())
             {
 
                 // container initialization:
@@ -308,7 +307,7 @@ namespace vm.Aspects.Wcf.Services
         /// <summary>
         /// Gets or sets a value indicating whether all types and instances needed for this  this instance are registered.
         /// </summary>
-        public virtual bool AreRegistered => _latch.IsLatched;
+        public virtual bool AreRegistered => InitializeLatch.IsLatched;
 
         /// <summary>
         /// Creates a service host outside of WAS where the created service is specified by <see cref="Type"/>.

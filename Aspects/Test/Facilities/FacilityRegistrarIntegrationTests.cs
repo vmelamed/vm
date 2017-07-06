@@ -58,6 +58,8 @@ namespace vm.Aspects.Tests.Facilities
                            ;
             }
 
+            DIContainer.Root.DebugDump();
+
             Assert.IsTrue(DIContainer.Root.IsRegistered<IExceptionPolicyProvider>(ExceptionPolicyProvider.RegistrationName));
             Assert.IsTrue(DIContainer.Root.IsRegistered<LoggingConfiguration>());
             Assert.IsFalse(DIContainer.Root.IsRegistered<LoggingConfiguration>(LogConfigProvider.TestLogConfigurationResolveName));
@@ -65,8 +67,8 @@ namespace vm.Aspects.Tests.Facilities
             Assert.IsTrue(DIContainer.Root.IsRegistered<IClock>());
             Assert.IsTrue(DIContainer.Root.IsRegistered<IGuidGenerator>());
             Assert.IsTrue(DIContainer.Root.IsRegistered<ValidatorFactory>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<Lazy<LogWriter>>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<Lazy<ExceptionManager>>());
+            Assert.IsTrue(DIContainer.Root.IsRegistered<LogWriter>());
+            Assert.IsTrue(DIContainer.Root.IsRegistered<ExceptionManager>());
 
             var clock = DIContainer.Root.Resolve<IClock>();
 
@@ -76,52 +78,6 @@ namespace vm.Aspects.Tests.Facilities
             var guidGen = ServiceLocator.Current.GetInstance<IGuidGenerator>();
 
             Assert.IsTrue(guidGen is GuidGenerator);
-            Assert.AreEqual(guidGen, Facility.GuidGenerator);
-
-            var vFactory = DIContainer.Root.Resolve<ValidatorFactory>();
-
-            Assert.IsTrue(vFactory is ValidatorFactory);
-            Assert.AreEqual(vFactory, Facility.ValidatorFactory);
-
-            Assert.IsNotNull(Facility.LogWriter);
-            Assert.IsNotNull(Facility.ExceptionManager);
-
-            DIContainer.Reset();
-        }
-
-        [TestMethod]
-        public void AllTestIsRegisteredTest()
-        {
-            DIContainer.Reset();
-            Facility.Registrar.Reset();
-
-            lock (DIContainer.Initialize())
-            {
-                var registrations = DIContainer.Root.GetRegistrationsSnapshot();
-
-                DIContainer.Root
-                           .UnsafeRegister(Facility.Registrar, registrations, true)
-                           ;
-            }
-
-            Assert.IsTrue(DIContainer.Root.IsRegistered<IExceptionPolicyProvider>(ExceptionPolicyProvider.RegistrationName));
-            Assert.IsFalse(DIContainer.Root.IsRegistered<LoggingConfiguration>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<LoggingConfiguration>(LogConfigProvider.TestLogConfigurationResolveName));
-
-            Assert.IsTrue(DIContainer.Root.IsRegistered<IClock>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<IGuidGenerator>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<ValidatorFactory>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<Lazy<LogWriter>>());
-            Assert.IsTrue(DIContainer.Root.IsRegistered<Lazy<ExceptionManager>>());
-
-            var clock = DIContainer.Root.Resolve<IClock>();
-
-            Assert.IsTrue(clock is TestClock);
-            Assert.AreEqual(clock, Facility.Clock);
-
-            var guidGen = ServiceLocator.Current.GetInstance<IGuidGenerator>();
-
-            Assert.IsTrue(guidGen is TestGuidGenerator);
             Assert.AreEqual(guidGen, Facility.GuidGenerator);
 
             var vFactory = DIContainer.Root.Resolve<ValidatorFactory>();

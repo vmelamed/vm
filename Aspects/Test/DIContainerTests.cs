@@ -53,14 +53,14 @@ namespace vm.Aspects.Tests
 
             Assert.IsNotNull(DIContainer.Root);
             Assert.IsTrue(DIContainer.IsInitialized);
-            Assert.AreEqual(3, DIContainer.Root.Registrations.Count());
+            Assert.AreEqual(4, DIContainer.Root.Registrations.Count());
 
             var idSource = DIContainer.Root.Resolve<ITestTarget>();
 
             Assert.AreEqual(idSource.IdentifySource(), "from app.config");
 
             DIContainer.Initialize();
-            Assert.AreEqual(3, DIContainer.Root.Registrations.Count());
+            Assert.AreEqual(4, DIContainer.Root.Registrations.Count());
         }
 
         [TestMethod]
@@ -74,14 +74,14 @@ namespace vm.Aspects.Tests
             Assert.IsNotNull(DIContainer.Root);
             Assert.IsNotNull(ServiceLocator.Current);
             Assert.IsTrue(DIContainer.IsInitialized);
-            Assert.AreEqual(4, DIContainer.Root.Registrations.Count());
+            Assert.AreEqual(5, DIContainer.Root.Registrations.Count());
 
             var idSource = DIContainer.Root.Resolve<ITestTarget>();
 
             Assert.AreEqual(idSource.IdentifySource(), "from app.config");
 
             DIContainer.Initialize();
-            Assert.AreEqual(4, DIContainer.Root.Registrations.Count());
+            Assert.AreEqual(5, DIContainer.Root.Registrations.Count());
         }
 
 
@@ -195,7 +195,8 @@ namespace vm.Aspects.Tests
 
             TestContext.WriteLine("{0}", dump);
             Assert.AreEqual(
-@"Container has 2 Registrations:
+@"Container has 3 Registrations:
++ InjectionPolicy  'Microsoft.Practices.Unity.InterceptionExtension.AttributeDrivenPolicy, Microsoft.Practices.Unity.Interception, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f'  ContainerControlled
 + ITestTarget -> TestTargetFromTestConfigBox  '[default]'  Transient
 + IUnityContainer  '[default]'  Container
 ", dump);
