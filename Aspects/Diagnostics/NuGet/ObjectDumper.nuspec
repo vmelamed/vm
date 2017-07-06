@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.7.5</version>
+        <version>1.7.6</version>
         <authors>Val Melamed</authors>
         <owners>Val Melamed</owners>
         <summary>
@@ -36,6 +36,7 @@
             The so generated expression tree is then compiled and cached. Any subsequent calls to dump objects of the same type, retrieve the dumping code from an internal static cache and execute it.
             The performance of the subsequent calls is more than 100 times faster, usually less than one half of a millisecond.
             Updated the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
+            Fixed minor bugs with dumping the number of elements in collections.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>

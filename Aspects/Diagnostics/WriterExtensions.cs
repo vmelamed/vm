@@ -606,19 +606,23 @@ namespace vm.Aspects.Diagnostics
 
                 if (piCount != null)
                     count = (int)piCount.GetValue(sequence);
+                else
+                    count = int.MaxValue;
             }
+
+            // how many items to dump max?
+            var max = dumpAttribute.GetMaxToDump(count);
 
             writer.Write(
                 DumpFormat.SequenceTypeName,
                 sequenceType.IsArray
                         ? elementsType[0].GetTypeName()
                         : sequenceType.GetTypeName(),
-                count > 0
+                count > 0  &&
+                count < int.MaxValue
                         ? count.ToString(CultureInfo.InvariantCulture)
                         : string.Empty);
 
-            // how many items to dump max?
-            var max   = dumpAttribute.GetMaxToDump(count);
             var bytes = sequence as byte[];
 
             if (bytes != null)

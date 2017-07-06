@@ -62,6 +62,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         //static readonly MethodInfo _miDumpedSequence          = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedCollection), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(bool), typeof(Action<object>), typeof(Action), typeof(Action) }, null);
 
         static readonly ConstantExpression _zero              = Expression.Constant(0, typeof(int));
+        static readonly ConstantExpression _intMax            = Expression.Constant(int.MaxValue, typeof(int));
         static readonly ConstantExpression _null              = Expression.Constant(null);
         static readonly ConstantExpression _empty             = Expression.Constant(string.Empty);
         static readonly ConstantExpression _false             = Expression.Constant(false);
@@ -577,7 +578,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                                 Expression.Property(sequenceType, _piIsGenericType),
                                                 Expression.Call(sequenceType, _miGetGenericArguments),
                                                 Expression.NewArrayInit(typeof(Type), Expression.Constant(typeof(object)))));
-            var truncatedCount = expressionCount!=null ? (Expression)Expression.Convert(expressionCount, typeof(object)) : Expression.Constant(Properties.Resources.StringUnknown);
+            var truncatedCount = expressionCount!=null ? (Expression)Expression.Convert(expressionCount, typeof(object)) : Expression.Constant(Resources.StringUnknown);
 
             BeginScriptSegment();
 
@@ -661,7 +662,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                         Expression.Assign(sequenceType, Expression.Call(sequence, _miGetType)),
                         Expression.Assign(n, _zero),
                         Expression.Assign(isArray, Expression.Property(sequenceType, _piIsArray)),
-                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount!=null ? expressionCount : _zero)),
+                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount!=null ? expressionCount : _intMax)),
                         Expression.Assign(bytes, Expression.TypeAs(sequence, typeof(byte[]))),
 
                         //// if (!(sequenceType.IsArray || sequenceType.IsFromSystem())) WriteLine();
