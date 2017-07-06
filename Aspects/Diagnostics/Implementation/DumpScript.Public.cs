@@ -56,6 +56,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             params Expression[] expressions)
         {
             Contract.Requires<ArgumentNullException>(expressions != null, nameof(expressions));
+            Contract.Requires<InvalidOperationException>(_script != null, nameof(_script) + " cannot be null.");
             Contract.Ensures(Contract.Result<DumpScript>() != null);
 
             for (var i = 0; i<expressions.Length; i++)

@@ -127,6 +127,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             Type objectType,
             ClassDumpData classDumpData)
         {
+            Contract.Requires<ArgumentNullException>(objectType != null, nameof(objectType));
+
             _sync.EnterWriteLock();
 
             _buildingNow.Add(new ScriptLookup(objectType, classDumpData, objectTextDumper));

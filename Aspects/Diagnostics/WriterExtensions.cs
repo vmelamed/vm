@@ -218,6 +218,8 @@ namespace vm.Aspects.Diagnostics
             object value,
             DumpAttribute dumpAttribute)
         {
+            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+
             if (value == null)
             {
                 writer.Write(DumpUtilities.Null);
