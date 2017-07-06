@@ -43,9 +43,9 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         {
             try
             {
-                var w = new DumpTextWriter();
+                using (var w = new DumpTextWriter())
+                    w.Write(new char[] { 'a', 'b', 'c' }, -1, -2);
 
-                w.Write(new char[] { 'a', 'b', 'c' }, -1, -2);
                 Assert.Fail("Expected System.Diagnostics.Contracts.__ContractsRuntime+ContractException");
             }
             catch (AssertFailedException x)
