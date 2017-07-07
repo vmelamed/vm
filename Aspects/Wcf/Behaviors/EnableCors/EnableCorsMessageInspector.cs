@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -19,17 +20,41 @@ namespace vm.Aspects.Wcf.Behaviors
     internal class EnableCorsMessageInspector : IDispatchMessageInspector
     {
         readonly IList<string> _corsEnabledOperationsNames;
+        readonly IList<string> _allowedOrigins;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnableCorsMessageInspector"/> class.
+        /// Initializes a new instance of the <see cref="EnableCorsMessageInspector" /> class.
         /// </summary>
         /// <param name="list">The list of operations to be inspected.</param>
+        /// <param name="allowedOrigins">Explicit list of allowed origins. If the array is empty, all origins are allowed.</param>
         public EnableCorsMessageInspector(
-            List<OperationDescription> list)
+            IEnumerable<OperationDescription> list,
+            params string[] allowedOrigins)
+        {
+            Contract.Requires<ArgumentNullException>(list           != null, nameof(list));
+            Contract.Requires<ArgumentNullException>(allowedOrigins != null, nameof(allowedOrigins));
+
+            _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
+            _allowedOrigins             = allowedOrigins;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnableCorsMessageInspector" /> class.
+        /// </summary>
+        /// <param name="list">The list of operations to be inspected.</param>
+        /// <param name="allowedOrigins">Explicit list of comma, semicolon or space separated allowed origins. If the string is <see langword="null"/> or empty, all origins are allowed.</param>
+        public EnableCorsMessageInspector(
+            IEnumerable<OperationDescription> list,
+            string allowedOrigins)
         {
             Contract.Requires<ArgumentNullException>(list != null, nameof(list));
 
             _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
+
+            if (allowedOrigins.IsNullOrWhiteSpace())
+                _allowedOrigins = new string[0];
+            else
+                _allowedOrigins = allowedOrigins.Split(new char[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -48,29 +73,37 @@ namespace vm.Aspects.Wcf.Behaviors
             IClientChannel channel,
             InstanceContext instanceContext)
         {
-            var httpProp = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+            var httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+            var origin = httpRequest?.Headers[Constants.Origin];
 
-            if (httpProp == null)
+            if (origin == null)
                 return null;
 
-            object operationName;
+            var operationName = (string)request.Properties[WebHttpDispatchOperationSelector.HttpOperationNamePropertyName];
 
-            request.Properties.TryGetValue(WebHttpDispatchOperationSelector.HttpOperationNamePropertyName, out operationName);
+            if (operationName == null)
+                return null;
 
-            if (operationName != null &&
-                _corsEnabledOperationsNames.Contains((string)operationName))
-                return httpProp.Headers[Constants.Origin];
+            if (!_corsEnabledOperationsNames.Contains(operationName, StringComparer.OrdinalIgnoreCase))
+            {
+                Facility.LogWriter.AlertError($"Failing CORS because the request operation {operationName} is not allowed.");
+                return null;
+            }
 
-            return null;
+            if (_allowedOrigins.Any()  &&  !_allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            {
+                Facility.LogWriter.AlertError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
+                return null;
+            }
+
+            return origin;
         }
 
         /// <summary>
         /// Called after the operation has returned but before the reply message is sent.
         /// </summary>
         /// <param name="reply">The reply message. This value is null if the operation is one way.</param>
-        /// <param name="correlationState">
-        /// The correlation object returned from the <see cref="IDispatchMessageInspector.AfterReceiveRequest"/> method.
-        /// </param>
+        /// <param name="correlationState">The correlation object returned from the <see cref="IDispatchMessageInspector.AfterReceiveRequest"/> method.</param>
         public void BeforeSendReply(
             ref Message reply,
             object correlationState)
@@ -80,22 +113,19 @@ namespace vm.Aspects.Wcf.Behaviors
             if (origin == null)
                 return;
 
-            HttpResponseMessageProperty httpProp = null;
+            var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
 
-            if (reply.Properties.ContainsKey(HttpResponseMessageProperty.Name))
-                httpProp = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
-            else
+            if (httpResponse == null)
             {
-                httpProp = new HttpResponseMessageProperty();
-                reply.Properties.Add(HttpResponseMessageProperty.Name, httpProp);
+                httpResponse = new HttpResponseMessageProperty();
+                reply.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
             }
 
-            var origins = httpProp.Headers.Get(Constants.AccessControlAllowOrigin);
+            var origins = httpResponse.Headers[Constants.AccessControlAllowOrigin];
 
-            if (origins == null  ||
-                !origins.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Contains(origin, StringComparer.OrdinalIgnoreCase))
-                httpProp.Headers.Add(Constants.AccessControlAllowOrigin, origin);
+            if (origins == null  ||  !origins.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                                             .Contains(origin, StringComparer.OrdinalIgnoreCase))
+                httpResponse.Headers.Add(Constants.AccessControlAllowOrigin, origin);
         }
     }
 }

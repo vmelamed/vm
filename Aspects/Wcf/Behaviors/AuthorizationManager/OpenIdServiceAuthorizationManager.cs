@@ -30,11 +30,11 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         }
 
         /// <summary>
-        /// Checks authorization for the given operation context.
+        /// Checks authorization for the given operation context based on default policy evaluation.
         /// </summary>
-        /// <param name="operationContext">The <see cref="OperationContext" />.</param>
-        /// <returns>true if access is granted; otherwise; otherwise false. The default is true.</returns>
-        public override bool CheckAccess(
+        /// <param name="operationContext">The <see cref="OperationContext" /> for the current authorization request.</param>
+        /// <returns>true if access is granted; otherwise, false. The default is true.</returns>
+        protected override bool CheckAccessCore(
             OperationContext operationContext)
             => Facility.ExceptionManager.Process(
                 () =>

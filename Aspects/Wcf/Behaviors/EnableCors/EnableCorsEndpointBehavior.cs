@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -15,6 +16,20 @@ namespace vm.Aspects.Wcf.Behaviors
     /// </remarks>
     public class EnableCorsEndpointBehavior : IEndpointBehavior
     {
+        readonly string[] _allowedOrigins;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnableCorsEndpointBehavior"/> class.
+        /// </summary>
+        /// <param name="allowedOrigins">The explicitly allowed origins. If empty - all origins are allowed.</param>
+        public EnableCorsEndpointBehavior(
+            params string[] allowedOrigins)
+        {
+            Contract.Requires<ArgumentNullException>(allowedOrigins != null, nameof(allowedOrigins));
+
+            _allowedOrigins = allowedOrigins;
+        }
+
         /// <summary>
         /// Adds the binding parameters.
         /// </summary>
@@ -46,27 +61,10 @@ namespace vm.Aspects.Wcf.Behaviors
             ServiceEndpoint endpoint,
             EndpointDispatcher endpointDispatcher)
         {
-            var operations = endpoint
-                                .Contract
-                                .Operations
-                                .ToList()
-                                ;
-
-            if (!endpoint
-                    .Contract
-                    .ContractBehaviors
-                    .Any(cb => cb is EnableCorsAttribute))
-                operations = operations
-                                .Where(od => od.OperationBehaviors
-                                               .Any(ob => ob is EnableCorsAttribute))
-                                .ToList()
-                                ;
-
-            if (operations.Any())
-                endpointDispatcher
-                    .DispatchRuntime
-                    .MessageInspectors
-                    .Add(new EnableCorsMessageInspector(operations));
+            endpointDispatcher
+                .DispatchRuntime
+                .MessageInspectors
+                .Add(new EnableCorsMessageInspector(endpoint.Contract.Operations, _allowedOrigins));
         }
 
         /// <summary>

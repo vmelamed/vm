@@ -6,10 +6,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using System.Text.RegularExpressions;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
@@ -421,148 +419,9 @@ namespace vm.Aspects.Wcf.Services
             foreach (var endpoint in host.Description
                                          .Endpoints
                                          .Where(ep => ep.Binding is WebHttpBinding))
-            {
-                var operations = endpoint
-                                    .Contract
-                                    .Operations
-                                    .ToList();
-
-                if (!endpoint
-                        .Contract
-                        .ContractBehaviors
-                        .Any(cb => cb is EnableCorsAttribute))
-                    operations = operations
-                                    .Where(od => od.OperationBehaviors
-                                                   .Any(ob => ob is EnableCorsAttribute))
-                                    .ToList();
-
-                if (!operations.Any())
-                    continue;
-
-                AddPreflightOperationSelectors(operations);
-
-                endpoint.Behaviors.Add(new EnableCorsEndpointBehavior());
-            }
+                EnableCorsAttribute.AddPreflightOperationSelectors(endpoint);
 
             return host;
-        }
-
-        static void AddPreflightOperationSelectors(
-            List<OperationDescription> operations)
-        {
-            Contract.Requires<ArgumentNullException>(operations != null, nameof(operations));
-
-            if (!operations.Any())
-                return;
-
-            var uriTemplates = new Dictionary<string, PreflightOperationBehavior>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var operation in operations)
-            {
-                if (operation.IsOneWay)
-                    // no support for 1-way messages
-                    continue;
-
-                string originalUriTemplate;
-                string originalMethod;
-
-                var webInvoke = operation.Behaviors.Find<WebInvokeAttribute>();
-
-                if (webInvoke != null)
-                {
-                    if (webInvoke.Method == "OPTIONS")
-                        continue;
-                    originalMethod = webInvoke.Method != null ? webInvoke.Method : "POST";
-                    originalUriTemplate = webInvoke.UriTemplate != null
-                                            ? NormalizeTemplate(webInvoke.UriTemplate)
-                                            : operation.Name;
-                }
-                else
-                {
-                    var webGet = operation.Behaviors.Find<WebGetAttribute>();
-
-                    if (webGet != null)
-                    {
-                        originalMethod = "GET";
-                        originalUriTemplate = webGet.UriTemplate != null
-                                                    ? NormalizeTemplate(webGet.UriTemplate)
-                                                    : operation.Name;
-                    }
-                    else
-                        continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(originalUriTemplate))
-                    originalUriTemplate = "/";
-
-                PreflightOperationBehavior preflightOperationBehavior;
-
-                if (uriTemplates.TryGetValue(originalUriTemplate, out preflightOperationBehavior))
-                {
-                    // there is already an OPTIONS operation for this URI, we can reuse it, just add the method
-                    preflightOperationBehavior.AddAllowedMethod(originalMethod);
-                    continue;
-                }
-
-                var contract = operation.DeclaringContract;
-
-                var inputMessage = new MessageDescription(operation.Messages[0].Action + Constants.PreflightSuffix, MessageDirection.Input);
-
-                inputMessage
-                    .Body
-                    .Parts
-                    .Add(
-                        new MessagePartDescription("input", contract.Namespace)
-                        {
-                            Index = 0,
-                            Type = typeof(Message),
-                        });
-
-                var outputMessage = new MessageDescription(operation.Messages[1].Action + Constants.PreflightSuffix, MessageDirection.Output);
-
-                outputMessage
-                    .Body
-                    .ReturnValue = new MessagePartDescription(operation.Name + Constants.PreflightSuffix + "Return", contract.Namespace)
-                    {
-                        Type = typeof(Message),
-                    };
-
-                var preflightOperation = new OperationDescription(operation.Name + Constants.PreflightSuffix, contract);
-
-                preflightOperation.Messages.Add(inputMessage);
-                preflightOperation.Messages.Add(outputMessage);
-
-                preflightOperationBehavior = new PreflightOperationBehavior();
-
-                preflightOperationBehavior.AddAllowedMethod(originalMethod);
-
-                preflightOperation.Behaviors.Add(new WebInvokeAttribute
-                {
-                    Method      = "OPTIONS",
-                    UriTemplate = originalUriTemplate,
-                });
-                preflightOperation.Behaviors.Add(new DataContractSerializerOperationBehavior(preflightOperation));
-                preflightOperation.Behaviors.Add(preflightOperationBehavior);
-
-                contract.Operations.Add(preflightOperation);
-
-                uriTemplates.Add(originalUriTemplate, preflightOperationBehavior);
-            }
-        }
-
-        static Regex _rexNamedParams = new Regex(@"{[^}]+}(?:/{[^}]+})*", RegexOptions.Compiled);
-
-        static string NormalizeTemplate(string uriTemplate)
-        {
-            Contract.Requires<ArgumentNullException>(uriTemplate != null, nameof(uriTemplate));
-
-            int queryIndex = uriTemplate.IndexOf('?');
-
-            if (queryIndex >= 0)
-                // no query string used for this
-                uriTemplate = uriTemplate.Substring(0, queryIndex);
-
-            return _rexNamedParams.Replace(uriTemplate, "*");
         }
     }
 }

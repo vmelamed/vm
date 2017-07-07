@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Security.Claims;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -14,7 +13,9 @@ namespace vm.Aspects.Wcf
     /// <remarks>Original author: Yehuda Graber</remarks>
     public static class OperationContextExtensions
     {
-        const string Principal = "Principal";
+        const string AuthorizationHeader = "Authorization";
+        const string BearerPrefix        = "Bearer ";
+        const string Principal           = "Principal";
 
         /// <summary>
         /// Get the authorization token as JWT from HTTP request.
@@ -24,25 +25,15 @@ namespace vm.Aspects.Wcf
         public static string GetAuthorizationToken(
             this OperationContext operationContext)
         {
-            Contract.Requires<ArgumentNullException>(operationContext?.RequestContext?.RequestMessage?.Properties != null, nameof(operationContext));
+            Contract.Requires<ArgumentNullException>(operationContext != null, nameof(operationContext));
 
-            object httpRequestMessageObject;
-            string jwt = null;
+            var httpRequestMessageObject = (HttpRequestMessageProperty)operationContext.RequestContext?.RequestMessage?.Properties[HttpRequestMessageProperty.Name];
+            var authorizationHeader = httpRequestMessageObject?.Headers[AuthorizationHeader];
 
-            if (operationContext
-                    .RequestContext
-                    .RequestMessage
-                    .Properties
-                    .TryGetValue(HttpRequestMessageProperty.Name, out httpRequestMessageObject))
-            {
-                var authorizationHeader = (httpRequestMessageObject as HttpRequestMessageProperty)?.Headers["Authorization"];
+            if (authorizationHeader?.StartsWith(BearerPrefix, StringComparison.OrdinalIgnoreCase) == true)
+                return authorizationHeader.Substring(BearerPrefix.Length);
 
-                if (!authorizationHeader.IsNullOrWhiteSpace()  &&
-                    authorizationHeader.StartsWith("Bearer ", StringComparison.Ordinal))
-                    jwt = authorizationHeader.Split(' ').ElementAtOrDefault(1);
-            }
-
-            return jwt;
+            return null;
         }
 
         /// <summary>
@@ -57,14 +48,7 @@ namespace vm.Aspects.Wcf
             Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
             Contract.Requires<ArgumentNullException>(claims != null, nameof(claims));
 
-            operationContext
-                .ServiceSecurityContext
-                .AuthorizationContext
-                .Properties[Principal] = new ClaimsPrincipal(
-                                                new ClaimsIdentity[]
-                                                {
-                                                    new ClaimsIdentity(claims)
-                                                });
+            operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = new ClaimsPrincipal(new ClaimsIdentity[] { new ClaimsIdentity(claims) });
         }
     }
 }

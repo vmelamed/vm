@@ -15,6 +15,16 @@ namespace vm.Aspects.Wcf.Behaviors
             _allowedMethods.Add(httpMethod);
         }
 
+        internal string AllowedMethods => string.Join(", ", _allowedMethods);
+
+        // IOperationBehavior:
+        public void ApplyDispatchBehavior(
+            OperationDescription operationDescription,
+            DispatchOperation dispatchOperation)
+        {
+            dispatchOperation.Invoker = new PreflightOperationInvoker(operationDescription.Messages[1].Action, _allowedMethods);
+        }
+
         public void AddBindingParameters(
             OperationDescription operationDescription,
             BindingParameterCollection bindingParameters)
@@ -27,17 +37,8 @@ namespace vm.Aspects.Wcf.Behaviors
         {
         }
 
-        public void ApplyDispatchBehavior(
-            OperationDescription operationDescription,
-            DispatchOperation dispatchOperation)
-        {
-            dispatchOperation.Invoker = new PreflightOperationInvoker(operationDescription.Messages[1].Action, _allowedMethods);
-        }
-
         public void Validate(OperationDescription operationDescription)
         {
         }
-
-        internal string AllowedMethods => string.Join(", ", _allowedMethods);
     }
 }
