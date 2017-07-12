@@ -97,7 +97,7 @@ namespace vm.Aspects.Wcf.Behaviors
             return null;
         }
 
-        string[] GetAllowedOrigins(
+        static string[] GetAllowedOrigins(
             string origins)
         {
             if (origins.IsNullOrWhiteSpace())
