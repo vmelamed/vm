@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -13,15 +14,18 @@ namespace vm.Aspects.Wcf.Behaviors
     {
         readonly string _replyAction;
         readonly List<string> _allowedHttpMethods;
+        readonly string[] _allowedOrigins;
 
         public PreflightOperationInvoker(
             string replyAction,
-            IEnumerable<string> allowedHttpMethods)
+            IEnumerable<string> allowedHttpMethods,
+            string[] allowedOrigins = null)
         {
             Contract.Requires<ArgumentNullException>(allowedHttpMethods != null, nameof(allowedHttpMethods));
 
             _replyAction        = replyAction;
             _allowedHttpMethods = allowedHttpMethods.ToList();
+            _allowedOrigins     = allowedOrigins;
         }
 
         public object[] AllocateInputs() => new object[1];
@@ -48,6 +52,21 @@ namespace vm.Aspects.Wcf.Behaviors
                 SuppressEntityBody = true,
                 StatusCode         = HttpStatusCode.OK,
             };
+
+            // is it allowed origin
+            if (_allowedOrigins!=null  &&  _allowedOrigins.Any()  &&  !_allowedOrigins.Contains(origin))
+            {
+                // build the appropriate negative HTTP response
+                httpResponse.StatusCode = HttpStatusCode.NotAcceptable;
+
+                // build the reply message
+                var replyNo = Message.CreateMessage(MessageVersion.None, _replyAction);
+
+                replyNo.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
+                Facility.LogWriter.LogError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
+
+                return replyNo;
+            }
 
             if (origin != null)
             {

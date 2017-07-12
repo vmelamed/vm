@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
@@ -8,9 +9,11 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
+#pragma warning disable 3015
     /// <summary>
     /// Enable CORS for endpoints with <see cref="WebHttpBinding"/>.
     /// </summary>
@@ -26,55 +29,76 @@ namespace vm.Aspects.Wcf.Behaviors
         Inherited = false)]
     public sealed class EnableCorsAttribute : Attribute, IContractBehavior
     {
+        readonly string[] _allowedOriginsResolveNames;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnableCorsAttribute"/> class.
+        /// </summary>
+        public EnableCorsAttribute()
+        {
+            _allowedOriginsResolveNames = null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnableCorsAttribute"/> class.
+        /// </summary>
+        /// <param name="allowedOriginsResolveNames">The allowed origins resolve names.</param>
+        public EnableCorsAttribute(
+            params string[] allowedOriginsResolveNames)
+        {
+            Contract.Requires<ArgumentNullException>(allowedOriginsResolveNames != null, nameof(allowedOriginsResolveNames));
+
+            _allowedOriginsResolveNames = allowedOriginsResolveNames;
+        }
+
+        /// <summary>
+        /// Gets the resolved allowed origins.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string[] AllowedOriginsResolveNames => _allowedOriginsResolveNames;
+
+        /// <summary/>
         #region IContractBehavior
-        /// <remarks/>
-        public void AddBindingParameters(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            BindingParameterCollection bindingParameters)
+        public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
         }
 
-        /// <remarks/>
-        public void ApplyClientBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            ClientRuntime clientRuntime)
+        /// <summary/>
+        public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
         {
         }
 
-        /// <remarks/>
-        public void ApplyDispatchBehavior(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint,
-            DispatchRuntime dispatchRuntime)
+        /// <summary/>
+        public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            //if (endpoint.Binding is WebHttpBinding)
-            //    AddPreflightOperationSelectors(endpoint);
         }
 
-        /// <remarks/>
-        public void Validate(
-            ContractDescription contractDescription,
-            ServiceEndpoint endpoint)
+        /// <summary/>
+        public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
         {
         }
         #endregion
 
-        internal static void AddPreflightOperationSelectors(
+        internal void AddPreflightOperationSelectors(
             ServiceEndpoint endpoint)
         {
             Contract.Requires<ArgumentNullException>(endpoint != null, nameof(endpoint));
 
             var uriTemplates = new SortedDictionary<string, PreflightOperationBehavior>();
+            string[] allowedOrigins = null;
+
+            if (_allowedOriginsResolveNames?.Any() == true)
+                allowedOrigins = _allowedOriginsResolveNames.Select(n => ServiceLocator.Current.GetInstance<string>(n)).ToArray();
 
             foreach (var operation in endpoint.Contract.Operations.ToList())
-                AddPreflightOperationSelector(operation, uriTemplates);
-            endpoint.Behaviors.Add(new EnableCorsEndpointBehavior());
+                AddPreflightOperationSelector(operation, allowedOrigins, uriTemplates);
+
+            endpoint.Behaviors.Add(new EnableCorsEndpointBehavior(allowedOrigins));
         }
 
-        internal static void AddPreflightOperationSelector(
+        static void AddPreflightOperationSelector(
             OperationDescription operation,
+            string[] allowedOrigins = null,
             IDictionary<string, PreflightOperationBehavior> uriTemplates = null)
         {
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
@@ -143,7 +167,7 @@ namespace vm.Aspects.Wcf.Behaviors
                     Type = typeof(Message),
                 };
 
-            preflightOperationBehavior = new PreflightOperationBehavior();
+            preflightOperationBehavior = new PreflightOperationBehavior(allowedOrigins);
 
             preflightOperationBehavior.AddAllowedMethod(originalMethod);
 
@@ -180,4 +204,5 @@ namespace vm.Aspects.Wcf.Behaviors
             return _rexNamedParams.Replace(uriTemplate, "*");
         }
     }
+#pragma warning restore 3015
 }

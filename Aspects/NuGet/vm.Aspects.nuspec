@@ -23,6 +23,9 @@
             <dependency id="System.Diagnostics.Tracing"
                         version="4.3.0" />
 
+            <dependency id="System.Identity.Tokens"
+                        version="5.1.4" />
+
             <dependency id="CommonServiceLocator"
                         version="1.3" />
 

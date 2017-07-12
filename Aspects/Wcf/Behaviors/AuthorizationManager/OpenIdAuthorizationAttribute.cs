@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -8,6 +11,7 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {
+#pragma warning disable CS3015 // Type has no accessible constructors which use only CLS-compliant types
     /// <summary>
     /// The marked class, interface or method with this attribute will be injected with WCF <see cref="ServiceAuthorizationManager"/> based on the Open ID Connect protocol.
     /// </summary>
@@ -20,18 +24,20 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
     public sealed class OpenIdAuthorizationAttribute : Attribute, IServiceBehavior
     {
         /// <summary>
-        /// Gets the DI resolve name of the token validation parameters.
+        /// Gets the DI resolve names of the token validation parameters that should be tried to validate the JWT token.
         /// </summary>
-        public string TokenValidationParametersResolveName { get; }
+        public ICollection<string> TokenValidationParametersResolveNames { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdAuthorizationAttribute"/> class.
         /// </summary>
-        /// <param name="tokenValidationParametersResolveName">The DI resolve name of the token validation parameters. Can be null or empty.</param>
+        /// <param name="tokenValidationParametersResolveNames">The DI resolve names of the token validation parameters. Cannot be null or empty but can contain at most one null or empty resolve name.</param>
         public OpenIdAuthorizationAttribute(
-            string tokenValidationParametersResolveName)
+            params string[] tokenValidationParametersResolveNames)
         {
-            TokenValidationParametersResolveName = tokenValidationParametersResolveName;
+            Contract.Requires<ArgumentNullException>(tokenValidationParametersResolveNames != null, nameof(tokenValidationParametersResolveNames));
+
+            TokenValidationParametersResolveNames = tokenValidationParametersResolveNames.ToList();
         }
 
         /// <summary>
@@ -58,22 +64,15 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            ServiceAuthorizationManager manager = null;
-
-            try
-            {
-                manager = ServiceLocator.Current.GetInstance<ServiceAuthorizationManager>(TokenValidationParametersResolveName);
-            }
-            catch (ActivationException) { }
-
-            if (manager == null)
-            {
-                manager = new OpenIdServiceAuthorizationManager(ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(TokenValidationParametersResolveName));
-
-                DIContainer.Root.RegisterInstanceIfNot(TokenValidationParametersResolveName, manager);
-            }
+            var manager = new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
 
             serviceHostBase.Authorization.ServiceAuthorizationManager = manager;
+        }
+
+        IEnumerable<Lazy<TokenValidationParameters>> GetTokenValidationParameters()
+        {
+            foreach (var tokenValidationParametersResolveName in TokenValidationParametersResolveNames)
+                yield return ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
         }
 
         /// <summary>
@@ -87,4 +86,5 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         {
         }
     }
+#pragma warning restore CS3015
 }

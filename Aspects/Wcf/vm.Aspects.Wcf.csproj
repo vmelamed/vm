@@ -285,6 +285,7 @@
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
     <Compile Include="AsyncCallContext.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\AllowOpenIdUnauthenticatedAttribute.cs" />
     <Compile Include="Behaviors\AuthorizationManager\OpenIdAuthorizationAttribute.cs" />
     <Compile Include="Behaviors\AuthorizationManager\OpenIdServiceAuthorizationManager.cs" />
     <Compile Include="Behaviors\EnableCors\EnableCorsAttribute.cs" />

@@ -418,9 +418,13 @@ namespace vm.Aspects.Wcf.Services
             // must have endpoint with WebHttpBinding and either the whole contract or any of the operations have EnableCorsAttribute
             foreach (var endpoint in host.Description
                                          .Endpoints
-                                         .Where(ep => ep.Binding is WebHttpBinding  &&
-                                                      ep.Contract.ContractBehaviors.Any(cb => cb is EnableCorsAttribute)))
-                EnableCorsAttribute.AddPreflightOperationSelectors(endpoint);
+                                         .Where(ep => ep.Binding is WebHttpBinding))
+            {
+                var enableCorsAttribute = (EnableCorsAttribute)endpoint.Contract.ContractBehaviors.FirstOrDefault(cb => cb is EnableCorsAttribute);
+
+                if (enableCorsAttribute != null)
+                    enableCorsAttribute.AddPreflightOperationSelectors(endpoint);
+            }
 
             return host;
         }

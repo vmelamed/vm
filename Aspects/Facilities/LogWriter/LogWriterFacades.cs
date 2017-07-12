@@ -1,10 +1,10 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities
 {
@@ -262,7 +262,7 @@ namespace vm.Aspects.Facilities
         #region Sending messages to the general log
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer's event listeners 
-        /// from the General category (usually associated with the windows event log).
+        /// from the General category.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="severity">The severity.</param>
@@ -286,7 +286,7 @@ namespace vm.Aspects.Facilities
 
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer's event listeners 
-        /// from the General category (usually associated with the windows event log) with severity Information.
+        /// from the General category with severity Information.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="format">The format.</param>
@@ -308,7 +308,7 @@ namespace vm.Aspects.Facilities
 
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer's event listeners 
-        /// from the General category (usually associated with the windows event log) with severity Warning.
+        /// from the General category with severity Warning.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="format">The format.</param>
@@ -330,7 +330,7 @@ namespace vm.Aspects.Facilities
 
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer's event listeners 
-        /// from the General category (usually associated with the windows event log) with severity Error.
+        /// from the General category with severity Error.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="format">The format.</param>
@@ -352,7 +352,7 @@ namespace vm.Aspects.Facilities
 
         /// <summary>
         /// Constructs a log entry and writes it to the specified log writer's event listeners 
-        /// from the General category (usually associated with the windows event log) with severity Critical.
+        /// from the General category with severity Critical.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="format">The format.</param>

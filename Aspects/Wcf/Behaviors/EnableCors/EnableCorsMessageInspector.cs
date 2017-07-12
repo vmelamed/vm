@@ -20,7 +20,7 @@ namespace vm.Aspects.Wcf.Behaviors
     internal class EnableCorsMessageInspector : IDispatchMessageInspector
     {
         readonly IList<string> _corsEnabledOperationsNames;
-        readonly IList<string> _allowedOrigins;
+        readonly string[] _allowedOrigins;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EnableCorsMessageInspector" /> class.
@@ -31,11 +31,10 @@ namespace vm.Aspects.Wcf.Behaviors
             IEnumerable<OperationDescription> list,
             params string[] allowedOrigins)
         {
-            Contract.Requires<ArgumentNullException>(list           != null, nameof(list));
-            Contract.Requires<ArgumentNullException>(allowedOrigins != null, nameof(allowedOrigins));
+            Contract.Requires<ArgumentNullException>(list != null, nameof(list));
 
             _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
-            _allowedOrigins             = allowedOrigins;
+            _allowedOrigins             = allowedOrigins?.Any() == true ? allowedOrigins : null;
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace vm.Aspects.Wcf.Behaviors
             _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
 
             if (allowedOrigins.IsNullOrWhiteSpace())
-                _allowedOrigins = new string[0];
+                _allowedOrigins = null;
             else
                 _allowedOrigins = allowedOrigins.Split(new char[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
@@ -86,13 +85,13 @@ namespace vm.Aspects.Wcf.Behaviors
 
             if (!_corsEnabledOperationsNames.Contains(operationName, StringComparer.OrdinalIgnoreCase))
             {
-                Facility.LogWriter.AlertError($"Failing CORS because the request operation {operationName} is not allowed.");
+                Facility.LogWriter.LogError($"Failing CORS because the request operation {operationName} is not allowed.");
                 return null;
             }
 
-            if (_allowedOrigins.Any()  &&  !_allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            if (_allowedOrigins!=null  &&  _allowedOrigins.Any()  &&  !_allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
             {
-                Facility.LogWriter.AlertError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
+                Facility.LogWriter.LogError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
                 return null;
             }
 

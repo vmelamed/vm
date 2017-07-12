@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -48,7 +49,22 @@ namespace vm.Aspects.Wcf
             Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
             Contract.Requires<ArgumentNullException>(claims != null, nameof(claims));
 
-            operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = new ClaimsPrincipal(new ClaimsIdentity[] { new ClaimsIdentity(claims) });
+            operationContext.SetPrincipal(new ClaimsPrincipal(new ClaimsIdentity[] { new ClaimsIdentity(claims) }));
+        }
+
+        /// <summary>
+        /// Set <see cref="IPrincipal"/> object in <see cref="OperationContext"/>'s <see cref="AuthorizationContext"/> properties.
+        /// </summary>
+        /// <param name="operationContext">The current operation context.</param>
+        /// <param name="principal">The principal to be set in the current operation context</param>
+        public static void SetPrincipal(
+            this OperationContext operationContext,
+            IPrincipal principal)
+        {
+            Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
+            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
+
+            operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = principal;
         }
     }
 }

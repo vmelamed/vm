@@ -20,6 +20,7 @@ using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 using vm.Aspects.Threading;
+using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.ServicePolicies;
 
@@ -258,6 +259,8 @@ namespace vm.Aspects.Wcf.Services
         /// as well as all the facilities needed for the normal work of the services from this framework.
         /// </summary>
         /// <returns>IUnityContainer.</returns>
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Normal for registrar")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will do it for lifetime managers.")]
         public virtual IUnityContainer RegisterDefaults()
         {
             if (InitializeLatch.Latched())
@@ -283,6 +286,7 @@ namespace vm.Aspects.Wcf.Services
                             .UnsafeRegister(ServiceFaultFromExceptionHandlingPolicies.Registrar, registrations)
                             .UnsafeRegister(ServiceExceptionHandlingPolicies.Registrar, registrations)
                             .UnsafeRegister(BindingConfigurator.Registrar, registrations)
+                            .RegisterTypeIfNot<IWcfContextUtilities, WcfContextUtilities>(registrations, new ContainerControlledLifetimeManager())
                             ;
 
                     // register the defaults of the inheriting classes
