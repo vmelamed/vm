@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -25,8 +23,6 @@ namespace vm.Aspects.Wcf.Behaviors
         public EnableCorsEndpointBehavior(
             params string[] allowedOrigins)
         {
-            Contract.Requires<ArgumentNullException>(allowedOrigins != null, nameof(allowedOrigins));
-
             _allowedOrigins = allowedOrigins;
         }
 

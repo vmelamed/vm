@@ -29,33 +29,23 @@ namespace vm.Aspects.Wcf.Behaviors
         Inherited = false)]
     public sealed class EnableCorsAttribute : Attribute, IContractBehavior
     {
-        readonly string[] _allowedOriginsResolveNames;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnableCorsAttribute"/> class.
-        /// </summary>
-        public EnableCorsAttribute()
-        {
-            _allowedOriginsResolveNames = null;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EnableCorsAttribute"/> class.
-        /// </summary>
-        /// <param name="allowedOriginsResolveNames">The allowed origins resolve names.</param>
-        public EnableCorsAttribute(
-            params string[] allowedOriginsResolveNames)
-        {
-            Contract.Requires<ArgumentNullException>(allowedOriginsResolveNames != null, nameof(allowedOriginsResolveNames));
-
-            _allowedOriginsResolveNames = allowedOriginsResolveNames;
-        }
-
-        /// <summary>
-        /// Gets the resolved allowed origins.
+        /// Gets or sets a string consisting of URL-s of the allowed origins, separated by commas, semicolons or new lines.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] AllowedOriginsResolveNames => _allowedOriginsResolveNames;
+        public string AllowedOrigins { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of an "app-setting" in the config file that is assigned a string consisting of URL-s of the allowed origins, separated by commas, semicolons or new lines.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string AllowedOriginsAppSetting { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DI container resolve name of a string consisting of URL-s of the allowed origins, separated by commas, semicolons or new lines.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string AllowedOriginsResolveName { get; set; }
 
         /// <summary/>
         #region IContractBehavior
@@ -85,15 +75,35 @@ namespace vm.Aspects.Wcf.Behaviors
             Contract.Requires<ArgumentNullException>(endpoint != null, nameof(endpoint));
 
             var uriTemplates = new SortedDictionary<string, PreflightOperationBehavior>();
-            string[] allowedOrigins = null;
-
-            if (_allowedOriginsResolveNames?.Any() == true)
-                allowedOrigins = _allowedOriginsResolveNames.Select(n => ServiceLocator.Current.GetInstance<string>(n)).ToArray();
+            string[] allowedOrigins = GetAllowedOrigins();
 
             foreach (var operation in endpoint.Contract.Operations.ToList())
                 AddPreflightOperationSelector(operation, allowedOrigins, uriTemplates);
 
             endpoint.Behaviors.Add(new EnableCorsEndpointBehavior(allowedOrigins));
+        }
+
+        string[] GetAllowedOrigins()
+        {
+            if (!AllowedOrigins.IsNullOrWhiteSpace())
+                return GetAllowedOrigins(AllowedOrigins);
+
+            if (!AllowedOriginsAppSetting.IsNullOrWhiteSpace())
+                return GetAllowedOrigins(AllowedOriginsAppSetting);
+
+            if (!AllowedOriginsResolveName.IsNullOrWhiteSpace())
+                return GetAllowedOrigins(ServiceLocator.Current.GetInstance<string>(AllowedOriginsResolveName));
+
+            return null;
+        }
+
+        string[] GetAllowedOrigins(
+            string origins)
+        {
+            if (origins.IsNullOrWhiteSpace())
+                return null;
+
+            return origins.Split(new char[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         static void AddPreflightOperationSelector(
