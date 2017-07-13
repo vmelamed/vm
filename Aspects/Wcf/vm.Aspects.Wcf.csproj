@@ -302,6 +302,7 @@
     <Compile Include="Bindings\FireAndForgetConfigurator.cs" />
     <Compile Include="Bindings\FireAndForgetNoSecurityConfigurator.cs" />
     <Compile Include="Bindings\MessagingPatternAttribute.cs" />
+    <Compile Include="Bindings\RequestResponseBasicAuthenticationConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseMessageClientCertificateAuthenticationConfigurator.cs" />
     <Compile Include="Bindings\RequestResponseMessageClientWindowsAuthenticationConfigurator.cs" />
