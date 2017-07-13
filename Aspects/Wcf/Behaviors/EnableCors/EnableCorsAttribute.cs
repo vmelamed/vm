@@ -103,7 +103,12 @@ namespace vm.Aspects.Wcf.Behaviors
             if (origins.IsNullOrWhiteSpace())
                 return null;
 
-            return origins.Split(new char[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var allowed = origins.Split(new char[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (!allowed.Any())
+                return null;
+
+            return allowed;
         }
 
         static void AddPreflightOperationSelector(
