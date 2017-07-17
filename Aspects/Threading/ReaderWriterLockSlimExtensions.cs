@@ -34,7 +34,7 @@ namespace vm.Aspects.Threading
         ///             if (_protected.TryGetValue(key, out v))
         ///                 throw ArgumentException("The key already exists.", "key");
         ///             
-        ///             using(_loc.WriterLock())
+        ///             using(_lock.WriterLock())
         ///                 _protected.Add(key, value);
         ///         }
         ///     }
@@ -42,7 +42,7 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="The returned object is supposed to be used in a using statement.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
         public static UpgradeableReaderSlimSync UpgradableReaderLock(
             this ReaderWriterLockSlim readerWriterLock)
         {
@@ -74,7 +74,7 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="The returned object is supposed to be used in a using statement.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
         public static ReaderSlimSync ReaderLock(
             this ReaderWriterLockSlim readerWriterLock)
         {
@@ -106,7 +106,7 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="The returned object is supposed to be used in a using statement.")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
         public static WriterSlimSync WriterLock(
             this ReaderWriterLockSlim readerWriterLock)
         {

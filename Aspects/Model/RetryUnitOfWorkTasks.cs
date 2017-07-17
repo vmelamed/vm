@@ -28,6 +28,7 @@ namespace vm.Aspects.Model
         /// <![CDATA[(r, x, i) => { if (x != null) throw x; else return Task.FromResult(r); })]]>
         /// </code></param>
         /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy for the repository.</param>
+        /// <param name="repositoryResolveName">The resolve name of the repository.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
         /// <param name="transactionScopeFactory">The transaction scope factory.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> creates a transaction scope.</param>
@@ -37,12 +38,14 @@ namespace vm.Aspects.Model
             Func<T, Exception, int, Task<bool>> isSuccess = null,
             Func<T, Exception, int, Task<T>> epilogue = null,
             OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,  // ClientWins probably doesn't make a lot of sense here
-            Func<OptimisticConcurrencyStrategy, IRepository> repositoryFactory = null,
+            string repositoryResolveName = null,
+            Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
             Func<TransactionScope> transactionScopeFactory = null,
             bool createTransactionScope = false)
             : base(
                 async i => await new UnitOfWork(
                                     optimisticConcurrencyStrategy,
+                                    repositoryResolveName,
                                     repositoryFactory,
                                     transactionScopeFactory,
                                     createTransactionScope)

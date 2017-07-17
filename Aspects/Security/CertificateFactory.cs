@@ -49,8 +49,7 @@ namespace vm.Aspects.Security
             }
             finally
             {
-                if (store != null)
-                    store.Close();
+                store?.Close();
             }
         }
     }

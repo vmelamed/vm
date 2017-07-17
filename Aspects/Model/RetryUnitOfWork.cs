@@ -18,19 +18,15 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryUnitOfWork{T}" /> class.
         /// </summary>
-        /// <param name="work">The delegate implementing the actual unit of work to be invoked between 1 and <c>maxRetries</c> in the method <see cref="Retry{T}.Start(int,int,int)"/>.</param>
+        /// <param name="work">The delegate implementing the actual unit of work to be invoked between 1 and <c>maxRetries</c> in the method <see cref="Retry{T}.Start(int,int,int)" />.</param>
         /// <param name="isFailure">A delegate testing if the unit of work has failed. Can be <see langword="null" /> in which case a default implementation will be invoked:
-        /// <code><![CDATA[(r, x, i) => x != null  &&  !(x is RepeatableOperationException)  &&  !x.IsTransient()]]></code>
-        /// </param>
+        /// <code><![CDATA[(r, x, i) => x != null  &&  !(x is RepeatableOperationException)  &&  !x.IsTransient()]]></code></param>
         /// <param name="isSuccess">A delegate testing if the unit of work has succeeded. Can be <see langword="null" /> in which case a default implementation will be invoked
-        /// <code>
-        /// <![CDATA[x == null]]>
-        /// </code></param>
+        /// <code><![CDATA[x == null]]></code></param>
         /// <param name="epilogue">A delegate invoked after the unit of work has been tried unsuccessfully <c>maxRetries</c>. Can be <see langword="null" /> in which case a default implementation will be invoked.
-        /// <code>
-        /// <![CDATA[(r, x, i) => { if (x != null) throw x; else return r; }]]>
-        /// </code></param>
+        /// <code><![CDATA[(r, x, i) => { if (x != null) throw x; else return r; }]]></code></param>
         /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy for the repository.</param>
+        /// <param name="repositoryResolveName">The resolve name of the repository.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
         /// <param name="transactionScopeFactory">The transaction scope factory.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> [create transaction scope].</param>
@@ -40,12 +36,14 @@ namespace vm.Aspects.Model
             Func<T, Exception, int, bool> isSuccess = null,
             Func<T, Exception, int, T> epilogue = null,
             OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
-            Func<OptimisticConcurrencyStrategy, IRepository> repositoryFactory = null,
+            string repositoryResolveName = null,
+            Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
             Func<TransactionScope> transactionScopeFactory = null,
             bool createTransactionScope = false)
             : base(
                 i => new UnitOfWork(
                             optimisticConcurrencyStrategy,
+                            repositoryResolveName,
                             repositoryFactory,
                             transactionScopeFactory,
                             createTransactionScope)
