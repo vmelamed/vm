@@ -81,9 +81,9 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                        mi.DeclaringType.GetCustomAttributes<AllowOpenIdUnauthenticatedAttribute>().Any();
 
             // OPTIONS preflight message is always unauthenticated
-            return _wcfContext.HasWebOperationContext  &&
+            return _wcfContext.HasWebOperationContext                               &&
                    WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
-                   _wcfContext.OperationAction.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase);
+                   (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
         }
     }
 }

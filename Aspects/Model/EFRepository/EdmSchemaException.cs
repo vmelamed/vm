@@ -18,7 +18,7 @@ namespace vm.Aspects.Model.EFRepository
         const string ErrorsCount = nameof(ErrorsCount);
         const string Error       = nameof(Error);
 
-        string[] _errors;
+        readonly string[] _errors;
 
         #region Constructors
         /// <summary>

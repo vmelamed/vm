@@ -92,7 +92,7 @@ namespace vm.Aspects.Model.EFRepository
         {
             DbMappingView view = null;
 
-            _serializableViews?.Cache?.TryGetValue(extent.Name, out view);
+            _serializableViews?.Cache.TryGetValue(extent.Name, out view);
 
             return view;
         }

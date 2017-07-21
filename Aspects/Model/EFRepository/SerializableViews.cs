@@ -18,8 +18,8 @@ namespace vm.Aspects.Model.EFRepository
         const string CacheKey   = nameof(CacheKey);
         const string CacheValue = nameof(CacheValue);
 
-        string _hash;
-        IReadOnlyDictionary<string, DbMappingView> _cache;
+        readonly string _hash;
+        readonly IReadOnlyDictionary<string, DbMappingView> _cache;
 
         public string HashValue => _hash;
 
@@ -31,6 +31,7 @@ namespace vm.Aspects.Model.EFRepository
         {
             Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
             Contract.Requires<ArgumentException>(hash.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(hash)+" cannot be empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(cache != null, nameof(cache));
 
             _hash  = hash;
             _cache = new ReadOnlyDictionary<string, DbMappingView>(
@@ -43,6 +44,8 @@ namespace vm.Aspects.Model.EFRepository
             SerializationInfo info,
             StreamingContext context)
         {
+            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+
             _hash = info.GetString(Hash);
 
             var count = info.GetInt32(CacheCount);

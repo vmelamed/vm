@@ -174,7 +174,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetKey(string argument)
         {
-            Contract.Requires<ArgumentException>(argument!=null  &&  argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
+            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty string or consist of whitespace characters only.");
 
             _key = ParseHexValue(GetHexValue(argument));
             return _key != null;

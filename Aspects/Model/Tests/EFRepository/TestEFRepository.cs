@@ -117,9 +117,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
         }
 
         public override IRepository Initialize(Action query)
-        {
-            return base.Initialize(query ?? InitializationQuery);
-        }
+            => base.Initialize(query ?? InitializationQuery);
 
         void InitializationQuery()
         {

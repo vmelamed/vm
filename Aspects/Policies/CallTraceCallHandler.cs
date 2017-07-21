@@ -179,6 +179,8 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
+            Contract.Ensures(Contract.Result<IMethodReturn>() == null);
+
             if (LogBeforeCall  &&  LogWriter.IsLoggingEnabled())
             {
                 var entry = CreateLogEntry(StartCallCategory);

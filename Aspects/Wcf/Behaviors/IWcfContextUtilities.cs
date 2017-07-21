@@ -42,6 +42,5 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="faultContractType">Type of the fault contract.</param>
         /// <returns>The fault action.</returns>
         string GetFaultedAction(Type faultContractType);
-
     }
 }

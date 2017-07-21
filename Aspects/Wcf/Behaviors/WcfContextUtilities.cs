@@ -59,13 +59,20 @@ namespace vm.Aspects.Wcf.Behaviors
             get
             {
                 var operationAction = OperationAction;
+
+                if (operationAction == null)
+                    return null;
+
                 var action = OperationContext
                                 .Current
                                 .EndpointDispatcher
                                 .DispatchRuntime
                                 .Operations
                                 .FirstOrDefault(o => operationAction.Equals(o.Name, StringComparison.OrdinalIgnoreCase))
-                                .Action;
+                                ?.Action;
+
+                if (action == null)
+                    return null;
 
                 return OperationContext
                             .Current
