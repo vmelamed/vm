@@ -258,7 +258,9 @@
     <Compile Include="BaseDomainValue.cs" />
     <Compile Include="CachedAttribute.cs" />
     <Compile Include="CacheKeyAttribute.cs" />
+    <Compile Include="EFRepository\EdmSchemaException.cs" />
     <Compile Include="EFRepository\EFRepositoryExceptionHandler.cs" />
+    <Compile Include="EFRepository\EFRepositoryMappingViewCache.cs" />
     <Compile Include="EFRepository\OptimisticConcurrencyExceptionHandlingPolicies.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainEntity.Metadata.cs">
@@ -280,6 +282,7 @@
     <Compile Include="EFRepository\IStoreIdProviders.cs" />
     <Compile Include="EFRepository\NumericAttribute.cs" />
     <Compile Include="EFRepository\ObjectContextExtensions.cs" />
+    <Compile Include="EFRepository\SerializableViews.cs" />
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
     <Compile Include="RetryUnitOfWork.cs" />

@@ -57,6 +57,25 @@ namespace vm.Aspects
         */
 
         /// <summary>
+        /// Gets a custom attribute 
+        /// from a method's <see cref="MethodBase"/> reflection object, or if not found,
+        /// from the declaring type of the method, or if not found,
+        /// from the reflected type if different from the declaring type (as it happens with an interface and implementing class).
+        /// The method is useful when attributes are used to modify or parameterize the behavior of a call handler.
+        /// </summary>
+        /// <param name="methodBase">The method base.</param>
+        /// <returns>CustomDataContextTypeAttribute.</returns>
+        public static T GetMethodCustomAttribute<T>(
+            this MethodBase methodBase) where T : Attribute
+        {
+            Contract.Requires<ArgumentNullException>(methodBase != null, nameof(methodBase));
+
+            return methodBase.GetCustomAttribute<T>(true)            ??
+                   methodBase.DeclaringType.GetCustomAttribute<T>()  ??
+                   (methodBase.ReflectedType != methodBase.DeclaringType ? methodBase.ReflectedType.GetCustomAttribute<T>() : null);
+        }
+
+        /// <summary>
         /// Determines whether the <paramref name="type"/> is or inherits from the type <paramref name="baseType"/>.
         /// </summary>
         /// <param name="type">The type to test.</param>

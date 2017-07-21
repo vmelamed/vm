@@ -34,21 +34,19 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         /// Initializes the repository.
         /// </summary>
         /// <returns>vm.Aspects.Model.Repository.IRepository.</returns>
-        public override IRepository Initialize()
+        public override IRepository Initialize(Action query)
         {
             if (IsInitialized)
                 return this;
 
-            base.Initialize();
+            Action defaultQuery = () => Debug.WriteLine(
+                                            "The {0} v{1} was initialized successfully and has {2} entities and {3} values.",
+                                            GetType().Name,
+                                            Assembly.GetAssembly(GetType()).GetCustomAttribute<AssemblyFileVersionAttribute>().Version,
+                                            Entities<Entity>().Count(),
+                                            Values<Value>().Count());
 
-            Debug.WriteLine(
-                "The {0} v{1} was initialized successfully and has {2} entities and {3} values.",
-                GetType().Name,
-                Assembly.GetAssembly(GetType()).GetCustomAttribute<AssemblyFileVersionAttribute>().Version,
-                Entities<Entity>().Count(),
-                Values<Value>().Count());
-
-            return this;
+            return base.Initialize(query ?? defaultQuery);
         }
 
         protected override void OnModelCreating(

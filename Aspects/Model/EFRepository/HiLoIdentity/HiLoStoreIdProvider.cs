@@ -1,10 +1,11 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Transactions;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 
@@ -83,7 +84,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <summary>
         /// The default generators repository factory delegate.
         /// </summary>
-        public static Func<IRepository> DefaultGeneratorsRepositoryFactory { get; } = () => DIContainer.Root.Resolve<IRepository>(HiLoGeneratorsRepositoryResolveName);
+        public static Func<IRepository> DefaultGeneratorsRepositoryFactory { get; } = () => ServiceLocator.Current.GetInstance<IRepository>(HiLoGeneratorsRepositoryResolveName);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HiLoStoreIdProvider" /> class.

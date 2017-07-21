@@ -14,7 +14,14 @@ namespace vm.Aspects.Model.Repository
         /// <summary>
         /// Initializes the repository.
         /// </summary>
-        IRepository Initialize();
+        /// <param name="query">
+        /// An optional parameterless delegate to be invoked after the initialization has finished.
+        /// On Entity Framework based implementations it is a good idea to run some simple query here 
+        /// which will force initialization of the mapping views and possibly regenerate stale cached views.
+        /// See <seealso cref="T:EFRepositoryMappingViewCache{}"/>.
+        /// </param>
+        /// <returns>IRepository.</returns>
+        IRepository Initialize(Action query = null);
 
         /// <summary>
         /// Gets a value indicating whether the instance implementing the interface is initialized.
@@ -299,7 +306,7 @@ namespace vm.Aspects.Model.Repository
     abstract class IRepositoryContracts : IRepository
     {
         #region IRepository Members
-        public IRepository Initialize()
+        public IRepository Initialize(Action query)
         {
             Contract.Ensures(IsInitialized, "The repository was not initialized successfully.");
 

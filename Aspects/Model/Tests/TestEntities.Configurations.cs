@@ -82,7 +82,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasOptional(e => e.XEntity)
                 .WithMany()
-                .HasForeignKey(e => e.XEntity_Id)
+                .HasForeignKey(e => e.XEntityId)
                 ;
 
             HasOptional(e => e.Value)
@@ -121,7 +121,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasMany(e => e.InternalValues)
                 .WithOptional(v => v.Entity2)
-                .HasForeignKey(v => v.Entity2_Id)
+                .HasForeignKey(v => v.Entity2Id)
                 ;
         }
     }
@@ -150,7 +150,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
                 .HasColumnOrder(1)
                 ;
 
-            Property(v => v.Entity2_Id)
+            Property(v => v.Entity2Id)
                 ;
 
             HasOptional(v => v.Entity)
@@ -159,7 +159,7 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
             HasOptional(v => v.Entity2)
                 .WithMany(e => e.InternalValues)
-                .HasForeignKey(v => v.Entity2_Id)
+                .HasForeignKey(v => v.Entity2Id)
                 ;
         }
     }

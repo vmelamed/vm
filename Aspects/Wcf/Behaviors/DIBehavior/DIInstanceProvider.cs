@@ -1,11 +1,13 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Threading;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
+using vm.Aspects.Threading;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -18,7 +20,7 @@ namespace vm.Aspects.Wcf.Behaviors
         readonly string _serviceResolveName;
         readonly bool _useRootContainer;
 
-        readonly static object _sync = new object();
+        readonly static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         readonly static IDictionary<InstanceContext, IUnityContainer> _containers = new Dictionary<InstanceContext, IUnityContainer>();
 
         /// <summary>
@@ -68,7 +70,7 @@ namespace vm.Aspects.Wcf.Behaviors
             {
                 container = DIContainer.Root.CreateChildContainer();
 
-                lock (_sync)
+                using (_sync.WriterLock())
                 {
                     Contract.Assume(!_containers.ContainsKey(instanceContext), "THERE IS A CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT ALREADY.");
                     _containers[instanceContext] = container;
@@ -105,7 +107,7 @@ namespace vm.Aspects.Wcf.Behaviors
             InstanceContext instanceContext) => GetInstance(instanceContext, null);
 
         /// <summary>
-        /// Performs any clean-up on the created above instances.
+        /// Performs any clean-up on the created instances above.
         /// </summary>
         /// <param name="instanceContext">Ignored.</param>
         /// <param name="instance">The object that we have to clean-up about.</param>
@@ -121,7 +123,7 @@ namespace vm.Aspects.Wcf.Behaviors
             instance.Dispose();
             if (!_useRootContainer)
             {
-                lock (_sync)
+                using (_sync.WriterLock())
                 {
                     _containers.TryGetValue(instanceContext, out container);
                     _containers.Remove(instanceContext);
@@ -132,5 +134,24 @@ namespace vm.Aspects.Wcf.Behaviors
             }
         }
         #endregion
+
+        /// <summary>
+        /// Gets the current container if present, otherwise the root container
+        /// </summary>
+        public static IUnityContainer CurrentContainer
+        {
+            get
+            {
+                IUnityContainer current;
+                var instanceContext = OperationContext.Current?.InstanceContext;
+
+                if (instanceContext != null)
+                    using (_sync.ReaderLock())
+                        if (_containers.TryGetValue(instanceContext, out current))
+                            return current;
+
+                return DIContainer.Root;
+            }
+        }
     }
 }

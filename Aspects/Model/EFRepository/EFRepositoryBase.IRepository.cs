@@ -7,6 +7,7 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
+    using System.Data.Entity.Core;
     using System.Data.Entity.Infrastructure;
     using System.Reflection;
     using System.Security;
@@ -19,31 +20,59 @@ namespace vm.Aspects.Model.EFRepository
 
     public partial class EFRepositoryBase : IRepository
     {
-        readonly object _initializeSync = new object();
-
-        /// <summary>
-        /// Provides access to the initialization latch for the inheritors.
-        /// The latch controls the initialization of the repository.
-        /// </summary>
-        protected Latch InitializeLatch { get; } = new Latch();
+        readonly static Latch _sync = new Latch();
 
         #region IRepository
         /// <summary>
         /// Initializes the repository.
         /// </summary>
         /// <returns>this</returns>
-        public virtual IRepository Initialize()
+        public virtual IRepository Initialize(Action query = null)
         {
-            if (InitializeLatch.Latched())
-                lock (_initializeSync)
-                {
-                    SetDatabaseInitializer();
-
-                    // and initialize the DB
-                    Database.Initialize(false);
-                }
+            if (_sync.Latched())
+                DoInitialize(query);
 
             return this;
+        }
+
+        /// <summary>
+        /// Performs the actual initialization (always called from a synchronized context, i.e. from within a lock).
+        /// Always call the base class's implementation first.
+        /// </summary>
+        protected virtual void DoInitialize(Action query)
+        {
+            SetDatabaseInitializer();
+            Database.Initialize(false);
+
+            if (query == null)
+                return;
+
+            var retry = false;
+
+            do
+                try
+                {
+                    query();
+                    retry = false;
+                }
+                catch (EntityCommandCompilationException x)
+                {
+                    if (x.InnerException is MappingException)
+                    {
+                        // cache.Generate();
+
+                        var cacheType = typeof(EFRepositoryMappingViewCache<>).MakeGenericType(GetType());
+                        var cache = cacheType.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
+                        var generateMethod = cacheType.GetMethod("Generate");
+
+                        generateMethod.Invoke(cache, new object[0]);
+
+                        retry = true;
+                    }
+                    else
+                        throw;
+                }
+            while (retry);
         }
 
         /// <summary>
@@ -106,7 +135,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <value>
         /// 	<see langword="true"/> if this instance is initialized; otherwise, <see langword="false"/>.
         /// </value>
-        public virtual bool IsInitialized => InitializeLatch.IsLatched;
+        public virtual bool IsInitialized => _sync.IsLatched;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).

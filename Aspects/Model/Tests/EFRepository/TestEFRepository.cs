@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure.MappingViews;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Facilities;
+using vm.Aspects.Model.EFRepository;
+using vm.Aspects.Model.EFRepository.Tests;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;
+
+[assembly: DbMappingViewCacheType(typeof(TestEFRepository), typeof(EFRepositoryMappingViewCache<TestEFRepository>))]
 
 namespace vm.Aspects.Model.EFRepository.Tests
 {
@@ -15,6 +20,10 @@ namespace vm.Aspects.Model.EFRepository.Tests
         public long GetStoreId<T>() where T : IHasStoreId<long> => GetStoreId<T, long>();
 
         #region Constructors
+        public TestEFRepository()
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of the repository with a connection string and by default will use the HiLo PK generator.
         /// </summary>
@@ -107,17 +116,19 @@ namespace vm.Aspects.Model.EFRepository.Tests
     3. Any mapped collection navigation property of the class must be typed as ICollection<T>.");
         }
 
-        public override IRepository Initialize()
+        public override IRepository Initialize(Action query)
         {
-            base.Initialize();
+            return base.Initialize(query ?? InitializationQuery);
+        }
+
+        void InitializationQuery()
+        {
             EnsureChangeTrackingProxyEntities();
             Facility.LogWriter.EventLogInfo(
                 "The {0} v{1} was initialized successfully and has {2} test entities.",
                 GetType().Name,
                 Assembly.GetAssembly(GetType()).GetCustomAttribute<AssemblyFileVersionAttribute>().Version,
                 Entities<TestEntity>().Count());
-
-            return this;
         }
     }
 }

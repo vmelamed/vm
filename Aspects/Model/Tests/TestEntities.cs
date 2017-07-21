@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
-using vm.Aspects.Validation;
 using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Model.Tests
@@ -40,11 +38,11 @@ namespace vm.Aspects.Model.Tests
 
         public virtual TestXEntity XEntity { get; set; }
 
-        public virtual long? XEntity_Id { get; set; }
+        public virtual long? XEntityId { get; set; }
 
         public virtual TestValue Value { get; set; }
 
-        public virtual long? Value_Id { get; set; }
+        public virtual long? ValueId { get; set; }
 
         public virtual DateTime Created { get; set; }
 
@@ -113,7 +111,7 @@ namespace vm.Aspects.Model.Tests
         public virtual TestEntity Entity { get; set; }
 
         public virtual TestEntity2 Entity2 { get; set; }
-        public virtual long? Entity2_Id { get; set; }
+        public virtual long? Entity2Id { get; set; }
 
         #region IVisited<TestValue> Members
         public TestValue Accept(IVisitor<TestValue> visitor)

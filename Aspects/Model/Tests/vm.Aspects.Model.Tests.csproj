@@ -260,7 +260,6 @@
     <Compile Include="EFRepository\TestEFRepository.cs" />
     <Compile Include="EFRepository\TestEFRepository.Registrar.cs" />
     <Compile Include="EFRepository\TestEFRepositoryConfiguration.cs" />
-    <Compile Include="EFRepository\TestEntityConfigurations.cs" />
     <None Include="EncryptedPartsTest.cs" />
     <Compile Include="EntityTests.cs" />
     <Compile Include="HiLoIdentityGeneratorTests.cs" />
@@ -274,8 +273,13 @@
     <Compile Include="MoneyTest.cs" />
     <Compile Include="ObjectsSpecificsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestEntities.Configurations.cs">
+      <DependentUpon>TestEntities.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestEntities.cs" />
-    <Compile Include="TestEntitiesMetadata.cs" />
+    <Compile Include="TestEntities.Metadata.cs">
+      <DependentUpon>TestEntities.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestEntityVisitor.cs" />
     <Compile Include="ValueTests.cs" />
     <None Include="packages.config" />

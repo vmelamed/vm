@@ -326,7 +326,6 @@
     <Compile Include="CustomDataContext.cs" />
     <Compile Include="CustomDataContextManager.cs" />
     <Compile Include="CustomDataContextTypeAttribute.cs" />
-    <Compile Include="CustomDataContextTypeAttributeExtensions.cs" />
     <Compile Include="DataContracts\DataTransferObject.cs" />
     <Compile Include="DataContracts\DataMessageObject.cs" />
     <Compile Include="Behaviors\DIBehavior\DIBehaviorAttribute.cs" />

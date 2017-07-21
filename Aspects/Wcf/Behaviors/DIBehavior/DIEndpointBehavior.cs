@@ -1,8 +1,8 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -63,12 +63,12 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </summary>
         /// <param name="endpoint">The endpoint that exposes the contract.</param>
         /// <param name="endpointDispatcher">The endpoint dispatcher to be modified or extended.</param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// endpoint
         /// or
         /// endpointDispatcher
         /// </exception>
-        /// <exception cref="System.ArgumentException">The DispatchRuntime property cannot be null.;endpointDispatcher</exception>
+        /// <exception cref="ArgumentException">The DispatchRuntime property cannot be null.;endpointDispatcher</exception>
         public void ApplyDispatchBehavior(
             ServiceEndpoint endpoint,
             EndpointDispatcher endpointDispatcher)

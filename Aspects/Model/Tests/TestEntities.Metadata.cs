@@ -35,17 +35,17 @@ namespace vm.Aspects.Model.Tests
         [OptionalStringLengthValidator(30)]
         public object StringProperty { get; set; }
 
-        [Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(RecurseDump = ShouldDump.Skip)]
         public object XEntity { get; set; }
 
-        [Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(RecurseDump = ShouldDump.Skip)]
         public object Value { get; set; }
 
         [Dump(2)]
-        public object XEntity_Id { get; set; }
+        public object XEntityId { get; set; }
 
         [Dump(3)]
-        public object Value_Id { get; set; }
+        public object ValueId { get; set; }
 
         [Dump(-1)]
         [NotBeforeValidator("1900-01-01T00:00:00.0000000Z")]
@@ -63,7 +63,7 @@ namespace vm.Aspects.Model.Tests
 
     abstract class TestEntity2Metadata
     {
-        [Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(RecurseDump = ShouldDump.Skip)]
         public virtual ICollection<TestValue> InternalValues { get; set; }
     }
 
@@ -73,11 +73,11 @@ namespace vm.Aspects.Model.Tests
         [Dump(0)]
         public virtual string Name { get; set; }
 
-        [Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(RecurseDump = ShouldDump.Skip)]
         public virtual TestEntity Entity { get; set; }
 
         [Dump(1)]
         public virtual TestEntity2 Entity2 { get; set; }
-        public virtual long? Entity2_Id { get; set; }
+        public virtual long? Entity2Id { get; set; }
     }
 }

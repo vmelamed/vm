@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
-using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Metadata;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;

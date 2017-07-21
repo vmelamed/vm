@@ -74,10 +74,12 @@ namespace vm.Aspects.Model.InMemory
         /// Initializes the repository.
         /// </summary>
         /// <returns>IRepository.</returns>
-        public IRepository Initialize()
+        public IRepository Initialize(Action query = null)
         {
             if (_latch.Latched())
                 Reset();
+
+            query?.Invoke();
 
             return this;
         }
