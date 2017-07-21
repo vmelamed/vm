@@ -11,16 +11,37 @@ namespace vm.Aspects.Model.EFRepository
     using System.Data.Entity.Infrastructure;
     using System.Reflection;
     using System.Security;
+    using System.Threading;
     using Facilities;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
     using Threading;
     using EFEntityState = System.Data.Entity.EntityState;
-    using EntityState = vm.Aspects.Model.Repository.EntityState;
+    using EntityState = Repository.EntityState;
 
     public partial class EFRepositoryBase : IRepository
     {
-        readonly static Latch _sync = new Latch();
+        readonly static ReaderWriterLockSlim _latchesSync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        readonly static IDictionary<Type, Latch> _latches = new SortedDictionary<Type, Latch>();
+
+        Latch GetLatch()
+        {
+            Latch latch = null;
+            Type myType = GetType();
+
+            using (_latchesSync.UpgradableReaderLock())
+            {
+                if (_latches.TryGetValue(myType, out latch))
+                    return latch;
+
+                using (_latchesSync.WriterLock())
+                {
+                    latch = new Latch();
+                    _latches[myType] = latch;
+                    return latch;
+                }
+            }
+        }
 
         #region IRepository
         /// <summary>
@@ -29,7 +50,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>this</returns>
         public virtual IRepository Initialize(Action query = null)
         {
-            if (_sync.Latched())
+            if (GetLatch().Latched())
                 DoInitialize(query);
 
             return this;
@@ -61,8 +82,8 @@ namespace vm.Aspects.Model.EFRepository
                     {
                         // cache.Generate();
 
-                        var cacheType = typeof(EFRepositoryMappingViewCache<>).MakeGenericType(GetType());
-                        var cache = cacheType.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
+                        var cacheType      = typeof(EFRepositoryMappingViewCache<>).MakeGenericType(GetType());
+                        var cache          = cacheType.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
                         var generateMethod = cacheType.GetMethod("Generate");
 
                         generateMethod.Invoke(cache, new object[0]);
@@ -135,7 +156,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <value>
         /// 	<see langword="true"/> if this instance is initialized; otherwise, <see langword="false"/>.
         /// </value>
-        public virtual bool IsInitialized => _sync.IsLatched;
+        public virtual bool IsInitialized => GetLatch().IsLatched;
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
