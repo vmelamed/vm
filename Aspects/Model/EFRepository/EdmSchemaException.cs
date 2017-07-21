@@ -18,9 +18,39 @@ namespace vm.Aspects.Model.EFRepository
         const string ErrorsCount = nameof(ErrorsCount);
         const string Error       = nameof(Error);
 
-        ICollection<string> _errors;
+        string[] _errors;
 
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EdmSchemaException"/> class.
+        /// </summary>
+        public EdmSchemaException()
+            : this(null, null, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EdmSchemaException" /> class.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public EdmSchemaException(
+            string message)
+            : this(message, null, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EdmSchemaException" /> class.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        public EdmSchemaException(
+            string message,
+            Exception innerException)
+            : this(message, null, innerException)
+        {
+        }
+
         /// <summary>
         /// Initializes a <see cref="EdmSchemaException" /> with a custom <paramref name="message" />,
         /// a collection of EDM errors and an inner exception.
@@ -34,9 +64,10 @@ namespace vm.Aspects.Model.EFRepository
             Exception innerException = null)
             : base(message.IsNullOrWhiteSpace() ? "EDM schema errors." : message, innerException)
         {
-            Contract.Requires<ArgumentNullException>(errors != null, nameof(errors));
-
-            _errors = errors?.Select(e => e.ToString())?.ToList();
+            if (errors != null)
+                _errors = errors.Select(e => e.ToString()).ToArray();
+            else
+                _errors = new string[0];
         }
 
         /// <summary>
@@ -67,7 +98,7 @@ namespace vm.Aspects.Model.EFRepository
             StreamingContext context)
             : base(info, context)
         {
-            _errors = DeserializeErrors(info, context).ToList();
+            _errors = DeserializeErrors(info, context).ToArray();
         }
 
         IEnumerable<string> DeserializeErrors(
@@ -97,7 +128,7 @@ namespace vm.Aspects.Model.EFRepository
         {
             base.GetObjectData(info, context);
 
-            var count = (_errors?.Count()).GetValueOrDefault();
+            var count = _errors.Count();
 
             info.AddValue(ErrorsCount, count);
             for (var i = 0; i<count; i++)

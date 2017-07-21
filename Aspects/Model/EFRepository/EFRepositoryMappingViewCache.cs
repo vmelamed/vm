@@ -28,7 +28,6 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         public EFRepositoryMappingViewCache()
         {
-            var repositoryType =
             _cachePath = Path.Combine(
                                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                                 nameof(EFRepository),
