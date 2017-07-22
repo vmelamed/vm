@@ -22,7 +22,7 @@ namespace vm.Aspects.Model.EFRepository
     public partial class EFRepositoryBase : IRepository
     {
         readonly static ReaderWriterLockSlim _latchesSync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        readonly static IDictionary<Type, Latch> _latches = new SortedDictionary<Type, Latch>();
+        readonly static IDictionary<Type, Latch> _latches = new Dictionary<Type, Latch>();
 
         Latch GetLatch()
         {
