@@ -32,6 +32,10 @@ namespace vm.Aspects.Wcf.Behaviors
         MethodInfo OperationMethod { get; }
 
         /// <summary>
+        /// Gets the attributes on the method implementing the current operation declared on both the interface and the service class.
+        /// </summary>
+        Attribute[] OperationMethodAllAttributes { get; }
+        /// <summary>
         /// Gets the <see cref="WebHttpBehavior"/>.
         /// </summary>
         WebHttpBehavior WebHttpBehavior { get; }

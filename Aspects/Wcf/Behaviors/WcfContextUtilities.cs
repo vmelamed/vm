@@ -86,6 +86,81 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         /// <summary>
+        /// Gets the attributes on the method implementing the current operation declared on both the interface and the service class.
+        /// </summary>
+        public Attribute[] OperationMethodAllAttributes
+        {
+            get
+            {
+                var operationAction = OperationAction;
+
+                if (operationAction == null)
+                    return null;
+
+                var action = OperationContext
+                                .Current
+                                .EndpointDispatcher
+                                .DispatchRuntime
+                                .Operations
+                                .FirstOrDefault(o => operationAction.Equals(o.Name, StringComparison.OrdinalIgnoreCase))
+                                ?.Action
+                                ;
+
+                if (action == null)
+                    return null;
+
+                var serviceType = OperationContext
+                                            .Current
+                                            .EndpointDispatcher
+                                            .DispatchRuntime
+                                            .Type
+                                            ;
+
+                var serviceClassMethodInfos = serviceType
+                                                .GetMethods()
+                                                ;
+
+                var mi = serviceClassMethodInfos
+                            .FirstOrDefault(m => operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
+                                                 action.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase))
+                            ;
+
+                if (mi != null)
+                    return mi.GetCustomAttributes()
+                             .ToArray()
+                             ;
+
+                if (serviceClassMethodInfos==null  ||  serviceClassMethodInfos.Length==0)
+                    return null;    // there is something wrong here?
+
+                // try to find the method on the interface
+                mi = serviceType
+                            .GetInterfaces()
+                            .Where(i => i.GetCustomAttribute<ServiceContractAttribute>() != null)
+                            .Select(i => i)
+                            .SelectMany(i => i.GetMethods())
+                            .FirstOrDefault(m => m.GetCustomAttribute<OperationContractAttribute>() != null  &&
+                                                 operationAction.Equals(m.Name, StringComparison.OrdinalIgnoreCase)  ||
+                                                 action.Equals(m.GetCustomAttribute<OperationContractAttribute>()?.Action, StringComparison.OrdinalIgnoreCase))
+                            ;
+
+                if (mi == null)
+                    return null;
+
+                // find the method again on the service
+                var smi = serviceClassMethodInfos
+                            .First(m => m.Name == mi.Name)
+                            ;
+
+                return mi.GetCustomAttributes()
+                         .Union(smi
+                         .GetCustomAttributes())
+                         .ToArray()
+                         ;
+            }
+        }
+
+        /// <summary>
         /// Gets the web HTTP behavior.
         /// </summary>
         /// <returns>The WebHttpBehavior.</returns>

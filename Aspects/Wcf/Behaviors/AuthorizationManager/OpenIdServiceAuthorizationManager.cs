@@ -44,6 +44,19 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Accumulating all exceptions and throwing AggregateException")]
         protected override bool CheckAccessCore(
             OperationContext operationContext)
+            => DoCheckAccess(operationContext);
+
+        /// <summary>
+        /// Checks authorization for the given operation context.
+        /// </summary>
+        /// <param name="operationContext">The <see cref="T:System.ServiceModel.OperationContext" />.</param>
+        /// <returns>true if access is granted; otherwise; otherwise false. The default is true.</returns>
+        public override bool CheckAccess(
+            OperationContext operationContext)
+            => DoCheckAccess(operationContext);
+
+        bool DoCheckAccess(
+            OperationContext operationContext)
             => Facility.ExceptionManager.Process(
                 () =>
                 {
@@ -72,13 +85,13 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                 false,
                 ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
+
         bool AllowedUnauthenticated()
         {
-            var mi = _wcfContext.OperationMethod;
+            var attributes = _wcfContext.OperationMethodAllAttributes;
 
-            if (mi != null)
-                return mi.GetCustomAttributes<AllowOpenIdUnauthenticatedAttribute>().Any()  ||
-                       mi.DeclaringType.GetCustomAttributes<AllowOpenIdUnauthenticatedAttribute>().Any();
+            if (attributes != null  &&  attributes.Length > 0)
+                return attributes.Any(a => a is AllowOpenIdUnauthenticatedAttribute);
 
             // OPTIONS preflight message is always unauthenticated
             return _wcfContext.HasWebOperationContext                               &&

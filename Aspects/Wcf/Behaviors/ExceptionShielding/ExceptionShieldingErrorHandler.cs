@@ -6,7 +6,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.ServiceModel;
@@ -406,16 +405,16 @@ namespace vm.Aspects.Wcf.Behaviors
             }
 
             // 3. The default format setting in the operation.
-            var operation = _wcfContext.OperationMethod;
+            var attributes = _wcfContext.OperationMethodAllAttributes;
 
-            if (operation != null)
+            if (attributes != null && attributes.Length > 0)
             {
-                var webGet = operation.GetCustomAttribute<WebGetAttribute>();
+                var webGet = attributes.FirstOrDefault(a => a is WebGetAttribute) as WebGetAttribute;
 
                 if (webGet != null  &&  webGet.IsResponseFormatSetExplicitly)
                     return webGet.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
 
-                var webInvoke = operation.GetCustomAttribute<WebInvokeAttribute>();
+                var webInvoke = attributes.FirstOrDefault(a => a is WebInvokeAttribute) as WebInvokeAttribute;
 
                 if (webInvoke != null  &&  webInvoke.IsResponseFormatSetExplicitly)
                     return webInvoke.ResponseFormat == WebMessageFormat.Json ? WebContentFormat.Json : WebContentFormat.Xml;
