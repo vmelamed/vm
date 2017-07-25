@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Microsoft.IdentityModel.Tokens;
@@ -43,15 +42,6 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <returns>true if access is granted; otherwise, false. The default is true.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Accumulating all exceptions and throwing AggregateException")]
         protected override bool CheckAccessCore(
-            OperationContext operationContext)
-            => DoCheckAccess(operationContext);
-
-        /// <summary>
-        /// Checks authorization for the given operation context.
-        /// </summary>
-        /// <param name="operationContext">The <see cref="T:System.ServiceModel.OperationContext" />.</param>
-        /// <returns>true if access is granted; otherwise; otherwise false. The default is true.</returns>
-        public override bool CheckAccess(
             OperationContext operationContext)
             => DoCheckAccess(operationContext);
 

@@ -76,22 +76,25 @@ namespace vm.Aspects.Model.EFRepository
                     query();
                     retry = false;
                 }
-                catch (EntityCommandCompilationException x)
+                catch (Exception x)
                 {
                     if (x.InnerException is MappingException)
                     {
-                        // cache.Generate();
-
+                        // call cache.Generate():
                         var cacheType      = typeof(EFRepositoryMappingViewCache<>).MakeGenericType(GetType());
                         var cache          = cacheType.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
                         var generateMethod = cacheType.GetMethod("Generate");
 
                         generateMethod.Invoke(cache, new object[0]);
 
+                        Facility.LogWriter.ExceptionWarning(x);
                         retry = true;
                     }
                     else
+                    {
+                        Facility.LogWriter.ExceptionError(x);
                         throw;
+                    }
                 }
             while (retry);
         }
