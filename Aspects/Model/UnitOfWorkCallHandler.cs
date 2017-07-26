@@ -1,10 +1,10 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Policies;
@@ -74,7 +74,7 @@ namespace vm.Aspects.Model
         /// <param name="methodReturn">The result.</param>
         /// <param name="transactionScope">The call data.</param>
         /// <returns>IMethodReturn.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#", Justification = "better discriptive name")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "2#", Justification = "better descriptive name")]
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
         protected override IMethodReturn PostInvoke(
             IMethodInvocation input,

@@ -347,6 +347,7 @@ namespace vm.Aspects.Wcf.Behaviors
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Exception is logged.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals")]
         static Guid LogServerException(
             Exception exception)
         {
@@ -407,7 +408,7 @@ namespace vm.Aspects.Wcf.Behaviors
             // 3. The default format setting in the operation.
             var attributes = _wcfContext.OperationMethodAllAttributes;
 
-            if (attributes != null && attributes.Length > 0)
+            if (attributes.Any())
             {
                 var webGet = attributes.FirstOrDefault(a => a is WebGetAttribute) as WebGetAttribute;
 

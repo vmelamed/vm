@@ -7,7 +7,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {
@@ -72,9 +72,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         IEnumerable<Lazy<TokenValidationParameters>> GetTokenValidationParameters()
         {
             foreach (var tokenValidationParametersResolveName in TokenValidationParametersResolveNames)
-                yield return DIInstanceProvider
-                                .CurrentContainer
-                                .Resolve<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
+                yield return ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
         }
 
         /// <summary>

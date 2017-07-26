@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
@@ -88,14 +89,14 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <summary>
         /// Gets the attributes on the method implementing the current operation declared on both the interface and the service class.
         /// </summary>
-        public Attribute[] OperationMethodAllAttributes
+        public ICollection<Attribute> OperationMethodAllAttributes
         {
             get
             {
                 var operationAction = OperationAction;
 
                 if (operationAction == null)
-                    return null;
+                    return new Attribute[0];
 
                 var action = OperationContext
                                 .Current
@@ -107,7 +108,7 @@ namespace vm.Aspects.Wcf.Behaviors
                                 ;
 
                 if (action == null)
-                    return null;
+                    return new Attribute[0];
 
                 var serviceType = OperationContext
                                             .Current
@@ -131,7 +132,7 @@ namespace vm.Aspects.Wcf.Behaviors
                              ;
 
                 if (serviceClassMethodInfos==null  ||  serviceClassMethodInfos.Length==0)
-                    return null;    // there is something wrong here?
+                    return new Attribute[0];    // there is something wrong here?
 
                 // try to find the method on the interface
                 mi = serviceType
@@ -145,7 +146,7 @@ namespace vm.Aspects.Wcf.Behaviors
                             ;
 
                 if (mi == null)
-                    return null;
+                    return new Attribute[0];
 
                 // find the method again on the service
                 var smi = serviceClassMethodInfos

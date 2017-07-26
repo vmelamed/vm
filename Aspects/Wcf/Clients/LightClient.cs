@@ -3,19 +3,59 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.ServiceModel.Web;
+using System.Threading;
+using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
 {
     /// <summary>
-    /// A lightweight WCF service client class based on ChannelFactory{T}
+    /// A base for lightweight WCF service client classes based on <see cref="ChannelFactory{T}"/>. 
+    /// This class encapsulates creating the channel factory. It also handles the graceful invoke of <see cref="IDisposable.Dispose()"/>
+    /// when the channel is faulted by aborting the channel instead of closing it.
     /// </summary>
     /// <typeparam name="TContract">The service interface.</typeparam>
-    public class LightClient<TContract> : LightClientBase<TContract> where TContract : class
+    public class LightClient<TContract> : IDisposable, IIsDisposed where TContract : class
     {
+        string _messagingPattern;
+        TContract _proxy;
+
+        /// <summary>
+        /// Gets or sets the channel factory.
+        /// </summary>
+        /// <value>The channel factory.</value>
+        public ChannelFactory<TContract> ChannelFactory { get; private set; }
+
+        /// <summary>
+        /// Gets or creates the proxy of the service.
+        /// </summary>
+        public TContract Proxy
+        {
+            get
+            {
+                if (_proxy == null)
+                    _proxy = CreateProxy();
+
+                return _proxy;
+            }
+        }
+
+        /// <summary>
+        /// Creates the proxy.
+        /// </summary>
+        /// <returns>TContract proxy object.</returns>
+        protected virtual TContract CreateProxy()
+        {
+            ConfigureChannelFactory(_messagingPattern);
+            return ChannelFactory.CreateChannel();
+        }
+
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
@@ -35,53 +75,76 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             string remoteAddress,
             ServiceIdentity identityType = ServiceIdentity.None,
             string identity = null,
             string messagingPattern = null)
-            : base(remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory)
-        /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName" /> and service address.
+        /// Initializes a new instance of the <see cref="LightClient{TContract}"/> class (creates the channel factory)
+        /// from an endpoint configuration section given by the <paramref name="endpointConfigurationName"/> and a remote address.
+        /// If <paramref name="endpointConfigurationName"/> is <see langword="null" />, empty or consist of whitespace characters only,
+        /// the constructor will try to resolve the binding from the schema in the given remote address from the current DI container.
         /// </summary>
-        /// <param name="endpointConfigurationName">Name of the endpoint configuration.</param>
-        /// <param name="remoteAddress">The remote address. If the remote address is <see langword="null" /> or empty
-        /// the constructor will try to use the address in the endpoint configuration.</param>
+        /// <param name="endpointConfigurationName">
+        /// The name of the endpoint section of the configuration files.
+        /// If <see langword="null" /> the constructor will try to resolve the binding from the address' schema.
+        /// </param>
+        /// <param name="remoteAddress">
+        /// The remote address. If the remote address is <see langword="null" /> or empty
+        /// the constructor will try to use the address in the endpoint configuration.
+        /// </param>
         /// <param name="messagingPattern">
         /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             string endpointConfigurationName,
             string remoteAddress,
             string messagingPattern = null)
-            : base(endpointConfigurationName, remoteAddress, messagingPattern)
         {
             Contract.Requires<ArgumentException>(
-                !endpointConfigurationName.IsNullOrWhiteSpace()  ||
-                !remoteAddress.IsNullOrWhiteSpace(), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
+                                !endpointConfigurationName.IsNullOrWhiteSpace()  ||
+                                !remoteAddress.IsNullOrWhiteSpace(), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            if (!endpointConfigurationName.IsNullOrWhiteSpace())
+            {
+                ChannelFactory = !remoteAddress.IsNullOrWhiteSpace()
+                                        ? new ChannelFactory<TContract>(endpointConfigurationName, new EndpointAddress(remoteAddress))
+                                        : new ChannelFactory<TContract>(endpointConfigurationName);
+                ConfigureBinding(ChannelFactory.Endpoint.Binding);
+            }
+            else
+            {
+                Contract.Assume(!remoteAddress.IsNullOrWhiteSpace());
+
+                BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(ServiceIdentity.None, ""));
+            }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityType">
-        /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" /> or <see cref="ServiceIdentity.Rsa" />.
+        /// Type of the identity: can be <see cref="ServiceIdentity.Certificate" />, <see cref="ServiceIdentity.Dns" /> or <see cref="ServiceIdentity.Rsa" />.
         /// </param>
         /// <param name="certificate">The identifying certificate.</param>
         /// <param name="messagingPattern">
@@ -89,42 +152,46 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             string remoteAddress,
             ServiceIdentity identityType,
             X509Certificate2 certificate,
             string messagingPattern = null)
-            : base(remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                                                             identityType == ServiceIdentity.Rsa  ||
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="remoteAddress">The remote address of the service.</param>
         /// <param name="identityClaim">The identity claim.</param>
         /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
         /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             string remoteAddress,
             Claim identityClaim,
             string messagingPattern = null)
-            : base(remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
 
         /// <summary>
@@ -146,25 +213,27 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
             string identity,
             string messagingPattern = null)
-            : base(binding, remoteAddress, identityType, identity, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -177,14 +246,14 @@ namespace vm.Aspects.Wcf.Clients
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute"/> if present,
         /// otherwise will apply the default messaging pattern fro the transport.
         /// </param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             Binding binding,
             string remoteAddress,
             ServiceIdentity identityType,
             X509Certificate2 certificate,
             string messagingPattern = null)
-            : base(binding, remoteAddress, identityType, certificate, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
@@ -193,12 +262,14 @@ namespace vm.Aspects.Wcf.Clients
                 identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
                                                            identityType == ServiceIdentity.Rsa  ||
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            Contract.Ensures(ChannelFactory != null);
 
-            Proxy = ChannelFactory.CreateChannel();
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class.
+        /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
         /// </summary>
         /// <param name="binding">A binding instance.</param>
         /// <param name="remoteAddress">The remote address of the service.</param>
@@ -206,30 +277,183 @@ namespace vm.Aspects.Wcf.Clients
         /// <param name="messagingPattern">The messaging pattern defining the configuration of the connection. If <see langword="null" />, empty or whitespace characters only,
         /// the constructor will try to resolve the pattern from the interface's attribute <see cref="MessagingPatternAttribute" /> if present,
         /// otherwise will apply the default messaging pattern fro the transport.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public LightClient(
+        protected LightClient(
             Binding binding,
             string remoteAddress,
             Claim identityClaim,
             string messagingPattern = null)
-            : base(binding, remoteAddress, identityClaim, messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentNullException>(remoteAddress != null, nameof(remoteAddress));
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
-            Proxy = ChannelFactory.CreateChannel();
+            Contract.Ensures(ChannelFactory != null);
+
+            _messagingPattern = messagingPattern;
+            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
         #endregion
 
+        /// <summary>
+        /// Builds a restful channel factory or at least builds and configures the binding derived from the address's scheme.
+        /// </summary>
+        /// <param name="remoteAddress">The remote address.</param>
+        /// <param name="identity">The server identity.</param>
+        /// <returns>The built and configured binding, if the channel was not created, otherwise <see langword="null" />.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by Dispose().")]
+        protected Binding BuildChannelFactory(
+            string remoteAddress,
+            EndpointIdentity identity)
+        {
+            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Ensures(ChannelFactory != null);
+            Contract.Ensures(Contract.Result<Binding>() != null);
+
+            var remoteUri = new Uri(remoteAddress);
+            var scheme = remoteUri.Scheme;
+            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+
+            if ((scheme == "http"  ||  scheme == "https") &&
+                ((messagingAttribute?.Restful).GetValueOrDefault()  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase)))   // only rest-ful endpoints do not need .svc page
+                scheme = string.Concat(remoteUri.Scheme, ".rest");
+
+            var binding = ServiceLocator.Current.GetInstance<Binding>(scheme);
+
+            return BuildChannelFactory(binding, remoteAddress, identity);
+        }
+
+        /// <summary>
+        /// Builds a restful channel factory or at least builds and configures the binding derived from the address's scheme.
+        /// </summary>
+        /// <param name="binding">The binding.</param>
+        /// <param name="remoteAddress">The remote address.</param>
+        /// <param name="identity">The server identity.</param>
+        /// <returns>The built and configured binding, if the channel was not created, otherwise <see langword="null" />.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by Dispose().")]
+        protected Binding BuildChannelFactory(
+            Binding binding,
+            string remoteAddress,
+            EndpointIdentity identity)
+        {
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+
+            Contract.Ensures(Contract.Result<Binding>() != null);
+            Contract.Ensures(ChannelFactory != null);
+
+            ConfigureBinding(binding);
+
+            if (binding is WebHttpBinding)
+            {
+                ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+            }
+            else
+                ChannelFactory = new ChannelFactory<TContract>(
+                                        binding,
+                                        new EndpointAddress(new Uri(remoteAddress), identity));
+            return binding;
+        }
+
+        void ConfigureBinding(
+            Binding binding)
+        {
+            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+
+            if (_messagingPattern.IsNullOrWhiteSpace())
+            {
+                // try to get the messaging pattern from the client
+                _messagingPattern = GetType().GetMessagingPattern();
+
+                if (_messagingPattern.IsNullOrWhiteSpace())
+                    _messagingPattern = typeof(TContract).GetMessagingPattern();
+            }
+
+            // resolve the configurator
+            var configurator = ServiceLocator.Current.GetInstance<BindingConfigurator>(_messagingPattern);
+
+            // configure the binding
+            configurator.Configure(binding);
+        }
+
+        /// <summary>
+        /// Gives the inheritors the chance to tweak the setting of the channel factory.
+        /// </summary>
+        /// <example>
+        /// <![CDATA[
+        /// protected override void ConfigureChannelFactory(
+        ///     string messagingPattern)
+        /// {
+        ///     ChannelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;
+        /// }
+        /// ]]>
+        /// </example>
+        protected virtual void ConfigureChannelFactory(
+            string messagingPattern)
+        {
+            // here we do nothing but give the user the opportunity to tweak the channel factory, e.g.
+            //
+            // ChannelFactory.Credentials.UserName.UserName = _userId;
+            // ChannelFactory.Credentials.UserName.Password = _password;
+        }
+
         #region IDisposable pattern implementation
         /// <summary>
-        /// Disposes the object graph.
+        /// The flag is being set when the object gets disposed.
         /// </summary>
-        protected override void DisposeObjectGraph()
+        /// <value>0 - if the object is not disposed yet, any other value would mean that the object is already disposed.</value>
+        /// <remarks>
+        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose(bool)"/>.
+        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
+        /// </remarks>
+        private int _disposed;
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
+        /// </summary>
+        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
+        public void Dispose()
         {
-            (Proxy as ICommunicationObject)?.DisposeCommunicationObject();
-            base.DisposeObjectGraph();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Performs the actual job of disposing the object.
+        /// </summary>
+        /// <param name="disposing">
+        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
+        /// implicitly at the end of a <c>using</c> statement).
+        /// </param>
+        /// <remarks>
+        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, it will try to release all managed resources 
+        /// (usually aggregated objects which implement <see cref="IDisposable"/> as well) and then it will release all unmanaged resources if any.
+        /// If the parameter is <see langword="false"/> then the method will only try to release the unmanaged resources.
+        /// </remarks>
+        protected virtual void Dispose(
+            bool disposing)
+        {
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
+            if (disposing)
+                DisposeObjectGraph();
+        }
+
+        /// <summary>
+        /// Disposes the objects associated with this object.
+        /// </summary>
+        protected virtual void DisposeObjectGraph()
+        {
+            ChannelFactory.DisposeCommunicationObject();
         }
         #endregion
 
@@ -237,7 +461,7 @@ namespace vm.Aspects.Wcf.Clients
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
         void ObjectInvariant()
         {
-            Contract.Invariant(Proxy != null);
+            Contract.Invariant(ChannelFactory != null);
         }
     }
 }

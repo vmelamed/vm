@@ -45,6 +45,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             OperationContext operationContext)
             => DoCheckAccess(operationContext);
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         bool DoCheckAccess(
             OperationContext operationContext)
             => Facility.ExceptionManager.Process(
@@ -78,15 +79,13 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 
         bool AllowedUnauthenticated()
         {
-            var attributes = _wcfContext.OperationMethodAllAttributes;
-
-            if (attributes != null  &&  attributes.Length > 0)
-                return attributes.Any(a => a is AllowOpenIdUnauthenticatedAttribute);
-
             // OPTIONS preflight message is always unauthenticated
-            return _wcfContext.HasWebOperationContext                               &&
-                   WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
-                   (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
+            if (_wcfContext.HasWebOperationContext                               &&
+                WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
+                (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true))
+                return true;
+
+            return _wcfContext.OperationMethodAllAttributes.Any(a => a is AllowOpenIdUnauthenticatedAttribute);
         }
     }
 }

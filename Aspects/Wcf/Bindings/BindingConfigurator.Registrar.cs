@@ -1,7 +1,7 @@
-﻿using Microsoft.Practices.Unity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -30,6 +30,7 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, ConfiguredBindingConfigurator>(registrations)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseConfigurator>(registrations, RequestResponseConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseNoSecurityConfigurator>(registrations, RequestResponseNoSecurityConfigurator.PatternName)
+                    .RegisterTypeIfNot<BindingConfigurator, RequestResponseBasicAuthenticationConfigurator>(registrations, RequestResponseBasicAuthenticationConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseTransportConfigurator>(registrations, RequestResponseTransportConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseTransportClientWindowsAuthenticationConfigurator>(registrations, RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseTransportClientCertificateAuthenticationConfigurator>(registrations, RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName)
@@ -49,9 +50,6 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq", new InjectionConstructor())
                     .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp.rest", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq.rest", new InjectionConstructor())
-                    //.RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe.rest", new InjectionConstructor())
                     ;
             }
         }

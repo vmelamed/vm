@@ -25,10 +25,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             where TException : Exception
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Requires<ArgumentNullException>(data      != null, nameof(data));
             Contract.Ensures(Contract.Result<Exception>() != null);
 
-            if (data.Count == 0)
+            if (data == null  ||  data.Count == 0)
                 return exception;
 
             data.Select(kv => exception.Data[kv.Key] = kv.Value).Count();
@@ -69,10 +68,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             where TFault : Fault
         {
             Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
-            Contract.Requires<ArgumentNullException>(data  != null, nameof(data));
             Contract.Ensures(Contract.Result<Fault>() != null);
 
-            if (data.Count == 0)
+            if (data == null  ||  data.Count == 0)
                 return fault;
 
             foreach (DictionaryEntry kv in data)

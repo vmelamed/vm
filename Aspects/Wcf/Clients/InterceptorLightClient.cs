@@ -14,7 +14,7 @@ namespace vm.Aspects.Wcf.Clients
     /// A lightweight WCF service client class based on <see cref="ChannelFactory{T}"/>, includes interceptor behavior.
     /// </summary>
     /// <typeparam name="TContract">The service interface.</typeparam>
-    public abstract class InterceptorLightClient<TContract> : LightClientBase<TContract>, ICallIntercept where TContract : class
+    public abstract class InterceptorLightClient<TContract> : LightClient<TContract>, ICallIntercept where TContract : class
     {
         #region ICallIntercept
         /// <summary>
@@ -66,7 +66,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
         /// <summary>
@@ -97,7 +96,6 @@ namespace vm.Aspects.Wcf.Clients
                 !remoteAddress.IsNullOrWhiteSpace(), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
         /// <summary>
@@ -128,7 +126,6 @@ namespace vm.Aspects.Wcf.Clients
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
 
@@ -151,7 +148,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
         /// <summary>
@@ -188,7 +184,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
         /// <summary>
@@ -222,7 +217,6 @@ namespace vm.Aspects.Wcf.Clients
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
 
         /// <summary>
@@ -247,7 +241,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
 
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
-            Proxy = ChannelFactory.CreateChannel();
         }
         #endregion
 
@@ -261,12 +254,5 @@ namespace vm.Aspects.Wcf.Clients
             base.DisposeObjectGraph();
         }
         #endregion
-
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        void ObjectInvariant()
-        {
-            Contract.Invariant(Proxy != null);
-        }
     }
 }

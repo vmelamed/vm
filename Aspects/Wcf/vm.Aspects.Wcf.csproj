@@ -321,7 +321,6 @@
     <Compile Include="Clients\InterceptorBehavior.cs" />
     <Compile Include="Clients\InterceptorLightClient.cs" />
     <Compile Include="Clients\LightClient.cs" />
-    <Compile Include="Clients\LightClientBase.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CustomDataContext.cs" />
     <Compile Include="CustomDataContextManager.cs" />
