@@ -74,24 +74,28 @@ namespace vm.Aspects.Model.EFRepository
                 repository = (T)DIContainer.Root.Resolve(registration.RegisteredType, registration.Name);
             else
                 repository = new T();   // couldn't find it so create one with the default
-            var mappingCollection = (StorageMappingItemCollection)repository.ObjectContext.MetadataWorkspace.GetItemCollection(DataSpace.CSSpace);
-            var mappingHashValue  = mappingCollection.ComputeMappingHashValue();
 
-            if (mappingHashValue == _serializableViews?.HashValue)
-                return;
+            using (repository as IDisposable)
+            {
+                var mappingCollection = (StorageMappingItemCollection)repository.ObjectContext.MetadataWorkspace.GetItemCollection(DataSpace.CSSpace);
+                var mappingHashValue  = mappingCollection.ComputeMappingHashValue();
 
-            // generate the views
-            var errors = new List<EdmSchemaError>();
-            var views  = mappingCollection.GenerateViews(errors);
+                if (mappingHashValue == _serializableViews?.HashValue)
+                    return;
 
-            if (errors.Any())
-                throw new EdmSchemaException(errors);
+                // generate the views
+                var errors = new List<EdmSchemaError>();
+                var views  = mappingCollection.GenerateViews(errors);
 
-            // serialize them
-            _serializableViews = new SerializableViews(mappingHashValue, views);
+                if (errors.Any())
+                    throw new EdmSchemaException(errors);
 
-            using (Stream stream = File.Open(_cacheFilePath, FileMode.Create))
-                new BinaryFormatter().Serialize(stream, _serializableViews);
+                // serialize them
+                _serializableViews = new SerializableViews(mappingHashValue, views);
+
+                using (Stream stream = File.Open(_cacheFilePath, FileMode.Create))
+                    new BinaryFormatter().Serialize(stream, _serializableViews);
+            }
         }
 
         /// <summary>

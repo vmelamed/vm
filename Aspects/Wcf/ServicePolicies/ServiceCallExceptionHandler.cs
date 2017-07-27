@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -7,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -27,7 +27,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             });
 
         /// <summary>
-        /// When implemented by a class, handles an <see cref="T:System.Exception" />.
+        /// When implemented by a class, handles an <see cref="Exception" />.
         /// </summary>
         /// <param name="exception">The exception to handle.</param>
         /// <param name="handlingInstanceId">The unique ID attached to the handling chain for this handling instance.</param>

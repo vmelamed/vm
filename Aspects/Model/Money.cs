@@ -1,9 +1,10 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Model
 {
@@ -256,6 +257,7 @@ namespace vm.Aspects.Model
         /// </summary>
         /// <param name="info">The serialization information.</param>
         /// <param name="context">The streaming context context.</param>
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
             StreamingContext context)
