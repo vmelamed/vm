@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Model.EFRepository
 {
@@ -55,7 +56,24 @@ namespace vm.Aspects.Model.EFRepository
             if (!Directory.Exists(_cachePath))
                 Directory.CreateDirectory(_cachePath);
 
-            var repository        = new T();
+            // try to resolve the real repository in the DI container
+            ContainerRegistration registration;
+
+            lock (DIContainer.Root)
+                registration = DIContainer
+                                .Root
+                                .GetRegistrationsSnapshot()
+                                .FirstOrDefault(kv => kv.Value.MappedToType == typeof(T) &&
+                                                      kv.Value.LifetimeManagerType == typeof(TransientLifetimeManager))
+                                .Value
+                                ;
+
+            T repository;
+
+            if (registration != null)
+                repository = (T)DIContainer.Root.Resolve(registration.RegisteredType, registration.Name);
+            else
+                repository = new T();   // couldn't find it so create one with the default
             var mappingCollection = (StorageMappingItemCollection)repository.ObjectContext.MetadataWorkspace.GetItemCollection(DataSpace.CSSpace);
             var mappingHashValue  = mappingCollection.ComputeMappingHashValue();
 
