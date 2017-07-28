@@ -856,5 +856,22 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         {
             public byte[] Bytes;
         }
+
+        [MetadataType(typeof(GenericWithBuddyMetadata))]
+        public class GenericWithBuddy<T>
+        {
+            public T Property1 { get; set; }
+
+            [Dump(Mask = true)]
+            public T Property2 { get; set; }
+        }
+
+        class GenericWithBuddyMetadata
+        {
+            [Dump(false)]
+            public object Property1 { get; set; }
+
+            public object Property2 { get; set; }
+        }
     }
 }

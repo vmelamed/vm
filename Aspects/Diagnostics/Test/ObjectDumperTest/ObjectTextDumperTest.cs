@@ -1513,5 +1513,16 @@ WrappedByteArray (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest
   Bytes                    = byte[8]: 00-00-00-00-00-00-00-00",
                 new WrappedByteArray { Bytes = new byte[8] });
         }
+
+        [TestMethod]
+        public void TestGenericWithBuddy()
+        {
+            ActAndAssert(
+                nameof(TestGenericWithBuddy),
+                @"
+GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property2                = ******",
+                new GenericWithBuddy<int> { Property1 = 7, Property2 = 3 });
+        }
     }
 }

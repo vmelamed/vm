@@ -85,7 +85,8 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
-            // if the class is already in the cache return that
+            // the dump data in the cache has preference:
+            // if the class is already in the cache return it
             var dumpData = TryGetClassDumpData(type);
 
             if (dumpData.HasValue)
@@ -96,9 +97,10 @@ namespace vm.Aspects.Diagnostics
 
             try
             {
+                // add it to the cache
                 AddClassDumpData(type, dumpData.Value, false);
 
-                // return what we found
+                // and return what we found
                 return dumpData.Value;
             }
             catch (InvalidOperationException)
@@ -113,6 +115,10 @@ namespace vm.Aspects.Diagnostics
 
             // see if the class has a buddy:
             var attribute = type.GetCustomAttribute<MetadataTypeAttribute>();
+
+            // see if the class is generic and the open generic has a buddy:
+            if (attribute == null  &&  type.IsGenericType)
+                attribute = type.GetGenericTypeDefinition().GetCustomAttribute<MetadataTypeAttribute>();
 
             // if there is no buddy, we assume that the class provides the metadata itself
             Type metadata = attribute != null
@@ -133,6 +139,9 @@ namespace vm.Aspects.Diagnostics
                 TypesDumpDataSync.EnterReadLock();
                 if (TypesDumpData.TryGetValue(type, out dumpData))
                     return dumpData;
+                if (type.IsGenericType  &&
+                    TypesDumpData.TryGetValue(type.GetGenericTypeDefinition(), out dumpData))
+                    return dumpData;
             }
             finally
             {
@@ -142,14 +151,21 @@ namespace vm.Aspects.Diagnostics
             return null;
         }
 
-        static void AddClassDumpData(Type type, Type buddy, DumpAttribute dumpAttribute, bool replace)
+        static void AddClassDumpData(
+            Type type,
+            Type buddy,
+            DumpAttribute dumpAttribute,
+            bool replace)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 
             AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
         }
 
-        static void AddClassDumpData(Type type, ClassDumpData classDumpData, bool replace)
+        static void AddClassDumpData(
+            Type type,
+            ClassDumpData classDumpData,
+            bool replace)
         {
             Contract.Requires<ArgumentNullException>(type != null, nameof(type));
 

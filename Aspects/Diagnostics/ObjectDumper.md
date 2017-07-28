@@ -84,7 +84,7 @@ And now we can replace the last line in the snippet with:
 ```
 The programmer has control over the dump through attributes associated with the classes, properties and fields of the dumped objects. The attributes can be applied:
 * Directly on the class and its properties and fields.
-* Indirectly in a so called buddy class - class referred to in a `MetadataTypeAttribute` applied to your class.
+* Indirectly in a so called buddy class - class referred to in a `MetadataTypeAttribute` applied to your class. This is my favorite method. I even have a Visual Studio extension that would generate a metadata class (some call it "buddy class") out of any class.
 * By using the parameters of the `Dump` method associate a type of objects with after-the-fact written buddy-class.
 * By using the method of the static class `ClassMetadataResolver.SetClassDumpData`. The signature of the method is self-explanatory:
 ```csharp
@@ -102,7 +102,7 @@ Let's go back to the constructor of the `ObjectTextDumper` class:
             int indentLength = 2,
             int maxDumpLength = 0,
             BindingFlags propertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly,
-            BindingFlags fieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+            BindingFlags fieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
 ```
 It takes:
   1. an object of type descending from `TextWriter`
@@ -183,7 +183,7 @@ MyClassDescendant (ObjectDumperSamples.MyClassDescendant, ObjectDumperSamples, V
   GuidProperty             = fe0e72b2-196f-424a-a011-7f8119c04ead
 ```
 
-### Dump some of the properties only if they are not null:
+### Dump properties only if they are not null:
 ```csharp
         [Dump(0, DumpNullValues=ShouldDump.Skip)]
         public Uri UriProperty { get; set; }
@@ -344,7 +344,7 @@ Generally the dump recurses only into arrays and sequences from the BCL. The rea
 [Dump(Enumerate=ShouldDump.Dump)]
 class MyCollection : IEnumerable<Item>
 {
-    . . .
+    . . .
 }
 ```
 ### Dumped dictionaries
@@ -484,10 +484,49 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
   Prop94                   = 5
 ```
 Notice that for the value of the property `Flags` it dumps all set values (bits) by name.
-### Performance and the dump cache (as of v1.7.0)
+### Metadata Classes (buddy classes)
+I personally do not like too many attributes in my code. It's been since .NET 3.5 that the concept of a buddy class was introduced. The idea is to have something like a parallel class for each heavily adorned class. The parallel class is designated with the attribute `MetadataTypeAttribute` or as some call it "buddy class". The idea is very simple: apply the attibute to the main class with a parameter the type of the metadata class. By convention the main class is marked with the keyword `partial`, although it is not absolutely mandatory. The metadata class should never be instantiated and to prevent you from doing so it is usually marked as abstract. The metadata class contains only properties with names the properties of the main class and since they are never used, they should be (again by convention) of type `object`. Now you can apply all attributes to the properties of the buddy class instead of to the main class. There are several packages that make use of buddy classes: Entity Framework, WPF, Enterprise Library and of course the AspectObjectDumper. Here is a small example of a class coupled with a buddy class (it is from the unit tests of the AspectObjectDumper):
+```csharp
+        [MetadataType(typeof(GenericWithBuddyMetadata))]
+        public class GenericWithBuddy<T>
+        {
+            public T Property1 { get; set; }
+
+            [Dump(Mask = true)]
+            public T Property2 { get; set; }
+        }
+
+        class GenericWithBuddyMetadata
+        {
+            [Dump(false)]
+            public object Property1 { get; set; }
+
+            public object Property2 { get; set; }
+        }
+```
+Note that the dumper can use `DumpAttribute`-s from both the main class and the buddy class (the buddy class has a preference) and can be applied even to generic classes. Dumping this object 
+```csharp
+    new GenericWithBuddy<int, int> { Property1 = 7, Property2 = 3}
+```
+produces the following output:
+```
+GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Property2                = ******
+```
+### Formatting the dump of objects for which you have no access to their source code
+Very often you want to dump objects for which you have no access to the source class (e.g. `System.InvalidOperationException`). AspectObjectDumper allows you to associate buddy classes for those type as well. Use the static method
+```csharp
+    ClassMetadataCache.SetClassDumpData(Type type, Type metadataType = null, DumpAttribute dumpAttribute = null, bool replace = false)
+```
+It associates the parameter `type` with the `metadataType` as it was a buddy class and also takes a class level `dumpAttribute`. The AspectObjectDumper defines a number of buddy classes and associates them to some BCL classes. Just take a look at the project folder `ExternalMetadata` and the utility `ClassMetadataRegistrar`. To use these predefined buddy classes just call:
+```csharp
+    ClassMetadataRegistrar.RegisterMetadata();
+```
+Feel free to add more mappings like this to the metadata cache. Note that the folder with metadata classes contains more classes than those that are actually registered. I just didn't want to increase the dependency footprint of the dumper by including System.Data, Microsoft.Practices.EnterpriseLibrary.Validation, etc.
+### Performance of the AspectObjectDumper and the dump cache (as of v1.7.0)
 You can imagine that the implementation of the object dumper is one huge exercise on .NET reflection. However this would make it not particularly good performer - on average an object is dumped in a few dozens of milliseconds. While working on the [expression serialization](https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization) I realized that all that reflection code can be used to generate expression trees that represent the dumping code for each class. Then all I need to do is compile these expression trees into delegates and cache them. So, the next time when I need to dump an object of the same type, instead of traversing the object graph with all its properties and nested objects using reflection again, all I need is really to pull the cached delegates and execute them with parameter the current object. The result was significant improvement. If on average dumping of an average object for first time takes something in the order of 40-60 milliseconds, the second time (executing a delegate from the cache) takes say 300 microseconds or less - a few hundreds times better. 
 
-If for some reason (memory concerns or bugs in the dumper) you want to suppress the cache, you can do so by setting the static property `UseDumpScriptCache`:
+If for some reason (memory concerns or bugs in the dumper) you want to suppress the expression cache, you can do so by setting the static property `UseDumpScriptCache`:
 ```csharp
         ObjectTextDumper.UseDumpScriptCache = false;
 ```
