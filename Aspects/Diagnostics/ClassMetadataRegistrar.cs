@@ -23,6 +23,8 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
+            ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
+
             return new ClassMetadataRegistrar()
                 .Register<Type, TypeDumpMetadata>()
                 .Register<Exception, ExceptionDumpMetadata>()
@@ -36,26 +38,27 @@ namespace vm.Aspects.Diagnostics
                 .Register<ParameterExpression, ParameterExpressionDumpMetadata>()
                 .Register<BinaryExpression, BinaryExpressionDumpMetadata>()
                 .Register<ConstantExpression, ConstantExpressionDumpMetadata>()
-
-                // Do not extend the BCL dependency, but the client can call also:
-                //
-                //using System.Data;
-                //using System.Data.Metadata.Edm;
-                //using System.Data.SqlClient;
-                //using System.Net;
-                //using Microsoft.Practices.EnterpriseLibrary.Validation;
-                //using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-                //
-                //.Register<SqlException, SqlExceptionDumpMetadata>()
-                //.Register<SqlError, SqlErrorDumpMetadata>()
-                //.Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
-                //.Register<MetadataItem, MetadataItemDumpMetadata>()
-                //.Register<UpdateException, UpdateExceptionDumpMetadata>()
-                //.Register<ValidationResult, ValidationResultDumpMetadata>()
-                //.Register<ValidationResults, ValidationResultsDumpMetadata>()
-                //.Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
-                //.Register<WebException, WebExceptionDumpMetadata>()
                 ;
+
+            // Do not extend the BCL dependency, but the client can call also:
+            //
+            //using System.Data;
+            //using System.Data.Metadata.Edm;
+            //using System.Data.SqlClient;
+            //using System.Net;
+            //using Microsoft.Practices.EnterpriseLibrary.Validation;
+            //using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+            //
+            //.Register<SqlException, SqlExceptionDumpMetadata>()
+            //.Register<SqlError, SqlErrorDumpMetadata>()
+            //.Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
+            //.Register<MetadataItem, MetadataItemDumpMetadata>()
+            //.Register<UpdateException, UpdateExceptionDumpMetadata>()
+            //.Register<ValidationResult, ValidationResultDumpMetadata>()
+            //.Register<ValidationResults, ValidationResultsDumpMetadata>()
+            //.Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
+            //.Register<WebException, WebExceptionDumpMetadata>()
+            ;
         }
 
         /// <summary>
