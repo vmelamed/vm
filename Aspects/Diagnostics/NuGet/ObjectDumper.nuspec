@@ -31,7 +31,7 @@
         <releaseNotes>
             Checking for buddy class of generic types on the open generic type as well.
             Added sections to the documentation about the buddy classes and the metadata cache.
-            Added registration of metadata class for the open generic Task<>.
+            Added registration of metadata class for the open generic Task{}.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
@@ -39,7 +39,7 @@
         <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
-                        version="1.3" />
+                        version="1.3" /> 
         </dependencies>
         <tags>dump object .net diagnostics debug log aspects</tags>
     </metadata>
