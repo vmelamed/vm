@@ -6,92 +6,95 @@ using System.Threading;
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
-    public abstract class TaskDumpMetadata : System.IAsyncResult
+    public abstract class TaskDumpMetadata : IAsyncResult
     {
         [Dump(0)]
-        public object CreationOptions;
+        public object CreationOptions { get; set; }
 
         [Dump(1)]
-        public object Options;
+        public object Options { get; set; }
 
         [Dump(2, DumpNullValues=ShouldDump.Skip)]
-        public object AsyncState;
+        public object AsyncState { get; set; }
 
         [Dump(3)]
-        public object Id;
+        public object Id { get; set; }
 
         [Dump(4)]
-        public object Status;
+        public object Status { get; set; }
 
         [Dump(5)]
-        public object IsCompleted;
+        public object IsCompleted { get; set; }
 
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Cancelled", Justification="see TaskDump")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Canceled", Justification="see TaskDump")]
         [Dump(6)]
-        public object IsCancelled;
+        public object IsCanceled { get; set; }
 
         [Dump(7)]
-        public object IsFaulted;
+        public object IsFaulted { get; set; }
 
         [Dump(false)]
-        public object IsChildReplica;
+        public object IsChildReplica { get; set; }
 
         [Dump(false)]
-        public object IsDelegateInvoked;
+        public object IsDelegateInvoked { get; set; }
 
         [Dump(8)]
-        public object IsExceptionObservedByParent;
+        public object IsExceptionObservedByParent { get; set; }
 
         [Dump(-1, DumpNullValues=ShouldDump.Skip)]
-        public object Exception;
-
-        [Dump(-2, DumpNullValues=ShouldDump.Skip)]
-        public object Result;
+        public object Exception { get; set; }
 
         [Dump(false)]
-        public object CancellationToken;
+        public object Result { get; set; }
 
         [Dump(false)]
-        public object CapturedContext;
+        public object Factory { get; set; }
 
         [Dump(false)]
-        public object CompletedEvent;
+        public object CancellationToken { get; set; }
 
         [Dump(false)]
-        public object ExceptionRecorded;
+        public object CapturedContext { get; set; }
 
         [Dump(false)]
-        public object ExecutingTaskScheduler;
+        public object CompletedEvent { get; set; }
 
         [Dump(false)]
-        public object HandedOverChildReplica;
+        public object ExceptionRecorded { get; set; }
 
         [Dump(false)]
-        public object SavedStateForNextReplica;
+        public object ExecutingTaskScheduler { get; set; }
 
         [Dump(false)]
-        public object SavedStateFromPreviousReplica;
+        public object HandedOverChildReplica { get; set; }
 
         [Dump(false)]
-        public object ShouldNotifyDebuggerOfWaitCompletion;
+        public object SavedStateForNextReplica { get; set; }
 
         [Dump(false)]
-        public object DebuggerDisplayMethodDescription;
+        public object SavedStateFromPreviousReplica { get; set; }
 
         [Dump(false)]
-        public object DebuggerDisplayResultDescription;
+        public object ShouldNotifyDebuggerOfWaitCompletion { get; set; }
 
         [Dump(false)]
-        public object ResultOnSuccess;
+        public object DebuggerDisplayMethodDescription { get; set; }
 
         [Dump(false)]
-        public object IsSelfReplicatingRoot;
+        public object DebuggerDisplayResultDescription { get; set; }
 
         [Dump(false)]
-        public object IsWaitNotificationEnabled;
+        public object ResultOnSuccess { get; set; }
 
         [Dump(false)]
-        public object IsWaitNotificationEnabledOrNotRanToCompletion;
+        public object IsSelfReplicatingRoot { get; set; }
+
+        [Dump(false)]
+        public object IsWaitNotificationEnabled { get; set; }
+
+        [Dump(false)]
+        public object IsWaitNotificationEnabledOrNotRanToCompletion { get; set; }
 
         #region IAsyncResult Members
 

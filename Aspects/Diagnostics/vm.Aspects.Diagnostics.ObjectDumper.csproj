@@ -206,6 +206,7 @@
     <Compile Include="DefaultServiceLocator.cs" />
     <Compile Include="DumpAttribute.cs" />
     <Compile Include="DumpFormat.cs" />
+    <Compile Include="ExternalMetadata\TaskGenericDumpMetadata.cs" />
     <Compile Include="Implementation\CSharpDumpExpression.cs" />
     <Compile Include="Implementation\CSharpDumpExpression.Visitor.cs">
       <DependentUpon>CSharpDumpExpression.cs</DependentUpon>

@@ -23,7 +23,7 @@ namespace vm.Aspects.Diagnostics
         {
             Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
 
-            ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
+            ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskGenericDumpMetadata));
 
             return new ClassMetadataRegistrar()
                 .Register<Type, TypeDumpMetadata>()
