@@ -92,9 +92,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 return input.CreateExceptionMethodReturn(exceptionToThrow);
 
             // if swallowed 
-            return input.CreateMethodReturn(
-                            input.ResultType()
-                                 .Default());
+            return methodReturn;
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
@@ -107,10 +105,28 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
 
-            Exception outException;
+            Exception outException = null;
 
-            if (!Facility.ExceptionManager.HandleException(exception, ExceptionHandlingPolicyName, out outException))
-                return null;
+            try
+            {
+                if (!Facility.ExceptionManager.HandleException(exception, ExceptionHandlingPolicyName, out outException))
+                    return null;
+            }
+            catch (Exception x)
+            {
+                Facility.LogWriter.LogError(
+                    $@"
+Facility.ExceptionManager.HandleException throws:
+{x.DumpString(1)}
+when processing
+{exception.DumpString(1)}");
+
+                if (ExceptionHandlingPolicyName == ExceptionPolicyProvider.LogAndSwallowPolicyName)
+                    return null;
+
+                if (outException == null)
+                    outException = exception;
+            }
 
             var faultException = outException as FaultException;
 
