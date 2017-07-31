@@ -71,7 +71,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                             exceptions.Add(x);
                         }
 
-                    throw new AggregateException("Errors validating the JWT with different validation parameters.", exceptions);
+                    Facility.LogWriter.ExceptionError(new AggregateException("Errors validating the JWT with different validation parameters.", exceptions));
+                    return false;
                 },
                 false,
                 ExceptionPolicyProvider.LogAndSwallowPolicyName);

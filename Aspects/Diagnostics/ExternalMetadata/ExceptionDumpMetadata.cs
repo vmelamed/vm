@@ -25,7 +25,7 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(-6)]
         public object IsTransient;
 
-        [Dump(int.MinValue+2, DumpNullValues=ShouldDump.Skip)]
+        [Dump(int.MinValue+2, DumpNullValues=ShouldDump.Skip, MaxLength = -1)]
         public object Data;
 
         [Dump(int.MinValue+1, ValueFormat="\r\n{0}")]
