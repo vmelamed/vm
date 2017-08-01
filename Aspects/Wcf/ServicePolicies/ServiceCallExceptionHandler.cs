@@ -117,7 +117,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
 
             var fault = ProtocolExceptionToWebFaultResolver.Resolve((WebException)x, expectedFaults, out responseText);
 
-            return GetFaultException(fault, responseText);
+            if (fault != null)
+                return GetFaultException(fault, responseText);
+            else
+                return x;
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.ServiceModel.FaultReasonText.#ctor(System.String)", Justification = "It is OK in a fault.")]

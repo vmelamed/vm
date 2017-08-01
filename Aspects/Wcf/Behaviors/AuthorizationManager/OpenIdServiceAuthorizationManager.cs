@@ -62,8 +62,9 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                     foreach (var tvp in _tokenValidationParameters)
                         try
                         {
-                            operationContext.SetPrincipal(
-                                _tokenHandler.ValidateToken(jwt, tvp.Value, out token));
+                            var claimsPrincipal = _tokenHandler.ValidateToken(jwt, tvp.Value, out token);
+
+                            operationContext.SetPrincipal(claimsPrincipal);
                             return true;
                         }
                         catch (Exception x)

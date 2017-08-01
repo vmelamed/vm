@@ -64,7 +64,12 @@ namespace vm.Aspects.Wcf
             Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
             Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
 
-            operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = principal;
+            var properties = operationContext.ServiceSecurityContext.AuthorizationContext.Properties;
+
+            if (properties.ContainsKey(Principal))
+                operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = principal;
+            else
+                properties.Add(Principal, principal);
         }
     }
 }

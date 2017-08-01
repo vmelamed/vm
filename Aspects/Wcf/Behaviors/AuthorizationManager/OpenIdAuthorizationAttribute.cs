@@ -64,9 +64,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            var manager = new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
-
-            serviceHostBase.Authorization.ServiceAuthorizationManager = manager;
+            serviceHostBase.Authorization.ServiceAuthorizationManager = new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
+            serviceHostBase.Authorization.PrincipalPermissionMode     = PrincipalPermissionMode.Custom;
         }
 
         IEnumerable<Lazy<TokenValidationParameters>> GetTokenValidationParameters()
