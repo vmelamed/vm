@@ -9,11 +9,14 @@ namespace vm.Aspects.Wcf.Behaviors
     {
         readonly ISet<string> _allowedMethods = new SortedSet<string>();
         readonly string[] _allowedOrigins;
+        readonly int _maxAge;
 
         public PreflightOperationBehavior(
-            string[] allowedOrigins = null)
+            string[] allowedOrigins = null,
+            int maxAge = 600)
         {
             _allowedOrigins = allowedOrigins;
+            _maxAge         = maxAge;
         }
 
         public void AddAllowedMethod(
@@ -29,7 +32,7 @@ namespace vm.Aspects.Wcf.Behaviors
             OperationDescription operationDescription,
             DispatchOperation dispatchOperation)
         {
-            dispatchOperation.Invoker = new PreflightOperationInvoker(operationDescription.Messages[1].Action, _allowedMethods, _allowedOrigins);
+            dispatchOperation.Invoker = new PreflightOperationInvoker(operationDescription.Messages[1].Action, _allowedMethods, _allowedOrigins, _maxAge);
         }
 
         public void AddBindingParameters(

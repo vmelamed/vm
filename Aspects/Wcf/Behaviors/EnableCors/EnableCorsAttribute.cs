@@ -47,6 +47,12 @@ namespace vm.Aspects.Wcf.Behaviors
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string AllowedOriginsResolveName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum age of the cached preflight headers (the value for the header "Access-Control-Max-Age").
+        /// The default is 600sec.
+        /// </summary>
+        public int MaxAge { get; set; } = 600;
+
         /// <summary/>
         #region IContractBehavior
         public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
@@ -75,10 +81,10 @@ namespace vm.Aspects.Wcf.Behaviors
             Contract.Requires<ArgumentNullException>(endpoint != null, nameof(endpoint));
 
             var uriTemplates = new SortedDictionary<string, PreflightOperationBehavior>();
-            string[] allowedOrigins = GetAllowedOrigins();
+            var allowedOrigins = GetAllowedOrigins();
 
             foreach (var operation in endpoint.Contract.Operations.ToList())
-                AddPreflightOperationSelector(operation, allowedOrigins, uriTemplates);
+                AddPreflightOperationSelector(operation, allowedOrigins, MaxAge, uriTemplates);
 
             endpoint.Behaviors.Add(new EnableCorsEndpointBehavior(allowedOrigins));
         }
@@ -114,6 +120,7 @@ namespace vm.Aspects.Wcf.Behaviors
         static void AddPreflightOperationSelector(
             OperationDescription operation,
             string[] allowedOrigins = null,
+            int maxAge = 600,
             IDictionary<string, PreflightOperationBehavior> uriTemplates = null)
         {
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
@@ -182,7 +189,7 @@ namespace vm.Aspects.Wcf.Behaviors
                     Type = typeof(Message),
                 };
 
-            preflightOperationBehavior = new PreflightOperationBehavior(allowedOrigins);
+            preflightOperationBehavior = new PreflightOperationBehavior(allowedOrigins, maxAge);
 
             preflightOperationBehavior.AddAllowedMethod(originalMethod);
 

@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Microsoft.IdentityModel.Tokens;
@@ -54,7 +56,15 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                     var jwt = operationContext.GetAuthorizationToken();
 
                     if (string.IsNullOrEmpty(jwt))
-                        return AllowedUnauthenticated();
+                    {
+                        var principal = AllowedUnauthenticated();
+
+                        if (principal == null)
+                            return false;
+
+                        operationContext.SetPrincipal(principal);
+                        return true;
+                    }
 
                     var exceptions = new List<Exception>();
                     SecurityToken token;
@@ -78,16 +88,26 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                 false,
                 ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
-
-        bool AllowedUnauthenticated()
+        IPrincipal AllowedUnauthenticated()
         {
-            // OPTIONS preflight message is always unauthenticated
-            if (_wcfContext.HasWebOperationContext                               &&
-                WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
-                (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true))
-                return true;
+            var isPreflight = _wcfContext.HasWebOperationContext                               &&
+                              WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
+                              (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
+            var allowUnauthenticated = isPreflight
+                                            ? new AllowOpenIdUnauthenticatedAttribute()
+                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowOpenIdUnauthenticatedAttribute>().FirstOrDefault();
 
-            return _wcfContext.OperationMethodAllAttributes.Any(a => a is AllowOpenIdUnauthenticatedAttribute);
+            if (allowUnauthenticated == null)
+                return null;
+
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name));
+            if (!allowUnauthenticated.Name.IsNullOrWhiteSpace())
+                claims.Add(new Claim(ClaimTypes.Role, allowUnauthenticated.Role));
+
+            return new ClaimsPrincipal(
+                        new ClaimsIdentity(claims));
         }
     }
 }

@@ -15,17 +15,20 @@ namespace vm.Aspects.Wcf.Behaviors
         readonly string _replyAction;
         readonly List<string> _allowedHttpMethods;
         readonly string[] _allowedOrigins;
+        readonly int _maxAge;
 
         public PreflightOperationInvoker(
             string replyAction,
             IEnumerable<string> allowedHttpMethods,
-            string[] allowedOrigins = null)
+            string[] allowedOrigins = null,
+            int maxAge = 600)
         {
             Contract.Requires<ArgumentNullException>(allowedHttpMethods != null, nameof(allowedHttpMethods));
 
             _replyAction        = replyAction;
             _allowedHttpMethods = allowedHttpMethods.ToList();
             _allowedOrigins     = allowedOrigins;
+            _maxAge             = maxAge;
         }
 
         public object[] AllocateInputs() => new object[1];
@@ -84,6 +87,9 @@ namespace vm.Aspects.Wcf.Behaviors
 
             if (requestHeaders != null)
                 httpResponse.Headers.Add(Constants.AccessControlAllowHeaders, requestHeaders);
+
+            if (_maxAge > 0)
+                httpResponse.Headers.Add(Constants.AccessControlMaxAge, _maxAge.ToString());
 
             // build the reply message
             var reply = Message.CreateMessage(MessageVersion.None, _replyAction);

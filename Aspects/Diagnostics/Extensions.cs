@@ -252,7 +252,7 @@ namespace vm.Aspects
         /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
         [Pure]
-        public static bool IsNullOrEmpty(this string value) => value?.Any() ?? true;
+        public static bool IsNullOrEmpty(this string value) => string.IsNullOrEmpty(value);
 
 #if DOTNET40
         static IDictionary<Type, string> _cSharpTypeName = new Dictionary<Type, string>

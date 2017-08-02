@@ -191,6 +191,7 @@ namespace vm.Aspects.Wcf
         internal const string AccessControlRequestHeaders = "Access-Control-Request-Headers";
         internal const string AccessControlAllowMethods   = "Access-Control-Allow-Methods";
         internal const string AccessControlAllowHeaders   = "Access-Control-Allow-Headers";
+        internal const string AccessControlMaxAge         = "Access-Control-Max-Age";
         internal const string PreflightSuffix             = "_preflight_";
         #endregion
     }
