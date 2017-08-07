@@ -370,7 +370,7 @@
     <Compile Include="FaultContracts\RepeatableOperationFault.cs" />
     <Compile Include="FaultContracts\SerializationFault.cs" />
     <Compile Include="FaultContracts\UnauthorizedAccessFault.cs" />
-    <Compile Include="FaultContracts\ValidationFault.cs" />
+    <Compile Include="FaultContracts\InvalidObjectFault.cs" />
     <Compile Include="FaultContracts\ValidationFaultElement.cs" />
     <Compile Include="FaultContracts\ValidationResultsExtensions.cs" />
     <Compile Include="FaultContracts\XmlFault.cs" />

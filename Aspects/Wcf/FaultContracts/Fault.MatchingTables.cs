@@ -1,8 +1,6 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -14,6 +12,8 @@ using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Threading;
@@ -311,6 +311,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(UnauthorizedAccessException)]           = typeof(UnauthorizedAccessFault),
             [typeof(XmlException)]                          = typeof(XmlFault),
             [typeof(AuthenticationException)]               = typeof(AuthenticationFault),
+            [typeof(InvalidObjectException)]                = typeof(InvalidObjectFault),
         };
 
         /// <summary>
@@ -339,6 +340,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(UnauthorizedAccessFault)]               = typeof(UnauthorizedAccessException),
             [typeof(XmlFault)]                              = typeof(XmlException),
             [typeof(AuthenticationFault)]                   = typeof(AuthenticationException),
+            [typeof(InvalidObjectFault)]                    = typeof(InvalidObjectException),
         };
 
         /// <summary>
@@ -378,6 +380,16 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(UnauthorizedAccessException)]           = FaultFactory<UnauthorizedAccessException>,
             [typeof(XmlException)]                          = FaultFactory<XmlException>,
             [typeof(AuthenticationException)]               = FaultFactory<AuthenticationException>,
+            [typeof(InvalidObjectException)]                = x =>
+                                                                {
+                                                                    var f = FaultFactory<InvalidObjectException>(x);
+                                                                    var elements = new List<ValidationFaultElement>();
+
+                                                                    ((InvalidObjectException)x).ValidationResults.CopyTo(elements);
+                                                                    ((InvalidObjectFault)f).Details = elements;
+
+                                                                    return f;
+                                                                },
         };
 
         /// <summary>
@@ -438,6 +450,18 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(UnauthorizedAccessFault)]               = f => { CheckFault<Fault>(f); return new UnauthorizedAccessException(f.Message).PopulateData(f); },
             [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f); },
             [typeof(AuthenticationFault)]                   = f => { CheckFault<Fault>(f); return new AuthenticationException(f.Message).PopulateData(f); },
+            [typeof(InvalidObjectFault)]                    = f =>
+                                                            {
+                                                                CheckFault<Fault>(f);
+
+                                                                var results = new ValidationResults();
+                                                                var vresults = new List<ValidationResult>();
+
+                                                                ((InvalidObjectFault)f).Details.CopyTo(vresults);
+                                                                results.AddAllResults(vresults);
+
+                                                                return new InvalidObjectException(results, f.Message, null).PopulateData(f);
+                                                            }
         };
 
         /// <summary>
@@ -468,6 +492,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(UnauthorizedAccessFault)]           = HttpStatusCode.Unauthorized,
             [typeof(XmlFault)]                          = HttpStatusCode.InternalServerError,
             [typeof(AuthenticationFault)]               = HttpStatusCode.Unauthorized,
+            [typeof(InvalidObjectFault)]                = HttpStatusCode.BadRequest,
         };
 
         /// <summary>
@@ -495,7 +520,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(RepeatableOperationException)]      = HttpStatusCode.GatewayTimeout,
             [typeof(SerializationException)]            = HttpStatusCode.BadRequest,
             [typeof(UnauthorizedAccessException)]       = HttpStatusCode.Unauthorized,
-            [typeof(ValidationException)]               = HttpStatusCode.BadRequest,
+            [typeof(InvalidObjectException)]            = HttpStatusCode.BadRequest,
             [typeof(XmlException)]                      = HttpStatusCode.InternalServerError,
             [typeof(AuthenticationException)]           = HttpStatusCode.Unauthorized,
         };

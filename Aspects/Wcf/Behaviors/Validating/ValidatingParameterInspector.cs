@@ -91,7 +91,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// Return null if you do not intend to use correlation state.</returns>
         /// <exception cref="System.ArgumentNullException">inputs</exception>
         /// <exception cref="FaultException{ValidationFault}"></exception>
-        /// <exception cref="ValidationFault"></exception>
+        /// <exception cref="InvalidObjectFault"></exception>
         public object BeforeCall(
             string operationName,
             object[] inputs)
@@ -109,13 +109,13 @@ namespace vm.Aspects.Wcf.Behaviors
             if (results.IsValid)
                 return null;
 
-            var validationFault = new ValidationFault();
+            var validationFault = new InvalidObjectFault();
 
             if (WebOperationContext.Current != null)
-                throw new WebFaultException<ValidationFault>(
+                throw new WebFaultException<InvalidObjectFault>(
                             AddFaultDetails(validationFault, results), validationFault.HttpStatusCode);
             else
-                throw new FaultException<ValidationFault>(
+                throw new FaultException<InvalidObjectFault>(
                                 AddFaultDetails(validationFault, results));
         }
 
@@ -141,8 +141,8 @@ namespace vm.Aspects.Wcf.Behaviors
         /// <param name="fault">The fault.</param>
         /// <param name="results">The results.</param>
         /// <returns>ValidationFault.</returns>
-        static ValidationFault AddFaultDetails(
-            ValidationFault fault,
+        static InvalidObjectFault AddFaultDetails(
+            InvalidObjectFault fault,
             ValidationResults results)
         {
             Contract.Requires<ArgumentNullException>(results != null, nameof(results));

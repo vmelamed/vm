@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
+using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -24,6 +25,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets or sets the inner exceptions.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "N/A")]
+        [Dump(false)]
         public ReadOnlyCollection<Exception> InnerExceptions
         {
             get

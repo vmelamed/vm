@@ -222,7 +222,6 @@ namespace vm.Aspects
             hashCode = Constants.HashMultiplier * hashCode + Minor.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + Patch.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + (Prerelease?.GetHashCode() ?? 0);
-            hashCode = Constants.HashMultiplier * hashCode + (Build?.GetHashCode() ?? 0);
 
             return hashCode;
         }

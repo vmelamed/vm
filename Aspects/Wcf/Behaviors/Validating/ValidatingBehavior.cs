@@ -332,7 +332,7 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
 
-            return operation.Faults.Any(f => f.DetailType==typeof(ValidationFault));
+            return operation.Faults.Any(f => f.DetailType==typeof(InvalidObjectFault));
         }
 
         static bool IsOneWay(

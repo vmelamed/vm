@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Runtime.Serialization;
+using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -14,21 +16,21 @@ namespace vm.Aspects.Wcf.FaultContracts
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ValidationFaultMetadata))]
-    public sealed class ValidationFault : Fault
+    public sealed class InvalidObjectFault : Fault
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationFault"/> class.
+        /// Initializes a new instance of the <see cref="InvalidObjectFault"/> class.
         /// </summary>
-        public ValidationFault()
+        public InvalidObjectFault()
         {
             InternalDetails = new List<ValidationFaultElement>();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationFault"/> class.
+        /// Initializes a new instance of the <see cref="InvalidObjectFault"/> class.
         /// </summary>
         /// <param name="details">The details.</param>
-        public ValidationFault(
+        public InvalidObjectFault(
             IEnumerable<ValidationFaultElement> details)
         {
             Contract.Requires<ArgumentNullException>(details != null, nameof(details));
@@ -54,7 +56,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public bool IsValid => InternalDetails.Count == 0;
 
         [DataMember(Name = "internalDetails")]
-        IList<ValidationFaultElement> InternalDetails { get; }
+        [Dump(false)]
+        IList<ValidationFaultElement> InternalDetails { get; set; }
 
         /// <summary>
         /// Gets the validation details.
@@ -66,6 +69,11 @@ namespace vm.Aspects.Wcf.FaultContracts
                 Contract.Ensures(Contract.Result<IReadOnlyList<ValidationFaultElement>>() != null);
 
                 return new ReadOnlyCollection<ValidationFaultElement>(InternalDetails);
+            }
+
+            internal set
+            {
+                InternalDetails = value.ToList();
             }
         }
     }

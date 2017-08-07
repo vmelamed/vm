@@ -481,6 +481,20 @@ namespace vm.Aspects
         public static Regex TelephoneNumber => _telephoneNumber.Value;
         #endregion
 
+        #region Telephone Number E.164
+        /// <summary>
+        /// Matches a telephone number according to E.164
+        /// </summary>
+        public const string RexTelephoneNumberE164 = @"^\+[1-9]\d{2,14}$";
+
+        readonly static Lazy<Regex> _telephoneNumberE164 = new Lazy<Regex>(() => new Regex(RexTelephoneNumber, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches a telephone number according to E.164
+        /// </summary>
+        public static Regex TelephoneNumberE164 => _telephoneNumberE164.Value;
+        #endregion
+
         #region UsStateCode
         /// <summary>
         /// Regular expression pattern which matches ...
