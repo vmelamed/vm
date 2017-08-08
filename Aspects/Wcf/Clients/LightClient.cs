@@ -47,6 +47,23 @@ namespace vm.Aspects.Wcf.Clients
         }
 
         /// <summary>
+        /// Creates a client operation context scope.
+        /// Must be disposed, so call it within a <c>using</c> operator:
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// using (var client = new LightClient<IMyInterface>())
+        /// using (client.CreateOperationContextScope())
+        ///     client.MyMethod();
+        /// ]]>
+        /// </code>
+        /// </example>
+        /// <returns>OperationContextScope.</returns>
+        public OperationContextScope CreateOperationContextScope()
+            => new OperationContextScope((IContextChannel)Proxy);
+
+        /// <summary>
         /// Creates the proxy.
         /// </summary>
         /// <returns>TContract proxy object.</returns>
@@ -348,7 +365,12 @@ namespace vm.Aspects.Wcf.Clients
             if (binding is WebHttpBinding)
             {
                 ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
-                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(
+                    new WebHttpBehavior
+                    {
+                        DefaultOutgoingResponseFormat = WebMessageFormat.Json,
+                        DefaultOutgoingRequestFormat  = WebMessageFormat.Json,
+                    });
             }
             else
                 ChannelFactory = new ChannelFactory<TContract>(
