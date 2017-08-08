@@ -61,7 +61,11 @@ namespace vm.Aspects.Wcf.Clients
         /// </example>
         /// <returns>OperationContextScope.</returns>
         public OperationContextScope CreateOperationContextScope()
-            => new OperationContextScope((IContextChannel)Proxy);
+        {
+            Contract.Ensures(Contract.Result<OperationContextScope>() != null);
+
+            return new OperationContextScope((IContextChannel)Proxy);
+        }
 
         /// <summary>
         /// Creates the proxy.
