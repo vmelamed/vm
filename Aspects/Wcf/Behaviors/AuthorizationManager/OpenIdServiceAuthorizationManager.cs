@@ -53,6 +53,10 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             => Facility.ExceptionManager.Process(
                 () =>
                 {
+                    // OpenID Connect is for WebHttpBinding (REST-ful) only, for the other bindings, WCF must've done it already.
+                    if (!_wcfContext.HasWebOperationContext)
+                        return true;
+
                     var jwt = operationContext.GetAuthorizationToken();
 
                     if (string.IsNullOrEmpty(jwt))
@@ -90,8 +94,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 
         IPrincipal AllowedUnauthenticated()
         {
-            var isPreflight = _wcfContext.HasWebOperationContext                               &&
-                              WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
+            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
                               (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
             var allowUnauthenticated = isPreflight
                                             ? new AllowOpenIdUnauthenticatedAttribute()
