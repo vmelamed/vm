@@ -90,10 +90,12 @@ namespace vm.Aspects.Wcf.TestServer
                                 {
                                     RequestResponseTransportConfigurator.PatternName,
                                     RequestResponseMessageConfigurator.PatternName,
-                                    RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,
+
                                     RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,
-                                    RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,
                                     RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName,
+
+                                    RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,
+                                    RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,
                                 }.Contains(pattern.PatternName))
                                 host.SetServiceCredentials(
                                         CertificateFactory.GetCertificate(StoreLocation.LocalMachine, StoreName.My, X509FindType.FindByThumbprint, "351ae52cb2c3ac15ec12a3bdce838554fc63da95"));
