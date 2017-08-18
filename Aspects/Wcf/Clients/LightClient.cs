@@ -332,15 +332,23 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(ChannelFactory != null);
             Contract.Ensures(Contract.Result<Binding>() != null);
 
-            var remoteUri = new Uri(remoteAddress);
-            var scheme = remoteUri.Scheme;
-            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var remoteUri   = new Uri(remoteAddress);
+            var resolveName = remoteUri.Scheme;
 
-            if ((scheme == "http"  ||  scheme == "https") &&
-                ((messagingAttribute?.Restful).GetValueOrDefault()  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase)))   // only rest-ful endpoints do not need .svc page
-                scheme = string.Concat(remoteUri.Scheme, ".rest");
+            if (remoteUri.Scheme == Uri.UriSchemeHttp  ||  remoteUri.Scheme == Uri.UriSchemeHttps)
+            {
+                var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
 
-            var binding = ServiceLocator.Current.GetInstance<Binding>(scheme);
+                if (messagingAttribute?.Restful == true  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))       // only rest-ful endpoints do not need .svc page
+                    resolveName = string.Concat(remoteUri.Scheme, Constants.RestfulSchemeSuffix);
+                else
+                {
+                    if (messagingAttribute?.BasicHttp == true)
+                        resolveName = string.Concat(remoteUri.Scheme, Constants.BasicHttpSchemeSuffix);
+                }
+            }
+
+            var binding = ServiceLocator.Current.GetInstance<Binding>(resolveName);
 
             return BuildChannelFactory(binding, remoteAddress, identity);
         }
