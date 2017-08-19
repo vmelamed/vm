@@ -91,8 +91,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (exceptionToThrow != null)
                 return input.CreateExceptionMethodReturn(exceptionToThrow);
 
-            // if swallowed 
-            return methodReturn;
+            // if swallowed return default(TResult)
+            return input.CreateMethodReturn(((MethodInfo)input.MethodBase).ReturnType.Default());
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
