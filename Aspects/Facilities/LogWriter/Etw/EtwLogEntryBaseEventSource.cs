@@ -10,8 +10,8 @@ namespace vm.Aspects.Facilities
     /// <summary>
     /// Base class for event sources that would log event entry objects from the Enterprise Library logging application block.
     /// </summary>
-    /// <seealso cref="System.Diagnostics.Tracing.EventSource" />
-    /// <seealso cref="vm.Aspects.Facilities.IEtwLogEntryHandler" />
+    /// <seealso cref="EventSource" />
+    /// <seealso cref="IEtwLogEntryHandler" />
     public abstract class EtwLogEntryBaseEventSource : EventSource
     {
         /// <summary>
@@ -35,110 +35,73 @@ namespace vm.Aspects.Facilities
         /// Writes the event.
         /// </summary>
         /// <param name="id">A numeric identifier for the event.</param>
-        /// <param name="eventId">A numeric identifier for the EL-LAB event.</param>
-        /// <param name="eventCache">A <see cref="TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
         /// <param name="data">The trace data to emit.</param>
-        protected unsafe void WriteLogEntryEvent(
+        [NonEvent]
+        unsafe protected void WriteEvent(
             int id,
-            int eventId,
-            TraceEventCache eventCache,
-            object data)
-        {
-            if (!IsEnabled())
-                return;
-
-            WriteLogEntryEvent(id, eventId, eventCache, data.DumpString());
-        }
-
-        /// <summary>
-        /// Writes the event.
-        /// </summary>
-        /// <param name="id">A numeric identifier for the event.</param>
-        /// <param name="eventId">A numeric identifier for the EL-LAB event.</param>
-        /// <param name="eventCache">A <see cref="TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
-        /// <param name="data">The trace data to emit.</param>
-        protected unsafe void WriteLogEntryEvent(
-            int id,
-            int eventId,
-            TraceEventCache eventCache,
-            string data)
-        {
-            if (!IsEnabled())
-                return;
-
-            const int numArguments = 4;
-
-            fixed (char* pStack = eventCache?.Callstack,
-                         pData = data)
-            {
-                var eventData = stackalloc EventData[numArguments];
-                var i = 0;
-
-                eventData[i++] = new EventData { DataPointer = (IntPtr)(&id), Size = sizeof(int) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)(&eventId), Size = sizeof(int) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pData, Size = SizeInBytes(data) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pStack, Size = SizeInBytes(eventCache.Callstack) };
-
-                WriteEventCore(eventId, numArguments, eventData);
-            }
-        }
-
-        /// <summary>
-        /// Writes the event.
-        /// </summary>
-        /// <param name="id">A numeric identifier for the event.</param>
-        /// <param name="eventCache">A <see cref="TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
-        /// <param name="data">The trace data to emit.</param>
-        protected unsafe void WriteLogEntryEvent(
-            int id,
-            TraceEventCache eventCache,
             LogEntry data)
         {
             if (!IsEnabled())
                 return;
 
-            var categories         = string.Join(", ", data.Categories);
-            var priority           = data.Priority;
-            var relatedActivity    = data.RelatedActivityId!=null ? data.RelatedActivityId.Value.ToString() : null;
-            var extendedProperties = DumpExtendedProperties(data.ExtendedProperties);
             var logEntryEventId    = data.EventId;
+            var priority           = data.Priority;
+            var categories         = string.Join(", ", data.Categories);
+            var relatedActivityId  = data.ActivityId;
+            var extendedProperties = DumpExtendedProperties(data.ExtendedProperties);
 
-            fixed (char* pStack = eventCache.Callstack,
-                         pActivityId = data.ActivityIdString,
-                         pAppDomainName = data.AppDomainName,
-                         pCategories = categories,
-                         pTitle = data.Title,
-                         pErrorMessages = data.ErrorMessages,
+            fixed (char* pTitle = data.Title,
                          pSeverity = data.LoggedSeverity,
+                         pCategories = categories,
                          pMessage = data.Message,
+                         pErrorMessages = data.ErrorMessages,
                          pProcessName = data.ProcessName,
-                         pRelatedActivity = relatedActivity,
+                         pAppDomainName = data.AppDomainName,
                          pExtendedProperties = extendedProperties)
             {
-                const int MaxEventEntries = 32;
+                const int eventDataSize = 8;
 
-                var eventData = stackalloc EventData[MaxEventEntries];
-
-                for (var j = 0; j < MaxEventEntries; j++)
-                    eventData = null;
+                var eventData = stackalloc EventData[eventDataSize];
 
                 var i = 0;
 
-                eventData[i++] = new EventData { DataPointer = (IntPtr)(&logEntryEventId), Size = sizeof(int) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pTitle, Size = SizeInBytes(data.Title) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pSeverity, Size = SizeInBytes(data.LoggedSeverity) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)(&priority), Size = sizeof(int) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pCategories, Size = SizeInBytes(categories) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pMessage, Size = SizeInBytes(data.Message) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pActivityId, Size = SizeInBytes(data.ActivityIdString) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pErrorMessages, Size = SizeInBytes(data.ErrorMessages) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pProcessName, Size = SizeInBytes(data.ProcessName) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pRelatedActivity, Size = SizeInBytes(relatedActivity) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pAppDomainName, Size = SizeInBytes(data.AppDomainName) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pExtendedProperties, Size = SizeInBytes(extendedProperties) };
-                eventData[i++] = new EventData { DataPointer = (IntPtr)pStack, Size = SizeInBytes(eventCache.Callstack) };
+                eventData[i].DataPointer = (IntPtr)(&logEntryEventId);
+                eventData[i].Size = sizeof(int);
+                i++;
+                //eventData[i].DataPointer = (IntPtr)pTitle;
+                //eventData[i].Size = SizeInBytes(data.Title);
+                //i++;
+                eventData[i].DataPointer = (IntPtr)pSeverity;
+                eventData[i].Size = SizeInBytes(data.LoggedSeverity);
+                i++;
+                eventData[i].DataPointer = (IntPtr)(&priority);
+                eventData[i].Size = sizeof(int);
+                i++;
+                //eventData[i].DataPointer = (IntPtr)pCategories;
+                //eventData[i].Size = SizeInBytes(categories);
+                //i++;
+                eventData[i].DataPointer = (IntPtr)pMessage;
+                eventData[i].Size = SizeInBytes(data.Message);
+                i++;
+                eventData[i].DataPointer = (IntPtr)(&relatedActivityId);
+                eventData[i].Size = sizeof(Guid);
+                i++;
+                //eventData[i].DataPointer = (IntPtr)pErrorMessages;
+                //eventData[i].Size = SizeInBytes(data.ErrorMessages);
+                //i++;
+                eventData[i].DataPointer = (IntPtr)pProcessName;
+                eventData[i].Size = SizeInBytes(data.ProcessName);
+                i++;
+                eventData[i].DataPointer = (IntPtr)pAppDomainName;
+                eventData[i].Size = SizeInBytes(data.AppDomainName);
+                i++;
+                eventData[i].DataPointer = (IntPtr)pExtendedProperties;
+                eventData[i].Size = SizeInBytes(extendedProperties);
+                i++;
 
-                WriteEventCore(id, i, eventData);
+                Debug.Assert(i == eventDataSize);
+
+                WriteEventCore(id, eventDataSize, eventData);
             }
         }
 

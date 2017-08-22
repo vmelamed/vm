@@ -64,7 +64,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             LogEntry logEntry)
         {
-            WriteLogEntryEvent(WriteLogDataId, eventId, eventCache, logEntry);
+            WriteEvent(eventId, eventCache, logEntry);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string text)
         {
-            WriteLogEntryEvent(WriteLogDataId, eventId, eventCache, text);
+            WriteEvent(WriteLogDataId, eventId, eventCache, text);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             object data)
         {
-            WriteLogEntryEvent(WriteLogDataId, eventId, eventCache, data);
+            WriteEvent(WriteLogDataId, eventId, eventCache, data);
         }
 
         #region Logging exceptions
@@ -110,7 +110,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             Exception exception)
         {
-            WriteLogEntryEvent(WriteExceptionVerboseEntryId, eventId, eventCache, exception);
+            WriteEvent(WriteExceptionVerboseEntryId, eventId, eventCache, exception);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             Exception exception)
         {
-            WriteLogEntryEvent(WriteExceptionInfoEntryId, eventId, eventCache, exception);
+            WriteEvent(WriteExceptionInfoEntryId, eventId, eventCache, exception);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             Exception exception)
         {
-            WriteLogEntryEvent(WriteExceptionWarningEntryId, eventId, eventCache, exception);
+            WriteEvent(WriteExceptionWarningEntryId, eventId, eventCache, exception);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             Exception exception)
         {
-            WriteLogEntryEvent(WriteExceptionErrorEntryId, eventId, eventCache, exception);
+            WriteEvent(WriteExceptionErrorEntryId, eventId, eventCache, exception);
         }
 
         /// <summary>
@@ -169,8 +169,8 @@ namespace vm.Aspects.Facilities
             int eventId,
             TraceEventCache eventCache,
             Exception exception)
-        { 
-            WriteLogEntryEvent(WriteExceptionCriticalEntryId, eventId, eventCache, exception);
+        {
+            WriteEvent(WriteExceptionCriticalEntryId, eventId, eventCache, exception);
         }
         #endregion
 
@@ -187,7 +187,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string traceMessage)
         {
-            WriteLogEntryEvent(WriteTraceVerboseEntryId, eventId, eventCache, traceMessage);
+            WriteEvent(WriteTraceVerboseEntryId, eventId, eventCache, traceMessage);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string traceMessage)
         {
-            WriteLogEntryEvent(WriteTraceInfoEntryId, eventId, eventCache, traceMessage);
+            WriteEvent(WriteTraceInfoEntryId, eventId, eventCache, traceMessage);
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string traceMessage)
         {
-            WriteLogEntryEvent(WriteTraceWarningEntryId, eventId, eventCache, traceMessage);
+            WriteEvent(WriteTraceWarningEntryId, eventId, eventCache, traceMessage);
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string traceMessage)
         {
-            WriteLogEntryEvent(WriteTraceErrorEntryId, eventId, eventCache, traceMessage);
+            WriteEvent(WriteTraceErrorEntryId, eventId, eventCache, traceMessage);
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string traceMessage)
         {
-            WriteLogEntryEvent(WriteTraceCriticalEntryId, eventId, eventCache, traceMessage);
+            WriteEvent(WriteTraceCriticalEntryId, eventId, eventCache, traceMessage);
         }
         #endregion
 
@@ -264,7 +264,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteStartCallTraceVerboseEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteStartCallTraceVerboseEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteStartCallTraceInfoEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteStartCallTraceInfoEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteStartCallTraceWarningEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteStartCallTraceWarningEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteStartCallTraceErrorEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteStartCallTraceErrorEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteStartCallTraceCriticalEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteStartCallTraceCriticalEntryId, eventId, eventCache, callTrace);
         }
         #endregion
 
@@ -341,7 +341,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteEndCallTraceVerboseEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteEndCallTraceVerboseEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteEndCallTraceInfoEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteEndCallTraceInfoEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -371,7 +371,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteEndCallTraceWarningEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteEndCallTraceWarningEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteEndCallTraceErrorEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteEndCallTraceErrorEntryId, eventId, eventCache, callTrace);
         }
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace vm.Aspects.Facilities
             TraceEventCache eventCache,
             string callTrace)
         {
-            WriteLogEntryEvent(WriteEndCallTraceCriticalEntryId, eventId, eventCache, callTrace);
+            WriteEvent(WriteEndCallTraceCriticalEntryId, eventId, eventCache, callTrace);
         }
         #endregion
     }
