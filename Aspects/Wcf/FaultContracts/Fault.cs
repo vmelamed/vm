@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading;
+using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -57,6 +57,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "WCF will complain.")]
         [DataMember(Name = "faultType")]
+        [Dump(0)]
         public string FaultType
         {
             get { return GetType().AssemblyQualifiedName; }
@@ -70,18 +71,21 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// This would help to track the fault caught at the client down to the original exception logged by the WCF service.
         /// </summary>
         [DataMember(Name = "handlingInstanceId")]
+        [Dump(1)]
         public Guid HandlingInstanceId { get; set; }
 
         /// <summary>
         /// Gets or sets the fault's message
         /// </summary>
         [DataMember(Name = "message")]
+        [Dump(2)]
         public virtual string Message { get; set; }
 
         /// <summary>
         /// Gets or sets the text of the messages of the inner exception(s) of the original exception that caused this fault.
         /// </summary>
         [DataMember(Name = "innerExceptionsMessages")]
+        [Dump(3)]
         public string InnerExceptionsMessages { get; protected set; }
 
         /// <summary>
@@ -105,6 +109,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// will extract recursively the needed textual information from the inner exception(s) and will append it to the property 
         /// <see cref="InnerExceptionsMessages"/>.
         /// </remarks>
+        [Dump(false)]
         public Exception InnerException
         {
             get
@@ -135,6 +140,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Gets or sets a collection of key-value pairs that provide additional, user-defined information about the exception.
         /// </summary>
         [DataMember(Name = "data")]
+        [Dump(-1)]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "It is a DTO.")]
         public IDictionary<string, string> Data { get; set; }
 

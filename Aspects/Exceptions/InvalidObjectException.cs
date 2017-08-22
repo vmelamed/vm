@@ -4,7 +4,6 @@ using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Exceptions
 {
@@ -32,7 +31,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a ValidationException with a custom <paramref name="message"/>.
+        /// Initializes a InvalidObjectException with a custom <paramref name="message"/>.
         /// </summary>
         /// <param name="message">The custom message.</param>
         public InvalidObjectException(string message)
@@ -41,7 +40,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a ValidationException with a custom <paramref name="message"/> and an inner exception which lead to generating this one.
+        /// Initializes a InvalidObjectException with a custom <paramref name="message"/> and an inner exception which lead to generating this one.
         /// </summary>
         /// <param name="message">The custom message.</param>
         /// <param name="innerException">The exception which lead to generating this one.</param>
@@ -53,7 +52,7 @@ namespace vm.Aspects.Exceptions
         }
 
         /// <summary>
-        /// Initializes a ValidationException with a <see cref="ValidationResults"/> object, a custom <paramref name="message"/> and
+        /// Initializes a InvalidObjectException with a <see cref="ValidationResults"/> object, a custom <paramref name="message"/> and
         /// an inner exception which lead to generating this one.
         /// </summary>
         /// <param name="validationResults"><see cref="ValidationResults"/> object, describing all validation problems.</param>
@@ -76,7 +75,7 @@ namespace vm.Aspects.Exceptions
         /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
         private InvalidObjectException(
-            SerializationInfo info, 
+            SerializationInfo info,
             StreamingContext context)
             : base(info, context)
         {
@@ -97,7 +96,7 @@ namespace vm.Aspects.Exceptions
         ///   </PermissionSet>
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(
-            SerializationInfo info, 
+            SerializationInfo info,
             StreamingContext context)
         {
             base.GetObjectData(info, context);

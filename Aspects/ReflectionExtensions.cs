@@ -84,15 +84,7 @@ namespace vm.Aspects
         [Pure]
         public static bool Is(
             this Type type,
-            Type baseType)
-        {
-            var t = type;
-
-            while (t != null  &&  t != baseType  &&  t != typeof(object))
-                t = t.BaseType;
-
-            return (t == baseType);
-        }
+            Type baseType) => baseType.IsAssignableFrom(type);
 
         /// <summary>
         /// Determines whether the <paramref name="type" /> is or inherits from the type <typeparamref name="T"/>.

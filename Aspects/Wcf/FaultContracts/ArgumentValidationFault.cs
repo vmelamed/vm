@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
@@ -40,6 +41,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         /// Allows for member-wise copying of <c>ArgumentValidationException.ValidationElements</c> by the
         /// exception shielding handlers.
         /// </summary>
+        [Dump(false)]
         public ValidationResults ValidationResults
         {
             get

@@ -209,10 +209,12 @@ namespace vm.Aspects.Wcf.TestServer
             if (new[]
                 {
                     RequestResponseTransportConfigurator.PatternName,
-                    RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,
                     RequestResponseMessageConfigurator.PatternName,
-                    RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,
+
+                    RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,
                     RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName,
+
+                    RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,
                 }.Contains(messagingPattern)  &&
                 ChannelFactory.Endpoint.Binding is NetTcpBinding  ||
                 ChannelFactory.Endpoint.Binding is WSHttpBinding  ||

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.Practices.Unity;
@@ -43,13 +44,20 @@ namespace vm.Aspects.Wcf.Bindings
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetConfigurator>(registrations, FireAndForgetConfigurator.PatternName)
                     .RegisterTypeIfNot<BindingConfigurator, FireAndForgetNoSecurityConfigurator>(registrations, FireAndForgetNoSecurityConfigurator.PatternName)
 
-                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "http", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "http.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, "https", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, "https.rest", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, "net.tcp", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, "net.msmq", new InjectionConstructor())
-                    .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, "net.pipe", new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, Uri.UriSchemeHttp, new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, WSHttpBinding>(registrations, Uri.UriSchemeHttps, new InjectionConstructor())
+
+                    .RegisterTypeIfNot<Binding, BasicHttpBinding>(registrations, Uri.UriSchemeHttp+Constants.BasicHttpSchemeSuffix, new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, BasicHttpsBinding>(registrations, Uri.UriSchemeHttps+Constants.BasicHttpSchemeSuffix, new InjectionConstructor())
+
+                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, Uri.UriSchemeHttp+Constants.RestfulSchemeSuffix, new InjectionConstructor())
+                    .RegisterTypeIfNot<Binding, WebHttpBinding>(registrations, Uri.UriSchemeHttps+Constants.RestfulSchemeSuffix, new InjectionConstructor())
+
+                    .RegisterTypeIfNot<Binding, NetTcpBinding>(registrations, Uri.UriSchemeNetTcp, new InjectionConstructor())
+
+                    .RegisterTypeIfNot<Binding, NetMsmqBinding>(registrations, Constants.UriSchemeNetMsmq, new InjectionConstructor())
+
+                    .RegisterTypeIfNot<Binding, NetNamedPipeBinding>(registrations, Uri.UriSchemeNetPipe, new InjectionConstructor())
                     ;
             }
         }

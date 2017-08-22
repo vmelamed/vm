@@ -10,6 +10,7 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -91,28 +92,31 @@ namespace vm.Aspects.Wcf.Behaviors
 
         string[] GetAllowedOrigins()
         {
+            var origins = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
             if (!AllowedOrigins.IsNullOrWhiteSpace())
-                return GetAllowedOrigins(AllowedOrigins);
+                origins.UnionWith(GetAllowedOrigins(AllowedOrigins));
 
             if (!AllowedOriginsAppSetting.IsNullOrWhiteSpace())
-                return GetAllowedOrigins(AllowedOriginsAppSetting);
+            {
+                var config = ServiceLocator.Current.GetInstance<IConfigurationProvider>();
+
+                origins.UnionWith(GetAllowedOrigins(config[AllowedOriginsAppSetting]));
+            }
 
             if (!AllowedOriginsResolveName.IsNullOrWhiteSpace())
                 return GetAllowedOrigins(ServiceLocator.Current.GetInstance<string>(AllowedOriginsResolveName));
 
-            return null;
+            return origins.Any() ? origins.ToArray() : null;
         }
 
         static string[] GetAllowedOrigins(
             string origins)
         {
             if (origins.IsNullOrWhiteSpace())
-                return null;
+                return new string[0];
 
             var allowed = origins.Split(new char[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (!allowed.Any())
-                return null;
 
             return allowed;
         }

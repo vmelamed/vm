@@ -51,7 +51,7 @@
                         version="6.2.0-beta1" />
 
             <dependency id="AspectObjectDumper"
-                        version="1.7.6" />
+                        version="1.7.11" />
         </dependencies>
         <tags></tags>
     </metadata>

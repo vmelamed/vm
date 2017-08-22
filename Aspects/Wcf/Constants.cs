@@ -184,6 +184,14 @@ namespace vm.Aspects.Wcf
             }
         }
 
+        /// <summary>
+        /// Specifies that the URI is accessed through the NetMsmq scheme used by Windows Communication Foundation (WCF). 
+        /// </summary>
+        public const string UriSchemeNetMsmq = "net.msmq";
+
+        internal const string RestfulSchemeSuffix   = ".rest";
+        internal const string BasicHttpSchemeSuffix = ".basic";
+
         #region CORS related constants. Needed internally only.
         internal const string Origin                      = "Origin";
         internal const string AccessControlAllowOrigin    = "Access-Control-Allow-Origin";

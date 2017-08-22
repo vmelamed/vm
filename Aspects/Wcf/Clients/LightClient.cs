@@ -47,6 +47,27 @@ namespace vm.Aspects.Wcf.Clients
         }
 
         /// <summary>
+        /// Creates a client operation context scope.
+        /// Must be disposed, so call it within a <c>using</c> operator:
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// using (var client = new LightClient<IMyInterface>())
+        /// using (client.CreateOperationContextScope())
+        ///     client.MyMethod();
+        /// ]]>
+        /// </code>
+        /// </example>
+        /// <returns>OperationContextScope.</returns>
+        public OperationContextScope CreateOperationContextScope()
+        {
+            Contract.Ensures(Contract.Result<OperationContextScope>() != null);
+
+            return new OperationContextScope((IContextChannel)Proxy);
+        }
+
+        /// <summary>
         /// Creates the proxy.
         /// </summary>
         /// <returns>TContract proxy object.</returns>
@@ -311,15 +332,23 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(ChannelFactory != null);
             Contract.Ensures(Contract.Result<Binding>() != null);
 
-            var remoteUri = new Uri(remoteAddress);
-            var scheme = remoteUri.Scheme;
-            var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
+            var remoteUri   = new Uri(remoteAddress);
+            var resolveName = remoteUri.Scheme;
 
-            if ((scheme == "http"  ||  scheme == "https") &&
-                ((messagingAttribute?.Restful).GetValueOrDefault()  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase)))   // only rest-ful endpoints do not need .svc page
-                scheme = string.Concat(remoteUri.Scheme, ".rest");
+            if (remoteUri.Scheme == Uri.UriSchemeHttp  ||  remoteUri.Scheme == Uri.UriSchemeHttps)
+            {
+                var messagingAttribute = typeof(TContract).GetCustomAttribute<MessagingPatternAttribute>(false);
 
-            var binding = ServiceLocator.Current.GetInstance<Binding>(scheme);
+                if (messagingAttribute?.Restful == true  ||  !remoteAddress.EndsWith(".svc", StringComparison.OrdinalIgnoreCase))       // only rest-ful endpoints do not need .svc page
+                    resolveName = string.Concat(remoteUri.Scheme, Constants.RestfulSchemeSuffix);
+                else
+                {
+                    if (messagingAttribute?.BasicHttp == true)
+                        resolveName = string.Concat(remoteUri.Scheme, Constants.BasicHttpSchemeSuffix);
+                }
+            }
+
+            var binding = ServiceLocator.Current.GetInstance<Binding>(resolveName);
 
             return BuildChannelFactory(binding, remoteAddress, identity);
         }
@@ -348,7 +377,12 @@ namespace vm.Aspects.Wcf.Clients
             if (binding is WebHttpBinding)
             {
                 ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
-                ChannelFactory.Endpoint.EndpointBehaviors.Add(new WebHttpBehavior { DefaultOutgoingRequestFormat = WebMessageFormat.Json });
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(
+                    new WebHttpBehavior
+                    {
+                        DefaultOutgoingResponseFormat = WebMessageFormat.Json,
+                        DefaultOutgoingRequestFormat  = WebMessageFormat.Json,
+                    });
             }
             else
                 ChannelFactory = new ChannelFactory<TContract>(
