@@ -659,6 +659,50 @@ namespace vm.Aspects
         /// Gets a Regex object which matches American Express or MasterCard or Visa credit card number.
         /// </summary>
         public static Regex AmexMCVisa => _amexMCVisa.Value;
+
+        #region Cvc
+        /// <summary>
+        /// Regular expression pattern which matches CVC/CVV code (except for American Express)
+        /// </summary>
+        public const string RexCvc = @"\d\d\d";
+
+        readonly static Lazy<Regex> _rexCvc = new Lazy<Regex>(() => new Regex(RexCvc, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex Cvc => _rexCvc.Value;
+        #endregion
+
+        #region Csc
+        /// <summary>
+        /// Regular expression pattern which matches CSC of American Express cards
+        /// </summary>
+        public const string RexCsc = @"\d\d\d\d";
+
+        readonly static Lazy<Regex> _rexCsc = new Lazy<Regex>(() => new Regex(RexCsc, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex Csc => _rexCsc.Value;
+        #endregion
+
+        #region AllCvc
+        /// <summary>
+        /// Regular expression pattern which matches all credit card CVC-s, incl. Amex.
+        /// </summary>
+        public const string RexAllCvc = @"\d\d\d\d?";
+
+        readonly static Lazy<Regex> _rexAllCvc = new Lazy<Regex>(() => new Regex(RexAllCvc, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches ...
+        /// </summary>
+        public static Regex AllCvc => _rexAllCvc.Value;
+        #endregion
+
+
         #endregion
         #endregion
 

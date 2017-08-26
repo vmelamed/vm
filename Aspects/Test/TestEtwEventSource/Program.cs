@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
 using vm.Aspects;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.LogWriters.Etw;
 
 namespace TestEtwEventSource
 {
@@ -9,26 +12,40 @@ namespace TestEtwEventSource
     {
         static void Main(string[] args)
         {
-            try
+            lock (DIContainer.Initialize())
             {
-                DIContainer
-                    .Initialize();
+                var registrations = DIContainer.Root.GetRegistrationsSnapshot();
 
-                lock (DIContainer.Root)
+                DIContainer.Root
+                        .UnsafeRegister(Facility.Registrar, registrations)
+                        ;
+            }
+
+            TelemetryConfiguration.Active.InstrumentationKey = "f6e10d93-dfae-4112-a0b8-3e3436ec9a85";
+
+            const int timesToRepeat = 100;
+
+            for (int i = 0; i < timesToRepeat; i++)
+                try
                 {
-                    var registrations = DIContainer.Root.GetRegistrationsSnapshot();
+                    Facility.LogWriter.TraceInfo("Hello there!");
 
-                    DIContainer.Root
-                            .UnsafeRegister(Facility.Registrar, registrations)
-                            ;
+                    EtwLogEntryEventSource.Log.Trace(-1, "This is EtwLogEntryEventSource.Log.Trace");
+                    EtwLogEntryEventSource.Log.WriteMessage("This is EtwLogEntryEventSource.Log.WriteMessage");
+
+                    //appInsights.trackEvent("Added Item to Shopping Cart");
+
+                    throw new InvalidOperationException("This is a test exception.");
+                }
+                catch (Exception x)
+                {
+                    Facility.LogWriter.ExceptionError(x);
+                    Debug.WriteLine("", x.DumpString());
                 }
 
-                Facility.LogWriter.TraceInfo("Hello there!", new object[] { });
-            }
-            catch (Exception x)
-            {
-                Debug.WriteLine("", x.DumpString());
-            }
+            Console.Write("Press any key to finish...");
+            Console.ReadKey(true);
+            Console.WriteLine();
         }
     }
 }

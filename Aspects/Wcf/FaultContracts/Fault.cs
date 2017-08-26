@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 

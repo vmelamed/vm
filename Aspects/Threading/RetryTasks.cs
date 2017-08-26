@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
+using vm.Aspects.Facilities.Diagnostics;
 
 namespace vm.Aspects.Threading
 {
@@ -92,8 +94,16 @@ namespace vm.Aspects.Threading
                     first = false;
                 else
                 {
+                    int delay = 0;
+
+                    retries++;
                     if (minDelay > 0  ||  maxDelay > 0)
-                        await Task.Delay(minDelay + Random.Next(maxDelay-minDelay));
+                    {
+                        delay = minDelay + Random.Next(maxDelay-minDelay);
+                        await Task.Delay(delay);
+                    }
+
+                    VmAspectsEventSource.Log.Retrying(this, delay);
                 }
 
                 try
@@ -103,22 +113,25 @@ namespace vm.Aspects.Threading
                 }
                 catch (Exception x)
                 {
+                    VmAspectsEventSource.Log.Exception(x, EventLevel.Informational);
                     exception = x;
                 }
 
                 if (await _isFailureAsync(result, exception, retries))
+                {
+                    VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
                     if (exception != null)
                         throw exception;
                     else
                         return result;
+                }
 
                 if (await _isSuccessAsync(result, exception, retries))
                     return result;
-
-                retries++;
             }
             while (retries < maxRetries);
 
+            VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
             return await _epilogueAsync(result, exception, retries);
         }
     }

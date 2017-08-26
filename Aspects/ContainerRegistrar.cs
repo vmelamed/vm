@@ -1,10 +1,11 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading;
+using Microsoft.Practices.Unity;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects
@@ -153,6 +154,8 @@ namespace vm.Aspects
 
             using (_sync.WriterLock())
                 _containerHashes.Add(container.GetHashCode());
+
+            VmAspectsEventSource.Log.Registered(this);
 
             return container;
         }

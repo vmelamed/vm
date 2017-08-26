@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Policies;
 
@@ -107,6 +108,7 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
+                VmAspectsEventSource.Log.CallHandlerFails(this, input, x);
                 return input.CreateExceptionMethodReturn(x);
             }
             finally
@@ -147,6 +149,11 @@ namespace vm.Aspects.Model
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
                 return result;
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.CallHandlerFails(this, input, x);
+                throw;
             }
             finally
             {

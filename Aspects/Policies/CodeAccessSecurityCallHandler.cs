@@ -1,9 +1,8 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Permissions;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -31,8 +30,7 @@ namespace vm.Aspects.Policies
                 if (!a.Unrestricted && a.Action == SecurityAction.Demand)
                     try
                     {
-                        a.CreatePermission()
-                         .Demand();
+                        a.CreatePermission().Demand();
                     }
                     catch (Exception x)
                     {

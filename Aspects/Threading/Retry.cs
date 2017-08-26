@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
+using vm.Aspects.Facilities.Diagnostics;
 
 namespace vm.Aspects.Threading
 {
@@ -61,7 +63,7 @@ namespace vm.Aspects.Threading
         /// Starts retrying the operation.
         /// </summary>
         /// <param name="maxRetries">
-        /// The maximum number of attempts to run the operation.
+        /// The maximum number of attempts to re-run the operation.
         /// </param>
         /// <param name="minDelay">
         /// The minimum delay before retrying the operation in milliseconds.
@@ -94,8 +96,16 @@ namespace vm.Aspects.Threading
                     first = false;
                 else
                 {
+                    int delay = 0;
+
+                    retries++;
                     if (minDelay > 0  ||  maxDelay > 0)
-                        Task.Delay(minDelay + Random.Next(maxDelay-minDelay)).Wait();
+                    {
+                        delay = minDelay + Random.Next(maxDelay-minDelay);
+                        Task.Delay(delay).Wait();
+                    }
+
+                    VmAspectsEventSource.Log.Retrying(this, delay);
                 }
 
                 try
@@ -105,22 +115,25 @@ namespace vm.Aspects.Threading
                 }
                 catch (Exception x)
                 {
+                    VmAspectsEventSource.Log.Exception(x, EventLevel.Informational);
                     exception = x;
                 }
 
                 if (_isFailure(result, exception, retries))
+                {
+                    VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
                     if (exception != null)
                         throw exception;
                     else
                         return result;
+                }
 
                 if (_isSuccess(result, exception, retries))
                     return result;
-
-                retries++;
             }
             while (retries < maxRetries);
 
+            VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
             return _epilogue(result, exception, retries);
         }
     }

@@ -132,7 +132,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;TEST</DefineConstants>
     <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>

@@ -60,6 +60,7 @@ namespace vm.Aspects.Wcf.Clients
         /// </code>
         /// </example>
         /// <returns>OperationContextScope.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public OperationContextScope CreateOperationContextScope()
         {
             Contract.Ensures(Contract.Result<OperationContextScope>() != null);

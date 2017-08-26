@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects
@@ -176,48 +178,43 @@ namespace vm.Aspects
         {
             EnsuresContainerInitialized();
 
-            if (_latch.Latched())
+            if (!_latch.Latched())
+                return _root;
+
+            try
+            {
                 lock (_root)
                 {
-                    try
-                    {
-                        var unityConfigSection = getConfigFileSection!=null
+                    var unityConfigSection = getConfigFileSection!=null
                                                 ? getConfigFileSection(configFileName, configSection)
                                                 : GetUnityConfigurationSection(configFileName, configSection);
 
-                        // file was not specified or does not exist - try loading from web/app.config then
-                        if (unityConfigSection == null)
-                            unityConfigSection = ConfigurationManager.GetSection(configSection) as UnityConfigurationSection;
+                    // file was not specified or does not exist - try loading from web/app.config then
+                    if (unityConfigSection == null)
+                        unityConfigSection = ConfigurationManager.GetSection(configSection) as UnityConfigurationSection;
 
-                        if (unityConfigSection != null)
-                            if (string.IsNullOrWhiteSpace(containerName))
-                                _root.LoadConfiguration(unityConfigSection);
-                            else
-                                _root.LoadConfiguration(unityConfigSection, containerName);
+                    if (unityConfigSection != null)
+                        if (string.IsNullOrWhiteSpace(containerName))
+                            _root.LoadConfiguration(unityConfigSection);
+                        else
+                            _root.LoadConfiguration(unityConfigSection, containerName);
 
-                        // initialize the CSL with Unity service location
-                        if (!ServiceLocator.IsLocationProviderSet)
-                            ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
+                    // initialize the CSL with Unity service location
+                    if (!ServiceLocator.IsLocationProviderSet)
+                        ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_root));
 
-                        // prepare for interception and policy injection (AOP)
-                        _root
-                            .AddNewExtension<Interception>()
-                            ;
-                    }
-                    catch (Exception x)
-                    {
-                        if (_root!=null)
-                            _root.DebugDump();
+                    // prepare for interception and policy injection (AOP)
+                    _root.AddNewExtension<Interception>();
 
-                        var dump = x.DumpString();
-
-                        Debug.WriteLine(dump);
-                        EventLog.WriteEntry("vm.Aspects", dump, EventLogEntryType.Error);
-                        throw;
-                    }
+                    VmAspectsEventSource.Log.Trace("The DIContainer was initialized.", EventLevel.Verbose);
+                    return _root;
                 }
-
-            return _root;
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.Exception(x, EventLevel.Critical);
+                throw;
+            }
         }
 
         /// <summary>
