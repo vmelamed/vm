@@ -64,6 +64,9 @@
             <Word>postprocess</Word>
             <Word>preprocess</Word>
             <Word>luhn</Word>
+            <Word>csc</Word>
+            <Word>cvv</Word>
+            <Word>cvc</Word>
         </Recognized>
         <Unrecognized>
             <!-- 

@@ -168,7 +168,8 @@ namespace vm.Aspects
         /// current executable's configuration file (e.g. web.config) and then will attempt loading the configuration section from that path and file.
         /// </param>
         /// <returns>The created and configured container.</returns>
-        /// <exception cref="System.InvalidOperationException">If the configuration section cannot be found in the configuration file.</exception>
+        /// <exception cref="InvalidOperationException">If the configuration section cannot be found in the configuration file.</exception>
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Facilities.Diagnostics.VmAspectsEventSource.Trace(System.String,System.Diagnostics.Tracing.EventLevel)")]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "n/a")]
         public static IUnityContainer Initialize(
             string configFileName = DefaultConfigurationFileName,
