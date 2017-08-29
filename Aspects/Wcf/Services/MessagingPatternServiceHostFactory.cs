@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -19,6 +18,7 @@ using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
@@ -265,7 +265,6 @@ namespace vm.Aspects.Wcf.Services
         {
             if (InitializeLatch.Latched())
             {
-
                 // container initialization:
                 DIContainer.Initialize();
 
@@ -304,6 +303,7 @@ namespace vm.Aspects.Wcf.Services
                             new Interceptor<InterfaceInterceptor>(),
                             new InterceptionBehavior<PolicyInjectionBehavior>());
                 }
+                VmAspectsEventSource.Log.ServiceHostFactoryRegisteredDefaults<TService>();
             }
             return DIContainer.Root;
         }
@@ -425,7 +425,10 @@ namespace vm.Aspects.Wcf.Services
 
             RegisterDefaults();
 
-            return DoCreateServiceHost(baseAddresses);
+            var host = DoCreateServiceHost(baseAddresses);
+
+            VmAspectsEventSource.Log.ServiceHostFactoryCreatedServiceHost<TService>();
+            return host;
         }
 
         /// <summary>
@@ -498,16 +501,7 @@ namespace vm.Aspects.Wcf.Services
             var host = (ServiceHostBase)sender;
 
             if (!DIContainer.Root.IsRegistered<TContract>(string.IsNullOrWhiteSpace(ServiceResolveName) ? null : ServiceResolveName))
-            {
-#if DEBUG
-                // this IF is probably not needed but let's see if we ever get here
-                Facility.LogWriter
-                        .EventLogError("The DI container was not properly initialized. Retrying.");
-
-                Debugger.Break();
-#endif
                 RegisterDefaults();
-            }
 
             HostInitialized(host);
         }

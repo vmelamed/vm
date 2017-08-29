@@ -11,6 +11,7 @@ using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -88,6 +89,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 AddPreflightOperationSelector(operation, allowedOrigins, MaxAge, uriTemplates);
 
             endpoint.Behaviors.Add(new EnableCorsEndpointBehavior(allowedOrigins));
+            VmAspectsEventSource.Log.EnabledCors(endpoint.Address.Uri.ToString(), endpoint.Binding.GetType().Name, endpoint.Contract.ContractType.FullName, string.Join(", ", allowedOrigins));
         }
 
         string[] GetAllowedOrigins()

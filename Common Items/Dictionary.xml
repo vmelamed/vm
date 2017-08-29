@@ -67,6 +67,9 @@
             <Word>csc</Word>
             <Word>cvv</Word>
             <Word>cvc</Word>
+            <Word>CORS</Word>
+            <Word>WCF</Word>
+            <Word>uow</Word>
         </Recognized>
         <Unrecognized>
             <!-- 
@@ -125,6 +128,7 @@
         <CasingExceptions>
             <Acronym>vm</Acronym>
             <Acronym>NaN</Acronym>
+            <Acronym>UoW</Acronym>
         </CasingExceptions>
     </Acronyms>
 </Dictionary>

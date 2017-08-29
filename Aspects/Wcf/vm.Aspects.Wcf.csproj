@@ -425,8 +425,6 @@
     </None>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="_EventRegisterUsersGuide.docx" />
-    <None Include="_EventSourceUsersGuide.docx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

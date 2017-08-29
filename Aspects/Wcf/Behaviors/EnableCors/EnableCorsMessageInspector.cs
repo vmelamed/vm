@@ -7,6 +7,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -86,12 +87,14 @@ namespace vm.Aspects.Wcf.Behaviors
             if (!_corsEnabledOperationsNames.Contains(operationName, StringComparer.OrdinalIgnoreCase))
             {
                 Facility.LogWriter.LogError($"Failing CORS because the request operation {operationName} is not allowed.");
+                VmAspectsEventSource.Log.CorsOperationNotAllowed(operationName);
                 return null;
             }
 
             if (_allowedOrigins!=null  &&  _allowedOrigins.Any()  &&  !_allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
             {
                 Facility.LogWriter.LogError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
+                VmAspectsEventSource.Log.CorsOriginNotAllowed(origin);
                 return null;
             }
 
