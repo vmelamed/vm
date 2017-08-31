@@ -17,6 +17,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// </summary>
         protected EtwLogEntryBaseEventSource()
         {
+
         }
 
         /// <summary>
