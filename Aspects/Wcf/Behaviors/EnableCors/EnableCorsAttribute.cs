@@ -89,7 +89,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 AddPreflightOperationSelector(operation, allowedOrigins, MaxAge, uriTemplates);
 
             endpoint.Behaviors.Add(new EnableCorsEndpointBehavior(allowedOrigins));
-            VmAspectsEventSource.Log.EnabledCors(endpoint.Address.Uri.ToString(), endpoint.Binding.GetType().Name, endpoint.Contract.ContractType.FullName, string.Join(", ", allowedOrigins));
+            VmAspectsEventSource.Log.EnabledCors(endpoint.Address.Uri.ToString(), endpoint.Binding.GetType().Name, endpoint.Contract.ContractType.FullName, (allowedOrigins!=null) ? string.Join(", ", allowedOrigins) : "*");
         }
 
         string[] GetAllowedOrigins()
