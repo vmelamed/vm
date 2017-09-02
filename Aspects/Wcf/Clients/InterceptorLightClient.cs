@@ -243,16 +243,5 @@ namespace vm.Aspects.Wcf.Clients
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
         #endregion
-
-        #region IDisposable pattern implementation
-        /// <summary>
-        /// Disposes the object graph.
-        /// </summary>
-        protected override void DisposeObjectGraph()
-        {
-            (Proxy as ICommunicationObject)?.DisposeCommunicationObject();
-            base.DisposeObjectGraph();
-        }
-        #endregion
     }
 }

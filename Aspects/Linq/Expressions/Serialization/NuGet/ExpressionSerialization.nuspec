@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.111</version>
-        <authors>Val Melamed</authors>
-        <owners>Val Melamed</owners>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
         <summary>
             Easy to use and integrate component which serializes Linq expression trees to and from XML documents.
         </summary>
@@ -33,7 +33,7 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2017</copyright>
+        <copyright>$version$</copyright>
         <dependencies>
         </dependencies>
         <tags>.net LINQ expression tree serialization XML aspects</tags>

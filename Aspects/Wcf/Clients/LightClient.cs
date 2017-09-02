@@ -10,6 +10,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
+using Microsoft.ApplicationInsights.Wcf;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
@@ -23,7 +24,6 @@ namespace vm.Aspects.Wcf.Clients
     /// <typeparam name="TContract">The service interface.</typeparam>
     public class LightClient<TContract> : IDisposable, IIsDisposed where TContract : class
     {
-        string _messagingPattern;
         TContract _proxy;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace vm.Aspects.Wcf.Clients
             get
             {
                 if (_proxy == null)
-                    _proxy = CreateProxy();
+                    _proxy = ChannelFactory.CreateChannel();
 
                 return _proxy;
             }
@@ -66,16 +66,6 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(Contract.Result<OperationContextScope>() != null);
 
             return new OperationContextScope((IContextChannel)Proxy);
-        }
-
-        /// <summary>
-        /// Creates the proxy.
-        /// </summary>
-        /// <returns>TContract proxy object.</returns>
-        protected virtual TContract CreateProxy()
-        {
-            ConfigureChannelFactory(_messagingPattern);
-            return ChannelFactory.CreateChannel();
         }
 
         #region Constructors
@@ -110,8 +100,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
+            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
         /// <summary>
@@ -145,19 +134,18 @@ namespace vm.Aspects.Wcf.Clients
                                 !remoteAddress.IsNullOrWhiteSpace(), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
             if (!endpointConfigurationName.IsNullOrWhiteSpace())
             {
                 ChannelFactory = !remoteAddress.IsNullOrWhiteSpace()
                                         ? new ChannelFactory<TContract>(endpointConfigurationName, new EndpointAddress(remoteAddress))
                                         : new ChannelFactory<TContract>(endpointConfigurationName);
-                ConfigureBinding(ChannelFactory.Endpoint.Binding);
+                ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
             }
             else
             {
                 Contract.Assume(!remoteAddress.IsNullOrWhiteSpace());
 
-                BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(ServiceIdentity.None, ""));
+                BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(ServiceIdentity.None, ""));
             }
         }
 
@@ -189,8 +177,7 @@ namespace vm.Aspects.Wcf.Clients
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
+            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
         /// <summary>
@@ -212,8 +199,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
+            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
 
         /// <summary>
@@ -250,8 +236,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
+            BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
         /// <summary>
@@ -286,8 +271,7 @@ namespace vm.Aspects.Wcf.Clients
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
+            BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
         /// <summary>
@@ -313,8 +297,7 @@ namespace vm.Aspects.Wcf.Clients
 
             Contract.Ensures(ChannelFactory != null);
 
-            _messagingPattern = messagingPattern;
-            BuildChannelFactory(binding, remoteAddress, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
+            BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
         #endregion
 
@@ -322,11 +305,13 @@ namespace vm.Aspects.Wcf.Clients
         /// Builds a restful channel factory or at least builds and configures the binding derived from the address's scheme.
         /// </summary>
         /// <param name="remoteAddress">The remote address.</param>
+        /// <param name="messagingPattern">The messaging pattern. Can be <see langword="null" /> or empty in which case it will pick-up the pattern from <see cref="MessagingPatternAttribute"/>.</param>
         /// <param name="identity">The server identity.</param>
         /// <returns>The built and configured binding, if the channel was not created, otherwise <see langword="null" />.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by Dispose().")]
         protected Binding BuildChannelFactory(
             string remoteAddress,
+            string messagingPattern,
             EndpointIdentity identity)
         {
             Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
@@ -351,7 +336,7 @@ namespace vm.Aspects.Wcf.Clients
 
             var binding = ServiceLocator.Current.GetInstance<Binding>(resolveName);
 
-            return BuildChannelFactory(binding, remoteAddress, identity);
+            return BuildChannelFactory(binding, remoteAddress, messagingPattern, identity);
         }
 
         /// <summary>
@@ -359,12 +344,14 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <param name="remoteAddress">The remote address.</param>
+        /// <param name="messagingPattern">The messaging pattern. Can be <see langword="null" /> or empty in which case it will pick-up the pattern from <see cref="MessagingPatternAttribute"/>.</param>
         /// <param name="identity">The server identity.</param>
         /// <returns>The built and configured binding, if the channel was not created, otherwise <see langword="null" />.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed by Dispose().")]
         protected Binding BuildChannelFactory(
             Binding binding,
             string remoteAddress,
+            string messagingPattern,
             EndpointIdentity identity)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
@@ -373,7 +360,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Ensures(Contract.Result<Binding>() != null);
             Contract.Ensures(ChannelFactory != null);
 
-            ConfigureBinding(binding);
+            ConfigureBinding(binding, messagingPattern);
 
             if (binding is WebHttpBinding)
             {
@@ -389,25 +376,34 @@ namespace vm.Aspects.Wcf.Clients
                 ChannelFactory = new ChannelFactory<TContract>(
                                         binding,
                                         new EndpointAddress(new Uri(remoteAddress), identity));
+
+            var telemetry = GetType().GetCustomAttribute<ClientTelemetryAttribute>();
+
+            if (telemetry != null)
+                ChannelFactory.Endpoint.EndpointBehaviors.Add(new ClientTelemetryEndpointBehavior());
+
+            ConfigureChannelFactory(messagingPattern);
+
             return binding;
         }
 
         void ConfigureBinding(
-            Binding binding)
+            Binding binding,
+            string messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
 
-            if (_messagingPattern.IsNullOrWhiteSpace())
+            if (messagingPattern.IsNullOrWhiteSpace())
             {
                 // try to get the messaging pattern from the client
-                _messagingPattern = GetType().GetMessagingPattern();
+                messagingPattern = GetType().GetMessagingPattern();
 
-                if (_messagingPattern.IsNullOrWhiteSpace())
-                    _messagingPattern = typeof(TContract).GetMessagingPattern();
+                if (messagingPattern.IsNullOrWhiteSpace())
+                    messagingPattern = typeof(TContract).GetMessagingPattern();
             }
 
             // resolve the configurator
-            var configurator = ServiceLocator.Current.GetInstance<BindingConfigurator>(_messagingPattern);
+            var configurator = ServiceLocator.Current.GetInstance<BindingConfigurator>(messagingPattern);
 
             // configure the binding
             configurator.Configure(binding);
@@ -488,6 +484,7 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         protected virtual void DisposeObjectGraph()
         {
+            (_proxy as ICommunicationObject)?.DisposeCommunicationObject();
             ChannelFactory.DisposeCommunicationObject();
         }
         #endregion
