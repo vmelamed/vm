@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using System.IO;
@@ -20,7 +21,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <summary>
         /// The log singleton instance.
         /// </summary>
-        public static EtwLogEntryEventSource Log;
+        public static EtwLogEntryEventSource Log { get; }
 
         static readonly IReadOnlyDictionary<TraceEventType, Action<int,int,TraceEventType,string,string,string,string>> _writeLogEntry;
         static readonly IReadOnlyDictionary<TraceEventType, Action<string>> _writeMessage;
@@ -43,6 +44,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     [TraceEventType.Transfer]    = EventLevel.Informational,
                 });
 
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "We need to guarantees the order of initialization of Log first.")]
         static EtwLogEntryEventSource()
         {
             // make sure Log is created before _writeXyz

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Threading;
@@ -17,12 +19,13 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// <summary>
         /// The log singleton instance.
         /// </summary>
-        public static VmAspectsEventSource Log;
+        public static VmAspectsEventSource Log { get; }
 
         static readonly IReadOnlyDictionary<EventLevel, Action<string, string, string>> _exceptions;
         static readonly IReadOnlyDictionary<EventLevel, Action<string>> _traces;
         static readonly IReadOnlyDictionary<EventLevel, Action<string, string>> _dumps;
 
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "We need to guarantees the order of initialization of Log first.")]
         static VmAspectsEventSource()
         {
             // make sure _log is initialized before _xyz
@@ -179,13 +182,15 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// <summary>
         /// Writes an exception to the ETW.
         /// </summary>
-        /// <param name="exception">The exception.</param>
+        /// <param name="ex">The exception.</param>
         /// <param name="eventLevel">The event level.</param>
         [NonEvent]
         public void Exception(
-            Exception exception,
+            Exception ex,
             EventLevel eventLevel = EventLevel.Error)
         {
+            Contract.Requires<ArgumentNullException>(ex != null, nameof(ex));
+
             if (!IsEnabled(eventLevel, Keywords.vmAspects | Keywords.Exception))
                 return;
 
@@ -194,7 +199,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             if (!_exceptions.TryGetValue(eventLevel, out writeException))
                 writeException = Log.ErrorException;
 
-            writeException(exception.GetType().FullName, exception.Message, exception.DumpString());
+            writeException(ex.GetType().FullName, ex.Message, ex.DumpString());
         }
 
         #region Exceptions
@@ -356,13 +361,11 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// <summary>
         /// Writes an event to ETW when a call handler fails a call before or after calling the next aspect in the pipeline.
         /// </summary>
-        /// <param name="callHandlerType">Type of the call handler.</param>
         /// <param name="targetType">Type of the target.</param>
         /// <param name="methodName">Name of the method.</param>
         /// <param name="exceptionDump">The exception dump.</param>
         [Event(CallHandlerFailsId, Level = EventLevel.Informational, Message = "{0} returns exception in the call to {1}.{2}", Keywords = Keywords.vmAspects)]
         void CallHandlerFails(
-            string callHandlerType,
             string targetType,
             string methodName,
             string exceptionDump)
@@ -374,18 +377,15 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// <summary>
         ///  Writes an event to ETW when a call handler fails a call before or after calling the next aspect in the pipeline.
         /// </summary>
-        /// <param name="callHandler">The call handler.</param>
         /// <param name="input">The input.</param>
         /// <param name="exception">The exception.</param>
         [NonEvent]
         public void CallHandlerFails(
-            ICallHandler callHandler,
             IMethodInvocation input,
             Exception exception)
         {
             if (IsEnabled(EventLevel.Informational, Keywords.vmAspects))
                 CallHandlerFails(
-                    callHandler.GetType().FullName,
                     input.Target.GetType().Name,
                     input.MethodBase.Name,
                     exception.DumpString());

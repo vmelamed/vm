@@ -108,7 +108,7 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
-                VmAspectsEventSource.Log.CallHandlerFails(this, input, x);
+                VmAspectsEventSource.Log.CallHandlerFails(input, x);
                 return input.CreateExceptionMethodReturn(x);
             }
             finally
@@ -152,7 +152,7 @@ namespace vm.Aspects.Model
             }
             catch (Exception x)
             {
-                VmAspectsEventSource.Log.CallHandlerFails(this, input, x);
+                VmAspectsEventSource.Log.CallHandlerFails(input, x);
                 throw;
             }
             finally

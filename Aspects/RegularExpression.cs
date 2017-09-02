@@ -692,6 +692,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches all credit card CVC-s, incl. Amex.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "RexAll")]
         public const string RexAllCvc = @"\d\d\d\d?";
 
         readonly static Lazy<Regex> _rexAllCvc = new Lazy<Regex>(() => new Regex(RexAllCvc, RegexOptions.Compiled));

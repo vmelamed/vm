@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities.LogWriters.Etw
@@ -56,7 +57,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             // remove the leading CR-LF
             int messageStart = 0;
 
-            if (message.StartsWith(Environment.NewLine))
+            if (message.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
                 messageStart = Environment.NewLine.Length;
 
             var intSeverity = (int)severity;
@@ -158,7 +159,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
 
             var size = (text.Length+1)*sizeof(char);
 
-            if (text.StartsWith(Environment.NewLine))
+            if (text.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
                 return size - Environment.NewLine.Length*sizeof(char);
             else
                 return size;
