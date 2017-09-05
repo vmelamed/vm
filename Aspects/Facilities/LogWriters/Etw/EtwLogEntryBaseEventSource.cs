@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
@@ -17,6 +18,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// </summary>
         protected EtwLogEntryBaseEventSource()
         {
+
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int eventId,
             int elEventId,
             int priority,
-            TraceEventType severity,
+            string severity,
             string message,
             string errorMessages,
             string categories,
@@ -54,19 +56,12 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled())
                 return;
 
-            // remove the leading CR-LF
-            int messageStart = 0;
-
-            if (message.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
-                messageStart = Environment.NewLine.Length;
-
-            var intSeverity = (int)severity;
-            var i = 0;
-
             // make sure that the EventDataLength constant is always equal to the number of logged fields below
             const int EventDataLength = 7;
+            var i = 0;
 
             fixed (char*
+                        pSeverity = severity,
                         pMessage = message,
                         pErrorMessages = errorMessages,
                         pCategories = categories,
@@ -74,27 +69,13 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             {
                 var eventData = stackalloc EventData[EventDataLength];
 
-                eventData[i].DataPointer = (IntPtr)(&elEventId);
-                eventData[i].Size        = sizeof(int);
-                i++;
-                eventData[i].DataPointer = (IntPtr)(&priority);
-                eventData[i].Size        = sizeof(int);
-                i++;
-                eventData[i].DataPointer = (IntPtr)(&intSeverity);
-                eventData[i].Size        = sizeof(int);
-                i++;
-                eventData[i].DataPointer = (IntPtr)(&pMessage[messageStart]);
-                eventData[i].Size        = SizeInBytes(message);
-                i++;
-                eventData[i].DataPointer = (IntPtr)pErrorMessages;
-                eventData[i].Size        = SizeInBytes(errorMessages);
-                i++;
-                eventData[i].DataPointer = (IntPtr)pCategories;
-                eventData[i].Size        = SizeInBytes(categories);
-                i++;
-                eventData[i].DataPointer = (IntPtr)pExtendedProperties;
-                eventData[i].Size        = SizeInBytes(extendedProperties);
-                i++;
+                AssignIntValue(&eventData[i++], &elEventId);
+                AssignIntValue(&eventData[i++], &priority);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pSeverity, severity);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], true, pMessage, message);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pErrorMessages, errorMessages);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pCategories, categories);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pExtendedProperties, extendedProperties);
 
                 WriteEventCore(eventId, i, eventData);
             }
@@ -120,49 +101,62 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled())
                 return;
 
+            // make sure that the EventDataLength constant is always equal to the number of logged fields below
+            const int EventDataLength = 3;
+            var i = 0;
+
             fixed (char*
                     pText = text,
                     pSource = source)
             {
-                // make sure that the EventDataLength constant is always equal to the number of logged fields below
-                const int EventDataLength = 3;
-
                 var eventData = stackalloc EventData[EventDataLength];
-                var i = 0;
 
-                eventData[i].DataPointer = (IntPtr)(&elEventId);
-                eventData[i].Size        = sizeof(int);
-                i++;
-                eventData[i].DataPointer = (IntPtr)pText;
-                eventData[i].Size        = SizeInBytes(text);
-                i++;
-                eventData[i].DataPointer = (IntPtr)pSource;
-                eventData[i].Size        = SizeInBytes(source);
-                i++;
-
-                // make sure that the EventDataLength constant is always equal to the number of logged fields below
-                Debug.Assert(i == EventDataLength);
+                AssignIntValue(&eventData[i++], &elEventId);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pText, text);
+                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pSource, source);
 
                 WriteEventCore(eventId, i, eventData);
             }
+
+            // make sure that the EventDataLength constant is always equal to the number of logged fields below
+            Debug.Assert(i == EventDataLength);
         }
 
-        /// <summary>
-        /// Computes the size of a string in bytes.
-        /// </summary>
-        /// <param name="text">The string.</param>
-        /// <returns>System.Int32.</returns>
-        protected static int SizeInBytes(string text)
+        // The length of the end of line sequence.
+        static int NewLineSize = Environment.NewLine.Length * sizeof(char);
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        unsafe void AssignStringWithoutLeadingEndOfLine(
+            EventData* eventData,
+            bool stripLeadingNewLine,
+            char* pText,
+            string text)
         {
             if (text == null)
-                return 0;
+            {
+                eventData->DataPointer = IntPtr.Zero;
+                eventData->Size        = 0;
+                return;
+            }
 
-            var size = (text.Length+1)*sizeof(char);
+            eventData->DataPointer = (IntPtr)pText;
+            eventData->Size        = (text.Length+1) * sizeof(char);
 
-            if (text.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
-                return size - Environment.NewLine.Length*sizeof(char);
-            else
-                return size;
+            if (stripLeadingNewLine  &&
+                text.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
+            {
+                eventData->DataPointer += NewLineSize;
+                eventData->Size        -= NewLineSize;
+            }
+        }
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        unsafe void AssignIntValue(
+            EventData* eventData,
+            int* pValue)
+        {
+            eventData->DataPointer = (IntPtr)pValue;
+            eventData->Size        = sizeof(int);
         }
     }
 }

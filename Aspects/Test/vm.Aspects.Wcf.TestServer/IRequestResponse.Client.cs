@@ -18,6 +18,7 @@ namespace vm.Aspects.Wcf.TestServer
     /// </summary>
     /// <seealso cref="LightClient{IRequestResponse}" />
     /// <seealso cref="IRequestResponse" />
+    [ClientTelemetry]
     public class RequestResponseClient : LightClient<IRequestResponse>, IRequestResponse
     {
         #region Constructors

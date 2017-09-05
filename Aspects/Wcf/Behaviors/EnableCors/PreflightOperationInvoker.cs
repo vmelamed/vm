@@ -7,6 +7,7 @@ using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 
 namespace vm.Aspects.Wcf.Behaviors
 {
@@ -66,6 +67,7 @@ namespace vm.Aspects.Wcf.Behaviors
                 var replyNo = Message.CreateMessage(MessageVersion.None, _replyAction);
 
                 replyNo.Properties.Add(HttpResponseMessageProperty.Name, httpResponse);
+                VmAspectsEventSource.Log.CorsOriginNotAllowed(origin);
                 Facility.LogWriter.LogError($"Failing CORS because the request origin {origin} is not explicitly allowed.");
 
                 return replyNo;

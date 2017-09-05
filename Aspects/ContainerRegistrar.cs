@@ -155,7 +155,7 @@ namespace vm.Aspects
             using (_sync.WriterLock())
                 _containerHashes.Add(container.GetHashCode());
 
-            VmAspectsEventSource.Log.Registered(this);
+            VmAspectsEventSource.Log.RegistrarRegistered(this);
 
             return container;
         }

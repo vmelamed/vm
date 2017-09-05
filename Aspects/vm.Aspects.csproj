@@ -290,8 +290,12 @@
     <Compile Include="Exceptions\RepeatableOperationException.cs" />
     <Compile Include="Facilities\ConfigProviders\AppConfigProvider.cs" />
     <Compile Include="Facilities\Clock.cs" />
+    <Compile Include="Facilities\Diagnostics\VmAspectsBaseEventSource.cs" />
     <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Constants.cs" />
     <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.cs" />
+    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.EFRepository.cs" />
+    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Retry.cs" />
+    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.WCF.cs" />
     <Compile Include="Facilities\LogWriters\DumpExceptionFormatter.cs" />
     <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryBaseEventSource.cs" />
     <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryEventSource.Constants.cs" />

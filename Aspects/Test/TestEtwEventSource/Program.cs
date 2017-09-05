@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using vm.Aspects;
 using vm.Aspects.Facilities;
@@ -23,7 +22,7 @@ namespace TestEtwEventSource
 
             TelemetryConfiguration.Active.InstrumentationKey = "f6e10d93-dfae-4112-a0b8-3e3436ec9a85";
 
-            const int timesToRepeat = 100;
+            const int timesToRepeat = 1;
 
             for (int i = 0; i < timesToRepeat; i++)
                 try
@@ -32,8 +31,6 @@ namespace TestEtwEventSource
 
                     EtwLogEntryEventSource.Log.Trace(-1, "This is EtwLogEntryEventSource.Log.Trace");
                     EtwLogEntryEventSource.Log.WriteMessage("This is EtwLogEntryEventSource.Log.WriteMessage");
-
-                    //appInsights.trackEvent("Added Item to Shopping Cart");
 
                     throw new InvalidOperationException("This is a test exception.");
                 }

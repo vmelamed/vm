@@ -7,12 +7,12 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
-    using System.Data.Entity.Core;
     using System.Data.Entity.Infrastructure;
     using System.Reflection;
     using System.Security;
     using System.Threading;
     using Facilities;
+    using Facilities.Diagnostics;
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
     using Threading;
@@ -62,41 +62,20 @@ namespace vm.Aspects.Model.EFRepository
         /// </summary>
         protected virtual void DoInitialize(Action query)
         {
-            SetDatabaseInitializer();
-            Database.Initialize(false);
+            try
+            {
+                VmAspectsEventSource.Log.EFRepositoryInitializationStart(this);
+                SetDatabaseInitializer();
+                Database.Initialize(false);
 
-            if (query == null)
-                return;
-
-            var retry = false;
-
-            do
-                try
-                {
-                    query();
-                    retry = false;
-                }
-                catch (Exception x)
-                {
-                    if (x.InnerException is MappingException)
-                    {
-                        // call cache.Generate():
-                        var cacheType      = typeof(EFRepositoryMappingViewCache<>).MakeGenericType(GetType());
-                        var cache          = cacheType.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
-                        var generateMethod = cacheType.GetMethod("Generate");
-
-                        generateMethod.Invoke(cache, new object[0]);
-
-                        Facility.LogWriter.ExceptionWarning(x);
-                        retry = true;
-                    }
-                    else
-                    {
-                        Facility.LogWriter.ExceptionError(x);
-                        throw;
-                    }
-                }
-            while (retry);
+                query?.Invoke();
+                VmAspectsEventSource.Log.EFRepositoryInitializationStop(this);
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.EFRepositoryInitializationFailed(this, x);
+                throw;
+            }
         }
 
         /// <summary>
@@ -542,6 +521,7 @@ namespace vm.Aspects.Model.EFRepository
                     {
                         try
                         {
+                            VmAspectsEventSource.Log.EFRepositoryCommitChanges(this);
                             SaveChanges();
                             return true;
                         }
@@ -602,6 +582,7 @@ namespace vm.Aspects.Model.EFRepository
                     {
                         try
                         {
+                            VmAspectsEventSource.Log.EFRepositoryCommitChanges(this);
                             await SaveChangesAsync();
                             return true;
                         }

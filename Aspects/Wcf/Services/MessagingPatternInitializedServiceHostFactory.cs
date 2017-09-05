@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Reflection;
@@ -10,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Services
@@ -279,18 +279,13 @@ namespace vm.Aspects.Wcf.Services
             object sender,
             EventArgs e)
         {
+            VmAspectsEventSource.Log.InitializeServiceHostStart<TService>();
+
             var host = sender as ServiceHost;
             var serviceType = host.Description.ServiceType;
 
             if (!DIContainer.IsInitialized)
             {
-#if DEBUG
-                // this IF is probably not needed but let's see if we ever get here
-                Facility.LogWriter
-                        .EventLogError("The DI container was not properly initialized. Retrying.");
-
-                Debugger.Break();
-#endif
                 RegisterDefaults();
                 ObtainInitializerResolveName();
             }
@@ -314,6 +309,8 @@ namespace vm.Aspects.Wcf.Services
                 Facility.LogWriter
                         .EventLogError(
                             $"The service host factory for service {serviceType.Name} was not initialized: could not find an initializer in the container. If you do not need one - use BindingPatternServiceHostFactory instead.");
+
+            VmAspectsEventSource.Log.InitializeServiceHostStop<TService>();
         }
     }
 }

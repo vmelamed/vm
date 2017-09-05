@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model
@@ -128,9 +129,16 @@ namespace vm.Aspects.Model
 
             try
             {
+                VmAspectsEventSource.Log.UnitOfWorkStart();
                 work(repository);
                 repository.CommitChanges();
                 transactionScope?.Complete();
+                VmAspectsEventSource.Log.UnitOfWorkStop();
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+                throw;
             }
             finally
             {
@@ -155,10 +163,20 @@ namespace vm.Aspects.Model
 
             try
             {
+                VmAspectsEventSource.Log.UnitOfWorkStart();
+
                 var result = work(repository);
+
                 repository.CommitChanges();
                 transactionScope?.Complete();
+                VmAspectsEventSource.Log.UnitOfWorkStop();
+
                 return result;
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+                throw;
             }
             finally
             {
@@ -179,9 +197,17 @@ namespace vm.Aspects.Model
 
             try
             {
+                VmAspectsEventSource.Log.UnitOfWorkStart();
                 await work(repository);
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
+                VmAspectsEventSource.Log.UnitOfWorkStop();
+
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+                throw;
             }
             finally
             {
@@ -204,11 +230,20 @@ namespace vm.Aspects.Model
 
             try
             {
+                VmAspectsEventSource.Log.UnitOfWorkStart();
+
                 var result = await work(repository);
+
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
+                VmAspectsEventSource.Log.UnitOfWorkStop();
 
                 return result;
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+                throw;
             }
             finally
             {

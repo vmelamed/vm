@@ -23,7 +23,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// </summary>
         public static EtwLogEntryEventSource Log { get; }
 
-        static readonly IReadOnlyDictionary<TraceEventType, Action<int,int,TraceEventType,string,string,string,string>> _writeLogEntry;
+        static readonly IReadOnlyDictionary<TraceEventType, Action<int,int,string,string,string,string,string>> _writeLogEntry;
         static readonly IReadOnlyDictionary<TraceEventType, Action<string>> _writeMessage;
         static readonly IReadOnlyDictionary<TraceEventType, Action<string>> _dumpObject;
         static readonly IReadOnlyDictionary<TraceEventType, Action<int, string, string>> _trace;
@@ -44,14 +44,14 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     [TraceEventType.Transfer]    = EventLevel.Informational,
                 });
 
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "We need to guarantees the order of initialization of Log first.")]
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Log must be initialized before the other initializations take place.")]
         static EtwLogEntryEventSource()
         {
             // make sure Log is created before _writeXyz
             Log = new EtwLogEntryEventSource();
 
-            _writeLogEntry = new ReadOnlyDictionary<TraceEventType, Action<int, int, TraceEventType, string, string, string, string>>(
-                new Dictionary<TraceEventType, Action<int, int, TraceEventType, string, string, string, string>>
+            _writeLogEntry = new ReadOnlyDictionary<TraceEventType, Action<int, int, string, string, string, string, string>>(
+                new Dictionary<TraceEventType, Action<int, int, string, string, string, string, string>>
                 {
                     [TraceEventType.Verbose]     = Log.VerboseLogEntry,
                     [TraceEventType.Warning]     = Log.WarningLogEntry,
@@ -109,13 +109,6 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     [TraceEventType.Stop]        = Log.InformationalTrace,
                     [TraceEventType.Transfer]    = Log.InformationalTrace,
                 });
-        }
-
-        /// <summary>
-        /// Prevents a non-default instance of the <see cref="EtwLogEntryEventSource"/> class from being created.
-        /// </summary>
-        private EtwLogEntryEventSource()
-        {
         }
 
         /// <summary>
@@ -203,12 +196,13 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled(_traceEventType2eventLevel[logEntry.Severity], Keywords.ELLab | Keywords.LogEntry))
                 return;
 
+            var severity           = logEntry.Severity.ToString();
             var message            = logEntry.Message       ?? string.Empty;
             var messages           = logEntry.ErrorMessages ?? string.Empty;
             var categories         = DumpCategories(logEntry.Categories);
             var extendedProperties = DumpExtendedProperties(logEntry.ExtendedProperties);
 
-            Action<int, int, TraceEventType, string, string, string, string> writeLogEntry;
+            Action<int, int, string, string, string, string, string> writeLogEntry;
 
             if (!_writeLogEntry.TryGetValue(logEntry.Severity, out writeLogEntry))
                 writeLogEntry = Log.InformationalLogEntry;
@@ -216,7 +210,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             writeLogEntry(
                     logEntry.EventId,
                     logEntry.Priority,
-                    logEntry.Severity,
+                    severity,
                     message,
                     messages,
                     categories,
@@ -262,11 +256,11 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <param name="ErrorMessages">The EL-LAB event error messages.</param>
         /// <param name="Categories">The EL-LAB event categories.</param>
         /// <param name="Extended">The EL-LAB event extended properties.</param>
-        [Event(VerboseLogEntryId, Level = EventLevel.Verbose, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5}: {3}")]
+        [Event(VerboseLogEntryId, Level = EventLevel.Verbose, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5} {2}: {3}")]
         void VerboseLogEntry(
             int EventId,
             int Priority,
-            TraceEventType Severity,
+            string Severity,
             string Message,
             string ErrorMessages,
             string Categories,
@@ -291,11 +285,11 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <param name="ErrorMessages">The EL-LAB event error messages.</param>
         /// <param name="Categories">The EL-LAB event categories.</param>
         /// <param name="Extended">The EL-LAB event extended properties.</param>
-        [Event(InformationalLogEntryId, Level = EventLevel.Informational, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5}: {3}")]
+        [Event(InformationalLogEntryId, Level = EventLevel.Informational, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5} {2}: {3}")]
         void InformationalLogEntry(
             int EventId,
             int Priority,
-            TraceEventType Severity,
+            string Severity,
             string Message,
             string ErrorMessages,
             string Categories,
@@ -320,11 +314,11 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <param name="ErrorMessages">The EL-LAB event error messages.</param>
         /// <param name="Categories">The EL-LAB event categories.</param>
         /// <param name="Extended">The EL-LAB event extended properties.</param>
-        [Event(WarningLogEntryId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5}: {3}")]
+        [Event(WarningLogEntryId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5} {2}: {3}")]
         void WarningLogEntry(
             int EventId,
             int Priority,
-            TraceEventType Severity,
+            string Severity,
             string Message,
             string ErrorMessages,
             string Categories,
@@ -349,11 +343,11 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <param name="ErrorMessages">The EL-LAB event error messages.</param>
         /// <param name="Categories">The EL-LAB event categories.</param>
         /// <param name="Extended">The EL-LAB event extended properties.</param>
-        [Event(ErrorLogEntryId, Level = EventLevel.Error, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5}: {3}")]
+        [Event(ErrorLogEntryId, Level = EventLevel.Error, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5} {2}: {3}")]
         void ErrorLogEntry(
             int EventId,
             int Priority,
-            TraceEventType Severity,
+            string Severity,
             string Message,
             string ErrorMessages,
             string Categories,
@@ -378,11 +372,11 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// <param name="ErrorMessages">The EL-LAB event error messages.</param>
         /// <param name="Categories">The EL-LAB event categories.</param>
         /// <param name="Extended">The EL-LAB event extended properties.</param>
-        [Event(CriticalLogEntryId, Level = EventLevel.Critical, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5}: {3}")]
+        [Event(CriticalLogEntryId, Level = EventLevel.Critical, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.LogEntry, Message = "{5} {2}: {3}")]
         void CriticalLogEntry(
             int EventId,
             int Priority,
-            TraceEventType Severity,
+            string Severity,
             string Message,
             string ErrorMessages,
             string Categories,

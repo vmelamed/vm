@@ -88,51 +88,59 @@ namespace vm.Aspects.Threading
             var retries = 0;
             var first   = true;
 
-            do
+            try
             {
-                if (first)
-                    first = false;
-                else
+                VmAspectsEventSource.Log.RetryStart(this);
+                do
                 {
-                    int delay = 0;
-
-                    retries++;
-                    if (minDelay > 0  ||  maxDelay > 0)
+                    if (first)
+                        first = false;
+                    else
                     {
-                        delay = minDelay + Random.Next(maxDelay-minDelay);
-                        await Task.Delay(delay);
+                        int delay = 0;
+
+                        retries++;
+                        if (minDelay > 0  ||  maxDelay > 0)
+                        {
+                            delay = minDelay + Random.Next(maxDelay-minDelay);
+                            await Task.Delay(delay);
+                        }
+
+                        VmAspectsEventSource.Log.Retrying(this, delay);
                     }
 
-                    VmAspectsEventSource.Log.Retrying(this, delay);
-                }
+                    try
+                    {
+                        exception = null;
+                        result = await _operationAsync(retries);
+                    }
+                    catch (Exception x)
+                    {
+                        VmAspectsEventSource.Log.Exception(x, EventLevel.Informational);
+                        exception = x;
+                    }
 
-                try
-                {
-                    exception = null;
-                    result = await _operationAsync(retries);
-                }
-                catch (Exception x)
-                {
-                    VmAspectsEventSource.Log.Exception(x, EventLevel.Informational);
-                    exception = x;
-                }
+                    if (await _isFailureAsync(result, exception, retries))
+                    {
+                        VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
+                        if (exception != null)
+                            throw exception;
+                        else
+                            return result;
+                    }
 
-                if (await _isFailureAsync(result, exception, retries))
-                {
-                    VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
-                    if (exception != null)
-                        throw exception;
-                    else
+                    if (await _isSuccessAsync(result, exception, retries))
                         return result;
                 }
+                while (retries < maxRetries);
 
-                if (await _isSuccessAsync(result, exception, retries))
-                    return result;
+                VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
+                return await _epilogueAsync(result, exception, retries);
             }
-            while (retries < maxRetries);
-
-            VmAspectsEventSource.Log.RetryFailed(this, retries, maxRetries);
-            return await _epilogueAsync(result, exception, retries);
+            finally
+            {
+                VmAspectsEventSource.Log.RetryStop(this);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
+f "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
 set vmAspectsVersion=1.0.106
 
 cd %~dp0..

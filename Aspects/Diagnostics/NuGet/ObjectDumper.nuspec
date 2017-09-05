@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.7.11</version>
-        <authors>Val Melamed</authors>
-        <owners>Val Melamed</owners>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
         <summary>
             Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form. Helpful for debugging and logging purposes.
         </summary>
@@ -37,7 +37,7 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2017</copyright>
+        <copyright>$version$</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
                         version="1.3" /> 
