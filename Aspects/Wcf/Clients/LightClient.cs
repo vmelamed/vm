@@ -10,7 +10,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
-using Microsoft.ApplicationInsights.Wcf;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
@@ -365,6 +364,7 @@ namespace vm.Aspects.Wcf.Clients
             if (binding is WebHttpBinding)
             {
                 ChannelFactory = new WebChannelFactory<TContract>(binding, new Uri(remoteAddress));
+
                 ChannelFactory.Endpoint.EndpointBehaviors.Add(
                     new WebHttpBehavior
                     {
@@ -373,14 +373,11 @@ namespace vm.Aspects.Wcf.Clients
                     });
             }
             else
+            {
                 ChannelFactory = new ChannelFactory<TContract>(
                                         binding,
                                         new EndpointAddress(new Uri(remoteAddress), identity));
-
-            var telemetry = GetType().GetCustomAttribute<ClientTelemetryAttribute>();
-
-            if (telemetry != null)
-                ChannelFactory.Endpoint.EndpointBehaviors.Add(new ClientTelemetryEndpointBehavior());
+            }
 
             ConfigureChannelFactory(messagingPattern);
 

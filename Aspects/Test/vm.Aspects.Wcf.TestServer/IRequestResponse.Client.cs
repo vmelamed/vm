@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
+using Microsoft.ApplicationInsights.Wcf;
 using vm.Aspects.Security;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.Clients;
@@ -232,6 +234,14 @@ namespace vm.Aspects.Wcf.TestServer
 
             if (RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName == messagingPattern)
                 ChannelFactory.Credentials.ServiceCertificate.DefaultCertificate = CertificateFactory.GetCertificate(StoreLocation.LocalMachine, StoreName.My, X509FindType.FindByThumbprint, "351ae52cb2c3ac15ec12a3bdce838554fc63da95");
+
+            if (ChannelFactory.Endpoint.EndpointBehaviors.FirstOrDefault(b => b is ClientTelemetryEndpointBehavior) == null)
+            {
+                var telemetryAttribute = GetType().GetCustomAttribute<ClientTelemetryAttribute>();
+
+                if (telemetryAttribute != null)
+                    ChannelFactory.Endpoint.EndpointBehaviors.Add(new ClientTelemetryEndpointBehavior());
+            }
         }
 
         #region IRequestResponse implementation

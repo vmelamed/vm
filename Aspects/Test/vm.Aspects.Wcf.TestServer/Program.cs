@@ -5,6 +5,9 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using Microsoft.ApplicationInsights;
+using vm.Aspects.Facilities;
+using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Security;
 using vm.Aspects.Wcf.Bindings;
 using vm.Aspects.Wcf.Services;
@@ -31,10 +34,10 @@ namespace vm.Aspects.Wcf.TestServer
             new AddressBinding { Address = "https://localhost:14443/basicHttps.svc", BindingFactory = () => new BasicHttpsBinding() },
             new AddressBinding { Address = "https://localhost:14444/netHttps.svc",   BindingFactory = () => new NetHttpsBinding() },
             new AddressBinding { Address = "http://localhost:1481/netHttp.svc",      BindingFactory = () => new NetHttpBinding() },
-            new AddressBinding { Address = "http://localhost:1482/webHttp",          BindingFactory = () => new WebHttpBinding() },
             new AddressBinding { Address = "http://localhost:1483/wsHttp.svc",       BindingFactory = () => new WSHttpBinding() },
             new AddressBinding { Address = "net.pipe://localhost/net.pipe.svc",      BindingFactory = () => new NetNamedPipeBinding() },
             new AddressBinding { Address = "net.tcp://localhost:14808/net.tcp.svc",  BindingFactory = () => new NetTcpBinding() },
+            new AddressBinding { Address = "http://localhost:1482/webHttp",          BindingFactory = () => new WebHttpBinding() },
         };
 
         static AddressBinding[] addressesAndBindings2 =
@@ -65,17 +68,19 @@ namespace vm.Aspects.Wcf.TestServer
         static PatternAddressesAndBindings[] patternsAddressesAndBindings =
         {
             new PatternAddressesAndBindings { PatternName = RequestResponseNoSecurityConfigurator.PatternName,                                  AddressesAndBindings = addressesAndBindings1 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseConfigurator.PatternName,                                            AddressesAndBindings = addressesAndBindings2 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseTransportConfigurator.PatternName,                                   AddressesAndBindings = addressesAndBindings2 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,        AddressesAndBindings = addressesAndBindings2 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,    AddressesAndBindings = addressesAndBindings2 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseMessageConfigurator.PatternName,                                     AddressesAndBindings = addressesAndBindings3 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,          AddressesAndBindings = addressesAndBindings3 },
-            new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName,      AddressesAndBindings = addressesAndBindings4 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseConfigurator.PatternName,                                            AddressesAndBindings = addressesAndBindings2 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseTransportConfigurator.PatternName,                                   AddressesAndBindings = addressesAndBindings2 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,        AddressesAndBindings = addressesAndBindings2 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientCertificateAuthenticationConfigurator.PatternName,    AddressesAndBindings = addressesAndBindings2 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseMessageConfigurator.PatternName,                                     AddressesAndBindings = addressesAndBindings3 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientWindowsAuthenticationConfigurator.PatternName,          AddressesAndBindings = addressesAndBindings3 },
+            //new PatternAddressesAndBindings { PatternName = RequestResponseMessageClientCertificateAuthenticationConfigurator.PatternName,      AddressesAndBindings = addressesAndBindings4 },
         };
 
         static void Main(string[] args)
         {
+            var ai = new TelemetryClient();
+
             try
             {
                 ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
@@ -120,6 +125,10 @@ namespace vm.Aspects.Wcf.TestServer
                                 }
                                 catch (Exception x)
                                 {
+                                    Facility.LogWriter.ExceptionError(x);
+                                    VmAspectsEventSource.Log.Exception(x);
+                                    ai.TrackException(x);
+
                                     Console.WriteLine($"{ab.Address} => failed:");
                                     Console.WriteLine(x.DumpString());
                                     Debug.WriteLine(x.DumpString());
@@ -129,11 +138,17 @@ namespace vm.Aspects.Wcf.TestServer
                         }
                         catch (Exception x)
                         {
+                            Facility.LogWriter.ExceptionError(x);
+                            VmAspectsEventSource.Log.Exception(x);
+                            ai.TrackException(x);
+
                             host.Abort();
                             Console.WriteLine($"The host with pattern {pattern.PatternName} => failed:");
                             Console.WriteLine(x.DumpString());
                             Debug.WriteLine(x.DumpString());
                         }
+
+                        ai.Flush();
 
                         Console.Write("Press any key to continue...");
                         Console.ReadKey(false);
@@ -143,12 +158,18 @@ namespace vm.Aspects.Wcf.TestServer
             }
             catch (Exception x)
             {
+                Facility.LogWriter.ExceptionError(x);
+                VmAspectsEventSource.Log.Exception(x);
+                ai.TrackException(x);
+
                 Console.WriteLine(x.DumpString());
                 Debug.WriteLine(x.DumpString());
 
                 Console.Write("Press any key to finish...");
                 Console.ReadKey(false);
             }
+
+            ai.Flush();
         }
     }
 }

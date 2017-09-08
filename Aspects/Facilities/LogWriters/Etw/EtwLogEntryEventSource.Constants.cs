@@ -39,29 +39,29 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             /// </summary>
             public const EventKeywords vmAspects = VmAspectsEventSource.Keywords.vmAspects;
             /// <summary>
-            /// The entry is an Enterprise Library Logging Application Block <see cref="LogEntry"/>.
-            /// </summary>
-            public const EventKeywords LogEntry  = (EventKeywords)(0x10000L << 4);
-            /// <summary>
             /// The entry is an Enterprise Library Logging Application Block.
             /// </summary>
-            public const EventKeywords ELLab     = (EventKeywords)(0x10000L << 5);
+            public const EventKeywords ELLab     = (EventKeywords)(((long)VmAspectsEventSource.Keywords.vmAspects) >> 1);
+            /// <summary>
+            /// The entry is an Enterprise Library Logging Application Block <see cref="LogEntry"/>.
+            /// </summary>
+            public const EventKeywords LogEntry  = (EventKeywords)(((long)VmAspectsEventSource.Keywords.vmAspects) >> 2);
             /// <summary>
             /// The entry is an exception.
             /// </summary>
-            public const EventKeywords Exception = (EventKeywords)(0x10000L << 0);
-            /// <summary>
-            /// The entry is associated with a message.
-            /// </summary>
-            public const EventKeywords Message   = (EventKeywords)(0x10000L << 1);
-            /// <summary>
-            /// The entry is associated with a message.
-            /// </summary>
-            public const EventKeywords Dump      = (EventKeywords)(0x10000L << 2);
+            public const EventKeywords Exception = VmAspectsEventSource.Keywords.Exception;
             /// <summary>
             /// The entry is a trace.
             /// </summary>
-            public const EventKeywords Trace     = (EventKeywords)(0x10000L << 3);
+            public const EventKeywords Trace     = VmAspectsEventSource.Keywords.Trace;
+            /// <summary>
+            /// The entry is associated with a message.
+            /// </summary>
+            public const EventKeywords Message   = VmAspectsEventSource.Keywords.Message;
+            /// <summary>
+            /// The entry is associated with a message.
+            /// </summary>
+            public const EventKeywords Dump      = VmAspectsEventSource.Keywords.Dump;
         }
     }
 }

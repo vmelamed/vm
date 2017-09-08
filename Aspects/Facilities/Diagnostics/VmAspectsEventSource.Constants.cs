@@ -63,7 +63,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             /// <summary>
             /// The entry is from vm.Aspects.
             /// </summary>
-            public const EventKeywords vmAspects    = (EventKeywords)0x0040000000000L;
+            public const EventKeywords vmAspects    = (EventKeywords)0x0000010000000000L;
             /// <summary>
             /// The entry is an exception.
             /// </summary>
@@ -73,37 +73,41 @@ namespace vm.Aspects.Facilities.Diagnostics
             /// </summary>
             public const EventKeywords Trace        = (EventKeywords)(0x10000L << 1);
             /// <summary>
+            /// The entry is a trace message.
+            /// </summary>
+            public const EventKeywords Message      = (EventKeywords)(0x10000L << 2);
+            /// <summary>
             /// The entry is associated with an object dump.
             /// </summary>
-            public const EventKeywords Dump         = (EventKeywords)(0x10000L << 2);
+            public const EventKeywords Dump         = (EventKeywords)(0x10000L << 3);
             /// <summary>
             /// The entry is associated with the dependency injection container.
             /// </summary>
-            public const EventKeywords DI           = (EventKeywords)(0x10000L << 3);
+            public const EventKeywords DI           = (EventKeywords)(0x10000L << 4);
             /// <summary>
             /// The entry is associated with unit of work.
             /// </summary>
-            public const EventKeywords Uow          = (EventKeywords)(0x10000L << 4);
+            public const EventKeywords Uow          = (EventKeywords)(0x10000L << 5);
             /// <summary>
             /// The entry is associated with WCF services/host/factories.
             /// </summary>
-            public const EventKeywords Wcf          = (EventKeywords)(0x10000L << 5);
+            public const EventKeywords Wcf          = (EventKeywords)(0x10000L << 6);
             /// <summary>
             /// The entry is associated with aspect (call handler).
             /// </summary>
-            public const EventKeywords Aspect       = (EventKeywords)(0x10000L << 6);
+            public const EventKeywords Aspect       = (EventKeywords)(0x10000L << 7);
             /// <summary>
             /// The entry is associated with aspect (call handler).
             /// </summary>
-            public const EventKeywords EFRepository = (EventKeywords)(0x10000L << 7);
+            public const EventKeywords EFRepository = (EventKeywords)(0x10000L << 8);
             /// <summary>
             /// The entry is associated with aspect (call handler).
             /// </summary>
-            public const EventKeywords Retry        = (EventKeywords)(0x10000L << 8);
+            public const EventKeywords Retry        = (EventKeywords)(0x10000L << 9);
             /// <summary>
             /// The entry is associated with aspect (call handler).
             /// </summary>
-            public const EventKeywords Cors        = (EventKeywords)(0x10000L << 9);
+            public const EventKeywords Cors        = (EventKeywords)(0x10000L << 10);
         }
     }
 }

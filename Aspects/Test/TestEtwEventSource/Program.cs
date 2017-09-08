@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using Microsoft.ApplicationInsights.Extensibility;
+using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using vm.Aspects;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.LogWriters.Etw;
@@ -11,6 +12,10 @@ namespace TestEtwEventSource
     {
         static void Main(string[] args)
         {
+            var ai = new TelemetryClient();
+
+            ai.InstrumentationKey = "1ea142b2-1d97-453e-a0f4-32b15523dd7d";
+
             lock (DIContainer.Initialize())
             {
                 var registrations = DIContainer.Root.GetRegistrationsSnapshot();
@@ -20,7 +25,6 @@ namespace TestEtwEventSource
                         ;
             }
 
-            TelemetryConfiguration.Active.InstrumentationKey = "f6e10d93-dfae-4112-a0b8-3e3436ec9a85";
 
             const int timesToRepeat = 1;
 
@@ -40,6 +44,8 @@ namespace TestEtwEventSource
                     Debug.WriteLine("", x.DumpString());
                 }
 
+            ai.Flush();
+            Task.Delay(1000).Wait();
             Console.Write("Press any key to finish...");
             Console.ReadKey(true);
             Console.WriteLine();
