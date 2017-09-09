@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>$version$</version>
-        <authors>$author$</authors>
-        <owners>$author$</owners>
+        <version>1.11.22</version>
+        <authors>vm</authors>
+        <owners>vm</owners>
         <summary>
             The Ciphers package helps in addressing a common requirement for achieving confidentiality, integrity and
             source authentication of data-at-rest, -in-motion, and -in-use, e.g. PII (Personally Identifiable Information) fields.
@@ -23,7 +23,7 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>$version$</copyright>
+        <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
                         version="1.3" />

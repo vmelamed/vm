@@ -5,7 +5,9 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Security;
@@ -81,6 +83,8 @@ namespace vm.Aspects.Wcf.TestServer
         {
             var ai = new TelemetryClient();
 
+            TelemetryConfiguration.Active.InstrumentationKey = "1ea142b2-1d97-453e-a0f4-32b15523dd7d";
+
             try
             {
                 ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
@@ -149,6 +153,7 @@ namespace vm.Aspects.Wcf.TestServer
                         }
 
                         ai.Flush();
+                        Task.Delay(1000).Wait();
 
                         Console.Write("Press any key to continue...");
                         Console.ReadKey(false);
@@ -170,6 +175,7 @@ namespace vm.Aspects.Wcf.TestServer
             }
 
             ai.Flush();
+            Task.Delay(1000).Wait();
         }
     }
 }

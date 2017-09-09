@@ -50,21 +50,6 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             // make sure Log is created before _writeXyz
             Log = new EtwLogEntryEventSource();
 
-            _writeLogEntry = new ReadOnlyDictionary<TraceEventType, Action<int, int, string, string, string, string, string>>(
-                new Dictionary<TraceEventType, Action<int, int, string, string, string, string, string>>
-                {
-                    [TraceEventType.Verbose]     = Log.VerboseLogEntry,
-                    [TraceEventType.Warning]     = Log.WarningLogEntry,
-                    [TraceEventType.Error]       = Log.ErrorLogEntry,
-                    [TraceEventType.Critical]    = Log.CriticalLogEntry,
-                    [TraceEventType.Information] = Log.InformationalLogEntry,
-                    [TraceEventType.Start]       = Log.InformationalLogEntry,
-                    [TraceEventType.Suspend]     = Log.InformationalLogEntry,
-                    [TraceEventType.Resume]      = Log.InformationalLogEntry,
-                    [TraceEventType.Stop]        = Log.InformationalLogEntry,
-                    [TraceEventType.Transfer]    = Log.InformationalLogEntry,
-                });
-
             _writeMessage = new ReadOnlyDictionary<TraceEventType, Action<string>>(
                 new Dictionary<TraceEventType, Action<string>>
                 {
@@ -109,7 +94,28 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     [TraceEventType.Stop]        = Log.InformationalTrace,
                     [TraceEventType.Transfer]    = Log.InformationalTrace,
                 });
+
+            _writeLogEntry = new ReadOnlyDictionary<TraceEventType, Action<int, int, string, string, string, string, string>>(
+                new Dictionary<TraceEventType, Action<int, int, string, string, string, string, string>>
+                {
+                    [TraceEventType.Verbose]     = Log.VerboseLogEntry,
+                    [TraceEventType.Warning]     = Log.WarningLogEntry,
+                    [TraceEventType.Error]       = Log.ErrorLogEntry,
+                    [TraceEventType.Critical]    = Log.CriticalLogEntry,
+                    [TraceEventType.Information] = Log.InformationalLogEntry,
+                    [TraceEventType.Start]       = Log.InformationalLogEntry,
+                    [TraceEventType.Suspend]     = Log.InformationalLogEntry,
+                    [TraceEventType.Resume]      = Log.InformationalLogEntry,
+                    [TraceEventType.Stop]        = Log.InformationalLogEntry,
+                    [TraceEventType.Transfer]    = Log.InformationalLogEntry,
+                });
         }
+
+        bool IsEnabled(
+            TraceEventType eventType,
+            EventKeywords keyWords)
+            => IsEnabled(_traceEventType2eventLevel[eventType], keyWords);
+
 
         /// <summary>
         /// Dispatches the message to the appropriate message event writer.
@@ -121,7 +127,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string message,
             TraceEventType eventType = TraceEventType.Information)
         {
-            if (!IsEnabled(_traceEventType2eventLevel[eventType], Keywords.ELLab | Keywords.Message))
+            if (!IsEnabled(eventType, Keywords.ELLab | Keywords.Message))
                 return;
 
             Action<string> writeMessage;
@@ -142,7 +148,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             object data,
             TraceEventType eventType = TraceEventType.Verbose)
         {
-            if (!IsEnabled(_traceEventType2eventLevel[eventType], Keywords.ELLab | Keywords.Dump))
+            if (!IsEnabled(eventType, Keywords.ELLab | Keywords.Dump))
                 return;
 
             var dataDump = data.DumpString();
@@ -169,15 +175,12 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string source = null,
             TraceEventType eventType = TraceEventType.Verbose)
         {
-            if (!IsEnabled(_traceEventType2eventLevel[eventType], Keywords.ELLab | Keywords.Trace))
+            if (!IsEnabled(eventType, Keywords.ELLab | Keywords.Trace))
                 return;
-
-            text   = text   ?? string.Empty;
-            source = source ?? string.Empty;
 
             Action<int, string, string> trace;
 
-            if (_trace.TryGetValue(eventType, out trace))
+            if (!_trace.TryGetValue(eventType, out trace))
                 trace = Log.InformationalTrace;
 
             trace(id, source, text);
@@ -193,12 +196,12 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         {
             Contract.Requires<ArgumentNullException>(logEntry != null, nameof(logEntry));
 
-            if (!IsEnabled(_traceEventType2eventLevel[logEntry.Severity], Keywords.ELLab | Keywords.LogEntry))
+            if (!IsEnabled(logEntry.Severity, Keywords.ELLab | Keywords.LogEntry))
                 return;
 
             var severity           = logEntry.Severity.ToString();
-            var message            = logEntry.Message       ?? string.Empty;
-            var messages           = logEntry.ErrorMessages ?? string.Empty;
+            var message            = logEntry.Message;
+            var messages           = logEntry.ErrorMessages;
             var categories         = DumpCategories(logEntry.Categories);
             var extendedProperties = DumpExtendedProperties(logEntry.ExtendedProperties);
 
@@ -265,7 +268,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string ErrorMessages,
             string Categories,
             string Extended)
-            => WriteEvent(
+        {
+            if (IsEnabled())
+                WriteEvent(
                     VerboseLogEntryId,
                     EventId,
                     Priority,
@@ -274,6 +279,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     ErrorMessages,
                     Categories,
                     Extended);
+        }
 
         /// <summary>
         /// Writes an informational log entry event.
@@ -294,7 +300,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string ErrorMessages,
             string Categories,
             string Extended)
-            => WriteEvent(
+        {
+            if (IsEnabled())
+                WriteEvent(
                     InformationalLogEntryId,
                     EventId,
                     Priority,
@@ -303,6 +311,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     ErrorMessages,
                     Categories,
                     Extended);
+        }
 
         /// <summary>
         /// Writes a warning log entry event.
@@ -323,7 +332,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string ErrorMessages,
             string Categories,
             string Extended)
-            => WriteEvent(
+        {
+            if (IsEnabled())
+                WriteEvent(
                     WarningLogEntryId,
                     EventId,
                     Priority,
@@ -332,6 +343,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     ErrorMessages,
                     Categories,
                     Extended);
+        }
 
         /// <summary>
         /// Writes an error log entry event.
@@ -352,7 +364,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string ErrorMessages,
             string Categories,
             string Extended)
-            => WriteEvent(
+        {
+            if (IsEnabled())
+                WriteEvent(
                     ErrorLogEntryId,
                     EventId,
                     Priority,
@@ -361,6 +375,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     ErrorMessages,
                     Categories,
                     Extended);
+        }
 
         /// <summary>
         /// Writes a critical log entry event.
@@ -381,7 +396,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             string ErrorMessages,
             string Categories,
             string Extended)
-            => WriteEvent(
+        {
+            if (IsEnabled())
+                WriteEvent(
                     CriticalLogEntryId,
                     EventId,
                     Priority,
@@ -390,6 +407,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                     ErrorMessages,
                     Categories,
                     Extended);
+        }
         #endregion
 
         #region Write text message to ETW
@@ -400,7 +418,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(VerboseMessageId, Level = EventLevel.Verbose, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Message, Message = "{0}")]
         void VerboseMessage(
             string Text)
-            => WriteEvent(VerboseMessageId, Text);
+        {
+            if (IsEnabled())
+                WriteEvent(VerboseMessageId, Text);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -409,7 +430,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(InformationalMessageId, Level = EventLevel.Informational, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Message, Message = "{0}")]
         void InformationalMessage(
             string Text)
-            => WriteEvent(InformationalMessageId, Text);
+        {
+            if (IsEnabled())
+                WriteEvent(InformationalMessageId, Text);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -418,7 +442,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(WarningMessageId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Message, Message = "{0}")]
         void WarningMessage(
             string Text)
-            => WriteEvent(WarningMessageId, Text);
+        {
+            if (IsEnabled())
+                WriteEvent(WarningMessageId, Text);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -427,7 +454,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(ErrorMessageId, Level = EventLevel.Error, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Message, Message = "{0}")]
         void ErrorMessage(
             string Text)
-            => WriteEvent(ErrorMessageId, Text);
+        {
+            if (IsEnabled())
+                WriteEvent(ErrorMessageId, Text);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -436,7 +466,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(CriticalMessageId, Level = EventLevel.Critical, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Message, Message = "{0}")]
         void CriticalMessage(
             string Text)
-            => WriteEvent(CriticalMessageId, Text);
+        {
+            if (IsEnabled())
+                WriteEvent(CriticalMessageId, Text);
+        }
         #endregion
 
         #region Dump an arbitrary object to ETW
@@ -447,7 +480,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(VerboseDumpObjectId, Level = EventLevel.Verbose, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Dump)]
         void VerboseDumpObject(
             string DataDump)
-            => WriteEvent(VerboseDumpObjectId, DataDump);
+        {
+            if (IsEnabled())
+                WriteEvent(VerboseDumpObjectId, DataDump);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -456,7 +492,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(InformationalDumpObjectId, Level = EventLevel.Informational, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Dump)]
         void InformationalDumpObject(
             string DataDump)
-            => WriteEvent(InformationalDumpObjectId, DataDump);
+        {
+            if (IsEnabled())
+                WriteEvent(InformationalDumpObjectId, DataDump);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -465,7 +504,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(WarningDumpObjectId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Dump)]
         void WarningDumpObject(
             string DataDump)
-            => WriteEvent(WarningDumpObjectId, DataDump);
+        {
+            if (IsEnabled())
+                WriteEvent(WarningDumpObjectId, DataDump);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -474,7 +516,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(ErrorDumpObjectId, Level = EventLevel.Error, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Dump)]
         void ErrorDumpObject(
             string DataDump)
-            => WriteEvent(ErrorDumpObjectId, DataDump);
+        {
+            if (IsEnabled())
+                WriteEvent(ErrorDumpObjectId, DataDump);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -483,7 +528,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [Event(CriticalDumpObjectId, Level = EventLevel.Critical, Keywords = Keywords.vmAspects | Keywords.ELLab | Keywords.Dump)]
         void CriticalDumpObject(
             string DataDump)
-            => WriteEvent(CriticalDumpObjectId, DataDump);
+        {
+            if (IsEnabled())
+                WriteEvent(CriticalDumpObjectId, DataDump);
+        }
         #endregion
 
         #region Trace stuff to ETW
@@ -498,7 +546,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int ID,
             string Text,
             string Source = null)
-            => WriteEvent(VerboseTraceId, ID, Text, Source);
+        {
+            if (IsEnabled())
+                WriteEvent(VerboseTraceId, ID, Text, Source);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -511,7 +562,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int ID,
             string Text,
             string Source = null)
-            => WriteEvent(InformationalTraceId, ID, Text, Source);
+        {
+            if (IsEnabled())
+                WriteEvent(InformationalTraceId, ID, Text, Source);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -524,7 +578,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int ID,
             string Text,
             string Source = null)
-            => WriteEvent(WarningTraceId, ID, Text, Source);
+        {
+            if (IsEnabled())
+                WriteEvent(WarningTraceId, ID, Text, Source);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -537,7 +594,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int ID,
             string Text,
             string Source = null)
-            => WriteEvent(ErrorTraceId, ID, Text, Source);
+        {
+            if (IsEnabled())
+                WriteEvent(ErrorTraceId, ID, Text, Source);
+        }
 
         /// <summary>
         /// Writes the log entry event.
@@ -550,7 +610,10 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             int ID,
             string Text,
             string Source = null)
-            => WriteEvent(CriticalTraceId, ID, Text, Source);
+        {
+            if (IsEnabled())
+                WriteEvent(CriticalTraceId, ID, Text, Source);
+        }
         #endregion
     }
 }

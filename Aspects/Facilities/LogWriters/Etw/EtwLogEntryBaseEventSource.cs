@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
-using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities.LogWriters.Etw
@@ -56,10 +55,6 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled())
                 return;
 
-            // make sure that the EventDataLength constant is always equal to the number of logged fields below
-            const int EventDataLength = 7;
-            var i = 0;
-
             fixed (char*
                         pSeverity = severity,
                         pMessage = message,
@@ -67,21 +62,23 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
                         pCategories = categories,
                         pExtendedProperties = extendedProperties)
             {
+                const int EventDataLength = 7;
                 var eventData = stackalloc EventData[EventDataLength];
+                var i = 0;
 
                 AssignIntValue(&eventData[i++], &elEventId);
                 AssignIntValue(&eventData[i++], &priority);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pSeverity, severity);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], true, pMessage, message);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pErrorMessages, errorMessages);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pCategories, categories);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pExtendedProperties, extendedProperties);
+                AssignString(&eventData[i++], pSeverity, severity);
+                AssignString(&eventData[i++], pMessage, message, true);
+                AssignString(&eventData[i++], pErrorMessages, errorMessages);
+                AssignString(&eventData[i++], pCategories, categories);
+                AssignString(&eventData[i++], pExtendedProperties, extendedProperties);
+
+                // make sure that the EventDataLength constant is always equal to the number of logged fields
+                Debug.Assert(i == EventDataLength);
 
                 WriteEventCore(eventId, i, eventData);
             }
-
-            // make sure that the EventDataLength constant is always equal to the number of logged fields below
-            Debug.Assert(i == EventDataLength);
         }
 
         /// <summary>
@@ -101,43 +98,43 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled())
                 return;
 
-            // make sure that the EventDataLength constant is always equal to the number of logged fields below
-            const int EventDataLength = 3;
-            var i = 0;
 
             fixed (char*
                     pText = text,
                     pSource = source)
             {
+                const int EventDataLength = 3;
                 var eventData = stackalloc EventData[EventDataLength];
+                var i = 0;
 
                 AssignIntValue(&eventData[i++], &elEventId);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pText, text);
-                AssignStringWithoutLeadingEndOfLine(&eventData[i++], false, pSource, source);
+                AssignString(&eventData[i++], pText, text);
+                AssignString(&eventData[i++], pSource, source);
+
+                // make sure that the EventDataLength constant is always equal to the number of logged fields
+                Debug.Assert(i == EventDataLength);
 
                 WriteEventCore(eventId, i, eventData);
             }
-
-            // make sure that the EventDataLength constant is always equal to the number of logged fields below
-            Debug.Assert(i == EventDataLength);
         }
 
         // The length of the end of line sequence.
         static int NewLineSize = Environment.NewLine.Length * sizeof(char);
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        unsafe void AssignStringWithoutLeadingEndOfLine(
+        unsafe void AssignString(
             EventData* eventData,
-            bool stripLeadingNewLine,
             char* pText,
-            string text)
+            string text,
+            bool stripLeadingNewLine = false)
         {
-            if (text == null)
-            {
-                eventData->DataPointer = IntPtr.Zero;
-                eventData->Size        = 0;
-                return;
-            }
+            if (text.IsNullOrWhiteSpace())
+                fixed (char* pEmpty = string.Empty)
+                {
+                    eventData->DataPointer = (IntPtr)pEmpty;
+                    eventData->Size        = sizeof(char);
+                    return;
+                }
 
             eventData->DataPointer = (IntPtr)pText;
             eventData->Size        = (text.Length+1) * sizeof(char);
@@ -153,9 +150,9 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         unsafe void AssignIntValue(
             EventData* eventData,
-            int* pValue)
+            int* value)
         {
-            eventData->DataPointer = (IntPtr)pValue;
+            eventData->DataPointer = (IntPtr)value;
             eventData->Size        = sizeof(int);
         }
     }

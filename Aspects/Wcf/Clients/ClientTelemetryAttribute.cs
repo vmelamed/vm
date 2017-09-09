@@ -6,7 +6,7 @@ namespace vm.Aspects.Wcf.Clients
     /// Instruments client-side WCF endpoints to generate DependencyTelemetry events on calls.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public class ClientTelemetryAttribute : Attribute
+    public sealed class ClientTelemetryAttribute : Attribute
     {
     }
 }
