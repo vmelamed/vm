@@ -13,7 +13,7 @@
             Supports only .NET 4.6.2.
         </description>
         <releaseNotes>
-            Built with AspectObjectDumper 1.7.2.
+            Built with AspectObjectDumper 1.7.11.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
