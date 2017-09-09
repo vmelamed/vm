@@ -353,10 +353,6 @@
       <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
       <Name>vm.Aspects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Wcf\vm.Aspects.Wcf.csproj">
-      <Project>{165ded1c-2f5b-4941-854c-ec928ada3f32}</Project>
-      <Name>vm.Aspects.Wcf</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

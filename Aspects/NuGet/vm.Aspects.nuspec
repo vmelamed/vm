@@ -52,16 +52,6 @@
                 <dependency id="EnterpriseLibrary.Validation"
                             version="6.0.1304.0" />
             </group>
-
-            <group>
-                <dependency id="Microsoft.Diagnostics.Tracing.EventSource"
-                            version="1.1.28" />
-
-                <dependency id="Microsoft.ApplicationInsights.WindowsServer"
-                            version="2.4.1" />
-                <dependency id="Microsoft.ApplicationInsights.WCF"
-                            version="0.27.0-build52604" />
-            </group>
         </dependencies>
         <tags></tags>
     </metadata>
