@@ -57,19 +57,18 @@ namespace vm.Aspects.Wcf.Bindings
         /// Adds a configurator for binding.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public static void AddConfigurator<T>()
+        public static void AddConfigurator<T>(Func<BindingConfigurator, Binding, Binding> configure)
             where T : Binding
         {
             using (_syncConfigurators.WriterLock())
-                _configurators[typeof(T)] = (c, b) => c.Configure((T)b);
+                _configurators[typeof(T)] = configure;
         }
 
         /// <summary>
         /// Configures the specified binding.
         /// </summary>
         /// <param name="binding">The binding.</param>
-        /// <returns>Binding.</returns>
-        /// <exception cref="System.NotSupportedException"></exception>
+        /// <returns>The configured binding.</returns>
         public Binding Configure(
             Binding binding)
         {

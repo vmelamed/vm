@@ -10,6 +10,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Bindings;
 
@@ -45,28 +46,6 @@ namespace vm.Aspects.Wcf.Clients
             }
         }
 
-        /// <summary>
-        /// Creates a client operation context scope.
-        /// Must be disposed, so call it within a <c>using</c> operator:
-        /// </summary>
-        /// <example>
-        /// <code>
-        /// <![CDATA[
-        /// using (var client = new LightClient<IMyInterface>())
-        /// using (client.CreateOperationContextScope())
-        ///     client.MyMethod();
-        /// ]]>
-        /// </code>
-        /// </example>
-        /// <returns>OperationContextScope.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public OperationContextScope CreateOperationContextScope()
-        {
-            Contract.Ensures(Contract.Result<OperationContextScope>() != null);
-
-            return new OperationContextScope((IContextChannel)Proxy);
-        }
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="LightClient{TContract}" /> class (creates the channel factory).
@@ -99,6 +78,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
@@ -133,12 +113,14 @@ namespace vm.Aspects.Wcf.Clients
                                 !remoteAddress.IsNullOrWhiteSpace(), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             if (!endpointConfigurationName.IsNullOrWhiteSpace())
             {
                 ChannelFactory = !remoteAddress.IsNullOrWhiteSpace()
                                         ? new ChannelFactory<TContract>(endpointConfigurationName, new EndpointAddress(remoteAddress))
                                         : new ChannelFactory<TContract>(endpointConfigurationName);
                 ConfigureBinding(ChannelFactory.Endpoint.Binding, messagingPattern);
+                ConfigureChannelFactory(messagingPattern);
             }
             else
             {
@@ -176,6 +158,7 @@ namespace vm.Aspects.Wcf.Clients
                                                                                             identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
@@ -198,6 +181,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty string or consist of whitespace characters only.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
 
@@ -235,6 +219,7 @@ namespace vm.Aspects.Wcf.Clients
             Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
         }
 
@@ -270,6 +255,7 @@ namespace vm.Aspects.Wcf.Clients
                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
         }
 
@@ -296,6 +282,7 @@ namespace vm.Aspects.Wcf.Clients
 
             Contract.Ensures(ChannelFactory != null);
 
+            EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityClaim));
         }
         #endregion
@@ -314,6 +301,9 @@ namespace vm.Aspects.Wcf.Clients
             EndpointIdentity identity)
         {
             Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(messagingPattern != null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty string or consist of whitespace characters only.");
+
             Contract.Ensures(ChannelFactory != null);
             Contract.Ensures(Contract.Result<Binding>() != null);
 
@@ -355,6 +345,8 @@ namespace vm.Aspects.Wcf.Clients
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
             Contract.Requires<ArgumentException>(remoteAddress != null  &&  remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be null, empty string or consist of whitespace characters only.");
+            Contract.Requires<ArgumentNullException>(messagingPattern != null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty string or consist of whitespace characters only.");
 
             Contract.Ensures(Contract.Result<Binding>() != null);
             Contract.Ensures(ChannelFactory != null);
@@ -384,20 +376,13 @@ namespace vm.Aspects.Wcf.Clients
             return binding;
         }
 
-        void ConfigureBinding(
+        static void ConfigureBinding(
             Binding binding,
             string messagingPattern)
         {
             Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-
-            if (messagingPattern.IsNullOrWhiteSpace())
-            {
-                // try to get the messaging pattern from the client
-                messagingPattern = GetType().GetMessagingPattern();
-
-                if (messagingPattern.IsNullOrWhiteSpace())
-                    messagingPattern = typeof(TContract).GetMessagingPattern();
-            }
+            Contract.Requires<ArgumentNullException>(messagingPattern != null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty string or consist of whitespace characters only.");
 
             // resolve the configurator
             var configurator = ServiceLocator.Current.GetInstance<BindingConfigurator>(messagingPattern);
@@ -421,11 +406,104 @@ namespace vm.Aspects.Wcf.Clients
         protected virtual void ConfigureChannelFactory(
             string messagingPattern)
         {
+            Contract.Requires<ArgumentNullException>(messagingPattern != null, nameof(messagingPattern));
+            Contract.Requires<ArgumentException>(messagingPattern.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(messagingPattern)+" cannot be empty string or consist of whitespace characters only.");
+
             // here we do nothing but give the user the opportunity to tweak the channel factory, e.g.
             //
             // ChannelFactory.Credentials.UserName.UserName = _userId;
             // ChannelFactory.Credentials.UserName.Password = _password;
         }
+
+        void EnsureMessagingPattern(ref string messagingPattern)
+        {
+            if (!messagingPattern.IsNullOrWhiteSpace())
+                return;
+
+            // try to get the messaging pattern from the client
+            messagingPattern = GetType().GetMessagingPattern();
+
+            if (messagingPattern.IsNullOrWhiteSpace())
+                messagingPattern = typeof(TContract).GetMessagingPattern();
+        }
+
+        /// <summary>
+        /// Creates a client operation context scope.
+        /// Must be disposed, so call it within a <c>using</c> operator:
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// <![CDATA[
+        /// using (var client = new LightClient<IMyInterface>())
+        /// using (client.CreateOperationContextScope())
+        ///     client.MyMethod();
+        /// ]]>
+        /// </code>
+        /// </example>
+        /// <returns>OperationContextScope.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public OperationContextScope CreateOperationContextScope()
+        {
+            Contract.Ensures(Contract.Result<OperationContextScope>() != null);
+
+            return new OperationContextScope((IContextChannel)Proxy);
+        }
+
+        /// <summary>
+        /// This method can be used to wrap an async await-able call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.
+        /// This is useful when the call is made out from a WCF asynchronously implemented service call on a WCF asynchronous client of another service.
+        /// In this scenario the call needs its own <see cref="OperationContext"/> different from the current one.
+        /// </summary>
+        /// <typeparam name="T">The type of the value that will be returned by the task returned from the client call.</typeparam>
+        /// <param name="proxyCall">The proxy call expressed as a lambda function.</param>
+        /// <returns>Task{T}.</returns>
+        /// <example>
+        /// <![CDATA[
+        /// class Client : LightClient<IContract>, IContract
+        /// {
+        ///     //...
+        ///     async Task<string> Method(int a, string b)
+        ///         => await WrapOperation(() => Proxy.Method(a, b));
+        /// }
+        /// ]]>
+        /// </example>
+        public async Task<T> WrapOperation<T>(Func<Task<T>> proxyCall)
+        {
+            Task<T> t;
+
+            using (CreateOperationContextScope())
+                t = proxyCall();
+
+            return await t;
+        }
+
+        /// <summary>
+        /// This method can be used to wrap an async await-able call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.
+        /// This is useful when the call is made out from a WCF asynchronously implemented service call on a WCF asynchronous client of another service.
+        /// In this scenario the call needs its own <see cref="OperationContext"/> different from the current one.
+        /// </summary>
+        /// <param name="proxyCall">The proxy call expressed as a lambda function.</param>
+        /// <returns>Task.</returns>
+        /// <example>
+        /// <![CDATA[
+        /// class Client : LightClient<IContract>, IContract
+        /// {
+        ///     //...
+        ///     async Task Method(int a, string b)
+        ///         => await WrapOperation(() => Proxy.Method(a, b));
+        /// }
+        /// ]]>
+        /// </example>
+        public async Task WrapOperation(Func<Task> proxyCall)
+        {
+            Task t;
+
+            using (CreateOperationContextScope())
+                t = proxyCall();
+
+            await t;
+        }
+
 
         #region IDisposable pattern implementation
         /// <summary>

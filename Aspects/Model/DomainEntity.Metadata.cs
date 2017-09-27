@@ -6,9 +6,11 @@ namespace vm.Aspects.Model
 {
     abstract class DomainEntityMetadata
     {
+        [NotMapped]
         [Dump(0)]
         public object HasIdentity { get; set; }
 
+        [NotMapped]
         [Dump(1)]
         public object Key { get; set; }
 

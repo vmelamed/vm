@@ -47,7 +47,7 @@ namespace vm.Aspects.Wcf.Bindings
         public bool Restful { get; }
 
         /// <summary>
-        /// Gets a value indicating that whether the messages transmitted over HTTP protocol, a BasicHTTP style of messaging is preferred.
+        /// Gets a value indicating that for the messages transmitted over HTTP protocol, a BasicHTTP style of messaging is preferred.
         /// I.e. <see cref="BasicHttpBinding"/> over <seealso cref="WSHttpBinding"/>.
         /// </summary>
         public bool BasicHttp { get; set; }
