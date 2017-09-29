@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
+using System.ServiceModel.Web;
 
 namespace vm.Aspects.Wcf
 {
@@ -14,8 +15,7 @@ namespace vm.Aspects.Wcf
     /// <remarks>Original author: Yehuda Graber</remarks>
     public static class OperationContextExtensions
     {
-        const string AuthorizationHeader = "Authorization";
-        const string BearerPrefix        = "Bearer ";
+        const string BearerPrefix        = "Bearer";
         const string Principal           = "Principal";
 
         /// <summary>
@@ -28,11 +28,15 @@ namespace vm.Aspects.Wcf
         {
             Contract.Requires<ArgumentNullException>(operationContext != null, nameof(operationContext));
 
-            var httpRequestMessageObject = (HttpRequestMessageProperty)operationContext.RequestContext?.RequestMessage?.Properties[HttpRequestMessageProperty.Name];
-            var authorizationHeader = httpRequestMessageObject?.Headers[AuthorizationHeader];
+            var authorizationHeader = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Authorization];
 
-            if (authorizationHeader?.StartsWith(BearerPrefix, StringComparison.OrdinalIgnoreCase) == true)
-                return authorizationHeader.Substring(BearerPrefix.Length);
+            if (authorizationHeader.IsNullOrWhiteSpace())
+                return null;
+
+            var parts = authorizationHeader.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts[0].Equals(BearerPrefix, StringComparison.OrdinalIgnoreCase))
+                return parts[1];
 
             return null;
         }
@@ -66,6 +70,7 @@ namespace vm.Aspects.Wcf
 
             var properties = operationContext.ServiceSecurityContext.AuthorizationContext.Properties;
 
+            // upsert the principal in the context
             if (properties.ContainsKey(Principal))
                 operationContext.ServiceSecurityContext.AuthorizationContext.Properties[Principal] = principal;
             else

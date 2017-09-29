@@ -288,6 +288,8 @@
     </Compile>
     <Compile Include="AsyncCallContext.cs" />
     <Compile Include="Behaviors\AuthorizationManager\AllowOpenIdUnauthenticatedAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BasicAuthorizationManager.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\IBasicAuthenticate.cs" />
     <Compile Include="Behaviors\AuthorizationManager\OpenIdAuthorizationAttribute.cs" />
     <Compile Include="Behaviors\AuthorizationManager\OpenIdServiceAuthorizationManager.cs" />
     <Compile Include="Behaviors\EnableCors\EnableCorsAttribute.cs" />

@@ -1,5 +1,5 @@
 f "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmAspectsVersion=1.0.106
+set vmAspectsVersion=1.0.107
 
 cd %~dp0..
 del *.nupkg

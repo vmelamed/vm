@@ -6,9 +6,9 @@
 [assembly: AssemblyTitle("vm.Aspects.Parser")]
 [assembly: AssemblyDescription("Text parsing readers, e.g. CSV/TSV reader.")]
 
-[assembly: AssemblyVersion("1.0.106")]
-[assembly: AssemblyFileVersion("1.0.106")]
-[assembly: AssemblyInformationalVersion("1.0.106")]
+[assembly: AssemblyVersion("1.0.107")]
+[assembly: AssemblyFileVersion("1.0.107")]
+[assembly: AssemblyInformationalVersion("1.0.107")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Parsers.Tests, " +

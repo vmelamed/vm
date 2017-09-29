@@ -227,7 +227,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-        #region Hash strin-s
+        #region Hash string-s
         /// <summary>
         /// Hashes the specified <paramref name="data"/>.
         /// </summary>
