@@ -288,6 +288,7 @@
     </Compile>
     <Compile Include="AsyncCallContext.cs" />
     <Compile Include="Behaviors\AuthorizationManager\AllowOpenIdUnauthenticatedAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BasicAuthenticationAttribute.cs" />
     <Compile Include="Behaviors\AuthorizationManager\BasicAuthorizationManager.cs" />
     <Compile Include="Behaviors\AuthorizationManager\IBasicAuthenticate.cs" />
     <Compile Include="Behaviors\AuthorizationManager\OpenIdAuthorizationAttribute.cs" />
