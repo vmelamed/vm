@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects
 {
     /// <summary>
@@ -22,9 +20,9 @@ namespace vm.Aspects
             T item,
             IComparer<T> comparer = null)
         {
-            Contract.Requires<ArgumentNullException>(list != null, nameof(list));
-            Contract.Ensures(Contract.Result<IList<T>>() != null);
-
+            if (list == null)
+                throw new ArgumentNullException(nameof(list));
+            
             if (comparer == null)
                 comparer = Comparer<T>.Default;
 

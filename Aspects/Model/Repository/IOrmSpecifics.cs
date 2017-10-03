@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,7 +8,6 @@ namespace vm.Aspects.Model.Repository
     /// Defines a set of bridged operation(s) (see G4 patterns) which are done and named differently in the various ORM-s 
     /// but have the same semantics for the client.
     /// </summary>
-    [ContractClass(typeof(IOrmSpecificsContract))]
     public interface IOrmSpecifics
     {
         /// <summary>
@@ -96,7 +94,6 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is an optimistic concurrency problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         bool IsOptimisticConcurrency(Exception exception);
 
         /// <summary>
@@ -106,7 +103,6 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         bool IsConnectionRelated(Exception exception);
 
         /// <summary>
@@ -116,7 +112,6 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a transactions isolation problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         bool IsTransactionRelated(Exception exception);
 
         /// <summary>
@@ -126,126 +121,6 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is allows for the operation to be repeated; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         bool IsTransient(Exception exception);
-    }
-
-    [ContractClassFor(typeof(IOrmSpecifics))]
-    abstract class IOrmSpecificsContract : IOrmSpecifics
-    {
-        #region IOrmSpecifics Members
-
-        public IQueryable<T> FetchAlso<T>(
-            IQueryable<T> sequence,
-            string path) where T : class
-        {
-            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
-            Contract.Requires<ArgumentException>(path != null  &&  path.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(path)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<T> FetchAlso<T, TProperty>(
-            IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : class
-        {
-            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
-            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
-
-            throw new NotImplementedException();
-        }
-
-
-        public IRepository EnlistInAmbientTransaction(
-            IRepository repository)
-        {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-            Contract.Ensures(Contract.Result<IRepository>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public Type GetEntityType(
-            object reference)
-        {
-            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
-
-            throw new NotImplementedException();
-        }
-
-        public string GetEntitySetName(
-            Type type,
-            IRepository repository)
-        {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsProxy(
-            object reference)
-        {
-            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsChangeTracking(
-            object reference,
-            IRepository repository)
-        {
-            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsLoaded(
-            object associated,
-            object principal,
-            string propertyName,
-            IRepository repository)
-        {
-            Contract.Requires<ArgumentNullException>(associated != null, nameof(associated));
-            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
-            Contract.Requires<ArgumentException>(propertyName != null  &&  propertyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(propertyName)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsOptimisticConcurrency(
-            Exception exception)
-        {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsConnectionRelated(Exception exception)
-        {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsTransactionRelated(Exception exception)
-        {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            throw new NotImplementedException();
-        }
-
-        public bool IsTransient(Exception exception)
-        {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }

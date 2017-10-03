@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using vm.Aspects.Diagnostics.Properties;
@@ -109,7 +107,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript(
             Type instanceType)
         {
-            Contract.Requires<ArgumentNullException>(instanceType != null, nameof(instanceType));
+            if (instanceType == null)
+                throw new ArgumentNullException(nameof(instanceType));
 
             _instance     = Expression.Parameter(instanceType, nameof(_instance));
             _dumpState    = Expression.Parameter(typeof(DumpState), nameof(_dumpState));
@@ -178,7 +177,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression MemberValue(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Expression.MakeMemberAccess(_instance, mi);
         }
@@ -221,7 +221,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpType(
             Expression type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return Write(
                         DumpFormat.Type,
@@ -238,7 +239,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpSequenceType(
             Expression sequenceType)
         {
-            Contract.Requires<ArgumentNullException>(sequenceType != null, nameof(sequenceType));
+            if (sequenceType == null)
+                throw new ArgumentNullException(nameof(sequenceType));
 
             return Write(
                         DumpFormat.SequenceType,
@@ -251,8 +253,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression sequence,
             Expression sequenceType)
         {
-            Contract.Requires<ArgumentNullException>(sequence     != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(sequenceType != null, nameof(sequenceType));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (sequenceType == null)
+                throw new ArgumentNullException(nameof(sequenceType));
 
             return Write(
                 DumpFormat.SequenceTypeName,
@@ -268,8 +272,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpExpressionText(
             string cSharpText)
         {
-            Contract.Requires<ArgumentNullException>(cSharpText != null, nameof(cSharpText));
-            Contract.Requires<ArgumentException>(cSharpText.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(cSharpText)+" cannot be empty string or consist of whitespace characters only.");
+            if (cSharpText.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(cSharpText));
 
             return Expression.Block
             (
@@ -290,7 +294,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedDelegate(
             Expression @delegate)
         {
-            Contract.Requires<ArgumentNullException>(@delegate != null, nameof(@delegate));
+            if (@delegate == null)
+                throw new ArgumentNullException(nameof(@delegate));
 
             return Expression.IfThenElse
                     (
@@ -307,7 +312,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedDelegate(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return DumpedDelegate(MemberValue(mi));
         }
@@ -321,7 +327,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedMemberInfo(
             Expression mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Expression.IfThenElse
                     (
@@ -338,7 +345,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedMemberInfo(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return DumpedMemberInfo(MemberValue(mi));
         }
@@ -352,7 +360,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedBasicValue(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Expression.Call(
                         _miDumpedBasicValue,
@@ -373,7 +382,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedBasicNullable(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Expression.Call(
                         _miDumpedBasicNullable,
@@ -395,7 +405,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             MethodInfo dumpMethod)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return dumpMethod == null
                         ? Expression.Call(_writer, _miWrite1, Expression.Call(MemberValue(mi), _miToString))
@@ -411,8 +422,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression dictionary,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dictionary    != null, nameof(dictionary));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dictionary == null)
+                throw new ArgumentNullException(nameof(dictionary));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             //// dictionary.GetType()
             var dictionaryType = Expression.Call(dictionary, _miGetType);
@@ -519,7 +532,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedDictionary(
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return DumpedDictionary(
                         //// _instance
@@ -531,8 +545,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return DumpedDictionary(
                     //// _instance.Property
@@ -547,8 +563,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             DumpAttribute dumpAttribute,
             Expression expressionCount = null)
         {
-            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             ParameterExpression n;              // how many items left to be dumped?            
             ParameterExpression max;            // max items to dump
@@ -743,7 +761,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         Expression DumpedCollection(
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             var piCount = _instance.Type.IsArray
                             ? _piArrayLength
@@ -763,8 +782,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             Expression count = null;
 
@@ -796,8 +817,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             var pi = mi as PropertyInfo;
             var fi = pi != null ? null : mi as FieldInfo;
@@ -833,7 +856,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             Type dumpMetadata,
             Expression dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Expression.Call(_dumper, _miDumperDumpObject, Expression.Convert(MemberValue(mi), typeof(object)), Expression.Constant(dumpMetadata, typeof(Type)), dumpAttribute, _dumpState);
         }

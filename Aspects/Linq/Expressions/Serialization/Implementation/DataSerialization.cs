@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -99,9 +99,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type constantsType,
             XName elementName)
         {
-            Contract.Requires<ArgumentNullException>(serializer != null, nameof(serializer));
-            Contract.Requires<ArgumentNullException>(constantsType != null, nameof(constantsType));
-            Contract.Requires<ArgumentNullException>(elementName != null, nameof(elementName));
+            if (serializer == null)
+                throw new ArgumentNullException(nameof(serializer));
+            if (constantsType == null)
+                throw new ArgumentNullException(nameof(constantsType));
+            if (elementName == null)
+                throw new ArgumentNullException(nameof(elementName));
 
             _constantSerializers[constantsType] = (c, t, x) => x.Add(serializer.Serialize(c, t));
             _constantDeserializers[elementName] = (x, t) => serializer.Deserialize(x, t);
@@ -137,7 +140,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </returns>
         public static bool CanSerialize(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             // yes if this is a basic type - perhaps the most common case
             if (type.IsBasicType())
@@ -171,7 +175,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (type2.IsArray)
                 type2 = type.GetElementType();
 
-            Contract.Assume(type2 != null);
+            Debug.Assert(type2 != null);
 
             // if the type is generic collection - continue the test for the element type
             if (type2.IsGenericType &&
@@ -185,7 +189,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 {
                     type2 = enumerable.GetGenericArguments()[0];
 
-                    Contract.Assume(type2 != null);
+                    Debug.Assert(type2 != null);
 
                     // if the collection is a dictionary - continue the test for both the key and the value types
                     if (type2.IsGenericType &&
@@ -206,7 +210,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return true;
 
             // continue the test for the underlying type
-            Contract.Assume(type2 != null);
+            Debug.Assert(type2 != null);
             return CanSerialize(type2);
         }
 
@@ -221,7 +225,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         internal static Action<object, Type, XElement> GetSerializer(
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             if (!CanSerialize(type))
                 throw new SerializationException(
@@ -258,7 +263,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The de-serializing delegate corresponding to the <paramref name="element"/>.</returns>
         internal static Func<XElement, Type, object> GetDeserializer(XElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             return _constantDeserializers[element.Name];
         }
@@ -276,9 +282,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(@enum != null, nameof(@enum));
-            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (@enum == null)
+                throw new ArgumentNullException(nameof(@enum));
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
 
             parent.Add(
                 new XElement(
@@ -297,7 +306,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </exception>
         static object DeserializeEnum(XElement element, Type type)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             var enumType = GetType(element);
 
@@ -334,9 +344,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
-            Contract.Requires<ArgumentException>(type.GetGenericArguments().Length > 0, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+            if (type.GetGenericArguments().Length <= 0)
+                throw new ArgumentException("The type must be generic.", nameof(type));
 
             var typeArgument = type.GetGenericArguments()[0];
             var nullableElement = new XElement(
@@ -389,7 +402,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             if (XmlConvert.ToBoolean(element.Attribute(XNames.Attributes.IsNull).Value))
                 return null;
@@ -415,8 +429,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
 
             var anonymousElement = new XElement(
                                         XNames.Elements.Anonymous,
@@ -455,7 +471,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             if (!element.Elements(XNames.Elements.Property).Any())
                 return null;
@@ -496,7 +513,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Type type,
             XElement parent)
         {
-            Contract.Requires<ArgumentNullException>(parent != null, nameof(parent));
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
 
             var custom = new XElement(
                                 XNames.Elements.Custom,
@@ -532,7 +550,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             XElement element,
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             if (element.Elements().FirstOrDefault() == null)
                 return null;
@@ -583,7 +602,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         internal static Type GetDataType(XElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             var type = TypeNameResolver.GetType(element.Name.LocalName);
 
@@ -626,7 +646,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static Type GetCustomConstantType(XElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             var typeAttribute = element.Attribute(XNames.Attributes.Type);
 
@@ -638,7 +659,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static Type GetEnumConstantType(XElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             var typeAttribute = element.Attribute(XNames.Attributes.Type);
 

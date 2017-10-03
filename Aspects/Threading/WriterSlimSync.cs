@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace vm.Aspects.Threading
@@ -37,7 +36,8 @@ namespace vm.Aspects.Threading
         public WriterSlimSync(
             ReaderWriterLockSlim readerWriterLock)
         {
-            Contract.Requires<ArgumentNullException>(readerWriterLock != null, nameof(readerWriterLock));
+            if (readerWriterLock == null)
+                throw new ArgumentNullException(nameof(readerWriterLock));
 
             readerWriterLock.EnterWriteLock();
             _readerWriterLock = readerWriterLock;

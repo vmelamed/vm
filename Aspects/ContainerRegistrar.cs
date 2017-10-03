@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Threading;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -13,7 +12,6 @@ namespace vm.Aspects
     /// <summary>
     /// Class ContainerRegistrar. Base class for registrars which register types and instances in the Unity DI container with code.
     /// </summary>
-    [ContractClass(typeof(ContainerRegistrarContract))]
     public abstract class ContainerRegistrar : IDisposable, IIsDisposed
     {
         readonly ReaderWriterLockSlim _sync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
@@ -24,7 +22,6 @@ namespace vm.Aspects
         /// </summary>
         /// <param name="container">The container for which the test must be run.</param>
         /// <returns><see langword="true" /> if XXXX, <see langword="false" /> otherwise.</returns>
-        [Pure]
         public bool AreRegistered(
             IUnityContainer container = null)
         {
@@ -39,8 +36,6 @@ namespace vm.Aspects
         public virtual void Reset(
             IUnityContainer container = null)
         {
-            Contract.Ensures(!AreRegistered(container));
-
             using (_sync.UpgradableReaderLock())
             {
                 var code = (container ?? DIContainer.Root).GetHashCode();
@@ -66,9 +61,6 @@ namespace vm.Aspects
             IUnityContainer container,
             bool isTest = false)
         {
-            Contract.Ensures(AreRegistered(container));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
             if (container == null)
                 container = DIContainer.Initialize();
 
@@ -135,9 +127,6 @@ namespace vm.Aspects
             IDictionary<RegistrationLookup, ContainerRegistration> registrations,
             bool isTest = false)
         {
-            Contract.Ensures(AreRegistered(container));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
             if (container == null)
                 container = DIContainer.Initialize();
 
@@ -181,8 +170,10 @@ namespace vm.Aspects
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
 
             DoRegister(container, registrations);
         }
@@ -246,19 +237,5 @@ namespace vm.Aspects
                 _sync.Dispose();
         }
         #endregion
-    }
-
-    [ContractClassFor(typeof(ContainerRegistrar))]
-    abstract class ContainerRegistrarContract : ContainerRegistrar
-    {
-        protected override void DoRegister(
-            IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations)
-        {
-            Contract.Requires<ArgumentNullException>(container     != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-
-            throw new NotImplementedException();
-        }
     }
 }

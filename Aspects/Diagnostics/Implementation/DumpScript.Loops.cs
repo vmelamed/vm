@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -26,8 +25,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             LabelTarget @break = null,
             LabelTarget @continue = null)
         {
-            Contract.Requires<ArgumentNullException>(dictionaryEntry != null, nameof(dictionaryEntry));
-            Contract.Requires<ArgumentNullException>(body != null, nameof(body));
+            if (dictionaryEntry == null)
+                throw new ArgumentNullException(nameof(dictionaryEntry));
+            if (body == null)
+                throw new ArgumentNullException(nameof(body));
 
             if (@break == null)
                 @break = Expression.Label();
@@ -72,8 +73,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             LabelTarget @break = null,
             LabelTarget @continue = null)
         {
-            Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
-            Contract.Requires<ArgumentNullException>(body != null, nameof(body));
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+            if (body == null)
+                throw new ArgumentNullException(nameof(body));
 
             if (@break == null)
                 @break = Expression.Label();

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Facilities.Diagnostics
 {
@@ -224,7 +224,8 @@ namespace vm.Aspects.Facilities.Diagnostics
             Exception ex,
             EventLevel eventLevel = EventLevel.Error)
         {
-            Contract.Requires<ArgumentNullException>(ex != null, nameof(ex));
+            if (ex == null)
+                throw new ArgumentNullException(nameof(ex));
 
             if (!IsEnabled(eventLevel, Keywords.vmAspects | Keywords.Exception))
                 return;
@@ -234,7 +235,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             if (!_exceptions.TryGetValue(eventLevel, out writeException))
                 writeException = Log.ErrorException;
 
-            Contract.Assume(writeException != null);
+            Debug.Assert(writeException != null);
 
             writeException(ex.GetType().FullName, ex.Message, ex.DumpString());
         }
@@ -327,6 +328,7 @@ namespace vm.Aspects.Facilities.Diagnostics
         }
         #endregion
 
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
         #region Call handler causes exception
         /// <summary>
         ///  Writes an event to ETW when a call handler fails a call before or after calling the next aspect in the pipeline.
@@ -344,6 +346,7 @@ namespace vm.Aspects.Facilities.Diagnostics
                     input.MethodBase.Name,
                     exception.DumpString());
         }
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
 
         /// <summary>
         /// Writes an event to ETW when a call handler fails a call before or after calling the next aspect in the pipeline.

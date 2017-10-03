@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Properties;
@@ -27,8 +26,6 @@ namespace vm.Aspects.Validation
         protected override Validator DoCreateValidator(
             Type targetType)
         {
-            Contract.Ensures(Contract.Result<Validator>() != null);
-
             if (targetType == null)
                 throw new ArgumentNullException(nameof(targetType));
 

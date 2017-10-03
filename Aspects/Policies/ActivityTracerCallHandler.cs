@@ -1,5 +1,5 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 using System.Threading.Tasks;
 using vm.Aspects.Facilities;
 

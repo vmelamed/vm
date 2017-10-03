@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace vm.Aspects.Diagnostics
 {
-    using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using MetadataTypeAttribute = System.ComponentModel.DataAnnotations.MetadataTypeAttribute;
 
     /// <summary>
@@ -61,7 +60,8 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             bool replace = false)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             if (metadata == null)
             {
@@ -83,7 +83,8 @@ namespace vm.Aspects.Diagnostics
         public static ClassDumpData GetClassDumpData(
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             // the dump data in the cache has preference:
             // if the class is already in the cache return it
@@ -111,7 +112,8 @@ namespace vm.Aspects.Diagnostics
 
         static ClassDumpData ExtractClassDumpData(Type type)
         {
-            Contract.Requires(type != null);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             // see if the class has a buddy:
             var attribute = type.GetCustomAttribute<MetadataTypeAttribute>();
@@ -130,7 +132,8 @@ namespace vm.Aspects.Diagnostics
 
         static ClassDumpData? TryGetClassDumpData(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             ClassDumpData dumpData;
 
@@ -157,7 +160,8 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute,
             bool replace)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
         }
@@ -167,7 +171,8 @@ namespace vm.Aspects.Diagnostics
             ClassDumpData classDumpData,
             bool replace)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             TypesDumpDataSync.EnterWriteLock();
             try

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -39,8 +37,10 @@ namespace vm.Aspects.Validation
             string schemaUrn,
             string filePath)
         {
-            Contract.Requires<ArgumentException>(schemaUrn != null  &&  schemaUrn.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(schemaUrn)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(filePath != null  &&  filePath.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(filePath)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (schemaUrn.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(schemaUrn));
+            if (filePath.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(filePath));
 
             using (var schemaStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 _schemas.Add(

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
@@ -194,7 +193,8 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         public void WriteLogEntry(
             LogEntry logEntry)
         {
-            Contract.Requires<ArgumentNullException>(logEntry != null, nameof(logEntry));
+            if (logEntry == null)
+                throw new ArgumentNullException(nameof(logEntry));
 
             if (!IsEnabled(logEntry.Severity, Keywords.ELLab | Keywords.LogEntry))
                 return;

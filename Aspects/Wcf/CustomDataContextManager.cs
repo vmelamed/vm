@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -22,9 +21,9 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
-            Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
-
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            
             return new SortedDictionary<string, string>
             {
                 { key, value }
@@ -43,9 +42,9 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
-            Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
-
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            
             return new SortedDictionary<string, string>(context)
             {
                 { key, value }
@@ -63,8 +62,10 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
-            Contract.Requires<ArgumentNullException>(innerChannel != null, nameof(innerChannel));
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
+            if (innerChannel == null)
+                throw new ArgumentNullException(nameof(innerChannel));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
 
             SetContext(innerChannel, CreateContext(key, value));
         }
@@ -78,7 +79,8 @@ namespace vm.Aspects.Wcf
             this IChannel innerChannel,
             IDictionary<string, string> context)
         {
-            Contract.Requires<ArgumentNullException>(innerChannel != null, nameof(innerChannel));
+            if (innerChannel == null)
+                throw new ArgumentNullException(nameof(innerChannel));
 
             innerChannel.GetProperty<IContextManager>().SetContext(context);
         }
@@ -95,10 +97,11 @@ namespace vm.Aspects.Wcf
             string key,
             string value)
         {
-            Contract.Requires<ArgumentNullException>(innerChannel != null, nameof(innerChannel));
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
-            Contract.Ensures(Contract.Result<IDictionary<string, string>>() != null);
-
+            if (innerChannel == null)
+                throw new ArgumentNullException(nameof(innerChannel));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            
             return CreateContext(innerChannel.GetProperty<IContextManager>().GetContext(), key, value);
         }
 
@@ -114,8 +117,10 @@ namespace vm.Aspects.Wcf
             string key,
             string value) where T : class
         {
-            Contract.Requires<ArgumentNullException>(proxy != null, nameof(proxy));
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
+            if (proxy == null)
+                throw new ArgumentNullException(nameof(proxy));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
 
             SetContext(proxy.InnerChannel, key, value);
         }
@@ -132,8 +137,10 @@ namespace vm.Aspects.Wcf
             string key,
             string value) where T : class
         {
-            Contract.Requires<ArgumentNullException>(proxy != null, nameof(proxy));
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
+            if (proxy == null)
+                throw new ArgumentNullException(nameof(proxy));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
 
             UpdateContext(proxy.InnerChannel, key, value);
         }

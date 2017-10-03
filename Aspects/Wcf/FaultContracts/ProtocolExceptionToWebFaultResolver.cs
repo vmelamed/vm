@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -40,7 +39,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             Type[] expectedFaults,
             out string serializedFault)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             serializedFault = null;
 
@@ -67,7 +67,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             Type[] expectedFaults,
             out string responseText)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             responseText = null;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,7 +65,7 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="type">The type.</param>
         /// <returns>System.Type.</returns>
         public static Type GetEntitySetRootType(
-                    Type type)
+            Type type)
         {
             var typeList = _entities.FirstOrDefault(kv => kv.Key.IsAssignableFrom(type) ||
                                                           type.IsAssignableFrom(kv.Key));
@@ -87,8 +86,8 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>List{BaseEntity}.</returns>
         static List<DomainEntity<long, string>> GetEntityList<T>()
         {
-            Contract.Requires<InvalidOperationException>(typeof(DomainEntity<long, string>).IsAssignableFrom(typeof(T)), "The repository does not support this type.");
-            Contract.Ensures(Contract.Result<List<DomainEntity<long, string>>>() != null);
+            if (!typeof(DomainEntity<long, string>).IsAssignableFrom(typeof(T)))
+                throw new InvalidOperationException("The repository does not support this type.");
 
             var type = typeof(T);
             List<DomainEntity<long, string>> list;
@@ -165,6 +164,8 @@ namespace vm.Aspects.Model.InMemory
         {
             if (typeof(TId) != typeof(long))
                 throw new NotImplementedException("The repository does not support entities with ID of type "+typeof(TId));
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
 
             object id = Interlocked.Increment(ref _longId);
 
@@ -190,7 +191,12 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The created entity.</returns>
         public BaseDomainEntity CreateEntity(
             Type entityType)
-            => (BaseDomainEntity)ObjectsRepositorySpecifics.CreateEntity(entityType);
+        {
+            if (entityType == null)
+                throw new ArgumentNullException(nameof(entityType));
+
+            return (BaseDomainEntity)ObjectsRepositorySpecifics.CreateEntity(entityType);
+        }
 
         /// <summary>
         /// Creates a <see cref="BaseDomainValue" /> derived object of type <typeparamref name="T" />.
@@ -206,7 +212,12 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="valueType">Type of the value.</param>
         /// <returns>BaseDomainEntity.</returns>
         public BaseDomainValue CreateValue(Type valueType)
-            => (BaseDomainValue)ObjectsRepositorySpecifics.CreateEntity(valueType);
+        {
+            if (valueType == null)
+                throw new ArgumentNullException(nameof(valueType));
+
+            return (BaseDomainValue)ObjectsRepositorySpecifics.CreateEntity(valueType);
+        }
 
         /// <summary>
         /// Adds a new entity of <typeparamref name="T" /> to the repository.
@@ -218,6 +229,11 @@ namespace vm.Aspects.Model.InMemory
         public IRepository Add<T>(
             T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+
             var entityWith = entity as DomainEntity<long, string>;
 
             if (entityWith == null)
@@ -289,6 +305,11 @@ namespace vm.Aspects.Model.InMemory
         public IRepository AttachEntity<T>(
             T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+
             var entityWith = entity as DomainEntity<long, string>;
 
             if (entityWith == null)
@@ -331,6 +352,13 @@ namespace vm.Aspects.Model.InMemory
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+            if (modifiedProperties == null)
+                throw new ArgumentNullException(nameof(modifiedProperties));
+
             var entityWith = entity as DomainEntity<long, string>;
 
             if (entityWith == null)
@@ -383,7 +411,13 @@ namespace vm.Aspects.Model.InMemory
         /// <returns><c>this</c></returns>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository AttachValue<T>(
-            T value) where T : BaseDomainValue => this;
+            T value) where T : BaseDomainValue
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            return this;
+        }
 
         /// <summary>
         /// Attaches the specified value to the context of the repository and marks the entire value or the specified properties as modified.
@@ -399,7 +433,15 @@ namespace vm.Aspects.Model.InMemory
         public IRepository AttachValue<T>(
             T value,
             EntityState state,
-            params string[] modifiedProperties) where T : BaseDomainValue => this;
+            params string[] modifiedProperties) where T : BaseDomainValue
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (modifiedProperties == null)
+                throw new ArgumentNullException(nameof(modifiedProperties));
+
+            return this;
+        }
 
         /// <summary>
         /// Detaches the specified entity from the context of the repository.
@@ -438,6 +480,9 @@ namespace vm.Aspects.Model.InMemory
         public IRepository DeleteEntity<T>(
             T instance) where T : BaseDomainEntity
         {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
             var entityWith = instance as DomainEntity<long, string>;
 
             if (entityWith == null)
@@ -458,7 +503,13 @@ namespace vm.Aspects.Model.InMemory
         /// <remarks>Consider if <paramref name="instance" /> is <see langword="null" /> or not found in the repository, the method to silently succeed.</remarks>
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#")]
         public IRepository DeleteValue<T>(
-            T instance) where T : BaseDomainValue => this;
+            T instance) where T : BaseDomainValue
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            return this;
+        }
 
         /// <summary>
         /// Gets a collection of all entities of type <typeparamref name="T" /> from the repository.

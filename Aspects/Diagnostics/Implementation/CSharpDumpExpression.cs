@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 
@@ -36,16 +34,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             };
         }
 
-        public string DumpText
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
-
-                return !IsDisposed ? _textWriter.GetStringBuilder().ToString() : null;
-            }
-        }
+        public string DumpText => !IsDisposed ? _textWriter.GetStringBuilder().ToString() : null;
 
         struct ExpressionMetadata
         {
@@ -60,9 +49,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression node,
             Expression parentNode)
         {
-            Contract.Requires<ArgumentNullException>(node       != null, nameof(node));
-            Contract.Requires<ArgumentNullException>(parentNode != null, nameof(parentNode));
-            Contract.Ensures(Contract.Result<Expression>() != null);
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+            if (parentNode == null)
+                throw new ArgumentNullException(nameof(parentNode));
 
             ExpressionMetadata parentMeta;
 
@@ -75,8 +65,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression node,
             ExpressionMetadata parentMeta)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
-            Contract.Ensures(Contract.Result<Expression>() != null);
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             ExpressionMetadata meta;
 

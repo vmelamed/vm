@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -8,7 +7,7 @@ using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 
@@ -122,7 +121,8 @@ namespace vm.Aspects.Policies
         public CallTraceCallHandler(
             LogWriter logWriter)
         {
-            Contract.Requires<ArgumentNullException>(logWriter != null, nameof(logWriter));
+            if (logWriter == null)
+                throw new ArgumentNullException(nameof(logWriter));
 
             LogWriter = logWriter;
         }
@@ -134,12 +134,7 @@ namespace vm.Aspects.Policies
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
         protected override CallTraceData Prepare(
-            IMethodInvocation input)
-        {
-            Contract.Ensures(Contract.Result<CallTraceData>() != null);
-
-            return InitializeCallData(new CallTraceData(), input);
-        }
+            IMethodInvocation input) => InitializeCallData(new CallTraceData(), input);
 
         /// <summary>
         /// Initializes the call data.
@@ -151,8 +146,8 @@ namespace vm.Aspects.Policies
             CallTraceData callData,
             IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
-            Contract.Ensures(Contract.Result<CallTraceData>() != null);
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (IncludeCallStack)
                 callData.CallStack = Environment.StackTrace;
@@ -179,25 +174,23 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() == null);
+            if (!LogBeforeCall  ||  !LogWriter.IsLoggingEnabled())
+                return null;
 
-            if (LogBeforeCall  &&  LogWriter.IsLoggingEnabled())
+            var entry = CreateLogEntry(StartCallCategory);
+
+            if (LogWriter.ShouldLog(entry))
             {
-                var entry = CreateLogEntry(StartCallCategory);
+                Action logBeforeCall = () => Facility
+                                                .ExceptionManager
+                                                .Process(
+                                                    () => LogBeforeCallData(entry, input, callData),
+                                                    ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
-                if (LogWriter.ShouldLog(entry))
-                {
-                    Action logBeforeCall = () => Facility
-                                                    .ExceptionManager
-                                                    .Process(
-                                                        () => LogBeforeCallData(entry, input, callData),
-                                                        ExceptionPolicyProvider.LogAndSwallowPolicyName);
-
-                    if (LogAsynchronously)
-                        Task.Run(logBeforeCall);
-                    else
-                        logBeforeCall();
-                }
+                if (LogAsynchronously)
+                    Task.Run(logBeforeCall);
+                else
+                    logBeforeCall();
             }
 
             return null;
@@ -215,8 +208,6 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             CallTraceData callData)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
             var takeTime = LogAfterCall && IncludeCallTime  &&  LogWriter.IsLoggingEnabled();
 
             if (takeTime)
@@ -245,8 +236,6 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             CallTraceData callData)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
             // async methods are always dumped in ContinueWith
             if (methodReturn.IsAsyncCall())
                 return methodReturn;
@@ -274,8 +263,6 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             CallTraceData callData)
         {
-            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
-
             TResult result = default(TResult);
 
             try
@@ -306,23 +293,23 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            if (LogAfterCall && LogWriter.IsLoggingEnabled())
-            {
-                var entry = CreateLogEntry(EndCallCategory);
+            if (!LogAfterCall  ||  !LogWriter.IsLoggingEnabled())
+                return;
 
-                if (LogWriter.ShouldLog(entry))
-                {
-                    Action logAfterCall = () => Facility
+            var entry = CreateLogEntry(EndCallCategory);
+
+            if (LogWriter.ShouldLog(entry))
+            {
+                Action logAfterCall = () => Facility
                                                 .ExceptionManager
                                                 .Process(
                                                     () => LogAfterCallData(entry, input, callData),
                                                     ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
-                    if (LogAsynchronously)
-                        Task.Run(() => logAfterCall());
-                    else
-                        logAfterCall();
-                }
+                if (LogAsynchronously)
+                    Task.Run(() => logAfterCall());
+                else
+                    logAfterCall();
             }
         }
 
@@ -351,9 +338,12 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             // build the call message:
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
@@ -386,9 +376,12 @@ namespace vm.Aspects.Policies
             CallTraceData callData,
             IMethodReturn ignore = null)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             DumpMethod(writer, input);
             DumpParameters(writer, input);
@@ -407,9 +400,12 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(entry != null, nameof(entry));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
@@ -437,9 +433,12 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer       != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData     != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             DumpMethod(writer, input);
             DumpParametersAfterCall(writer, input, callData);
@@ -462,8 +461,10 @@ namespace vm.Aspects.Policies
             TextWriter writer,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (callData.CallTimer == null)
                 return;
@@ -481,8 +482,10 @@ namespace vm.Aspects.Policies
             TextWriter writer,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (!IncludePrincipal)
                 return;
@@ -500,8 +503,10 @@ namespace vm.Aspects.Policies
             TextWriter writer,
             IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             // dump the method on a single line in a simple format
             writer.WriteLine();
@@ -517,8 +522,10 @@ namespace vm.Aspects.Policies
             TextWriter writer,
             IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             if (!IncludeParameters)
                 return;
@@ -548,9 +555,12 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input    != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (!IncludeParameters)
                 return;
@@ -596,8 +606,10 @@ namespace vm.Aspects.Policies
             ParameterInfo pi,
             object value)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (pi == null)
+                throw new ArgumentNullException(nameof(pi));
 
             writer.WriteLine();
             writer.Write(
@@ -628,8 +640,10 @@ namespace vm.Aspects.Policies
             bool hasOutValue,
             object outValue = null)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (pi == null)
+                throw new ArgumentNullException(nameof(pi));
 
             writer.WriteLine();
             writer.Write(
@@ -660,8 +674,10 @@ namespace vm.Aspects.Policies
             TextWriter writer,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (!IncludeCallStack)
                 return;
@@ -699,9 +715,12 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer   != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(input    != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             writer.WriteLine();
             if (IncludeException && callData.Exception != null)

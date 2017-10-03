@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.MsmqIntegration;
@@ -72,7 +71,8 @@ namespace vm.Aspects.Wcf.Bindings
         public Binding Configure(
             Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             Func<BindingConfigurator, Binding, Binding> configure;
 
@@ -97,7 +97,8 @@ namespace vm.Aspects.Wcf.Bindings
         protected virtual Binding ConfigureDefault(
             Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             if (string.IsNullOrWhiteSpace(binding.Name))
                 binding.Name = $"{binding.GetType().Name}_{MessagingPattern}";
@@ -122,7 +123,8 @@ namespace vm.Aspects.Wcf.Bindings
         protected virtual void IncompatibleBinding(
             Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             throw new NotSupportedException(
                         $"A {binding.GetType().Name} binding is incompatible with messaging pattern {MessagingPattern}.");
@@ -140,7 +142,8 @@ namespace vm.Aspects.Wcf.Bindings
         protected virtual void NotImplementedBinding(
             Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             throw new NotImplementedException(
                         $"A {binding.GetType().Name} binding is not implemented yet for messaging pattern {MessagingPattern}.");
@@ -154,7 +157,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             CustomBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             IncompatibleBinding(binding);
             return binding;
@@ -168,7 +172,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             BasicHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -181,7 +186,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             BasicHttpsBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -194,7 +200,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             NetHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -207,7 +214,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             NetHttpsBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -220,7 +228,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             WebHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             binding = ConfigureDefault(binding) as WebHttpBinding;
             binding.ContentTypeMapper = new WebContentTypeMapperDefaultJson();
@@ -236,7 +245,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             WSHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -249,7 +259,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             WSFederationHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -262,7 +273,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             WS2007FederationHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -275,7 +287,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             WSDualHttpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -288,7 +301,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             NetNamedPipeBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -301,7 +315,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             NetTcpBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -314,7 +329,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             NetMsmqBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }
@@ -327,7 +343,8 @@ namespace vm.Aspects.Wcf.Bindings
         public virtual Binding Configure(
             MsmqIntegrationBinding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return ConfigureDefault(binding);
         }

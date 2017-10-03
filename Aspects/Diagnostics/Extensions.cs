@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -57,7 +57,8 @@ namespace vm.Aspects
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             try
             {
@@ -95,8 +96,6 @@ namespace vm.Aspects
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
-
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
                 value.DumpText(writer, indentLevel, dumpMetadata, dumpAttribute);
@@ -112,9 +111,6 @@ namespace vm.Aspects
         public static string DumpCSharpText(
             this Expression expression)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
-            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
-
             if (expression == null)
                 return DumpUtilities.Null;
 
@@ -136,7 +132,8 @@ namespace vm.Aspects
         internal static bool IsBasicType(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
         }
@@ -171,7 +168,8 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
+            if (attributeProvider == null)
+                throw new ArgumentNullException(nameof(attributeProvider));
 
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return null;
@@ -191,7 +189,8 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
+            if (attributeProvider == null)
+                throw new ArgumentNullException(nameof(attributeProvider));
 
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return new T[0];
@@ -208,7 +207,8 @@ namespace vm.Aspects
         internal static bool IsVirtual(
             this PropertyInfo pi)
         {
-            Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
+            if (pi == null)
+                throw new ArgumentNullException(nameof(pi));
 
             return pi.GetMethod.IsVirtual  &&  !pi.GetMethod.IsFinal;
         }
@@ -222,7 +222,8 @@ namespace vm.Aspects
         internal static bool CanRead(
             this MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             if (mi is FieldInfo)
                 return true;
@@ -236,22 +237,18 @@ namespace vm.Aspects
         }
         /// <summary>
         /// Determines whether the specified string is null, or empty or consist of whitespace characters only.
-        /// Equivalent to <code>!string.IsNullOrWhiteSpace(s)</code> but has the attribute <see cref="PureAttribute"/>
-        /// which makes it suitable to participate in Code Contracts.
+        /// Equivalent to <code>!string.IsNullOrWhiteSpace(s)</code>.
         /// </summary>
         /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
-        [Pure]
         public static bool IsNullOrWhiteSpace(this string value) => value?.All(c => char.IsWhiteSpace(c)) ?? true;
 
         /// <summary>
         /// Determines whether the specified string is null, or empty.
-        /// Equivalent to <code>!string.IsNullOrEmpty(s)</code> but has the attribute <see cref="PureAttribute"/>
-        /// which makes it suitable to participate in Code Contracts.
+        /// Equivalent to <code>!string.IsNullOrEmpty(s)</code>.
         /// </summary>
         /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
-        [Pure]
         public static bool IsNullOrEmpty(this string value) => string.IsNullOrEmpty(value);
 
 #if DOTNET40
@@ -302,14 +299,12 @@ namespace vm.Aspects
         /// <param name="type">The object which type name needs to be retrieved.</param>
         /// <param name="shortenEfTypes">if set to <c>true</c> the method will shorten EF dynamically generated types.</param>
         /// <returns>The type name.</returns>
-        [Pure]
         internal static string GetTypeName(
             this Type type,
             bool shortenEfTypes = true)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(Contract.Result<string>() != null);
-            Contract.Ensures(Contract.Result<string>().Length > 0);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             string typeName;
 
@@ -347,7 +342,8 @@ namespace vm.Aspects
         public static Type[] DictionaryTypeArguments(
             this Type sequenceType)
         {
-            Contract.Requires<ArgumentNullException>(sequenceType != null, nameof(sequenceType));
+            if (sequenceType == null)
+                throw new ArgumentNullException(nameof(sequenceType));
 
             var dictionaryType = sequenceType
                                     .GetInterfaces()
@@ -359,7 +355,7 @@ namespace vm.Aspects
 
             var typeArguments = dictionaryType.GetGenericArguments();
 
-            Contract.Assume(typeArguments.Length == 2);
+            Debug.Assert(typeArguments.Length == 2);
 
             if (!typeArguments[0].IsBasicType())
                 return null;
@@ -371,8 +367,8 @@ namespace vm.Aspects
             this DumpAttribute dumpAttribute,
             int length = int.MaxValue)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-            Contract.Ensures(Contract.Result<int>() >= 0);
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             var max = dumpAttribute.MaxLength;
 

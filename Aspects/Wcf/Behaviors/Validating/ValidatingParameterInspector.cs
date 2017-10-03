@@ -2,7 +2,6 @@
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
@@ -40,7 +39,8 @@ namespace vm.Aspects.Wcf.Behaviors
             OperationDescription operation,
             string ruleset)
         {
-            Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
+            if (operation == null)
+                throw new ArgumentNullException(nameof(operation));
 
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
@@ -74,7 +74,8 @@ namespace vm.Aspects.Wcf.Behaviors
             ParameterInfo param,
             string ruleset)
         {
-            Contract.Requires<ArgumentNullException>(param != null, nameof(param));
+            if (param == null)
+                throw new ArgumentNullException(nameof(param));
 
             return new AndCompositeValidator(
                             ParameterValidatorFactory.CreateValidator(param),
@@ -96,8 +97,7 @@ namespace vm.Aspects.Wcf.Behaviors
             string operationName,
             object[] inputs)
         {
-            Contract.Ensures(Contract.Result<object>() == null);
-
+            
             if (inputs == null)
                 throw new ArgumentNullException(nameof(inputs));
 
@@ -145,8 +145,10 @@ namespace vm.Aspects.Wcf.Behaviors
             InvalidObjectFault fault,
             ValidationResults results)
         {
-            Contract.Requires<ArgumentNullException>(results != null, nameof(results));
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+            if (results == null)
+                throw new ArgumentNullException(nameof(results));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
 
             if (!results.IsValid)
                 foreach (ValidationResult result in results)
@@ -157,9 +159,9 @@ namespace vm.Aspects.Wcf.Behaviors
 
         static ValidationFaultElement CreateValidationDetail(ValidationResult result)
         {
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
-            Contract.Ensures(Contract.Result<ValidationFaultElement>() != null);
-
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+            
             return new ValidationFaultElement { Message = result.Message, Key = result.Key, };
         }
     }

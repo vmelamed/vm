@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace vm.Aspects.FtpTransfer
@@ -8,7 +6,6 @@ namespace vm.Aspects.FtpTransfer
     /// <summary>
     /// Interface IFileListParser
     /// </summary>
-    [ContractClass(typeof(IFileListParserContract))]
     public interface IFileListParser
     {
         /// <summary>
@@ -19,19 +16,4 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>A sequence of <see cref="FtpFileListEntry"/>-s</returns>
         IEnumerable<FtpFileListEntry> Parse(Stream fileListStream);
     }
-
-    #region IFileListParser contracts
-    [ContractClassFor(typeof(IFileListParser))]
-    abstract class IFileListParserContract : IFileListParser
-    {
-        public IEnumerable<FtpFileListEntry> Parse(Stream fileListStream)
-        {
-            Contract.Requires<ArgumentNullException>(fileListStream != null, nameof(fileListStream));
-            Contract.Ensures(Contract.Result<IEnumerable<FtpFileListEntry>>() != null);
-
-            throw new NotImplementedException();
-        }
-    }
-    #endregion
-
 }

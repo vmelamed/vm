@@ -1,7 +1,6 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
@@ -37,7 +36,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
             LogWriter logWriter)
             : base(logWriter)
         {
-            Contract.Requires<ArgumentNullException>(logWriter != null, nameof(logWriter));
+            if (logWriter == null)
+                throw new ArgumentNullException(nameof(logWriter));
         }
 
         /// <summary>
@@ -48,8 +48,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         protected override CallTraceData Prepare(
             IMethodInvocation input)
         {
-            Contract.Ensures(Contract.Result<CallTraceData>() != null);
-
+            
             return InitializeCallData(new ServiceCallTraceData(), input);
         }
 
@@ -144,8 +143,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             TextWriter writer,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             var wcfCallData = callData as ServiceCallTraceData;
 
@@ -163,8 +164,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             TextWriter writer,
             CallTraceData callData)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(callData != null, nameof(callData));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (callData == null)
+                throw new ArgumentNullException(nameof(callData));
 
             if (!IncludeCustomContext)
                 return;

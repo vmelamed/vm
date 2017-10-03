@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Properties;
@@ -48,7 +48,7 @@ namespace vm.Aspects.Validation
 
             if (isValid)
             {
-                Contract.Assume(objectToValidate.Length == 9);
+                Debug.Assert(objectToValidate.Length == 9);
 
                 // compute the checksum of the first 8 digits
                 int check = 10 - ((objectToValidate[0] - '0') * 3 +

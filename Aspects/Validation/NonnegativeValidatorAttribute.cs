@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation
 {
@@ -27,8 +25,6 @@ namespace vm.Aspects.Validation
         /// <exception cref="ArgumentException">Thrown if the target does not support <see cref="IComparable"/></exception>
         protected override Validator DoCreateValidator(Type targetType)
         {
-            Contract.Ensures(Contract.Result<Validator>() != null);
-
             if (targetType == null)
                 throw new ArgumentNullException(nameof(targetType));
 

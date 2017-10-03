@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -13,9 +12,9 @@ namespace vm.Aspects.Validation
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     [AttributeUsage(
-        AttributeTargets.Method | 
-        AttributeTargets.Property | 
-        AttributeTargets.Field | 
+        AttributeTargets.Method |
+        AttributeTargets.Property |
+        AttributeTargets.Field |
         AttributeTargets.Parameter,
         AllowMultiple = true,
         Inherited = false)]
@@ -54,8 +53,6 @@ namespace vm.Aspects.Validation
         protected override Validator DoCreateValidator(
             Type targetType)
         {
-            Contract.Ensures(Contract.Result<Validator>() != null);
-
             if (targetType == null)
                 throw new ArgumentNullException(nameof(targetType));
 

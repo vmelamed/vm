@@ -1,14 +1,16 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Unity;
 using System.Runtime.Remoting.Messaging;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf
 {
+#pragma warning disable CS3009 // Base type is not CLS-compliant
     /// <summary>
     /// Class PerCallContextLifetimeManager. Used for objects which lifetime should end with the end of the current 
     /// .NET remoting or WCF call context. The objects are stored in the current <see cref="CallContext"/>.
     /// </summary>
     public class PerCallContextLifetimeManager : LifetimeManager
+#pragma warning restore CS3009 // Base type is not CLS-compliant
     {
         /// <summary>
         /// Gets the key of the object stored in the call context.

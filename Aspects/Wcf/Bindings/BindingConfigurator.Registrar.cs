@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -26,6 +26,11 @@ namespace vm.Aspects.Wcf.Bindings
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     // the default messaging pattern is the ConfiguredBindingConfigurator - assumes that the binding is fully configured already.
                     .RegisterTypeIfNot<BindingConfigurator, ConfiguredBindingConfigurator>(registrations)

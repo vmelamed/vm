@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -61,7 +60,8 @@ namespace vm.Aspects.Wcf.Services
         public static T GetOrAddServiceBehavior<T>(
             this ServiceHost host) where T : IServiceBehavior, new()
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
 
             var behavior = host.Description.Behaviors.Find<T>();
 
@@ -84,9 +84,9 @@ namespace vm.Aspects.Wcf.Services
             this ServiceHost host,
             EndpointIdentity identity)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
             if (identity != null)
                 foreach (var ep in host.Description.Endpoints)
                     ep.Address = new EndpointAddress(
@@ -109,10 +109,11 @@ namespace vm.Aspects.Wcf.Services
             this ServiceHost host,
             X509Certificate2 certificate)
         {
-            Contract.Requires<ArgumentNullException>(host        != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(certificate != null, nameof(certificate));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            if (certificate == null)
+                throw new ArgumentNullException(nameof(certificate));
+            
             host.Credentials.ServiceCertificate.Certificate = certificate;
             return host;
         }
@@ -130,11 +131,12 @@ namespace vm.Aspects.Wcf.Services
             Type serviceContractType,
             string messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Requires<ArgumentNullException>(serviceContractType != null, nameof(serviceContractType));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            if (serviceContractType == null)
+                throw new ArgumentNullException(nameof(serviceContractType));
+            
+            
             // if we still don't know the pattern - try to get it from the service type.
             if (string.IsNullOrWhiteSpace(messagingPattern))
                 messagingPattern = serviceContractType.GetMessagingPattern();
@@ -196,10 +198,10 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost AddMexEndpoints(
             this ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
+            
             Func<ServiceHost, ServiceEndpoint> AddMexEndpoint;
 
             foreach (var baseAddress in host.BaseAddresses)
@@ -221,10 +223,10 @@ namespace vm.Aspects.Wcf.Services
             this ServiceHost host,
             MetadataFeatures features = MetadataFeatures.All)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
+            
             var serviceMetadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
 
             // if no metadata is requested - remove the behavior altogether
@@ -314,10 +316,10 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost AddDebugBehaviors(
             this ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
+            
 #if DEBUG
             // add include exception details:
             var serviceDebugBehavior = host.GetOrAddServiceBehavior<ServiceDebugBehavior>();
@@ -337,10 +339,10 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost AddTransactionTimeout(
             this ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
+            
             // transaction timeout
             if (host.Description.Endpoints.SelectMany(
                         ep => ep.Contract.Operations.SelectMany(
@@ -360,10 +362,10 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost AddSecurityAuditBehavior(
             this ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() == host);
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
+            
             // add security audit behavior
             host.Description.Behaviors.Remove<ServiceSecurityAuditBehavior>();
             host.Description.Behaviors.Add(
@@ -388,10 +390,11 @@ namespace vm.Aspects.Wcf.Services
             this ServiceHost serviceHost,
             ServiceAuthorizationManager serviceAuthorizationManager)
         {
-            Contract.Requires<ArgumentNullException>(serviceHost != null, nameof(serviceHost));
-            Contract.Requires<ArgumentNullException>(serviceAuthorizationManager != null, nameof(serviceAuthorizationManager));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (serviceHost == null)
+                throw new ArgumentNullException(nameof(serviceHost));
+            if (serviceAuthorizationManager == null)
+                throw new ArgumentNullException(nameof(serviceAuthorizationManager));
+            
             serviceHost.Description.Behaviors.Remove<ServiceAuthorizationBehavior>();
             serviceHost.Description.Behaviors.Add(
                                                 new ServiceAuthorizationBehavior
@@ -412,9 +415,9 @@ namespace vm.Aspects.Wcf.Services
         public static ServiceHost EnableCorsBehavior(
             this ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+            
             // must have endpoint with WebHttpBinding and either the whole contract or any of the operations have EnableCorsAttribute
             foreach (var endpoint in host.Description
                                          .Endpoints

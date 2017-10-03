@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 
@@ -24,9 +23,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             IDictionary<string, string> data)
             where TException : Exception
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Ensures(Contract.Result<Exception>() != null);
-
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+            
             if (data == null  ||  data.Count == 0)
                 return exception;
 
@@ -47,10 +46,11 @@ namespace vm.Aspects.Wcf.FaultContracts
             Fault fault)
             where TException : Exception
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Requires<ArgumentNullException>(fault     != null, nameof(fault));
-            Contract.Ensures(Contract.Result<Exception>() != null);
-
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
+            
             exception.PopulateData(fault.Data);
             exception.Data[$"{fault.GetType().Name}.Dump"] = fault.DumpString();
             return exception;
@@ -67,9 +67,9 @@ namespace vm.Aspects.Wcf.FaultContracts
             IDictionary data)
             where TFault : Fault
         {
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
-            Contract.Ensures(Contract.Result<Fault>() != null);
-
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
+            
             if (data == null  ||  data.Count == 0)
                 return fault;
 
@@ -87,7 +87,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Exception ToException(
             this Fault fault)
         {
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
 
             var factory = Fault.GetFaultToExceptionFactory(fault.GetType());
 
@@ -105,7 +106,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Fault ToFault(
             this Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             var exceptionType = exception.GetType();
             var factory = Fault.GetExceptionToFaultFactory(exceptionType);
@@ -131,7 +133,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Exception ToException(
             this FaultException exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             var fault = exception.ToFault();
 

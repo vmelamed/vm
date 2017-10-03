@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Threading;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Threading;
 
@@ -72,7 +72,7 @@ namespace vm.Aspects.Wcf.Behaviors
 
                 using (_sync.WriterLock())
                 {
-                    Contract.Assume(!_containers.ContainsKey(instanceContext), "THERE IS A CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT ALREADY.");
+                    Debug.Assert(!_containers.ContainsKey(instanceContext), "THERE IS A CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT ALREADY.");
                     _containers[instanceContext] = container;
                 }
             }
@@ -129,7 +129,7 @@ namespace vm.Aspects.Wcf.Behaviors
                     _containers.Remove(instanceContext);
                 }
 
-                Contract.Assume(container != null, "THERE IS NO CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT.");
+                Debug.Assert(container != null, "THERE IS NO CONTAINER ASSOCIATED WITH THIS INSTANCE CONTEXT.");
                 container.Dispose();
             }
         }

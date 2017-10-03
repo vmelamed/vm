@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using System;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -316,7 +315,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static bool HasValidationAssertions(
             OperationDescription operation)
         {
-            Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
+            if (operation == null)
+                throw new ArgumentNullException(nameof(operation));
 
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
@@ -330,7 +330,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static bool HasFaultDescription(
             OperationDescription operation)
         {
-            Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
+            if (operation == null)
+                throw new ArgumentNullException(nameof(operation));
 
             return operation.Faults.Any(f => f.DetailType==typeof(InvalidObjectFault));
         }
@@ -338,7 +339,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static bool IsOneWay(
             OperationDescription operation)
         {
-            Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
+            if (operation == null)
+                throw new ArgumentNullException(nameof(operation));
 
             var methodInfo = operation.SyncMethod ?? operation.BeginMethod ?? operation.TaskMethod;
 
@@ -353,7 +355,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static bool HasParametersWithValidationAssertions(
             ParameterInfo[] parameters)
         {
-            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
 
             return parameters.Any(p => p.GetCustomAttributes(typeof(ValidatorAttribute), false).Length > 0);
         }

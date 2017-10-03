@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure.MappingViews;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -29,9 +28,10 @@ namespace vm.Aspects.Model.EFRepository
             string hash,
             IDictionary<EntitySetBase, DbMappingView> cache)
         {
-            Contract.Requires<ArgumentNullException>(hash != null, nameof(hash));
-            Contract.Requires<ArgumentException>(hash.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(hash)+" cannot be empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(cache != null, nameof(cache));
+            if (hash.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(hash));
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
 
             _hash  = hash;
             _cache = new ReadOnlyDictionary<string, DbMappingView>(
@@ -44,7 +44,8 @@ namespace vm.Aspects.Model.EFRepository
             SerializationInfo info,
             StreamingContext context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
 
             _hash = info.GetString(Hash);
 

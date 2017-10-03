@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
@@ -206,8 +205,6 @@ namespace vm.Aspects.Diagnostics
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-
                 return _maskValue ?? Resources.MaskInLogs;
             }
             set
@@ -296,8 +293,6 @@ namespace vm.Aspects.Diagnostics
         /// <returns>DumpAttribute.</returns>
         public DumpAttribute Clone()
         {
-            Contract.Ensures(Contract.Result<DumpAttribute>() != null);
-
             return new DumpAttribute
             {
                 Order           = Order,

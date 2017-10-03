@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -37,9 +36,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             Type metadata = null)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
-            Contract.Requires((mi is PropertyInfo) || (mi is FieldInfo), "The parameter can be only "+nameof(PropertyInfo)+" or "+nameof(FieldInfo)+" type.");
-            Contract.Ensures(Contract.Result<DumpAttribute>() != null);
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (!(mi is PropertyInfo) && !(mi is FieldInfo))
+                throw new ArgumentException("The parameter can be only "+nameof(PropertyInfo)+" or "+nameof(FieldInfo)+" type.", nameof(mi));
 
             var lookup = Tuple.Create(mi, metadata);
             DumpAttribute dumpAttribute;
@@ -117,7 +117,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public static bool PropertyHasNonDefaultDumpAttribute(
             MemberInfo memberInfo)
         {
-            Contract.Requires<ArgumentNullException>(memberInfo != null, nameof(memberInfo));
+            if (memberInfo == null)
+                throw new ArgumentNullException(nameof(memberInfo));
 
             try
             {

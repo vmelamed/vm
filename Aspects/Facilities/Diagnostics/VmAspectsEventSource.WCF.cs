@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Tracing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 
 namespace vm.Aspects.Facilities.Diagnostics
 {
@@ -100,10 +101,10 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// <param name="Binding">The binding.</param>
         /// <param name="Contract">The contract.</param>
         /// <param name="Allowed">The allowed.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Contract")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Binding")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Allowed")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Address")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Contract")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Binding")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Allowed")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Address")]
         [Event(EnabledCorsForId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.Wcf | Keywords.Cors, Message = "CORS enabled for {0}/{1}/{2} for URL-s: {3}")]
         public void EnabledCors(
             string Address,
@@ -119,7 +120,7 @@ namespace vm.Aspects.Facilities.Diagnostics
         /// The CORS origin is not allowed.
         /// </summary>
         /// <param name="Origin">The origin.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Origin")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Origin")]
         [Event(CorsOriginNotAllowedId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.Wcf | Keywords.Cors, Message = "CORS origin {0} not allowed.")]
         public void CorsOriginNotAllowed(
             string Origin)
@@ -129,7 +130,7 @@ namespace vm.Aspects.Facilities.Diagnostics
         }
 
         /// <remarks/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Operation")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Operation")]
         [Event(CorsOperationNotAllowedId, Level = EventLevel.Warning, Keywords = Keywords.vmAspects | Keywords.Wcf | Keywords.Cors, Message = "CORS operation {0} not allowed.")]
         public void CorsOperationNotAllowed(
            string Operation)

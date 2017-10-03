@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -63,6 +63,11 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 RegisterCommon(container, registrations)
                     .RegisterTypeIfNot<IClock, Clock>(registrations, new ContainerControlledLifetimeManager())
                     .RegisterTypeIfNot<IGuidGenerator, GuidGenerator>(registrations, new ContainerControlledLifetimeManager())

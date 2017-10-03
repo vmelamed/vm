@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -27,8 +26,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             Expression expression,
             Type defaultType = null)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
-            Contract.Requires<ArgumentNullException>(expression != null, nameof(expression));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
 
             if (expression.Type != defaultType)
                 element.Add(
@@ -49,7 +50,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>An &quot;asType&quot; attribute or <see langword="null"/> if <paramref name="node"/> does not contain type conversion component.</returns>
         static XAttribute VisitAsType(UnaryExpression node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             if (node.NodeType != ExpressionType.TypeAs && node.NodeType != ExpressionType.Convert)
                 return null;
@@ -83,7 +85,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var stack = new Stack<XElement>();
 
             // pop the expressions:
-            for (var i=0; i<numberOfExpressions; i++)
+            for (var i = 0; i<numberOfExpressions; i++)
                 stack.Push(_elements.Pop());
 
             return stack;
@@ -91,21 +93,24 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         IEnumerable<XElement> PopParameters(IEnumerable<ParameterExpression> parameters)
         {
-            Contract.Requires<ArgumentNullException>(parameters != null, nameof(parameters));
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
 
             return PopExpressions(parameters.Count());
         }
 
         IEnumerable<XElement> PopArguments(IEnumerable<Expression> arguments)
         {
-            Contract.Requires<ArgumentNullException>(arguments != null, nameof(arguments));
+            if (arguments == null)
+                throw new ArgumentNullException(nameof(arguments));
 
             return PopExpressions(arguments.Count());
         }
 
         XElement AddParameters(IEnumerable<ParameterExpression> parameters, XElement node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             node.Add(PopParameters(parameters));
             return node;
@@ -113,7 +118,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         XElement AddArguments(IEnumerable<Expression> arguments, XElement node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             node.Add(PopArguments(arguments));
             return node;
@@ -150,7 +156,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static XElement ReplaceParameterWithReference(XElement parameter, XElement body)
         {
-            Contract.Requires<ArgumentException>(parameter == null || body != null);
+            if (parameter != null  &&  body == null)
+                throw new ArgumentNullException(nameof(body));
 
             if (parameter == null)
                 return body;
@@ -187,7 +194,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(BinaryExpression node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             return VisitMethodInfo(node.Method);
         }
@@ -199,7 +207,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(UnaryExpression node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             return VisitMethodInfo(node.Method);
         }
@@ -260,16 +269,16 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
                 else
                     if (methodInfo.IsAssembly)
-                        visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
-                    else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
+                else
                         if (methodInfo.IsFamily)
-                            visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
-                        else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
+                else
                             if (methodInfo.IsFamilyAndAssembly)
-                                visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
-                            else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
+                else
                                 if (methodInfo.IsFamilyOrAssembly)
-                                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
 
             return new XElement(
@@ -301,16 +310,16 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
                 else
                     if (constructorInfo.IsAssembly)
-                        visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
-                    else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
+                else
                         if (constructorInfo.IsFamily)
-                            visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
-                        else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
+                else
                             if (constructorInfo.IsFamilyAndAssembly)
-                                visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
-                            else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
+                else
                                 if (constructorInfo.IsFamilyOrAssembly)
-                                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
 
             return new XElement(
@@ -374,16 +383,16 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
                 else
                     if (fieldInfo.IsFamily)
-                        visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
-                    else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
+                else
                         if (fieldInfo.IsPrivate)
-                            visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
-                        else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
+                else
                             if (fieldInfo.IsFamilyAndAssembly)
-                                visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
-                            else
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
+                else
                                 if (fieldInfo.IsFamilyOrAssembly)
-                                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
+                    visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
 
 

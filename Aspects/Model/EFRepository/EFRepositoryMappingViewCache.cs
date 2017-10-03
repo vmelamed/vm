@@ -6,7 +6,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects.Model.EFRepository
 {

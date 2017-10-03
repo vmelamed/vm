@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security;
@@ -40,7 +38,8 @@ namespace vm.Aspects.FtpTransfer
             ITransferClientConfiguration configuration,
             X509Certificate2 clientCertificate = null)
         {
-            Contract.Requires<ArgumentNullException>(configuration != null, nameof(configuration));
+            if (configuration == null)
+                throw new ArgumentNullException(nameof(configuration));
 
             Configuration     = (ITransferClientConfiguration)configuration.Clone();
             ClientCertificate = clientCertificate;
@@ -67,6 +66,9 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task{Stream}.</returns>
         public Stream DownloadFile(string name)
         {
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
+
             var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
             var response = request.GetResponse();
 
@@ -81,6 +83,11 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task.</returns>
         public void UploadFile(Stream stream, string name)
         {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
+
             var request = PrepareFileRequest(WebRequestMethods.Ftp.UploadFile, name);
 
             using (var requestStream = request.GetRequestStream())
@@ -111,6 +118,9 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task{Stream}.</returns>
         public async Task<Stream> DownloadFileAsync(string name)
         {
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
+
             var request = PrepareFileRequest(WebRequestMethods.Ftp.DownloadFile, name);
             var response = await request.GetResponseAsync();
 
@@ -125,6 +135,11 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>Task.</returns>
         public async Task UploadFileAsync(Stream stream, string name)
         {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
+
             var request = PrepareFileRequest(WebRequestMethods.Ftp.UploadFile, name);
 
             using (var requestStream = await request.GetRequestStreamAsync())
@@ -148,9 +163,12 @@ namespace vm.Aspects.FtpTransfer
             string method,
             string fileName)
         {
-            Contract.Requires<ArgumentNullException>(method != null, nameof(method));
-            Contract.Requires<ArgumentException>(method.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(method)+" cannot be empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(Configuration.Link != null  ||  (fileName!=null && fileName.Any(c => !char.IsWhiteSpace(c))), "Invalid configuration or parameter "+nameof(fileName));
+            if (method == null)
+                throw new ArgumentNullException(nameof(method));
+            if (method.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(method));
+            if (Configuration.Link == null  &&  !fileName.IsNullOrWhiteSpace())
+                throw new ArgumentException("Invalid configuration or parameter", nameof(fileName));
 
             var fileUrl = Configuration.Link;
 

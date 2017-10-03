@@ -1,5 +1,6 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
 using System.Collections.Generic;
+using Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
 
@@ -13,6 +14,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<IWcfContextUtilities>(registrations, new WcfContextUtilities())
                     .RegisterInstanceIfNot<IExceptionPolicyProvider>(registrations, ServiceFaultFromExceptionHandlingPolicies.RegistrationName, new ServiceFaultFromExceptionHandlingPolicies());

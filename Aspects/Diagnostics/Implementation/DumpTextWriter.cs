@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -43,7 +42,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             int maxLength = DefaultMaxLength)
             : base(writer.FormatProvider)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             _writer    = writer;
             _maxLength = maxLength;
@@ -55,7 +55,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             int maxLength = 0)
             : base(CultureInfo.InvariantCulture)
         {
-            Contract.Requires<ArgumentNullException>(existing != null, nameof(existing));
+            if (existing == null)
+                throw new ArgumentNullException(nameof(existing));
 
             _writer      = new StringWriter(existing, CultureInfo.InvariantCulture) { NewLine = EndOfLine };
             _isOwnWriter = true;
@@ -69,7 +70,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             get { return _writer.NewLine; }
             set
             {
-                Contract.Assume(value == EndOfLine, "The DumpTextWriter works well only with the sequence \\r\\n as end of line marker.");
+                Debug.Assert(value == EndOfLine, "The DumpTextWriter works well only with the sequence \\r\\n as end of line marker.");
 
                 _writer.NewLine = value;
             }
@@ -125,11 +126,16 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         void WriteCharBuffer(char[] buffer, int index, int count)
         {
-            Contract.Requires<InvalidOperationException>(!IsClosed, "The writer is closed.");
-            Contract.Requires(buffer != null, "buffer");
-            Contract.Requires(index >= 0, "The parameter index must be non-negative.");
-            Contract.Requires(count >= 0, "The parameter count must be non-negative.");
-            Contract.Requires((buffer.Length - index) >= count, "The parameters index or count have invalid values.");
+            if (IsClosed)
+                throw new InvalidOperationException("The writer is closed.");
+            if (buffer == null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (index < 0)
+                throw new ArgumentException("The parameter must be non-negative.", nameof(index));
+            if (count < 0)
+                throw new ArgumentException("The parameter must be non-negative.", nameof(count));
+            if (buffer.Length - index < count)
+                throw new ArgumentException("The parameters index or count have invalid values.");
 
             for (int i = index; i < index+count; i++)
                 WriteChar(buffer[i]);
@@ -187,13 +193,5 @@ namespace vm.Aspects.Diagnostics.Implementation
         }
 
         public override string ToString() => _writer.ToString();
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_writer!=null, "The underlying writer is null.");
-        }
     }
 }

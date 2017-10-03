@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,9 +50,10 @@ namespace vm.Aspects.Threading
             int maxRetries,
             Func<Exception, Task<bool>> shouldRetry)
         {
-            Contract.Requires<ArgumentNullException>(method != null, nameof(method));
-            Contract.Requires<ArgumentNullException>(shouldRetry != null, nameof(shouldRetry));
-            Contract.Ensures(Contract.Result<Task<T>>() != null);
+            if (method == null)
+                throw new ArgumentNullException(nameof(method));
+            if (shouldRetry == null)
+                throw new ArgumentNullException(nameof(shouldRetry));
 
             var exceptions = new List<Exception>();
 
@@ -101,9 +101,10 @@ namespace vm.Aspects.Threading
         public static async Task<T> OnlyOne<T>(
             IEnumerable<Func<CancellationToken, Task<T>>> methods)
         {
-            Contract.Requires<ArgumentNullException>(methods != null, nameof(methods));
-            Contract.Requires<ArgumentException>(methods.All(m => m!=null), "None of the methods in the array can be null.");
-            Contract.Ensures(Contract.Result<Task<T>>() != null);
+            if (methods == null)
+                throw new ArgumentNullException(nameof(methods));
+            if (methods.Any(m => m==null))
+                throw new ArgumentException("None of the methods in the array can be null.");
 
             var cts = new CancellationTokenSource();
             var tasks = methods.Select(f => f(cts.Token)).ToArray();
@@ -141,9 +142,10 @@ namespace vm.Aspects.Threading
         public static async Task<T> OnlyOne<T>(
             params Func<CancellationToken, Task<T>>[] methods)
         {
-            Contract.Requires<ArgumentNullException>(methods != null, nameof(methods));
-            Contract.Requires<ArgumentException>(methods.All(m => m!=null), "None of the methods in the array can be null.");
-            Contract.Ensures(Contract.Result<Task<T>>() != null);
+            if (methods == null)
+                throw new ArgumentNullException(nameof(methods));
+            if (methods.Any(m => m==null))
+                throw new ArgumentException("None of the methods in the array can be null.");
 
             var cts = new CancellationTokenSource();
             var tasks = methods.Select(f => f(cts.Token)).ToArray();
@@ -180,10 +182,10 @@ namespace vm.Aspects.Threading
         public static IEnumerable<Task<T>> Interleaved<T>(
             IEnumerable<Task<T>> inputTasks)
         {
-            Contract.Requires<ArgumentNullException>(inputTasks != null, nameof(inputTasks));
-            Contract.Requires<ArgumentException>(inputTasks.All(t => t!=null), "None of the tasks in the sequence can be null.");
-            Contract.Ensures(Contract.Result<IEnumerable<Task<T>>>() != null);
-            Contract.Ensures(Contract.Result<IEnumerable<Task<T>>>().All(t => t!=null));
+            if (inputTasks == null)
+                throw new ArgumentNullException(nameof(inputTasks));
+            if (inputTasks.Any(t => t==null))
+                throw new ArgumentException("None of the tasks in the sequence can be null.");
 
             var tasks = inputTasks.ToList();
 
@@ -236,10 +238,10 @@ namespace vm.Aspects.Threading
         public static IEnumerable<Task<T>> Interleaved<T>(
             params Task<T>[] inputTasks)
         {
-            Contract.Requires<ArgumentNullException>(inputTasks != null, nameof(inputTasks));
-            Contract.Requires<ArgumentException>(inputTasks.All(t => t!=null), "None of the tasks in the sequence can be null.");
-            Contract.Ensures(Contract.Result<IEnumerable<Task<T>>>() != null);
-            Contract.Ensures(Contract.Result<IEnumerable<Task<T>>>().All(t => t!=null));
+            if (inputTasks == null)
+                throw new ArgumentNullException(nameof(inputTasks));
+            if (inputTasks.Any(t => t==null))
+                throw new ArgumentException("None of the tasks in the sequence can be null.");
 
             // create an array of TCS-s
             var sources = Enumerable.Range(0, inputTasks.Length)
@@ -280,9 +282,10 @@ namespace vm.Aspects.Threading
         public static Task<T[]> WhenAllOrFirstException<T>(
             IEnumerable<Task<T>> inputTasks)
         {
-            Contract.Requires<ArgumentNullException>(inputTasks != null, nameof(inputTasks));
-            Contract.Requires<ArgumentException>(inputTasks.All(t => t!=null), "None of the tasks in the sequence can be null.");
-            Contract.Ensures(Contract.Result<Task<T[]>>() != null);
+            if (inputTasks == null)
+                throw new ArgumentNullException(nameof(inputTasks));
+            if (inputTasks.Any(t => t==null))
+                throw new ArgumentException("None of the tasks in the sequence can be null.");
 
             var tasks = inputTasks.ToList();
             var countdown = new CountdownEvent(tasks.Count);
@@ -310,9 +313,10 @@ namespace vm.Aspects.Threading
         public static Task<T[]> WhenAllOrFirstException<T>(
             params Task<T>[] inputTasks)
         {
-            Contract.Requires<ArgumentNullException>(inputTasks != null, nameof(inputTasks));
-            Contract.Requires<ArgumentException>(inputTasks.All(t => t!=null), "None of the tasks can be null.");
-            Contract.Ensures(Contract.Result<Task<T[]>>() != null);
+            if (inputTasks == null)
+                throw new ArgumentNullException(nameof(inputTasks));
+            if (inputTasks.Any(t => t==null))
+                throw new ArgumentException("None of the tasks in the sequence can be null.");
 
             var countdown = new CountdownEvent(inputTasks.Length);
             var tcs = new TaskCompletionSource<T[]>();

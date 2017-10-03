@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
-using vm.Aspects.Properties;
 
 namespace vm.Aspects.Exceptions
 {
@@ -119,7 +117,8 @@ namespace vm.Aspects.Exceptions
             StreamingContext context)
             : base(info, context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
         }
         #endregion
     }

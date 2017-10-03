@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using Microsoft.Practices.ServiceLocation;
@@ -62,8 +61,8 @@ namespace vm.Aspects.Model
             string currency = null,
             IMoneyDefaults defaults = null)
         {
-            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(currency) ||
-                                                 RegularExpression.CurrencyIsoCode.IsMatch(currency), "The argument " + nameof(currency) + " does not represent a valid currency code.");
+            if (currency.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(currency));
 
             defaults = defaults ?? ServiceLocator.Current.GetInstance<IMoneyDefaults>();
 
@@ -83,7 +82,8 @@ namespace vm.Aspects.Model
             SerializationInfo info,
             StreamingContext context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
 
             Value    = (decimal)info.GetValue(nameof(Value), typeof(decimal));
             Currency = (string)info.GetValue(nameof(Currency), typeof(string));
@@ -280,8 +280,8 @@ namespace vm.Aspects.Model
         public static Money Plus(
             Money operand)
         {
-            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (operand == null)
+                throw new ArgumentNullException(nameof(operand));
 
             return new Money(
                         operand.Value,
@@ -299,8 +299,8 @@ namespace vm.Aspects.Model
         public static Money Negate(
             Money operand)
         {
-            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (operand == null)
+                throw new ArgumentNullException(nameof(operand));
 
             return new Money(
                         -operand.Value,
@@ -323,10 +323,12 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return new Money(
                         left.Value + right.Value,
@@ -347,10 +349,12 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return new Money(
                         left.Value - right.Value,
@@ -371,10 +375,14 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (right.Value == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return left.Value / right.Value;
         }
@@ -393,9 +401,10 @@ namespace vm.Aspects.Model
             Money left,
             decimal right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
 
             return new Money(
                         left.Value / right,
@@ -416,9 +425,10 @@ namespace vm.Aspects.Model
             Money left,
             decimal right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
 
             return new Money(
                         left.Value % right,
@@ -438,7 +448,8 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
 
             return left.CompareTo(right) > 0;
         }
@@ -454,7 +465,8 @@ namespace vm.Aspects.Model
             Money left,
             Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
 
             return left.CompareTo(right) < 0;
         }
@@ -468,7 +480,8 @@ namespace vm.Aspects.Model
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
         public static bool operator >=(Money left, Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
 
             return !(left < right);
         }
@@ -482,7 +495,8 @@ namespace vm.Aspects.Model
         /// <exception cref="InvalidOperationException">If the objects are of different currencies.</exception>
         public static bool operator <=(Money left, Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
 
             return !(left > right);
         }
@@ -498,8 +512,8 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator +(Money operand)
         {
-            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (operand == null)
+                throw new ArgumentNullException(nameof(operand));
 
             return Plus(operand);
         }
@@ -514,8 +528,8 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator -(Money operand)
         {
-            Contract.Requires<ArgumentNullException>(operand != null, nameof(operand));
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (operand == null)
+                throw new ArgumentNullException(nameof(operand));
 
             return Negate(operand);
         }
@@ -534,10 +548,12 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator +(Money left, Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return Add(left, right);
         }
@@ -554,10 +570,12 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator -(Money left, Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return Subtract(left, right);
         }
@@ -574,10 +592,14 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static decimal operator /(Money left, Money right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
-            Contract.Requires<DivideByZeroException>(right.Value != 0M, "The divisor is 0.");
-            Contract.Requires<ArgumentException>(string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase), "The currencies are different.");
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
+            if (right.Value == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
+            if (!string.Equals(left.Currency, right.Currency, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("The currencies are different.");
 
             return Divide(left, right);
         }
@@ -594,9 +616,10 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator /(Money left, decimal right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
 
             return Divide(left, right);
         }
@@ -613,9 +636,10 @@ namespace vm.Aspects.Model
         /// </remarks>
         public static Money operator %(Money left, decimal right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<DivideByZeroException>(right != 0M, "The divisor is 0.");
-            Contract.Ensures(Contract.Result<Money>() != null);
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == 0M)
+                throw new DivideByZeroException("The divisor is 0.");
 
             return Mod(left, right);
         }

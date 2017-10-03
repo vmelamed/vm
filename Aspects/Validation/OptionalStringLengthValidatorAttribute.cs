@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -9,7 +8,7 @@ namespace vm.Aspects.Validation
     /// <summary>
     /// Describes a <see cref="OptionalStringLengthValidatorAttribute"/>.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification="May cause logical problems.")]
+    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments", Justification = "May cause logical problems.")]
     [AttributeUsage(
         AttributeTargets.Property |
         AttributeTargets.Field |
@@ -85,8 +84,6 @@ namespace vm.Aspects.Validation
         protected override Validator DoCreateValidator(
             Type targetType)
         {
-            Contract.Ensures(Contract.Result<Validator>() != null);
-
             if (targetType == null)
                 throw new ArgumentNullException(nameof(targetType));
 

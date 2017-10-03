@@ -35,6 +35,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
                     .Register<ObjectStateEntry, ObjectStateEntryDumpMetadata>()
                     ;
 
+                var shouldDump = DIContainer.IsInitialized;
+
                 DIContainer.Initialize();
 
                 lock (DIContainer.Root)
@@ -46,6 +48,9 @@ namespace vm.Aspects.Model.EFRepository.Tests
                                .UnsafeRegister(TestEFRepository.Registrar, registrations, true)
                                ;
                 }
+
+                if (shouldDump)
+                    DIContainer.Root.DebugDump();
             }
             catch (Exception x)
             {

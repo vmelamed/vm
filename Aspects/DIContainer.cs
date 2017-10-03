@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity;
+using Unity.Configuration;
+using Unity.InterceptionExtension;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -75,15 +74,7 @@ namespace vm.Aspects
         /// <summary>
         /// Gets the current default container.
         /// </summary>
-        public static IUnityContainer Root
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<IUnityContainer>() != null, "The root container is null.");
-
-                return _root;
-            }
-        }
+        public static IUnityContainer Root => _root;
 
         /// <summary>
         /// Gets the unity configuration section with name <paramref name="configSection" /> from the specified file.
@@ -120,7 +111,7 @@ namespace vm.Aspects
                                .CurrentDomain
                                .GetData("APP_CONFIG_FILE");
 
-                Contract.Assume(data != null);
+                Debug.Assert(data != null);
 
                 var path = Path.GetDirectoryName(data.ToString());
 
@@ -132,15 +123,6 @@ namespace vm.Aspects
                                                         ConfigurationUserLevel.None);
 
             return configuration.GetSection(configSection) as UnityConfigurationSection;
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "It is called by the rewritten code.")]
-        [ContractAbbreviator]
-        static void EnsuresContainerInitialized()
-        {
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null, "The container was not initialized properly.");
-            Contract.Ensures(IsInitialized, "The container was not initialized properly.");
-            Contract.Ensures(ServiceLocator.IsLocationProviderSet, "The common service locator is not associated with any DI container.");
         }
 
         /// <summary>
@@ -177,8 +159,6 @@ namespace vm.Aspects
             string containerName = DefaultContainerName,
             Func<string, string, UnityConfigurationSection> getConfigFileSection = null)
         {
-            EnsuresContainerInitialized();
-
             if (!_latch.Latched())
                 return _root;
 
@@ -255,8 +235,8 @@ namespace vm.Aspects
         public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot(
             this IUnityContainer container)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
 
             lock (container)
                 return container
@@ -270,12 +250,7 @@ namespace vm.Aspects
         /// Gets a snapshot of the registrations in the specified container.
         /// Simply a short cut for <c>GetRegistrationDictionary(DIContainer.Root)</c>
         /// </summary>
-        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot()
-        {
-            Contract.Ensures(Contract.Result<IDictionary<RegistrationLookup, ContainerRegistration>>() != null);
-
-            return GetRegistrationsSnapshot(DIContainer.Root);
-        }
+        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot() => GetRegistrationsSnapshot(DIContainer.Root);
 
         /// <summary>
         /// Registers the types and instances of the <see cref="ContainerRegistrar"/> in the specified container.
@@ -303,8 +278,8 @@ namespace vm.Aspects
             ContainerRegistrar registrar,
             bool isTest = false)
         {
-            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
+            if (registrar == null)
+                throw new ArgumentNullException(nameof(registrar));
 
             return registrar.Register(container, isTest);
         }
@@ -341,8 +316,8 @@ namespace vm.Aspects
             IDictionary<RegistrationLookup, ContainerRegistration> registrations,
             bool isTest = false)
         {
-            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
+            if (registrar == null)
+                throw new ArgumentNullException(nameof(registrar));
 
             return registrar.UnsafeRegister(container, registrations, isTest);
         }
@@ -355,8 +330,6 @@ namespace vm.Aspects
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "n/a")]
         public static IUnityContainer InitializeEmpty()
         {
-            EnsuresContainerInitialized();
-
             if (_latch.Latched())
                 lock (_root)
                 {
@@ -376,8 +349,6 @@ namespace vm.Aspects
         [Conditional("TEST")]
         public static void Reset()
         {
-            Contract.Ensures(_root != null);
-
             ServiceLocator.SetLocatorProvider(null);
 
             if (_root != null)
@@ -395,8 +366,10 @@ namespace vm.Aspects
             this IUnityContainer container,
             TextWriter writer)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             var registrations = container.GetRegistrationsSnapshot();
 
@@ -423,7 +396,7 @@ namespace vm.Aspects
                 var regName = item.Name ?? "[default]";
                 var lifetime = item.LifetimeManagerType.Name;
 
-                Contract.Assert(lifetime.Length > "LifetimeManager".Length);
+                Debug.Assert(lifetime.Length > "LifetimeManager".Length);
 
                 if (mapTo != regType)
                     mapTo = " -> " + mapTo;
@@ -448,8 +421,10 @@ namespace vm.Aspects
             char delimiter = ',',
             char quot = '\'')
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             var registrations = container.GetRegistrationsSnapshot();
 
@@ -480,7 +455,7 @@ namespace vm.Aspects
                 var resolveName = item.Name ?? "[default]";
 
                 var lifetime = item.LifetimeManagerType.Name;
-                Contract.Assert(lifetime.Length > "LifetimeManager".Length);
+                Debug.Assert(lifetime.Length > "LifetimeManager".Length);
                 lifetime = lifetime.Substring(0, lifetime.Length - "LifetimeManager".Length);
 
                 writer.WriteLine($"{QuoteIfNeeded(regType, delimiter, quot)}{delimiter}{QuoteIfNeeded(mapTo, delimiter, quot)}{delimiter}{QuoteIfNeeded(resolveName, delimiter, quot)}{delimiter}{QuoteIfNeeded(lifetime, delimiter, quot)}");
@@ -492,7 +467,8 @@ namespace vm.Aspects
             char delimiter,
             char quot)
         {
-            Contract.Requires<ArgumentNullException>(token != null, nameof(token));
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
 
             if (token.Contains(delimiter))
                 return $"{quot}{token.Replace(quot.ToString(), quot.ToString()+quot)}{quot}";
@@ -510,7 +486,8 @@ namespace vm.Aspects
         public static void DebugDump(
             this IUnityContainer container)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {

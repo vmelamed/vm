@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Reflection;
 
@@ -22,8 +21,8 @@ namespace vm.Aspects
         public static bool IsEmpty<TEnum>(
             this TEnum value) where TEnum : struct
         {
-            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
-
+            if (!typeof(TEnum).IsEnum)
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
@@ -46,8 +45,8 @@ namespace vm.Aspects
             this TEnum value,
             TEnum flags) where TEnum : struct
         {
-            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
-
+            if (!typeof(TEnum).IsEnum)
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
@@ -71,8 +70,8 @@ namespace vm.Aspects
             this TEnum value,
             TEnum flags) where TEnum : struct
         {
-            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
-
+            if (!typeof(TEnum).IsEnum)
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 
@@ -96,8 +95,8 @@ namespace vm.Aspects
             this TEnum value,
             TEnum flags) where TEnum : struct
         {
-            Contract.Requires<ArgumentException>(typeof(TEnum).IsEnum, "The method is applicable only to enum types marked with attribute FlagsAttribute only.");
-
+            if (!typeof(TEnum).IsEnum)
+                throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.");
             if (typeof(TEnum).GetCustomAttribute<FlagsAttribute>() == null)
                 throw new ArgumentException("The method is applicable only to enum types marked with attribute FlagsAttribute only.", nameof(value));
 

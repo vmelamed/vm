@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -81,7 +80,8 @@ namespace vm.Aspects.Model.EFRepository
             Exception innerException = null)
             : this(null, errors, innerException)
         {
-            Contract.Requires<ArgumentNullException>(errors != null, nameof(errors));
+            if (errors == null)
+                throw new ArgumentNullException(nameof(errors));
         }
 
         /// <summary>

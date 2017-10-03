@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Validation;

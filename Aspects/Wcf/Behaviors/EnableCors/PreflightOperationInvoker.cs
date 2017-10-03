@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.ServiceModel.Channels;
@@ -24,7 +23,8 @@ namespace vm.Aspects.Wcf.Behaviors
             string[] allowedOrigins = null,
             int maxAge = 600)
         {
-            Contract.Requires<ArgumentNullException>(allowedHttpMethods != null, nameof(allowedHttpMethods));
+            if (allowedHttpMethods == null)
+                throw new ArgumentNullException(nameof(allowedHttpMethods));
 
             _replyAction        = replyAction;
             _allowedHttpMethods = allowedHttpMethods.ToList();

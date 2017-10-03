@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace vm.Aspects.Model.EFRepository
@@ -29,8 +28,10 @@ namespace vm.Aspects.Model.EFRepository
             byte precision,
             byte scale = 0)
         {
-            Contract.Requires<ArgumentException>(precision > 0, "The precision parameter must be positive.");
-            Contract.Requires<ArgumentException>(scale > 0  &&  scale <= precision, "The scale parameter must be positive and less than the precision.");
+            if (precision <= 0)
+                throw new ArgumentException("The precision parameter must be positive.");
+            if (scale <= 0  ||  scale > precision)
+                throw new ArgumentException("The scale parameter must be positive and less than the precision.");
 
             _precision = precision;
             _scale     = scale;

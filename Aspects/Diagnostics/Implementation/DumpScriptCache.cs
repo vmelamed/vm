@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading;
 
@@ -15,8 +14,10 @@ namespace vm.Aspects.Diagnostics.Implementation
                 ClassDumpData classDumpData,
                 ObjectTextDumper objectTextDumper)
             {
-                Contract.Requires<ArgumentNullException>(objectTextDumper != null, nameof(objectTextDumper));
-                Contract.Requires<ArgumentNullException>(objectType       != null, nameof(objectType));
+                if (objectTextDumper == null)
+                    throw new ArgumentNullException(nameof(objectTextDumper));
+                if (objectType == null)
+                    throw new ArgumentNullException(nameof(objectType));
 
                 ObjectType             = objectType;
                 ClassDumpData          = classDumpData;
@@ -71,8 +72,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             ClassDumpData classDumpData,
             out Script script)
         {
-            Contract.Requires<ArgumentNullException>(objectTextDumper != null, nameof(objectTextDumper));
-            Contract.Requires<ArgumentNullException>(obj              != null, nameof(obj));
+            if (objectTextDumper == null)
+                throw new ArgumentNullException(nameof(objectTextDumper));
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
 
             script = null;
 
@@ -95,9 +98,12 @@ namespace vm.Aspects.Diagnostics.Implementation
             ClassDumpData classDumpData,
             DumpScript _dumpScript)
         {
-            Contract.Requires<ArgumentNullException>(objectTextDumper != null, nameof(objectTextDumper));
-            Contract.Requires<ArgumentNullException>(objectType       != null, nameof(objectType));
-            Contract.Requires<ArgumentNullException>(_dumpScript      != null, nameof(_dumpScript));
+            if (objectTextDumper == null)
+                throw new ArgumentNullException(nameof(objectTextDumper));
+            if (objectType == null)
+                throw new ArgumentNullException(nameof(objectType));
+            if (_dumpScript == null)
+                throw new ArgumentNullException(nameof(_dumpScript));
 
             var lookup = new ScriptLookup(objectType, classDumpData, objectTextDumper);
             var script = _dumpScript.GetScriptAction();
@@ -127,7 +133,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             Type objectType,
             ClassDumpData classDumpData)
         {
-            Contract.Requires<ArgumentNullException>(objectType != null, nameof(objectType));
+            if (objectType == null)
+                throw new ArgumentNullException(nameof(objectType));
 
             _sync.EnterWriteLock();
 

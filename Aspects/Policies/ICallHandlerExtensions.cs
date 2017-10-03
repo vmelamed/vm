@@ -1,8 +1,7 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
-using System.Diagnostics.Contracts;
+﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -19,8 +18,8 @@ namespace vm.Aspects.Policies
         public static Type ResultType(
             this IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
-            Contract.Ensures(Contract.Result<Type>() != null);
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             return ((MethodInfo)input.MethodBase).ReturnType;
         }
@@ -32,7 +31,8 @@ namespace vm.Aspects.Policies
         public static bool IsAsyncCall(
             this IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             return typeof(Task).IsAssignableFrom(input.ResultType());
         }
@@ -45,7 +45,8 @@ namespace vm.Aspects.Policies
         public static bool IsAsyncCall(
             this IMethodReturn methodReturn)
         {
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
+            if (methodReturn == null)
+                throw new ArgumentNullException(nameof(methodReturn));
 
             return methodReturn.ReturnValue is Task;
         }

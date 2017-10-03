@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IdentityModel.Claims;
 using System.IO;
@@ -13,8 +12,8 @@ using System.ServiceModel.Description;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity;
+using Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -177,7 +176,8 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern = null)
             : this(messagingPattern)
         {
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
+            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
+                throw new ArgumentException("Invalid combination of identity parameters.");
 
             if (identityType != ServiceIdentity.None)
                 EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity);
@@ -202,10 +202,10 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern)
             : this(messagingPattern)
         {
-            Contract.Requires<ArgumentException>(
-                identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                           identityType == ServiceIdentity.Rsa  ||
-                                                           identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                             identityType == ServiceIdentity.Rsa  ||
+                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
+                throw new ArgumentException("Invalid combination of identity parameters.");
 
             if (identityType != ServiceIdentity.None)
                 EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate);
@@ -239,6 +239,9 @@ namespace vm.Aspects.Wcf.Services
         public virtual ICreateServiceHost SetEndpointProvider(
             Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
         {
+            if (provideEndpoints == null)
+                throw new ArgumentNullException(nameof(provideEndpoints));
+
             _provideEndpoints = provideEndpoints;
             return this;
         }
@@ -250,6 +253,9 @@ namespace vm.Aspects.Wcf.Services
         public virtual ICreateServiceHost SetServiceRegistrar(
             Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
         {
+            if (registrar == null)
+                throw new ArgumentNullException(nameof(registrar));
+
             _serviceRegistrar = registrar;
             return this;
         }
@@ -334,7 +340,13 @@ namespace vm.Aspects.Wcf.Services
         /// A <see cref="ServiceHost"/> for the type of service specified with a specific base address.
         /// </returns>
         public ServiceHost CreateHost(
-            params Uri[] baseAddresses) => CreateServiceHost(baseAddresses);
+            params Uri[] baseAddresses)
+        {
+            if (baseAddresses == null)
+                throw new ArgumentNullException(nameof(baseAddresses));
+
+            return CreateServiceHost(baseAddresses);
+        }
 
         /// <summary>
         /// Represents the task of initializing the created host.
@@ -379,10 +391,11 @@ namespace vm.Aspects.Wcf.Services
             IUnityContainer container,
             IDictionary<RegistrationLookup, ContainerRegistration> registrations)
         {
-            Contract.Requires<ArgumentNullException>(container     != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-            Contract.Ensures(Contract.Result<IUnityContainer>() == container);
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+
 
             _serviceRegistrar?.Invoke(container, typeof(TService), registrations);
 
@@ -439,7 +452,8 @@ namespace vm.Aspects.Wcf.Services
         protected virtual ServiceHost DoCreateServiceHost(
             Uri[] baseAddresses)
         {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
+            if (baseAddresses == null)
+                throw new ArgumentNullException(nameof(baseAddresses));
 
             var host = base.CreateServiceHost(typeof(TService), baseAddresses);
 
@@ -469,8 +483,8 @@ namespace vm.Aspects.Wcf.Services
         protected virtual ServiceHost AddEndpoints(
             ServiceHost host)
         {
-            Contract.Requires<ArgumentNullException>(host != null, nameof(host));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
 
             if (_provideEndpoints != null)
                 foreach (var ep in _provideEndpoints())
@@ -496,7 +510,8 @@ namespace vm.Aspects.Wcf.Services
             object sender,
             EventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(sender != null, nameof(sender));
+            if (sender == null)
+                throw new ArgumentNullException(nameof(sender));
 
             var host = (ServiceHostBase)sender;
 
@@ -513,7 +528,8 @@ namespace vm.Aspects.Wcf.Services
         protected virtual void HostInitialized(
             ServiceHostBase host)
         {
-            Contract.Requires<ArgumentNullException>(host        != null, nameof(host));
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
 
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
@@ -535,7 +551,8 @@ namespace vm.Aspects.Wcf.Services
             object sender,
             EventArgs e)
         {
-            Contract.Requires<ArgumentNullException>(sender != null, nameof(sender));
+            if (sender == null)
+                throw new ArgumentNullException(nameof(sender));
 
             Facility.LogWriter
                     .EventLogInfo($"The service host for service {typeof(TService).FullName} has been closed.");

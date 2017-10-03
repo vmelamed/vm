@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Text;
 
@@ -114,14 +113,12 @@ namespace vm.Aspects.Parsers
             string fileSeparators = DefaultFileSeparators,
             string fieldMark = DefaultFieldMark)
         {
-            Contract.Requires<ArgumentNullException>(fieldSeparators!=null, nameof(fieldSeparators));
-            Contract.Requires<ArgumentException>(fieldSeparators.Length > 0, "The argument "+nameof(fieldSeparators)+" cannot be empty or consist of whitespace characters only.");
-
-            Contract.Requires<ArgumentNullException>(recordSeparators!=null, nameof(recordSeparators));
-            Contract.Requires<ArgumentException>(recordSeparators.Length > 0, "The argument "+nameof(recordSeparators)+" cannot be empty or consist of whitespace characters only.");
-
-            Contract.Requires<ArgumentNullException>(fieldMark!=null, nameof(fieldMark));
-            Contract.Requires<ArgumentException>(fieldMark.Length == 1, "The "+nameof(fieldMark)+" parameter must specify a single, non-whitespace character.");
+            if (string.IsNullOrWhiteSpace(fieldSeparators))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldSeparators));
+            if (string.IsNullOrWhiteSpace(recordSeparators))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(recordSeparators));
+            if (string.IsNullOrWhiteSpace(fieldMark))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldMark));
 
             // the record separators always include CR/LF
             if (recordSeparators.IndexOf(CR) < 0)
@@ -166,8 +163,10 @@ namespace vm.Aspects.Parsers
             string target,
             string newClass)
         {
-            Contract.Requires<ArgumentNullException>(target != null, nameof(target));
-            Contract.Requires<ArgumentNullException>(newClass != null, nameof(newClass));
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+            if (newClass == null)
+                throw new ArgumentNullException(nameof(newClass));
 
             var repeatedIndex = target.IndexOfAny(newClass.ToCharArray());
 
@@ -446,7 +445,8 @@ namespace vm.Aspects.Parsers
             string qualifications,
             char character)
         {
-            Contract.Requires<ArgumentNullException>(qualifications != null, nameof(qualifications));
+            if (qualifications == null)
+                throw new ArgumentNullException(nameof(qualifications));
 
             for (var i = 0; i<qualifications.Length; i++)
                 if (qualifications[i] == character)

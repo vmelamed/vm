@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace vm.Aspects
 {
@@ -24,7 +22,8 @@ namespace vm.Aspects
         /// <exception cref="System.ArgumentException">The name cannot be null, empty or whitespace only string.;name</exception>
         public ResolveNameAttribute(string name)
         {
-            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
 
             Name = name;
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.Serialization;
 using vm.Aspects.Diagnostics;
@@ -33,7 +32,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public InvalidObjectFault(
             IEnumerable<ValidationFaultElement> details)
         {
-            Contract.Requires<ArgumentNullException>(details != null, nameof(details));
+            if (details == null)
+                throw new ArgumentNullException(nameof(details));
 
             InternalDetails = new List<ValidationFaultElement>(details);
         }
@@ -45,7 +45,8 @@ namespace vm.Aspects.Wcf.FaultContracts
         public void Add(
             ValidationFaultElement detail)
         {
-            Contract.Requires<ArgumentNullException>(detail != null, nameof(detail));
+            if (detail == null)
+                throw new ArgumentNullException(nameof(detail));
 
             InternalDetails.Add(detail);
         }
@@ -66,8 +67,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             get
             {
-                Contract.Ensures(Contract.Result<IReadOnlyList<ValidationFaultElement>>() != null);
-
+                
                 return new ReadOnlyCollection<ValidationFaultElement>(InternalDetails);
             }
 

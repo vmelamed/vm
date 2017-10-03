@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
@@ -31,11 +30,10 @@ namespace vm.Aspects.Validation
             : base(messageTemplate, tag, negated)
         {
             // can be either Enum or Nullable enum
-            Contract.Requires<NotSupportedException>(
-                typeof(T).IsEnum  ||  (typeof(T).IsGenericType  &&  
-                                       typeof(T).GetGenericTypeDefinition()==typeof(Nullable<>)  &&  
-                                       typeof(T).GetGenericArguments()[0].IsEnum),
-                "This validator can be applied to enum or nullable enum types only.");
+            if (!typeof(T).IsEnum  &&  (!typeof(T).IsGenericType  ||
+                                        typeof(T).GetGenericTypeDefinition()!=typeof(Nullable<>)  ||
+                                        !typeof(T).GetGenericArguments()[0].IsEnum))
+                throw new NotSupportedException("This validator can be applied to enum or nullable enum types only.");
         }
 
         /// <summary>
@@ -59,16 +57,16 @@ namespace vm.Aspects.Validation
                 if (typeof(T).IsGenericType &&
                     typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>) &&
                     typeof(T).GetGenericArguments()[0].IsEnum)
-                {
-                    // if it is Nullable<Enum> check for null and for the defined Enum values:
-                    if (objectToValidate == null)
-                        valid = true;
-                    else
-                        valid = Enum.IsDefined(
-                                        typeof(T).GetGenericArguments()[0],
-                                        typeof(T).GetProperty("Value")
-                                                 .GetValue(objectToValidate, null));
-                }
+            {
+                // if it is Nullable<Enum> check for null and for the defined Enum values:
+                if (objectToValidate == null)
+                    valid = true;
+                else
+                    valid = Enum.IsDefined(
+                                    typeof(T).GetGenericArguments()[0],
+                                    typeof(T).GetProperty("Value")
+                                             .GetValue(objectToValidate, null));
+            }
 
             if (Negated)
                 valid = !valid;
@@ -80,27 +78,11 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the default negated message template.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-                
-                return Resources.ExFromEnumDomain;
-            }
-        }
+        protected override string DefaultNegatedMessageTemplate => Resources.ExFromEnumDomain;
 
         /// <summary>
         /// Gets the default non negated message template.
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-                
-                return Resources.ExNotFromEnumDomain;
-            }
-        }
+        protected override string DefaultNonNegatedMessageTemplate => Resources.ExNotFromEnumDomain;
     }
 }

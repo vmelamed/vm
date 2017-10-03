@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Diagnostics.Contracts;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Diagnostics;
@@ -24,8 +23,10 @@ namespace vm.Aspects.Facilities
             Guid handlingInstanceId)
             : base(writer, exception, handlingInstanceId)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
         }
 
         /// <summary>

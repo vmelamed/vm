@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -19,7 +18,8 @@ namespace vm.Aspects.Wcf.Bindings
         public static TransferMode GetTransferMode(
             this Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             var netTcpBinding = binding as NetTcpBinding;
 
@@ -53,7 +53,8 @@ namespace vm.Aspects.Wcf.Bindings
         public static bool IsStreaming(
             this Binding binding)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
 
             return binding.GetTransferMode() != TransferMode.Buffered;
         }

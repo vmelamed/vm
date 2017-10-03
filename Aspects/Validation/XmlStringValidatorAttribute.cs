@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Xml.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -100,8 +99,6 @@ namespace vm.Aspects.Validation
         /// <exception cref="ArgumentException">Thrown if the type of the target is not <see cref="string"/>.</exception>
         protected override Validator DoCreateValidator(Type targetType)
         {
-            Contract.Ensures(Contract.Result<Validator>() != null);
-
             if (targetType != typeof(string))
                 throw new ArgumentException(Resources.ExNotStringType, nameof(targetType));
 

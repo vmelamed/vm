@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects.Wcf.Behaviors
 {
     /// <summary>
@@ -19,8 +17,7 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             get 
             {
-                Contract.Ensures(Contract.Result<Type>() != null);
-
+                
                 return typeof(ValidatingBindingElement); 
             }
         }
@@ -33,8 +30,7 @@ namespace vm.Aspects.Wcf.Behaviors
         /// </returns>
         protected override BindingElement CreateBindingElement()
         {
-            Contract.Ensures(Contract.Result<BindingElement>() != null);
-
+            
             return new ValidatingBindingElement();
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using vm.Aspects.Threading;
@@ -31,7 +29,8 @@ namespace vm.Aspects.Wcf
         public object GetData(
             string slotName)
         {
-            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (slotName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(slotName));
 
             object entry;
 
@@ -64,7 +63,8 @@ namespace vm.Aspects.Wcf
             string slotName,
             object entry)
         {
-            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (slotName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(slotName));
 
             using (_lock.WriterLock())
             {
@@ -84,7 +84,8 @@ namespace vm.Aspects.Wcf
         public void FreeDataSlot(
             string slotName)
         {
-            Contract.Requires<ArgumentException>(slotName != null  &&  slotName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(slotName)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (slotName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(slotName));
 
             object entry;
 
@@ -108,14 +109,6 @@ namespace vm.Aspects.Wcf
 
                 _contextSlots.Clear();
             }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        void ObjectInvariant()
-        {
-            Contract.Invariant(_contextSlots != null);
         }
 
         #region IDisposable pattern implementation

@@ -31,7 +31,15 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> FetchAlso<T>(
             IQueryable<T> sequence,
-            string path) where T : class => QueryableExtensions.Include(sequence, path);
+            string path) where T : class
+        {
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(path));
+
+            return QueryableExtensions.Include(sequence, path);
+        }
 
         /// <summary>
         /// Suggests eager fetching of related objects when querying the repository.
@@ -43,7 +51,15 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> FetchAlso<T, TProperty>(
             IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : class => QueryableExtensions.Include(sequence, path);
+            Expression<Func<T, TProperty>> path) where T : class
+        {
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            return QueryableExtensions.Include(sequence, path);
+        }
 
         /// <summary>
         /// Enlists the repository's back store connection in the ambient transaction.
@@ -53,6 +69,9 @@ namespace vm.Aspects.Model.EFRepository
         public IRepository EnlistInAmbientTransaction(
             IRepository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -72,7 +91,13 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>The POCO type of the reference.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public Type GetEntityType(
-            object reference) => ObjectContext.GetObjectType(reference.GetType());
+            object reference)
+        {
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
+
+            return ObjectContext.GetObjectType(reference.GetType());
+        }
 
         /// <summary>
         /// Gets the name of the entity set associated with the specified type.
@@ -82,7 +107,15 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>System.String.</returns>
         public string GetEntitySetName(
             Type type,
-            IRepository repository) => (repository as EFRepositoryBase).ObjectContext.GetEntitySetName(type);
+            IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            return (repository as EFRepositoryBase).ObjectContext.GetEntitySetName(type);
+        }
 
         /// <summary>
         /// Determines whether the specified reference is a reference to an ORM generated wrapper/proxy of the actual object instead of the actual object itself.
@@ -94,6 +127,9 @@ namespace vm.Aspects.Model.EFRepository
         public bool IsProxy(
             object reference)
         {
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
+
             var type = reference.GetType();
 
             return type != ObjectContext.GetObjectType(type);
@@ -132,6 +168,11 @@ namespace vm.Aspects.Model.EFRepository
             object reference,
             IRepository repository)
         {
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             if (!IsProxy(reference))
                 return false;
 
@@ -211,6 +252,15 @@ namespace vm.Aspects.Model.EFRepository
             string propertyName,
             IRepository repository)
         {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             // if it is not an ORM proxy - it must be loaded
             if (!IsProxy(associated))
                 return true;
@@ -246,8 +296,14 @@ namespace vm.Aspects.Model.EFRepository
         ///   <see langword="true"/> if the specified exception is an optimistic concurrency problem; otherwise, <see langword="false"/>.
         /// </returns>
         public bool IsOptimisticConcurrency(
-            Exception exception) => (exception is OptimisticConcurrencyException) ||
+            Exception exception)
+        {
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+
+            return (exception is OptimisticConcurrencyException) ||
                                     (exception is DbUpdateConcurrencyException);
+        }
 
         /// <summary>
         /// Determines whether the specified exception is a result of problems connecting to the store.
@@ -257,6 +313,9 @@ namespace vm.Aspects.Model.EFRepository
         public bool IsConnectionRelated(
             Exception exception)
         {
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+
             if (IsOptimisticConcurrency(exception))
                 return false;
 
@@ -289,6 +348,9 @@ namespace vm.Aspects.Model.EFRepository
         public bool IsTransactionRelated(
             Exception exception)
         {
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+
             if (IsOptimisticConcurrency(exception))
                 return false;
 
@@ -319,6 +381,9 @@ namespace vm.Aspects.Model.EFRepository
         public bool IsTransient(
             Exception exception)
         {
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+
             if (IsOptimisticConcurrency(exception))
                 return true;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -9,7 +8,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Policies;
 using vm.Aspects.Threading;
@@ -104,7 +103,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
     IMethodInvocation input,
     Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             Exception outException = null;
 
@@ -177,7 +177,8 @@ when processing
             IMethodInvocation input,
             Type faultType)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             if (faultType == null)
                 return false;

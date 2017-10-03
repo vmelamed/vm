@@ -15,7 +15,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Interface,
         AllowMultiple = false,
         Inherited = false)]
-    public class BasicAuthenticationAttribute : Attribute, IServiceBehavior
+    public sealed class BasicAuthenticationAttribute : Attribute, IServiceBehavior
     {
         /// <summary>
         /// Gets the realm of the authenticated identities.
@@ -25,19 +25,19 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <summary>
         /// Gets the resolve name of the basic authentication provider.
         /// </summary>
-        public string BasicAuthResolveName { get; }
+        public string BasicAuthenticationResolveName { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicAuthenticationAttribute"/> class.
         /// </summary>
         /// <param name="realm">The realm of the authenticated identities.</param>
-        /// <param name="basicAuthResolveName">The resolve name of the basic authentication provider.</param>
+        /// <param name="basicAuthenticationResolveName">The resolve name of the basic authentication provider.</param>
         public BasicAuthenticationAttribute(
             string realm = null,
-            string basicAuthResolveName = null)
+            string basicAuthenticationResolveName = null)
         {
-            Realm                = realm;
-            BasicAuthResolveName = basicAuthResolveName;
+            Realm                          = realm;
+            BasicAuthenticationResolveName = basicAuthenticationResolveName;
         }
 
         #region IServiceBehavior
@@ -65,7 +65,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <param name="serviceHostBase">The host that is currently being built.</param>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            var auth = ServiceLocator.Current.GetInstance<IBasicAuthenticate>(BasicAuthResolveName);
+            var auth = ServiceLocator.Current.GetInstance<IBasicAuthenticate>(BasicAuthenticationResolveName);
             var ctx  = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
 
             serviceHostBase.Authorization.ServiceAuthorizationManager = new BasicAuthorizationManager(ctx, auth, Realm);

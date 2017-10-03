@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects.Model
 {
     /// <summary>
@@ -29,8 +27,7 @@ namespace vm.Aspects.Model
         /// <returns>A <see cref="MidpointRounding" /> value.</returns>
         public MidpointRounding Rounding(string currency)
         {
-            Contract.Ensures(Contract.Result<MidpointRounding>() == MidpointRounding.ToEven);
-
+            
             return MidpointRounding.ToEven;
         }
     }

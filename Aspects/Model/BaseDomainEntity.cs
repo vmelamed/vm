@@ -1,9 +1,8 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Properties;
 using vm.Aspects.Validation;
@@ -72,12 +71,10 @@ namespace vm.Aspects.Model
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">An existing results collection to which the current validation results should be appended to.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
-        [Pure]
         public virtual ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {
-            Contract.Ensures(Contract.Result<ValidationResults>() != null);
 
             var validator = Facility.ValidatorFactory
                                     .CreateValidator(GetType(), ruleset);
@@ -159,7 +156,6 @@ namespace vm.Aspects.Model
         public string ToString(
             int indentLevel)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
 
             return this.DumpString(indentLevel);
         }
@@ -172,7 +168,6 @@ namespace vm.Aspects.Model
         /// </returns>
         public override string ToString()
         {
-            Contract.Ensures(Contract.Result<string>() != null);
 
             return this.ToString(0);
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -25,7 +24,15 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> FetchAlso<T>(
             IQueryable<T> sequence,
-            string path) where T : class => sequence;
+            string path) where T : class
+        {
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(path));
+
+            return sequence;
+        }
 
         /// <summary>
         /// Suggests eager fetching of related objects when querying the repository.
@@ -37,7 +44,15 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The queryable sequence.</returns>
         public IQueryable<T> FetchAlso<T, TProperty>(
             IQueryable<T> sequence,
-            Expression<Func<T, TProperty>> path) where T : class => sequence;
+            Expression<Func<T, TProperty>> path) where T : class
+        {
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            return sequence;
+        }
 
         /// <summary>
         /// Enlists the repository's back store transaction manager in the ambient transaction.
@@ -46,7 +61,13 @@ namespace vm.Aspects.Model.InMemory
         /// <param name="repository">The repository.</param>
         /// <returns>this</returns>
         public IRepository EnlistInAmbientTransaction(
-            IRepository repository) => repository;
+            IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return repository;
+        }
 
         /// <summary>
         /// Gets the type of the entity.
@@ -55,7 +76,13 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The POCO type of the reference.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public Type GetEntityType(
-            object reference) => reference.GetType();
+            object reference)
+        {
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
+
+            return reference.GetType();
+        }
 
         /// <summary>
         /// Gets the name of the entity set associated with the specified type.
@@ -67,6 +94,11 @@ namespace vm.Aspects.Model.InMemory
             Type type,
             IRepository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
             if (repository is ListObjectsRepository)
                 return null;
 
@@ -83,7 +115,8 @@ namespace vm.Aspects.Model.InMemory
         public bool IsProxy(
             object reference)
         {
-            Contract.Ensures(Contract.Result<bool>() == false);
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
 
             return false;
         }
@@ -103,7 +136,10 @@ namespace vm.Aspects.Model.InMemory
             object reference,
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<bool>() == true);
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return true;
         }
@@ -124,7 +160,14 @@ namespace vm.Aspects.Model.InMemory
             string propertyName,
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<bool>() == true);
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return true;
         }
@@ -138,7 +181,8 @@ namespace vm.Aspects.Model.InMemory
         public bool IsOptimisticConcurrency(
             Exception exception)
         {
-            Contract.Ensures(Contract.Result<bool>() == false);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return false;
         }
@@ -153,7 +197,8 @@ namespace vm.Aspects.Model.InMemory
         public bool IsConnectionRelated(
             Exception exception)
         {
-            Contract.Ensures(Contract.Result<bool>() == false);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return false;
         }
@@ -168,7 +213,8 @@ namespace vm.Aspects.Model.InMemory
         public bool IsTransactionRelated(
             Exception exception)
         {
-            Contract.Ensures(Contract.Result<bool>() == false);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return false;
         }
@@ -183,7 +229,8 @@ namespace vm.Aspects.Model.InMemory
         public bool IsTransient(
             Exception exception)
         {
-            Contract.Ensures(Contract.Result<bool>() == false);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return false;
         }
@@ -197,8 +244,8 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The created entity.</returns>
         public static T CreateEntity<T>() where T : BaseDomainEntity, new()
         {
-            Contract.Requires<InvalidOperationException>(typeof(DomainEntity<long, string>).IsAssignableFrom(typeof(T)), "The repository does not support this type.");
-            Contract.Ensures(Contract.Result<T>() != null);
+            if (!typeof(DomainEntity<long, string>).IsAssignableFrom(typeof(T)))
+                throw new InvalidOperationException("The repository does not support this type.");
 
             return CreateCollections(new T());
         }
@@ -210,9 +257,10 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>System.Object.</returns>
         public static object CreateEntity(Type entityType)
         {
-            Contract.Requires<ArgumentNullException>(entityType != null, nameof(entityType));
-            Contract.Requires<InvalidOperationException>(typeof(DomainEntity<long, string>).IsAssignableFrom(entityType), "The repository does not support this type.");
-            Contract.Ensures(Contract.Result<object>() != null);
+            if (entityType == null)
+                throw new ArgumentNullException(nameof(entityType));
+            if (!typeof(DomainEntity<long, string>).IsAssignableFrom(entityType))
+                throw new InvalidOperationException("The repository does not support this type.");
 
             return CreateCollections(Activator.CreateInstance(entityType));
         }
@@ -224,7 +272,6 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>The created entity.</returns>
         public static T CreateValue<T>() where T : BaseDomainValue, new()
         {
-            Contract.Ensures(Contract.Result<T>() != null);
 
             return CreateCollections(new T());
         }
@@ -236,15 +283,16 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>System.Object.</returns>
         public static object CreateValue(Type valueType)
         {
-            Contract.Requires<ArgumentNullException>(valueType != null, nameof(valueType));
-            Contract.Ensures(Contract.Result<object>() != null);
+            if (valueType == null)
+                throw new ArgumentNullException(nameof(valueType));
 
             return CreateCollections(Activator.CreateInstance(valueType));
         }
 
         static object CreateCollections(object instance)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
 
             foreach (var pi in instance
                                     .GetType()

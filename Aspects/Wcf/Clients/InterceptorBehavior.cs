@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -18,7 +17,8 @@ namespace vm.Aspects.Wcf.Clients
         internal InterceptorBehavior(
             ICallIntercept interceptor)
         {
-            Contract.Requires<ArgumentNullException>(interceptor != null, nameof(interceptor));
+            if (interceptor == null)
+                throw new ArgumentNullException(nameof(interceptor));
 
             _interceptor = interceptor;
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,8 +13,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         DumpScript Add(
             Expression expression1)
         {
-            Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
+            if (expression1 == null)
+                throw new ArgumentNullException(nameof(expression1));
 
             _script.Add(expression1);
             return this;
@@ -25,9 +24,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression expression1,
             Expression expression2)
         {
-            Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
-            Contract.Requires<ArgumentNullException>(expression2 != null, nameof(expression2));
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
+            if (expression1 == null)
+                throw new ArgumentNullException(nameof(expression1));
+            if (expression2 == null)
+                throw new ArgumentNullException(nameof(expression2));
 
             _script.Add(expression1);
             _script.Add(expression2);
@@ -40,10 +40,12 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression expression2,
             Expression expression3)
         {
-            Contract.Requires<ArgumentNullException>(expression1 != null, nameof(expression1));
-            Contract.Requires<ArgumentNullException>(expression2 != null, nameof(expression2));
-            Contract.Requires<ArgumentNullException>(expression3 != null, nameof(expression2));
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
+            if (expression1 == null)
+                throw new ArgumentNullException(nameof(expression1));
+            if (expression2 == null)
+                throw new ArgumentNullException(nameof(expression2));
+            if (expression3 == null)
+                throw new ArgumentNullException(nameof(expression2));
 
             _script.Add(expression1);
             _script.Add(expression2);
@@ -55,21 +57,19 @@ namespace vm.Aspects.Diagnostics.Implementation
         DumpScript Add(
             params Expression[] expressions)
         {
-            Contract.Requires<ArgumentNullException>(expressions != null, nameof(expressions));
-            Contract.Requires<InvalidOperationException>(_script != null, nameof(_script) + " cannot be null.");
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
+            if (expressions == null)
+                throw new ArgumentNullException(nameof(expressions));
+            if (_script == null)
+                throw new InvalidOperationException(nameof(_script) + " cannot be null.");
 
             for (var i = 0; i<expressions.Length; i++)
-            {
                 _script.Add(expressions[i]);
-            }
+
             return this;
         }
 
         DumpScript Close()
         {
-            Contract.Ensures(Contract.Result<DumpScript>() != null);
-
             if (_scripts.Any())
                 throw new InvalidOperationException("Not all scripts were popped from the stack of scripts.");
 
@@ -109,7 +109,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             Add(Expression.Assign(_tempDumpAttribute, Expression.Constant(dumpAttribute)));
             BeginScriptSegment();
@@ -125,7 +126,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             bool dontDumpNulls)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             var blockBody   = EndScriptSegment();
             var isReference = true;
@@ -257,7 +259,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript AddDumpedDelegate(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Add(DumpedDelegate(mi));
         }
@@ -267,7 +270,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript AddDumpedMemberInfo(
             MemberInfo mi)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Add(DumpedMemberInfo(mi));
         }
@@ -281,8 +285,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedBasicValue(mi));
         }
@@ -290,7 +296,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript AddDumpedBasicValue(
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedBasicValue());
         }
@@ -301,7 +308,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             MethodInfo dumpMethod)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Add(CustomDumpPropertyOrField(mi, dumpMethod));
         }
@@ -311,7 +319,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript AddDumpedDictionary(
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedDictionary(Expression.Convert(_instance, typeof(IDictionary)), dumpAttribute));
         }
@@ -320,8 +329,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedDictionary(mi, dumpAttribute));
         }
@@ -331,7 +342,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpScript AddDumpedCollection(
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedCollection(dumpAttribute));
         }
@@ -340,8 +352,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             return Add(DumpedCollection(mi, dumpAttribute));
         }
@@ -352,8 +366,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(mi            != null, nameof(mi));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             var ex = DumpPropertyOrCollectionValue(mi, dumpAttribute);
 
@@ -369,7 +385,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             Type dumpMetadata)
         {
-            Contract.Requires<ArgumentNullException>(mi != null, nameof(mi));
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
 
             return Add(DumpObject(mi, dumpMetadata, _tempDumpAttribute));
         }

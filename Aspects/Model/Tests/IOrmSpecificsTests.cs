@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Model.Repository;
 

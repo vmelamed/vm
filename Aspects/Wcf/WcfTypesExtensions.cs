@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,8 +31,10 @@ namespace vm.Aspects.Wcf
             Type type,
             Func<Type, bool, bool> callback)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentException>(type.IsInterface || type.IsClass, "The parameter must represent either an interface or a class type.");
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!type.IsInterface && !type.IsClass)
+                throw new ArgumentException("The parameter must represent either an interface or a class type.");
 
             // get all operations
             var operations = type.GetMethods()
@@ -78,8 +79,10 @@ namespace vm.Aspects.Wcf
         public static TransferMode RequiredTransferMode(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentException>(type.IsInterface || type.IsClass, "The parameter must represent either an interface or a class type.");
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!type.IsInterface && !type.IsClass)
+                throw new ArgumentException("The parameter must represent either an interface or a class type.");
 
             var transferMode = TransferMode.Buffered;
 
@@ -142,8 +145,10 @@ namespace vm.Aspects.Wcf
         public static bool RequiresStreaming(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentException>(type.IsInterface || type.IsClass, "The parameter must represent either an interface or a class type.");
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!type.IsInterface && !type.IsClass)
+                throw new ArgumentException("The parameter must represent either an interface or a class type.");
 
             return type.RequiredTransferMode() != TransferMode.Buffered;
         }
@@ -157,7 +162,8 @@ namespace vm.Aspects.Wcf
         public static string GetServiceResolveName(
             this Type serviceType)
         {
-            Contract.Requires<ArgumentNullException>(serviceType != null, nameof(serviceType));
+            if (serviceType == null)
+                throw new ArgumentNullException(nameof(serviceType));
 
             var serviceDIBehaviorAttribute = serviceType.GetCustomAttribute<DIBehaviorAttribute>(false);
 
@@ -175,7 +181,8 @@ namespace vm.Aspects.Wcf
         public static string GetMessagingPattern(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return type.GetCustomAttribute<MessagingPatternAttribute>(false)?.Name;
         }
@@ -227,7 +234,6 @@ namespace vm.Aspects.Wcf
         public static Task DisposeCommunicationObjectAsync(
             this ICommunicationObject co)
         {
-            Contract.Ensures(Contract.Result<Task>() != null);
 
             if (co == null)
                 return Task.FromResult(true);

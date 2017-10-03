@@ -9,10 +9,9 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -33,8 +32,7 @@ namespace vm.Aspects.Model.EFRepository
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will own it.")]
         public static ContainerRegistrar Registrar<T>() where T : EFRepositoryBase
         {
-            Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
-
+            
             return new EFRepositoryBaseRegistrar<T>();
         }
 
@@ -51,6 +49,11 @@ namespace vm.Aspects.Model.EFRepository
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 DoRegisterCommon(container, registrations, false);
             }
 
@@ -59,6 +62,11 @@ namespace vm.Aspects.Model.EFRepository
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 DoRegisterCommon(container, registrations, true);
 
                 var clock = ServiceLocator.Current.GetInstance<IClock>() as TestClock;

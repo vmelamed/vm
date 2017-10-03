@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,8 +88,10 @@ namespace vm.Aspects.Cache
             Func<T> objectFactory,
             bool lazy = true)
         {
-            Contract.Requires<ArgumentException>(poolSize > 0, "The pool size must be a positive number.");
-            Contract.Requires<ArgumentNullException>(objectFactory != null, nameof(objectFactory));
+            if (poolSize <= 0)
+                throw new ArgumentException("The pool size must be a positive number.");
+            if (objectFactory == null)
+                throw new ArgumentNullException(nameof(objectFactory));
 
             Initialize(poolSize, objectFactory, lazy);
         }
@@ -113,11 +114,12 @@ namespace vm.Aspects.Cache
             Func<T> objectFactory,
             bool lazy = true)
         {
-            Contract.Requires<ArgumentException>(poolSize > 0, "The pool size must be a positive number.");
-            Contract.Requires<ArgumentNullException>(objectFactory != null, nameof(objectFactory));
-            Contract.Requires<InvalidOperationException>(!IsInitialized, "The pool is already initialized.");
-            Contract.Ensures(Contract.Result<ObjectPool<T>>() != null);
-            Contract.Ensures(Contract.Result<ObjectPool<T>>() == this);
+            if (poolSize <= 0)
+                throw new ArgumentException("The pool size must be a positive number.");
+            if (objectFactory == null)
+                throw new ArgumentNullException(nameof(objectFactory));
+            if (IsInitialized)
+                throw new InvalidOperationException("The pool is already initialized.");
 
             lock (_sync)
             {
@@ -148,28 +150,12 @@ namespace vm.Aspects.Cache
         /// Gets the number of immediately available instances. Use for testing only.
         /// The number is not reliable depending on 2 factors: the laziness of the pool and the number of concurrent clients.
         /// </summary>
-        internal int AvailableInstances
-        {
-            get
-            {
-                Contract.Requires<InvalidOperationException>(IsInitialized, "The pool is not initialized.");
-
-                return _freeObjects.Count();
-            }
-        }
+        internal int AvailableInstances => _freeObjects.Count();
 
         /// <summary>
         /// Gets the size of the pool.
         /// </summary>
-        public int PoolSize
-        {
-            get
-            {
-                Contract.Requires<InvalidOperationException>(IsInitialized, "The pool is not initialized.");
-
-                return _poolSize;
-            }
-        }
+        public int PoolSize => _poolSize;
 
         /// <summary>
         /// Lends an object from the pool to the caller.
@@ -178,8 +164,10 @@ namespace vm.Aspects.Cache
         public LentObject<T> LendObject(
             int waitMilliseconds = Timeout.Infinite)
         {
-            Contract.Requires<ArgumentException>(waitMilliseconds >= -1, "The timeout must be greater or equal to -1 (infinite).");
-            Contract.Requires<InvalidOperationException>(IsInitialized, "The object pool is not initialized.");
+            if (waitMilliseconds < -1)
+                throw new ArgumentException("The timeout must be greater or equal to -1 (infinite).");
+            if (!IsInitialized)
+                throw new InvalidOperationException("The object pool is not initialized.");
 
             if (!_semaphore.Wait(waitMilliseconds))
                 return null;
@@ -205,9 +193,10 @@ namespace vm.Aspects.Cache
             int waitMilliseconds = Timeout.Infinite,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            Contract.Requires<ArgumentException>(waitMilliseconds >= -1, "The timeout must be greater or equal to -1 (infinite).");
-            Contract.Requires<InvalidOperationException>(IsInitialized, "The object pool is not initialized.");
-            Contract.Ensures(Contract.Result<Task<LentObject<T>>>() != null);
+            if (waitMilliseconds < -1)
+                throw new ArgumentException("The timeout must be greater or equal to -1 (infinite).");
+            if (!IsInitialized)
+                throw new InvalidOperationException("The object pool is not initialized.");
 
             if (!await _semaphore.WaitAsync(waitMilliseconds, cancellationToken))
                 return null;
@@ -231,11 +220,12 @@ namespace vm.Aspects.Cache
         internal ObjectPool<T> ReturnObject(
             LentObject<T> lentObject)
         {
-            Contract.Requires<ArgumentNullException>(lentObject != null, nameof(lentObject));
-            Contract.Requires<InvalidOperationException>(lentObject.Pool == this, "The object was not lent from this pool.");
-            Contract.Requires<InvalidOperationException>(IsInitialized, "The object pool is not initialized.");
-            Contract.Ensures(Contract.Result<ObjectPool<T>>() != null);
-            Contract.Ensures(Contract.Result<ObjectPool<T>>() == this);
+            if (lentObject == null)
+                throw new ArgumentNullException(nameof(lentObject));
+            if (lentObject.Pool != this)
+                throw new InvalidOperationException("The object was not lent from this pool.");
+            if (!IsInitialized)
+                throw new InvalidOperationException("The object pool is not initialized.");
 
             lock (_sync)
             {

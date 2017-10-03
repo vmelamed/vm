@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -141,7 +140,8 @@ namespace vm.Aspects.Diagnostics
             BindingFlags propertiesBindingFlags = BindingFlags.Default,
             BindingFlags fieldsBindingFlags = BindingFlags.Default)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (writer.GetType() == typeof(StringWriter))
             {
@@ -184,9 +184,6 @@ namespace vm.Aspects.Diagnostics
             Type dumpMetadata = null,
             DumpAttribute dumpAttribute = null)
         {
-            Contract.Ensures(Contract.OldValue(_indentLevel) == _indentLevel, "The indent level was not preserved.");
-            Contract.Ensures(Contract.Result<ObjectTextDumper>() != null);
-
             var originalIndentLevel = _indentLevel;
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission     = false;
@@ -384,8 +381,10 @@ namespace vm.Aspects.Diagnostics
             DumpState state,
             Stack<DumpState> statesWithRemainingProperties)
         {
-            Contract.Requires<ArgumentNullException>(state                         != null, nameof(state));
-            Contract.Requires<ArgumentNullException>(statesWithRemainingProperties != null, nameof(statesWithRemainingProperties));
+            if (state == null)
+                throw new ArgumentNullException(nameof(state));
+            if (statesWithRemainingProperties == null)
+                throw new ArgumentNullException(nameof(statesWithRemainingProperties));
 
             if (state.DumpedDelegate()    ||
                 state.DumpedMemberInfo()  ||
@@ -433,8 +432,10 @@ namespace vm.Aspects.Diagnostics
             Stack<DumpState> statesWithRemainingProperties,
             Queue<DumpState> statesWithTailProperties)
         {
-            Contract.Requires<ArgumentNullException>(statesWithRemainingProperties != null, nameof(statesWithRemainingProperties));
-            Contract.Requires<ArgumentNullException>(statesWithTailProperties      != null, nameof(statesWithTailProperties));
+            if (statesWithRemainingProperties == null)
+                throw new ArgumentNullException(nameof(statesWithRemainingProperties));
+            if (statesWithTailProperties == null)
+                throw new ArgumentNullException(nameof(statesWithTailProperties));
 
             bool isTailProperty;
 
@@ -473,7 +474,8 @@ namespace vm.Aspects.Diagnostics
         static void DumpTailProperties(
             IEnumerable<DumpState> statesWithTailProperties)
         {
-            Contract.Requires<ArgumentNullException>(statesWithTailProperties != null, nameof(statesWithTailProperties));
+            if (statesWithTailProperties == null)
+                throw new ArgumentNullException(nameof(statesWithTailProperties));
 
             foreach (var state in statesWithTailProperties)
                 using (state)
@@ -535,16 +537,5 @@ namespace vm.Aspects.Diagnostics
                 Writer.Dispose();
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(Writer!=null, "The text writer cannot be null at any time.");
-            Contract.Invariant(_indentSize>=0, "The length of the indent cannot be negative.");
-            Contract.Invariant(_indentLevel>=0, "The the indent level cannot be negative.");
-            Contract.Invariant(DumpedObjects!=null);
-        }
     }
 }

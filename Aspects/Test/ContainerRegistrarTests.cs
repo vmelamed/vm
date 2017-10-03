@@ -1,7 +1,8 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
+using Unity;
 
 namespace vm.Aspects.Tests
 {
@@ -81,6 +82,11 @@ namespace vm.Aspects.Tests
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 _ranRegistration = true;
             }
 
@@ -88,6 +94,11 @@ namespace vm.Aspects.Tests
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 _ranTestRegistration = true;
             }
         }

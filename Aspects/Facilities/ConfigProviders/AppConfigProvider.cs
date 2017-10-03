@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace vm.Aspects.Facilities
 {
@@ -13,6 +14,15 @@ namespace vm.Aspects.Facilities
         /// </summary>
         /// <param name="settingName">Name of the setting.</param>
         /// <returns>System.String.</returns>
-        public string this[string settingName] => ConfigurationManager.AppSettings[settingName];
+        public string this[string settingName]
+        {
+            get
+            {
+                if (settingName.IsNullOrWhiteSpace())
+                    throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(settingName));
+
+                return ConfigurationManager.AppSettings[settingName];
+            }
+        }
     }
 }

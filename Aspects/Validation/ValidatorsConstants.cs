@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects.Validation
 {
     /// <summary>
@@ -16,9 +14,10 @@ namespace vm.Aspects.Validation
         public static IComparable GetZero(
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentException>(typeof(IComparable).IsAssignableFrom(type), "The type does not implement IComparable.");
-            Contract.Ensures(Contract.Result<IComparable>() != null);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!typeof(IComparable).IsAssignableFrom(type))
+                throw new ArgumentException("The type does not implement IComparable.");
 
             switch (Type.GetTypeCode(type))
             {

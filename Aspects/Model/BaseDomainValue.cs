@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
@@ -30,8 +29,7 @@ namespace vm.Aspects.Model
             string ruleset = "",
             ValidationResults results = null)
         {
-            Contract.Ensures(Contract.Result<ValidationResults>() != null);
-
+            
             var validator = Facility.ValidatorFactory
                                     .CreateValidator(GetType(), ruleset);
 
@@ -91,8 +89,7 @@ namespace vm.Aspects.Model
         public string ToString(
             int indentLevel)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
-
+            
             return this.DumpString(indentLevel);
         }
 
@@ -104,8 +101,7 @@ namespace vm.Aspects.Model
         /// </returns>
         public override string ToString()
         {
-            Contract.Ensures(Contract.Result<string>() != null);
-
+            
             return this.ToString(0);
         }
     }

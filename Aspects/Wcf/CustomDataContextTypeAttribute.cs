@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Wcf.Clients;
 
 namespace vm.Aspects.Wcf
@@ -30,7 +29,8 @@ namespace vm.Aspects.Wcf
         /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="customDataContextType"/> is <see langword="null"/></exception>
         public CustomDataContextTypeAttribute(Type customDataContextType)
         {
-            Contract.Requires<ArgumentNullException>(customDataContextType != null, nameof(customDataContextType));
+            if (customDataContextType == null)
+                throw new ArgumentNullException(nameof(customDataContextType));
 
             CustomDataContextType = customDataContextType;
         }

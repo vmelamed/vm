@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 
@@ -118,7 +117,6 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
 
             var provider = this as IStoreUniqueId<TId>;
 
@@ -133,6 +131,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         long IStoreUniqueId<long>.GetNewId<T>(
             IRepository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -145,6 +146,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -158,6 +164,9 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         int IStoreUniqueId<int>.GetNewId<T>(
             IRepository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -176,6 +185,11 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
             var efRepository = repository as EFRepositoryBase;
 
             if (efRepository == null)
@@ -195,6 +209,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         Guid IStoreUniqueId<Guid>.GetNewId<T>(
             IRepository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
             if (!(repository is EFRepositoryBase))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
@@ -205,6 +221,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             IRepository repository)
         {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
             if (!(repository is EFRepositoryBase))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
@@ -214,7 +234,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 
         long DoGetNew<T>(EFRepositoryBase efRepository)
         {
-            Contract.Requires<ArgumentNullException>(efRepository != null, nameof(efRepository));
+            if (efRepository == null)
+                throw new ArgumentNullException(nameof(efRepository));
 
             long id = -1L;
             HiLoIdentityGenerator generator;
@@ -241,8 +262,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             Type objectsType,
             EFRepositoryBase efRepository)
         {
-            Contract.Requires<ArgumentNullException>(objectsType != null, nameof(objectsType));
-            Contract.Requires<ArgumentNullException>(efRepository != null, nameof(efRepository));
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (efRepository == null)
+                throw new ArgumentNullException(nameof(efRepository));
 
             long id = -1L;
             HiLoIdentityGenerator generator;
@@ -269,10 +292,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         HiLoIdentityGenerator GetOrCreateFreshGenerator(
             string entitySetName)
         {
-            Contract.Requires<ArgumentNullException>(entitySetName != null, nameof(entitySetName));
-            Contract.Requires<ArgumentException>(entitySetName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(entitySetName)+" cannot be empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<HiLoIdentityGenerator>() != null);
+            if (entitySetName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(entitySetName));
 
             HiLoIdentityGenerator generator;
 

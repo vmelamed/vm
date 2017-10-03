@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects.Model.Repository
 {
     /// <summary>
@@ -8,7 +6,6 @@ namespace vm.Aspects.Model.Repository
     /// E.g. usually represents obtaining a DB primary key for the specified type.
     /// </summary>
     /// <typeparam name="TId">The type of the store unique identifier.</typeparam>
-    [ContractClass(typeof(IStoreUniqueIdContract<>))]
     public interface IStoreUniqueId<TId> where TId : IEquatable<TId>
     {
         /// <summary>
@@ -27,26 +24,4 @@ namespace vm.Aspects.Model.Repository
         /// <returns>A new unused value for unique store identifier in the store sequence.</returns>
         TId GetNewId(Type objectsType, IRepository repository);
     }
-
-    #region IStoreUniqueId<TId> contract binding
-    [ContractClassFor(typeof(IStoreUniqueId<>))]
-    abstract class IStoreUniqueIdContract<TId> : IStoreUniqueId<TId> where TId : IEquatable<TId>
-    {
-        public TId GetNewId<T>(IRepository repository) where T : IHasStoreId<TId>
-        {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-
-            throw new NotImplementedException();
-        }
-
-        public TId GetNewId(Type objectsType, IRepository repository)
-        {
-            Contract.Requires<ArgumentNullException>(repository  != null, nameof(repository));
-            Contract.Requires<ArgumentNullException>(objectsType != null, nameof(objectsType));
-
-            throw new NotImplementedException();
-        }
-    }
-    #endregion
-
 }

@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure.MappingViews;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Facilities;
@@ -34,7 +33,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
             string connectionString)
             : base(connectionString)
         {
-            Contract.Requires<ArgumentException>(connectionString != null  &&  connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (connectionString.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(connectionString));
         }
 
         /// <summary>
@@ -48,7 +48,8 @@ namespace vm.Aspects.Model.EFRepository.Tests
             IStoreIdProvider storeIdProvider = null)
             : base(connectionString, storeIdProvider)
         {
-            Contract.Requires<ArgumentException>(connectionString != null  &&  connectionString.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(connectionString)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (connectionString.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(connectionString));
         }
         #endregion
 
@@ -103,11 +104,11 @@ namespace vm.Aspects.Model.EFRepository.Tests
 
         void EnsureChangeTrackingProxyEntities()
         {
-            if (!IsChangeTrackingProxy<TestXEntity>(e => { e.Id = GetStoreId<TestXEntity, long>(); e.Name = "TestXEntity.IsChangeTrackingProxy"; }) |
-                !IsChangeTrackingProxy<TestEntity>(e => { e.Id = GetStoreId<TestEntity, long>(); e.Name = "TestEntity.IsChangeTrackingProxy"; })  |
-                !IsChangeTrackingProxy<TestEntity1>(e => { e.Id = GetStoreId<TestEntity1, long>(); e.Name = "TestEntity1.IsChangeTrackingProxy"; }) |
-                !IsChangeTrackingProxy<TestEntity2>(e => { e.Id = GetStoreId<TestEntity2, long>(); e.Name = "TestEntity2.IsChangeTrackingProxy"; }) |
-                !IsChangeTrackingProxy<TestValue>(v => { v.Id = GetStoreId<TestValue, long>(); v.Name = "TestValue.IsChangeTrackingProxy"; }))
+            if (!IsChangeTrackingProxy<TestXEntity>(e => { e.Name = "TestXEntity.IsChangeTrackingProxy"; }) |
+                !IsChangeTrackingProxy<TestEntity>(e => { e.Name = "TestEntity.IsChangeTrackingProxy"; })  |
+                !IsChangeTrackingProxy<TestEntity1>(e => { e.Name = "TestEntity1.IsChangeTrackingProxy"; }) |
+                !IsChangeTrackingProxy<TestEntity2>(e => { e.Name = "TestEntity2.IsChangeTrackingProxy"; }) |
+                !IsChangeTrackingProxy<TestValue>(v => { v.Name = "TestValue.IsChangeTrackingProxy"; }))
                 Debug.WriteLine(
 @"Requirements for a type to be change tracking proxy:
     1. The class must be public and not sealed.

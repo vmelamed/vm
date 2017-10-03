@@ -14,8 +14,8 @@ namespace vm.Aspects.Model.EFRepository
     using Facilities;
     using Facilities.Diagnostics;
     using Microsoft.Practices.ServiceLocation;
-    using Microsoft.Practices.Unity;
     using Threading;
+    using Unity;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;
 
@@ -166,9 +166,15 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>Unique ID value.</returns>
         public TId GetStoreId<TId>(
             Type objectsType)
-            where TId : IEquatable<TId> => StoreIdProvider
-                                                .GetProvider<TId>()
-                                                .GetNewId(objectsType, this);
+            where TId : IEquatable<TId>
+        {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+
+            return StoreIdProvider
+                        .GetProvider<TId>()
+                        .GetNewId(objectsType, this);
+        }
 
         /// <summary>
         /// Creates an entity of type <typeparamref name="T"/>.
@@ -185,7 +191,12 @@ namespace vm.Aspects.Model.EFRepository
         /// <param name="entityType">Type of the entity.</param>
         /// <returns>The created entity.</returns>
         public BaseDomainEntity CreateEntity(Type entityType)
-            => Set(entityType).Create() as BaseDomainEntity;
+        {
+            if (entityType == null)
+                throw new ArgumentNullException(nameof(entityType));
+
+            return Set(entityType).Create() as BaseDomainEntity;
+        }
 
         /// <summary>
         /// Creates a value object of type <typeparamref name="T"/>.
@@ -201,7 +212,12 @@ namespace vm.Aspects.Model.EFRepository
         /// <param name="valueType">Type of the value.</param>
         /// <returns>The created value.</returns>
         public BaseDomainValue CreateValue(Type valueType)
-            => Set(valueType).Create() as BaseDomainValue;
+        {
+            if (valueType == null)
+                throw new ArgumentNullException(nameof(valueType));
+
+            return Set(valueType).Create() as BaseDomainValue;
+        }
 
         /// <summary>
         /// Adds a new entity of <typeparamref name="T" /> to the repository.
@@ -214,6 +230,11 @@ namespace vm.Aspects.Model.EFRepository
         /// <exception cref="System.ArgumentNullException">entity</exception>
         public IRepository Add<T>(T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+
             Set<T>().Add(entity);
             return this;
         }
@@ -228,6 +249,11 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository AttachEntity<T>(T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+
             Set<T>().Attach(entity);
             return this;
         }
@@ -249,6 +275,14 @@ namespace vm.Aspects.Model.EFRepository
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
         {
+
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (!entity.HasIdentity)
+                throw new InvalidOperationException("The entity must have identity before it is added to the repository.");
+            if (modifiedProperties == null)
+                throw new ArgumentNullException(nameof(modifiedProperties));
+
             Set<T>().Add(entity);
 
             var entry = ChangeTracker.Entries<T>()
@@ -276,6 +310,9 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository AttachValue<T>(T value) where T : BaseDomainValue
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             Set<T>().Attach(value);
             return this;
         }
@@ -297,6 +334,11 @@ namespace vm.Aspects.Model.EFRepository
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainValue
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (modifiedProperties == null)
+                throw new ArgumentNullException(nameof(modifiedProperties));
+
             Set<T>().Add(value);
 
             var entry = ChangeTracker.Entries<T>()
@@ -324,6 +366,9 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository DetachEntity<T>(T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
             ObjectContext.Detach(entity);
             return this;
         }
@@ -338,6 +383,9 @@ namespace vm.Aspects.Model.EFRepository
         /// </returns>
         public IRepository DetachValue<T>(T value) where T : BaseDomainValue
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             ObjectContext.Detach(value);
             return this;
         }
@@ -381,6 +429,9 @@ namespace vm.Aspects.Model.EFRepository
         public IRepository DeleteEntity<T>(
             T entity) where T : BaseDomainEntity
         {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
             try
             {
                 Set<T>().Remove(entity);
@@ -408,6 +459,9 @@ namespace vm.Aspects.Model.EFRepository
         public IRepository DeleteValue<T>(
             T value) where T : BaseDomainValue
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             try
             {
                 Set<T>().Remove(value);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Core.Objects;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace vm.Aspects.Model.EFRepository
@@ -21,8 +20,10 @@ namespace vm.Aspects.Model.EFRepository
             this ObjectContext context,
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
-            Contract.Requires<ArgumentNullException>(type    != null, nameof(type));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             for (var t = type; t != typeof(object); t = t.BaseType)
             {
@@ -54,7 +55,8 @@ namespace vm.Aspects.Model.EFRepository
         public static string GetEntitySetName<T>(
             this ObjectContext context)
         {
-            Contract.Requires<ArgumentNullException>(context != null, nameof(context));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             for (var t = typeof(T); t != typeof(object); t = t.BaseType)
             {

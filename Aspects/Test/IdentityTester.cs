@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Diagnostics.Contracts;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests
 {
@@ -42,20 +41,33 @@ namespace vm.Aspects.Tests
             T obj4,
             params Action<T>[] modifyingMethods)
         {
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj1, null), nameof(obj1));
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj2, null), nameof(obj2));
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj3, null), nameof(obj3));
-            Contract.Requires<ArgumentNullException>(!ReferenceEquals(obj4, null), nameof(obj4));
-            Contract.Requires<ArgumentNullException>(modifyingMethods != null, nameof(modifyingMethods));
-            Contract.Requires<ArgumentException>(modifyingMethods.Length!=0, "modifyingMethods must not be empty.");
-            Contract.Requires<ArgumentException>(modifyingMethods.All(m => m!=null), "modifyingMethods cannot contain null delegates.");
+            if (ReferenceEquals(obj1, null))
+                throw new ArgumentNullException(nameof(obj1));
+            if (ReferenceEquals(obj2, null))
+                throw new ArgumentNullException(nameof(obj2));
+            if (ReferenceEquals(obj3, null))
+                throw new ArgumentNullException(nameof(obj3));
+            if (ReferenceEquals(obj4, null))
+                throw new ArgumentNullException(nameof(obj4));
 
-            Contract.Requires<ArgumentException>(!ReferenceEquals(obj1, obj2), "The arguments obj1 and obj2 must be different instances considered to be equal.");
-            Contract.Requires<ArgumentException>(!ReferenceEquals(obj2, obj3), "The arguments obj2 and obj3 must be different instances considered to be equal.");
-            Contract.Requires<ArgumentException>(!ReferenceEquals(obj3, obj4), "The arguments obj3 and obj4 must be different instances considered not to be equal.");
+            if (modifyingMethods == null)
+                throw new ArgumentNullException(nameof(modifyingMethods));
+            if (modifyingMethods.Length == 0)
+                throw new ArgumentNullException("modifyingMethods must not be empty.");
+            if (modifyingMethods.Any(m => m == null))
+                throw new ArgumentException("modifyingMethods cannot contain null delegates.");
 
-            Contract.Requires<ArgumentException>(obj1.Equals(obj2) && obj2.Equals(obj3), "The arguments obj1, obj2 and obj3 should be considered equal.");
-            Contract.Requires<ArgumentException>(!obj1.Equals(obj4), "The arguments obj1 and obj4 should be considered not equal.");
+            if (ReferenceEquals(obj1, obj2))
+                throw new ArgumentException("The arguments obj1 and obj2 must be different instances considered to be equal.");
+            if (ReferenceEquals(obj2, obj3))
+                throw new ArgumentException("The arguments obj2 and obj3 must be different instances considered to be equal.");
+            if (ReferenceEquals(obj3, obj4))
+                throw new ArgumentException("The arguments obj3 and obj4 must be different instances considered to be equal.");
+
+            if (!obj1.Equals(obj2) || !obj2.Equals(obj3))
+                throw new ArgumentException("The arguments obj1, obj2 and obj3 should be considered equal.");
+            if (obj1.Equals(obj4))
+                throw new ArgumentException("The arguments obj1 and obj4 should be considered not equal.");
 
             _obj1 = obj1;
             _obj2 = obj2;

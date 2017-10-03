@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
@@ -13,8 +11,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             object instance,
             string property)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentException>(property != null  &&  property.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(property)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (property.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(property));
 
             Instance = instance;
             Property = property;

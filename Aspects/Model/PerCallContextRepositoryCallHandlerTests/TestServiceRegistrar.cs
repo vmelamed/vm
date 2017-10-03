@@ -1,8 +1,9 @@
-﻿using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net;
+using Unity;
+using Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -23,6 +24,11 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 InitializeObjectDumper();
 
                 container
@@ -44,7 +50,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
                                             new InjectionProperty(
                                                 nameof(ServiceExceptionHandlingCallHandler.ExceptionHandlingPolicyName),
                                                 ServiceFaultFromExceptionHandlingPolicies.PolicyName))
-                                                //ExceptionPolicyProvider.LogAndSwallowPolicyName))
+                        //ExceptionPolicyProvider.LogAndSwallowPolicyName))
                         .AddCallHandler<ServiceCallTraceCallHandler>(
                                             new ContainerControlledLifetimeManager(),
                                             new InjectionConstructor(Facility.LogWriter))

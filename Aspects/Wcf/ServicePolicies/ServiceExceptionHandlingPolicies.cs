@@ -7,7 +7,6 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -58,8 +57,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             int eventId,
             string logExceptionTitle = LogExceptionTitle)
         {
-            Contract.Ensures(Contract.Result<ExceptionPolicyEntry>() != null);
-
+            
             return new ExceptionPolicyEntry(
                             typeof(TException),
                             PostHandlingAction.ThrowNewException,

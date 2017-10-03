@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -26,7 +25,8 @@ namespace vm.Aspects.Wcf
         public static string GetAuthorizationToken(
             this OperationContext operationContext)
         {
-            Contract.Requires<ArgumentNullException>(operationContext != null, nameof(operationContext));
+            if (operationContext == null)
+                throw new ArgumentNullException(nameof(operationContext));
 
             var authorizationHeader = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Authorization];
 
@@ -50,8 +50,10 @@ namespace vm.Aspects.Wcf
             this OperationContext operationContext,
             IEnumerable<Claim> claims)
         {
-            Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
-            Contract.Requires<ArgumentNullException>(claims != null, nameof(claims));
+            if (operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties == null)
+                throw new ArgumentNullException(nameof(operationContext));
+            if (claims == null)
+                throw new ArgumentNullException(nameof(claims));
 
             operationContext.SetPrincipal(new ClaimsPrincipal(new ClaimsIdentity[] { new ClaimsIdentity(claims) }));
         }
@@ -65,8 +67,10 @@ namespace vm.Aspects.Wcf
             this OperationContext operationContext,
             IPrincipal principal)
         {
-            Contract.Requires<ArgumentNullException>(operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties != null, nameof(operationContext));
-            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
+            if (operationContext?.ServiceSecurityContext?.AuthorizationContext?.Properties == null)
+                throw new ArgumentNullException(nameof(operationContext));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
 
             var properties = operationContext.ServiceSecurityContext.AuthorizationContext.Properties;
 

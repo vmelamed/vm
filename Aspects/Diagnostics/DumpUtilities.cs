@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
@@ -35,8 +34,8 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Ensures(Contract.Result<TextWriter>() != null);
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             var dumpWriter = writer as DumpTextWriter;
 
@@ -71,8 +70,8 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Ensures(Contract.Result<TextWriter>() != null);
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             var dumpWriter = writer as DumpTextWriter;
 

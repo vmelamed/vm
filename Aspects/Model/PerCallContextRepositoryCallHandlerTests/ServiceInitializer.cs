@@ -1,7 +1,6 @@
 ﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using Unity;
 using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -20,7 +19,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             [Dependency("transient")]
             IRepository repository)
         {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             _repository = repository;
         }

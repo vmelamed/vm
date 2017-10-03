@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.ServiceModel;
-using vm.Aspects.Wcf.Bindings;
 using System;
-using System.Diagnostics.Contracts;
+using System.Collections.Generic;
 using System.IdentityModel.Claims;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Channels;
 using vm.Aspects.Wcf;
@@ -38,9 +34,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(endpointConfigurationName, remoteAddress, messagingPattern)
         {
-            Contract.Requires<ArgumentException>(
-                (endpointConfigurationName!=null && endpointConfigurationName.Length > 0 && endpointConfigurationName.Any(c => !char.IsWhiteSpace(c)))  ||
-                (remoteAddress!=null && remoteAddress.Length > 0 && remoteAddress.Any(c => !char.IsWhiteSpace(c))), "At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
+            if (endpointConfigurationName.IsNullOrWhiteSpace()  &&  remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
         }
 
         /// <summary>
@@ -68,11 +63,10 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(remoteAddress, identityType, identity, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
+            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
+                throw new ArgumentException("Invalid combination of identity parameters.");
         }
 
         /// <summary>
@@ -95,12 +89,12 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(remoteAddress, identityType, certificate, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
+            if (identityType != ServiceIdentity.None  &&  !((identityType == ServiceIdentity.Dns  ||
+                                                             identityType == ServiceIdentity.Rsa  ||
+                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
+                throw new ArgumentException("Invalid combination of identity parameters.");
         }
 
         /// <summary>
@@ -119,9 +113,8 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(remoteAddress, identityClaim, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
         }
 
         /// <summary>
@@ -151,12 +144,14 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(binding, remoteAddress, identityType, identity, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || identityType == ServiceIdentity.Certificate ||
-                                                 (identity!=null && identity.Length > 0 && identity.Any(c => !char.IsWhiteSpace(c))), "Invalid combination of identity parameters.");
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
+            if (identityType != ServiceIdentity.None &&
+                identityType != ServiceIdentity.Certificate &&
+                identity.IsNullOrWhiteSpace())
+                throw new ArgumentException("Invalid combination of identity parameters.");
         }
 
         /// <summary>
@@ -181,13 +176,14 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(binding, remoteAddress, identityType, certificate, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && certificate!=null, "Invalid combination of identity parameters.");
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
+            if (identityType != ServiceIdentity.None  &&  !((identityType == ServiceIdentity.Dns  ||
+                                                             identityType == ServiceIdentity.Rsa  ||
+                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
+                throw new ArgumentException("Invalid combination of identity parameters.");
         }
 
         /// <summary>
@@ -208,32 +204,27 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             string messagingPattern = null)
             : base(binding, remoteAddress, identityClaim, messagingPattern)
         {
-            Contract.Requires<ArgumentNullException>(binding != null, nameof(binding));
-            Contract.Requires<ArgumentNullException>(remoteAddress!=null, nameof(remoteAddress));
-            Contract.Requires<ArgumentException>(remoteAddress.Length > 0, "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(remoteAddress.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(remoteAddress)+" cannot be empty or consist of whitespace characters only.");
+            if (binding == null)
+                throw new ArgumentNullException(nameof(binding));
+            if (remoteAddress.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
         }
         #endregion
 
         #region ITestService implementation
-        public void AddNewEntity(
-            ) => Proxy.AddNewEntity();
+        public void AddNewEntity() => Proxy.AddNewEntity();
 
-        public void UpdateEntities(
-            ) => Proxy.UpdateEntities();
+        public void UpdateEntities() => Proxy.UpdateEntities();
 
-        public int CountOfEntities(
-            ) => Proxy.CountOfEntities();
+        public int CountOfEntities() => Proxy.CountOfEntities();
 
-        public int CountOfValues(
-            ) => Proxy.CountOfValues();
+        public int CountOfValues() => Proxy.CountOfValues();
 
         public ICollection<Entity> GetEntities(
             int skip,
             int take) => Proxy.GetEntities(skip, take);
 
-        public EntitiesAndValuesCountsDto GetCounts(
-            ) => Proxy.GetCounts();
+        public EntitiesAndValuesCountsDto GetCounts() => Proxy.GetCounts();
         #endregion
     }
 }

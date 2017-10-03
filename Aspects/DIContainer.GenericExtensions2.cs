@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects
 {
@@ -52,11 +51,13 @@ namespace vm.Aspects
             IDictionary<RegistrationLookup, ContainerRegistration> registrations,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(T), injectionMembers);
         }
 
@@ -106,11 +107,13 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(T), lifetimeManager, injectionMembers);
         }
 
@@ -160,11 +163,13 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(T), name, injectionMembers);
         }
 
@@ -217,11 +222,13 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(T), name, lifetimeManager, injectionMembers);
         } 
         #endregion
@@ -272,11 +279,13 @@ namespace vm.Aspects
             IDictionary<RegistrationLookup, ContainerRegistration> registrations,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), injectionMembers);
         }
 
@@ -328,11 +337,13 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), lifetimeManager, injectionMembers);
         }
 
@@ -384,11 +395,13 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), name, injectionMembers);
         }
 
@@ -443,11 +456,13 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), name, lifetimeManager, injectionMembers);
         } 
         #endregion
@@ -496,11 +511,13 @@ namespace vm.Aspects
             IDictionary<RegistrationLookup, ContainerRegistration> registrations,
             T instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            
             return container.RegisterInstanceIfNot(registrations, typeof(T), instance);
         }
 
@@ -549,12 +566,15 @@ namespace vm.Aspects
             T instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             return container.RegisterInstanceIfNot(registrations, typeof(T), instance, lifetimeManager);
         }
 
@@ -603,11 +623,13 @@ namespace vm.Aspects
             string name,
             T instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            
             return container.RegisterInstanceIfNot(registrations, typeof(T), name, instance);
         }
 
@@ -659,12 +681,15 @@ namespace vm.Aspects
             T instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             return container.RegisterInstanceIfNot(registrations, typeof(T), name, instance, lifetimeManager);
         } 
         #endregion

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace vm.Aspects.Exceptions
 {
@@ -118,11 +113,12 @@ namespace vm.Aspects.Exceptions
         /// <param name="info">The serialization info.</param>
         /// <param name="context">The streaming context.</param>
         protected ObjectNotFoundException(
-            SerializationInfo info, 
+            SerializationInfo info,
             StreamingContext context)
             : base(info, context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
         }
         #endregion
     }

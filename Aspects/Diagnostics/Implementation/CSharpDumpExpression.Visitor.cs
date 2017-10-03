@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -186,7 +185,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         void VisitElementInits(
             ReadOnlyCollection<ElementInit> elementInits)
         {
-            Contract.Requires<ArgumentNullException>(elementInits != null, nameof(elementInits));
+            if (elementInits == null)
+                throw new ArgumentNullException(nameof(elementInits));
 
             _writer.WriteLine();
             _writer.WriteLine('{');
@@ -547,7 +547,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         void VisitThenOrElse(
             Expression node)
         {
-            Contract.Requires<ArgumentNullException>(node != null, nameof(node));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
 
             NewLine();
             if (node.NodeType != ExpressionType.Block  &&
@@ -728,7 +729,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         string GetTypeName(
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             var s = type.GetTypeName(ShortenNamesOfGeneratedClasses);
 

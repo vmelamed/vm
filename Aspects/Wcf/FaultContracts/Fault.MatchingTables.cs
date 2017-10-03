@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -30,8 +29,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Type GetFaultTypeForException(
             Type exceptionType)
         {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be an exception type.");
+            if (exceptionType == null)
+                throw new ArgumentNullException(nameof(exceptionType));
+            if (!typeof(Exception).IsAssignableFrom(exceptionType))
+                throw new ArgumentException("The argument must be an exception type.");
 
             Type faultType;
 
@@ -49,8 +50,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Type GetExceptionTypeForFault(
             Type faultType)
         {
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be a fault type.");
+            if (faultType == null)
+                throw new ArgumentNullException(nameof(faultType));
+            if (!typeof(Fault).IsAssignableFrom(faultType))
+                throw new ArgumentException("The argument must be a fault type.");
 
             Type exceptionType;
 
@@ -130,10 +133,14 @@ namespace vm.Aspects.Wcf.FaultContracts
             Type faultType,
             Type exceptionType)
         {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument "+nameof(exceptionType)+" must be an exception type.");
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument "+nameof(faultType)+" must be a fault type.");
+            if (exceptionType == null)
+                throw new ArgumentNullException(nameof(exceptionType));
+            if (faultType == null)
+                throw new ArgumentNullException(nameof(faultType));
+            if (!typeof(Exception).IsAssignableFrom(exceptionType))
+                throw new ArgumentException("The argument "+nameof(exceptionType)+" must be an exception type.");
+            if (!typeof(Fault).IsAssignableFrom(faultType))
+                throw new ArgumentException("The argument "+nameof(faultType)+" must be a fault type.");
 
             using (_lock.WriterLock())
             {
@@ -163,8 +170,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Func<Exception, Fault> GetExceptionToFaultFactory(
             Type exceptionType)
         {
-            Contract.Requires<ArgumentNullException>(exceptionType != null, nameof(exceptionType));
-            Contract.Requires<ArgumentException>(typeof(Exception).IsAssignableFrom(exceptionType), "The argument must be Exception or descendant type.");
+            if (exceptionType == null)
+                throw new ArgumentNullException(nameof(exceptionType));
+            if (!typeof(Exception).IsAssignableFrom(exceptionType))
+                throw new ArgumentException("The argument must be Exception or descendant type.");
 
             Func<Exception, Fault> factory;
 
@@ -190,8 +199,10 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static Func<Fault, Exception> GetFaultToExceptionFactory(
             Type faultType)
         {
-            Contract.Requires<ArgumentNullException>(faultType != null, nameof(faultType));
-            Contract.Requires<ArgumentException>(typeof(Fault).IsAssignableFrom(faultType), "The argument must be Exception or descendant type.");
+            if (faultType == null)
+                throw new ArgumentNullException(nameof(faultType));
+            if (!typeof(Fault).IsAssignableFrom(faultType))
+                throw new ArgumentException("The argument must be Exception or descendant type.");
 
             Func<Fault, Exception> factory;
 
@@ -220,8 +231,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             Exception exception)
             where TException : Exception
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
-            Contract.Ensures(Contract.Result<Fault>() != null);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             var exceptionProperties = exception
                                         .GetType()

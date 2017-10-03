@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -32,7 +31,8 @@ namespace vm.Aspects.Wcf.Behaviors
             IEnumerable<OperationDescription> list,
             params string[] allowedOrigins)
         {
-            Contract.Requires<ArgumentNullException>(list != null, nameof(list));
+            if (list == null)
+                throw new ArgumentNullException(nameof(list));
 
             _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
             _allowedOrigins             = allowedOrigins?.Any() == true ? allowedOrigins : null;
@@ -47,7 +47,8 @@ namespace vm.Aspects.Wcf.Behaviors
             IEnumerable<OperationDescription> list,
             string allowedOrigins)
         {
-            Contract.Requires<ArgumentNullException>(list != null, nameof(list));
+            if (list == null)
+                throw new ArgumentNullException(nameof(list));
 
             _corsEnabledOperationsNames = list.Select(o => o.Name).ToList();
 

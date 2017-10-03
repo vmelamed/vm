@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
@@ -52,9 +51,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Exception exception,
             params Type[] expectedFaults)
         {
-            Contract.Requires<ArgumentNullException>(exception      != null, nameof(exception));
-            Contract.Requires<ArgumentNullException>(expectedFaults != null, nameof(expectedFaults));
-            Contract.Ensures(Contract.Result<Exception>() != null);
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+            if (expectedFaults == null)
+                throw new ArgumentNullException(nameof(expectedFaults));
 
             Func<Exception, Type[], Exception> handler;
 
@@ -76,9 +76,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Exception x,
             params Type[] expectedFaults)
         {
-            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
-            Contract.Requires<ArgumentException>(x is AggregateException, "The argument must be an AggregateException.");
-            Contract.Ensures(Contract.Result<Exception>() != null);
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (!(x is AggregateException))
+                throw new ArgumentException("The argument must be an AggregateException.");
 
             var exception = (AggregateException)x;
 
@@ -93,9 +94,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Exception x,
             params Type[] expectedFaults)
         {
-            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
-            Contract.Requires<ArgumentException>(x is ProtocolException, "The argument must be a ProtocolException.");
-            Contract.Ensures(Contract.Result<Exception>() != null);
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (!(x is ProtocolException))
+                throw new ArgumentException("The argument must be a ProtocolException.");
 
             string responseText;
 
@@ -109,9 +111,10 @@ namespace vm.Aspects.Wcf.ServicePolicies
             Exception x,
             params Type[] expectedFaults)
         {
-            Contract.Requires<ArgumentNullException>(x != null, nameof(x));
-            Contract.Requires<ArgumentException>(x is WebException, "The argument must be a WebException.");
-            Contract.Ensures(Contract.Result<Exception>() != null);
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (!(x is WebException))
+                throw new ArgumentException("The argument must be a WebException.");
 
             string responseText;
 

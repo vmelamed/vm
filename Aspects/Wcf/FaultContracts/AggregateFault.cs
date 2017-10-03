@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -30,8 +29,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             get
             {
-                Contract.Ensures(Contract.Result<ReadOnlyCollection<Exception>>() == null);
-
+                
                 return null;
             }
             set

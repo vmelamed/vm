@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Exceptions;
 
 namespace vm.Aspects.Validation
@@ -17,14 +16,12 @@ namespace vm.Aspects.Validation
         /// <returns>This instance.</returns>
         /// <exception cref="InvalidObjectException"></exception>
         /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
-        [Pure]
         public static IValidatable ConfirmValid(
             this IValidatable validatable,
             string ruleset = "")
         {
-            Contract.Requires<ArgumentNullException>(validatable != null, nameof(validatable));
-
-            Contract.Ensures(Contract.Result<IValidatable>() != null);
+            if (validatable == null)
+                throw new ArgumentNullException(nameof(validatable));
 
             var results = validatable.Validate(ruleset);
 
@@ -41,12 +38,12 @@ namespace vm.Aspects.Validation
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <returns><see langword="true" /> if the object is valid, otherwise <see langword="false" />.</returns>
         /// <remarks>Based upon the Validation Application Block from Microsoft Enterprise Library</remarks>
-        [Pure]
         public static bool IsValid(
             this IValidatable validatable,
             string ruleset = "")
         {
-            Contract.Requires<ArgumentNullException>(validatable != null, nameof(validatable));
+            if (validatable == null)
+                throw new ArgumentNullException(nameof(validatable));
 
             return validatable.Validate(ruleset).IsValid;
         }

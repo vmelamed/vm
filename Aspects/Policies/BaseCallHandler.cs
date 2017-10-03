@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -63,7 +62,8 @@ namespace vm.Aspects.Policies
         /// <returns>T.</returns>
         protected virtual T Prepare(IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             return default(T);
         }
@@ -79,7 +79,8 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             return null;
         }
@@ -96,9 +97,10 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input   != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(getNext != null, nameof(getNext));
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (getNext == null)
+                throw new ArgumentNullException(nameof(getNext));
 
             var continueWith = GetContinueWith(input);
             var methodReturn = getNext().Invoke(input, getNext);
@@ -123,9 +125,10 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (methodReturn == null)
+                throw new ArgumentNullException(nameof(methodReturn));
 
             return methodReturn;    // returns the final result or the task
         }
@@ -146,9 +149,10 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             T callData)
         {
-            Contract.Requires<ArgumentNullException>(input        != null, nameof(input));
-            Contract.Requires<ArgumentNullException>(methodReturn != null, nameof(methodReturn));
-            Contract.Ensures(Contract.Result<Task<TResult>>() != null);
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (methodReturn == null)
+                throw new ArgumentNullException(nameof(methodReturn));
 
             // if the call already failed - throw the exception
             if (methodReturn.Exception != null)
@@ -177,7 +181,8 @@ namespace vm.Aspects.Policies
         MethodInfo GetContinueWith(
             IMethodInvocation input)
         {
-            Contract.Requires<ArgumentNullException>(input != null, nameof(input));
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             if (!input.IsAsyncCall() || !IsContinueWithOverridden)  // return directly the Task from the actual call. The caller will await it, i.e. there is no continue-with here.
                 return null;
@@ -209,8 +214,6 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             GetNextHandlerDelegate getNext)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
             try
             {
                 if (input == null)

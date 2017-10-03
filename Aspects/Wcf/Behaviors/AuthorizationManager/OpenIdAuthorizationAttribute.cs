@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -34,7 +33,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         public OpenIdAuthorizationAttribute(
             params string[] tokenValidationParametersResolveNames)
         {
-            Contract.Requires<ArgumentNullException>(tokenValidationParametersResolveNames != null, nameof(tokenValidationParametersResolveNames));
+            if (tokenValidationParametersResolveNames == null)
+                throw new ArgumentNullException(nameof(tokenValidationParametersResolveNames));
 
             TokenValidationParametersResolveNames = tokenValidationParametersResolveNames.ToList();
         }

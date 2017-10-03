@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects
 {
@@ -23,7 +22,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file and from code, where the registrations from the 
         /// configuration file take precedence over code configuration.
         /// </para><para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -49,10 +48,11 @@ namespace vm.Aspects
             this IUnityContainer container,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(T), injectionMembers);
         }
 
@@ -72,7 +72,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -99,10 +99,11 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(T), lifetimeManager, injectionMembers);
         }
 
@@ -122,7 +123,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -149,10 +150,11 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(T), name, injectionMembers);
         }
 
@@ -174,7 +176,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -202,10 +204,11 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(T), name, lifetimeManager, injectionMembers);
         } 
         #endregion
@@ -228,7 +231,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -254,10 +257,11 @@ namespace vm.Aspects
             this IUnityContainer container,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), injectionMembers);
         }
 
@@ -280,7 +284,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -307,10 +311,11 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), lifetimeManager, injectionMembers);
         }
 
@@ -333,7 +338,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -360,10 +365,11 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), name, injectionMembers);
         }
 
@@ -388,7 +394,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -416,10 +422,11 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), name, lifetimeManager, injectionMembers);
         } 
         #endregion
@@ -440,7 +447,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -465,10 +472,11 @@ namespace vm.Aspects
             this IUnityContainer container,
             T instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            
             return container.RegisterInstanceIfNot(typeof(T), instance);
         }
 
@@ -488,7 +496,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -514,11 +522,13 @@ namespace vm.Aspects
             T instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             return container.RegisterInstanceIfNot(typeof(T), instance, lifetimeManager);
         }
 
@@ -538,7 +548,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -564,10 +574,11 @@ namespace vm.Aspects
             string name,
             T instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            
             return container.RegisterInstanceIfNot(typeof(T), name, instance);
         }
 
@@ -589,7 +600,7 @@ namespace vm.Aspects
         /// This allows a container to be configured both from configuration file or other source and from code, where the registrations from the 
         /// configuration file have precedence over code configuration.
         /// <para>
-        /// Note that the method uses the extension method <see cref="T:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered"/>. 
+        /// Note that the method uses the extension method <see cref="T:Unity.UnityContainerExtensions.IsRegistered"/>. 
         /// There are well documented performance and multi-threaded issues with this method, e.g. http://philipm.at/2011/0819/.
         /// However if used only during the container's configuration at application initialization time and 
         /// within the context of a synchronization lock, these should be acceptable.
@@ -616,11 +627,13 @@ namespace vm.Aspects
             T instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             return container.RegisterInstanceIfNot(typeof(T), name, instance, lifetimeManager);
         } 
         #endregion

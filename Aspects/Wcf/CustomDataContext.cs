@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -43,8 +42,7 @@ namespace vm.Aspects.Wcf
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+
 
                 if (_name == null)
                     Initialize();
@@ -60,7 +58,6 @@ namespace vm.Aspects.Wcf
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
 
                 if (_namespace == null)
                     Initialize();
@@ -76,7 +73,6 @@ namespace vm.Aspects.Wcf
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
 
                 if (_webHeaderName == null)
                     Initialize();
@@ -208,9 +204,12 @@ namespace vm.Aspects.Wcf
             set
             {
                 // put the custom header into the outgoing message which is in the current operation context (called by the clients)
-                Contract.Requires<ArgumentNullException>(value != null, nameof(value));
-                Contract.Requires<ArgumentException>(!value.Name.IsNullOrWhiteSpace(), "The property "+nameof(value.Name)+" cannot be null, empty string or consist of whitespace characters only.");
-                Contract.Requires<InvalidOperationException>(OperationContext.Current != null, "The current thread does not have operation context.");
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+                if (value.Name.IsNullOrWhiteSpace())
+                    throw new ArgumentException("The value cannot be null, empty string or consist of whitespace characters only.");
+                if (OperationContext.Current == null)
+                    throw new ArgumentException($"{nameof(OperationContext)}.{nameof(OperationContext.Current)} cannot be null.");
 
                 // make sure the header is initialized.
                 Initialize();
@@ -243,7 +242,8 @@ namespace vm.Aspects.Wcf
         public void AddToHeaders(
             MessageHeaders headers)
         {
-            Contract.Requires<ArgumentNullException>(headers != null, nameof(headers));
+            if (headers == null)
+                throw new ArgumentNullException(nameof(headers));
 
             headers.Add(
                 new MessageHeader<CustomDataContext<T>>(this)
@@ -258,7 +258,8 @@ namespace vm.Aspects.Wcf
         public void AddToHeaders(
             WebHeaderCollection headers)
         {
-            Contract.Requires<ArgumentNullException>(headers != null, nameof(headers));
+            if (headers == null)
+                throw new ArgumentNullException(nameof(headers));
 
             using (var stream = new MemoryStream())
             {

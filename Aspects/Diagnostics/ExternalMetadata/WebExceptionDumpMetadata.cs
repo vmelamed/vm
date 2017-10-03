@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net;
 
@@ -22,8 +21,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         public static string DumpResponse(
             WebResponse response)
         {
-            Contract.Ensures(Contract.Result<string>() != null);
-
             var stream = response?.GetResponseStream();
 
             if (stream == null)

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -80,7 +79,8 @@ namespace vm.Aspects.Wcf.Behaviors
         internal void AddPreflightOperationSelectors(
             ServiceEndpoint endpoint)
         {
-            Contract.Requires<ArgumentNullException>(endpoint != null, nameof(endpoint));
+            if (endpoint == null)
+                throw new ArgumentNullException(nameof(endpoint));
 
             var uriTemplates = new SortedDictionary<string, PreflightOperationBehavior>();
             var allowedOrigins = GetAllowedOrigins();
@@ -129,7 +129,8 @@ namespace vm.Aspects.Wcf.Behaviors
             int maxAge = 600,
             IDictionary<string, PreflightOperationBehavior> uriTemplates = null)
         {
-            Contract.Requires<ArgumentNullException>(operation != null, nameof(operation));
+            if (operation == null)
+                throw new ArgumentNullException(nameof(operation));
 
             if (operation.IsOneWay)
                 // no support for 1-way messages
@@ -221,7 +222,8 @@ namespace vm.Aspects.Wcf.Behaviors
 
         static string NormalizeTemplate(string uriTemplate)
         {
-            Contract.Requires<ArgumentNullException>(uriTemplate != null, nameof(uriTemplate));
+            if (uriTemplate == null)
+                throw new ArgumentNullException(nameof(uriTemplate));
 
             int queryIndex = uriTemplate.IndexOf('?');
 

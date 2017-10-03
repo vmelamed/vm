@@ -1,13 +1,12 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Reflection;
+using Unity;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -74,7 +73,8 @@ namespace vm.Aspects.Policies
             ValidatorFactory validatorFactory,
             int handlerOrder)
         {
-            Contract.Requires<ArgumentNullException>(validatorFactory != null, nameof(validatorFactory));
+            if (validatorFactory == null)
+                throw new ArgumentNullException(nameof(validatorFactory));
 
             _ruleSet          = ruleset;
             _validatorFactory = validatorFactory;
@@ -90,25 +90,23 @@ namespace vm.Aspects.Policies
         protected static ValidatorFactory CreateValidatorFactory(
             SpecificationSource specificationSource)
         {
-            Contract.Ensures(Contract.Result<ValidatorFactory>() != null);
-
             using (var configurationSource = ConfigurationSourceFactory.Create())
                 switch (specificationSource)
                 {
-                    case SpecificationSource.Both:
-                        return new CompositeValidatorFactory(
-                                        new AttributeValidatorFactory(),
-                                        new ConfigurationValidatorFactory(configurationSource));
+                case SpecificationSource.Both:
+                    return new CompositeValidatorFactory(
+                                    new AttributeValidatorFactory(),
+                                    new ConfigurationValidatorFactory(configurationSource));
 
-                    case SpecificationSource.Attributes:
-                        return new AttributeValidatorFactory();
+                case SpecificationSource.Attributes:
+                    return new AttributeValidatorFactory();
 
-                    case SpecificationSource.Configuration:
-                        return new ConfigurationValidatorFactory(configurationSource);
+                case SpecificationSource.Configuration:
+                    return new ConfigurationValidatorFactory(configurationSource);
 
-                    case SpecificationSource.ParameterAttributesOnly:
-                    default:
-                        throw new InvalidOperationException("Invalid specification source.");
+                case SpecificationSource.ParameterAttributesOnly:
+                default:
+                    throw new InvalidOperationException("Invalid specification source.");
                 }
         }
 
@@ -153,8 +151,8 @@ namespace vm.Aspects.Policies
             ParameterInfo parameterInfo,
             object parameterValue)
         {
-            Contract.Requires<ArgumentNullException>(parameterInfo != null, nameof(parameterInfo));
-            Contract.Ensures(Contract.Result<Validator>() != null);
+            if (parameterInfo == null)
+                throw new ArgumentNullException(nameof(parameterInfo));
 
             // get the validators defined on the parameter itself
             var parameterValidator = CreateParameterValidator(parameterInfo, parameterValue);
@@ -194,8 +192,8 @@ namespace vm.Aspects.Policies
             ParameterInfo parameterInfo,
             object parameterValue)
         {
-            Contract.Requires<ArgumentNullException>(parameterInfo != null, nameof(parameterInfo));
-            Contract.Ensures(Contract.Result<Validator>() != null);
+            if (parameterInfo == null)
+                throw new ArgumentNullException(nameof(parameterInfo));
 
             var parameterElement = new MetadataValidatedParameterElement();
 
@@ -227,7 +225,8 @@ namespace vm.Aspects.Policies
         /// <returns>The created validator.</returns>
         protected Validator CreateValidator(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return _validatorFactory.CreateValidator(type, _ruleSet);
         }
@@ -240,7 +239,8 @@ namespace vm.Aspects.Policies
         /// <exception cref="System.ArgumentNullException">type</exception>
         static bool IsBasicType(Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return
                 type.IsEnum                    ||
@@ -253,14 +253,6 @@ namespace vm.Aspects.Policies
                 type == typeof(TimeSpan)       ||
                 type == typeof(DateTimeOffset) ||
                 type == typeof(DBNull);
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        void Invariant()
-        {
-            Contract.Invariant(_validatorFactory != null);
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {
@@ -45,8 +43,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             string name = DefaultName,
             string role = DefaultRole)
         {
-            Contract.Requires<ArgumentNullException>(name != null, nameof(name));
-            Contract.Requires<ArgumentException>(name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be empty string or consist of whitespace characters only.");
+            if (name.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
 
             Name = name;
             Role = role;

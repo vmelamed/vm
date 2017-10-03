@@ -2,7 +2,7 @@
 using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.EFRepository;

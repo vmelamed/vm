@@ -1,10 +1,11 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
+#pragma warning disable CS3003 // Constraint type is not CLS-compliant
     /// <summary>
     /// Class CallData encapsulates some audit data to be output about the current call.
     /// </summary>
@@ -42,4 +43,5 @@ namespace vm.Aspects.Policies
         /// <value>The exception.</value>
         public Exception Exception { get; set; }
     }
+#pragma warning restore CS3003 // Constraint type is not CLS-compliant
 }

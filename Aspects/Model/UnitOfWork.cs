@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
@@ -122,7 +121,8 @@ namespace vm.Aspects.Model
         public void WorkAction(
             Action<IRepository> work)
         {
-            Contract.Requires<ArgumentNullException>(work != null, nameof(work));
+            if (work == null)
+                throw new ArgumentNullException(nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory(OptimisticConcurrencyStrategy, RepositoryResolveName);
@@ -156,7 +156,8 @@ namespace vm.Aspects.Model
         public TResult WorkFunc<TResult>(
             Func<IRepository, TResult> work)
         {
-            Contract.Requires<ArgumentNullException>(work != null, nameof(work));
+            if (work == null)
+                throw new ArgumentNullException(nameof(work));
 
             var transactionScope = CreateTransactionScope ? _transactionScopeFactory() : null;
             var repository       = _repositoryFactory(OptimisticConcurrencyStrategy, RepositoryResolveName);

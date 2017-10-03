@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Security;
@@ -21,8 +20,6 @@ namespace vm.Aspects.Diagnostics
         /// <returns>ClassMetadataRegistrar.</returns>
         public static ClassMetadataRegistrar RegisterMetadata()
         {
-            Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
-
             ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskGenericDumpMetadata));
 
             return new ClassMetadataRegistrar()
@@ -83,8 +80,8 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             bool replace = false)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute, replace);
             return this;
@@ -109,11 +106,7 @@ namespace vm.Aspects.Diagnostics
         public ClassMetadataRegistrar Register<T, TMetadata>(
             DumpAttribute dumpAttribute = null,
             bool replace = false)
-        {
-            Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
-
-            return Register(typeof(T), typeof(TMetadata), dumpAttribute, replace);
-        }
+            => Register(typeof(T), typeof(TMetadata), dumpAttribute, replace);
 
         /// <summary>
         /// Registers the specified dump attribute.
@@ -133,10 +126,6 @@ namespace vm.Aspects.Diagnostics
         public ClassMetadataRegistrar Register<T>(
             DumpAttribute dumpAttribute,
             bool replace = false)
-        {
-            Contract.Ensures(Contract.Result<ClassMetadataRegistrar>() != null);
-
-            return Register(typeof(T), null, dumpAttribute, replace);
-        }
+            => Register(typeof(T), null, dumpAttribute, replace);
     }
 }

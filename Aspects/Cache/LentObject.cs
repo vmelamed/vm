@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace vm.Aspects.Cache
@@ -25,8 +24,10 @@ namespace vm.Aspects.Cache
             T instance,
             ObjectPool<T> pool)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(pool     != null, nameof(pool));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (pool == null)
+                throw new ArgumentNullException(nameof(pool));
 
             _instance = instance;
             _pool     = pool;
@@ -35,28 +36,12 @@ namespace vm.Aspects.Cache
         /// <summary>
         /// Gets the lent object.
         /// </summary>
-        public T Instance
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<T>() != null);
-
-                return _instance;
-            }
-        }
+        public T Instance => _instance;
 
         /// <summary>
         /// Gets the object pool from which the object was lent.
         /// </summary>
-        internal ObjectPool<T> Pool
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ObjectPool<T>>() != null);
-
-                return _pool;
-            }
-        }
+        internal ObjectPool<T> Pool => _pool;
 
         #region IDisposable pattern implementation
         /// <summary>
@@ -106,13 +91,5 @@ namespace vm.Aspects.Cache
                 _pool.ReturnObject(this);
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_instance != null, "The lent object is null.");
-            Contract.Invariant(_pool     != null, "The reference to the object pool is null.");
-        }
     }
 }

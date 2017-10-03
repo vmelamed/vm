@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity;
+using Unity.InterceptionExtension;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -69,7 +68,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
             int handlerOrder)
             : base(ruleset, validatorFactory, handlerOrder)
         {
-            Contract.Requires<ArgumentNullException>(validatorFactory != null, nameof(validatorFactory));
+            if (validatorFactory == null)
+                throw new ArgumentNullException(nameof(validatorFactory));
         }
         #endregion
 

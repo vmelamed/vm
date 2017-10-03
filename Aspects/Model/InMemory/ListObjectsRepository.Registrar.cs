@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
-using vm.Aspects.Facilities;
+﻿using System;
+using System.Collections.Generic;
+using Unity;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.InMemory
@@ -20,7 +19,6 @@ namespace vm.Aspects.Model.InMemory
         {
             get
             {
-                Contract.Ensures(Contract.Result<ContainerRegistrar>() != null);
 
                 return _registrar;
             }
@@ -42,6 +40,11 @@ namespace vm.Aspects.Model.InMemory
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<IOrmSpecifics>(registrations, new ObjectsRepositorySpecifics())
                     .RegisterTypeIfNot<IRepository, ListObjectsRepository>(registrations)

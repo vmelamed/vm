@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -30,8 +29,6 @@ namespace vm.Aspects.Facilities
         {
             get
             {
-                Contract.Ensures(Contract.Result<IReadOnlyCollection<string>>() != null);
-
                 lock (_sync)
                     return new ReadOnlyCollection<string>(_messages.ToList());
             }

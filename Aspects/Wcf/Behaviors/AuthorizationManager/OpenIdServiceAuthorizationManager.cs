@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -31,7 +30,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         public OpenIdServiceAuthorizationManager(
             IEnumerable<Lazy<TokenValidationParameters>> tokenValidationParameters)
         {
-            Contract.Requires<ArgumentNullException>(tokenValidationParameters != null, nameof(tokenValidationParameters));
+            if (tokenValidationParameters == null)
+                throw new ArgumentNullException(nameof(tokenValidationParameters));
 
             _tokenValidationParameters = tokenValidationParameters.ToList();
             _wcfContext                = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();

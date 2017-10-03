@@ -1,11 +1,11 @@
-﻿using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+using Unity;
+using Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
+#pragma warning disable CS3024 // Constraint type is not CLS-compliant
     /// <summary>
     /// Defines a few extension methods to the <see cref="PolicyDefinition"/>
     /// </summary>
@@ -21,12 +21,13 @@ namespace vm.Aspects.Policies
             this PolicyDefinition policyDefinition)
             where T : ICallHandler
         {
-            Contract.Requires<ArgumentNullException>(policyDefinition != null, nameof(policyDefinition));
-            Contract.Ensures(Contract.Result<PolicyDefinition>() != null);
+            if (policyDefinition == null)
+                throw new ArgumentNullException(nameof(policyDefinition));
 
             return policyDefinition
                         .AddCallHandler<T>(new ContainerControlledLifetimeManager())
                         ;
         }
     }
+#pragma warning restore CS3024 // Constraint type is not CLS-compliant
 }

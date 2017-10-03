@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 using System.Threading;
 using vm.Aspects.Threading;
@@ -26,7 +25,8 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
+            if (attributeProvider == null)
+                throw new ArgumentNullException(nameof(attributeProvider));
 
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return null;
@@ -46,9 +46,9 @@ namespace vm.Aspects
             this ICustomAttributeProvider attributeProvider,
             bool inherit = false) where T : class
         {
-            Contract.Requires<ArgumentNullException>(attributeProvider != null, nameof(attributeProvider));
-            Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
-
+            if (attributeProvider == null)
+                throw new ArgumentNullException(nameof(attributeProvider));
+            
             if (!attributeProvider.IsDefined(typeof(T), inherit))
                 return new T[0];
 
@@ -68,7 +68,8 @@ namespace vm.Aspects
         public static T GetMethodCustomAttribute<T>(
             this MethodBase methodBase) where T : Attribute
         {
-            Contract.Requires<ArgumentNullException>(methodBase != null, nameof(methodBase));
+            if (methodBase == null)
+                throw new ArgumentNullException(nameof(methodBase));
 
             return methodBase.GetCustomAttribute<T>(true)            ??
                    methodBase.DeclaringType.GetCustomAttribute<T>()  ??
@@ -81,7 +82,6 @@ namespace vm.Aspects
         /// <param name="type">The type to test.</param>
         /// <param name="baseType">The base type to test against.</param>
         /// <returns><c>true</c> if [is] [the specified base type]; otherwise, <c>false</c>.</returns>
-        [Pure]
         public static bool Is(
             this Type type,
             Type baseType) => baseType.IsAssignableFrom(type);
@@ -92,7 +92,6 @@ namespace vm.Aspects
         /// <typeparam name="T">The base type to test against.</typeparam>
         /// <param name="type">The type to test.</param>
         /// <returns><c>true</c> if [is] [the specified base type]; otherwise, <c>false</c>.</returns>
-        [Pure]
         public static bool Is<T>(
             this Type type) => type.Is(typeof(T));
 
@@ -102,11 +101,11 @@ namespace vm.Aspects
         /// <param name="pi">The <see cref="PropertyInfo"/> object.</param>
         /// <returns><see langword="true"/> if the specified <see cref="PropertyInfo"/> object represents a virtual property; otherwise, <see langword="false"/>.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="pi"/> is <see langword="null"/>.</exception>
-        [Pure]
         public static bool? IsVirtual(
             this PropertyInfo pi)
         {
-            Contract.Requires<ArgumentNullException>(pi != null, nameof(pi));
+            if (pi == null)
+                throw new ArgumentNullException(nameof(pi));
 
             bool? isVirtual = null;
 
@@ -130,7 +129,8 @@ namespace vm.Aspects
         public static bool IsNullable(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return type.IsGenericType &&
                    type.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -168,7 +168,8 @@ namespace vm.Aspects
         public static object Default(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             if (type == typeof(void)  ||  !type.IsValueType)
                 return null;

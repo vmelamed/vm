@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 
@@ -41,11 +40,16 @@ namespace vm.Aspects
             string prerelease = null,
             string build = null)
         {
-            Contract.Requires<ArgumentException>(major >= 0, "The major version cannot be negative.");
-            Contract.Requires<ArgumentException>(minor >= 0, "The minor version cannot be negative.");
-            Contract.Requires<ArgumentException>(patch >= 0, "The patch version cannot be negative.");
-            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(prerelease) || RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease) && ValidateParts(prerelease), "The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
-            Contract.Requires<ArgumentException>(string.IsNullOrEmpty(build)      || RegularExpression.SemanticVersionPrerelease.IsMatch(build) && ValidateParts(build), "The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
+            if (major < 0)
+                throw new ArgumentException("The major version cannot be negative.");
+            if (minor < 0)
+                throw new ArgumentException("The minor version cannot be negative.");
+            if (patch < 0)
+                throw new ArgumentException("The patch version cannot be negative.");
+            if (prerelease.IsNullOrWhiteSpace()  &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease)  &&  ValidateParts(prerelease)))
+                throw new ArgumentException("The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
+            if (!string.IsNullOrEmpty(build) &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(build)  &&  ValidateParts(build)))
+                throw new ArgumentException("The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
 
             Major      = major;
             Minor      = minor;
@@ -64,7 +68,8 @@ namespace vm.Aspects
             string version,
             out SemanticVersion semanticVersion)
         {
-            Contract.Requires<ArgumentException>(version != null  &&  version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (version.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(version));
 
             semanticVersion = null;
 
@@ -108,7 +113,6 @@ namespace vm.Aspects
         /// </summary>
         /// <param name="prereleaseOrBuildVersionParts">The prerelease or build version parts.</param>
         /// <returns><c>true</c> if the build or the prerelease are valid strings, otherwise <c>false</c>.</returns>
-        [Pure]
         public static bool ValidateParts(string prereleaseOrBuildVersionParts)
         {
             if (prereleaseOrBuildVersionParts == null)
@@ -258,7 +262,6 @@ namespace vm.Aspects
         /// <param name="other">The other.</param>
         /// <returns>System.Int32.</returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [Pure]
         public int CompareTo(SemanticVersion other)
         {
             if (other == null)
@@ -341,8 +344,10 @@ namespace vm.Aspects
         /// <returns>The result of the operator.</returns>
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
 
             return left.CompareTo(right) > 0;
         }
@@ -355,8 +360,10 @@ namespace vm.Aspects
         /// <returns>The result of the operator.</returns>
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
 
             return left.CompareTo(right) < 0;
         }
@@ -369,8 +376,10 @@ namespace vm.Aspects
         /// <returns>The result of the operator.</returns>
         public static bool operator <=(SemanticVersion left, SemanticVersion right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
 
             return !(left > right);
         }
@@ -383,8 +392,10 @@ namespace vm.Aspects
         /// <returns>The result of the operator.</returns>
         public static bool operator >=(SemanticVersion left, SemanticVersion right)
         {
-            Contract.Requires<ArgumentNullException>(left != null, nameof(left));
-            Contract.Requires<ArgumentNullException>(right != null, nameof(right));
+            if (left == null)
+                throw new ArgumentNullException(nameof(left));
+            if (right == null)
+                throw new ArgumentNullException(nameof(right));
 
             return !(left < right);
         }
@@ -410,19 +421,5 @@ namespace vm.Aspects
                 !buildIsBlank ? "+" : "",
                 !buildIsBlank ? Build : "");
         }
-
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(Major >= 0, "The major version cannot be negative.");
-            Contract.Invariant(Minor >= 0, "The minor version cannot be negative.");
-            Contract.Invariant(Patch >= 0, "The patch version cannot be negative.");
-            Contract.Invariant(Prerelease == null || RegularExpression.SemanticVersionPrerelease.IsMatch(Prerelease) && ValidateParts(Prerelease), "The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes. ");
-            Contract.Invariant(Build == null || RegularExpression.SemanticVersionPrerelease.IsMatch(Build) && ValidateParts(Build), "The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes. ");
-        }
-
     }
 }

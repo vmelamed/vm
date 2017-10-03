@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace vm.Aspects.Model.EFRepository
@@ -25,7 +24,8 @@ namespace vm.Aspects.Model.EFRepository
         public StringAttribute(
             int length)
         {
-            Contract.Requires<ArgumentException>(length > 0 || length == -1, "The length can be either a positive number greater than 0 or -1.");
+            if (length <= 0 && length != -1)
+                throw new ArgumentException("The length can be either a positive number greater than 0 or -1.");
 
             _length = length;
         }

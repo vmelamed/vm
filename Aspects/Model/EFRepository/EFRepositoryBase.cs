@@ -7,13 +7,12 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Validation;
@@ -52,8 +51,7 @@ namespace vm.Aspects.Model.EFRepository
         {
             get
             {
-                Contract.Ensures(Contract.Result<ObjectContext>() != null);
-
+                
                 return ((IObjectContextAdapter)this).ObjectContext;
             }
         }
@@ -269,8 +267,7 @@ namespace vm.Aspects.Model.EFRepository
             DbEntityEntry entityEntry,
             IDictionary<object, object> items)
         {
-            Contract.Ensures(Contract.Result<DbEntityValidationResult>() != null);
-
+            
             if (entityEntry == null)
                 throw new ArgumentNullException(nameof(entityEntry));
 
@@ -302,10 +299,11 @@ namespace vm.Aspects.Model.EFRepository
             IEnumerable<ValidationResult> results,
             IList<DbValidationError> errors)
         {
-            Contract.Requires<ArgumentNullException>(results != null, nameof(results));
-            Contract.Requires<ArgumentNullException>(errors != null, nameof(errors));
-            Contract.Ensures(Contract.Result<IList<DbValidationError>>() != null);
-
+            if (results == null)
+                throw new ArgumentNullException(nameof(results));
+            if (errors == null)
+                throw new ArgumentNullException(nameof(errors));
+            
             foreach (var r in results)
             {
                 errors.Add(new DbValidationError(r.Key, r.Message));
@@ -350,13 +348,5 @@ namespace vm.Aspects.Model.EFRepository
             base.Dispose(disposing);
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(StoreIdProvider != null);
-        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -64,8 +63,10 @@ namespace vm.Aspects.Model
             object instance,
             ICipher cipher)
         {
-            Contract.Requires<ArgumentNullException>(instance != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             _instance = instance;
             _type     = _instance.GetType();

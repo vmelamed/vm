@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 namespace vm.Aspects
 {
@@ -22,46 +19,21 @@ namespace vm.Aspects
         public ApiVersionAttribute(
             string version)
         {
-            Contract.Requires<ArgumentNullException>(version != null, nameof(version));
-            Contract.Requires<ArgumentException>(version.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(version)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (version.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(version));
 
             if (!SemanticVersion.TryParse(version, out _version))
                 throw new ArgumentException("Invalid semantic version specified. See http://semver.org.", nameof(version));
         }
 
-        [ContractInvariantMethod]
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(_version != null);
-        }
-
         /// <summary>
         /// Gets the semantic version as a <see cref="SemanticVersion"/> object.
         /// </summary>
-        public SemanticVersion SemanticVersion
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<SemanticVersion>() != null);
-
-                return _version;
-            }
-        }
+        public SemanticVersion SemanticVersion => _version;
 
         /// <summary>
         /// Gets the version as a string.
         /// </summary>
-        public string Version
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
-
-                return _version.ToString();
-            }
-        }
+        public string Version => _version.ToString();
     }
 }

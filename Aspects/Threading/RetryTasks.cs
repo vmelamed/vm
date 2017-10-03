@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
 using vm.Aspects.Facilities.Diagnostics;
@@ -49,7 +48,8 @@ namespace vm.Aspects.Threading
             Func<T, Exception, int, Task<bool>> isSuccessAsync = null,
             Func<T, Exception, int, Task<T>> epilogueAsync = null)
         {
-            Contract.Requires<ArgumentNullException>(operationAsync != null, nameof(operationAsync));
+            if (operationAsync == null)
+                throw new ArgumentNullException(nameof(operationAsync));
 
             _operationAsync = operationAsync;
             _isSuccessAsync = isSuccessAsync ?? RetryConstants.DefaultIsSuccessAsync;
@@ -76,9 +76,13 @@ namespace vm.Aspects.Threading
             int minDelay = RetryConstants.DefaultMinDelay,
             int maxDelay = RetryConstants.DefaultMaxDelay)
         {
-            Contract.Requires<ArgumentException>(maxRetries > 1, "The retries must be more than one.");
-            Contract.Requires<ArgumentException>(minDelay >= 0, "The minimum delay before retrying must be a non-negative number.");
-            Contract.Requires<ArgumentException>(maxDelay == 0  ||  maxDelay >= minDelay, "The maximum delay must be 0 or equal to or greater than the minimum delay.");
+            if (maxRetries <= 1)
+                throw new ArgumentException("The retries must be more than one.");
+            if (maxRetries < 0)
+                throw new ArgumentException("The minimum delay before retrying must be a non-negative number.");
+            if (maxDelay != 0  &&  maxDelay < minDelay)
+                throw new ArgumentException("The maximum delay must be 0 or equal to or greater than the minimum delay.");
+
 
             if (maxDelay == 0)
                 maxDelay = minDelay;

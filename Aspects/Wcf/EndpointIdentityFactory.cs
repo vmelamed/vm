@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -27,8 +26,10 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             string identity = null)
         {
-            Contract.Requires<ArgumentException>(identityType != ServiceIdentity.Certificate, "Invalid combination of identity parameters.");
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None || !identity.IsNullOrWhiteSpace(), "Invalid combination of identity parameters.");
+            if (identityType != ServiceIdentity.Certificate)
+                throw new ArgumentException("Invalid combination of identity parameters.");
+            if (identityType != ServiceIdentity.None && identity.IsNullOrWhiteSpace())
+                throw new ArgumentException("Invalid combination of identity parameters.");
 
             switch (identityType)
             {
@@ -66,9 +67,10 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             X509Certificate2 identifyingCertificate)
         {
-            Contract.Requires<ArgumentException>(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && identifyingCertificate!=null, "Invalid combination of identity parameters.");
+            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
+                                                             identityType == ServiceIdentity.Rsa  ||
+                                                             identityType == ServiceIdentity.Certificate) && identifyingCertificate!=null))
+                throw new ArgumentException("Invalid combination of identity parameters.");
 
             switch (identityType)
             {

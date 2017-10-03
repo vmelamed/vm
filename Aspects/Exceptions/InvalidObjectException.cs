@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
@@ -79,7 +78,8 @@ namespace vm.Aspects.Exceptions
             StreamingContext context)
             : base(info, context)
         {
-            Contract.Requires<ArgumentNullException>(info != null, nameof(info));
+            if (info == null)
+                throw new ArgumentNullException(nameof(info));
 
             ValidationResults = (ValidationResults)info.GetValue("ValidationResults", typeof(ValidationResults));
         }

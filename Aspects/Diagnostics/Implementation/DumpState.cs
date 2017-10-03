@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,13 +25,6 @@ namespace vm.Aspects.Diagnostics.Implementation
         DumpAttribute _currentDumpAttribute;
         #endregion
 
-        [ContractInvariantMethod]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(_dumper != null);
-        }
-
         public DumpScript DumpScript { get; }
 
         public DumpState(
@@ -42,8 +34,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             bool buildScript)
             : this(dumper, instance, instance.GetType(), classDumpData, classDumpData.DumpAttribute, null, true)
         {
-            Contract.Requires<ArgumentNullException>(dumper        != null, nameof(dumper));
-            Contract.Requires<ArgumentNullException>(instance      != null, nameof(instance));
+            if (dumper == null)
+                throw new ArgumentNullException(nameof(dumper));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
 
             // let's not create script if we don't need it or are not doing anything here.
             if (buildScript  &&  CurrentType != typeof(object))
@@ -61,10 +55,14 @@ namespace vm.Aspects.Diagnostics.Implementation
             DumpScript dumpScript,
             bool isTopLevelClass)
         {
-            Contract.Requires<ArgumentNullException>(instance              != null, nameof(instance));
-            Contract.Requires<ArgumentNullException>(type                  != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(instanceDumpAttribute != null, nameof(instanceDumpAttribute));
-            Contract.Requires<ArgumentNullException>(dumper                != null, nameof(dumper));
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (instanceDumpAttribute == null)
+                throw new ArgumentNullException(nameof(instanceDumpAttribute));
+            if (dumper == null)
+                throw new ArgumentNullException(nameof(dumper));
 
             _dumper               = dumper;
             _isTopLevelClass      = isTopLevelClass;
@@ -530,8 +528,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             MemberInfo mi,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             if (sequence.IsDynamicObject())
                 return false;
@@ -564,8 +564,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             bool enumerateCustom = false,
             bool newLineForCustom = false)
         {
-            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
 
             var sequenceType = sequence.GetType();
             var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();

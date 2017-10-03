@@ -1,6 +1,7 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using Unity;
 using vm.Aspects.Model.EFRepository;
 using vm.Aspects.Model.Repository;
 
@@ -15,12 +16,26 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             protected override void DoRegister(
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
-                => RegisterCommon(container, registrations, false);
+            {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
+                RegisterCommon(container, registrations, false);
+            }
 
             protected override void DoTestRegister(
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
-                => RegisterCommon(container, registrations, true);
+            {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
+                RegisterCommon(container, registrations, true);
+            }
 
             IUnityContainer RegisterCommon(
                 IUnityContainer container,

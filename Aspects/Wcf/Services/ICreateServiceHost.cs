@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects.Wcf.Services
 {
     /// <summary>
     /// Represents the service creating behavior of the messaging pattern service host factories.
     /// </summary>
-    [ContractClass(typeof(ICreateServiceHostContract))]
     public interface ICreateServiceHost
     {
         /// <summary>
@@ -55,59 +53,4 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         Task<bool> InitializeHostTask { get; }
     }
-
-    #region ICreateServiceHost contract binding
-    [ContractClassFor(typeof(ICreateServiceHost))]
-    abstract class ICreateServiceHostContract : ICreateServiceHost
-    {
-        public ServiceHost CreateHost(params Uri[] baseAddresses)
-        {
-            Contract.Requires<ArgumentNullException>(baseAddresses != null, nameof(baseAddresses));
-            Contract.Ensures(Contract.Result<ServiceHost>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public ICreateServiceHost SetEndpointProvider(
-            Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
-        {
-            Contract.Requires<ArgumentNullException>(provideEndpoints != null, nameof(provideEndpoints));
-            Contract.Ensures(Contract.Result<ICreateServiceHost>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public ICreateServiceHost SetServiceRegistrar(
-            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
-        {
-            Contract.Requires<ArgumentNullException>(registrar != null, nameof(registrar));
-            Contract.Ensures(Contract.Result<ICreateServiceHost>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public IUnityContainer RegisterDefaults()
-        {
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> InitializeHostTask
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public bool AreRegistered
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-    }
-    #endregion
 }

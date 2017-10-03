@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -36,6 +35,9 @@ namespace vm.Aspects.FtpTransfer
         public IEnumerable<FtpFileListEntry> Parse(
             Stream fileListStream)
         {
+            if (fileListStream == null)
+                throw new ArgumentNullException(nameof(fileListStream));
+
             var reader = new StreamReader(fileListStream, Encoding.ASCII);
 
             while (!reader.EndOfStream)
@@ -53,7 +55,8 @@ namespace vm.Aspects.FtpTransfer
 
         static FtpFileListEntry StreamDescriptorFactory(Match match)
         {
-            Contract.Requires<ArgumentNullException>(match != null, nameof(match));
+            if (match == null)
+                throw new ArgumentNullException(nameof(match));
 
             int num;
             DateTime dt;

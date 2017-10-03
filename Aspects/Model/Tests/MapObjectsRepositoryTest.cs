@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Microsoft.Practices.Unity;
+using Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;

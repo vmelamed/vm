@@ -13,7 +13,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -164,7 +163,8 @@ namespace vm.Aspects.Wcf.Behaviors
         void AddErrorHandler(
             ChannelDispatcher channelDispatcher)
         {
-            Contract.Requires<ArgumentNullException>(channelDispatcher != null, nameof(channelDispatcher));
+            if (channelDispatcher == null)
+                throw new ArgumentNullException(nameof(channelDispatcher));
 
             if (!channelDispatcher.IncludeExceptionDetailInFaults                              &&
                 !channelDispatcher.ErrorHandlers.Any(h => h is ExceptionShieldingErrorHandler) &&

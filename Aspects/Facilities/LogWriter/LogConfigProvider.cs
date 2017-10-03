@@ -1,16 +1,15 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.ServiceLocation;
+using Unity;
 
 namespace vm.Aspects.Facilities
 {
@@ -60,6 +59,11 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<LoggingConfiguration>(registrations, ConfigureDebugLog());
             }
@@ -74,6 +78,11 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<LoggingConfiguration>(registrations, TestLogConfigurationResolveName, ConfigureTestLog());
             }
@@ -86,8 +95,6 @@ namespace vm.Aspects.Facilities
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "EL will do it.")]
         static LoggingConfiguration ConfigureDebugLog()
         {
-            Contract.Ensures(Contract.Result<LoggingConfiguration>() != null);
-
             // configure a log that outputs everything in the debugger output window:
             var logConfig = new LoggingConfiguration();
             var traceListener = new AsynchronousTraceListenerWrapper(new DefaultTraceListener());
@@ -148,8 +155,6 @@ namespace vm.Aspects.Facilities
         public static LogWriter CreateLogWriterFromContainer(
             string logConfigurationResolveName)
         {
-            Contract.Ensures(Contract.Result<LogWriter>() != null);
-
             _logConfigurationFileName = logConfigurationResolveName;
 
             using (var configuration = ConfigurationSourceFactory.Create())
@@ -179,8 +184,6 @@ namespace vm.Aspects.Facilities
         public static LogWriter CreateLogWriterFromConfigFile(
             string configFileName)
         {
-            Contract.Ensures(Contract.Result<LogWriter>() != null);
-
             if (!string.IsNullOrWhiteSpace(configFileName))
                 if (Path.IsPathRooted(configFileName))
                     _logConfigurationFileName = configFileName;
@@ -190,7 +193,7 @@ namespace vm.Aspects.Facilities
                                    .CurrentDomain
                                    .GetData("APP_CONFIG_FILE");
 
-                    Contract.Assume(data != null);
+                    Debug.Assert(data != null);
 
                     var path = Path.GetDirectoryName(data.ToString());
 
@@ -255,8 +258,6 @@ namespace vm.Aspects.Facilities
             string resolveName,
             bool containerOverConfigFile = false)
         {
-            Contract.Ensures(Contract.Result<LogWriter>() != null);
-
             LogWriter logWriter;
 
             try

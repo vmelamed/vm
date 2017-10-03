@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
@@ -60,27 +59,11 @@ namespace vm.Aspects.Validation
         /// <summary>
         /// Gets the default negated message template.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-
-                return Resources.ExNotEmptyGuid;
-            }
-        }
+        protected override string DefaultNegatedMessageTemplate => Resources.ExNotEmptyGuid;
 
         /// <summary>
         /// Gets the default non negated message template.
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<string>() != null);
-
-                return Resources.ExEmptyGuid;
-            }
-        }
+        protected override string DefaultNonNegatedMessageTemplate => Resources.ExEmptyGuid;
     }
 }

@@ -1,13 +1,12 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.ServiceLocation;
+using Unity;
 
 namespace vm.Aspects.Facilities
 {
@@ -49,10 +48,7 @@ namespace vm.Aspects.Facilities
             int eventId,
             TraceEventType eventType = TraceEventType.Error,
             int priority = 1)
-        {
-            Contract.Ensures(Contract.Result<LoggingExceptionHandler>() != null);
-
-            return new LoggingExceptionHandler(
+            => new LoggingExceptionHandler(
                                         LogWriterFacades.Exception,
                                         eventId++,
                                         eventType,
@@ -60,7 +56,6 @@ namespace vm.Aspects.Facilities
                                         priority,
                                         typeof(DumpExceptionFormatter),
                                         Facility.LogWriter);
-        }
 
         /// <summary>
         /// Class ExceptionHandlingPoliciesRegistrar. Registers the two exception handling policies.
@@ -84,6 +79,11 @@ namespace vm.Aspects.Facilities
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<IExceptionPolicyProvider>(
                             registrations,
@@ -135,8 +135,6 @@ namespace vm.Aspects.Facilities
         /// <returns>ExceptionManager object.</returns>
         public static ExceptionManager CreateExceptionManager()
         {
-            Contract.Ensures(Contract.Result<ExceptionManager>() != null);
-
             // gather all policies and merge the ones with the same names
             var policyEntries = new Dictionary<string, List<ExceptionPolicyEntry>>();
             List<ExceptionPolicyEntry> list;

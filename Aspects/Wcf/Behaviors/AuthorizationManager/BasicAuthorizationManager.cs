@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -32,14 +30,14 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             IBasicAuthenticate authentication,
             string realm = "vm.Aspects")
         {
-            Contract.Requires<ArgumentNullException>(realm != null, nameof(realm));
-            Contract.Requires<ArgumentException>(realm.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(realm)+" cannot be empty string or consist of whitespace characters only.");
+            if (realm.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(realm));
 
             // if not injected by DI, try the CSL - if not defined it'll throw exception
-            if (authentication == null)
-                authentication = ServiceLocator.Current.GetInstance<IBasicAuthenticate>();
             if (wcfContext == null)
                 wcfContext = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
+            if (authentication == null)
+                authentication = ServiceLocator.Current.GetInstance<IBasicAuthenticate>();
 
             _wcfContext     = wcfContext;
             _authentication = authentication;

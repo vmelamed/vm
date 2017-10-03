@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
@@ -39,7 +38,8 @@ namespace vm.Aspects.Wcf.Behaviors
             IWcfContextUtilities wcfContext)
             : this(wcfContext, ExceptionShielding.DefaultExceptionPolicy)
         {
-            Contract.Requires<ArgumentNullException>(wcfContext != null, nameof(wcfContext));
+            if (wcfContext == null)
+                throw new ArgumentNullException(nameof(wcfContext));
         }
 
         /// <summary>
@@ -51,8 +51,10 @@ namespace vm.Aspects.Wcf.Behaviors
             IWcfContextUtilities wcfContext,
             string exceptionPolicyName)
         {
-            Contract.Requires<ArgumentNullException>(wcfContext != null, nameof(wcfContext));
-            Contract.Requires<ArgumentException>(exceptionPolicyName != null  &&  exceptionPolicyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(exceptionPolicyName)+" cannot be null, empty string or consist of whitespace characters only.");
+            if (wcfContext == null)
+                throw new ArgumentNullException(nameof(wcfContext));
+            if (exceptionPolicyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(exceptionPolicyName));
 
             _wcfContext         = wcfContext;
             ExceptionPolicyName = exceptionPolicyName;
@@ -99,7 +101,7 @@ namespace vm.Aspects.Wcf.Behaviors
             if (fault == null)
                 fault = Message.CreateMessage(version ?? MessageVersion.Default, "");
 
-            Contract.Assert(fault != null);
+            Debug.Assert(fault != null);
 
             try
             {
@@ -184,8 +186,10 @@ namespace vm.Aspects.Wcf.Behaviors
             FaultContractWrapperException faultContractWrapper,
             ref Message fault)
         {
-            Contract.Requires<ArgumentNullException>(faultContractWrapper != null, nameof(faultContractWrapper));
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+            if (faultContractWrapper == null)
+                throw new ArgumentNullException(nameof(faultContractWrapper));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
 
             try
             {
@@ -303,7 +307,8 @@ namespace vm.Aspects.Wcf.Behaviors
             Guid handlingInstanceId,
             FaultContractWrapperException faultContractWrapper = null)
         {
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
 
             if (_wcfContext.HasWebOperationContext)
                 BuildHttpResponseMessage(
@@ -326,7 +331,8 @@ namespace vm.Aspects.Wcf.Behaviors
 
         static Guid GetHandlingInstanceId(Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return GetHandlingInstanceId(exception, Guid.NewGuid());
         }
@@ -335,7 +341,8 @@ namespace vm.Aspects.Wcf.Behaviors
             Exception exception,
             Guid optionalHandlingInstanceId)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             var result = optionalHandlingInstanceId;
             var match = RegularExpression.Guid.Match(exception.Message);
@@ -351,7 +358,8 @@ namespace vm.Aspects.Wcf.Behaviors
         static Guid LogServerException(
             Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             // try to get the handling instance from the exception message or get a new one.
             Guid handlingInstanceId = GetHandlingInstanceId(exception);
@@ -436,7 +444,8 @@ namespace vm.Aspects.Wcf.Behaviors
             HttpStatusCode httpStatusCode,
             ref Message fault)
         {
-            Contract.Requires<ArgumentNullException>(fault != null, nameof(fault));
+            if (fault == null)
+                throw new ArgumentNullException(nameof(fault));
 
             var responseMessageProperty = new HttpResponseMessageProperty();
 

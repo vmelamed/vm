@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects.Model.EFRepository.HiLoIdentity
 {
     /// <summary>
@@ -56,9 +54,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             int maxLowValue = DefaultMaxLowValue,
             long initialHighValue = 1L)
         {
-            Contract.Requires<ArgumentException>(entitySetName==null || RegularExpression.CSharpIdentifier.IsMatch(entitySetName));
-            Contract.Requires<ArgumentException>(maxLowValue > 0);
-            Contract.Requires<ArgumentException>(initialHighValue >= 0L);
+            if (entitySetName != null  &&  !RegularExpression.CSharpIdentifier.IsMatch(entitySetName))
+                throw new ArgumentException("Invalid entity set name.", nameof(entitySetName));
+            if (maxLowValue <= 0)
+                throw new ArgumentException("The parameter must be positive.", nameof(maxLowValue));
+            if (initialHighValue < 0L)
+                throw new ArgumentException("The parameter cannot be negative.", nameof(initialHighValue));
 
             EntitySetName = entitySetName;
             MaxLowValue   = maxLowValue;

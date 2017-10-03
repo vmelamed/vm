@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -23,7 +22,6 @@ namespace vm.Aspects.Model.EFRepository
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-            Contract.Ensures(Contract.Result<IStoreUniqueId<TId>>() != null);
 
             var uniqueId = this as IStoreUniqueId<TId>;
 
@@ -38,7 +36,8 @@ namespace vm.Aspects.Model.EFRepository
         int IStoreUniqueId<int>.GetNewId<T>(
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<int>() == 0);
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             // the value should be ignored by SQL Server
             return 0;
@@ -48,7 +47,10 @@ namespace vm.Aspects.Model.EFRepository
             Type objectsType,
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<int>() == 0);
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             // the value should be ignored by SQL Server
             return 0;
@@ -59,7 +61,8 @@ namespace vm.Aspects.Model.EFRepository
         long IStoreUniqueId<long>.GetNewId<T>(
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<long>() == 0L);
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             // the value should be ignored by SQL Server
             return 0L;
@@ -69,7 +72,10 @@ namespace vm.Aspects.Model.EFRepository
             Type objectsType,
             IRepository repository)
         {
-            Contract.Ensures(Contract.Result<long>() == 0L);
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             // the value should be ignored by SQL Server
             return 0L;
@@ -80,18 +86,46 @@ namespace vm.Aspects.Model.EFRepository
         readonly static DateTime _0date = new DateTime(1900, 1, 1);
 
         // the value should be ignored by SQL Server
-        DateTime IStoreUniqueId<DateTime>.GetNewId<T>(IRepository repository) => _0date;
+        DateTime IStoreUniqueId<DateTime>.GetNewId<T>(IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return _0date;
+        }
 
         // the value should be ignored by SQL Server
         DateTime IStoreUniqueId<DateTime>.GetNewId(
             Type objectsType,
-            IRepository repository) => _0date;
+            IRepository repository)
+        {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return _0date;
+        }
         #endregion
 
         #region IStoreUniqueId<Guid> Members
-        Guid IStoreUniqueId<Guid>.GetNewId<T>(IRepository repository) => new Guid("0123456789ABCDEF0123456789ABCDEF");
+        Guid IStoreUniqueId<Guid>.GetNewId<T>(IRepository repository)
+        {
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
-        Guid IStoreUniqueId<Guid>.GetNewId(Type objectsType, IRepository repository) => new Guid("0123456789ABCDEF0123456789ABCDEF");
+            return new Guid("0123456789ABCDEF0123456789ABCDEF");
+        }
+
+        Guid IStoreUniqueId<Guid>.GetNewId(Type objectsType, IRepository repository)
+        {
+            if (objectsType == null)
+                throw new ArgumentNullException(nameof(objectsType));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return new Guid("0123456789ABCDEF0123456789ABCDEF");
+        }
         #endregion
     }
 }

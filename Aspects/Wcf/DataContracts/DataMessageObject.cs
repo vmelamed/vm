@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
@@ -23,12 +22,10 @@ namespace vm.Aspects.Wcf.DataContracts
         /// <param name="ruleset">The ruleset to test validity against.</param>
         /// <param name="results">The results.</param>
         /// <returns>A list of <see cref="ValidationResult" /> objects.</returns>
-        [Pure]
         public ValidationResults Validate(
             string ruleset = "",
             ValidationResults results = null)
         {
-            Contract.Ensures(Contract.Result<ValidationResults>() != null);
 
             var validator = Facility.ValidatorFactory.CreateValidator(GetType(), ruleset);
 
@@ -62,7 +59,8 @@ namespace vm.Aspects.Wcf.DataContracts
         public virtual void AcceptVisitor(
             object visitor)
         {
-            Contract.Requires<ArgumentNullException>(visitor != null, nameof(visitor));
+            if (visitor == null)
+                throw new ArgumentNullException(nameof(visitor));
 
             throw new NotImplementedException(
                         $"The message of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");

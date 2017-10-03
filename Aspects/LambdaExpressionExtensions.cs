@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -22,13 +20,11 @@ namespace vm.Aspects
         /// <exception cref="System.ArgumentException">Thrown if <paramref name="lambda" /> is not a lambda expression with a body of a single property selection expression</exception>
         /// <exception cref="System.ArgumentNullException">Thrown if the <paramref name="lambda" /> is <see langword="null" />.</exception>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        [Pure]
         public static string GetMemberName<TPrincipal, TAssociated>(
             this Expression<Func<TPrincipal, TAssociated>> lambda)
         {
-            Contract.Requires<ArgumentNullException>(lambda != null, nameof(lambda));
-            Contract.Ensures(Contract.Result<string>() != null, "Could not determine the property name from the given lambda.");
-            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+            if (lambda == null)
+                throw new ArgumentNullException(nameof(lambda));
 
             var memberExpression = lambda.Body as MemberExpression;
 

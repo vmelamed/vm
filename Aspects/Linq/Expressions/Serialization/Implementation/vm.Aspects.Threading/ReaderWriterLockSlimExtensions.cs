@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Threading;
 
 namespace vm.Aspects.Threading
@@ -46,9 +45,9 @@ namespace vm.Aspects.Threading
         public static UpgradeableReaderSlimSync UpgradableReaderLock(
             this ReaderWriterLockSlim readerWriterLock)
         {
-            Contract.Requires<ArgumentNullException>(readerWriterLock != null, nameof(readerWriterLock));
-            Contract.Ensures(Contract.Result<UpgradeableReaderSlimSync>() != null);
-
+            if (readerWriterLock == null)
+                throw new ArgumentNullException(nameof(readerWriterLock));
+            
             return new UpgradeableReaderSlimSync(readerWriterLock);
         }
 
@@ -78,9 +77,9 @@ namespace vm.Aspects.Threading
         public static ReaderSlimSync ReaderLock(
             this ReaderWriterLockSlim readerWriterLock)
         {
-            Contract.Requires<ArgumentNullException>(readerWriterLock != null, nameof(readerWriterLock));
-            Contract.Ensures(Contract.Result<ReaderSlimSync>() != null);
-
+            if (readerWriterLock == null)
+                throw new ArgumentNullException(nameof(readerWriterLock));
+            
             return new ReaderSlimSync(readerWriterLock);
         }
 
@@ -110,9 +109,9 @@ namespace vm.Aspects.Threading
         public static WriterSlimSync WriterLock(
             this ReaderWriterLockSlim readerWriterLock)
         {
-            Contract.Requires<ArgumentNullException>(readerWriterLock != null, nameof(readerWriterLock));
-            Contract.Ensures(Contract.Result<WriterSlimSync>() != null);
-
+            if (readerWriterLock == null)
+                throw new ArgumentNullException(nameof(readerWriterLock));
+            
             return new WriterSlimSync(readerWriterLock);
         }
     }

@@ -219,8 +219,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <returns>EncryptedKey.</returns>
         protected virtual EncryptedKey CreateEncryptedKey()
         {
-            Contract.Ensures(Contract.Result<EncryptedKey>() == null);
-
             return null;
         }
 

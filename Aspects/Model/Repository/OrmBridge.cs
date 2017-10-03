@@ -1,11 +1,9 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
-using System.Diagnostics.Contracts;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.Practices.ServiceLocation;
+using Unity;
 using vm.Aspects.Model.InMemory;
-using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.Repository
 {
@@ -24,8 +22,8 @@ namespace vm.Aspects.Model.Repository
         public static void SetOrmSpecifics(
             IOrmSpecifics ormSpecifics)
         {
-            Contract.Requires<ArgumentNullException>(ormSpecifics != null, nameof(ormSpecifics));
-            Contract.Ensures(_ormSpecifics != null);
+            if (ormSpecifics == null)
+                throw new ArgumentNullException(nameof(ormSpecifics));
 
             lock (_sync)
                 if (_ormSpecifics == null)
@@ -39,7 +37,6 @@ namespace vm.Aspects.Model.Repository
         {
             get
             {
-                Contract.Ensures(Contract.Result<IOrmSpecifics>() != null);
 
                 if (_ormSpecifics == null)
                     try
@@ -70,11 +67,10 @@ namespace vm.Aspects.Model.Repository
             this IQueryable<T> sequence,
             string path) where T : class
         {
-            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
-            Contract.Requires<ArgumentException>(path.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(path)+" cannot be empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(path));
 
             return OrmSpecifics.FetchAlso(sequence, path);
         }
@@ -91,9 +87,10 @@ namespace vm.Aspects.Model.Repository
             this IQueryable<T> sequence,
             Expression<Func<T, TProperty>> path) where T : class
         {
-            Contract.Requires<ArgumentNullException>(sequence != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(path != null, nameof(path));
-            Contract.Ensures(Contract.Result<IQueryable<T>>() != null);
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
 
             return OrmSpecifics.FetchAlso(sequence, path);
         }
@@ -106,8 +103,8 @@ namespace vm.Aspects.Model.Repository
         public static IRepository EnlistInAmbientTransaction(
             this IRepository repository)
         {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-            Contract.Ensures(Contract.Result<IRepository>() != null);
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return OrmSpecifics.EnlistInAmbientTransaction(repository);
         }
@@ -120,7 +117,8 @@ namespace vm.Aspects.Model.Repository
         public static Type GetEntityType(
             object reference)
         {
-            Contract.Requires<ArgumentNullException>(reference != null, nameof(reference));
+            if (reference == null)
+                throw new ArgumentNullException(nameof(reference));
 
             return OrmSpecifics.GetEntityType(reference);
         }
@@ -139,7 +137,8 @@ namespace vm.Aspects.Model.Repository
         public static bool IsProxy(
             this object entity)
         {
-            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
 
             return OrmSpecifics.IsProxy(entity);
         }
@@ -160,11 +159,14 @@ namespace vm.Aspects.Model.Repository
             string propertyName,
             IRepository repository)
         {
-            Contract.Requires<ArgumentNullException>(associated != null, nameof(associated));
-            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
-            Contract.Requires<ArgumentNullException>(propertyName != null, nameof(propertyName));
-            Contract.Requires<ArgumentException>(propertyName.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(propertyName)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return OrmSpecifics.IsLoaded(associated, principal, propertyName, repository);
         }
@@ -189,10 +191,14 @@ namespace vm.Aspects.Model.Repository
             where TAssociated : class
             where TPrincipal : class
         {
-            Contract.Requires<ArgumentNullException>(associated != null, nameof(associated));
-            Contract.Requires<ArgumentNullException>(principal != null, nameof(principal));
-            Contract.Requires<ArgumentNullException>(propertyNameLambda != null, nameof(propertyNameLambda));
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyNameLambda == null)
+                throw new ArgumentNullException(nameof(propertyNameLambda));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return OrmSpecifics.IsLoaded(associated, principal, propertyNameLambda.GetMemberName(), repository);
         }
@@ -214,8 +220,10 @@ namespace vm.Aspects.Model.Repository
             this object entity,
             IRepository repository)
         {
-            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
 
             return OrmSpecifics.IsChangeTracking(entity, repository);
         }
@@ -227,11 +235,11 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is an optimistic concurrency problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         public static bool IsOptimisticConcurrency(
             this Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return OrmSpecifics.IsOptimisticConcurrency(exception);
         }
@@ -243,11 +251,11 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         public static bool IsTransactionRelated(
             this Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return OrmSpecifics.IsTransactionRelated(exception);
         }
@@ -259,11 +267,11 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is a connection problem; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         public static bool IsConnectionRelated(
             this Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return OrmSpecifics.IsConnectionRelated(exception);
         }
@@ -275,11 +283,11 @@ namespace vm.Aspects.Model.Repository
         /// <returns>
         ///   <see langword="true"/> if the specified exception is allows for the operation to be repeated; otherwise, <see langword="false"/>.
         /// </returns>
-        [Pure]
         public static bool IsTransient(
             this Exception exception)
         {
-            Contract.Requires<ArgumentNullException>(exception != null, nameof(exception));
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
 
             return OrmSpecifics.IsTransient(exception);
         }

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
@@ -82,8 +81,7 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             TransactionScope transactionScope)
         {
-            Contract.Ensures(Contract.Result<IMethodReturn>() != null);
-
+            
             if (methodReturn.IsAsyncCall())
                 return methodReturn;        // return the task, do not clean-up yet
 

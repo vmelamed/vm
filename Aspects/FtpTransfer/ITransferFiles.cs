@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace vm.Aspects.FtpTransfer
@@ -9,7 +6,6 @@ namespace vm.Aspects.FtpTransfer
     /// <summary>
     /// Abstracts a object that can list download and upload files (e.g. from an FTP site).
     /// </summary>
-    [ContractClass(typeof(ITransferFilesContract))]
     public interface ITransferFiles
     {
         /// <summary>
@@ -55,61 +51,4 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>The uploading task.</returns>
         Task UploadFileAsync(Stream stream, string name);
     }
-
-    #region ITransferFile contract binding
-    [ContractClassFor(typeof(ITransferFiles))]
-    abstract class ITransferFilesContract : ITransferFiles
-    {
-        public Stream DownloadFile(string name)
-        {
-            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<Stream>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public Task<Stream> DownloadFileAsync(string name)
-        {
-            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            Contract.Ensures(Contract.Result<Stream>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public Stream ListFiles()
-        {
-            Contract.Ensures(Contract.Result<Stream>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public Task<Stream> ListFilesAsync()
-        {
-            Contract.Ensures(Contract.Result<Task<Stream>>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public void UploadFile(Stream stream, string name)
-        {
-            Contract.Requires<ArgumentNullException>(stream != null, nameof(stream));
-            Contract.Requires<ArgumentException>(stream.CanRead);
-            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            throw new NotImplementedException();
-        }
-
-        public Task UploadFileAsync(Stream stream, string name)
-        {
-            Contract.Requires<ArgumentNullException>(stream != null, nameof(stream));
-            Contract.Requires<ArgumentException>(stream.CanRead);
-            Contract.Requires<ArgumentException>(name != null  &&  name.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(name)+" cannot be null, empty string or consist of whitespace characters only.");
-
-            throw new NotImplementedException();
-        }
-    }
-    #endregion
-
 }

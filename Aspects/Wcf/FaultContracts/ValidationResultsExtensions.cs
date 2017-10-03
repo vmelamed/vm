@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -22,8 +21,10 @@ namespace vm.Aspects.Wcf.FaultContracts
             this ValidationResult result,
             ValidationFaultElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
-            Contract.Requires<ArgumentNullException>(result != null, nameof(result));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
 
             element.Message       = result.Message;
             element.Key           = result.Key;
@@ -55,8 +56,10 @@ namespace vm.Aspects.Wcf.FaultContracts
             this IEnumerable<ValidationResult> results,
             ICollection<ValidationFaultElement> elements)
         {
-            Contract.Requires<ArgumentNullException>(elements != null, nameof(elements));
-            Contract.Requires<ArgumentNullException>(results != null, nameof(results));
+            if (elements == null)
+                throw new ArgumentNullException(nameof(elements));
+            if (results == null)
+                throw new ArgumentNullException(nameof(results));
 
             foreach (var r in results)
                 if (r != null)
@@ -75,8 +78,10 @@ namespace vm.Aspects.Wcf.FaultContracts
             this IEnumerable<ValidationFaultElement> elements,
             ICollection<ValidationResult> results)
         {
-            Contract.Requires<ArgumentNullException>(elements != null, nameof(elements));
-            Contract.Requires<ArgumentNullException>(results != null, nameof(results));
+            if (elements == null)
+                throw new ArgumentNullException(nameof(elements));
+            if (results == null)
+                throw new ArgumentNullException(nameof(results));
 
             foreach (var e in elements)
             {

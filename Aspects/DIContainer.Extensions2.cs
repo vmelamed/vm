@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Microsoft.Practices.Unity;
+using Unity;
 
 namespace vm.Aspects
 {
@@ -53,12 +52,15 @@ namespace vm.Aspects
             Type type,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterType(type, injectionMembers);
             return container;
@@ -111,12 +113,15 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterType(type, lifetimeManager, injectionMembers);
             return container;
@@ -169,12 +174,15 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterType(type, name, injectionMembers);
             return container;
@@ -230,12 +238,15 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterType(type, name, lifetimeManager, injectionMembers);
 
@@ -291,13 +302,17 @@ namespace vm.Aspects
             Type typeTo,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(typeFrom != null, nameof(typeFrom));
-            Contract.Requires<ArgumentNullException>(typeTo != null, nameof(typeTo));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (typeFrom == null)
+                throw new ArgumentNullException(nameof(typeFrom));
+            if (typeTo == null)
+                throw new ArgumentNullException(nameof(typeTo));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom)))
                 container.RegisterType(typeFrom, typeTo, injectionMembers);
 
@@ -354,13 +369,17 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(typeFrom != null, nameof(typeFrom));
-            Contract.Requires<ArgumentNullException>(typeTo != null, nameof(typeTo));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (typeFrom == null)
+                throw new ArgumentNullException(nameof(typeFrom));
+            if (typeTo == null)
+                throw new ArgumentNullException(nameof(typeTo));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom)))
                 container.RegisterType(typeFrom, typeTo, lifetimeManager, injectionMembers);
 
@@ -417,13 +436,17 @@ namespace vm.Aspects
             string name,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(typeFrom != null, nameof(typeFrom));
-            Contract.Requires<ArgumentNullException>(typeTo != null, nameof(typeTo));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (typeFrom == null)
+                throw new ArgumentNullException(nameof(typeFrom));
+            if (typeTo == null)
+                throw new ArgumentNullException(nameof(typeTo));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom, name)))
                 container.RegisterType(typeFrom, typeTo, name, injectionMembers);
 
@@ -483,13 +506,17 @@ namespace vm.Aspects
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(typeFrom != null, nameof(typeFrom));
-            Contract.Requires<ArgumentNullException>(typeTo != null, nameof(typeTo));
-            Contract.Requires<ArgumentNullException>(injectionMembers != null, nameof(injectionMembers));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (typeFrom == null)
+                throw new ArgumentNullException(nameof(typeFrom));
+            if (typeTo == null)
+                throw new ArgumentNullException(nameof(typeTo));
+            if (injectionMembers == null)
+                throw new ArgumentNullException(nameof(injectionMembers));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom, name)))
                 container.RegisterType(typeFrom, typeTo, name, lifetimeManager, injectionMembers);
 
@@ -542,11 +569,13 @@ namespace vm.Aspects
             Type type,
             object instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterInstance(type, instance);
 
@@ -599,12 +628,15 @@ namespace vm.Aspects
             object instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterInstance(type, instance, lifetimeManager);
             return container;
@@ -656,11 +688,13 @@ namespace vm.Aspects
             string name,
             object instance)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterInstance(type, name, instance);
 
@@ -716,12 +750,15 @@ namespace vm.Aspects
             object instance,
             LifetimeManager lifetimeManager)
         {
-            Contract.Requires<ArgumentNullException>(container != null, nameof(container));
-            Contract.Requires<ArgumentNullException>(registrations != null, nameof(registrations));
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
-            Contract.Requires<ArgumentNullException>(lifetimeManager != null, nameof(lifetimeManager));
-            Contract.Ensures(Contract.Result<IUnityContainer>() != null);
-
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+            if (registrations == null)
+                throw new ArgumentNullException(nameof(registrations));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (lifetimeManager == null)
+                throw new ArgumentNullException(nameof(lifetimeManager));
+            
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterInstance(type, name, instance, lifetimeManager);
 

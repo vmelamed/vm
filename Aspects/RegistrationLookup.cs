@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-
 namespace vm.Aspects
 {
     /// <summary>
@@ -20,7 +18,8 @@ namespace vm.Aspects
             Type type,
             string name = null)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             RegisteredType = type;
 

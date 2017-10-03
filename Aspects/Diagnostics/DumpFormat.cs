@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
@@ -185,33 +184,5 @@ namespace vm.Aspects.Diagnostics
         /// Gets or sets the C# expression dump label.
         /// </summary>
         public static string CSharpDumpLabel { get; set; }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [ContractInvariantMethod]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Required for code contracts.")]
-        static void ObjectInvariant()
-        {
-            Contract.Invariant(!string.IsNullOrEmpty(CyclicalReference));
-            Contract.Invariant(!string.IsNullOrEmpty(Delegate));
-            Contract.Invariant(!string.IsNullOrEmpty(Enum));
-            Contract.Invariant(!string.IsNullOrEmpty(GenericParam));
-            Contract.Invariant(!string.IsNullOrEmpty(IndexerIndexType));
-            Contract.Invariant(!string.IsNullOrEmpty(MemberInfoMemberType));
-            Contract.Invariant(!string.IsNullOrEmpty(MethodInfo));
-            Contract.Invariant(!string.IsNullOrEmpty(MethodParameter));
-            Contract.Invariant(!string.IsNullOrEmpty(DefaultPropertyLabel));
-            Contract.Invariant(!string.IsNullOrEmpty(SequenceDumpTruncated));
-            Contract.Invariant(!string.IsNullOrEmpty(SequenceType));
-            Contract.Invariant(!string.IsNullOrEmpty(SequenceTypeName));
-            Contract.Invariant(!string.IsNullOrEmpty(Type));
-            Contract.Invariant(!string.IsNullOrEmpty(TypeInfo));
-            Contract.Invariant(!string.IsNullOrEmpty(Value));
-            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagPrefix));
-            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagSeparator));
-            Contract.Invariant(!string.IsNullOrEmpty(EnumFlagSuffix));
-            Contract.Invariant(!string.IsNullOrEmpty(EnumFlag));
-            Contract.Invariant(!string.IsNullOrEmpty(CSharpDumpLabel));
-        }
-
     }
 }

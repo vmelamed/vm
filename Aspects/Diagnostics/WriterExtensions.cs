@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -67,7 +67,8 @@ namespace vm.Aspects.Diagnostics
         public static bool IsFromSystem(
             this Type type)
         {
-            Contract.Requires<ArgumentNullException>(type != null, nameof(type));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
 
             return _systemNameSpace.IsMatch(type.Namespace);
         }
@@ -78,7 +79,8 @@ namespace vm.Aspects.Diagnostics
             string @string,
             int max)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (@string == null)
                 return false;
@@ -94,8 +96,10 @@ namespace vm.Aspects.Diagnostics
             object v,
             int max)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(v != null, nameof(v));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (v == null)
+                throw new ArgumentNullException(nameof(v));
 
             var type = v.GetType();
 
@@ -162,7 +166,8 @@ namespace vm.Aspects.Diagnostics
             object value,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (value == null)
             {
@@ -218,7 +223,8 @@ namespace vm.Aspects.Diagnostics
             object value,
             DumpAttribute dumpAttribute)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (value == null)
             {
@@ -253,7 +259,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             Delegate @delegate)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (@delegate == null)
                 return false;
@@ -275,7 +282,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             MemberInfo memberInfo)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (memberInfo == null)
                 return false;
@@ -326,7 +334,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             Type type)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (type == null)
                 return false;
@@ -344,7 +353,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             EventInfo eventInfo)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (eventInfo == null)
                 return false;
@@ -366,7 +376,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             FieldInfo fieldInfo)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (fieldInfo == null)
                 return false;
@@ -388,7 +399,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             PropertyInfo propertyInfo)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (propertyInfo == null)
                 return false;
@@ -436,7 +448,8 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             MethodInfo methodInfo)
         {
-            Contract.Requires<ArgumentNullException>(writer != null, nameof(writer));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
             if (methodInfo == null)
                 return false;
@@ -496,12 +509,18 @@ namespace vm.Aspects.Diagnostics
             Action indent,
             Action unindent)
         {
-            Contract.Requires<ArgumentNullException>(writer        != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-            Contract.Requires<ArgumentNullException>(dumpObject    != null, nameof(dumpObject));
-            Contract.Requires<ArgumentNullException>(indent        != null, nameof(indent));
-            Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
+            if (dumpObject == null)
+                throw new ArgumentNullException(nameof(dumpObject));
+            if (indent == null)
+                throw new ArgumentNullException(nameof(indent));
+            if (unindent == null)
+                throw new ArgumentNullException(nameof(unindent));
 
             var sequenceType  = sequence.GetType();
             var typeArguments = sequenceType.DictionaryTypeArguments();
@@ -509,7 +528,7 @@ namespace vm.Aspects.Diagnostics
             if (typeArguments == null)
                 return false;
 
-            Contract.Assume(typeArguments.Length == 2);
+            Debug.Assert(typeArguments.Length == 2);
 
             var keyType   = typeArguments[0];
             var valueType = typeArguments[1];
@@ -547,7 +566,7 @@ namespace vm.Aspects.Diagnostics
 
             foreach (var kv in (IEnumerable)sequence)
             {
-                Contract.Assume(kv.GetType() == keyValueType);
+                Debug.Assert(kv.GetType() == keyValueType);
 
                 writer.WriteLine();
                 if (n++ >= max)
@@ -581,12 +600,18 @@ namespace vm.Aspects.Diagnostics
             Action indent,
             Action unindent)
         {
-            Contract.Requires<ArgumentNullException>(writer        != null, nameof(writer));
-            Contract.Requires<ArgumentNullException>(sequence      != null, nameof(sequence));
-            Contract.Requires<ArgumentNullException>(dumpAttribute != null, nameof(dumpAttribute));
-            Contract.Requires<ArgumentNullException>(dumpObject    != null, nameof(dumpObject));
-            Contract.Requires<ArgumentNullException>(indent        != null, nameof(indent));
-            Contract.Requires<ArgumentNullException>(unindent      != null, nameof(unindent));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
+            if (sequence == null)
+                throw new ArgumentNullException(nameof(sequence));
+            if (dumpAttribute == null)
+                throw new ArgumentNullException(nameof(dumpAttribute));
+            if (dumpObject == null)
+                throw new ArgumentNullException(nameof(dumpObject));
+            if (indent == null)
+                throw new ArgumentNullException(nameof(indent));
+            if (unindent == null)
+                throw new ArgumentNullException(nameof(unindent));
 
             var sequenceType = sequence.GetType();
             var elementsType = sequenceType.IsArray

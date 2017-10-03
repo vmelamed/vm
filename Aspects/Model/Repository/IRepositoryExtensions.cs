@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -29,11 +28,13 @@ namespace vm.Aspects.Model.Repository
             EntityState state,
             params Expression<Func<T, object>>[] modifiedProperties) where T : BaseDomainEntity
         {
-            Contract.Requires<ArgumentNullException>(repository != null, nameof(repository));
-            Contract.Requires<ArgumentNullException>(entity != null, nameof(entity));
-            Contract.Requires<ArgumentNullException>(modifiedProperties != null, nameof(modifiedProperties));
-            Contract.Ensures(Contract.Result<IRepository>() != null);
-
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+            if (modifiedProperties == null)
+                throw new ArgumentNullException(nameof(modifiedProperties));
+            
             return repository.AttachEntity<T>(
                                     entity,
                                     state,

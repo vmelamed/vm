@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
@@ -26,7 +25,8 @@ namespace vm.Aspects.Validation
             bool negated)
             : base(messageTemplate, tag, negated)
         {
-            Contract.Requires<ArgumentNullException>(zero != null, nameof(zero));
+            if (zero == null)
+                throw new ArgumentNullException(nameof(zero));
 
             _zero = zero;
         }

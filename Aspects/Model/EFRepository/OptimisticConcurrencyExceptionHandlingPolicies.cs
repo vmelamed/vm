@@ -1,9 +1,9 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Unity;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
@@ -226,6 +226,11 @@ namespace vm.Aspects.Model.EFRepository
                 IUnityContainer container,
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations)
             {
+                if (container == null)
+                    throw new ArgumentNullException(nameof(container));
+                if (registrations == null)
+                    throw new ArgumentNullException(nameof(registrations));
+
                 container
                     .RegisterInstanceIfNot<IExceptionPolicyProvider>(
                             registrations,
