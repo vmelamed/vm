@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmCiphersVersion=1.12.0
+set vmCiphersVersion=1.12.1
 
 cd %~dp0..
 del *.nupkg

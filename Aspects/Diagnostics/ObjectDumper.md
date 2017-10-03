@@ -526,7 +526,7 @@ Feel free to add more mappings like this to the metadata cache. Note that the fo
 
 Here is how the registrar registers metadata class for the `Task<>` class:
 ```csharp
-	ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
+    ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
 ```
 ### Performance of the AspectObjectDumper and the dump cache (as of v1.7.0)
 You can imagine that the implementation of the object dumper is one huge exercise on .NET reflection. However this would make it not particularly good performer - on average an object is dumped in a few dozens of milliseconds. While working on the [expression serialization](https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization) I realized that all that reflection code can be used to generate expression trees that represent the dumping code for each class. Then all I need to do is compile these expression trees into delegates and cache them. So, the next time when I need to dump an object of the same type, instead of traversing the object graph with all its properties and nested objects using reflection again, all I need is really to pull the cached delegates and execute them with parameter the current object. The result was significant improvement. If on average dumping of an average object for first time takes something in the order of 40-60 milliseconds, the second time (executing a delegate from the cache) takes say 300 microseconds or less - a few hundreds times better. 
