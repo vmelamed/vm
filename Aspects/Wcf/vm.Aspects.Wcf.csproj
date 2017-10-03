@@ -189,6 +189,10 @@
     <NoWarn>3001, 3002, 3003</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.IdentityModel.Logging, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.IdentityModel.Logging.5.2.0-preview1-408290725\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
       <Private>True</Private>
@@ -233,10 +237,6 @@
       <HintPath>..\..\packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.2.0.0\lib\net45\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -274,8 +274,8 @@
       <HintPath>..\..\packages\Unity.Interception.5.0.0-beta\lib\net45\Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.1.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AspectObjectDumper.1.9.1\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.4.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AspectObjectDumper.1.9.4\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

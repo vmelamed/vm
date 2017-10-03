@@ -131,8 +131,8 @@
     <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommonServiceLocator.2.0.0\lib\net45\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -142,8 +142,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.1.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AspectObjectDumper.1.9.1\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.4.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AspectObjectDumper.1.9.4\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

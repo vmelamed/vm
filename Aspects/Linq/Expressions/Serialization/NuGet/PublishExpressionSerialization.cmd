@@ -1,5 +1,5 @@
 ﻿if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmExpressionSerializationVersion=1.0.111
+set vmExpressionSerializationVersion=1.0.112
 
 cd %~dp0..
 del *.nupkg

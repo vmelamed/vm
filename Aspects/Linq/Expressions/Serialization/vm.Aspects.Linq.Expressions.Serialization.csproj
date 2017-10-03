@@ -187,8 +187,8 @@
     <NoWarn>3001, 3002, 3003</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\CommonServiceLocator.2.0.0\lib\net45\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\CommonServiceLocator.1.4.0\lib\net45\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

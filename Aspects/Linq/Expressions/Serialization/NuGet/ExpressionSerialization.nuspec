@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.111</version>
+        <version>1.0.112</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -35,6 +35,8 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
+            <dependency id="CommonServiceLocator"
+                        version="1.4" />
         </dependencies>
         <tags>.net LINQ expression tree serialization XML aspects</tags>
     </metadata>
