@@ -1,6 +1,6 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Unity.InterceptionExtension;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Policies

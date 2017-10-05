@@ -2,8 +2,8 @@
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Unity;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies

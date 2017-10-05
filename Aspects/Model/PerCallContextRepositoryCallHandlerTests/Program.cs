@@ -6,8 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
-using Unity;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests

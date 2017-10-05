@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Permissions;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {

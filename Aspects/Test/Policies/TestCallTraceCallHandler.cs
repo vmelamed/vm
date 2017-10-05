@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Unity;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Facilities;
 

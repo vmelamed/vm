@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {

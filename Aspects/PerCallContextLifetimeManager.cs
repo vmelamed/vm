@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Threading;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects

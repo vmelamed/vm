@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Wcf.Bindings;

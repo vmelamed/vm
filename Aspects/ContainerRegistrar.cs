@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 

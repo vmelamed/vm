@@ -1,4 +1,4 @@
-﻿using Unity.InterceptionExtension;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies.Tests
 {

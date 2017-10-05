@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Facilities.Diagnostics
 {

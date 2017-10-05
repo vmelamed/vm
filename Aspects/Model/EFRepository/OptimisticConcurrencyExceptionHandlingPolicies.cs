@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;

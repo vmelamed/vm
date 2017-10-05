@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Services
 {

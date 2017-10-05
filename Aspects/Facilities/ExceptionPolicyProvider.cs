@@ -6,7 +6,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 using Microsoft.Practices.ServiceLocation;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Facilities
 {

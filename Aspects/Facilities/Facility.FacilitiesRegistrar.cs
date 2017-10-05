@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 

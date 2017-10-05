@@ -7,7 +7,7 @@ using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 

@@ -2,10 +2,9 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using Unity;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Policies.Tests

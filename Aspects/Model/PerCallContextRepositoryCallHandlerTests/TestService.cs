@@ -1,12 +1,12 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;

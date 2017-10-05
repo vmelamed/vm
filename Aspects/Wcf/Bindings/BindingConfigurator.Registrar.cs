@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Wcf.Bindings
 {

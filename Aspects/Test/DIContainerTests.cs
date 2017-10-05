@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.ServiceLocation;
-using Unity;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Tests

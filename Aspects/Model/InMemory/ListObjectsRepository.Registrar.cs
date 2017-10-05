@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity;
+using Microsoft.Practices.Unity;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.InMemory

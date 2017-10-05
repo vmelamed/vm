@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.12.1</version>
+        <version>1.12.2</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -18,7 +18,7 @@
             * Built and tested with .NET v4.6.2.
         </description>
         <releaseNotes>
-            Builds targeting .NET 4.6.2.
+            Back to CommonServiceLocator 1.3
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -26,7 +26,7 @@
         <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
-                        version="1.4" />
+                        version="1.3" />
         </dependencies>
         <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
     </metadata>
@@ -37,7 +37,7 @@
               target="lib\net462"/>
         <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net462"/>
-        <file src="..\ProtectedKey\bin\pack\CommonServiceLocator.dll"
+        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
               target="lib\net462"/>
         <file src="..\EncryptedKey\bin\pack\EncryptedKey.exe"
               target="tools\net462"/>
@@ -57,7 +57,7 @@
               target="tools\net462"/>
         <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\CommonServiceLocator.dll"
+        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net462"/>
 
         <file src="..\**\*.cs"

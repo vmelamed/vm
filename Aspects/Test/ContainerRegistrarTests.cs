@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Tests
 {

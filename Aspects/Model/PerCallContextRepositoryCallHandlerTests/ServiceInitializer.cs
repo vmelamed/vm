@@ -1,5 +1,5 @@
 ﻿using Microsoft.Practices.ServiceLocation;
-using Unity;
+using Microsoft.Practices.Unity;
 using System;
 using System.Linq;
 using System.ServiceModel;

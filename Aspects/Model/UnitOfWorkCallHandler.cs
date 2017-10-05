@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
@@ -81,7 +81,7 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             TransactionScope transactionScope)
         {
-            
+
             if (methodReturn.IsAsyncCall())
                 return methodReturn;        // return the task, do not clean-up yet
 

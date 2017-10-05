@@ -8,9 +8,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Practices.ServiceLocation;
-using Unity;
-using Unity.Configuration;
-using Unity.InterceptionExtension;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 

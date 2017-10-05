@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {

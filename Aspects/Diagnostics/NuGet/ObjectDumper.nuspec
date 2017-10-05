@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.9.4</version>
+        <version>1.9.7</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -29,9 +29,7 @@
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
-            Taking dependance on CommonServiceLocator 1.4.
-            Removed the "Code Contracts" :(
-            Fixed bug in the NuSpec.
+            Back to CommonServiceLocator 1.3
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
@@ -39,7 +37,7 @@
         <copyright>Copyright © vm 2013-2017</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
-                        version="1.4" /> 
+                        version="1.3" /> 
         </dependencies>
         <tags>dump object .net diagnostics debug log aspects</tags>
     </metadata>
