@@ -39,25 +39,13 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         #endregion
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void WriteBufferNull()
         {
-            try
-            {
-                using (var w = new DumpTextWriter())
-                    w.Write(new char[] { 'a', 'b', 'c' }, -1, -2);
+            using (var w = new DumpTextWriter())
+                w.Write(new char[] { 'a', 'b', 'c' }, -1, -2);
 
-                Assert.Fail("Expected System.Diagnostics.Contracts.__ContractsRuntime+ContractException");
-            }
-            catch (AssertFailedException x)
-            {
-                TestContext.WriteLine("{0}", x.DumpString());
-                throw;
-            }
-            catch (Exception x)
-            {
-                TestContext.WriteLine("{0}", x.DumpString());
-                Assert.AreEqual("System.Diagnostics.Contracts.__ContractsRuntime+ContractException", x.GetType().FullName);
-            }
+            Assert.Fail("Expected "+nameof(ArgumentException));
         }
     }
 }

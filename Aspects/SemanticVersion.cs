@@ -46,7 +46,7 @@ namespace vm.Aspects
                 throw new ArgumentException("The minor version cannot be negative.");
             if (patch < 0)
                 throw new ArgumentException("The patch version cannot be negative.");
-            if (prerelease.IsNullOrWhiteSpace()  &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease)  &&  ValidateParts(prerelease)))
+            if (!prerelease.IsNullOrWhiteSpace()  &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease)  &&  ValidateParts(prerelease)))
                 throw new ArgumentException("The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
             if (!string.IsNullOrEmpty(build) &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(build)  &&  ValidateParts(build)))
                 throw new ArgumentException("The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");

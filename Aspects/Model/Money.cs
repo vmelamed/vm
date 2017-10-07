@@ -61,7 +61,7 @@ namespace vm.Aspects.Model
             string currency = null,
             IMoneyDefaults defaults = null)
         {
-            if (currency.IsNullOrWhiteSpace())
+            if (!currency.IsNullOrWhiteSpace()  &&  !RegularExpression.CurrencyIsoCode.IsMatch(currency))
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(currency));
 
             defaults = defaults ?? ServiceLocator.Current.GetInstance<IMoneyDefaults>();
