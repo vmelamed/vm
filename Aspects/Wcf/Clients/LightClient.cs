@@ -54,10 +54,21 @@ namespace vm.Aspects.Wcf.Clients
         /// Type of the identity: can be <see cref="ServiceIdentity.Dns" />, <see cref="ServiceIdentity.Spn" />, <see cref="ServiceIdentity.Upn" />, or 
         /// <see cref="ServiceIdentity.Rsa" />.
         /// </param>
-        /// <param name="identity">
-        /// The identifier in the case of <see cref="ServiceIdentity.Dns" /> should be the DNS name of specified by the service's certificate or machine.
-        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity; if <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// <param name="identityName">
+        /// <list type="bullet">
+        /// <item>
+        /// If the identity type is <see cref="ServiceIdentity.Dns" /> - the identifier should be the DNS name specified in the service's certificate or machine.
+        /// </item>
+        /// <item>
+        /// If the identity type is <see cref="ServiceIdentity.Upn" /> - use the UPN of the service identity;
+        /// </item>
+        /// <item>
+        /// If the identity type is <see cref="ServiceIdentity.Spn" /> - use the SPN and if
+        /// </item>
+        /// <item>
         /// <see cref="ServiceIdentity.Rsa" /> - use the RSA key.
+        /// </item>
+        /// </list>
         /// </param>
         /// <param name="messagingPattern">
         /// The messaging pattern defining the configuration of the connection. If <see langword="null"/>, empty or whitespace characters only, 
@@ -69,18 +80,15 @@ namespace vm.Aspects.Wcf.Clients
         protected LightClient(
             string remoteAddress,
             ServiceIdentity identityType = ServiceIdentity.None,
-            string identity = null,
+            string identityName = null,
             string messagingPattern = null)
         {
             if (remoteAddress.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None  &&
-                identityType != ServiceIdentity.Certificate  &&
-                identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
+            EndpointIdentityFactory.ValidateIdentityParameters(identityType, identityName);
 
             EnsureMessagingPattern(ref messagingPattern);
-            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
+            BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identityName));
         }
 
         /// <summary>
@@ -109,8 +117,7 @@ namespace vm.Aspects.Wcf.Clients
             string remoteAddress,
             string messagingPattern = null)
         {
-            if (endpointConfigurationName.IsNullOrWhiteSpace()  &&
-                remoteAddress.IsNullOrWhiteSpace())
+            if (endpointConfigurationName.IsNullOrWhiteSpace()  &&  remoteAddress.IsNullOrWhiteSpace())
                 throw new ArgumentException("At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
 
             EnsureMessagingPattern(ref messagingPattern);
@@ -153,10 +160,7 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (remoteAddress.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
+            EndpointIdentityFactory.ValidateIdentityParameters(identityType, certificate);
 
             EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));
@@ -216,8 +220,7 @@ namespace vm.Aspects.Wcf.Clients
                 throw new ArgumentNullException(nameof(binding));
             if (remoteAddress.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate || identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
+            EndpointIdentityFactory.ValidateIdentityParameters(identityType, identity);
 
             EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity));
@@ -250,10 +253,7 @@ namespace vm.Aspects.Wcf.Clients
                 throw new ArgumentNullException(nameof(binding));
             if (remoteAddress.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
+            EndpointIdentityFactory.ValidateIdentityParameters(identityType, certificate);
 
             EnsureMessagingPattern(ref messagingPattern);
             BuildChannelFactory(binding, remoteAddress, messagingPattern, EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate));

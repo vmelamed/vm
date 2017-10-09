@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -59,11 +58,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityType, identity, messagingPattern)
         {
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -90,10 +84,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(endpointConfigurationName, remoteAddress, messagingPattern)
         {
-            if (endpointConfigurationName.IsNullOrWhiteSpace()  &&
-                remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("At least one of the parameters must be not null, not empty and not consist of whitespace characters only.");
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -118,13 +108,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityType, certificate, messagingPattern)
         {
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -144,9 +127,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(remoteAddress, identityClaim, messagingPattern)
         {
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -178,13 +158,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(binding, remoteAddress, identityType, identity, messagingPattern)
         {
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -211,15 +184,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(binding, remoteAddress, identityType, certificate, messagingPattern)
         {
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                                                            identityType == ServiceIdentity.Rsa  ||
-                                                                                            identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
 
@@ -240,11 +204,6 @@ namespace vm.Aspects.Wcf.Clients
             string messagingPattern = null)
             : base(binding, remoteAddress, identityClaim, messagingPattern)
         {
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-
             ChannelFactory.Endpoint.Behaviors.Add(new InterceptorBehavior(this));
         }
         #endregion

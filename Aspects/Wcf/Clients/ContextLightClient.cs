@@ -56,10 +56,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None && identityType == ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
 
             Context = context;
         }
@@ -87,8 +83,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (endpointConfigurationName.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(endpointConfigurationName));
 
             Context = context;
         }
@@ -114,12 +108,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
 
             Context = context;
         }
@@ -143,8 +131,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
 
             Context = context;
         }
@@ -175,12 +161,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
 
             Context = context;
         }
@@ -208,14 +188,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
 
             Context = context;
         }
@@ -241,10 +213,6 @@ namespace vm.Aspects.Wcf.Clients
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            if (binding == null)
-                throw new ArgumentNullException(nameof(binding));
-            if (remoteAddress.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(remoteAddress));
 
             Context = context;
         }
