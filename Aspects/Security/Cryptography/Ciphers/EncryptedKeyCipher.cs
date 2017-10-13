@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -147,7 +147,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"certificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument \"certificate\" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             PublicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
@@ -196,6 +196,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
+            if (encryptedKey == null)
+                throw new ArgumentNullException(nameof(encryptedKey));
+            if (encryptedKey.Length == 0)
+                throw new ArgumentException(Resources.InvalidArgument, nameof(encryptedKey));
             if (PublicKey == null)
                 throw new InvalidOperationException("The method is not available on light clones.");
             if (PrivateKey == null)
@@ -213,6 +217,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <remarks>The method is called by the GoF template-methods.</remarks>
         protected override byte[] EncryptIV()
         {
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
             if (ShouldEncryptIV  &&  PublicKey == null)
                 throw new InvalidOperationException("The method is not available on light clones.");
 
@@ -232,6 +238,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void DecryptIV(
             byte[] encryptedIV)
         {
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
             if (ShouldEncryptIV  &&  PrivateKey == null)
                 throw new InvalidOperationException(PublicKey == null
                                                         ? "The method is not available on light clones."
@@ -283,7 +291,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// See also <seealso cref="CloneLightCipher"/>.
         public virtual ICipherAsync ReleaseCertificate()
         {
-            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
 
             if (ShouldEncryptIV)
                 throw new InvalidOperationException("This object cannot reset its asymmetric keys because the property"+nameof(ShouldEncryptIV)+" is true.");
@@ -317,7 +324,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller must dispose it.")]
         public virtual ICipherAsync CloneLightCipher()
         {
-            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
 
             if (ShouldEncryptIV)
                 throw new InvalidOperationException("This object cannot create light clones because the property "+nameof(ShouldEncryptIV)+" is true.");

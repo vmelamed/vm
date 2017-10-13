@@ -1,14 +1,10 @@
-﻿
-using System;
-using System.Diagnostics.Contracts;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// The interface IKeyManagement defines the behavior of managing the encryption key(s) used by the ciphers.
     /// </summary>
-    [ContractClass(typeof(IKeyManagementContract))]
     public interface IKeyManagement
     {
         /// <summary>
@@ -45,47 +41,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// A <see cref="Task"/> object representing the process of asynchronously importing the symmetric key.
         /// </returns>
         Task ImportSymmetricKeyAsync(byte[] key);
-    }
-
-    [ContractClassFor(typeof(IKeyManagement))]
-    abstract class IKeyManagementContract : IKeyManagement
-    {
-        #region IKeyManagement Members
-        public string KeyLocation
-        {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrEmpty(Contract.Result<string>()), "The key location cannot be null, empty or consist of whitespace characters only.");
-
-                throw new NotImplementedException();
-            }
-        }
-
-        public byte[] ExportSymmetricKey()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<byte[]> ExportSymmetricKeyAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ImportSymmetricKey(byte[] key)
-        {
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
-            Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
-
-            throw new NotImplementedException();
-        }
-
-        public Task ImportSymmetricKeyAsync(byte[] key)
-        {
-            Contract.Requires<ArgumentNullException>(key != null, nameof(key));
-            Contract.Requires<ArgumentException>(key.Length > 0, "The length of the imported key is 0");
-
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }

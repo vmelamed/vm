@@ -1,9 +1,8 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -200,14 +199,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                             $"Service type {serviceType.FullName} with key {key} is not registered in the internal service locator.");
 
             return v.Value.Value;
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_defaultServices != null, "The field cannot be null.");
         }
     }
 }

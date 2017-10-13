@@ -1,8 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Diagnostics.Contracts;
+﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -10,15 +9,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         public virtual IHasherAsync GetHasher()
         {
-            Contract.Ensures(Contract.Result<IHasherAsync>() != null);
-
             throw new NotImplementedException();
         }
 
         public virtual IHasherAsync GetHasher(int saltLength)
         {
-            Contract.Ensures(Contract.Result<IHasherAsync>() != null);
-
             throw new NotImplementedException();
         }
 

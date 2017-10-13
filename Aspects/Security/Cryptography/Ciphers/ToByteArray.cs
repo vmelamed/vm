@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Text;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -18,11 +18,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(bool data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -31,7 +27,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(bool[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
 
             if (data == null)
                 return null;
@@ -59,11 +54,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(char data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -72,8 +63,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(char[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -86,11 +75,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(byte data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return new byte[] { data };
-        }
+            => new byte[] { data };
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -99,11 +84,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(byte[] data)
-        {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
-            return data;
-        }
+            => data;
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -111,11 +92,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(sbyte data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -124,8 +101,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(sbyte[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -152,11 +127,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(short data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -165,8 +136,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(short[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -193,11 +162,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(ushort data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -206,8 +171,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(ushort[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -234,11 +197,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(int data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -247,8 +206,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(int[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -275,11 +232,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(uint data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -288,8 +241,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(uint[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -316,11 +267,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(long data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -329,8 +276,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(long[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -357,11 +302,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(ulong data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -370,8 +311,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(ulong[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -398,11 +337,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(float data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -411,8 +346,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(float[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -439,11 +372,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(double data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return BitConverter.GetBytes(data);
-        }
+            => BitConverter.GetBytes(data);
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -452,8 +381,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(double[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -481,11 +408,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(decimal data)
         {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
             var bits = decimal.GetBits(data);
 
-            Contract.Assume(bits != null);
+            Debug.Assert(bits != null);
 
             return Convert(bits);
         }
@@ -497,8 +422,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(decimal[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -510,7 +433,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             {
                 var bits = decimal.GetBits(data[i]);
 
-                Contract.Assume(bits != null);
+                Debug.Assert(bits != null);
 
                 Array.Copy(
                     Convert(bits), 0,
@@ -530,8 +453,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(string data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -544,11 +465,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(DateTime data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return Convert(data.ToBinary());
-        }
+            => Convert(data.ToBinary());
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -557,8 +474,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(DateTime[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -585,11 +500,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="data">The data.</param>
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(Guid data)
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
-            return data.ToByteArray();
-        }
+            => data.ToByteArray();
 
         /// <summary>
         /// Converts the specified data to byte array.
@@ -598,8 +509,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>Byte array representing the data.</returns>
         public static byte[] Convert(Guid[] data)
         {
-            Contract.Ensures(!(data == null ^ Contract.Result<byte[]>() == null));
-
             if (data == null)
                 return null;
 
@@ -664,7 +573,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             object data,
             Type dataType)
         {
-            Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
+            if (dataType == null)
+                throw new ArgumentNullException(nameof(dataType));
 
             if (!ConvertTypedData.ContainsKey(dataType))
                 throw new ArgumentException("The specified data type cannot be converted.");
@@ -682,10 +592,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         public static byte[] ConvertNullable<T>(
-            Nullable<T> data) where T : struct
+            T? data) where T : struct
         {
-            Contract.Ensures(Contract.Result<byte[]>() != null);
-
             if (!ConvertTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be converted.");
 

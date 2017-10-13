@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -12,8 +11,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         public virtual IXmlSigner GetSigner(
             SignatureLocation signatureLocation = SignatureLocation.Enveloped)
         {
-            Contract.Ensures(Contract.Result<IXmlSigner>() != null);
-
             throw new NotImplementedException();
         }
 

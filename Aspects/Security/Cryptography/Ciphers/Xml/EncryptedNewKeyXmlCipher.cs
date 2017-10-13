@@ -117,6 +117,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlDocument document,
             string xmlPath = null, XmlNamespaceManager namespaceManager = null)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             base.Encrypt(document, xmlPath, namespaceManager);
         }
 
@@ -128,6 +131,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public override void Decrypt(
             XmlDocument document)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
             if (PrivateKey == null)
                 throw new InvalidOperationException("The certificate did not contain a private key.");
 
@@ -157,7 +162,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// Creates an object representing the asymmetric XML encryption method.
         /// </summary>
         /// <returns>EncryptionMethod.</returns>
-        protected virtual EncryptionMethod CreateAsymmetricXmlEncryptionMethod() => new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
+        protected virtual EncryptionMethod CreateAsymmetricXmlEncryptionMethod()
+            => new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
         #endregion
     }
 }

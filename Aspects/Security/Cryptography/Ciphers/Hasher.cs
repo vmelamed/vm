@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -61,13 +60,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string hashAlgorithmName = null,
             int saltLength = DefaultSaltLength)
         {
-            Contract.Requires<ArgumentException>(saltLength==0 || saltLength>=DefaultSaltLength, "The salt length should be either 0 or not less than 8 bytes.");
+            if (saltLength != 0  &&  saltLength < DefaultSaltLength)
+                throw new ArgumentException("The salt length should be either 0 or not less than 8 bytes.", nameof(saltLength));
 
             var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>();
+
             hashAlgorithmFactory.Initialize(hashAlgorithmName);
-
             _hashAlgorithm = hashAlgorithmFactory.Create();
-
             _saltLength = saltLength;
         }
         #endregion
@@ -80,8 +79,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+
 
                 return _hashAlgorithm.GetType().FullName;
             }
@@ -119,7 +117,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             _hashAlgorithm.Initialize();
             using (var hashStream = CreateHashStream())
@@ -147,6 +145,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             byte[] hash)
         {
+            if (dataStream != null  &&  hash == null)
+                throw new ArgumentNullException(nameof(hash));
+
             if (dataStream == null)
                 return hash==null;
 
@@ -224,6 +225,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data,
             byte[] hash)
         {
+            if (data != null  &&  hash == null)
+                throw new ArgumentNullException(nameof(hash));
+
             if (data == null)
                 return hash==null;
 
@@ -279,6 +283,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             _hashAlgorithm.Initialize();
             using (var hashStream = CreateHashStream())
@@ -307,6 +313,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return hash==null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             // save the property value - it may change for this call only depending on the length of the hash
             var savedSaltLength = SaltLength;
@@ -365,8 +373,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
+            if (hashStream == null)
+                throw new ArgumentNullException(nameof(hashStream));
+            if (!hashStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(hashStream));
 
             if (!ShouldSalt)
                 return null;
@@ -395,9 +405,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(!ShouldSalt || salt != null, nameof(salt));
+            if (hashStream == null)
+                throw new ArgumentNullException(nameof(hashStream));
+            if (!hashStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(hashStream));
+            if (ShouldSalt  &&  salt == null)
+                throw new ArgumentNullException(nameof(salt));
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
@@ -425,8 +438,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             CryptoStream hashStream,
             byte[] salt)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
+            if (hashStream == null)
+                throw new ArgumentNullException(nameof(hashStream));
+            if (!hashStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(hashStream));
 
             if (!ShouldSalt)
                 return null;
@@ -493,14 +508,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 _hashAlgorithm.Dispose();
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_hashAlgorithm != null, "The hash algorithm factory cannot be null.");
-            Contract.Invariant(_saltLength==0 || _saltLength>=DefaultSaltLength, "Invalid salt length.");
-        }
     }
 }

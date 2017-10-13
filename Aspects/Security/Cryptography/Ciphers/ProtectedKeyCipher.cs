@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -143,6 +143,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             // generate, read from store, etc.
             InitializeSymmetricKey();
 
@@ -203,6 +212,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             // generate, read from store, etc.
             InitializeSymmetricKey();
 
@@ -333,6 +351,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             // generate, read from store, etc.
             await InitializeSymmetricKeyAsync();
 
@@ -383,6 +410,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             // generate, read from store, etc.
             await InitializeSymmetricKeyAsync();
 
@@ -422,6 +458,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
+            if (encryptedKey == null)
+                throw new ArgumentNullException(nameof(encryptedKey));
+            if (encryptedKey.Length == 0)
+                throw new ArgumentException(Resources.InvalidArgument, nameof(encryptedKey));
+
             Symmetric.Key = ProtectedData.Unprotect(encryptedKey, null, DataProtectionScope.LocalMachine);
         }
         #endregion
@@ -441,9 +482,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             Symmetric.GenerateIV();
 
@@ -463,7 +507,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>System.Byte[].</returns>
         protected virtual byte[] EncryptIV()
         {
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             return ShouldEncryptIV
                         ? ProtectedData.Protect(Symmetric.IV, null, DataProtectionScope.LocalMachine)
@@ -485,8 +530,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual CryptoStream CreateEncryptingStream(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
 
             return new CryptoStream(
                             encryptedStream,
@@ -515,11 +562,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(dataStream != null, nameof(dataStream));
-            Contract.Requires<ArgumentException>(dataStream.CanRead, "The argument "+nameof(dataStream)+" cannot be read from.");
-
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument "+nameof(cryptoStream)+" cannot be written to.");
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!cryptoStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(cryptoStream));
 
             dataStream.CopyTo(cryptoStream);
         }
@@ -539,11 +589,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
-
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument "+nameof(cryptoStream)+" cannot be written to.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!cryptoStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(cryptoStream));
         }
         #endregion
 
@@ -562,9 +615,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void BeforeReadDecrypted(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             // read the length of the IV and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
@@ -572,14 +628,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             // read the length of the IV and allocate an array for it
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the IV.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the IV.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedIV = new byte[length];
 
             // read the encrypted IV from the memory stream
             if (encryptedStream.Read(encryptedIV, 0, encryptedIV.Length) != encryptedIV.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the IV.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"IV.", nameof(encryptedStream));
 
             // decrypt the IV and set it in Symmetric
             DecryptIV(encryptedIV);
@@ -593,7 +649,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void DecryptIV(
             byte[] encryptedIV)
         {
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             Symmetric.IV = ShouldEncryptIV
                                 ? ProtectedData.Unprotect(encryptedIV, null, DataProtectionScope.LocalMachine)
@@ -615,10 +672,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual CryptoStream CreateDecryptingStream(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
-            Contract.Ensures(Contract.Result<CryptoStream>() != null);
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             return new CryptoStream(
                             encryptedStream,
@@ -647,11 +706,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream cryptoStream,
             Stream dataStream)
         {
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
-
-            Contract.Requires<ArgumentNullException>(dataStream != null, nameof(dataStream));
-            Contract.Requires<ArgumentException>(dataStream.CanWrite, "The argument "+nameof(dataStream)+" cannot be written to.");
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
 
             cryptoStream.CopyTo(dataStream);
         }
@@ -669,11 +731,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
         }
         #endregion
 
@@ -695,9 +760,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument \"encryptedStream\" cannot be written to.");
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             Symmetric.GenerateIV();
 
@@ -729,11 +797,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(dataStream != null, nameof(dataStream));
-            Contract.Requires<ArgumentException>(dataStream.CanRead, "The argument \"dataStream\" cannot be read from.");
-
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument \"cryptoStream\" cannot be written to.");
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!cryptoStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(cryptoStream));
 
             await dataStream.CopyToAsync(cryptoStream);
         }
@@ -755,9 +826,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-            Contract.Requires<InvalidOperationException>(IsSymmetricKeyInitialized, "The symmetric key must be initialized first.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
 
             // read the length of the key and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
@@ -765,14 +839,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             // read the length of the IV and allocate an array for it
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the IV.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the IV.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedIV = new byte[length];
 
             // read the encrypted IV from the memory stream
             if (await encryptedStream.ReadAsync(encryptedIV, 0, encryptedIV.Length) != encryptedIV.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the IV.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"IV.", nameof(encryptedStream));
 
             // decrypt the IV and set it in Symmetric
             DecryptIV(encryptedIV);
@@ -799,11 +873,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream cryptoStream,
             Stream dataStream)
         {
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
-
-            Contract.Requires<ArgumentNullException>(dataStream != null, nameof(dataStream));
-            Contract.Requires<ArgumentException>(dataStream.CanWrite, "The argument "+nameof(dataStream)+" cannot be written to.");
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
 
             await cryptoStream.CopyToAsync(dataStream);
         }

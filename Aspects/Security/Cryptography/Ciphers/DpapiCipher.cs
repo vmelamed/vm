@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -93,6 +94,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             var buffer = new byte[BlockLength];
             var read = 0;
             var first = true;
@@ -159,6 +169,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             var bufferLenBytes = new byte[sizeof(int)];
             int bufferLen;
             byte[] buffer = null;
@@ -181,7 +200,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                         return;
                     first = false;
                     if (read != bufferLenBytes.Length)
-                        throw new ArgumentException("The input stream does not seem to be produced with compatible cipher.", nameof(encryptedStream));
+                        throw new ArgumentException(Resources.StreamNotCompatible, nameof(encryptedStream));
 
                     bufferLen = BitConverter.ToInt32(bufferLenBytes, 0);
 
@@ -194,7 +213,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     read = inputStream.Read(buffer, 0, bufferLen);
 
                     if (read != bufferLen)
-                        throw new ArgumentException("The input stream does not seem to be produced with compatible cipher.", nameof(encryptedStream));
+                        throw new ArgumentException(Resources.StreamNotCompatible, nameof(encryptedStream));
 
                     decrypted = Decrypt(buffer);
 
@@ -291,6 +310,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             var buffer = new byte[BlockLength];
             var read = 0;
             var first = true;
@@ -349,6 +377,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             var bufferLenBytes = new byte[sizeof(int)];
             int bufferLen;
             byte[] buffer = null;
@@ -367,7 +404,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     return;
 
                 if (read != bufferLenBytes.Length)
-                    throw new ArgumentException("The input stream does not seem to be produced with compatible cipher.", nameof(encryptedStream));
+                    throw new ArgumentException(Resources.StreamNotCompatible, nameof(encryptedStream));
 
                 bufferLen = BitConverter.ToInt32(bufferLenBytes, 0);
 
@@ -380,7 +417,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 read = await encryptedStream.ReadAsync(buffer, 0, bufferLen);
 
                 if (read != bufferLen)
-                    throw new ArgumentException("The input stream does not seem to be produced with compatible cipher.", nameof(encryptedStream));
+                    throw new ArgumentException(Resources.StreamNotCompatible, nameof(encryptedStream));
 
                 decrypted = await Task.Run(() => Decrypt(buffer));
                 await dataStream.WriteAsync(decrypted, 0, decrypted.Length);

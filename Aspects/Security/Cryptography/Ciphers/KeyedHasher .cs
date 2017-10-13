@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -109,12 +109,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <value>0</value>
         public virtual int SaltLength
         {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() == 0);
-
-                return 0;
-            }
+            get { return 0; }
             set { }
         }
 
@@ -132,7 +127,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             InitializeHashKey();
             using (var hashStream = CreateHashStream(_hashAlgorithm))
@@ -240,6 +235,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             await InitializeHashKeyAsync();
             using (var hashStream = CreateHashStream(_hashAlgorithm))
@@ -266,6 +263,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return hash==null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             await InitializeHashKeyAsync();
             if (hash.Length != _hashAlgorithm.HashSize/8)
@@ -349,8 +348,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IKeyLocationStrategy keyLocationStrategy,
             IKeyStorageAsync keyStorage)
         {
-            Contract.Ensures(KeyLocation != null, "Could not determine the key's physical location.");
-            Contract.Ensures(KeyStorage != null, "Could not resolve the IKeyStorageAsync object.");
+
 
             try
             {
@@ -387,7 +385,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _publicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
@@ -426,7 +424,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         protected async Task InitializeHashKeyAsync()
         {
-            Contract.Ensures(Contract.Result<Task>() != null);
 
             if (!IsHashKeyInitialized)
             {
@@ -477,7 +474,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual CryptoStream CreateHashStream(
             HashAlgorithm hashAlgorithm)
         {
-            Contract.Requires<ArgumentNullException>(hashAlgorithm != null, nameof(hashAlgorithm));
+            if (hashAlgorithm == null)
+                throw new ArgumentNullException(nameof(hashAlgorithm));
 
             return new CryptoStream(new NullStream(), hashAlgorithm, CryptoStreamMode.Write);
         }
@@ -491,8 +489,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual byte[] FinalizeHashing(
             CryptoStream hashStream)
         {
-            Contract.Requires<ArgumentNullException>(hashStream != null, nameof(hashStream));
-            Contract.Requires<ArgumentException>(hashStream.CanWrite, "The argument "+nameof(hashStream)+" cannot be written to.");
+            if (hashStream == null)
+                throw new ArgumentNullException(nameof(hashStream));
+            if (!hashStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(hashStream));
 
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
@@ -567,7 +567,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </exception>
         public virtual IHasherAsync ReleaseCertificate()
         {
-            Contract.Ensures(Contract.Result<IHasherAsync>() != null);
 
             if (_publicKey == null)
                 return this;
@@ -595,7 +594,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller owns it.")]
         public virtual IHasherAsync CloneLightHasher()
         {
-            Contract.Ensures(Contract.Result<IHasherAsync>() != null);
 
             InitializeHashKey();
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -77,11 +76,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string symmetricAlgorithmName = null)
             : base(symmetricAlgorithmName)
         {
-            Contract.Requires<ArgumentException>(password != null  &&  password.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(password)+" cannot be null, empty string or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(numberOfIterations >= PasswordDerivationConstants.MinNumberOfIterations, "The "+nameof(numberOfIterations)+" cannot be at less than \"PasswordDerivationConstants.MinNumberOfIterations\" bytes long.");
-            Contract.Requires<ArgumentException>(saltLength >= PasswordDerivationConstants.MinSaltLength, "The "+nameof(saltLength)+" cannot be at less than \"PasswordDerivationConstants.MinSaltLength\" bytes long.");
-
-            Contract.Ensures(_password != null && _password.Length==password.Length);
+            if (password.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(password));
+            if (numberOfIterations < PasswordDerivationConstants.MinNumberOfIterations)
+                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinNumberOfIterations} bytes long.", nameof(numberOfIterations));
+            if (saltLength < PasswordDerivationConstants.MinSaltLength)
+                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinSaltLength} bytes long.", nameof(saltLength));
 
             _numberOfIterations = numberOfIterations;
             _saltLength         = saltLength;
@@ -126,11 +126,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string symmetricAlgorithmName = null)
             : base(symmetricAlgorithmName)
         {
-            Contract.Requires<ArgumentNullException>(password != null, nameof(password));
-            Contract.Requires<ArgumentException>(password.Length > 0, "The argument "+nameof(password)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(numberOfIterations >= PasswordDerivationConstants.MinNumberOfIterations, "The "+nameof(numberOfIterations)+" cannot be at less than \"PasswordDerivationConstants.MinNumberOfIterations\" bytes long.");
-            Contract.Requires<ArgumentException>(saltLength >= PasswordDerivationConstants.MinSaltLength, "The "+nameof(saltLength)+" cannot be at less than \"PasswordDerivationConstants.MinSaltLength\" bytes long.");
-            Contract.Ensures(_password != null && _password.Length==password.Length);
+            if (password == null)
+                throw new ArgumentNullException(nameof(password));
+            if (numberOfIterations < PasswordDerivationConstants.MinNumberOfIterations)
+                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinNumberOfIterations} bytes long.", nameof(numberOfIterations));
+            if (saltLength < PasswordDerivationConstants.MinSaltLength)
+                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinSaltLength} bytes long.", nameof(saltLength));
 
             _password           = password.Copy();
             _numberOfIterations = numberOfIterations;
@@ -146,7 +147,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<bool>() == false);
 
                 return false;
             }
@@ -292,6 +292,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             InitializeSymmetricKeyInternal(true);
 
             // write the length and contents of the salt clear text in the memory stream
@@ -322,20 +329,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void BeforeReadDecrypted(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+
             // read the length of the salt and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             // read the length of the salt and allocate an array for it
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the salt.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the salt.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _salt = new byte[length];
 
             // read the salt from the memory stream
             if (encryptedStream.Read(_salt, 0, _salt.Length) != _salt.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the salt.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"salt.", nameof(encryptedStream));
 
             InitializeSymmetricKeyInternal(false);
 
@@ -356,6 +368,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             InitializeSymmetricKeyInternal(true);
 
             // write the length and contents of the salt clear text in the memory stream
@@ -386,20 +405,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             // read the length of the salt and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             // read the length of the salt and allocate an array for it
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the salt.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the salt.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _salt = new byte[length];
 
             // read the salt from the memory stream
             if (await encryptedStream.ReadAsync(_salt, 0, _salt.Length) != _salt.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the salt.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"salt.", nameof(encryptedStream));
 
             InitializeSymmetricKeyInternal(false);
 
@@ -420,15 +446,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (disposing && _password != null)
                 _password.Dispose();
             base.Dispose(disposing);
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_password != null || _isSymmetricKeyInitializedInternal);
-            Contract.Invariant(_salt != null || !_isSymmetricKeyInitializedInternal);
         }
     }
 }

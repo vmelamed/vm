@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -23,8 +23,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             DateTime data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             return cipher.Encrypt(ToByteArray.Convert(data));
         }
@@ -40,13 +40,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (encrypted == null)
+                throw new ArgumentNullException(nameof(encrypted));
 
             var decrypted = cipher.Decrypt(encrypted);
 
             if (decrypted.Length < 8)
-                throw new ArgumentException("The argument is not a valid encrypted DateTime value.");
+                throw new ArgumentException(Resources.InvalidEncryptedValue);
 
             return FromByteArray.ToDateTime(decrypted);
         }
@@ -62,7 +64,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             DateTime[] data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (data == null)
                 return null;
@@ -81,7 +84,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encrypted == null)
                 return null;
@@ -102,8 +106,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             decimal data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             return cipher.Encrypt(ToByteArray.Convert(data));
         }
@@ -119,13 +123,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (encrypted == null)
+                throw new ArgumentNullException(nameof(encrypted));
 
             var decrypted = cipher.Decrypt(encrypted);
 
             if (decrypted.Length < 16)
-                throw new ArgumentException("The argument is not a valid encrypted Decimal value.");
+                throw new ArgumentException(Resources.InvalidEncryptedValue);
 
             return FromByteArray.ToDecimal(decrypted);
         }
@@ -141,7 +147,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             decimal[] data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (data == null)
                 return null;
@@ -160,7 +167,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encrypted == null)
                 return null;
@@ -181,7 +189,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             string data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (data == null)
                 return null;
@@ -200,8 +209,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encryptedText)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(!(encryptedText == null ^ Contract.Result<string>() == null), "The returned value is invalid.");
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encryptedText == null)
                 return null;
@@ -220,9 +229,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             string text)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(text != null, nameof(text));
-            Contract.Ensures(Contract.Result<string>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
 
             var base64 = cipher.Base64Encoded;
 
@@ -246,8 +256,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             string encryptedText64)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(!(encryptedText64 == null ^ Contract.Result<string>() == null), "The returned value is invalid.");
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encryptedText64 == null)
                 return null;
@@ -275,8 +285,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             string data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
 
             return cipher.Encrypt(data);
         }
@@ -293,8 +305,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encryptedText)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(!(encryptedText == null ^ Contract.Result<string>() == null), "The returned value is invalid.");
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encryptedText == null)
                 return null;
@@ -315,8 +327,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             Guid data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             return cipher.Encrypt(ToByteArray.Convert(data));
         }
@@ -332,13 +344,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (encrypted == null)
+                throw new ArgumentNullException(nameof(encrypted));
 
             var decrypted = cipher.Decrypt(encrypted);
 
             if (decrypted.Length != 16)
-                throw new ArgumentException("The argument is not a valid encrypted Guid value.");
+                throw new ArgumentException(Resources.InvalidEncryptedValue);
 
             return FromByteArray.ToGuid(decrypted);
         }
@@ -354,7 +368,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             Guid[] data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (data == null)
                 return null;
@@ -373,7 +388,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encrypted == null)
                 return null;
@@ -393,8 +409,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             T? data) where T : struct
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (!EncryptTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be converted.", nameof(data));
@@ -472,8 +488,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             object data,
             Type dataType)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (dataType == null)
+                throw new ArgumentNullException(nameof(dataType));
 
             if (!EncryptTypedData.ContainsKey(dataType))
                 throw new ArgumentException("The specified data type cannot be encrypted.", nameof(dataType));
@@ -491,7 +509,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             T data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (!EncryptTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be encrypted.");
@@ -510,10 +529,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted) where T : struct
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(encrypted != null, nameof(encrypted));
-            Contract.Requires<ArgumentException>(encrypted.Length >= 2, "Invalid length of the parameter.");
-
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (encrypted == null)
+                throw new ArgumentNullException(nameof(encrypted));
+            if (encrypted.Length < 2)
+                throw new ArgumentException(Resources.InvalidArgumentLength, nameof(encrypted));
             if (!EncryptTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be decrypted.");
 
@@ -594,8 +615,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] encrypted,
             Type dataType)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(dataType != null, nameof(dataType));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (dataType == null)
+                throw new ArgumentNullException(nameof(dataType));
 
             if (!DecryptTypedData.ContainsKey(dataType))
                 throw new ArgumentException("The specified data type cannot be decrypted.");
@@ -614,7 +637,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] encrypted)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (!DecryptTypedData.ContainsKey(typeof(T)))
                 throw new ArgumentException("The specified data type cannot be decrypted.");
@@ -635,9 +659,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             byte[] data)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Requires<ArgumentNullException>(data != null, nameof(data));
-            Contract.Ensures(Contract.Result<string>() != null);
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
 
             var base64 = cipher.Base64Encoded;
 
@@ -662,8 +687,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this ICipher cipher,
             string encryptedData64)
         {
-            Contract.Requires<ArgumentNullException>(cipher != null, nameof(cipher));
-            Contract.Ensures(!(encryptedData64 == null ^ Contract.Result<byte[]>() == null), "The returned value is invalid.");
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
 
             if (encryptedData64 == null)
                 return null;

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -102,7 +103,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _asymmetric = signCertificate.HasPrivateKey
@@ -121,6 +122,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void ReserveSpaceForHash(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!encryptedStream.CanSeek)
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
+
             // reserve space in the encrypted stream for the signature
             var length = Asymmetric.KeySize / 8;
             var placeholderSignature = new byte[length];
@@ -140,6 +148,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             byte[] hash)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!encryptedStream.CanSeek)
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
+
             try
             {
                 var rsaFormatter = new RSAPKCS1SignatureFormatter(Asymmetric);
@@ -148,7 +163,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
                 _signature = rsaFormatter.CreateSignature(hash);
 
-                Contract.Assume(_signature.Length == Asymmetric.KeySize / 8);
+                Debug.Assert(_signature.Length == Asymmetric.KeySize / 8);
 
                 // write the hash into the reserved space
                 encryptedStream.Seek(sizeof(int), SeekOrigin.Begin);
@@ -174,18 +189,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void LoadHashToValidate(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!ShouldEncryptHash &&  PrivateKey == null)
+                throw new InvalidOperationException("The certificate does not contain a private key for decryption.");
+
             //read the encrypted length and hash
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the signature.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _signature = new byte[length];
 
             if (encryptedStream.Read(_signature, 0, _signature.Length) != _signature.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"signature.", nameof(encryptedStream));
         }
 
         /// <summary>
@@ -203,6 +225,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
+
             try
             {
                 var deformatter = new RSAPKCS1SignatureDeformatter(Asymmetric);
@@ -234,18 +265,23 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task LoadHashToValidateAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+
             //read the encrypted length and hash
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the signature.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the signature.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _signature = new byte[length];
 
             if (await encryptedStream.ReadAsync(_signature, 0, _signature.Length) != _signature.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the signature.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"signature.", nameof(encryptedStream));
         }
         #endregion
 
@@ -263,13 +299,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             base.Dispose(disposing);
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(Asymmetric != null, "The asymmetric algorithm cannot be null.");
-        }
     }
 }

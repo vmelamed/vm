@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -43,7 +44,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
             return new byte[8];
         }
 
@@ -79,14 +80,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (hash == null)
                 throw new ArgumentNullException(nameof(hash));
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
             return true;
         }
 
+        int _saltLength;
         /// <summary>
         /// Gets or sets the length of the salt in bytes. If set to 0 salt will not be applied to the hash.
         /// </summary>
-        public int SaltLength { get; set; }
+        public int SaltLength
+        {
+            get { return _saltLength; }
+            set
+            {
+                if (value != 0  &&  value < 8)
+                    throw new ArgumentException("The salt length should be either 0 or not less than 8 bytes.", nameof(value));
+
+                _saltLength = value;
+            }
+        }
         #endregion
 
         #region IHasherAsync implementation
@@ -103,7 +115,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+
             return await Task.FromResult(new byte[8]);
         }
 
@@ -121,11 +134,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] hash)
         {
             if (dataStream == null)
-                return hash==null;
+                return hash == null;
             if (hash == null)
                 throw new ArgumentNullException(nameof(hash));
             if (!dataStream.CanRead)
-                throw new ArgumentException("The data stream cannot be read.", nameof(dataStream));
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+
             return await Task.FromResult(true);
         }
         #endregion

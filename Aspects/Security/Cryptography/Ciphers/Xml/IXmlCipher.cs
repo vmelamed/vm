@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Xml;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -9,7 +8,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     /// The interface <c>IXmlCipher</c> defines the behavior of cipher objects for
     /// encryption and decryption of XML elements.
     /// </summary>
-    [ContractClass(typeof(IXmlCipherContract))]
     public interface IXmlCipher : IDisposable
     {
         /// <summary>
@@ -50,50 +48,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We need here the whole document.")]
         void Decrypt(XmlDocument document);
-    }
-
-    [ContractClassFor(typeof(IXmlCipher))]
-    abstract class IXmlCipherContract : IXmlCipher
-    {
-        #region IXmlCipher Members
-
-        public bool ContentOnly
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void Encrypt(
-            XmlDocument document,
-            string xmlPath = null,
-            XmlNamespaceManager namespaceManager = null)
-        {
-            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
-            throw new NotImplementedException();
-        }
-
-        public void Decrypt(
-            XmlDocument document)
-        {
-            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 }

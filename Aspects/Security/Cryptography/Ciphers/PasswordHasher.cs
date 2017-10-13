@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -101,7 +102,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var data = new byte[dataStream.Length];
 
             if (dataStream.Read(data, 0, data.Length) != data.Length)
-                throw new IOException("Unexpected number of bytes read from the data stream.");
+                throw new IOException(Resources.InvalidNumberOfBytes);
 
             return Hash(data);
         }
@@ -123,12 +124,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return hash == null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The stream cannot be read.");
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var data = new byte[dataStream.Length];
 
             if (dataStream.Read(data, 0, data.Length) != data.Length)
-                throw new IOException("Unexpected number of bytes read from the data stream.");
+                throw new IOException(Resources.InvalidNumberOfBytes);
 
             return TryVerifyHash(data, hash);
         }
@@ -147,12 +148,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The stream cannot be read.");
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var data = new byte[dataStream.Length];
 
             if (await dataStream.ReadAsync(data, 0, data.Length) != data.Length)
-                throw new IOException("Unexpected number of bytes read from the data stream.");
+                throw new IOException(Resources.InvalidNumberOfBytes);
 
             return await Task.Run(() => Hash(data));
         }
@@ -174,12 +175,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (dataStream == null)
                 return hash == null;
             if (!dataStream.CanRead)
-                throw new ArgumentException("The stream cannot be read.");
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var data = new byte[dataStream.Length];
 
             if (await dataStream.ReadAsync(data, 0, data.Length) != data.Length)
-                throw new IOException("Unexpected number of bytes read from the data stream.");
+                throw new IOException(Resources.InvalidNumberOfBytes);
 
             return await Task.Run(() => TryVerifyHash(data, hash));
         }
@@ -276,6 +277,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     throw new ArgumentException(
                                 $"Password hashes must always be salted with at least {PasswordDerivationConstants.MinSaltLength} bytes.",
                                 "value");
+
                 _saltLength = value;
             }
         }

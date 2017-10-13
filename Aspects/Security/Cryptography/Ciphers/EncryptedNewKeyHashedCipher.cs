@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -122,7 +123,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<bool>() == false);
 
                 return false;
             }
@@ -146,8 +146,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
             if (!encryptedStream.CanSeek)
-                throw new ArgumentException("The encrypted stream must be seek-able.");
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             base.Encrypt(dataStream, encryptedStream);
         }
@@ -164,8 +172,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
             if (!encryptedStream.CanSeek)
-                throw new ArgumentException("The encrypted stream must be seek-able.");
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             base.Decrypt(encryptedStream, dataStream);
         }
@@ -196,6 +212,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             _hasher = _hashAlgorithmFactory.Create();
             ReserveSpaceForHash(encryptedStream);
 
@@ -211,9 +234,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void ReserveSpaceForHash(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
-            Contract.Requires<ArgumentException>(encryptedStream.CanSeek, "The argument "+nameof(encryptedStream)+" cannot be sought.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!encryptedStream.CanSeek)
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             // reserve space in the encrypted stream for the hash
             var length = ShouldEncryptHash
@@ -238,7 +264,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override CryptoStream CreateEncryptingStream(
             Stream encryptedStream)
         {
-            Contract.Assume(_hasher != null);
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
+            Debug.Assert(_hasher != null);
 
             return new CryptoStream(
                             base.CreateEncryptingStream(encryptedStream),
@@ -261,6 +292,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!cryptoStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(cryptoStream));
+
             WriteHashInReservedSpace(
                 encryptedStream,
                 FinalizeHashAfterWrite(encryptedStream, cryptoStream));
@@ -277,8 +317,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             byte[] hash)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!encryptedStream.CanSeek)
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             try
             {
@@ -286,7 +330,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                             ? PublicKey.Encrypt(hash, true)
                             : hash;
 
-                Contract.Assert(_hash.Length == (ShouldEncryptHash
+                Debug.Assert(_hash.Length == (ShouldEncryptHash
                                                     ? PublicKey.KeySize / 8
                                                     : Hasher.HashSize / 8));
 
@@ -313,7 +357,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override CryptoStream CreateDecryptingStream(
             Stream encryptedStream)
         {
-            Contract.Assume(_hasher != null);
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
+            Debug.Assert(_hasher != null);
 
             return new CryptoStream(
                             base.CreateDecryptingStream(encryptedStream),
@@ -336,6 +387,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void BeforeReadDecrypted(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+
             _hasher = _hashAlgorithmFactory.Create();
             LoadHashToValidate(encryptedStream);
             base.BeforeReadDecrypted(encryptedStream);
@@ -355,22 +411,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void LoadHashToValidate(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The input stream "+nameof(encryptedStream)+" cannot be read.");
-            Contract.Requires<InvalidOperationException>(!ShouldEncryptHash || PrivateKey != null, "The certificate does not contain a private key for decryption.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!ShouldEncryptHash &&  PrivateKey == null)
+                throw new InvalidOperationException("The certificate does not contain a private key for decryption.");
 
             //read the encrypted length and hash
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the hash.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             _hash = new byte[length];
 
             if (encryptedStream.Read(_hash, 0, _hash.Length) != _hash.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"hash.", nameof(encryptedStream));
 
             // decrypt
             if (ShouldEncryptHash)
@@ -394,6 +453,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
+
             try
             {
                 // compare the hashes
@@ -425,12 +493,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanWrite, "The argument "+nameof(encryptedStream)+" cannot be written to.");
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanWrite, "The argument "+nameof(cryptoStream)+" cannot be written to.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!cryptoStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(cryptoStream));
 
-            Contract.Assume(_hasher != null);
+            Debug.Assert(_hasher != null);
 
             base.AfterWriteEncrypted(encryptedStream, cryptoStream);
             if (!cryptoStream.HasFlushedFinalBlock)
@@ -462,13 +534,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             CryptoStream cryptoStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-            Contract.Requires<ArgumentNullException>(cryptoStream != null, nameof(cryptoStream));
-            Contract.Requires<ArgumentException>(cryptoStream.CanRead, "The argument "+nameof(cryptoStream)+" cannot be read from.");
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (cryptoStream == null)
+                throw new ArgumentNullException(nameof(cryptoStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!cryptoStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(cryptoStream));
 
-            Contract.Assume(_hasher != null);
+            Debug.Assert(_hasher != null);
 
             base.AfterReadDecrypted(encryptedStream, cryptoStream);
             if (!cryptoStream.HasFlushedFinalBlock)
@@ -496,8 +571,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
             if (!encryptedStream.CanSeek)
-                throw new ArgumentException("The encrypted stream must be seek-able.");
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             return base.EncryptAsync(dataStream, encryptedStream);
         }
@@ -515,8 +598,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
             if (!encryptedStream.CanSeek)
-                throw new ArgumentException("The encrypted stream must be seek-able.");
+                throw new ArgumentException(Resources.StreamNotSeekable, nameof(encryptedStream));
 
             return base.DecryptAsync(encryptedStream, dataStream);
         }
@@ -538,6 +629,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             _hasher = _hashAlgorithmFactory.Create();
             ReserveSpaceForHash(encryptedStream);
 
@@ -559,6 +657,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             _hasher = _hashAlgorithmFactory.Create();
             await LoadHashToValidateAsync(encryptedStream);
             await base.BeforeReadDecryptedAsync(encryptedStream);
@@ -578,22 +683,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual async Task LoadHashToValidateAsync(
             Stream encryptedStream)
         {
-            Contract.Requires<ArgumentNullException>(encryptedStream != null, nameof(encryptedStream));
-            Contract.Requires<ArgumentException>(encryptedStream.CanRead, "The argument "+nameof(encryptedStream)+" cannot be read from.");
-            Contract.Requires<ArgumentException>(!ShouldEncryptHash || PrivateKey != null, "The certificate does not contain a private key for decryption.");
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!ShouldEncryptHash  &&  PrivateKey == null)
+                throw new InvalidOperationException("The certificate does not contain a private key for decryption.");
 
             //read the encrypted length and hash
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the hash.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the hash.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var storedHash = new byte[length];
 
             if (await encryptedStream.ReadAsync(storedHash, 0, storedHash.Length) != storedHash.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the hash.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"hash.", nameof(encryptedStream));
 
             // decrypt
             _hash = ShouldEncryptHash
@@ -622,13 +730,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_hashAlgorithmFactory != null, "The hash algorithm factory cannot be null.");
-        }
     }
 }

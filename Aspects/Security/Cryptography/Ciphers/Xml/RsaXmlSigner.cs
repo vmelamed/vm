@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Deployment.Internal.CodeSigning;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
@@ -11,6 +10,7 @@ using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -49,8 +49,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         {
             get
             {
-                Contract.Ensures(Contract.Result<string>() != null);
-                Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+
 
                 return _hashAlgorithmName;
             }
@@ -63,7 +62,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         {
             get
             {
-                Contract.Ensures(Contract.Result<AsymmetricAlgorithm>() != null);
 
                 return _asymmetric;
             }
@@ -104,7 +102,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             if (hashAlgorithmName == null)
@@ -148,11 +146,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
         #region IXmlSigner Members
 
+        SignatureLocation _signatureLocation;
         /// <summary>
         /// Gets or sets the signature type being created or verified. 
         /// The default is <see cref="SignatureLocation" /><c>.Enveloped</c>
         /// </summary>
-        public SignatureLocation SignatureLocation { get; set; }
+        public SignatureLocation SignatureLocation
+        {
+            get { return _signatureLocation; }
+            set
+            {
+                if (!Enum.IsDefined(typeof(SignatureLocation), value))
+                    throw new ArgumentException(Resources.InvalidArgument, nameof(value));
+
+                _signatureLocation = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether to include key information in the signature.
@@ -214,6 +223,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlNamespaceManager namespaceManager = null,
             Uri documentLocation = null)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             var signer = new SignedXmlWithId(document, IdAttributeNames) { SigningKey = Asymmetric };
 
             signer.SignedInfo.CanonicalizationMethod = _canonicalizationMethod;
@@ -269,6 +281,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlDocument document,
             XmlDocument signature = null)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
             if (signature == null && SignatureLocation == SignatureLocation.Detached)
                 throw new ArgumentNullException(nameof(signature));
 
@@ -415,9 +429,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         reference.AddTransform(new XmlDsigExcC14NTransform());
                         break;
 
-#pragma warning disable CS0612 // Type or member is obsolete - used for bacwards compatibility
                     case Algorithms.Hash.Sha1:
-#pragma warning restore CS0612 // Type or member is obsolete
                         reference.AddTransform(new XmlDsigC14NTransform());
                         break;
                     }
@@ -440,9 +452,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             ref int id,
             HashSet<string> xmlIds)
         {
-            Contract.Requires<ArgumentNullException>(xmlIds!=null, nameof(xmlIds));
-            Contract.Ensures(Contract.Result<string>() != null);
-            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
+            if (xmlIds == null)
+                throw new ArgumentNullException(nameof(xmlIds));
 
             string xmlId;
 
@@ -508,14 +519,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 _asymmetric.Dispose();
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_asymmetric != null, "The signing/signature verification object cannot be null.");
-            Contract.Invariant(IdAttributeNames == null || IdAttributeNames.All(id => !id.IsNullOrWhiteSpace()), "The \"IdAttributeNames\" contains invalid attribute names.");
-        }
     }
 }

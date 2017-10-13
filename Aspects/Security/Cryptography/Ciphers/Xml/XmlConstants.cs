@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Xml;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -50,8 +49,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public static XmlNamespaceManager GetEncryptNamespaceManager(
             XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document!=null, nameof(document));
-            Contract.Ensures(Contract.Result<XmlNamespaceManager>() != null, "Could not create namespace manager.");
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
 
             var namespaceManager = new XmlNamespaceManager(document.NameTable);
 
@@ -63,8 +62,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public static XmlNamespaceManager GetXmlNamespaceManager(
             XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document!=null, nameof(document));
-            Contract.Ensures(Contract.Result<XmlNamespaceManager>() != null, "Could not create namespace manager.");
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
 
             var namespaceManager = new XmlNamespaceManager(document.NameTable);
 

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +18,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<bool>() == true);
 
                 return true;
             }
@@ -32,7 +30,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<bool>() == true);
 
                 return true;
             }
@@ -45,7 +42,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<bool>() == false);
 
                 return false;
             }
@@ -65,7 +61,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<long>() == 0L);
 
                 return 0L;
             }
@@ -78,7 +73,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<long>() == 0L);
 
                 return 0L;
             }
@@ -160,7 +154,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>The new position within the current stream.</returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            Contract.Ensures(Contract.Result<long>() == 0L);
 
             return 0L;
         }

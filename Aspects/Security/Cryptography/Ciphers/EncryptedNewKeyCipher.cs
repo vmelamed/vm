@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -165,6 +166,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override void BeforeWriteEncrypted(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             var encryptedKey = EncryptSymmetricKey();
 
             encryptedStream.Write(BitConverter.GetBytes(encryptedKey.Length), 0, sizeof(int));
@@ -189,21 +197,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </exception>
         /// <remarks>The method is called by the GoF template-methods.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-        protected override void BeforeReadDecrypted(Stream encryptedStream)
+        protected override void BeforeReadDecrypted(
+            Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+
             // read the length of the key and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (encryptedStream.Read(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the key.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedKey = new byte[length];
 
             // read the encrypted key, decrypt it and set it in Symmetric
             if (encryptedStream.Read(encryptedKey, 0, encryptedKey.Length) != encryptedKey.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"key.", nameof(encryptedStream));
 
             DecryptSymmetricKey(encryptedKey);
 
@@ -228,6 +242,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeWriteEncryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             var encryptedKey = EncryptSymmetricKey();
 
             await encryptedStream.WriteAsync(BitConverter.GetBytes(encryptedKey.Length), 0, sizeof(int));
@@ -255,19 +276,26 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override async Task BeforeReadDecryptedAsync(
             Stream encryptedStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!IsSymmetricKeyInitialized)
+                throw new InvalidOperationException(Resources.UninitializedSymmetricKey);
+
             // read the length of the key and allocate an array for it
             var lengthBuffer = new byte[sizeof(int)];
             var length = 0;
 
             if (await encryptedStream.ReadAsync(lengthBuffer, 0, sizeof(int)) != sizeof(int))
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the length of the key.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"length of the key.", nameof(encryptedStream));
             length = BitConverter.ToInt32(lengthBuffer, 0);
 
             var encryptedKey = new byte[length];
 
             // read the encrypted key, decrypt it and set it in Symmetric
             if (await encryptedStream.ReadAsync(encryptedKey, 0, encryptedKey.Length) != encryptedKey.Length)
-                throw new ArgumentException("The input data does not represent a valid crypto package: could not read the key.", nameof(encryptedStream));
+                throw new ArgumentException(Resources.InvalidInputData+"key.", nameof(encryptedStream));
 
             DecryptSymmetricKey(encryptedKey);
 

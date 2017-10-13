@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -11,8 +10,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     {
         public virtual IXmlCipher GetCipher()
         {
-            Contract.Ensures(Contract.Result<IXmlCipher>() != null);
-
             throw new NotImplementedException();
         }
 
@@ -28,7 +25,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
         public void DumpXml(XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document != null);
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
 
             using (var w = new StringWriter(CultureInfo.InvariantCulture))
             {
@@ -50,7 +48,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
         public XmlNamespaceManager GetNamespaceManager(XmlDocument document)
         {
-            Contract.Requires<ArgumentNullException>(document != null, nameof(document));
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
 
             var nsMgr = new XmlNamespaceManager(document.NameTable);
 

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
-
-namespace vm.Aspects.Security.Cryptography.Ciphers
+﻿namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// The objects implementing the interface <c>IKeyLocationStrategy</c> implement a strategy for determining the encryption key location name, 
     /// e.g. paths and filenames.
     /// </summary>
-    [ContractClass(typeof(IKeyLocationStrategyContract))]
     public interface IKeyLocationStrategy
     {
         /// <summary>
@@ -36,19 +31,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         ///     </list>
         /// </remarks>
         string GetKeyLocation(string keyLocation);
-    }
-
-    [ContractClassFor(typeof(IKeyLocationStrategy))]
-    abstract class IKeyLocationStrategyContract : IKeyLocationStrategy
-    {
-        #region IKeyLocationStrategy Members
-        public string GetKeyLocation(string keyLocation)
-        {
-            Contract.Ensures(Contract.Result<string>() != null);
-            Contract.Ensures(Contract.Result<string>().Any(c => !char.IsWhiteSpace(c)));
-
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }

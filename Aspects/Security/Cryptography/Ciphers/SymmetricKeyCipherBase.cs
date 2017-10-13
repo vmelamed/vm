@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// Internally manages tasks associated with the symmetric key. Also
     /// implements <see cref="IKeyManagement"/> and the <see cref="IDisposable"/> pattern.
     /// </summary>
-    [ContractClass(typeof(SymmetricKeyCipherBaseContract))]
     public abstract class SymmetricKeyCipherBase : IKeyManagement, IDisposable
     {
         #region Fields
@@ -76,7 +74,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the underlying .NET symmetric cipher.
         /// </summary>
-        protected SymmetricAlgorithm Symmetric => _symmetric;
+        protected SymmetricAlgorithm Symmetric
+            => _symmetric;
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance's symmetric key is initialized.
@@ -100,9 +99,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             IKeyLocationStrategy symmetricKeyLocationStrategy,
             IKeyStorageAsync keyStorage)
         {
-            Contract.Ensures(KeyLocation != null, "Could not determine the key's physical location.");
-            Contract.Ensures(KeyStorage != null, "Could not resolve the IKeyStorageAsync object.");
-
             try
             {
                 if (symmetricKeyLocationStrategy == null)
@@ -192,8 +188,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         protected virtual void InitializeSymmetricKey()
         {
-            Contract.Ensures(IsSymmetricKeyInitialized, "The key was not initialized properly.");
-
             if (IsSymmetricKeyInitialized)
                 return;
 
@@ -273,8 +267,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is correct.")]
         public void Dispose()
         {
-            Contract.Ensures(_disposed!=0, "The object was not disposed successfully.");
-
             // these will be called only if the instance is not disposed and is not in a process of disposing.
             Dispose(true);
             GC.SuppressFinalize(this);
@@ -312,15 +304,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
         #endregion
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(Symmetric != null, "The symmetric key was not instantiated.");
-            Contract.Invariant(!IsDisposed, "The object was disposed.");
-        }
-
         /// <summary>
         /// Copies certain characteristics of this instance to the <paramref name="cipher"/> parameter.
         /// The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
@@ -330,6 +313,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected virtual void CopyTo(
             SymmetricKeyCipherBase cipher)
         {
+            if (cipher == null)
+                throw new ArgumentNullException(nameof(cipher));
+
             if (!IsSymmetricKeyInitialized)
                 return;
 
@@ -345,31 +331,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             cipher.IsSymmetricKeyInitialized = true;
             cipher.ShouldEncryptIV           = ShouldEncryptIV;
-        }
-    }
-
-    [ContractClassFor(typeof(SymmetricKeyCipherBase))]
-    abstract class SymmetricKeyCipherBaseContract : SymmetricKeyCipherBase
-    {
-        protected SymmetricKeyCipherBaseContract()
-            : base(null)
-        {
-        }
-
-        protected override byte[] EncryptSymmetricKey()
-        {
-            Contract.Ensures(Contract.Result<byte[]>() != null && Contract.Result<byte[]>().Length > 0, "The method returned null or empty encrypted key.");
-
-            throw new NotImplementedException();
-        }
-
-        protected override void DecryptSymmetricKey(
-            byte[] encryptedKey)
-        {
-            Contract.Requires<ArgumentNullException>(encryptedKey != null, nameof(encryptedKey));
-            Contract.Requires<ArgumentException>(encryptedKey.Length > 0, "The argument "+nameof(encryptedKey)+" cannot be empty.");
-
-            throw new NotImplementedException();
         }
     }
 }

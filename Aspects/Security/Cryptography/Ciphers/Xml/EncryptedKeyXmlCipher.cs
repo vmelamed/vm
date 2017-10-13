@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -105,7 +105,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             PublicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
@@ -122,7 +122,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <returns>System.Byte[].</returns>
-        protected override byte[] EncryptSymmetricKey() => PublicKey.Encrypt(Symmetric.Key, true);
+        protected override byte[] EncryptSymmetricKey()
+            => PublicKey.Encrypt(Symmetric.Key, true);
 
         /// <summary>
         /// Decrypts the symmetric key using the private key.
@@ -131,23 +132,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <param name="encryptedKey">The encrypted key.</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
+            if (encryptedKey == null)
+                throw new ArgumentNullException(nameof(encryptedKey));
+            if (encryptedKey.Length == 0)
+                throw new ArgumentException(Resources.InvalidArgument, nameof(encryptedKey));
             if (PrivateKey == null)
                 throw new InvalidOperationException("The certificate did not contain a private key.");
 
             Symmetric.Key = PrivateKey.Decrypt(encryptedKey, true);
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(PublicKey != null, "The public key cannot be null.");
-        }
     }
 }

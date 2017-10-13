@@ -1,7 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -10,7 +8,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// the underlying <see cref="HashAlgorithm"/> objects. The factory must implement a strategy for picking the
     /// hash algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
-    [ContractClass(typeof(IHashAlgorithmFactoryContract))]
     public interface IHashAlgorithmFactory
     {
         /// <summary>
@@ -33,31 +30,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>The name of the hash algorithm.</value>
         string HashAlgorithmName { get; }
-    }
-
-    [ContractClassFor(typeof(IHashAlgorithmFactory))]
-    abstract class IHashAlgorithmFactoryContract : IHashAlgorithmFactory
-    {
-        #region IHashAlgorithmFactory Members
-
-        public void Initialize(
-            string hashAlgorithmName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public HashAlgorithm Create()
-        {
-            Contract.Ensures(Contract.Result<HashAlgorithm>() != null, "Could not create a hash algorithm.");
-
-            throw new NotImplementedException();
-        }
-
-        public string HashAlgorithmName
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        #endregion
     }
 }

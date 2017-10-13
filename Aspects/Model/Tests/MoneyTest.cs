@@ -87,7 +87,7 @@ namespace vm.Aspects.Model.Tests
             Assert.IsTrue(!(target1 == (Money)null), "target1 must not be equal to null.");
             Assert.IsTrue(!((Money)null == target1), "target1 must not be equal to obj1.");
 
-            // reflexitivity
+            // reflexivity
             var t = target1;
 
             Assert.IsTrue(target1 == t, "The operator == must be reflexive.");
@@ -97,7 +97,7 @@ namespace vm.Aspects.Model.Tests
             Assert.AreEqual(target1 == target2, target2 == target1, "The operator == must be symmetric.");
             Assert.AreEqual(target1 != target4, target4 != target1, "The operator != must be symmetric.");
 
-            // transityvity
+            // transitivity
             Assert.IsTrue(target1 == target2 && target2 == target3 && target3 == target1, "The operator == must be transitive.");
             Assert.IsTrue(target1 == target2 && target1 != target4 && target2 != target4, "The operator != must be transitive.");
         }

@@ -1,7 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
+using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Security.Cryptography.Ciphers.Algorithms;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -11,7 +9,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// the underlying <see cref="Symmetric"/> objects. The factory must implement a strategy for picking the
     /// symmetric algorithm given choices like, parameters, Common Service Locator registrations, default values, etc.
     /// </summary>
-    [ContractClass(typeof(ISymmetricAlgorithmFactoryContract))]
     public interface ISymmetricAlgorithmFactory
     {
         /// <summary>
@@ -34,28 +31,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <value>The name of the symmetric algorithm.</value>
         string SymmetricAlgorithmName { get; }
-    }
-
-    [ContractClassFor(typeof(ISymmetricAlgorithmFactory))]
-    abstract class ISymmetricAlgorithmFactoryContract : ISymmetricAlgorithmFactory
-    {
-        #region ISymmetricAlgorithmFactory Members
-        public void Initialize(
-            string symmetricAlgorithmName)
-        {
-        }
-
-        public SymmetricAlgorithm Create()
-        {
-            Contract.Ensures(Contract.Result<SymmetricAlgorithm>() != null, "Could not create a symmetric algorithm.");
-
-            throw new NotImplementedException();
-        }
-
-        public string SymmetricAlgorithmName
-        {
-            get { throw new NotImplementedException(); }
-        }
-        #endregion
     }
 }

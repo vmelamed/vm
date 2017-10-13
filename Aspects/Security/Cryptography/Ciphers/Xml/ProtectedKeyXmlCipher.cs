@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -85,6 +85,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         protected override void DecryptSymmetricKey(
             byte[] encryptedKey)
         {
+            if (encryptedKey == null)
+                throw new ArgumentNullException(nameof(encryptedKey));
+            if (encryptedKey.Length == 0)
+                throw new ArgumentException(Resources.InvalidArgument, nameof(encryptedKey));
+
             Symmetric.Key = ProtectedData.Unprotect(encryptedKey, null, DataProtectionScope.LocalMachine);
         }
 
@@ -120,6 +125,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string xmlPath = null,
             XmlNamespaceManager namespaceManager = null)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             InitializeSymmetricKey();
 
             var encryptedXml = new EncryptedXml(document);
@@ -142,6 +150,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public virtual void Decrypt(
             XmlDocument document)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             InitializeSymmetricKey();
 
             foreach (XmlElement element in document.SelectNodes(XmlConstants.XPathEncryptedElements, XmlConstants.GetEncryptNamespaceManager(document)))
@@ -166,8 +177,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             XmlElement element,
             EncryptedXml encryptedXml)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
-            Contract.Requires<ArgumentNullException>(encryptedXml != null, nameof(encryptedXml));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (encryptedXml == null)
+                throw new ArgumentNullException(nameof(encryptedXml));
 
             var encryptedElement = new EncryptedData
             {
@@ -200,7 +213,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         protected virtual void DecryptElement(
             XmlElement element)
         {
-            Contract.Requires<ArgumentNullException>(element != null, nameof(element));
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
 
             var encryptedElement = new EncryptedData();
 
@@ -229,7 +243,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <exception cref="System.Security.Cryptography.CryptographicException">The specified symmetric algorithm is not supported for XML encryption.</exception>
         protected string SymmetricXmlNamespace()
         {
-            Contract.Ensures(Contract.Result<string>() != null);
 
             if (Symmetric is TripleDES)
                 return EncryptedXml.XmlEncTripleDESUrl;

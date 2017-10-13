@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -19,8 +19,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public static byte[] FillRandom(
             this byte[] array)
         {
-            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
 
             using (var generator = new RNGCryptoServiceProvider())
                 generator.GetBytes(array);
@@ -85,8 +85,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this byte[] array,
             byte[] other)
         {
-            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
-            Contract.Requires<ArgumentNullException>(other != null, nameof(other));
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
 
             bool equal = array.Length == other.Length;
 
@@ -115,8 +117,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             this byte[] array,
             Base64FormattingOptions options = Base64FormattingOptions.None)
         {
-            Contract.Requires<ArgumentNullException>(array != null, nameof(array));
-            Contract.Ensures(Contract.Result<string>() != null);
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
 
             return Convert.ToBase64String(array, options);
         }
@@ -133,9 +135,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             int offset = 0,
             int length = -1)
         {
-            Contract.Requires<ArgumentNullException>(base64 != null, nameof(base64));
-            Contract.Requires<ArgumentException>(offset >= 0, nameof(offset));
-            Contract.Ensures(Contract.Result<byte[]>() != null);
+            if (base64 == null)
+                throw new ArgumentNullException(nameof(base64));
+            if (offset < 0)
+                throw new ArgumentException(Resources.InvalidArgument, nameof(offset));
 
             return Convert.FromBase64CharArray(base64.ToCharArray(), offset, length < 0 ? base64.Length : length);
         }

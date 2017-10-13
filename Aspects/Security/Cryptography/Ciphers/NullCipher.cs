@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -38,6 +39,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             dataStream.CopyTo(encryptedStream);
         }
 
@@ -61,6 +71,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             encryptedStream.CopyTo(dataStream);
         }
 
@@ -116,6 +135,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             Stream encryptedStream)
         {
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+            if (!encryptedStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
+
             await dataStream.CopyToAsync(encryptedStream);
         }
 
@@ -137,6 +165,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream encryptedStream,
             Stream dataStream)
         {
+            if (encryptedStream == null)
+                throw new ArgumentNullException(nameof(encryptedStream));
+            if (dataStream == null)
+                throw new ArgumentNullException(nameof(dataStream));
+            if (!encryptedStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
+            if (!dataStream.CanWrite)
+                throw new ArgumentException(Resources.StreamNotWritable, nameof(dataStream));
+
             await encryptedStream.CopyToAsync(dataStream);
         }
         #endregion

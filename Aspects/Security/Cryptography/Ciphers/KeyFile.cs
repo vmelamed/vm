@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -21,7 +22,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns><see langword="true" /> if the file exists, otherwise <see langword="false" />.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public bool KeyLocationExists(
-            string keyLocation) => File.Exists(keyLocation);
+            string keyLocation)
+        {
+            if (keyLocation.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
+
+            return File.Exists(keyLocation);
+        }
+
+        /// <summary>
+        /// Tests whether the key's storage location name exists.
+        /// </summary>
+        /// <param name="keyLocation">The key location.</param>
+        /// <returns><see langword="true"/> if the location exists, otherwise <see langword="false"/>.</returns>
+        public async Task<bool> KeyLocationExistsAsync(
+            string keyLocation)
+        {
+            if (keyLocation.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
+
+            return await Task.FromResult(File.Exists(keyLocation));
+        }
 
         /// <summary>
         /// Puts the key in the specified file. If the file doesn't exist it creates it, stores the key and sets the appropriate security on the file.
@@ -60,6 +81,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key,
             string keyLocation)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length == 0)
+                throw new ArgumentException("The length of the array cannot be 0.", nameof(key));
+            if (keyLocation.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
+
             var created = !KeyLocationExists(keyLocation);
 
             using (var stream = new FileStream(keyLocation, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -154,6 +182,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] key,
             string keyLocation)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (keyLocation.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
+
             var created = !KeyLocationExists(keyLocation);
 
             using (var stream = new FileStream(keyLocation, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -202,6 +235,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public async Task<byte[]> GetKeyAsync(
             string keyLocation)
         {
+            if (keyLocation.IsNullOrWhiteSpace())
+                throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
+
             byte[] key;
 
             using (var stream = new FileStream(keyLocation, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -241,6 +277,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string keyLocation)
         {
             if (!KeyLocationExists(keyLocation))
+                return;
+
+            File.Delete(keyLocation);
+        }
+
+        /// <summary>
+        /// Deletes the storage with the specified location name.
+        /// </summary>
+        /// <param name="keyLocation">The key location name to be deleted.</param>
+        public async Task DeleteKeyLocationAsync(
+            string keyLocation)
+        {
+            if (!await KeyLocationExistsAsync(keyLocation))
                 return;
 
             File.Delete(keyLocation);

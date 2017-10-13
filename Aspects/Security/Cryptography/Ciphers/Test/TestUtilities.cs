@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +23,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             TestContext testContext,
             Action action)
         {
-            Contract.Requires<ArgumentNullException>(action != null, nameof(action));
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
             try
             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -7,7 +6,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// Interface ILightCipher defines a behavior where the implementing cipher drops certain composed data (e.g. public/private keys) and some associated functionality (e.g. IKeyManagement)
     /// and remains a pure cipher that is used for encryption/decryption only. This is useful when many ciphers need to be cached in memory for a long time.
     /// </summary>
-    [ContractClass(typeof(ILightCipherContract))]
     public interface ILightCipher
     {
         /// <summary>
@@ -30,23 +28,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// e.g. encryption of the IV.
         /// </exception>
         ICipherAsync CloneLightCipher();
-    }
-
-    [ContractClassFor(typeof(ILightCipher))]
-    abstract class ILightCipherContract : ILightCipher
-    {
-        public ICipherAsync CloneLightCipher()
-        {
-            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
-
-            throw new NotImplementedException();
-        }
-
-        public ICipherAsync ReleaseCertificate()
-        {
-            Contract.Ensures(Contract.Result<ICipherAsync>() != null);
-
-            throw new NotImplementedException();
-        }
     }
 }

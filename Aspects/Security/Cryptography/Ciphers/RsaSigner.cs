@@ -1,11 +1,11 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -28,7 +28,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<AsymmetricAlgorithm>() != null);
 
                 return _asymmetric;
             }
@@ -62,7 +61,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _asymmetric = signCertificate.HasPrivateKey
@@ -83,6 +82,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var hash = base.Hash(dataStream);
             var formatter = new RSAPKCS1SignatureFormatter(Asymmetric);
@@ -102,6 +103,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             byte[] signature)
         {
+            if (dataStream != null  &&  signature == null)
+                throw new ArgumentNullException(nameof(signature));
+            if (dataStream != null  &&  !dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
+
             if (dataStream==null)
                 return signature == null;
 
@@ -144,8 +150,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data,
             byte[] signature)
         {
+            if (data != null  &&  signature == null)
+                throw new ArgumentNullException(nameof(signature));
+
             if (data == null)
-                return signature==null;
+                return signature == null;
 
             var hash = base.Hash(data);
             var deformatter = new RSAPKCS1SignatureDeformatter(Asymmetric);
@@ -166,6 +175,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var hash = await base.HashAsync(dataStream);
             var formatter = new RSAPKCS1SignatureFormatter(Asymmetric);
@@ -185,8 +196,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             byte[] signature)
         {
-            if (dataStream==null)
+            if (dataStream == null)
                 return signature == null;
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             var hash = await base.HashAsync(dataStream);
             var deformatter = new RSAPKCS1SignatureDeformatter(Asymmetric);
@@ -217,13 +230,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             base.Dispose(disposing);
         }
         #endregion
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_asymmetric != null, "The asymmetric algorithm cannot be null.");
-        }
     }
 }

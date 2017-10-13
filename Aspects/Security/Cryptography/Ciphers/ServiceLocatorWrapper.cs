@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -20,7 +19,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         #region IServiceLocator Members
         public IEnumerable<TService> GetAllInstances<TService>()
         {
-            Contract.Ensures(Contract.Result<IEnumerable<TService>>() != null);
 
             try
             {
@@ -37,7 +35,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public IEnumerable<object> GetAllInstances(Type serviceType)
         {
-            Contract.Ensures(Contract.Result<IEnumerable<object>>() != null);
 
             try
             {
@@ -84,7 +81,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public object GetInstance(Type serviceType, string key)
         {
-            Contract.Ensures(Contract.Result<object>() != null);
 
             try
             {
@@ -101,7 +97,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         public object GetInstance(Type serviceType)
         {
-            Contract.Ensures(Contract.Result<object>() != null);
 
             try
             {
@@ -127,7 +122,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </returns>
         public object GetService(Type serviceType)
         {
-            Contract.Ensures(Contract.Result<object>() != null);
 
             try
             {
@@ -149,7 +143,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             get
             {
-                Contract.Ensures(Contract.Result<IServiceLocator>() != null);
 
                 if (_current == null)
                     try

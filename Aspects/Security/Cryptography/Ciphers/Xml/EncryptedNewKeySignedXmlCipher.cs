@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using Microsoft.Practices.ServiceLocation;
@@ -56,7 +55,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The parameter \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _signer = new RsaXmlSigner(signCertificate, hashAlgorithmName);
@@ -79,6 +78,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string xmlPath = null,
             XmlNamespaceManager namespaceManager = null)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             _signer.Sign(document, xmlPath, namespaceManager);
             base.Encrypt(document, xmlPath, namespaceManager);
         }
@@ -89,6 +91,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <param name="document">A document containing encrypted elements.</param>
         public override void Decrypt(XmlDocument document)
         {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
             base.Decrypt(document);
             _signer.TryVerifySignature(document);
         }
@@ -108,13 +113,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             base.Dispose(disposing);
         }
         #endregion
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        [ContractInvariantMethod]
-        void Invariant()
-        {
-            Contract.Invariant(_signer!=null, "The internal signing object is null.");
-        }
     }
 }
