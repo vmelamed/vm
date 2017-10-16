@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 
 namespace vm.Aspects.Wcf
 {
@@ -41,146 +39,49 @@ namespace vm.Aspects.Wcf
         /// The default send timeout - when debugging we need more time while stepping through the service's code - make the default 15 min (should be enough for debugging)
         /// or read it from the config file (see below).
         /// </summary>
-        static readonly TimeSpan defaultSendTimeout = new TimeSpan(0, 15, 0);
+        public static readonly TimeSpan DefaultSendTimeout = new TimeSpan(0, 15, 0);
         /// <summary>
         /// The default receive timeout - when debugging we need more time while stepping through the service's code - make the default 30 min (should be enough for debugging)
         /// or read it from the config file (see below).
         /// </summary>
-        static readonly TimeSpan defaultReceiveTimeout = new TimeSpan(0, 30, 0);
+        public static readonly TimeSpan DefaultReceiveTimeout = new TimeSpan(0, 30, 0);
         /// <summary>
         /// The default transaction timeout - when debugging we need more time while stepping through the service's code - make the default 30 min (should be enough for debugging)
         /// or read it from the config file (see below).
         /// </summary>
-        const string defaultTransactionTimeout = "00:30:00";
+        public const string DefaultTransactionTimeout = "00:30:00";
 #else
         /// <summary>
         /// The default send timeout - 1 min
         /// or read it from the config file (see below).
         /// </summary>
-        static readonly TimeSpan defaultSendTimeout = new TimeSpan(0, 1, 0);
+        public static readonly TimeSpan DefaultSendTimeout = new TimeSpan(0, 1, 0);
         /// <summary>
         /// The default receive timeout - 10 min
         /// or read it from the config file (see below).
         /// </summary>
-        static readonly TimeSpan defaultReceiveTimeout = new TimeSpan(0, 10, 0);
+        public static readonly TimeSpan DefaultReceiveTimeout = new TimeSpan(0, 10, 0);
         /// <summary>
         /// The default transaction timeout - 10 min
         /// or read it from the config file (see below).
         /// </summary>
-        const string defaultTransactionTimeout = "00:10:00";
+        public const string DefaultTransactionTimeout = "00:10:00";
 #endif
-
-        /// <summary>
-        /// The cached WCF debug send timeout
-        /// </summary>
-        static TimeSpan? _defaultSendTimeout;
-
-        /// <summary>
-        /// The cached WCF debug receive timeout
-        /// </summary>
-        static TimeSpan? _defaultReceiveTimeout;
-
-        /// <summary>
-        /// The cached WCF debug transaction timeout
-        /// </summary>
-        static string _defaultTransactionTimeout;
 
         /// <summary>
         /// The name of the application setting representing the default debug mode WCF send timeout.
         /// </summary>
-        const string SendTimeoutAppSettingName = "WcfSendTimeout";
+        public const string SendTimeoutAppSettingName = "WcfSendTimeout";
 
         /// <summary>
         /// The name of the application setting representing the default debug mode WCF receive timeout.
         /// </summary>
-        const string ReceiveTimeoutAppSettingName = "WcfReceiveTimeout";
+        public const string ReceiveTimeoutAppSettingName = "WcfReceiveTimeout";
 
         /// <summary>
         /// The name of the application setting representing the default debug mode WCF transaction timeout.
         /// </summary>
-        const string TransactionTimeoutAppSettingName = "WcfTransactionTimeout";
-
-        /// <summary>
-        /// Gets the default WCF send timeout. In debug mode by default the value is "00:15:00" - 15 min and in release mode is 1 min.
-        /// The value can be overridden in the configuration file by specifying app. setting "WcfSendTimeout", e.g.
-        /// <![CDATA[<add key="WcfSendTimeout" value="00:20:00">]]>. The format of the value is the same as for the 
-        /// method <see cref="M:System.TimeSpan.TryParse(string, TimeSpan)"/>.
-        /// </summary>
-        public static TimeSpan DefaultSendTimeout
-        {
-            get
-            {
-                if (!_defaultSendTimeout.HasValue)
-                {
-                    var timeoutString = ConfigurationManager.AppSettings[SendTimeoutAppSettingName];
-                    TimeSpan tmo;
-
-                    if (!string.IsNullOrEmpty(timeoutString) &&
-                        TimeSpan.TryParse(timeoutString, out tmo))
-                        _defaultSendTimeout = tmo;
-                    else
-                        _defaultSendTimeout = defaultSendTimeout;
-                }
-
-                return _defaultSendTimeout.Value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the default WCF receive timeout. In debug mode by default the value is "00:30:00" - 30 min and in release mode is 10 min.
-        /// The value can be overridden in the configuration file by specifying app. setting "WcfReceiveTimeout", e.g.
-        /// <![CDATA[<add key="WcfReceiveTimeout" value="00:20:00">]]>. The format of the value is the same as for the 
-        /// method <see cref="M:System.TimeSpan.TryParse"/>.
-        /// </summary>
-        public static TimeSpan DefaultReceiveTimeout
-        {
-            get
-            {
-                if (!_defaultReceiveTimeout.HasValue)
-                {
-                    var timeoutString = ConfigurationManager.AppSettings[ReceiveTimeoutAppSettingName];
-                    TimeSpan tmo;
-
-                    if (!string.IsNullOrEmpty(timeoutString) &&
-                        TimeSpan.TryParse(timeoutString, out tmo))
-                        _defaultReceiveTimeout = tmo;
-                    else
-                        _defaultReceiveTimeout = defaultReceiveTimeout;
-                }
-
-                return _defaultReceiveTimeout.Value;
-            }
-        }
-
-        /// <summary>
-        /// Gets the default WCF transaction timeout. In debug mode by default the value is "00:30:00" - 30 min and in release mode is 10 min.
-        /// The value can be overridden in the configuration file by specifying app. setting "WcfTransactionTimeout", e.g.
-        /// <![CDATA[<add key="WcfTransactionTimeout" value="00:20:00">]]>. The format of the value is the same as for the 
-        /// method <see cref="M:System.TimeSpan.TryParse"/>.
-        /// </summary>
-        public static string DefaultTransactionTimeout
-        {
-            get
-            {
-                
-                
-                if (_defaultTransactionTimeout == null)
-                {
-                    var timeoutString = ConfigurationManager.AppSettings[TransactionTimeoutAppSettingName];
-                    TimeSpan tmo;
-
-                    if (!string.IsNullOrEmpty(timeoutString) &&
-                        TimeSpan.TryParse(timeoutString, out tmo) &&
-                        tmo >= new TimeSpan(0, 0, 30) &&  // make sure the transaction timeout is reasonable: between 30s and 1hr
-                        tmo <= new TimeSpan(1, 0, 0))
-                        _defaultTransactionTimeout = tmo.ToString();
-                    else
-                        _defaultTransactionTimeout = defaultTransactionTimeout;
-                }
-
-                return _defaultTransactionTimeout;
-            }
-        }
+        public const string TransactionTimeoutAppSettingName = "WcfTransactionTimeout";
 
         /// <summary>
         /// Specifies that the URI is accessed through the NetMsmq scheme used by Windows Communication Foundation (WCF). 

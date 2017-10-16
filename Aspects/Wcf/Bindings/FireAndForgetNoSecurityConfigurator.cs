@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -22,11 +23,21 @@ namespace vm.Aspects.Wcf.Bindings
         public override string MessagingPattern => PatternName;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="FireAndForgetNoSecurityConfigurator"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public FireAndForgetNoSecurityConfigurator(
+            Lazy<IConfigurationProvider> config)
+            : base(config)
+        {
+        }
+
+        /// <summary>
         /// Configures the specified binding.
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="IncompatibleBinding will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "IncompatibleBinding will validate it.")]
         public override Binding Configure(
             NetHttpBinding binding)
         {
@@ -40,7 +51,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="IncompatibleBinding will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "IncompatibleBinding will validate it.")]
         public override Binding Configure(
             NetHttpsBinding binding)
         {
@@ -81,7 +92,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetMsmqBinding binding)
         {

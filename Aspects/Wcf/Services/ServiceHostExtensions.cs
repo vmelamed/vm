@@ -86,7 +86,7 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
+
             if (identity != null)
                 foreach (var ep in host.Description.Endpoints)
                     ep.Address = new EndpointAddress(
@@ -113,7 +113,7 @@ namespace vm.Aspects.Wcf.Services
                 throw new ArgumentNullException(nameof(host));
             if (certificate == null)
                 throw new ArgumentNullException(nameof(certificate));
-            
+
             host.Credentials.ServiceCertificate.Certificate = certificate;
             return host;
         }
@@ -135,8 +135,7 @@ namespace vm.Aspects.Wcf.Services
                 throw new ArgumentNullException(nameof(host));
             if (serviceContractType == null)
                 throw new ArgumentNullException(nameof(serviceContractType));
-            
-            
+
             // if we still don't know the pattern - try to get it from the service type.
             if (string.IsNullOrWhiteSpace(messagingPattern))
                 messagingPattern = serviceContractType.GetMessagingPattern();
@@ -177,6 +176,13 @@ namespace vm.Aspects.Wcf.Services
                         });
             }
 
+            // transaction timeout
+            if (host.Description.Endpoints.SelectMany(
+                        ep => ep.Contract.Operations.SelectMany(
+                            o => o.Behaviors.OfType<OperationBehaviorAttribute>()))
+                                    .Any(ob => ob.TransactionScopeRequired))
+                host.GetOrAddServiceBehavior<ServiceBehaviorAttribute>().TransactionTimeout = configurator.TransactionTimeout;
+
             return host;
         }
 
@@ -200,8 +206,8 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
-            
+
+
             Func<ServiceHost, ServiceEndpoint> AddMexEndpoint;
 
             foreach (var baseAddress in host.BaseAddresses)
@@ -225,8 +231,8 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
-            
+
+
             var serviceMetadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
 
             // if no metadata is requested - remove the behavior altogether
@@ -318,8 +324,8 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
-            
+
+
 #if DEBUG
             // add include exception details:
             var serviceDebugBehavior = host.GetOrAddServiceBehavior<ServiceDebugBehavior>();
@@ -327,28 +333,6 @@ namespace vm.Aspects.Wcf.Services
             serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
             //serviceDebugBehavior.HttpHelpPageEnabled = false;
 #endif
-
-            return host;
-        }
-
-        /// <summary>
-        /// If any of the operations requires transaction, the method adds default (depending on the build mode) transaction timeout.
-        /// </summary>
-        /// <param name="host">The host.</param>
-        /// <returns>ServiceHost.</returns>
-        public static ServiceHost AddTransactionTimeout(
-            this ServiceHost host)
-        {
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
-            
-            
-            // transaction timeout
-            if (host.Description.Endpoints.SelectMany(
-                        ep => ep.Contract.Operations.SelectMany(
-                            o => o.Behaviors.OfType<OperationBehaviorAttribute>()))
-                                    .Any(ob => ob.TransactionScopeRequired))
-                host.GetOrAddServiceBehavior<ServiceBehaviorAttribute>().TransactionTimeout = Constants.DefaultTransactionTimeout;
 
             return host;
         }
@@ -364,8 +348,8 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
-            
+
+
             // add security audit behavior
             host.Description.Behaviors.Remove<ServiceSecurityAuditBehavior>();
             host.Description.Behaviors.Add(
@@ -394,7 +378,7 @@ namespace vm.Aspects.Wcf.Services
                 throw new ArgumentNullException(nameof(serviceHost));
             if (serviceAuthorizationManager == null)
                 throw new ArgumentNullException(nameof(serviceAuthorizationManager));
-            
+
             serviceHost.Description.Behaviors.Remove<ServiceAuthorizationBehavior>();
             serviceHost.Description.Behaviors.Add(
                                                 new ServiceAuthorizationBehavior
@@ -417,7 +401,7 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            
+
             // must have endpoint with WebHttpBinding and either the whole contract or any of the operations have EnableCorsAttribute
             foreach (var endpoint in host.Description
                                          .Endpoints

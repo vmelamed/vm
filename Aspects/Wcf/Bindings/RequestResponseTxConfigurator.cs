@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.MsmqIntegration;
-using System.Text;
-using System.Threading.Tasks;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -27,11 +23,21 @@ namespace vm.Aspects.Wcf.Bindings
         public override string MessagingPattern => PatternName;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="RequestResponseTxConfigurator"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public RequestResponseTxConfigurator(
+            Lazy<IConfigurationProvider> config)
+            : base(config)
+        {
+        }
+
+        /// <summary>
         /// Configures the specified binding.
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="Unity will dispose it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Unity will dispose it.")]
         public override Binding Configure(
             BasicHttpBinding binding)
         {
@@ -44,7 +50,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             BasicHttpsBinding binding)
         {
@@ -57,7 +63,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetHttpBinding binding)
         {
@@ -70,7 +76,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetHttpsBinding binding)
         {
@@ -83,7 +89,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             WebHttpBinding binding)
         {
@@ -96,7 +102,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             WSHttpBinding binding)
         {
@@ -118,7 +124,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetNamedPipeBinding binding)
         {
@@ -134,7 +140,7 @@ namespace vm.Aspects.Wcf.Bindings
         /// </summary>
         /// <param name="binding">The binding.</param>
         /// <returns>Binding.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId="0", Justification="ConfigureDefault will validate it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "ConfigureDefault will validate it.")]
         public override Binding Configure(
             NetTcpBinding binding)
         {

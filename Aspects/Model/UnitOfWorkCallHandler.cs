@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
@@ -42,6 +43,9 @@ namespace vm.Aspects.Model
         protected override TransactionScope Prepare(
             IMethodInvocation input)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
             if (!(input.Target is IHasRepository))
                 throw new InvalidOperationException($"{nameof(UnitOfWorkCallHandler)} can be used only with services that implement {nameof(IHasRepository)}. Either implement it in {input.Target.GetType().Name} or remove this handler from the pipeline.");
 
@@ -81,6 +85,10 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             TransactionScope transactionScope)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (methodReturn == null)
+                throw new ArgumentNullException(nameof(methodReturn));
 
             if (methodReturn.IsAsyncCall())
                 return methodReturn;        // return the task, do not clean-up yet
@@ -88,7 +96,12 @@ namespace vm.Aspects.Model
             try
             {
                 if (methodReturn.Exception != null)
+                {
+                    if (methodReturn.Exception.IsTransient())
+                        return input.CreateExceptionMethodReturn(new RepeatableOperationException(methodReturn.Exception));
+
                     return methodReturn;    // return the exception (and cleanup)
+                }
 
                 var hasRepository = (IHasRepository)input.Target;
 
@@ -107,6 +120,10 @@ namespace vm.Aspects.Model
             catch (Exception x)
             {
                 VmAspectsEventSource.Log.CallHandlerFails(input, x);
+
+                if (x.IsTransient())
+                    return input.CreateExceptionMethodReturn(new RepeatableOperationException(x));
+
                 return input.CreateExceptionMethodReturn(x);
             }
             finally
@@ -131,10 +148,30 @@ namespace vm.Aspects.Model
             IMethodReturn methodReturn,
             TransactionScope transactionScope)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (methodReturn == null)
+                throw new ArgumentNullException(nameof(methodReturn));
+
             try
             {
                 if (methodReturn.Exception != null)
-                    throw methodReturn.Exception;
+                {
+                    var x = methodReturn.Exception;
+                    var ax = x as AggregateException;
+
+                    if (ax != null)
+                    {
+                        if (ax.InnerExceptions.Count == 1  &&
+                            ax.InnerExceptions[0].IsTransient())
+                            throw new RepeatableOperationException(ax.InnerExceptions[0]);
+                    }
+                    else
+                    if (x.IsTransient())
+                        throw new RepeatableOperationException(x);
+
+                    throw x;
+                }
 
                 var result = await base.ContinueWith<TResult>(input, methodReturn, transactionScope);
                 var hasRepository = (IHasRepository)input.Target;
@@ -145,8 +182,18 @@ namespace vm.Aspects.Model
                     throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
 
                 await repository.CommitChangesAsync();
+
                 transactionScope?.Complete();
+
                 return result;
+            }
+            catch (AggregateException x)
+            {
+                if (x.InnerExceptions.Count == 1  &&
+                    x.InnerExceptions[0].IsTransient())
+                    throw new RepeatableOperationException(x.InnerExceptions[0]);
+
+                throw x;
             }
             catch (Exception x)
             {

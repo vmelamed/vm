@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
 
@@ -138,6 +139,10 @@ namespace vm.Aspects.Model
             catch (Exception x)
             {
                 VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+
+                if (x.IsTransient())
+                    throw new RepeatableOperationException(x);
+
                 throw;
             }
             finally
@@ -177,6 +182,10 @@ namespace vm.Aspects.Model
             catch (Exception x)
             {
                 VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+
+                if (x.IsTransient())
+                    throw new RepeatableOperationException(x);
+
                 throw;
             }
             finally
@@ -204,6 +213,18 @@ namespace vm.Aspects.Model
                 transactionScope?.Complete();
                 VmAspectsEventSource.Log.UnitOfWorkStop();
 
+            }
+            catch (AggregateException x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+
+                if (x.InnerExceptions.Count != 1)
+                    throw;
+
+                if (x.InnerExceptions[0].IsTransient())
+                    throw new RepeatableOperationException(x.InnerExceptions[0]);
+                else
+                    throw x.InnerExceptions[0];
             }
             catch (Exception x)
             {
@@ -240,6 +261,18 @@ namespace vm.Aspects.Model
                 VmAspectsEventSource.Log.UnitOfWorkStop();
 
                 return result;
+            }
+            catch (AggregateException x)
+            {
+                VmAspectsEventSource.Log.UnitOfWorkFailed(x);
+
+                if (x.InnerExceptions.Count != 1)
+                    throw;
+
+                if (x.InnerExceptions[0].IsTransient())
+                    throw new RepeatableOperationException(x.InnerExceptions[0]);
+                else
+                    throw x.InnerExceptions[0];
             }
             catch (Exception x)
             {

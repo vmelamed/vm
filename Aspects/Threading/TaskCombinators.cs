@@ -287,9 +287,9 @@ namespace vm.Aspects.Threading
             if (inputTasks.Any(t => t==null))
                 throw new ArgumentException("None of the tasks in the sequence can be null.");
 
-            var tasks = inputTasks.ToList();
+            var tasks     = inputTasks.ToList();
             var countdown = new CountdownEvent(tasks.Count);
-            var tcs = new TaskCompletionSource<T[]>();
+            var tcs       = new TaskCompletionSource<T[]>();
 
             foreach (var task in tasks)
                 task.ContinueWith(
@@ -319,7 +319,7 @@ namespace vm.Aspects.Threading
                 throw new ArgumentException("None of the tasks in the sequence can be null.");
 
             var countdown = new CountdownEvent(inputTasks.Length);
-            var tcs = new TaskCompletionSource<T[]>();
+            var tcs       = new TaskCompletionSource<T[]>();
 
             foreach (var task in inputTasks)
                 task.ContinueWith(

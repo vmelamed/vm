@@ -166,11 +166,17 @@ namespace vm.Aspects.Wcf
                 throw new ArgumentNullException(nameof(serviceType));
 
             var serviceDIBehaviorAttribute = serviceType.GetCustomAttribute<DIBehaviorAttribute>(false);
+            var resolveName = serviceDIBehaviorAttribute?.ResolveName;
 
-            if (serviceDIBehaviorAttribute != null)
+            if (!resolveName.IsNullOrWhiteSpace())
                 return serviceDIBehaviorAttribute.ResolveName;
-            else
-                return serviceType.GetCustomAttribute<ResolveNameAttribute>(false)?.Name;
+
+            resolveName = serviceType.GetCustomAttribute<ResolveNameAttribute>(false)?.Name;
+
+            if (!resolveName.IsNullOrWhiteSpace())
+                return serviceDIBehaviorAttribute.ResolveName;
+
+            return null;
         }
 
         /// <summary>

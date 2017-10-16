@@ -100,8 +100,8 @@ namespace vm.Aspects.Wcf.ServicePolicies
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "vm.Aspects.Wcf.FaultContracts.Fault.set_Message(System.String)", Justification = "For programmers' eyes only.")]
         FaultException TransformException(
-    IMethodInvocation input,
-    Exception exception)
+            IMethodInvocation input,
+            Exception exception)
         {
             if (exception == null)
                 throw new ArgumentNullException(nameof(exception));

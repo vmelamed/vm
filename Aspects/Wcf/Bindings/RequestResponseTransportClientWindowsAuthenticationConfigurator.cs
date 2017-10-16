@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -19,6 +21,16 @@ namespace vm.Aspects.Wcf.Bindings
         /// Gets the human readable messaging pattern identifier.
         /// </summary>
         public override string MessagingPattern => PatternName;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RequestResponseTransportClientWindowsAuthenticationConfigurator"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public RequestResponseTransportClientWindowsAuthenticationConfigurator(
+            Lazy<IConfigurationProvider> config)
+            : base(config)
+        {
+        }
 
         /// <summary>
         /// Configures the specified binding.

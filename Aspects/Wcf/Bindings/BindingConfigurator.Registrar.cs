@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.Practices.Unity;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -32,6 +33,8 @@ namespace vm.Aspects.Wcf.Bindings
                     throw new ArgumentNullException(nameof(registrations));
 
                 container
+                    .UnsafeRegister(Facility.Registrar, registrations)
+
                     // the default messaging pattern is the ConfiguredBindingConfigurator - assumes that the binding is fully configured already.
                     .RegisterTypeIfNot<BindingConfigurator, ConfiguredBindingConfigurator>(registrations)
                     .RegisterTypeIfNot<BindingConfigurator, RequestResponseConfigurator>(registrations, RequestResponseConfigurator.PatternName)

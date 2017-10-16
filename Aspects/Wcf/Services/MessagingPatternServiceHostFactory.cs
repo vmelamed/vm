@@ -294,10 +294,7 @@ namespace vm.Aspects.Wcf.Services
                             .RegisterTypeIfNot<IWcfContextUtilities, WcfContextUtilities>(registrations, new ContainerControlledLifetimeManager())
                             ;
 
-                    // register the defaults of the inheriting classes
-                    DoRegisterDefaults(DIContainer.Root, registrations);
-
-                    ServiceResolveName = ObtainServiceResolveName();
+                    ObtainServiceResolveName();
 
                     // (re)register properly the service with the interceptor and the policy injection behavior, etc. whistles and blows,
                     // unless it was already registered before getting the registrations above.
@@ -308,6 +305,9 @@ namespace vm.Aspects.Wcf.Services
                             ServiceLifetimeManager,
                             new Interceptor<InterfaceInterceptor>(),
                             new InterceptionBehavior<PolicyInjectionBehavior>());
+
+                    // register the defaults of the inheriting classes
+                    DoRegisterDefaults(DIContainer.Root, registrations);
                 }
                 VmAspectsEventSource.Log.ServiceHostFactoryRegisteredDefaults<TService>();
             }
@@ -396,7 +396,6 @@ namespace vm.Aspects.Wcf.Services
             if (registrations == null)
                 throw new ArgumentNullException(nameof(registrations));
 
-
             _serviceRegistrar?.Invoke(container, typeof(TService), registrations);
 
             return container;
@@ -411,7 +410,13 @@ namespace vm.Aspects.Wcf.Services
         /// </list>
         /// </summary>
         /// <returns></returns>
-        protected virtual string ObtainServiceResolveName() => typeof(TService).GetServiceResolveName();
+        protected virtual string ObtainServiceResolveName()
+        {
+            if (ServiceResolveName.IsNullOrWhiteSpace())
+                ServiceResolveName = typeof(TService).GetServiceResolveName();
+
+            return ServiceResolveName;
+        }
 
         /// <summary>
         /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
@@ -419,7 +424,8 @@ namespace vm.Aspects.Wcf.Services
         /// <param name="baseAddresses">The <see cref="Array" /> of type <see cref="Uri" /> that contains the base addresses for the service hosted.</param>
         /// <returns>A <see cref="ServiceHost" /> for the type of service specified with a specific base address.</returns>
         protected ServiceHost CreateServiceHost(
-            Uri[] baseAddresses) => CreateServiceHost(typeof(TService), baseAddresses);
+            Uri[] baseAddresses)
+            => CreateServiceHost(typeof(TService), baseAddresses);
 
         /// <summary>
         /// Creates a <see cref="ServiceHost" /> for a specified type of service with a specific base address.
@@ -461,7 +467,6 @@ namespace vm.Aspects.Wcf.Services
             host = AddEndpoints(host)
                         .ConfigureBindings(typeof(TContract), MessagingPattern)
                         .SetServiceEndpointIdentity(EndpointIdentity)
-                        .AddTransactionTimeout()
                         .AddDebugBehaviors()
                         .AddMetadataBehaviors(MetadataFeatures)
                         .AddSecurityAuditBehavior()

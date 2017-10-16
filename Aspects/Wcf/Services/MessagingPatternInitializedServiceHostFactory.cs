@@ -201,10 +201,11 @@ namespace vm.Aspects.Wcf.Services
         {
             ObtainInitializerResolveName();
 
-            return container.RegisterTypeIfNot<IInitializeService, TInitializer>(
-                                                    registrations,
-                                                    InitializerResolveName,
-                                                    ServiceInitializerLifetimeManager);
+            return base.DoRegisterDefaults(container, registrations)
+                       .RegisterTypeIfNot<IInitializeService, TInitializer>(
+                                registrations,
+                                InitializerResolveName,
+                                ServiceInitializerLifetimeManager);
         }
 
         /// <summary>
@@ -213,12 +214,12 @@ namespace vm.Aspects.Wcf.Services
         /// <returns>the resolve name of the initializer</returns>
         protected virtual string ObtainInitializerResolveName()
         {
-            if (InitializerResolveName != null)
+            if (!InitializerResolveName.IsNullOrWhiteSpace())
                 return InitializerResolveName;
 
             InitializerResolveName = typeof(TInitializer).GetCustomAttribute<ResolveNameAttribute>()?.Name;
 
-            if (InitializerResolveName != null)
+            if (!InitializerResolveName.IsNullOrWhiteSpace())
                 return InitializerResolveName;
 
             InitializerResolveName = ServiceResolveName;

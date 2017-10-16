@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -21,6 +18,16 @@ namespace vm.Aspects.Wcf.Bindings
         /// Gets the human readable messaging pattern identifier.
         /// </summary>
         public override string MessagingPattern => PatternName;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfiguredBindingConfigurator"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        public ConfiguredBindingConfigurator(
+            Lazy<IConfigurationProvider> config)
+            : base(config)
+        {
+        }
 
         /// <summary>
         /// Configures the specified binding.

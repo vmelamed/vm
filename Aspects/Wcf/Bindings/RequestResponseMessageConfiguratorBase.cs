@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
 {
@@ -9,6 +11,16 @@ namespace vm.Aspects.Wcf.Bindings
     /// </summary>
     public abstract class RequestResponseMessageConfiguratorBase : RequestResponseNoSecurityConfigurator
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RequestResponseMessageConfiguratorBase"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        protected RequestResponseMessageConfiguratorBase(
+            Lazy<IConfigurationProvider> config)
+            : base(config)
+        {
+        }
+
         /// <summary>
         /// Configures the specified binding.
         /// </summary>

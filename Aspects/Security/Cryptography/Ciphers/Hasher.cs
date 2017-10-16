@@ -116,6 +116,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             if (dataStream == null)
                 return null;
+
             if (!dataStream.CanRead)
                 throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
@@ -149,7 +150,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 throw new ArgumentNullException(nameof(hash));
 
             if (dataStream == null)
-                return hash==null;
+                return hash == null;
+
+            if (!dataStream.CanRead)
+                throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             // save the property value - it may change for this call only depending on the length of the hash
             var savedSaltLength = SaltLength;
@@ -230,6 +234,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             if (data == null)
                 return hash==null;
+
+            if (hash == null)
+                return false;
 
             // save the property value - it may change for this call only
             var savedSaltLength = SaltLength;
