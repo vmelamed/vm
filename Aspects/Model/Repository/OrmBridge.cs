@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using vm.Aspects.Model.InMemory;
@@ -144,18 +145,24 @@ namespace vm.Aspects.Model.Repository
         }
 
         /// <summary>
-        /// Determines whether an object or collection of objects which is associated to a principal object is already loaded in memory by the repository.
+        /// Determines whether a principal object's associated object or collection of objects is already loaded in memory by the repository.
         /// </summary>
-        /// <param name="associated">The associated object or collection that is tested.</param>
         /// <param name="principal">The principal object.</param>
-        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property with value the <paramref name="associated" /> object.</param>
         /// <param name="repository">The repository.</param>
-        /// <returns>
-        ///   <see langword="true"/> if the specified reference is loaded; otherwise, <see langword="false"/>.
-        /// </returns>
+        /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
         public static bool IsLoaded(
-            this object associated,
-            object principal,
+            this object principal,
+            object associated,
             string propertyName,
             IRepository repository)
         {
@@ -172,35 +179,156 @@ namespace vm.Aspects.Model.Repository
         }
 
         /// <summary>
-        /// Determines whether an object or collection of objects which is associated to a principal object is already loaded in memory by the repository.
+        /// Determines whether a principal object's associated object or collection of objects is already loaded in memory by the repository.
         /// </summary>
         /// <typeparam name="TAssociated">The type of the associated object.</typeparam>
         /// <typeparam name="TPrincipal">The type of the principal object.</typeparam>
-        /// <param name="associated">The associated object or collection that is tested.</param>
         /// <param name="principal">The principal object.</param>
-        /// <param name="propertyNameLambda">
-        /// Must be a simple lambda expression of the type <c>principal =&gt; principal.Associated</c> which will supply the name of the property.
+        /// <param name="associateLambda">
+        /// Must be a simple lambda expression of the type <c>principal =&gt; principal.Associated</c> which will supply the reference to and the name of the property or collection.
         /// </param>
         /// <param name="repository">The repository where the objects are or will be stored to.</param>
         /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
         public static bool IsLoaded<TAssociated, TPrincipal>(
-            this TAssociated associated,
-            TPrincipal principal,
-            Expression<Func<TPrincipal, TAssociated>> propertyNameLambda,
+            this TPrincipal principal,
+            Expression<Func<TPrincipal, TAssociated>> associateLambda,
             IRepository repository)
             where TAssociated : class
             where TPrincipal : class
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (associateLambda == null)
+                throw new ArgumentNullException(nameof(associateLambda));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            var associateName = associateLambda.GetMemberName();
+            var associate = associateLambda.Compile()(principal);
+
+            return OrmSpecifics.IsLoaded(associate, principal, associateName, repository);
+        }
+
+        /// <summary>
+        /// Loads a principal object's associated object or collection from the DB, if it is not loaded already.
+        /// </summary>
+        /// <param name="associated">The associated object or collection to be loaded.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference was loaded from the DB; or <see langword="false" /> if it was already loaded.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
+        public static bool Load(
+            this object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
         {
             if (associated == null)
                 throw new ArgumentNullException(nameof(associated));
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
-            if (propertyNameLambda == null)
-                throw new ArgumentNullException(nameof(propertyNameLambda));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            return OrmSpecifics.IsLoaded(associated, principal, propertyNameLambda.GetMemberName(), repository);
+            return OrmSpecifics.Load(associated, principal, propertyName, repository);
+        }
+
+        /// <summary>
+        /// Asynchronously loads a principal object's associated object or collection from the DB, if it is not loaded already.
+        /// </summary>
+        /// <param name="associated">The associated object or collection to be loaded.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference was loaded from the DB; or <see langword="false" /> if it was already loaded.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
+        public static async Task<bool> LoadAsync(
+            this object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return await OrmSpecifics.LoadAsync(associated, principal, propertyName, repository);
+        }
+
+        /// <summary>
+        /// Loads the principal object's associated object or collection from the DB, if it is not loaded already.
+        /// </summary>
+        /// <typeparam name="TPrincipal">The type of the principal object.</typeparam>
+        /// <typeparam name="TAssociated">The type of the associated object.</typeparam>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="associateLambda">Must be a simple lambda expression of the type <c>principal =&gt; principal.Associated</c> which will supply the value and name of the property.</param>
+        /// <param name="repository">The repository where the objects are or will be stored to.</param>
+        /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
+        public static bool Load<TPrincipal, TAssociated>(
+            this TPrincipal principal,
+            Expression<Func<TPrincipal, TAssociated>> associateLambda,
+            IRepository repository)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (associateLambda == null)
+                throw new ArgumentNullException(nameof(associateLambda));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            var associateName = associateLambda.GetMemberName();
+            var associated = associateLambda.Compile()(principal);
+
+            return OrmSpecifics.Load(associated, principal, associateName, repository);
+        }
+
+        /// <summary>
+        /// Asynchronously loads the principal object's associated object or collection from the DB, if it is not loaded already.
+        /// </summary>
+        /// <typeparam name="TPrincipal">The type of the principal object.</typeparam>
+        /// <typeparam name="TAssociated">The type of the associated object.</typeparam>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="associateLambda">Must be a simple lambda expression of the type <c>principal =&gt; principal.Associated</c> which will supply the value and name of the property.</param>
+        /// <param name="repository">The repository where the objects are or will be stored to.</param>
+        /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
+        public static async Task<bool> LoadAsync<TPrincipal, TAssociated>(
+            this TPrincipal principal,
+            Expression<Func<TPrincipal, TAssociated>> associateLambda,
+            IRepository repository)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (associateLambda == null)
+                throw new ArgumentNullException(nameof(associateLambda));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            var associateName = associateLambda.GetMemberName();
+            var associated = associateLambda.Compile()(principal);
+
+            return await OrmSpecifics.LoadAsync(associated, principal, associateName, repository);
         }
 
         /// <summary>

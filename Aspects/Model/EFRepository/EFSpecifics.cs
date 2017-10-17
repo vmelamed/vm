@@ -13,6 +13,7 @@ using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
+    using System.Threading.Tasks;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;
 
@@ -245,7 +246,18 @@ namespace vm.Aspects.Model.EFRepository
         /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is <paramref name="associated" />.</param>
         /// <param name="repository">The repository.</param>
         /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
-        /// <exception cref="System.ArgumentException">The repository must be implemented by EFRepositoryBase descendant.;repository</exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The argument cannot be null, empty string or consist of whitespace characters only. - propertyName
+        /// or
+        /// The repository must be implemented by EFRepositoryBase descendant. - repository
+        /// </exception>
         public bool IsLoaded(
             object associated,
             object principal,
@@ -268,7 +280,6 @@ namespace vm.Aspects.Model.EFRepository
             // get the current repository which can tell if the object is loaded
             var efRepository = repository as EFRepositoryBase;
 
-            // if there is no DbContext - assume that the object is loaded
             if (efRepository == null)
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
@@ -282,10 +293,149 @@ namespace vm.Aspects.Model.EFRepository
             bool isCollection = associated.GetType().IsGenericType && (associated.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))  ||
                                 associated.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(ICollection<>))) != null;
 
+            return isCollection
+                        ? ownerEntry.Collection(propertyName).IsLoaded
+                        : ownerEntry.Reference(propertyName).IsLoaded;
+        }
+
+        /// <summary>
+        /// Loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference was loaded from the DB; otherwise, <see langword="false" /> - the reference was already loaded.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The argument cannot be null, empty string or consist of whitespace characters only. - propertyName
+        /// or
+        /// The repository must be implemented by EFRepositoryBase descendant. - repository
+        /// </exception>
+        public bool Load(
+            object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            // if it is not an ORM proxy - it must be loaded
+            if (!IsProxy(associated))
+                return true;
+
+            // get the current repository which can tell if the object is loaded
+            var efRepository = repository as EFRepositoryBase;
+
+            if (efRepository == null)
+                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
+
+            var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));
+
+            // if the owner is not in the change tracker, consider the reference loaded
+            if (ownerEntry == null)
+                return true;
+
+            // is it a reference to a collection of objects or reference to an object?
+            bool isCollection = associated.GetType().IsGenericType && (associated.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))  ||
+                                associated.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(ICollection<>))) != null;
+
+            var isLoaded =  isCollection
+                                ? ownerEntry.Collection(propertyName).IsLoaded
+                                : ownerEntry.Reference(propertyName).IsLoaded;
+
+            if (isLoaded)
+                return false;
+
             if (isCollection)
-                return ownerEntry.Collection(propertyName).IsLoaded;
+                ownerEntry.Collection(propertyName).Load();
             else
-                return ownerEntry.Reference(propertyName).IsLoaded;
+                ownerEntry.Reference(propertyName).Load();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Asynchronously loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference was loaded from the DB; otherwise, <see langword="false" /> - the reference was already loaded.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// The argument cannot be null, empty string or consist of whitespace characters only. - propertyName
+        /// or
+        /// The repository must be implemented by EFRepositoryBase descendant. - repository
+        /// </exception>
+        public async Task<bool> LoadAsync(
+            object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            // if it is not an ORM proxy - it must be loaded
+            if (!IsProxy(associated))
+                return true;
+
+            // get the current repository which can tell if the object is loaded
+            var efRepository = repository as EFRepositoryBase;
+
+            if (efRepository == null)
+                throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
+
+            var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));
+
+            // if the owner is not in the change tracker, consider the reference loaded
+            if (ownerEntry == null)
+                return true;
+
+            // is it a reference to a collection of objects or reference to an object?
+            bool isCollection = associated.GetType().IsGenericType && (associated.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))  ||
+                                associated.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(ICollection<>))) != null;
+
+            var isLoaded =  isCollection
+                                ? ownerEntry.Collection(propertyName).IsLoaded
+                                : ownerEntry.Reference(propertyName).IsLoaded;
+
+            if (isLoaded)
+                return false;
+
+            if (isCollection)
+                await ownerEntry.Collection(propertyName).LoadAsync();
+            else
+                await ownerEntry.Reference(propertyName).LoadAsync();
+
+            return true;
         }
 
         /// <summary>

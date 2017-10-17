@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.InMemory
@@ -146,14 +147,21 @@ namespace vm.Aspects.Model.InMemory
 
         /// <summary>
         /// Determines whether a reference to an object or collection which is associated to a principal object is already loaded in memory.
-        /// Here returns <see langword="true"/>.
+        /// Here returns <see langword="true" />.
         /// </summary>
         /// <param name="associated">The reference object that needs testing.</param>
         /// <param name="principal">The owner object of the associated.</param>
         /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is <paramref name="associated" />.</param>
         /// <param name="repository">The repository.</param>
         /// <returns><see langword="true" />.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
         public bool IsLoaded(
             object associated,
             object principal,
@@ -170,6 +178,74 @@ namespace vm.Aspects.Model.InMemory
                 throw new ArgumentNullException(nameof(repository));
 
             return true;
+        }
+
+        /// <summary>
+        /// Loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference is loaded; otherwise, <see langword="false" />.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
+        public bool Load(
+            object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Asynchronously loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns><see langword="true" /> if the specified reference was loaded from the DB; otherwise, <see langword="false" /> - the reference was already loaded.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// associated
+        /// or
+        /// principal
+        /// or
+        /// repository
+        /// </exception>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - propertyName</exception>
+        public Task<bool> LoadAsync(
+            object associated,
+            object principal,
+            string propertyName,
+            IRepository repository)
+        {
+            if (associated == null)
+                throw new ArgumentNullException(nameof(associated));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            if (propertyName.IsNullOrWhiteSpace())
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(propertyName));
+            if (repository == null)
+                throw new ArgumentNullException(nameof(repository));
+
+            return Task.FromResult(true);
         }
 
         /// <summary>

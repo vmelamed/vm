@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace vm.Aspects.Model.Repository
 {
@@ -86,6 +87,30 @@ namespace vm.Aspects.Model.Repository
         ///   <see langword="true"/> if the specified reference is loaded; otherwise, <see langword="false"/>.
         /// </returns>
         bool IsLoaded(object associated, object principal, string propertyName, IRepository repository);
+
+        /// <summary>
+        /// Loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns>
+        ///   <see langword="true"/> if the specified reference was loaded from the DB; otherwise, <see langword="false"/> - the reference was already loaded.
+        /// </returns>
+        bool Load(object associated, object principal, string propertyName, IRepository repository);
+
+        /// <summary>
+        /// Asynchronously loads an object or collection of objects which is associated to a principal object.
+        /// </summary>
+        /// <param name="associated">The associated object or collection that is tested.</param>
+        /// <param name="principal">The principal object.</param>
+        /// <param name="propertyName">The name of the <paramref name="principal" />'s property whose value is the <paramref name="associated" />.</param>
+        /// <param name="repository">The repository.</param>
+        /// <returns>
+        ///   <see langword="true"/> if the specified reference was loaded from the DB; otherwise, <see langword="false"/> - the reference was already loaded.
+        /// </returns>
+        Task<bool> LoadAsync(object associated, object principal, string propertyName, IRepository repository);
 
         /// <summary>
         /// Determines whether the specified exception is a result of detected optimistic concurrency.

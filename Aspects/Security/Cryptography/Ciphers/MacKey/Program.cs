@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using vm.Aspects.Security.Cryptography.Ciphers.Utilities.Properties;
@@ -68,7 +67,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool ParseArguments(string[] args)
         {
-            Contract.Requires<ArgumentNullException>(args != null, nameof(args));
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
 
             if (args.Length == 0)
                 return true;
@@ -126,7 +126,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetCommand(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
+            if (argument == null)
+                throw new ArgumentNullException(nameof(argument));
 
             if (CreateCommand.StartsWith(argument, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -162,8 +163,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetFile(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty string or consist of whitespace characters only.");
+            if (string.IsNullOrWhiteSpace(argument))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(argument));
 
             var fileInfo = new FileInfo(argument);
 
@@ -191,8 +192,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetThumbprint(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty string or consist of whitespace characters only.");
+            if (string.IsNullOrWhiteSpace(argument))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(argument));
 
             _thumbprint = GetHexValue(argument);
             return _thumbprint != null;
@@ -200,19 +201,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static bool GetKey(string argument)
         {
-            Contract.Requires<ArgumentNullException>(argument != null, nameof(argument));
-            Contract.Requires<ArgumentException>(argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty string or consist of whitespace characters only.");
-            
+            if (string.IsNullOrWhiteSpace(argument))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(argument));
+
             _key = ParseHexValue(GetHexValue(argument));
             return _key != null;
         }
 
         static byte[] ParseHexValue(string argument)
         {
-            Contract.Requires<ArgumentException>(argument!=null  &&  argument.Any(c => !char.IsWhiteSpace(c)), "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
-            Contract.Requires<ArgumentException>(argument.Length >= 2, "The argument must be longer than 2 characters.");
+            if (string.IsNullOrWhiteSpace(argument))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(argument));
+            if (argument.Length % 2 != 0)
+                throw new ArgumentException("Invalid length of the argument.", nameof(argument));
 
-            var hexValue = new byte[(argument.Length+1)/2];
+            var hexValue = new byte[argument.Length/2];
 
             for (var i = 0; i<argument.Length; i += 2)
                 hexValue[i/2] = byte.Parse(argument.Substring(i, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
@@ -222,7 +225,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static string GetHexValue(string argument)
         {
-            Contract.Requires<ArgumentException>(argument?.Any(c => !char.IsWhiteSpace(c)) ?? false, "The argument "+nameof(argument)+" cannot be empty or consist of whitespace characters only.");
+            if (string.IsNullOrWhiteSpace(argument))
+                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(argument));
 
             if (!Regex.IsMatch(argument, RexByteArray))
             {
@@ -258,20 +262,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
         }
 
         static IKeyStorage GetKeyStorage()
-        {
-            Contract.Ensures(Contract.Result<IKeyStorage>() != null);
-
-            return new KeyFile();
-        }
+            => new KeyFile();
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         static IHasher GetHasher()
-        {
-            Contract.Ensures(Contract.Result<IHasher>() != null);
-            Contract.Ensures(Contract.Result<IHasher>() is KeyedHasher);
-
-            return new KeyedHasher(_cert, null, _keyFile, null);
-        }
+            => new KeyedHasher(_cert, null, _keyFile, null);
 
         static int Import()
         {
@@ -306,7 +301,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
             // this will create the key file
             hasher.Hash(new byte[] { 1, 2, 3 });
 
-            Contract.Assert(keyStorage.KeyLocationExists(_keyFile));
+            Debug.Assert(keyStorage.KeyLocationExists(_keyFile));
             return 0;
         }
 
