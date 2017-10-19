@@ -97,8 +97,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
                               (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
             var allowUnauthenticated = isPreflight
-                                            ? new AllowOpenIdUnauthenticatedAttribute()
-                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowOpenIdUnauthenticatedAttribute>().FirstOrDefault();
+                                            ? new AllowUnauthenticatedAttribute()
+                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowUnauthenticatedAttribute>().FirstOrDefault();
 
             if (allowUnauthenticated == null)
                 return null;

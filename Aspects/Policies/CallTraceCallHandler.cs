@@ -149,16 +149,24 @@ namespace vm.Aspects.Policies
             if (callData == null)
                 throw new ArgumentNullException(nameof(callData));
 
-            if (IncludeCallStack)
-                callData.CallStack = Environment.StackTrace;
+            var attribute = input.MethodBase.GetCustomAttribute<CallTraceAttribute>()  ??
+                            input.Target.GetType().GetCustomAttribute<CallTraceAttribute>();
 
-            if (IncludePrincipal)
+            callData.Trace = attribute?.Trace ?? true;
+
+            if (callData.Trace)
             {
-                if (ServiceSecurityContext.Current != null &&
-                    ServiceSecurityContext.Current.PrimaryIdentity != null)
-                    callData.IdentityName = ServiceSecurityContext.Current.PrimaryIdentity.Name;
-                else
-                    callData.IdentityName = WindowsIdentity.GetCurrent().Name;
+                if (IncludeCallStack)
+                    callData.CallStack = Environment.StackTrace;
+
+                if (IncludePrincipal)
+                {
+                    if (ServiceSecurityContext.Current != null &&
+                        ServiceSecurityContext.Current.PrimaryIdentity != null)
+                        callData.IdentityName = ServiceSecurityContext.Current.PrimaryIdentity.Name;
+                    else
+                        callData.IdentityName = WindowsIdentity.GetCurrent().Name;
+                }
             }
 
             return callData;
@@ -174,7 +182,7 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            if (!LogBeforeCall  ||  !LogWriter.IsLoggingEnabled())
+            if (!callData.Trace  ||  !LogBeforeCall  ||  !LogWriter.IsLoggingEnabled())
                 return null;
 
             var entry = CreateLogEntry(StartCallCategory);
@@ -188,7 +196,7 @@ namespace vm.Aspects.Policies
                                                     ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
                 if (LogAsynchronously)
-                    Task.Run(logBeforeCall);
+                    callData.LogBeforeCall = Task.Run(logBeforeCall);
                 else
                     logBeforeCall();
             }
@@ -208,7 +216,10 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             CallTraceData callData)
         {
-            var takeTime = LogAfterCall && IncludeCallTime  &&  LogWriter.IsLoggingEnabled();
+            if (!callData.Trace)
+                return base.DoInvoke(input, getNext, callData);
+
+            var takeTime = LogAfterCall  &&  IncludeCallTime  &&  LogWriter.IsLoggingEnabled();
 
             if (takeTime)
             {
@@ -237,12 +248,15 @@ namespace vm.Aspects.Policies
             CallTraceData callData)
         {
             // async methods are always dumped in ContinueWith
-            if (methodReturn.IsAsyncCall())
+            if (!callData.Trace  ||  methodReturn.IsAsyncCall())
                 return methodReturn;
 
             callData.ReturnValue  = methodReturn.ReturnValue;
             callData.OutputValues = methodReturn.Outputs;
             callData.Exception    = methodReturn.Exception;
+
+            if (callData.LogBeforeCall != null  &&  !callData.LogBeforeCall.IsCompleted)
+                callData.LogBeforeCall.GetAwaiter().GetResult();
 
             LogPostInvoke(input, callData);
 
@@ -263,6 +277,9 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             CallTraceData callData)
         {
+            if (!callData.Trace)
+                return await base.ContinueWith<TResult>(input, methodReturn, callData);
+
             TResult result = default(TResult);
 
             try
@@ -274,6 +291,9 @@ namespace vm.Aspects.Policies
             {
                 callData.Exception = x;
             }
+
+            if (callData.LogBeforeCall != null  &&  !callData.LogBeforeCall.IsCompleted)
+                await callData.LogBeforeCall;
 
             LogPostInvoke(input, callData);
 

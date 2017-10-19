@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
@@ -11,6 +12,11 @@ namespace vm.Aspects.Policies
     /// </summary>
     public class CallTraceData
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether to trace the current call.
+        /// </summary>
+        public bool Trace { get; set; }
+
         /// <summary>
         /// Gets or sets the call stack.
         /// </summary>
@@ -42,6 +48,11 @@ namespace vm.Aspects.Policies
         /// </summary>
         /// <value>The exception.</value>
         public Exception Exception { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parallel task of logging data available before the call.
+        /// </summary>
+        public Task LogBeforeCall { get; set; }
     }
 #pragma warning restore CS3003 // Constraint type is not CLS-compliant
 }

@@ -329,6 +329,7 @@
     <Compile Include="LambdaExpressionExtensions.cs" />
     <Compile Include="PerCallContextLifetimeManager.cs" />
     <Compile Include="Policies\BaseCallHandler.cs" />
+    <Compile Include="Policies\CallTraceAttribute.cs" />
     <Compile Include="Policies\CallTraceCallHandler.cs" />
     <Compile Include="Policies\CallTraceData.cs" />
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />

@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using Microsoft.Practices.ServiceLocation;
+using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {
@@ -61,8 +66,19 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 
             if (authorizationHeader.IsNullOrWhiteSpace())
             {
-                WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.WwwAuthenticate, $"Basic realm=\"{_realm}\"");
-                throw new WebFaultException(HttpStatusCode.Unauthorized);
+                var principal = AllowedUnauthenticated();
+
+                if (principal != null)
+                {
+                    operationContext.SetPrincipal(principal);
+                    return true;
+                }
+                else
+                {
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.WwwAuthenticate, $"Basic realm=\"{_realm}\"");
+                    Facility.LogWriter.LogError($"Basic authentication credentials not provided.");
+                    throw new WebFaultException(HttpStatusCode.Unauthorized);
+                }
             }
 
             var headerParts = authorizationHeader.Split(new char[]{ ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -73,8 +89,46 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             var credentials = Encoding.ASCII.GetString(
                                         Convert.FromBase64String(authorizationHeader.Substring(6)))
                                             .Split(':');
+            var userName = credentials[0];
+            var password = credentials[1];
+            var authenticated = _authentication.Authenticate(userName, password);
 
-            return _authentication.Authenticate(credentials[0], credentials[1]);
+            if (authenticated)
+            {
+                var claims = new List<Claim>();
+
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, userName));
+
+                operationContext.SetPrincipal(
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(claims)));
+
+                return true;
+            }
+
+            Facility.LogWriter.LogError($"Basic authentication for user-name '{userName}' failed.");
+            return false;
+        }
+
+        IPrincipal AllowedUnauthenticated()
+        {
+            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
+                              (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
+            var allowUnauthenticated = isPreflight
+                                            ? new AllowUnauthenticatedAttribute()
+                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowUnauthenticatedAttribute>().FirstOrDefault();
+
+            if (allowUnauthenticated == null)
+                return null;
+
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name));
+            if (!allowUnauthenticated.Name.IsNullOrWhiteSpace())
+                claims.Add(new Claim(ClaimTypes.Role, allowUnauthenticated.Role));
+
+            return new ClaimsPrincipal(
+                        new ClaimsIdentity(claims));
         }
     }
 }

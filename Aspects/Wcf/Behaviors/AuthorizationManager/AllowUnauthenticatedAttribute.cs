@@ -13,7 +13,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Method,
         AllowMultiple = false,
         Inherited = false)]
-    public sealed class AllowOpenIdUnauthenticatedAttribute : Attribute
+    public sealed class AllowUnauthenticatedAttribute : Attribute
     {
         /// <summary>
         /// The default role to be assigned to the unauthenticated principal.
@@ -35,11 +35,11 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         public string Role { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowOpenIdUnauthenticatedAttribute"/> class.
+        /// Initializes a new instance of the <see cref="AllowUnauthenticatedAttribute"/> class.
         /// </summary>
         /// <param name="name">The name of the unauthenticated principal.</param>
         /// <param name="role">The role of the unauthenticated principal.</param>
-        public AllowOpenIdUnauthenticatedAttribute(
+        public AllowUnauthenticatedAttribute(
             string name = DefaultName,
             string role = DefaultRole)
         {
