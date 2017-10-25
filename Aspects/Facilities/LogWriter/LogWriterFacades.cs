@@ -30,13 +30,13 @@ namespace vm.Aspects.Facilities
         /// </summary>
         public const string Trace          = "Trace";
         /// <summary>
-        /// The start call trace - the category specific for tracing starting calls. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "Start Call Trace"
+        /// The start call trace - the category specific for pre-call tracing. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "Call Start"
         /// </summary>
-        public const string StartCallTrace = "Start Call Trace";
+        public const string StartCallTrace = "Call Start";
         /// <summary>
-        /// The end call trace - the category specific for tracing ending call. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "End Call Trace"
+        /// The end call trace - the category specific for post-call tracing. Similar to Trace category but can be useful to audit service calls, etc. in production too. - "Call End"
         /// </summary>
-        public const string EndCallTrace   = "End Call Trace";
+        public const string EndCallTrace   = "Call End";
         /// <summary>
         /// The event log - the category that specifically sends messages to the Windows event log, e.g. "Service xyz started." - "Event Log"
         /// </summary>

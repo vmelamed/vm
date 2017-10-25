@@ -54,8 +54,8 @@ namespace vm.Aspects.Threading
                 throw new ArgumentNullException(nameof(operation));
 
             _operation = operation;
-            _isSuccess = isSuccess ?? RetryConstants.DefaultIsSuccess;
             _isFailure = isFailure ?? RetryConstants.DefaultIsFailure;
+            _isSuccess = isSuccess ?? RetryConstants.DefaultIsSuccess;
             _epilogue  = epilogue  ?? RetryConstants.DefaultEpilogue;
         }
 
