@@ -87,7 +87,7 @@
                 <!--<Icon guid="guidImages"
                       id="bmpPic2" />-->
                 <Strings>
-                    <ButtonText>Add Metadata Type</ButtonText>
+                    <ButtonText>Add Metadata Type (buddy class)</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidAddRelatedTypePackageCmdSet"
@@ -97,7 +97,7 @@
                 <Parent guid="guidAddRelatedTypePackageCmdSet"
                         id="AddRelatedTypeSubMenuGroup" />
                 <Strings>
-                    <ButtonText>Add DTO</ButtonText>
+                    <ButtonText>Add data contract DTO</ButtonText>
                 </Strings>
             </Button>
             <!--Button guid="guidAddRelatedTypePackageCmdSet"
@@ -117,7 +117,7 @@
                 <Parent guid="guidAddRelatedTypePackageCmdSet"
                         id="AddRelatedTypeSubMenuGroup" />
                 <Strings>
-                    <ButtonText>Add Task Async Interface</ButtonText>
+                    <ButtonText>Add Tasks Interface (TPL asynchronous type)</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidAddRelatedTypePackageCmdSet"
@@ -127,7 +127,7 @@
                 <Parent guid="guidAddRelatedTypePackageCmdSet"
                         id="AddRelatedTypeSubMenuGroup" />
                 <Strings>
-                    <ButtonText>Add Client</ButtonText>
+                    <ButtonText>Add Light WCF Client</ButtonText>
                 </Strings>
             </Button>
 

@@ -47,6 +47,8 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Validation;
 
+#pragma warning disable 1591
+
 namespace <#= targetNameSpace.Name #>
 {
     abstract class <#= sourceClass.Name #>Metadata
