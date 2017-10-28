@@ -5,9 +5,9 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class ArgumentExceptionDumpMetadata
     {
         [Dump(false)]
-        public object Message;
+        public object Message { get; set; }
 
         [Dump(0)]
-        public object ParamName;
+        public object ParamName { get; set; }
     }
 }

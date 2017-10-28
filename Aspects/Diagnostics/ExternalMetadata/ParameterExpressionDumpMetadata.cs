@@ -2,13 +2,13 @@
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
-    [Dump(DefaultProperty="Name")]
+    [Dump(DefaultProperty = "Name")]
     public abstract class ParameterExpressionDumpMetadata
     {
         [Dump(0)]
-        public object Name;
+        public object Name { get; set; }
 
         [Dump(1)]
-        public object IsByRef;
+        public object IsByRef { get; set; }
     }
 }

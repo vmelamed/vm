@@ -1,30 +1,34 @@
-﻿namespace vm.Aspects.Diagnostics.ExternalMetadata
+﻿#pragma warning disable 1591
+
+using System.Diagnostics.CodeAnalysis;
+
+namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
-#pragma warning disable 1591
     public abstract class ClaimMetadata
     {
+        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         [Dump(0)]
-        public object Type;
+        public object Type { get; set; }
 
         [Dump(1)]
-        public object Value;
+        public object Value { get; set; }
 
         [Dump(2)]
-        public object ValueType;
+        public object ValueType { get; set; }
 
         [Dump(false)]
-        public object Issuer;
+        public object Issuer { get; set; }
 
         [Dump(false)]
-        public object OriginalIssuer;
+        public object OriginalIssuer { get; set; }
 
         [Dump(false)]
-        public object Properties;
+        public object Properties { get; set; }
 
         [Dump(false)]
-        public object Subject;
+        public object Subject { get; set; }
 
         [Dump(false)]
-        public object CustomSerializationData;
+        public object CustomSerializationData { get; set; }
     }
 }

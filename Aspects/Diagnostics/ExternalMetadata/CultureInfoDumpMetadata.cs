@@ -2,7 +2,7 @@
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
-    [Dump(RecurseDump=ShouldDump.Skip, DefaultProperty="Name")]
+    [Dump(RecurseDump = ShouldDump.Skip, DefaultProperty = "Name")]
     public abstract class CultureInfoDumpMetadata
     {
     }

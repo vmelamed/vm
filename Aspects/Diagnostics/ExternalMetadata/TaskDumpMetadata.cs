@@ -14,7 +14,7 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(1)]
         public object Options { get; set; }
 
-        [Dump(2, DumpNullValues=ShouldDump.Skip)]
+        [Dump(2, DumpNullValues = ShouldDump.Skip)]
         public object AsyncState { get; set; }
 
         [Dump(3)]
@@ -26,7 +26,7 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(5)]
         public object IsCompleted { get; set; }
 
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId="Canceled", Justification="see TaskDump")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Canceled", Justification = "see TaskDump")]
         [Dump(6)]
         public object IsCanceled { get; set; }
 
@@ -42,7 +42,7 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(8)]
         public object IsExceptionObservedByParent { get; set; }
 
-        [Dump(-1, DumpNullValues=ShouldDump.Skip)]
+        [Dump(-1, DumpNullValues = ShouldDump.Skip)]
         public object Exception { get; set; }
 
         [Dump(false)]

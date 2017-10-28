@@ -2,13 +2,13 @@
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
-    [Dump(Enumerate=ShouldDump.Dump)]
+    [Dump(Enumerate = ShouldDump.Dump)]
     public abstract class ValidationResultsDumpMetadata
     {
         [Dump(0)]
-        public object IsValid;
+        public object IsValid { get; set; }
 
         [Dump(1)]
-        public object Count;
+        public object Count { get; set; }
     }
 }

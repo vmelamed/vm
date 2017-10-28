@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 
+#pragma warning disable 1591
+
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
     /// <remarks/>

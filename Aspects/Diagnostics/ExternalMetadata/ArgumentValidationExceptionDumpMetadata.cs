@@ -4,7 +4,7 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
     public abstract class ArgumentValidationExceptionDumpMetadata
     {
-        [Dump(0, Enumerate=ShouldDump.Dump)]
-        public object ValidationResults;
+        [Dump(0, Enumerate = ShouldDump.Dump)]
+        public object ValidationResults { get; set; }
     }
 }
