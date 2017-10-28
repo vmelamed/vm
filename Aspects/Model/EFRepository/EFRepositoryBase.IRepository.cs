@@ -14,8 +14,8 @@ namespace vm.Aspects.Model.EFRepository
     using Facilities;
     using Facilities.Diagnostics;
     using Microsoft.Practices.ServiceLocation;
-    using Threading;
     using Microsoft.Practices.Unity;
+    using Threading;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;
 
@@ -275,7 +275,6 @@ namespace vm.Aspects.Model.EFRepository
             EntityState state,
             params string[] modifiedProperties) where T : BaseDomainEntity
         {
-
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
             if (!entity.HasIdentity)

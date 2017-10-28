@@ -123,6 +123,7 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
     <DocumentationFile>bin\Release\vm.Aspects.Linq.Expressions.Serialization.XML</DocumentationFile>
     <NoWarn>3001, 3002, 3003</NoWarn>
+    <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.9.7</version>
+        <version>1.9.9</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>

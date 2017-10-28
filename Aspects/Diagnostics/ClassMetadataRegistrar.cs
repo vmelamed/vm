@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Security;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 
@@ -29,6 +30,8 @@ namespace vm.Aspects.Diagnostics
                 .Register<SecurityException, SecurityExceptionDumpMetadata>()
                 .Register<CultureInfo, CultureInfoDumpMetadata>()
                 .Register<Task, TaskDumpMetadata>()
+                .Register<ClaimsIdentity, ClaimsIdentityMetadata>()
+                .Register<Claim, ClaimMetadata>()
 
                 .Register<Expression, ExpressionDumpMetadata>()
                 .Register<LambdaExpression, LambdaExpressionDumpMetadata>()

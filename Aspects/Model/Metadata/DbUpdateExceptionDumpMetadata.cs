@@ -10,7 +10,7 @@ namespace vm.Aspects.Model.Metadata
         /// <summary>
         /// Gets or sets the entries.
         /// </summary>
-        //[Dump(RecurseDump=ShouldDump.Skip)]
+        [Dump(MaxLength = -1)]
         public object Entries;
     }
 }

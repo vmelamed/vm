@@ -6,6 +6,10 @@
     public enum EntityState
     {
         /// <summary>
+        /// The object was not modified.
+        /// </summary>
+        Unchanged,
+        /// <summary>
         /// The object was added to the repository.
         /// </summary>
         Added,

@@ -97,7 +97,9 @@ namespace vm.Aspects.Facilities
                 IDictionary<RegistrationLookup, ContainerRegistration> registrations,
                 bool isTest = false)
             {
-                ClassMetadataRegistrar.RegisterMetadata();
+                ClassMetadataRegistrar
+                    .RegisterMetadata()
+                    ;
 
                 return container
                     .RegisterInstanceIfNot<ValidatorFactory>(registrations, ValidationFactory.DefaultCompositeValidatorFactory)

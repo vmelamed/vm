@@ -175,9 +175,15 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Clones this instance.
         /// </summary>
-        /// <returns>A money instance identical to this.</returns>
-        public object Clone() => new Money(Value, Currency);
+        /// <returns>An object that can be cast to <see cref="Money"/> identical to this.</returns>
+        object ICloneable.Clone() => new Money(Value, Currency);
         #endregion
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>A money instance identical to this.</returns>
+        public Money Clone() => (Money)((ICloneable)this).Clone();
 
         #region ICompareable<Money>
         /// <summary>

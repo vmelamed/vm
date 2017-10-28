@@ -8,12 +8,12 @@ using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Transactions;
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
 {
-    using System.Threading.Tasks;
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;
 
@@ -562,9 +562,10 @@ namespace vm.Aspects.Model.EFRepository
         static readonly IDictionary<EntityState, EFEntityState>
             _stateTranslation = new SortedList<EntityState, EFEntityState>()
             {
-                { EntityState.Added,    EFEntityState.Added },
-                { EntityState.Deleted,  EFEntityState.Deleted },
-                { EntityState.Modified, EFEntityState.Modified },
+                { EntityState.Added,     EFEntityState.Added },
+                { EntityState.Deleted,   EFEntityState.Deleted },
+                { EntityState.Modified,  EFEntityState.Modified },
+                { EntityState.Unchanged, EFEntityState.Unchanged },
             };
 
         /// <summary>

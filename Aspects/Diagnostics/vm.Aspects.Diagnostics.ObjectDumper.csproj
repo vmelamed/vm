@@ -125,6 +125,7 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>3001, 3002, 3003</NoWarn>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -211,6 +212,8 @@
     <Compile Include="DefaultServiceLocator.cs" />
     <Compile Include="DumpAttribute.cs" />
     <Compile Include="DumpFormat.cs" />
+    <Compile Include="ExternalMetadata\ClaimMetadata.cs" />
+    <Compile Include="ExternalMetadata\ClaimsIdentityMetadata.cs" />
     <Compile Include="ExternalMetadata\TaskGenericDumpMetadata.cs" />
     <Compile Include="Implementation\CSharpDumpExpression.cs" />
     <Compile Include="Implementation\CSharpDumpExpression.Visitor.cs">

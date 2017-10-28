@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" EQU "" call "%VS140COMNTOOLS%vsvars32.bat"
-set vmDumperVersion=1.9.7
+set vmDumperVersion=1.9.9
 
 cd %~dp0..
 del *.nupkg

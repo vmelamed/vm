@@ -10,11 +10,12 @@ namespace vm.Aspects.Policies
     /// <summary>
     /// Generalizes the way call handlers work by dividing the process in four distinct phases:
     /// <list type="number">
-    /// <item><see cref="Prepare"/>: gather and prepare per call local data of type <typeparamref name="T"/> that will be passed to the following phases.</item>
+    /// <item><see cref="Prepare"/>: gather and prepare per-call local data of custom type <typeparamref name="T"/> that will be passed to the following phases.</item>
     /// <item><see cref="PreInvoke"/>: process the input and the context before the control is passed down the aspects pipeline.
     /// For various reasons it may cut the pipeline short, e.g. due to an invalid parameter</item>
     /// <item><see cref="DoInvoke"/>: synchronously or asynchronously pass the control down the aspects pipeline.</item>
     /// <item><see cref="PostInvoke"/>: process the output from the call so far and optionally modify the output.</item>
+    /// <item><see cref="ContinueWith"/>: process the final result from asynchronous TPL style calls and optionally modify the final result.</item>
     /// </list>
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -38,17 +39,19 @@ namespace vm.Aspects.Policies
                                         .Where(
                                             m =>
                                             {
-                                                if (!m.IsGenericMethod        ||
-                                                    m.Name != "ContinueWith"  ||
-                                                    m.GetGenericArguments().Count() != 1)
+                                                if (m.IsGenericMethod               &&
+                                                    m.Name == nameof(ContinueWith)  &&
+                                                    m.GetGenericArguments().Count() == 1)
+                                                {
+                                                    var parameters = m.GetParameters();
+
+                                                    return parameters.Count()          == 3                          &&
+                                                           parameters[0].ParameterType == typeof(IMethodInvocation)  &&
+                                                           parameters[1].ParameterType == typeof(IMethodReturn)      &&
+                                                           parameters[2].ParameterType == typeof(T);
+                                                }
+                                                else
                                                     return false;
-
-                                                var parameters = m.GetParameters();
-
-                                                return parameters.Count()          == 3                          &&
-                                                       parameters[0].ParameterType == typeof(IMethodInvocation)  &&
-                                                       parameters[1].ParameterType == typeof(IMethodReturn)      &&
-                                                       parameters[2].ParameterType == typeof(T);
                                             })
                                         .Single();
 
@@ -56,11 +59,12 @@ namespace vm.Aspects.Policies
         }
 
         /// <summary>
-        /// Prepares per call data specific to the handler.
+        /// Prepares the per-call custom data specific to the handler.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
-        protected virtual T Prepare(IMethodInvocation input)
+        protected virtual T Prepare(
+            IMethodInvocation input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -108,7 +112,7 @@ namespace vm.Aspects.Policies
             if (continueWith == null)
                 return methodReturn;
 
-            // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result
+            // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result data
             return input.CreateMethodReturn(
                                 continueWith.Invoke(this, new object[] { input, methodReturn, callData }));
         }
@@ -166,10 +170,10 @@ namespace vm.Aspects.Policies
             var task = methodReturn.ReturnValue as Task;
 
             // in case the target method does not return Task<Result>, it must be just Task (see GetContinueWith), 
-            // - we'll return Task<bool>, so return the default value false.
             if (task != null)
                 await task;
 
+            // - we'll return Task<bool>, so return the default value false.
             return default(TResult);
         }
 

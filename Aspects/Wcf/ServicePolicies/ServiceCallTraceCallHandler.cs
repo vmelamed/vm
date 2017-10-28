@@ -6,7 +6,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using vm.Aspects.Diagnostics;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -47,10 +46,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <returns>T.</returns>
         protected override CallTraceData Prepare(
             IMethodInvocation input)
-        {
-
-            return InitializeCallData(new ServiceCallTraceData(), input);
-        }
+            => InitializeCallData(new ServiceCallTraceData(), input);
 
         /// <summary>
         /// Initializes the call data.
@@ -116,7 +112,6 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             DumpCallerAddress(writer, callData);
             DumpCustomContext(writer, callData);
-
             base.DoDumpBeforeCall(writer, input, callData, ignore);
         }
 
@@ -126,7 +121,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         /// <param name="writer">The writer to dump the call information to.</param>
         /// <param name="input">Object representing the inputs to the current call to the target.</param>
         /// <param name="callData">The additional audit data about the call.</param>
-        protected override void DoDumpAfterCall(
+        protected override void DoBeginDumpAfterCall(
             TextWriter writer,
             IMethodInvocation input,
             CallTraceData callData)
@@ -136,22 +131,14 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 DumpCallerAddress(writer, callData);
                 DumpCustomContext(writer, callData);
             }
-            base.DoDumpAfterCall(writer, input, callData);
+            base.DoBeginDumpAfterCall(writer, input, callData);
         }
 
         void DumpCallerAddress(
             TextWriter writer,
             CallTraceData callData)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-            if (callData == null)
-                throw new ArgumentNullException(nameof(callData));
-
-            var wcfCallData = callData as ServiceCallTraceData;
-
-            if (wcfCallData == null)
-                throw new ArgumentException("callData must be of type ServiceCallData");
+            var wcfCallData = (ServiceCallTraceData)callData;
 
             if (!IncludeCallerAddress || string.IsNullOrWhiteSpace(wcfCallData.CallerAddress))
                 return;
@@ -164,26 +151,15 @@ namespace vm.Aspects.Wcf.ServicePolicies
             TextWriter writer,
             CallTraceData callData)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-            if (callData == null)
-                throw new ArgumentNullException(nameof(callData));
-
             if (!IncludeCustomContext)
                 return;
 
-            var wcfCallData = callData as ServiceCallTraceData;
-
-            if (wcfCallData == null)
-                throw new ArgumentException("callData must be of type ServiceCallData", nameof(callData));
-
+            var wcfCallData  = (ServiceCallTraceData)callData;
             var contextValue = wcfCallData.CustomContext;
 
-            writer.Indent(2);
             writer.WriteLine();
             writer.Write("Custom context: ");
-            contextValue.DumpText(writer, 4);
-            writer.Unindent(2);
+            contextValue.DumpText(writer, 2);
         }
     }
 }
