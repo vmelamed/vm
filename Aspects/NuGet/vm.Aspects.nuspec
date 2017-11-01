@@ -45,8 +45,6 @@
                             version="6.0.1304.0" />
                 <dependency id="EnterpriseLibrary.ExceptionHandling"
                             version="6.0.1304.0" />
-                <dependency id="EnterpriseLibrary.ExceptionHandling.WCF"
-                            version="6.0.1304.0" />
                 <dependency id="EnterpriseLibrary.ExceptionHandling.Logging"
                             version="6.0.1304.0" />
                 <dependency id="EnterpriseLibrary.Logging"

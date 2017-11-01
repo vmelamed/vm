@@ -218,10 +218,6 @@
       <HintPath>..\..\packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EnterpriseLibrary.ExceptionHandling.WCF.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
       <Private>True</Private>
@@ -344,9 +340,9 @@
     <Compile Include="Behaviors\DIBehavior\DIEndpointBehavior.cs" />
     <Compile Include="Behaviors\DIBehavior\DIInstanceProvider.cs" />
     <Compile Include="EndpointIdentityFactory.cs" />
-    <Compile Include="Behaviors\ExceptionShielding\ExceptionShieldingAttribute.cs" />
-    <Compile Include="Behaviors\ExceptionShielding\ExceptionShieldingBehavior.cs" />
-    <Compile Include="Behaviors\ExceptionShielding\ExceptionShieldingErrorHandler.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingAttribute.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingBehavior.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingErrorHandler.cs" />
     <Compile Include="FaultContracts\AggregateFault.cs" />
     <Compile Include="FaultContracts\ArgumentFault.cs" />
     <Compile Include="FaultContracts\ArgumentNullFault.cs" />
@@ -404,8 +400,8 @@
     <Compile Include="ServicePolicies\ServiceCallExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
-    <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
-    <Compile Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
+    <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
+    <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
     <Compile Include="Services\ICreateServiceHost.cs" />
