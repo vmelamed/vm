@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
@@ -84,18 +83,17 @@ namespace vm.Aspects.Wcf.ServicePolicies
             IMethodInvocation input,
             bool callData)
         {
-            var typeAttribute = input.MethodBase.DeclaringType.GetCustomAttribute<CustomDataContextTypeAttribute>(true);
-            var methodAttribute = input.MethodBase.GetCustomAttribute<CustomDataContextTypeAttribute>(true);
+            var methodAttribute = input.MethodBase.GetMethodCustomAttribute<CustomDataContextTypeAttribute>();
 
-            if (typeAttribute == null  &&  methodAttribute == null)
+            if (methodAttribute == null)
                 return base.PreInvoke(input, callData);
 
-            var type = methodAttribute?.CustomDataContextType ?? typeAttribute?.CustomDataContextType;
+            var type = methodAttribute?.CustomDataContextType;
 
             if (type == null)
                 return input.CreateExceptionMethodReturn(new InvalidOperationException($"CustomDataContextTypeAttribute was specified but the type of the context/header was not."));
 
-            var isOptional = (methodAttribute?.IsOptional) ?? (typeAttribute?.IsOptional).GetValueOrDefault();
+            var isOptional = (methodAttribute?.IsOptional).GetValueOrDefault();
 
             // validate the custom context if necessary
             var contextType = typeof(CustomDataContext<>).MakeGenericType(type);

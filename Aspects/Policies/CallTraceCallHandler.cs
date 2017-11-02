@@ -157,7 +157,7 @@ namespace vm.Aspects.Policies
             if (callData == null)
                 throw new ArgumentNullException(nameof(callData));
 
-            var attribute = input.MethodBase.GetCustomAttribute<CallTraceAttribute>()  ??
+            var attribute = input.MethodBase.GetMethodCustomAttribute<CallTraceAttribute>()  ??
                             input.Target.GetType().GetCustomAttribute<CallTraceAttribute>();
 
             callData.Trace = attribute?.Trace ?? true;

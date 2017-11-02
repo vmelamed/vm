@@ -263,6 +263,8 @@ namespace vm.Aspects
         /// Matches a C# identifier.
         /// </summary>
         const string rexCSharpIdentifier = @"[_@\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Mc}\p{Cf}\p{Pc}\p{Lm}][_\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]*";
+
+        const string rexContentTypeToken = @"(?:[^ \p{Cc}()<>@,;:""/\\\[\]?.=+])+";
         #endregion
 
         #region Internet addresses, URL, etc. regular expressions
@@ -782,7 +784,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
         /// </summary>
-        public const string RexContentType = @"(?i:)^(?<type>text|application)/(?:(?<vendor>[^\s,;+-]+)(?:-(?<version>[^\s,;+]+))?\+)?(?<format>[^\s\+,;]+)$";
+        public const string RexContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-"+rexContentTypeToken+@"))/(?<subtype>"+rexContentTypeToken+@")(?:; (?<attribute>"+rexContentTypeToken+@")=(?<value>"+rexContentTypeToken+@"))?$";
 
         readonly static Lazy<Regex> _contentType = new Lazy<Regex>(() => new Regex(RexContentType, RegexOptions.Compiled));
 
@@ -790,6 +792,20 @@ namespace vm.Aspects
         /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
         /// </summary>
         public static Regex ContentType => _contentType.Value;
+        #endregion
+
+        #region Content-type or Accepts header values:
+        /// <summary>
+        /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
+        /// </summary>
+        public const string RexVendorContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-"+rexContentTypeToken+@"))/(?:(?<vendor>"+rexContentTypeToken+@")(?:-(?<version>"+rexContentTypeToken+@"))?\+)?(?<subtype>"+rexContentTypeToken+@")(?:; (?<attribute>"+rexContentTypeToken+@")=(?<value>"+rexContentTypeToken+@"))?$";
+
+        readonly static Lazy<Regex> _vendorContentType = new Lazy<Regex>(() => new Regex(RexVendorContentType, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
+        /// </summary>
+        public static Regex VendorContentType => _vendorContentType.Value;
         #endregion
 
         #region ByteArray

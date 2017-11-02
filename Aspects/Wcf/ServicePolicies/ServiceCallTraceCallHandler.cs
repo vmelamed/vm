@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -65,8 +64,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (IncludeCustomContext)
             {
                 var customContextTypeAttribute = input.MethodBase
-                                                      .DeclaringType
-                                                      .GetCustomAttribute<CustomDataContextTypeAttribute>(true);
+                                                      .GetMethodCustomAttribute<CustomDataContextTypeAttribute>();
 
                 if (customContextTypeAttribute != null)
                 {
