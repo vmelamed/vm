@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Transactions;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
 
@@ -12,6 +11,19 @@ namespace vm.Aspects.Model
     /// </summary>
     public class RetryUnitOfWorkTasks<T> : RetryTasks<T>
     {
+        /// <summary>
+        /// The default method testing if the operation has failed is:
+        /// <code>
+        /// <![CDATA[public static Task<bool> DefaultIsFailure(T result, Exception exception, int attempt) => Task.FromResult(exception != null  &&  !exception.IsTransient()  &&  !(exception is RepeatableOperationException));]]>
+        /// </code>
+        /// </summary>
+        /// <param name="result">The result of the operation.</param>
+        /// <param name="exception">The exception that was thrown by the operation (if any).</param>
+        /// <param name="attempt">The number of the current attempt.</param>
+        /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
+        public static Task<bool> IsFailureAsync(T result, Exception exception, int attempt)
+            => Task.FromResult(RetryConstants.IsFailure(result, exception, attempt)  &&  !exception.IsTransient());
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryUnitOfWorkTasks{T}"/> class.
         /// </summary>
@@ -50,9 +62,9 @@ namespace vm.Aspects.Model
                                     transactionScopeFactory,
                                     createTransactionScope)
                                 .WorkFuncAsync(async r => await work(r, i)),
-                isFailure ?? ((r, x, i) => Task.FromResult(x != null  &&  !(x is RepeatableOperationException)  &&  !x.IsTransient())),
-                isSuccess ?? ((r, x, i) => Task.FromResult(x == null)),
-                epilogue  ?? ((r, x, i) => { if (x != null) throw x; else return Task.FromResult(r); }))
+                isFailure ?? IsFailureAsync,
+                isSuccess ?? RetryConstants.IsSuccessResultAsync,
+                epilogue  ?? RetryConstants.EpilogueAsync)
         {
         }
     }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
-using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Wcf.DataContracts
 {
@@ -50,20 +48,5 @@ namespace vm.Aspects.Wcf.DataContracts
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString() => this.DumpString();
-
-        /// <summary>
-        /// Accepts the visitor which implements the <see cref="IVisitor{T}"/> interface. See the G4 visitor pattern.
-        /// Here it serves as a catch all - throws <see cref="System.NotImplementedException"/>.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public virtual void AcceptVisitor(
-            object visitor)
-        {
-            if (visitor == null)
-                throw new ArgumentNullException(nameof(visitor));
-
-            throw new NotImplementedException(
-                        $"The message of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");
-        }
     }
 }

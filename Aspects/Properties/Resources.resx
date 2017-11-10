@@ -186,4 +186,8 @@
   <data name="ExValidAbaRoutingNumber" xml:space="preserve">
     <value>The target does represents a valid ABA routing number.</value>
   </data>
+  <data name="ExceptionDumpTruncated" xml:space="preserve">
+    <value>
+ The exception dump was truncated - it cannot exceed 32766 characters.</value>
+  </data>
 </root>

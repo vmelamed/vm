@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Transactions;
-using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
 
@@ -15,6 +14,17 @@ namespace vm.Aspects.Model
     /// <seealso cref="vm.Aspects.Threading.Retry{T}" />
     public class RetryUnitOfWork<T> : Retry<T>
     {
+        /// <summary>
+        /// The method testing if the operation has failed is:
+        /// <code><![CDATA[public static bool DefaultIsFailure(T result, Exception exception, int attempt) => exception != null  &&  !exception.IsTransient() &&  !(exception is RepeatableOperationException);]]></code>
+        /// </summary>
+        /// <param name="result">The result of the operation.</param>
+        /// <param name="exception">The exception that was thrown by the operation (if any).</param>
+        /// <param name="attempt">The number of the current attempt.</param>
+        /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
+        public static bool IsFailure(T result, Exception exception, int attempt)
+            => RetryConstants.IsFailure(result, exception, attempt)  &&  !exception.IsTransient();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryUnitOfWork{T}" /> class.
         /// </summary>
@@ -48,9 +58,9 @@ namespace vm.Aspects.Model
                             transactionScopeFactory,
                             createTransactionScope)
                         .WorkFunc(r => work(r, i)),
-                isFailure ?? ((r, x, i) => x != null  &&  !(x is RepeatableOperationException)  &&  !x.IsTransient()),
-                isSuccess ?? ((r, x, i) => x == null),
-                epilogue  ?? ((r, x, i) => { if (x != null) throw x; else return r; }))
+                isFailure ?? IsFailure,
+                isSuccess ?? RetryConstants.IsSuccessResult,
+                epilogue  ?? RetryConstants.Epilogue)
         {
         }
     }

@@ -31,7 +31,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailure">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.DefaultIsFailure"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.IsFailure"/>.
         /// Note that <paramref name="isFailure"/> is always called before <paramref name="isSuccess"/>.
         /// The operation will be retried if <paramref name="isFailure"/> and <paramref name="isSuccess"/> return <see langword="false"/>.
         /// </param>
@@ -54,9 +54,9 @@ namespace vm.Aspects.Threading
                 throw new ArgumentNullException(nameof(operation));
 
             _operation = operation;
-            _isFailure = isFailure ?? RetryConstants.DefaultIsFailure;
-            _isSuccess = isSuccess ?? RetryConstants.DefaultIsSuccess;
-            _epilogue  = epilogue  ?? RetryConstants.DefaultEpilogue;
+            _isFailure = isFailure ?? RetryConstants.IsFailure;
+            _isSuccess = isSuccess ?? RetryConstants.IsSuccess;
+            _epilogue  = epilogue  ?? RetryConstants.Epilogue;
         }
 
         /// <summary>

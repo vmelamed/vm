@@ -72,33 +72,15 @@ namespace vm.Aspects.Model.Tests
             Assert.IsTrue(target1==target2 && target1!=target4 && target2!=target4, "The operator != must be transitive.");
         }
 
-        [TestMethod]
-        public void AcceptedVisitorsTest()
-        {
-            var vm = new TestEntity() { Name = "vm", };
-            var vm1 = new TestEntity1() { Name = "vm1", };
-            var vm2 = new TestEntity2() { Name = "vm2", };
+        //[TestMethod]
+        //[ExpectedException(typeof(NotImplementedException))]
+        //public void UnacceptedVisitorTest()
+        //{
+        //    var target = new TestXEntity();
+        //    var visitor = new TestEntityVisitor();
 
-            var visitor = new TestEntityVisitor();
-
-            vm.Accept(visitor);
-            vm1.Accept(visitor);
-            vm2.Accept(visitor);
-
-            Assert.AreEqual(1, visitor.TestEntityVisitedCount);
-            Assert.AreEqual(1, visitor.TestEntity1VisitedCount);
-            Assert.AreEqual(1, visitor.TestEntity2VisitedCount);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NotImplementedException))]
-        public void UnacceptedVisitorTest()
-        {
-            var target = new TestXEntity();
-            var visitor = new TestEntityVisitor();
-
-            target.Accept(visitor);
-        }
+        //    target.Accept(visitor);
+        //}
 
         [TestMethod]
         public void ValidationTest()

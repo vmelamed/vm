@@ -234,8 +234,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Transactions" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.9.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\AspectObjectDumper.1.9.9\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.10.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\AspectObjectDumper.1.9.10\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -260,6 +260,7 @@
     <Compile Include="EFRepository\TestEFRepository.cs" />
     <Compile Include="EFRepository\TestEFRepository.Registrar.cs" />
     <Compile Include="EFRepository\TestEFRepositoryConfiguration.cs" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="EncryptedPartsTest.cs" />
     <Compile Include="EntityTests.cs" />
     <Compile Include="HiLoIdentityGeneratorTests.cs" />

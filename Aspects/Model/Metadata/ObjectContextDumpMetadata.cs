@@ -3,10 +3,10 @@
 namespace vm.Aspects.Model.Metadata
 {
     /// <summary>
-    /// Class ObjectStateEntryDumpMetadata.
+    /// Class ObjectContextDumpMetadata.
     /// </summary>
     [Dump(RecurseDump = ShouldDump.Skip)]
-    public abstract class ObjectStateEntryDumpMetadata
+    public abstract class ObjectContextDumpMetadata
     {
     }
 }

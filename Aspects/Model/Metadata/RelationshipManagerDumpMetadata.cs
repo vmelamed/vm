@@ -6,7 +6,7 @@ namespace vm.Aspects.Model.Metadata
     /// Class ObjectStateEntryDumpMetadata.
     /// </summary>
     [Dump(RecurseDump = ShouldDump.Skip)]
-    public abstract class ObjectStateEntryDumpMetadata
+    public abstract class RelationshipManagerDumpMetadata
     {
     }
 }

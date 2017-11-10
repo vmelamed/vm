@@ -29,7 +29,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailureAsync">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.DefaultIsFailureAsync"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.IsFailureAsync"/>.
         /// Note that <paramref name="isFailureAsync"/> is always called before <paramref name="isSuccessAsync"/>.
         /// The operation will be retried if <paramref name="isFailureAsync"/> and <paramref name="isSuccessAsync"/> return <see langword="false"/>.
         /// </param>
@@ -52,9 +52,9 @@ namespace vm.Aspects.Threading
                 throw new ArgumentNullException(nameof(operationAsync));
 
             _operationAsync = operationAsync;
-            _isSuccessAsync = isSuccessAsync ?? RetryConstants.DefaultIsSuccessAsync;
-            _isFailureAsync = isFailureAsync ?? RetryConstants.DefaultIsFailureAsync;
-            _epilogueAsync  = epilogueAsync  ?? RetryConstants.DefaultEpilogueAsync;
+            _isSuccessAsync = isSuccessAsync ?? RetryConstants.IsSuccessAsync;
+            _isFailureAsync = isFailureAsync ?? RetryConstants.IsFailureAsync;
+            _epilogueAsync  = epilogueAsync  ?? RetryConstants.EpilogueAsync;
         }
 
         /// <summary>

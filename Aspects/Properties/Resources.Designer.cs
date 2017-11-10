@@ -61,6 +61,16 @@ namespace vm.Aspects.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        /// The exception dump was truncated - it cannot exceed 32766 characters..
+        /// </summary>
+        internal static string ExceptionDumpTruncated {
+            get {
+                return ResourceManager.GetString("ExceptionDumpTruncated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The target Guid value is equal to the default Guid value of &apos;00000000-0000-0000-0000-000000000000&apos;..
         /// </summary>
         internal static string ExEmptyGuid {

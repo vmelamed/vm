@@ -32,7 +32,7 @@ namespace vm.Aspects.Model.EFRepository
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will own it.")]
         public static ContainerRegistrar Registrar<T>() where T : EFRepositoryBase
         {
-            
+
             return new EFRepositoryBaseRegistrar<T>();
         }
 
@@ -87,15 +87,16 @@ namespace vm.Aspects.Model.EFRepository
                     .Register<DbEntityEntry, DbEntityEntryDumpMetadata>()
                     .Register<DbEntityValidationResult, DbEntityValidationResultDumpMetadata>()
                     .Register<DbValidationError, DbValidationErrorDumpMetadata>()
-                    .Register<ObjectContext>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<MetadataProperty>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<FieldMetadata>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<EntityKey>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<TypeUsage>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<AssociationSet>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<EntityRecordInfo>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<ReferentialConstraint>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
-                    .Register<RelationshipManager>(new DumpAttribute { RecurseDump = ShouldDump.Skip })
+                    .Register<ObjectContext, ObjectContextDumpMetadata>()
+                    .Register<MetadataProperty, MetadataPropertyDumpMetadata>()
+                    .Register<FieldMetadata, FieldMetadataDumpMetadata>()
+                    .Register<EntityKey, EntityKeyDumpMetadata>()
+                    .Register<TypeUsage, TypeUsageDumpMetadata>()
+                    .Register<AssociationSet, AssociationSetDumpMetadata>()
+                    .Register<EntityRecordInfo, EntityRecordInfoDumpMetadata>()
+                    .Register<ReferentialConstraint, ReferentialConstraintDumpMetadata>()
+                    .Register<RelationshipManager, RelationshipManagerDumpMetadata>()
+                    .Register<ObjectContext, ObjectContextDumpMetadata>()
                     ;
             }
 

@@ -44,6 +44,11 @@ namespace vm.Aspects.Facilities
             if (exceptionToFormat == null)
                 throw new ArgumentNullException(nameof(exceptionToFormat));
 
+            var exceptionDump = exceptionToFormat.DumpString(1);
+
+            if (exceptionDump.Length >= short.MaxValue)
+                exceptionDump = exceptionDump.Substring(0, short.MaxValue - 250) + Properties.Resources.ExceptionDumpTruncated;
+
             exceptionToFormat.DumpText(Writer, 1);
             WriteAdditionalInfo(AdditionalInfo);
         }

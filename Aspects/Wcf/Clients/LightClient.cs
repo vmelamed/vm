@@ -445,6 +445,52 @@ namespace vm.Aspects.Wcf.Clients
         }
 
         /// <summary>
+        /// This method can be used to wrap a synchronous call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.
+        /// This is useful when the call is made out from a WCF implemented service call on a WCF client of another service.
+        /// In this scenario the call needs its own <see cref="OperationContext"/> different from the current one.
+        /// </summary>
+        /// <typeparam name="T">The type of the return value.</typeparam>
+        /// <param name="proxyCall">The proxy call expressed as a lambda function.</param>
+        /// <returns>T</returns>
+        /// <example>
+        /// <![CDATA[
+        /// class Client : LightClient<IContract>, IContract
+        /// {
+        ///     //...
+        ///     async Task<string> Method(int a, string b)
+        ///         => await WrapOperation(() => Proxy.Method(a, b));
+        /// }
+        /// ]]>
+        /// </example>
+        public T WrapOperation<T>(Func<T> proxyCall)
+        {
+            using (CreateOperationContextScope())
+                return proxyCall();
+        }
+
+        /// <summary>
+        /// This method can be used to wrap a synchronous call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.
+        /// This is useful when the call is made out from a WCF implemented service call on a WCF client of another service.
+        /// In this scenario the call needs its own <see cref="OperationContext"/> different from the current one.
+        /// </summary>
+        /// <param name="proxyCall">The proxy call expressed as a lambda function.</param>
+        /// <example>
+        /// <![CDATA[
+        /// class Client : LightClient<IContract>, IContract
+        /// {
+        ///     //...
+        ///     async Task<string> Method(int a, string b)
+        ///         => await WrapOperation(() => Proxy.Method(a, b));
+        /// }
+        /// ]]>
+        /// </example>
+        public void WrapOperation(Action proxyCall)
+        {
+            using (CreateOperationContextScope())
+                proxyCall();
+        }
+
+        /// <summary>
         /// This method can be used to wrap an async await-able call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.
         /// This is useful when the call is made out from a WCF asynchronously implemented service call on a WCF asynchronous client of another service.
         /// In this scenario the call needs its own <see cref="OperationContext"/> different from the current one.
@@ -462,7 +508,7 @@ namespace vm.Aspects.Wcf.Clients
         /// }
         /// ]]>
         /// </example>
-        public async Task<T> WrapOperation<T>(Func<Task<T>> proxyCall)
+        public async Task<T> WrapOperationAsync<T>(Func<Task<T>> proxyCall)
         {
             Task<T> t;
 
@@ -489,7 +535,7 @@ namespace vm.Aspects.Wcf.Clients
         /// }
         /// ]]>
         /// </example>
-        public async Task WrapOperation(Func<Task> proxyCall)
+        public async Task WrapOperationAsync(Func<Task> proxyCall)
         {
             Task t;
 

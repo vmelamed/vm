@@ -251,8 +251,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.9.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AspectObjectDumper.1.9.9\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
+    <Reference Include="vm.Aspects.Diagnostics.ObjectDumper, Version=1.9.10.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AspectObjectDumper.1.9.10\lib\net462\vm.Aspects.Diagnostics.ObjectDumper.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -267,6 +267,9 @@
     <Compile Include="EFRepository\EdmSchemaException.cs" />
     <Compile Include="EFRepository\EFRepositoryExceptionHandler.cs" />
     <Compile Include="EFRepository\EFRepositoryMappingViewCache.cs" />
+    <Compile Include="Metadata\AssociationSetDumpMetadata.cs" />
+    <Compile Include="Metadata\EntityKeyDumpMetadata.cs" />
+    <Compile Include="Metadata\FieldMetadataDumpMetadata.cs" />
     <Compile Include="EFRepository\OptimisticConcurrencyExceptionHandlingPolicies.cs" />
     <Compile Include="DomainEntity.cs" />
     <Compile Include="DomainEntity.Metadata.cs">
@@ -291,6 +294,11 @@
     <Compile Include="EFRepository\SerializableViews.cs" />
     <Compile Include="EFRepository\SqlExceptionExtensions.cs" />
     <Compile Include="EFRepository\SqlStoreIdProvider.cs" />
+    <Compile Include="Metadata\MetadataPropertyDumpMetadata.cs" />
+    <Compile Include="Metadata\ObjectContextDumpMetadata.cs" />
+    <Compile Include="Metadata\ReferentialConstraintDumpMetadata.cs" />
+    <Compile Include="Metadata\RelationshipManagerDumpMetadata.cs" />
+    <Compile Include="Metadata\TypeUsageDumpMetadata.cs" />
     <Compile Include="RetryUnitOfWork.cs" />
     <Compile Include="RetryUnitOfWorkTasks.cs" />
     <Compile Include="UnitOfWork.cs" />

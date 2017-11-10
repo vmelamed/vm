@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Properties;
 using vm.Aspects.Validation;
-using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Model
 {
@@ -34,7 +32,7 @@ namespace vm.Aspects.Model
     /// </summary>
     [DebuggerDisplay("{GetType().Name, nq}")]
     [HasSelfValidation]
-    public abstract class BaseDomainEntity : IEquatable<BaseDomainEntity>, IValidatable, IVisited<BaseDomainEntity>, IVisitedTasks<BaseDomainEntity>
+    public abstract class BaseDomainEntity : IEquatable<BaseDomainEntity>, IValidatable
     {
         /// <summary>
         /// Gets a value indicating whether this instance has identity.
@@ -109,42 +107,6 @@ namespace vm.Aspects.Model
                         "HasIdentity",
                         string.Empty,
                         null));
-        }
-        #endregion
-
-        #region IVisited<BaseDomainEntity> Members
-        /// <summary>
-        /// Throws <see cref="NotImplementedException"/> exception.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
-        /// <exception cref="NotImplementedException">Always thrown.</exception>
-        public virtual BaseDomainEntity Accept(
-            IVisitor<BaseDomainEntity> visitor)
-        {
-            if (visitor == null)
-                throw new ArgumentNullException(nameof(visitor));
-
-            throw new NotImplementedException(
-                        $"Entities of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");
-        }
-        #endregion
-
-        #region IVisitedTasks<BaseDomainEntity> Members
-        /// <summary>
-        /// Throws <see cref="NotImplementedException"/> exception.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
-        /// <exception cref="NotImplementedException">Always thrown.</exception>
-        public virtual Task<BaseDomainEntity> AcceptAsync(
-            IVisitorTasks<BaseDomainEntity> visitor)
-        {
-            if (visitor == null)
-                throw new ArgumentNullException(nameof(visitor));
-
-            throw new NotImplementedException(
-                        $"Entities of type {GetType().Name} do not accept visitors of type {visitor.GetType().Name}.");
         }
         #endregion
 

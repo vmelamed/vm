@@ -1,10 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using vm.Aspects.Facilities;
 using vm.Aspects.Validation;
-using vm.Aspects.Visitor;
 
 namespace vm.Aspects.Model
 {
@@ -16,7 +13,7 @@ namespace vm.Aspects.Model
     /// However the value objects should be validated and also can participate in the visitor pattern.
     /// </remarks>
     [DebuggerDisplay("{GetType().Name, nq}")]
-    public abstract partial class BaseDomainValue : IValidatable, IVisited<BaseDomainValue>, IVisitedTasks<BaseDomainValue>
+    public abstract partial class BaseDomainValue : IValidatable
     {
         #region IValidatable Members
         /// <summary>
@@ -29,7 +26,7 @@ namespace vm.Aspects.Model
             string ruleset = "",
             ValidationResults results = null)
         {
-            
+
             var validator = Facility.ValidatorFactory
                                     .CreateValidator(GetType(), ruleset);
 
@@ -47,40 +44,6 @@ namespace vm.Aspects.Model
         }
         #endregion
 
-        #region IVisited<BaseDomainValue> Members
-        /// <summary>
-        /// Throws <see cref="NotImplementedException"/> exception.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
-        /// <exception cref="System.NotImplementedException">Always thrown.</exception>
-        public BaseDomainValue Accept(
-            IVisitor<BaseDomainValue> visitor)
-        {
-            if (visitor == null)
-                throw new ArgumentNullException(nameof(visitor));
-
-            throw new NotImplementedException($"Either values of type {GetType().Name} do not accept visitors of type {1} or the visitors do not have a concrete overload for {visitor.GetType().Name}.");
-        }
-        #endregion
-
-        #region IVisitedTasks<BaseDomainValue> Members
-        /// <summary>
-        /// Throws <see cref="NotImplementedException"/> exception.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="visitor"/> is <see langword="null"/>.</exception>
-        /// <exception cref="System.NotImplementedException">Always thrown.</exception>
-        public Task<BaseDomainValue> AcceptAsync(
-            IVisitorTasks<BaseDomainValue> visitor)
-        {
-            if (visitor == null)
-                throw new ArgumentNullException(nameof(visitor));
-
-            throw new NotImplementedException($"Either values of type {GetType().Name} do not accept visitors of type {1} or the visitors do not have a concrete overload for {visitor.GetType().Name}.");
-        }
-        #endregion
-
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
@@ -89,7 +52,7 @@ namespace vm.Aspects.Model
         public string ToString(
             int indentLevel)
         {
-            
+
             return this.DumpString(indentLevel);
         }
 
@@ -101,7 +64,7 @@ namespace vm.Aspects.Model
         /// </returns>
         public override string ToString()
         {
-            
+
             return this.ToString(0);
         }
     }
