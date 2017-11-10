@@ -1,6 +1,6 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Threading
@@ -34,29 +34,37 @@ namespace vm.Aspects.Threading
             Exception exception,
             Guid handlingInstanceId)
         {
-            var innerException = Unwrap(exception as AggregateException);
+            var innerException = Unwrap(exception as AggregateException, handlingInstanceId);
 
-            if (innerException == null  ||  innerException == exception)
+            if (innerException == null  ||
+                innerException == exception)
                 return exception;
 
             Exception newException;
 
             // pass the inner exception to the requested exception handler
-            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException)  &&
-                newException != null)
-                return newException;
+            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException))
+                if (newException != null)
+                {
+                    newException.Data["HandlingInstanceId"] = handlingInstanceId;
+                    return newException;
+                }
+                else
+                    return exception;
 
-            return innerException;
+            return null;
         }
 
         /// <summary>
-        /// Gets the single inner exception wrapped in one or more <see cref="AggregateException"/>-s.
+        /// Gets the single inner exception wrapped in one or more <see cref="AggregateException" />-s.
         /// If there are more than one inner exceptions - returns the original argument.
         /// </summary>
         /// <param name="exception">The exception to be unwrapped.</param>
+        /// <param name="handlingInstanceId">The handling instance identifier.</param>
         /// <returns>The single inner exception or the argument.</returns>
         public static Exception Unwrap(
-            AggregateException exception)
+            AggregateException exception,
+            Guid handlingInstanceId)
         {
             Exception x = exception;
 
@@ -70,6 +78,7 @@ namespace vm.Aspects.Threading
                 x = ax.InnerExceptions[0];
             }
 
+            x.Data["HandlingInstanceId"] = handlingInstanceId;
             return x;
         }
     }

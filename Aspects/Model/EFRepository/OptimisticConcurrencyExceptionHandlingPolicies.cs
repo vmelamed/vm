@@ -82,7 +82,7 @@ namespace vm.Aspects.Model.EFRepository
                                     eventId++,
                                     TraceEventType.Information),
 
-                            new UnwrapAggregateExceptionHandler(OptimisticConcurrencyStrategy.None.ToString()),
+                            new UnwrapAggregateExceptionHandler(NonePolicyName),
                         }
                     ),
 
@@ -119,7 +119,7 @@ namespace vm.Aspects.Model.EFRepository
                 // log and unwrap
                 new ExceptionPolicyEntry(
                         typeof(AggregateException),
-                        PostHandlingAction.NotifyRethrow,
+                        PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
@@ -127,7 +127,7 @@ namespace vm.Aspects.Model.EFRepository
                                     eventId++,
                                     TraceEventType.Information),
 
-                            new UnwrapAggregateExceptionHandler(OptimisticConcurrencyStrategy.ClientWins.ToString()),
+                            new UnwrapAggregateExceptionHandler(ClientWinsPolicyName),
                         }
                     ),
 
@@ -177,7 +177,7 @@ namespace vm.Aspects.Model.EFRepository
                 // log and unwrap
                 new ExceptionPolicyEntry(
                         typeof(AggregateException),
-                        PostHandlingAction.NotifyRethrow,
+                        PostHandlingAction.ThrowNewException,
                         new IExceptionHandler[]
                         {
                             ExceptionPolicyProvider.CreateLoggingExceptionHandler(
@@ -185,8 +185,7 @@ namespace vm.Aspects.Model.EFRepository
                                     eventId++,
                                     TraceEventType.Information),
 
-                            new UnwrapAggregateExceptionHandler(
-                                    OptimisticConcurrencyStrategy.StoreWins.ToString()),
+                            new UnwrapAggregateExceptionHandler(StoreWinsPolicyName),
                         }
                     ),
 
