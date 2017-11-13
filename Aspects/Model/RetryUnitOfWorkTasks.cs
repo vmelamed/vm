@@ -57,10 +57,10 @@ namespace vm.Aspects.Model
             : base(
                 async i => await new UnitOfWork(
                                     optimisticConcurrencyStrategy,
-                                    repositoryResolveName,
-                                    repositoryFactory,
-                                    transactionScopeFactory,
-                                    createTransactionScope)
+                    repositoryResolveName,
+                    repositoryFactory,
+                    createTransactionScope,
+                    transactionScopeFactory)
                                 .WorkFuncAsync(async r => await work(r, i)),
                 isFailure ?? IsFailureAsync,
                 isSuccess ?? RetryConstants.IsSuccessResultAsync,

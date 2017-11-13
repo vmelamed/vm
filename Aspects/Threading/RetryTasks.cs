@@ -52,8 +52,8 @@ namespace vm.Aspects.Threading
                 throw new ArgumentNullException(nameof(operationAsync));
 
             _operationAsync = operationAsync;
-            _isSuccessAsync = isSuccessAsync ?? RetryConstants.IsSuccessAsync;
             _isFailureAsync = isFailureAsync ?? RetryConstants.IsFailureAsync;
+            _isSuccessAsync = isSuccessAsync ?? RetryConstants.IsSuccessAsync;
             _epilogueAsync  = epilogueAsync  ?? RetryConstants.EpilogueAsync;
         }
 
@@ -78,11 +78,10 @@ namespace vm.Aspects.Threading
         {
             if (maxRetries <= 1)
                 throw new ArgumentException("The retries must be more than one.");
-            if (maxRetries < 0)
+            if (minDelay < 0)
                 throw new ArgumentException("The minimum delay before retrying must be a non-negative number.");
             if (maxDelay != 0  &&  maxDelay < minDelay)
                 throw new ArgumentException("The maximum delay must be 0 or equal to or greater than the minimum delay.");
-
 
             if (maxDelay == 0)
                 maxDelay = minDelay;
@@ -103,7 +102,6 @@ namespace vm.Aspects.Threading
                     {
                         int delay = 0;
 
-                        retries++;
                         if (minDelay > 0  ||  maxDelay > 0)
                         {
                             delay = minDelay + Random.Next(maxDelay-minDelay);
@@ -135,6 +133,8 @@ namespace vm.Aspects.Threading
 
                     if (await _isSuccessAsync(result, exception, retries))
                         return result;
+
+                    retries++;
                 }
                 while (retries < maxRetries);
 

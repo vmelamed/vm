@@ -12,13 +12,13 @@ namespace vm.Aspects.Model
     /// <summary>
     /// Represents a local 'unit of work' scope which:
     /// <list type="number">
-    /// <item>Creates a transaction</item>
+    /// <item>Optionally creates a transaction scope</item>
     /// <item>Obtains an enlisted <see cref="IRepository"/> from the DI container</item>
-    /// <item>Performs a number of operations, including operations with the repository.</item>
+    /// <item>Performs a number of operations, including operations with the repository</item>
     /// <item>Explicitly commits the changes in the repository</item>
-    /// <item>Commits the transaction</item>
-    /// <item>Disposes of the repository.</item>
-    /// <item>Disposes of the transaction.</item>
+    /// <item>Commits the transaction if any</item>
+    /// <item>Disposes of the repository</item>
+    /// <item>Disposes of the transaction if any</item>
     /// </list>
     /// See the examples below for recommended usage.
     /// </summary>
@@ -99,26 +99,35 @@ namespace vm.Aspects.Model
         /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy.</param>
         /// <param name="repositoryResolveName">The repository resolve name.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
-        /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> the <see cref="WorkAction" /> and <see cref="WorkFunc" /> will create a transaction scope for the unit of work.</param>
+        /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
         public UnitOfWork(
             OptimisticConcurrencyStrategy optimisticConcurrencyStrategy,
             string repositoryResolveName = null,
             Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
-            Func<TransactionScope> transactionScopeFactory = null,
-            bool createTransactionScope = false)
+            bool createTransactionScope = false,
+            Func<TransactionScope> transactionScopeFactory = null)
         {
             OptimisticConcurrencyStrategy  = optimisticConcurrencyStrategy;
             RepositoryResolveName          = repositoryResolveName;
             _repositoryFactory             = repositoryFactory ?? DefaultRepositoryFactory;
-            _transactionScopeFactory       = transactionScopeFactory ?? DefaultTransactionScopeFactory;
             CreateTransactionScope         = createTransactionScope;
+            _transactionScopeFactory       = transactionScopeFactory ?? DefaultTransactionScopeFactory;
         }
 
         /// <summary>
-        /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
+        /// The method:
+        /// <list type="number">
+        /// <item>Optionally creates a transaction scope</item>
+        /// <item>Creates a repository</item>
+        /// <item>Executes the given <paramref name="work" /></item>
+        /// <item>Commits the repository changes</item>
+        /// <item>And commits the transaction scope, if any</item>
+        /// </list>
         /// </summary>
         /// <param name="work">The action to be performed within the unit of work.</param>
+        /// <exception cref="System.ArgumentNullException">work</exception>
+        /// <exception cref="RepeatableOperationException"></exception>
         public void WorkAction(
             Action<IRepository> work)
         {
@@ -134,7 +143,6 @@ namespace vm.Aspects.Model
                 work(repository);
                 repository.CommitChanges();
                 transactionScope?.Complete();
-                VmAspectsEventSource.Log.UnitOfWorkStop();
             }
             catch (Exception x)
             {
@@ -147,17 +155,26 @@ namespace vm.Aspects.Model
             }
             finally
             {
+                VmAspectsEventSource.Log.UnitOfWorkStop();
                 repository.Dispose();
                 transactionScope?.Dispose();
             }
         }
 
         /// <summary>
-        /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
+        /// The method:
+        /// <list type="number">
+        /// <item>Optionally creates a transaction scope</item>
+        /// <item>Creates a repository</item>
+        /// <item>Executes the given <paramref name="work" /></item>
+        /// <item>Commits the repository changes</item>
+        /// <item>Commits the transaction scope, if any</item>
+        /// <item>And returns the result of the <paramref name="work"/></item>
+        /// </list>
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="work">The function to be performed within the unit of work.</param>
-        /// <returns>TResult.</returns>
+        /// <param name="work">The action to be performed within the unit of work.</param>
+        /// <exception cref="System.ArgumentNullException">work</exception>
+        /// <exception cref="RepeatableOperationException"></exception>
         public TResult WorkFunc<TResult>(
             Func<IRepository, TResult> work)
         {
@@ -175,7 +192,6 @@ namespace vm.Aspects.Model
 
                 repository.CommitChanges();
                 transactionScope?.Complete();
-                VmAspectsEventSource.Log.UnitOfWorkStop();
 
                 return result;
             }
@@ -190,15 +206,25 @@ namespace vm.Aspects.Model
             }
             finally
             {
+                VmAspectsEventSource.Log.UnitOfWorkStop();
                 repository.Dispose();
                 transactionScope?.Dispose();
             }
         }
 
         /// <summary>
-        /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
+        /// The asynchronous method:
+        /// <list type="number">
+        /// <item>Optionally creates a transaction scope</item>
+        /// <item>Creates a repository</item>
+        /// <item>Asynchronously executes the given <paramref name="work" /></item>
+        /// <item>Asynchronously commits the repository changes</item>
+        /// <item>And commits the transaction scope, if any</item>
+        /// </list>
         /// </summary>
-        /// <param name="work">The async action to be performed within the unit of work.</param>
+        /// <param name="work">The action to be performed within the unit of work.</param>
+        /// <exception cref="System.ArgumentNullException">work</exception>
+        /// <exception cref="RepeatableOperationException"></exception>
         public async Task WorkActionAsync(
             Func<IRepository, Task> work)
         {
@@ -211,8 +237,6 @@ namespace vm.Aspects.Model
                 await work(repository);
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
-                VmAspectsEventSource.Log.UnitOfWorkStop();
-
             }
             catch (AggregateException x)
             {
@@ -221,6 +245,7 @@ namespace vm.Aspects.Model
                 if (x.InnerExceptions.Count != 1)
                     throw;
 
+                // unwrap from AggregateException
                 if (x.InnerExceptions[0].IsTransient())
                     throw new RepeatableOperationException(x.InnerExceptions[0]);
                 else
@@ -233,17 +258,26 @@ namespace vm.Aspects.Model
             }
             finally
             {
+                VmAspectsEventSource.Log.UnitOfWorkStop();
                 repository.Dispose();
                 transactionScope?.Dispose();
             }
         }
 
         /// <summary>
-        /// The method offers a retrying capability for transient errors like connection, optimistic concurrency and transaction kill exceptions.
+        /// The asynchronous method:
+        /// <list type="number">
+        /// <item>Optionally creates a transaction scope</item>
+        /// <item>Creates a repository</item>
+        /// <item>Asynchronously executes the given <paramref name="work" /></item>
+        /// <item>Asynchronously commits the repository changes</item>
+        /// <item>Commits the transaction scope, if any</item>
+        /// <item>And returns the result of the <paramref name="work"/></item>
+        /// </list>
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="work">The async function to be performed within the unit of work.</param>
-        /// <returns>TResult.</returns>
+        /// <param name="work">The action to be performed within the unit of work.</param>
+        /// <exception cref="System.ArgumentNullException">work</exception>
+        /// <exception cref="RepeatableOperationException"></exception>
         public async Task<TResult> WorkFuncAsync<TResult>(
             Func<IRepository, Task<TResult>> work)
         {
@@ -258,7 +292,6 @@ namespace vm.Aspects.Model
 
                 await repository.CommitChangesAsync();
                 transactionScope?.Complete();
-                VmAspectsEventSource.Log.UnitOfWorkStop();
 
                 return result;
             }
@@ -281,6 +314,7 @@ namespace vm.Aspects.Model
             }
             finally
             {
+                VmAspectsEventSource.Log.UnitOfWorkStop();
                 repository.Dispose();
                 transactionScope?.Dispose();
             }

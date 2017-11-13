@@ -52,12 +52,12 @@ namespace vm.Aspects.Model
             bool createTransactionScope = false)
             : base(
                 i => new UnitOfWork(
-                            optimisticConcurrencyStrategy,
-                            repositoryResolveName,
-                            repositoryFactory,
-                            transactionScopeFactory,
-                            createTransactionScope)
-                        .WorkFunc(r => work(r, i)),
+                                optimisticConcurrencyStrategy,
+                                repositoryResolveName,
+                                repositoryFactory,
+                                createTransactionScope,
+                                transactionScopeFactory)
+                            .WorkFunc(r => work(r, i)),
                 isFailure ?? IsFailure,
                 isSuccess ?? RetryConstants.IsSuccessResult,
                 epilogue  ?? RetryConstants.Epilogue)

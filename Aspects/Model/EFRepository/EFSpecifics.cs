@@ -534,7 +534,8 @@ namespace vm.Aspects.Model.EFRepository
             if (exception == null)
                 throw new ArgumentNullException(nameof(exception));
 
-            if (IsOptimisticConcurrency(exception))
+            if (IsOptimisticConcurrency(exception)  ||
+                exception is RetryLimitExceededException)
                 return true;
 
             // walk the exceptions chain and see if the root cause is a SqlException - transaction or connectivity problem

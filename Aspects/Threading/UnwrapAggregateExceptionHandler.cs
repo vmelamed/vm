@@ -46,7 +46,8 @@ namespace vm.Aspects.Threading
             if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException))
                 if (newException != null)
                 {
-                    newException.Data["HandlingInstanceId"] = handlingInstanceId;
+                    if (handlingInstanceId != default(Guid))
+                        newException.Data["HandlingInstanceId"] = handlingInstanceId;
                     return newException;
                 }
                 else
@@ -64,7 +65,7 @@ namespace vm.Aspects.Threading
         /// <returns>The single inner exception or the argument.</returns>
         public static Exception Unwrap(
             AggregateException exception,
-            Guid handlingInstanceId)
+            Guid handlingInstanceId = default(Guid))
         {
             Exception x = exception;
 

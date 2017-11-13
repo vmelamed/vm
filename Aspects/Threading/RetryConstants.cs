@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using vm.Aspects.Exceptions;
 
@@ -13,15 +14,15 @@ namespace vm.Aspects.Threading
         /// <summary>
         /// The default maximum number of retries.
         /// </summary>
-        public const int DefaultMaxRetries = 10;
+        public const int DefaultMaxRetries = 5;
         /// <summary>
         /// The default minimum delay between retries.
         /// </summary>
-        public const int DefaultMinDelay = 50;
+        public const int DefaultMinDelay = 10;
         /// <summary>
         /// The default maximum delay between retries.
         /// </summary>
-        public const int DefaultMaxDelay = 150;
+        public const int DefaultMaxDelay = 100;
 
         /// <summary>
         /// The method testing if the operation has failed is: 
@@ -33,9 +34,7 @@ namespace vm.Aspects.Threading
         /// <param name="exception">The exception that was thrown by the operation (if any).</param>
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
-        public static bool IsFailure<T>(T result, Exception exception, int attempt)
-            => exception != null        &&
-               !(exception is RepeatableOperationException);
+        public static bool IsFailure<T>(T result, Exception exception, int attempt) => exception != null  &&  !(exception is RepeatableOperationException);
 
         /// <summary>
         /// The method testing if the operation has succeeded is: 
@@ -50,8 +49,7 @@ namespace vm.Aspects.Threading
         /// <remarks>
         /// The default implementation is:
         /// </remarks>
-        public static bool IsSuccess<T>(T result, Exception exception, int attempt)
-            => exception == null;
+        public static bool IsSuccess<T>(T result, Exception exception, int attempt) => exception == null;
 
         /// <summary>
         /// The method testing if the operation has succeeded is: 
@@ -66,9 +64,8 @@ namespace vm.Aspects.Threading
         /// <remarks>
         /// The default implementation is:
         /// </remarks>
-        public static bool IsSuccessResult<T>(T result, Exception exception, int attempt)
-            => exception == null  &&
-               !EqualityComparer<T>.Default.Equals(result, default(T));
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "attempt")]
+        public static bool IsSuccessResult<T>(T result, Exception exception, int attempt) => exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default(T));
 
         /// <summary>
         /// The epilogue method throws the raised exception or returns the result of the operation:
@@ -103,10 +100,7 @@ namespace vm.Aspects.Threading
         /// <param name="exception">The exception that was thrown by the operation (if any).</param>
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
-        public static Task<bool> IsFailureAsync<T>(T result, Exception exception, int attempt)
-            => Task.FromResult(
-                        exception != null         &&
-                        !(exception is RepeatableOperationException));
+        public static Task<bool> IsFailureAsync<T>(T result, Exception exception, int attempt) => Task.FromResult(exception != null  &&  !(exception is RepeatableOperationException));
 
         /// <summary>
         /// The default method testing if the operation has succeeded is:
@@ -118,8 +112,7 @@ namespace vm.Aspects.Threading
         /// <param name="exception">The exception that was thrown by the operation (if any).</param>
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation succeeded and should not be retried, <see langword="false" /> otherwise.</returns>
-        public static Task<bool> IsSuccessAsync<T>(T result, Exception exception, int attempt)
-            => Task.FromResult(exception == null);
+        public static Task<bool> IsSuccessAsync<T>(T result, Exception exception, int attempt) => Task.FromResult(exception == null);
 
         /// <summary>
         /// The default method testing if the operation has succeeded is:
@@ -131,10 +124,8 @@ namespace vm.Aspects.Threading
         /// <param name="exception">The exception that was thrown by the operation (if any).</param>
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation succeeded and should not be retried, <see langword="false" /> otherwise.</returns>
-        public static Task<bool> IsSuccessResultAsync<T>(T result, Exception exception, int attempt)
-            => Task.FromResult(
-                        exception == null  &&
-                        !EqualityComparer<T>.Default.Equals(result, default(T)));
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "attempt")]
+        public static Task<bool> IsSuccessResultAsync<T>(T result, Exception exception, int attempt) => Task.FromResult(exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default(T)));
 
         /// <summary>
         /// The epilogue method throws the raised exception or returns the result of the operation:
