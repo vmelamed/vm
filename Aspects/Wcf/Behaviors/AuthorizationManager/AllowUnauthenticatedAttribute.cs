@@ -18,7 +18,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <summary>
         /// The default role to be assigned to the unauthenticated principal.
         /// </summary>
-        public const string DefaultName = "Annonymous";
+        public const string DefaultName = "Anonymous";
         /// <summary>
         /// The default role to be assigned to the unauthenticated principal.
         /// </summary>
@@ -35,19 +35,28 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         public string Role { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AllowUnauthenticatedAttribute"/> class.
+        /// Gets a value indicating whether unauthenticated calls are allowed.
+        /// </summary>
+        public bool UnauthenticatedCallsAllowed { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AllowUnauthenticatedAttribute" /> class.
         /// </summary>
         /// <param name="name">The name of the unauthenticated principal.</param>
         /// <param name="role">The role of the unauthenticated principal.</param>
+        /// <param name="unauthenticatedCallsAllowed">if set to <c>true</c> unauthenticated calls are allowed.</param>
+        /// <exception cref="System.ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - name</exception>
         public AllowUnauthenticatedAttribute(
             string name = DefaultName,
-            string role = DefaultRole)
+            string role = DefaultRole,
+            bool unauthenticatedCallsAllowed = true)
         {
             if (name.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
 
             Name = name;
             Role = role;
+            UnauthenticatedCallsAllowed = unauthenticatedCallsAllowed;
         }
     }
 }
