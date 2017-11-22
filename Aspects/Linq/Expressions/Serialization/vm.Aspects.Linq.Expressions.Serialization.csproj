@@ -253,7 +253,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Diagnostics\vm.Aspects.Diagnostics.ObjectDumper.csproj">
+      <Project>{372A2FEF-C004-498C-B57F-CF0ACA66C37B}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

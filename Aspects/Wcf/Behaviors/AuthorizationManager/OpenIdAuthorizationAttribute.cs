@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Practices.ServiceLocation;
 
@@ -19,13 +16,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Interface,
         AllowMultiple = false,
         Inherited = false)]
-    public sealed class OpenIdAuthorizationAttribute : Attribute, IServiceBehavior
+    public sealed class OpenIdAuthorizationAttribute : CustomAuthorizationAttributeBase
     {
-        /// <summary>
-        /// Gets the DI resolve names of the token validation parameters that should be tried to validate the JWT token.
-        /// </summary>
-        public ICollection<string> TokenValidationParametersResolveNames { get; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdAuthorizationAttribute"/> class.
         /// </summary>
@@ -40,48 +32,21 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         }
 
         /// <summary>
-        /// Provides the ability to pass custom data to binding elements to support the contract implementation.
+        /// Gets the DI resolve names of the token validation parameters that should be tried to validate the JWT token.
         /// </summary>
-        /// <param name="serviceDescription">The service description of the service.</param>
-        /// <param name="serviceHostBase">The host of the service.</param>
-        /// <param name="endpoints">The service endpoints.</param>
-        /// <param name="bindingParameters">Custom objects to which binding elements have access.</param>
-        public void AddBindingParameters(
-            ServiceDescription serviceDescription,
-            ServiceHostBase serviceHostBase,
-            Collection<ServiceEndpoint> endpoints,
-            BindingParameterCollection bindingParameters)
-        {
-        }
+        public ICollection<string> TokenValidationParametersResolveNames { get; }
 
         /// <summary>
-        /// Provides the ability to change run-time property values or insert custom extension objects such as error handlers, message or parameter interceptors, security extensions, and other custom extension objects.
+        /// Gets the concrete authorization manager.
         /// </summary>
-        /// <param name="serviceDescription">The service description.</param>
-        /// <param name="serviceHostBase">The host that is currently being built.</param>
-        public void ApplyDispatchBehavior(
-            ServiceDescription serviceDescription,
-            ServiceHostBase serviceHostBase)
-        {
-            serviceHostBase.Authorization.ServiceAuthorizationManager = new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
-            serviceHostBase.Authorization.PrincipalPermissionMode     = PrincipalPermissionMode.Custom;
-        }
+        /// <returns>ServiceAuthorizationManager.</returns>
+        protected override ServiceAuthorizationManager GetCustomAuthorizationManager()
+            => new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
 
         IEnumerable<Lazy<TokenValidationParameters>> GetTokenValidationParameters()
         {
             foreach (var tokenValidationParametersResolveName in TokenValidationParametersResolveNames)
                 yield return ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
-        }
-
-        /// <summary>
-        /// Provides the ability to inspect the service host and the service description to confirm that the service can run successfully.
-        /// </summary>
-        /// <param name="serviceDescription">The service description.</param>
-        /// <param name="serviceHostBase">The service host that is currently being constructed.</param>
-        public void Validate(
-            ServiceDescription serviceDescription,
-            ServiceHostBase serviceHostBase)
-        {
         }
     }
 #pragma warning restore CS3015

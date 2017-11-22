@@ -3,114 +3,86 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.ServiceModel;
-using System.ServiceModel.Web;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {
     /// <summary>
-    /// Class Auth0ServiceAuthorizationManager.
+    /// Authorization manager that performs OpenID HTTP authentication/authorization.
     /// </summary>
     /// <seealso cref="ServiceAuthorizationManager" />
-    public partial class OpenIdServiceAuthorizationManager : ServiceAuthorizationManager
+    public partial class OpenIdServiceAuthorizationManager : BaseHttpAuthorizationManager
     {
         readonly ICollection<Lazy<TokenValidationParameters>> _tokenValidationParameters;
         readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
-        readonly IWcfContextUtilities _wcfContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdServiceAuthorizationManager" /> class.
         /// </summary>
         /// <param name="tokenValidationParameters">The validation parameters.</param>
+        /// <param name="wcfContext">The WCF context.</param>
+        /// <exception cref="ArgumentNullException">tokenValidationParameters</exception>
         public OpenIdServiceAuthorizationManager(
-            IEnumerable<Lazy<TokenValidationParameters>> tokenValidationParameters)
+            IEnumerable<Lazy<TokenValidationParameters>> tokenValidationParameters,
+            IWcfContextUtilities wcfContext = null)
+            : base(wcfContext)
         {
             if (tokenValidationParameters == null)
                 throw new ArgumentNullException(nameof(tokenValidationParameters));
 
             _tokenValidationParameters = tokenValidationParameters.ToList();
-            _wcfContext                = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
         }
 
         /// <summary>
-        /// Checks authorization for the given operation context based on default policy evaluation.
+        /// Does the check access for the current operation.
         /// </summary>
-        /// <param name="operationContext">The <see cref="OperationContext" /> for the current authorization request.</param>
-        /// <returns>true if access is granted; otherwise, false. The default is true.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Accumulating all exceptions and throwing AggregateException")]
-        protected override bool CheckAccessCore(
-            OperationContext operationContext)
-            => DoCheckAccess(operationContext);
-
+        /// <param name="operationContext">The operation context.</param>
+        /// <returns><c>true</c> if access to the current operation is allowed, <c>false</c> otherwise.</returns>
+        /// <exception cref="ArgumentNullException">operationContext</exception>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        bool DoCheckAccess(
+        protected override bool DoCheckAccess(
             OperationContext operationContext)
-            => Facility.ExceptionManager.Process(
-                () =>
-                {
-                    // OpenID Connect is for WebHttpBinding (REST-ful) only, for the other bindings, WCF must've done it already.
-                    if (!_wcfContext.HasWebOperationContext)
-                        return true;
-
-                    var jwt = operationContext.GetAuthorizationToken();
-
-                    if (string.IsNullOrEmpty(jwt))
-                    {
-                        var principal = AllowedUnauthenticated();
-
-                        if (principal == null)
-                            return false;
-
-                        operationContext.SetPrincipal(principal);
-                        return true;
-                    }
-
-                    var exceptions = new List<Exception>();
-                    SecurityToken token;
-
-                    foreach (var tvp in _tokenValidationParameters)
-                        try
-                        {
-                            var claimsPrincipal = _tokenHandler.ValidateToken(jwt, tvp.Value, out token);
-
-                            operationContext.SetPrincipal(claimsPrincipal);
-                            return true;
-                        }
-                        catch (Exception x)
-                        {
-                            exceptions.Add(x);
-                        }
-
-                    Facility.LogWriter.ExceptionError(new AggregateException("Errors validating the JWT with different validation parameters.", exceptions));
-                    return false;
-                },
-                false,
-                ExceptionPolicyProvider.LogAndSwallowPolicyName);
-
-        IPrincipal AllowedUnauthenticated()
         {
-            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
-                              (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
-            var allowUnauthenticated = isPreflight
-                                            ? new AllowUnauthenticatedAttribute()
-                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowUnauthenticatedAttribute>().FirstOrDefault();
+            if (operationContext == null)
+                throw new ArgumentNullException(nameof(operationContext));
 
-            if (allowUnauthenticated == null)
-                return null;
+            // OpenID Connect is for WebHttpBinding (REST-ful) only, for the other bindings, WCF must've done it already.
+            if (!WcfContext.HasWebOperationContext)
+                return true;
 
-            var claims = new List<Claim>();
+            var jwt = operationContext.GetAuthorizationToken();
 
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name));
-            if (!allowUnauthenticated.Name.IsNullOrWhiteSpace())
-                claims.Add(new Claim(ClaimTypes.Role, allowUnauthenticated.Role));
+            if (jwt.IsNullOrEmpty())
+            {
+                var principal = AllowedUnauthenticated();
 
-            return new ClaimsPrincipal(
-                        new ClaimsIdentity(claims));
+                if (principal == null)
+                    return false;
+
+                operationContext.SetPrincipal(principal);
+                return true;
+            }
+
+            var exceptions = new List<Exception>();
+            SecurityToken token;
+
+            foreach (var tvp in _tokenValidationParameters)
+                try
+                {
+                    var claimsPrincipal = _tokenHandler.ValidateToken(jwt, tvp.Value, out token);
+
+                    operationContext.SetPrincipal(claimsPrincipal);
+                    return true;
+                }
+                catch (Exception x)
+                {
+                    exceptions.Add(x);
+                }
+
+            Facility.LogWriter.ExceptionError(new AggregateException("Errors validating the JWT with different validation parameters.", exceptions));
+            return false;
         }
     }
 }

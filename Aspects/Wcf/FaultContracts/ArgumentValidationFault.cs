@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using vm.Aspects.Wcf.FaultContracts.Metadata;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Diagnostics;
+using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
@@ -45,7 +44,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             get
             {
-                
+
                 return null;
             }
             set
@@ -58,7 +57,7 @@ namespace vm.Aspects.Wcf.FaultContracts
 
                 value.CopyTo(ValidationElements);
 
-                if (string.IsNullOrEmpty(Message))
+                if (Message.IsNullOrEmpty())
                     return;
 
                 // append the validation messages to the existing message:

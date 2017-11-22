@@ -290,6 +290,8 @@
     </Compile>
     <Compile Include="AsyncCallContext.cs" />
     <Compile Include="Behaviors\AuthorizationManager\AllowUnauthenticatedAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BaseHttpAuthorizationManager.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\CustomAuthorizationAttributeBase.cs" />
     <Compile Include="Behaviors\AuthorizationManager\BasicAuthenticationAttribute.cs" />
     <Compile Include="Behaviors\AuthorizationManager\BasicAuthorizationManager.cs" />
     <Compile Include="Behaviors\AuthorizationManager\IBasicAuthenticate.cs" />

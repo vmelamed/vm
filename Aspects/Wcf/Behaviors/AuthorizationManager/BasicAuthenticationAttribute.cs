@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
@@ -15,7 +12,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Interface,
         AllowMultiple = false,
         Inherited = false)]
-    public sealed class BasicAuthenticationAttribute : Attribute, IServiceBehavior
+    public sealed class BasicAuthenticationAttribute : CustomAuthorizationAttributeBase
     {
         /// <summary>
         /// Gets the realm of the authenticated identities.
@@ -40,49 +37,15 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             BasicAuthenticationResolveName = basicAuthenticationResolveName;
         }
 
-        #region IServiceBehavior
         /// <summary>
-        /// Provides the ability to pass custom data to binding elements to support the contract implementation.
+        /// Gets the concrete authorization manager.
         /// </summary>
-        /// <param name="serviceDescription">The service description of the service.</param>
-        /// <param name="serviceHostBase">The host of the service.</param>
-        /// <param name="endpoints">The service endpoints.</param>
-        /// <param name="bindingParameters">Custom objects to which binding elements have access.</param>
+        /// <returns>ServiceAuthorizationManager.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public void AddBindingParameters(
-            ServiceDescription serviceDescription,
-            ServiceHostBase serviceHostBase,
-            Collection<ServiceEndpoint> endpoints,
-            BindingParameterCollection bindingParameters)
-        {
-        }
-
-        /// <summary>
-        /// Provides the ability to change run-time property values or insert custom extension objects such as error handlers,
-        /// message or parameter interceptors, security extensions, and other custom extension objects.
-        /// </summary>
-        /// <param name="serviceDescription">The service description.</param>
-        /// <param name="serviceHostBase">The host that is currently being built.</param>
-        public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
-        {
-            var auth = ServiceLocator.Current.GetInstance<IBasicAuthenticate>(BasicAuthenticationResolveName);
-            var ctx  = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
-
-            serviceHostBase.Authorization.ServiceAuthorizationManager = new BasicAuthorizationManager(ctx, auth, Realm);
-            serviceHostBase.Authorization.PrincipalPermissionMode     = PrincipalPermissionMode.Custom;
-        }
-
-        /// <summary>
-        /// Provides the ability to inspect the service host and the service description to confirm that the service can run successfully.
-        /// </summary>
-        /// <param name="serviceDescription">The service description.</param>
-        /// <param name="serviceHostBase">The service host that is currently being constructed.</param>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public void Validate(
-            ServiceDescription serviceDescription,
-            ServiceHostBase serviceHostBase)
-        {
-        }
-        #endregion
+        protected override ServiceAuthorizationManager GetCustomAuthorizationManager()
+            => new BasicAuthorizationManager(
+                        ServiceLocator.Current.GetInstance<IWcfContextUtilities>(),
+                        ServiceLocator.Current.GetInstance<IBasicAuthenticate>(BasicAuthenticationResolveName),
+                        Realm);
     }
 }

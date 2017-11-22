@@ -66,7 +66,7 @@ namespace vm.Aspects.Model
 
             defaults = defaults ?? ServiceLocator.Current.GetInstance<IMoneyDefaults>();
 
-            if (string.IsNullOrEmpty(currency))
+            if (currency.IsNullOrEmpty())
                 currency = defaults.Currency;
 
             Value    = decimal.Round(value, defaults.Decimals(currency), defaults.Rounding(currency));

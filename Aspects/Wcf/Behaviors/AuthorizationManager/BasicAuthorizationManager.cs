@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
@@ -16,12 +14,11 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
     /// Authorization manager that performs Basic HTTP authentication/authorization.
     /// </summary>
     /// <seealso cref="ServiceAuthorizationManager" />
-    public class BasicAuthorizationManager : ServiceAuthorizationManager
+    public class BasicAuthorizationManager : BaseHttpAuthorizationManager
     {
         const string BasicPrefix = "Basic";
-        readonly string _realm;
+        readonly string _realm   = "vm.Aspects";
 
-        readonly IWcfContextUtilities _wcfContext;
         readonly IBasicAuthenticate _authentication;
 
         /// <summary>
@@ -30,36 +27,44 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <param name="wcfContext">The WCF context.</param>
         /// <param name="authentication">The authentication interface.</param>
         /// <param name="realm">The realm of authentication.</param>
+        /// <exception cref="ArgumentException">The argument cannot be null, empty string or consist of whitespace characters only. - realm</exception>
+        /// <exception cref="ArgumentNullException">authentication</exception>
         public BasicAuthorizationManager(
             IWcfContextUtilities wcfContext,
             IBasicAuthenticate authentication,
-            string realm = "vm.Aspects")
+            string realm = null)
+            : base(wcfContext)
         {
             if (realm.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(realm));
 
-            // if not injected by DI, try the CSL - if not defined it'll throw exception
-            if (wcfContext == null)
-                wcfContext = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
+            // if not injected by DI, try the CSL - if still not defined, throw exception
             if (authentication == null)
                 authentication = ServiceLocator.Current.GetInstance<IBasicAuthenticate>();
+            if (authentication == null)
+                throw new ArgumentNullException(nameof(authentication));
 
-            _wcfContext     = wcfContext;
             _authentication = authentication;
-            _realm          = realm;
+
+            if (!realm.IsNullOrWhiteSpace())
+                _realm      = realm;
         }
 
         /// <summary>
-        /// Checks authorization for the given operation context based on default policy evaluation.
+        /// Does the check access for the current operation.
         /// </summary>
-        /// <param name="operationContext">The <see cref="OperationContext" /> for the current authorization request.</param>
-        /// <returns>true if access is granted; otherwise, false. The default is true.</returns>
+        /// <param name="operationContext">The operation context.</param>
+        /// <returns><c>true</c> if access to the current operation is allowed, <c>false</c> otherwise.</returns>
+        /// <exception cref="ArgumentNullException">operationContext</exception>
         /// <exception cref="WebFaultException"></exception>
-        protected override bool CheckAccessCore(
+        protected override bool DoCheckAccess(
             OperationContext operationContext)
         {
+            if (operationContext == null)
+                throw new ArgumentNullException(nameof(operationContext));
+
             // This manager is for WebHttpBinding (REST-ful) only, for the other bindings, WCF must've done it already.
-            if (!_wcfContext.HasWebOperationContext)
+            if (!WcfContext.HasWebOperationContext)
                 return true;
 
             var authorizationHeader = WebOperationContext.Current.IncomingRequest.Headers[HttpRequestHeader.Authorization];
@@ -86,11 +91,11 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             if (!headerParts[0].Equals(BasicPrefix, StringComparison.OrdinalIgnoreCase))
                 return false;
 
-            var credentials = Encoding.ASCII.GetString(
-                                        Convert.FromBase64String(authorizationHeader.Substring(6)))
-                                            .Split(':');
-            var userName = credentials[0];
-            var password = credentials[1];
+            var credentials   = Encoding.ASCII.GetString(
+                                                Convert.FromBase64String(authorizationHeader.Substring(6)))
+                                                    .Split(':');
+            var userName      = credentials[0];
+            var password      = credentials[1];
             var authenticated = _authentication.Authenticate(userName, password);
 
             if (authenticated)
@@ -108,27 +113,6 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 
             Facility.LogWriter.LogError($"Basic authentication for user-name '{userName}' failed.");
             return false;
-        }
-
-        IPrincipal AllowedUnauthenticated()
-        {
-            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
-                              (_wcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
-            var allowUnauthenticated = isPreflight
-                                            ? new AllowUnauthenticatedAttribute()
-                                            : _wcfContext.OperationMethodAllAttributes.OfType<AllowUnauthenticatedAttribute>().FirstOrDefault();
-
-            if (allowUnauthenticated == null)
-                return null;
-
-            var claims = new List<Claim>();
-
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name));
-            if (!allowUnauthenticated.Name.IsNullOrWhiteSpace())
-                claims.Add(new Claim(ClaimTypes.Role, allowUnauthenticated.Role));
-
-            return new ClaimsPrincipal(
-                        new ClaimsIdentity(claims));
         }
     }
 }

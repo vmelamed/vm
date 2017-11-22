@@ -99,7 +99,7 @@ namespace vm.Aspects.Wcf.Bindings
                     TimeSpan tmo;
 
                     lock (_syncTimeouts)
-                        if (!string.IsNullOrEmpty(timeoutString) &&
+                        if (!timeoutString.IsNullOrEmpty() &&
                             TimeSpan.TryParse(timeoutString, out tmo))
                             _defaultSendTimeout = tmo;
                         else
@@ -126,7 +126,7 @@ namespace vm.Aspects.Wcf.Bindings
                     TimeSpan tmo;
 
                     lock (_syncTimeouts)
-                        if (!string.IsNullOrEmpty(timeoutString) &&
+                        if (!timeoutString.IsNullOrEmpty() &&
                         TimeSpan.TryParse(timeoutString, out tmo))
                             _defaultReceiveTimeout = tmo;
                         else
@@ -153,7 +153,7 @@ namespace vm.Aspects.Wcf.Bindings
                     TimeSpan tmo;
 
                     lock (_syncTimeouts)
-                        if (!string.IsNullOrEmpty(timeoutString) &&
+                        if (!timeoutString.IsNullOrEmpty() &&
                             TimeSpan.TryParse(timeoutString, out tmo) &&
                             tmo >= new TimeSpan(0, 0, 30) &&  // make sure the transaction timeout is reasonable: between 30s and 1hr
                             tmo <= new TimeSpan(1, 0, 0))

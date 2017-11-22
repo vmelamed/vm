@@ -54,8 +54,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             if (name.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(name));
 
-            Name = name;
-            Role = role;
+            Name                        = name;
+            Role                        = role;
             UnauthenticatedCallsAllowed = unauthenticatedCallsAllowed;
         }
     }

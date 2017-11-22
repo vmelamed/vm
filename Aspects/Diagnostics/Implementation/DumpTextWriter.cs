@@ -104,7 +104,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public override void Write(string value)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value.IsNullOrEmpty())
                 return;
 
             WriteCharBuffer(value.ToCharArray(), 0, value.Length);

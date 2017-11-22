@@ -245,7 +245,7 @@ namespace vm.Aspects
 
         /// <summary>
         /// Determines whether the specified string is null, or empty.
-        /// Equivalent to <code>!string.IsNullOrEmpty(s)</code>.
+        /// Equivalent to <code>string.IsNullOrEmpty(s)</code>.
         /// </summary>
         /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>

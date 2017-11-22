@@ -48,14 +48,14 @@ namespace vm.Aspects
                 throw new ArgumentException("The patch version cannot be negative.");
             if (!prerelease.IsNullOrWhiteSpace()  &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(prerelease)  &&  ValidateParts(prerelease)))
                 throw new ArgumentException("The prerelease version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
-            if (!string.IsNullOrEmpty(build) &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(build)  &&  ValidateParts(build)))
+            if (!build.IsNullOrEmpty() &&  !(RegularExpression.SemanticVersionPrerelease.IsMatch(build)  &&  ValidateParts(build)))
                 throw new ArgumentException("The build version must comprise only ASCII alphanumerics and hyphen [0-9A-Za-z-]. Numeric identifiers must not include leading zeroes.");
 
             Major      = major;
             Minor      = minor;
             Patch      = patch;
-            Prerelease = string.IsNullOrEmpty(prerelease) ? null : prerelease;
-            Build      = string.IsNullOrEmpty(build) ? null : build;
+            Prerelease = prerelease.IsNullOrEmpty() ? null : prerelease;
+            Build      = build.IsNullOrEmpty() ? null : build;
         }
 
         /// <summary>

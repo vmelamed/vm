@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace vm.Aspects
 {
     /// <summary>
@@ -23,7 +24,7 @@ namespace vm.Aspects
 
             RegisteredType = type;
 
-            if (string.IsNullOrEmpty(name))
+            if (name.IsNullOrEmpty())
                 Name = string.Empty;
             else
                 Name = name;
@@ -85,8 +86,8 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator==(RegistrationLookup left, RegistrationLookup right) => ReferenceEquals(left, null) 
-                                                                                                ? ReferenceEquals(right, null) 
+        public static bool operator ==(RegistrationLookup left, RegistrationLookup right) => ReferenceEquals(left, null)
+                                                                                                ? ReferenceEquals(right, null)
                                                                                                 : left.Equals(right);
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator!=(RegistrationLookup left, RegistrationLookup right) => !(left==right);
+        public static bool operator !=(RegistrationLookup left, RegistrationLookup right) => !(left==right);
         #endregion
     }
 }
