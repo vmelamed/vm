@@ -75,6 +75,7 @@ namespace vm.Aspects.Model.EFRepository
                     clock.StartTime = DateTime.Parse("2016-01-01T00:00:00.0000000Z", CultureInfo.InvariantCulture);
             }
 
+            [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
             static void RegisterMetadata()
             {
                 ClassMetadataRegistrar.RegisterMetadata()

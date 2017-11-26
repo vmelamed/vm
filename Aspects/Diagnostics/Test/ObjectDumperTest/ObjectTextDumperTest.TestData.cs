@@ -174,6 +174,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public object DateTimeOffsetProperty { get; set; }
         }
 
+#pragma warning disable 0649
         abstract class Object1FieldsMetadata
         {
             [Dump(0, LabelFormat = "{0,-24} : ")]
@@ -263,6 +264,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             [Dump(false)]
             public object DateTimeOffsetField;
         }
+#pragma warning restore 0649
 
         [Dump(DumpNullValues = ShouldDump.Skip)]
         public class Object2

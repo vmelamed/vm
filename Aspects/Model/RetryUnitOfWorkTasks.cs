@@ -12,19 +12,6 @@ namespace vm.Aspects.Model
     public class RetryUnitOfWorkTasks<T> : RetryTasks<T>
     {
         /// <summary>
-        /// The default method testing if the operation has failed is:
-        /// <code>
-        /// <![CDATA[public static Task<bool> DefaultIsFailure(T result, Exception exception, int attempt) => Task.FromResult(exception != null  &&  !exception.IsTransient()  &&  !(exception is RepeatableOperationException));]]>
-        /// </code>
-        /// </summary>
-        /// <param name="result">The result of the operation.</param>
-        /// <param name="exception">The exception that was thrown by the operation (if any).</param>
-        /// <param name="attempt">The number of the current attempt.</param>
-        /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
-        public static Task<bool> IsFailureAsync(T result, Exception exception, int attempt)
-            => Task.FromResult(RetryConstants.IsFailure(result, exception, attempt)  &&  !exception.IsTransient());
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="RetryUnitOfWorkTasks{T}"/> class.
         /// </summary>
         /// <param name="work">The work.</param>
@@ -62,7 +49,7 @@ namespace vm.Aspects.Model
                     createTransactionScope,
                     transactionScopeFactory)
                                 .WorkFuncAsync(async r => await work(r, i)),
-                isFailure ?? IsFailureAsync,
+                isFailure ?? RetryUnitOfWorkConstants.IsFailureAsync,
                 isSuccess ?? RetryConstants.IsSuccessResultAsync,
                 epilogue  ?? RetryConstants.EpilogueAsync)
         {

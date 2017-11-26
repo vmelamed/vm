@@ -10,7 +10,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
     /// Class AuthorizationAttributeBase injects a custom authorization manager in the channel.
     /// </summary>
     /// <seealso cref="IServiceBehavior" />
-    public abstract class CustomAuthorizationAttributeBase : Attribute, IServiceBehavior
+    public abstract class CustomAuthorizationBaseAttribute : Attribute, IServiceBehavior
     {
         #region IServiceBehavior
         /// <summary>
@@ -38,7 +38,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             ServiceDescription serviceDescription,
             ServiceHostBase serviceHostBase)
         {
-            serviceHostBase.Authorization.ServiceAuthorizationManager = GetCustomAuthorizationManager();
+            serviceHostBase.Authorization.ServiceAuthorizationManager = CustomAuthorizationManager;
             serviceHostBase.Authorization.PrincipalPermissionMode     = PrincipalPermissionMode.Custom;
         }
 
@@ -58,6 +58,6 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// Gets the concrete authorization manager.
         /// </summary>
         /// <returns>ServiceAuthorizationManager.</returns>
-        protected abstract ServiceAuthorizationManager GetCustomAuthorizationManager();
+        protected abstract ServiceAuthorizationManager CustomAuthorizationManager { get; }
     }
 }

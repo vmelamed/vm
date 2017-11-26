@@ -17,18 +17,18 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         static readonly IDictionary<string, string> HashAlgorithms = new Dictionary<string, string>(
             new Dictionary<string, string>
             {
-#pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable 0612, 0618 // Type or member is obsolete
                 // no sign
                 { "1.2.840.113549.2.5",     Algorithms.Hash.MD5    },
                 { "1.3.14.3.2.18",          Algorithms.Hash.Sha1   },
                 { "1.3.14.3.2.26",          Algorithms.Hash.Sha1   },
-#pragma warning restore CS0612 // Type or member is obsolete
+#pragma warning restore 0612, 0618 // Type or member is obsolete
 
                 { "2.16.840.1.101.3.4.2.1", Algorithms.Hash.Sha256 },
                 { "2.16.840.1.101.3.4.2.2", Algorithms.Hash.Sha384 },
                 { "2.16.840.1.101.3.4.2.3", Algorithms.Hash.Sha512 },
 
-#pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable 0612, 0618 // Type or member is obsolete
                 // DSA
                 { "1.3.14.3.2.12",          Algorithms.Hash.Sha1   },
                 { "1.3.14.3.2.13",          Algorithms.Hash.Sha1   },
@@ -46,7 +46,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 { "1.3.14.3.2.15",          Algorithms.Hash.Sha1   },
                 { "1.3.14.3.2.29",          Algorithms.Hash.Sha1   },
                 { "1.2.840.113549.1.1.5",   Algorithms.Hash.Sha1   },
-#pragma warning restore CS0612 // Type or member is obsolete
+#pragma warning restore 0612, 0618 // Type or member is obsolete
 
                 { "1.2.840.113549.1.1.11",  Algorithms.Hash.Sha256 },
                 { "1.2.840.113549.1.1.12",  Algorithms.Hash.Sha384 },

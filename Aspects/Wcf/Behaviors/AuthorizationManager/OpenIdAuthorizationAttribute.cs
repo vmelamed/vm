@@ -16,7 +16,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Interface,
         AllowMultiple = false,
         Inherited = false)]
-    public sealed class OpenIdAuthorizationAttribute : CustomAuthorizationAttributeBase
+    public sealed class OpenIdAuthorizationAttribute : CustomAuthorizationBaseAttribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdAuthorizationAttribute"/> class.
@@ -40,13 +40,16 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// Gets the concrete authorization manager.
         /// </summary>
         /// <returns>ServiceAuthorizationManager.</returns>
-        protected override ServiceAuthorizationManager GetCustomAuthorizationManager()
-            => new OpenIdServiceAuthorizationManager(GetTokenValidationParameters());
+        protected override ServiceAuthorizationManager CustomAuthorizationManager
+            => new OpenIdServiceAuthorizationManager(TokenValidationParameters);
 
-        IEnumerable<Lazy<TokenValidationParameters>> GetTokenValidationParameters()
+        IEnumerable<Lazy<TokenValidationParameters>> TokenValidationParameters
         {
-            foreach (var tokenValidationParametersResolveName in TokenValidationParametersResolveNames)
-                yield return ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
+            get
+            {
+                foreach (var tokenValidationParametersResolveName in TokenValidationParametersResolveNames)
+                    yield return ServiceLocator.Current.GetInstance<Lazy<TokenValidationParameters>>(tokenValidationParametersResolveName);
+            }
         }
     }
 #pragma warning restore CS3015

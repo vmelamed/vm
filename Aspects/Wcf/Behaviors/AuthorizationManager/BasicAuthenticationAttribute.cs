@@ -12,7 +12,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         AttributeTargets.Interface,
         AllowMultiple = false,
         Inherited = false)]
-    public sealed class BasicAuthenticationAttribute : CustomAuthorizationAttributeBase
+    public sealed class BasicAuthenticationAttribute : CustomAuthorizationBaseAttribute
     {
         /// <summary>
         /// Gets the realm of the authenticated identities.
@@ -42,7 +42,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// </summary>
         /// <returns>ServiceAuthorizationManager.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        protected override ServiceAuthorizationManager GetCustomAuthorizationManager()
+        protected override ServiceAuthorizationManager CustomAuthorizationManager
             => new BasicAuthorizationManager(
                         ServiceLocator.Current.GetInstance<IWcfContextUtilities>(),
                         ServiceLocator.Current.GetInstance<IBasicAuthenticate>(BasicAuthenticationResolveName),

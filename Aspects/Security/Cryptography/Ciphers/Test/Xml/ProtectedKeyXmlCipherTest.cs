@@ -88,8 +88,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
             var target = new InheritedXmlCipherTest(Algorithms.Symmetric.TripleDes);
             Assert.AreEqual(EncryptedXml.XmlEncTripleDESUrl, target.PublicSymmetricXmlNamespace());
 
+#pragma warning disable 618
             target = new InheritedXmlCipherTest(Algorithms.Symmetric.Des);
             Assert.AreEqual(EncryptedXml.XmlEncDESUrl, target.PublicSymmetricXmlNamespace());
+#pragma warning restore 618
 
             target = new InheritedXmlCipherTest(Algorithms.Symmetric.Aes);
             target.SetLength(256);
@@ -109,8 +111,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         [ExpectedException(typeof(CryptographicException))]
         public void SymmetricUnknownNamespaceTest()
         {
+#pragma warning disable 618
             var target = new InheritedXmlCipherTest(Algorithms.Symmetric.RC2);
             target.PublicSymmetricXmlNamespace();
+#pragma warning restore 618
         }
 
         #region IsDisposed tests

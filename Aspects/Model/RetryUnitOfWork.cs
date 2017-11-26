@@ -15,17 +15,6 @@ namespace vm.Aspects.Model
     public class RetryUnitOfWork<T> : Retry<T>
     {
         /// <summary>
-        /// The method testing if the operation has failed is:
-        /// <code><![CDATA[public static bool DefaultIsFailure(T result, Exception exception, int attempt) => exception != null  &&  !exception.IsTransient() &&  !(exception is RepeatableOperationException);]]></code>
-        /// </summary>
-        /// <param name="result">The result of the operation.</param>
-        /// <param name="exception">The exception that was thrown by the operation (if any).</param>
-        /// <param name="attempt">The number of the current attempt.</param>
-        /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
-        public static bool IsFailure(T result, Exception exception, int attempt)
-            => RetryConstants.IsFailure(result, exception, attempt)  &&  !exception.IsTransient();
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="RetryUnitOfWork{T}" /> class.
         /// </summary>
         /// <param name="work">The delegate implementing the actual unit of work to be invoked between 1 and <c>maxRetries</c> in the method <see cref="Retry{T}.Start(int,int,int)" />.</param>
@@ -58,9 +47,9 @@ namespace vm.Aspects.Model
                                 createTransactionScope,
                                 transactionScopeFactory)
                             .WorkFunc(r => work(r, i)),
-                isFailure ?? IsFailure,
-                isSuccess ?? RetryConstants.IsSuccessResult,
-                epilogue  ?? RetryConstants.Epilogue)
+                isFailure: isFailure ?? RetryUnitOfWorkConstants.IsFailure,
+                isSuccess: isSuccess ?? RetryConstants.IsSuccessResult,
+                epilogue:  epilogue  ?? RetryConstants.Epilogue)
         {
         }
     }
