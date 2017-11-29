@@ -44,14 +44,14 @@ namespace vm.Aspects.Model
             : base(
                 async i => await new UnitOfWork(
                                     optimisticConcurrencyStrategy,
-                    repositoryResolveName,
-                    repositoryFactory,
-                    createTransactionScope,
-                    transactionScopeFactory)
+                                    repositoryResolveName,
+                                    repositoryFactory,
+                                    createTransactionScope,
+                                    transactionScopeFactory)
                                 .WorkFuncAsync(async r => await work(r, i)),
                 isFailure ?? RetryUnitOfWorkConstants.IsFailureAsync,
                 isSuccess ?? RetryConstants.IsSuccessResultAsync,
-                epilogue  ?? RetryConstants.EpilogueAsync)
+                epilogue ?? RetryConstants.EpilogueAsync)
         {
         }
     }

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
@@ -10,10 +14,6 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -176,11 +176,7 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern = null)
             : this(messagingPattern)
         {
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
-            if (identityType != ServiceIdentity.None)
-                EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity);
+            EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, identity);
         }
 
         /// <summary>
@@ -202,13 +198,7 @@ namespace vm.Aspects.Wcf.Services
             string messagingPattern)
             : this(messagingPattern)
         {
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
-            if (identityType != ServiceIdentity.None)
-                EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate);
+            EndpointIdentity = EndpointIdentityFactory.CreateEndpointIdentity(identityType, certificate);
         }
 
         /// <summary>

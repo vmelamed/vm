@@ -11,51 +11,6 @@ namespace vm.Aspects
     /// </summary>
     public static class ReflectionExtensions
     {
-        /*
-        /// <summary>
-        /// Retrieves a custom attribute of a specified type that is applied to a specified member.
-        /// </summary>
-        /// <typeparam name="T">The type of attribute to search for.</typeparam>
-        /// <param name="attributeProvider">The member to inspect.</param>
-        /// <param name="inherit"><see langword="true" /> to inspect the ancestors of element; otherwise, <see langword="false" /> (the default).</param>
-        /// <returns>A custom attribute that matches <typeparamref name="T"/>, or <see langword="null" /> if no such attribute is found.</returns>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="attributeProvider"/> is <see langword="null"/>.</exception>
-        /// <exception cref="System.InvalidOperationException">Thrown if more than one attribute of the specified type <typeparamref name="T"/> is found.</exception>
-        internal static T GetCustomAttribute<T>(
-            this ICustomAttributeProvider attributeProvider,
-            bool inherit = false) where T : class
-        {
-            if (attributeProvider == null)
-                throw new ArgumentNullException(nameof(attributeProvider));
-
-            if (!attributeProvider.IsDefined(typeof(T), inherit))
-                return null;
-
-            return (T)attributeProvider.GetCustomAttributes(typeof(T), inherit).Single();
-        }
-
-        /// <summary>
-        /// Retrieves all custom attributes of a specified type that are applied to a specified member.
-        /// </summary>
-        /// <typeparam name="T">The type of attribute to search for.</typeparam>
-        /// <param name="attributeProvider">The member to inspect.</param>
-        /// <param name="inherit"><see langword="true" /> to inspect the ancestors of element; otherwise, <see langword="false" /> (the default).</param>
-        /// <returns>A sequence of custom attributes that match <typeparamref name="T"/> (possibly empty).</returns>
-        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="attributeProvider"/> is <see langword="null"/>.</exception>
-        internal static IEnumerable<T> GetCustomAttributes<T>(
-            this ICustomAttributeProvider attributeProvider,
-            bool inherit = false) where T : class
-        {
-            if (attributeProvider == null)
-                throw new ArgumentNullException(nameof(attributeProvider));
-            
-            if (!attributeProvider.IsDefined(typeof(T), inherit))
-                return new T[0];
-
-            return attributeProvider.GetCustomAttributes(typeof(T), inherit).OfType<T>();
-        }
-        */
-
         /// <summary>
         /// Gets a custom attribute 
         /// from a method's <see cref="MethodBase"/> reflection object, or if not found,
@@ -71,9 +26,24 @@ namespace vm.Aspects
             if (methodBase == null)
                 throw new ArgumentNullException(nameof(methodBase));
 
-            return methodBase.GetCustomAttribute<T>(true)            ??
-                   methodBase.DeclaringType.GetCustomAttribute<T>()  ??
-                   (methodBase.ReflectedType != methodBase.DeclaringType ? methodBase.ReflectedType.GetCustomAttribute<T>() : null);
+            var a = methodBase.GetCustomAttribute<T>(true);
+
+            if (a != null)
+                return a;
+
+            a = methodBase.DeclaringType.GetCustomAttribute<T>(true);
+
+            if (a != null)
+                return a;
+
+            if (methodBase.ReflectedType != methodBase.DeclaringType)
+                a = methodBase.ReflectedType.GetCustomAttribute<T>(true);
+
+            return a;
+
+            //return methodBase.GetCustomAttribute<T>(true)            ??
+            //       methodBase.DeclaringType.GetCustomAttribute<T>()  ??
+            //       (methodBase.ReflectedType != methodBase.DeclaringType ? methodBase.ReflectedType.GetCustomAttribute<T>() : null);
         }
 
         /// <summary>
@@ -137,27 +107,27 @@ namespace vm.Aspects
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
-        static IDictionary<Type,object> _defaultValues = new Dictionary<Type,object>
+        static IDictionary<Type, object> _defaultValues = new Dictionary<Type, object>
         {
-            [typeof(char)]           = '\x0',
-            [typeof(bool)]           = false,
-            [typeof(byte)]           = (byte)0,
-            [typeof(sbyte)]          = (sbyte)0,
-            [typeof(short)]          = (short)0,
-            [typeof(ushort)]         = (ushort)0u,
-            [typeof(int)]            = 0,
-            [typeof(uint)]           = 0U,
-            [typeof(long)]           = 0L,
-            [typeof(ulong)]          = 0UL,
-            [typeof(decimal)]        = 0M,
-            [typeof(float)]          = (float)0.0,
-            [typeof(double)]         = 0.0,
-            [typeof(DateTime)]       = default(DateTime),
+            [typeof(char)] = '\x0',
+            [typeof(bool)] = false,
+            [typeof(byte)] = (byte)0,
+            [typeof(sbyte)] = (sbyte)0,
+            [typeof(short)] = (short)0,
+            [typeof(ushort)] = (ushort)0u,
+            [typeof(int)] = 0,
+            [typeof(uint)] = 0U,
+            [typeof(long)] = 0L,
+            [typeof(ulong)] = 0UL,
+            [typeof(decimal)] = 0M,
+            [typeof(float)] = (float)0.0,
+            [typeof(double)] = 0.0,
+            [typeof(DateTime)] = default(DateTime),
             [typeof(DateTimeOffset)] = default(DateTimeOffset),
-            [typeof(TimeSpan)]       = default(TimeSpan),
-            [typeof(Guid)]           = default(Guid),
-            [typeof(IntPtr)]         = IntPtr.Zero,
-            [typeof(UIntPtr)]        = UIntPtr.Zero,
+            [typeof(TimeSpan)] = default(TimeSpan),
+            [typeof(Guid)] = default(Guid),
+            [typeof(IntPtr)] = IntPtr.Zero,
+            [typeof(UIntPtr)] = UIntPtr.Zero,
         };
 
         /// <summary>
@@ -171,7 +141,7 @@ namespace vm.Aspects
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            if (type == typeof(void)  ||  !type.IsValueType)
+            if (type == typeof(void) || !type.IsValueType)
                 return null;
 
             object value;
@@ -180,7 +150,7 @@ namespace vm.Aspects
                 if (!_defaultValues.TryGetValue(type, out value))
                 {
                     value = typeof(ReflectionExtensions)
-                                .GetMethod(nameof(GenericDefault), BindingFlags.Static|BindingFlags.NonPublic)
+                                .GetMethod(nameof(GenericDefault), BindingFlags.Static | BindingFlags.NonPublic)
                                 .MakeGenericMethod(type)
                                 .Invoke(null, null);
 

@@ -10,7 +10,7 @@ using vm.Aspects.Model.EFRepository.Tests;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;
 
-[assembly: DbMappingViewCacheType(typeof(TestEFRepository), typeof(EFRepositoryMappingViewCache<TestEFRepository>))]
+//[assembly: DbMappingViewCacheType(typeof(TestEFRepository), typeof(EFRepositoryMappingViewCache<TestEFRepository>))]
 
 namespace vm.Aspects.Model.EFRepository.Tests
 {

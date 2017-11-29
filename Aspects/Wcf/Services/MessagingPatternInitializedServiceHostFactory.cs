@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Wcf.Bindings;
@@ -142,9 +142,6 @@ namespace vm.Aspects.Wcf.Services
             string initializerResolveName = null)
             : base(identityType, identity, messagingPattern)
         {
-            if (identityType != ServiceIdentity.None && identityType != ServiceIdentity.Certificate && identity.IsNullOrWhiteSpace())
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             InitializerResolveName = initializerResolveName;
         }
 
@@ -172,11 +169,6 @@ namespace vm.Aspects.Wcf.Services
             string initializerResolveName = null)
             : base(identityType, certificate, messagingPattern)
         {
-            if (!(identityType == ServiceIdentity.None  ||  (identityType == ServiceIdentity.Dns  ||
-                                                             identityType == ServiceIdentity.Rsa  ||
-                                                             identityType == ServiceIdentity.Certificate) && certificate!=null))
-                throw new ArgumentException("Invalid combination of identity parameters.");
-
             InitializerResolveName = initializerResolveName;
         }
         #endregion
@@ -298,7 +290,7 @@ namespace vm.Aspects.Wcf.Services
                                             .ContinueWith(
                                                 t =>
                                                 {
-                                                    if (t.IsCompleted  &&  t.Result)
+                                                    if (t.IsCompleted && t.Result)
                                                         HostInitialized(host);
                                                     else
                                                         throw new InvalidOperationException(

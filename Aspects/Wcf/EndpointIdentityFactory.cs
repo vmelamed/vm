@@ -27,7 +27,7 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             string identityName)
         {
-            if (identityType == ServiceIdentity.None  &&  identityName == null)
+            if (identityType == ServiceIdentity.None && identityName.IsNullOrWhiteSpace())
                 return;
 
             // the identity name should be not null, empty or blank.
@@ -35,9 +35,9 @@ namespace vm.Aspects.Wcf
                 throw new ArgumentNullException(nameof(identityName));
 
             // the identity type must be name based
-            if (identityType != ServiceIdentity.Dns  &&
-                identityType != ServiceIdentity.Spn  &&
-                identityType != ServiceIdentity.Upn  &&
+            if (identityType != ServiceIdentity.Dns &&
+                identityType != ServiceIdentity.Spn &&
+                identityType != ServiceIdentity.Upn &&
                 identityType != ServiceIdentity.Rsa)
                 throw new ArgumentException("Invalid identity type.", nameof(identityType));
         }
@@ -57,14 +57,15 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             X509Certificate2 identifyingCertificate)
         {
-            if (identityType == ServiceIdentity.None  &&  identifyingCertificate == null)
+            if (identityType == ServiceIdentity.None && identifyingCertificate == null)
                 return;
 
-            if (identifyingCertificate==null)
+            if (identifyingCertificate == null)
                 throw new ArgumentNullException(nameof(identifyingCertificate));
 
             // the identity type must be certificate based
-            if (identityType != ServiceIdentity.Rsa  &&
+            if (identityType != ServiceIdentity.Rsa &&
+                identityType != ServiceIdentity.Dns &&
                 identityType != ServiceIdentity.Certificate)
                 throw new ArgumentException("Invalid identity type.", nameof(identityType));
         }
@@ -86,7 +87,7 @@ namespace vm.Aspects.Wcf
             ServiceIdentity identityType,
             Claim identityClaim)
         {
-            if (identityType == ServiceIdentity.None  &&  identityClaim == null)
+            if (identityType == ServiceIdentity.None && identityClaim == null)
                 return;
 
             if (identityClaim == null)
@@ -116,23 +117,23 @@ namespace vm.Aspects.Wcf
 
             switch (identityType)
             {
-            case ServiceIdentity.None:
-                return null;
+                case ServiceIdentity.None:
+                    return null;
 
-            case ServiceIdentity.Dns:
-                return EndpointIdentity.CreateDnsIdentity(identityName);
+                case ServiceIdentity.Dns:
+                    return EndpointIdentity.CreateDnsIdentity(identityName);
 
-            case ServiceIdentity.Upn:
-                return EndpointIdentity.CreateUpnIdentity(identityName);
+                case ServiceIdentity.Upn:
+                    return EndpointIdentity.CreateUpnIdentity(identityName);
 
-            case ServiceIdentity.Spn:
-                return EndpointIdentity.CreateSpnIdentity(identityName);
+                case ServiceIdentity.Spn:
+                    return EndpointIdentity.CreateSpnIdentity(identityName);
 
-            case ServiceIdentity.Rsa:
-                return EndpointIdentity.CreateRsaIdentity(identityName);
+                case ServiceIdentity.Rsa:
+                    return EndpointIdentity.CreateRsaIdentity(identityName);
 
-            default:
-                throw new NotSupportedException($"Identity type {identityType} is not supported.");
+                default:
+                    throw new NotSupportedException($"Identity type {identityType} is not supported.");
             }
         }
 
@@ -155,20 +156,23 @@ namespace vm.Aspects.Wcf
 
             switch (identityType)
             {
-            case ServiceIdentity.None:
-                return null;
+                case ServiceIdentity.None:
+                    return null;
 
-            case ServiceIdentity.Certificate:
-                return EndpointIdentity.CreateX509CertificateIdentity(identifyingCertificate);
+                case ServiceIdentity.Certificate:
+                    return EndpointIdentity.CreateX509CertificateIdentity(identifyingCertificate);
 
-            case ServiceIdentity.Rsa:
-                return EndpointIdentity.CreateRsaIdentity(identifyingCertificate);
+                case ServiceIdentity.Rsa:
+                    return EndpointIdentity.CreateRsaIdentity(identifyingCertificate);
 
-            case ServiceIdentity.Dns:
-                return EndpointIdentity.CreateDnsIdentity(identifyingCertificate.SubjectName.Name.Split(',')[0].Replace("CN=", ""));
+                case ServiceIdentity.Dns:
+                    return EndpointIdentity.CreateDnsIdentity(
+                                                RegularExpression.CommonName.Replace(
+                                                                    identifyingCertificate.SubjectName.Name.Split(',')[0],
+                                                                    string.Empty));
 
-            default:
-                throw new NotSupportedException($"Identity type {identityType} is not supported.");
+                default:
+                    throw new NotSupportedException($"Identity type {identityType} is not supported.");
             }
         }
 
@@ -178,7 +182,7 @@ namespace vm.Aspects.Wcf
         /// <param name="identityClaim">The identity.</param>
         /// <returns>EndpointIdentity.</returns>
         public static EndpointIdentity CreateEndpointIdentity(
-            Claim identityClaim) => identityClaim!=null ? EndpointIdentity.CreateIdentity(identityClaim) : null;
+            Claim identityClaim) => identityClaim != null ? EndpointIdentity.CreateIdentity(identityClaim) : null;
 
         /// <summary>
         /// Creates an endpoint identity based on claim.

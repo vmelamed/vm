@@ -190,9 +190,9 @@ namespace vm.Aspects
         /// </summary>
         const string rexEmailId = "(?<userId>" + rexUserId + ")";
 
-        const string rexXalpha  = @"[a-z0-9$_@.&+!*""'(),-]|%[0-9a-f][0-9a-f]";
+        const string rexXalpha = @"[a-z0-9$_@.&+!*""'(),-]|%[0-9a-f][0-9a-f]";
         const string rexXalphas = @"(?:" + rexXalpha + ")+";
-        const string rexQalpha  = @"[a-z0-9$_@.+!*""'(),-]|%[0-9a-f][0-9a-f]";
+        const string rexQalpha = @"[a-z0-9$_@.+!*""'(),-]|%[0-9a-f][0-9a-f]";
         const string rexQalphas = @"(?:" + rexQalpha + ")+";
 
         /// <summary>
@@ -620,26 +620,26 @@ namespace vm.Aspects
         /// <summary>
         /// Matches MasterCard Credit Card numbers.
         /// </summary>
-        public const string RexMasterCard      = @"(?:(?:(?<inmc>222[1-9]|22[3-9]\d|2[3-6]\d\d|271\d|2720)\d{11})|(?:(?<mc>5[1-5])\d{13}))(?<check>\d)";
+        public const string RexMasterCard = @"(?:(?:(?<inmc>222[1-9]|22[3-9]\d|2[3-6]\d\d|271\d|2720)\d{11})|(?:(?<mc>5[1-5])\d{13}))(?<check>\d)";
         /// <summary>
         /// Matches Maestro Credit Card numbers.
         /// </summary>
-        public const string RexMaestro         = @"(?<inmaestro>50|5[6-9]|6[0-9])\d{9,16}(?<check>\d)";
+        public const string RexMaestro = @"(?<inmaestro>50|5[6-9]|6[0-9])\d{9,16}(?<check>\d)";
         /// <summary>
         /// Matches Visa Credit Card numbers.
         /// </summary>
-        public const string RexVisa            = @"(?<invisa>4)(?:(?:\d{17})|(?:\d{14})|(?:\d{11}))(?<check>\d)";
+        public const string RexVisa = @"(?<invisa>4)(?:(?:\d{17})|(?:\d{14})|(?:\d{11}))(?<check>\d)";
 
         /// <summary>
         /// Matches American Express or MasterCard or Visa credit card number.
         /// </summary>
-        public const string RexAmexMCVisa      = @"^(?:(?<amex>"+RexAmericanExpress+")|(?<mc>"+RexMasterCard+")|(?<visa>"+RexVisa+"))$";
+        public const string RexAmexMCVisa = @"^(?:(?<amex>" + RexAmericanExpress + ")|(?<mc>" + RexMasterCard + ")|(?<visa>" + RexVisa + "))$";
 
-        readonly static Lazy<Regex> _americanExpress = new Lazy<Regex>(() => new Regex("^"+RexAmericanExpress+"$", RegexOptions.Compiled));
-        readonly static Lazy<Regex> _masterCard      = new Lazy<Regex>(() => new Regex("^"+RexMasterCard+"$", RegexOptions.Compiled));
-        readonly static Lazy<Regex> _maestro         = new Lazy<Regex>(() => new Regex("^"+RexMaestro+"$", RegexOptions.Compiled));
-        readonly static Lazy<Regex> _visa            = new Lazy<Regex>(() => new Regex("^"+RexVisa+"$", RegexOptions.Compiled));
-        readonly static Lazy<Regex> _amexMCVisa      = new Lazy<Regex>(() => new Regex(RexAmexMCVisa, RegexOptions.Compiled));
+        readonly static Lazy<Regex> _americanExpress = new Lazy<Regex>(() => new Regex("^" + RexAmericanExpress + "$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _masterCard = new Lazy<Regex>(() => new Regex("^" + RexMasterCard + "$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _maestro = new Lazy<Regex>(() => new Regex("^" + RexMaestro + "$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _visa = new Lazy<Regex>(() => new Regex("^" + RexVisa + "$", RegexOptions.Compiled));
+        readonly static Lazy<Regex> _amexMCVisa = new Lazy<Regex>(() => new Regex(RexAmexMCVisa, RegexOptions.Compiled));
 
         /// <summary>
         /// Gets a Regex object which matches American Express card numbers.
@@ -736,7 +736,7 @@ namespace vm.Aspects
         /// <summary>
         /// Tests semantic versioning strings: http://semver.org/
         /// </summary>
-        public const string RexSemanticVersion = @"^(?i:)(?<major>0|(?:0|[1-9][0-9]*))\.(?<minor>0|[1-9][0-9]*)\.(?<patch>0|[1-9][0-9]*)(?:-(?<prerelease>"+RexSemanticVersionPrerelease+@"))?(?:\+(?<build>"+RexSemanticVersionBuild+@"))?$";
+        public const string RexSemanticVersion = @"^(?i:)(?<major>0|(?:0|[1-9][0-9]*))\.(?<minor>0|[1-9][0-9]*)\.(?<patch>0|[1-9][0-9]*)(?:-(?<prerelease>" + RexSemanticVersionPrerelease + @"))?(?:\+(?<build>" + RexSemanticVersionBuild + @"))?$";
 
         readonly static Lazy<Regex> _semanticVersion = new Lazy<Regex>(() => new Regex(RexSemanticVersion, RegexOptions.Compiled));
 
@@ -749,13 +749,13 @@ namespace vm.Aspects
         #region Guid
         const string rexGuidWithDashes = @"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
         const string rexGuidWithNoDashes = @"[0-9a-f]{32}";
-        const string rexGuid = @"\{?(?:"+rexGuidWithDashes+@")|(?:"+rexGuidWithNoDashes+@")\}?";
+        const string rexGuid = @"\{?(?:" + rexGuidWithDashes + @")|(?:" + rexGuidWithNoDashes + @")\}?";
 
         #region GUID somewhere in the input string
         /// <summary>
         /// Regular expression pattern which matches GUID somewhere in the input string.
         /// </summary>
-        public const string RexGuid = @"(?i:"+rexGuid+")";
+        public const string RexGuid = @"(?i:" + rexGuid + ")";
 
         readonly static Lazy<Regex> _rexGuid = new Lazy<Regex>(() => new Regex(RexGuid, RegexOptions.Compiled));
 
@@ -769,7 +769,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches exactly GUID against the input string.
         /// </summary>
-        public const string RexExactGuid = @"(?i:^"+rexGuid+@"$)";
+        public const string RexExactGuid = @"(?i:^" + rexGuid + @"$)";
 
         readonly static Lazy<Regex> _rexExactGuid = new Lazy<Regex>(() => new Regex(RexExactGuid, RegexOptions.Compiled));
 
@@ -784,7 +784,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
         /// </summary>
-        public const string RexContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-"+rexContentTypeToken+@"))/(?<subtype>"+rexContentTypeToken+@")(?:; (?<attribute>"+rexContentTypeToken+@")=(?<value>"+rexContentTypeToken+@"))?$";
+        public const string RexContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-" + rexContentTypeToken + @"))/(?<subtype>" + rexContentTypeToken + @")(?:; (?<attribute>" + rexContentTypeToken + @")=(?<value>" + rexContentTypeToken + @"))?$";
 
         readonly static Lazy<Regex> _contentType = new Lazy<Regex>(() => new Regex(RexContentType, RegexOptions.Compiled));
 
@@ -798,7 +798,7 @@ namespace vm.Aspects
         /// <summary>
         /// Regular expression pattern which matches the value of the HTTP headers Accept and content-type, incl. vendor specific MIME types.
         /// </summary>
-        public const string RexVendorContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-"+rexContentTypeToken+@"))/(?:(?<vendor>"+rexContentTypeToken+@")(?:-(?<version>"+rexContentTypeToken+@"))?\+)?(?<subtype>"+rexContentTypeToken+@")(?:; (?<attribute>"+rexContentTypeToken+@")=(?<value>"+rexContentTypeToken+@"))?$";
+        public const string RexVendorContentType = @"(?i:)^(?<type>text|application|audio|image|message|multipart|video|(?:X-" + rexContentTypeToken + @"))/(?:(?<vendor>" + rexContentTypeToken + @")(?:-(?<version>" + rexContentTypeToken + @"))?\+)?(?<subtype>" + rexContentTypeToken + @")(?:; (?<attribute>" + rexContentTypeToken + @")=(?<value>" + rexContentTypeToken + @"))?$";
 
         readonly static Lazy<Regex> _vendorContentType = new Lazy<Regex>(() => new Regex(RexVendorContentType, RegexOptions.Compiled));
 
@@ -844,7 +844,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches a C# identifier.
         /// </summary>
-        public const string RexCSharpIdentifier = @"^"+rexCSharpIdentifier+"$";
+        public const string RexCSharpIdentifier = @"^" + rexCSharpIdentifier + "$";
 
         readonly static Lazy<Regex> _cSharpIdentifier = new Lazy<Regex>(() => new Regex(RexCSharpIdentifier, RegexOptions.Compiled));
 
@@ -870,20 +870,20 @@ namespace vm.Aspects
 
         #region ISO 8601 date and time strings:
         #region fragments:
-        const string rexYear     = @"(?<year>\d{4})";
-        const string rexMonth    = @"(?<month>0[1-9]|1[012])";
-        const string rexDay      = @"(?<day>[012]\d|3[01])";
-        const string rexDate     = @"(?<date>(?:"+rexYear+"-"+rexMonth+"(?:-"+rexDay+")?)|(?:"+rexYear+rexMonth+rexDay+"))";
+        const string rexYear = @"(?<year>\d{4})";
+        const string rexMonth = @"(?<month>0[1-9]|1[012])";
+        const string rexDay = @"(?<day>[012]\d|3[01])";
+        const string rexDate = @"(?<date>(?:" + rexYear + "-" + rexMonth + "(?:-" + rexDay + ")?)|(?:" + rexYear + rexMonth + rexDay + "))";
 
-        const string rexHour     = @"(?<hour>[01]\d|2[0-3])";
-        const string rexMinute   = @"(?<minute>[0-5]\d)";
-        const string rexHSecond  = @"(?<second>[0-5]\d)";
-        const string rexFSecond  = @"(?:\.(?<fraction>\d{1,7}))?";
-        const string rexSecond   = rexHSecond+rexFSecond;
-        const string rexLTime    = @"(?<ltime>(?:"+rexHour+"(?::"+rexMinute+"(?::"+rexSecond+")?)?)|(?:"+rexHour+rexMinute+"(?:"+rexSecond+")?))";
-        const string rexZone     = @"(?<zone>Z|(?:[+-](?:[01]\d|2[0-3])(?::?[0-5]\d)?))";
-        const string rexTimeTz   = rexLTime+rexZone;
-        const string rexTime     = rexLTime+rexZone+"?";
+        const string rexHour = @"(?<hour>[01]\d|2[0-3])";
+        const string rexMinute = @"(?<minute>[0-5]\d)";
+        const string rexHSecond = @"(?<second>[0-5]\d)";
+        const string rexFSecond = @"(?:\.(?<fraction>\d{1,7}))?";
+        const string rexSecond = rexHSecond + rexFSecond;
+        const string rexLTime = @"(?<ltime>(?:" + rexHour + "(?::" + rexMinute + "(?::" + rexSecond + ")?)?)|(?:" + rexHour + rexMinute + "(?:" + rexSecond + ")?))";
+        const string rexZone = @"(?<zone>Z|(?:[+-](?:[01]\d|2[0-3])(?::?[0-5]\d)?))";
+        const string rexTimeTz = rexLTime + rexZone;
+        const string rexTime = rexLTime + rexZone + "?";
 
         #endregion
 
@@ -891,7 +891,7 @@ namespace vm.Aspects
         /// <summary>
         /// The regular expression matches years in ISO 8601 format.
         /// </summary>
-        public const string RexYearIso8601 = @"^"+rexYear+"$";
+        public const string RexYearIso8601 = @"^" + rexYear + "$";
 
         static Lazy<Regex> _rexYearIso8601 = new Lazy<Regex>(() => new Regex(RexYearIso8601, RegexOptions.Compiled));
 
@@ -905,7 +905,7 @@ namespace vm.Aspects
         /// <summary>
         /// The regular expression matches dates in ISO 8601 format. Does not include formats with weeks and days of the year.
         /// </summary>
-        public const string RexDateIso8601 = @"^"+rexDate+"$";
+        public const string RexDateIso8601 = @"^" + rexDate + "$";
 
         static Lazy<Regex> _rexDateIso8601 = new Lazy<Regex>(() => new Regex(RexDateIso8601, RegexOptions.Compiled));
 
@@ -919,7 +919,7 @@ namespace vm.Aspects
         /// <summary>
         /// The regular expression matches times in ISO 8601 format.
         /// </summary>
-        public const string RexTimeIso8601 = @"^"+rexTime+"$";
+        public const string RexTimeIso8601 = @"^" + rexTime + "$";
 
         static Lazy<Regex> _rexTimeIso8601 = new Lazy<Regex>(() => new Regex(RexTimeIso8601, RegexOptions.Compiled));
 
@@ -932,7 +932,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches date and time value expressed in ISO 8601 standard format:
         /// </summary>
-        public const string RexDateTimeIso8601 = @"^"+rexDate+"T"+rexTime+"$";
+        public const string RexDateTimeIso8601 = @"^" + rexDate + "T" + rexTime + "$";
 
         readonly static Lazy<Regex> _dateTimeIso8601 = new Lazy<Regex>(() => new Regex(RexDateTimeIso8601, RegexOptions.Compiled));
 
@@ -940,6 +940,20 @@ namespace vm.Aspects
         /// Matches date and time value expressed in ISO 8601 standard format:
         /// </summary>
         public static Regex DateTimeIso8601 => _dateTimeIso8601.Value;
+        #endregion
+
+        #region CommonName
+        /// <summary>
+        /// Regular expression pattern which matches @&quot;&quot;
+        /// </summary>
+        public const string RexCommonName = @"CN\s*=\s*";
+
+        readonly static Lazy<Regex> _rexCommonName = new Lazy<Regex>(() => new Regex(RexCommonName, RegexOptions.Compiled));
+
+        /// <summary>
+        /// Gets a Regex object which matches @&quot;CN=&quot;
+        /// </summary>
+        public static Regex CommonName => _rexCommonName.Value;
         #endregion
 
         /// <summary>

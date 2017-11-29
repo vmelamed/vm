@@ -26,32 +26,18 @@ namespace vm.Aspects.Wcf
         /// The attribute makes sense only when applied to service or operation contracts.
         /// </summary>
         /// <param name="customDataContextType">The type of the custom context data.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="customDataContextType"/> is <see langword="null"/></exception>
-        public CustomDataContextTypeAttribute(Type customDataContextType)
-        {
-            if (customDataContextType == null)
-                throw new ArgumentNullException(nameof(customDataContextType));
-
-            CustomDataContextType = customDataContextType;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CustomDataContextTypeAttribute" /> class with
-        /// the type of of the custom header that is (optionally) expected in the message headers.
-        /// The attribute makes sense only when applied to service or operation contracts.
-        /// </summary>
         /// <param name="isRequired">if set to <see langword="true" /> specifies that the custom data header (the context) is required (the default).</param>
-        /// <remarks>Usually this form of the constructor is used on method and the type of the header is inherited by the attribute on the parent class or structure.</remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown when <paramref name="customDataContextType"/> is <see langword="null"/></exception>
         /// <example>
         /// In the following example the interface IBusiness requires for each method to receive a custom data context (header) of type BusinessDataContext.
-        /// The method Ping however overrides this requirement by attributing it with [CustomDataContextType(false)] and allowing to skip the header for this method.
+        /// The method Ping however overrides this requirement by attributing it with [CustomDataContextType(typeof(BusinessDataContext), false)] and allowing to skip the header for this method.
         /// This can be useful if you would like to be able to 'ping' the service from a browser, postman, fiddler, etc.
         /// <![CDATA[
         /// [CustomDataContextType(typeof(BusinessDataContext))]
         /// public interface IBusiness
         /// {
         ///     [OperationContract]
-        ///     [CustomDataContextType(false)]
+        ///     [CustomDataContextType(typeof(BusinessDataContext), false)]
         ///     string Ping(string pong);
         ///     
         ///     [OperationContract]
@@ -61,8 +47,11 @@ namespace vm.Aspects.Wcf
         /// }
         /// ]]>
         /// </example>
-        public CustomDataContextTypeAttribute(bool isRequired)
+        public CustomDataContextTypeAttribute(
+            Type customDataContextType,
+            bool isRequired = true)
         {
+            CustomDataContextType = customDataContextType ?? throw new ArgumentNullException(nameof(customDataContextType));
             IsOptional = !isRequired;
         }
 
