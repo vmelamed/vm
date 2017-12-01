@@ -59,7 +59,10 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                 var principal = AllowedUnauthenticated();
 
                 if (principal == null)
+                {
+                    Facility.LogWriter.ExceptionError(new UnauthorizedAccessException("Invalid or missing JWT."));
                     return false;
+                }
 
                 operationContext.SetPrincipal(principal);
                 return true;
