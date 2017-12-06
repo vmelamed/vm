@@ -173,8 +173,7 @@ namespace TraceEventSamples
                 {
                     // On Second Events, if the ID matches, compute the delta and display it. 
                     var myID = (int)data.PayloadByName("MyId");
-                    double firstEventTime;
-                    if (firstEventTimeMSec.TryGetValue(myID, out firstEventTime))
+                    if (firstEventTimeMSec.TryGetValue(myID, out var firstEventTime))
                     {
                         firstEventTimeMSec.Remove(myID);            // We are done with the ID after matching it, so remove it from the table. 
                         Out.WriteLine("   >>> Time Delta from first Event = {0:f3} MSec", data.TimeStampRelativeMSec - firstEventTime);

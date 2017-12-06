@@ -50,10 +50,7 @@ namespace vm.Aspects.Threading
             Func<T, Exception, int, bool> isSuccess = null,
             Func<T, Exception, int, T> epilogue = null)
         {
-            if (operation == null)
-                throw new ArgumentNullException(nameof(operation));
-
-            _operation = operation;
+            _operation = operation ?? throw new ArgumentNullException(nameof(operation));
             _isFailure = isFailure ?? RetryConstants.IsFailure;
             _isSuccess = isSuccess ?? RetryConstants.IsSuccess;
             _epilogue  = epilogue  ?? RetryConstants.Epilogue;

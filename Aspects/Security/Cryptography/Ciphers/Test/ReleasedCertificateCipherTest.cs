@@ -8,13 +8,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class ReleasedCertificateCipherTest : ClonedLightCipherTest
     {
-        const string keyFileName = "resetToDuplicate.key";
+        const string _keyFileName = "resetToDuplicate.key";
 
         protected override EncryptedKeyCipher GetCipher(bool base64 = false)
         {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
+            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+            {
+                Base64Encoded = base64,
+            };
 
-            cipher.Base64Encoded = base64;
             cipher.ReleaseCertificate();
             return cipher;
         }
@@ -24,7 +26,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
             {
                 cipher.ExportSymmetricKey();
 
@@ -43,7 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
             {
                 cipher.ExportSymmetricKey();
 

@@ -11,12 +11,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             object instance,
             string property)
         {
-            if (instance == null)
-                throw new ArgumentNullException(nameof(instance));
             if (property.IsNullOrWhiteSpace())
                 throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(property));
 
-            Instance = instance;
+            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
             Property = property;
         }
 

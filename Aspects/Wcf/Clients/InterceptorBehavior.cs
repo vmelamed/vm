@@ -17,10 +17,7 @@ namespace vm.Aspects.Wcf.Clients
         internal InterceptorBehavior(
             ICallIntercept interceptor)
         {
-            if (interceptor == null)
-                throw new ArgumentNullException(nameof(interceptor));
-
-            _interceptor = interceptor;
+            _interceptor = interceptor ?? throw new ArgumentNullException(nameof(interceptor));
         }
 
         #region IClientMessageInspector Members

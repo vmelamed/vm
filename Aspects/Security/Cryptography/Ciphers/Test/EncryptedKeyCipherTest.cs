@@ -8,23 +8,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class EncryptedKeyCipherTest : GenericCipherTest<EncryptedKeyCipher>
     {
-        const string keyFileName = "encrypted.key";
+        const string _keyFileName = "encrypted.key";
 
         public override ICipherAsync GetCipher(bool base64 = false)
-        {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+            {
+                Base64Encoded = base64,
+            };
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
-        {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName);
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName)
+            {
+                Base64Encoded = base64,
+            };
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -35,9 +31,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName) as IKeyManagement;
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName) as IKeyManagement;
 
-            if (keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+            if (keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
@@ -46,7 +42,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void CertificateNullTest()
         {
-            var target = new EncryptedKeyCipher(null, null, keyFileName);
+            var target = new EncryptedKeyCipher(null, null, _keyFileName);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
@@ -57,7 +53,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var target = GetCipher();
             var encrypted = target.Encrypt(input);
 
-            target = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName);
+            target = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName);
 
             var output =  target.Decrypt(encrypted);
         }
@@ -85,9 +81,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             GC.Collect();
 
-            EncryptedKeyCipher collected;
 
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
         #endregion
 

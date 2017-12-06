@@ -270,18 +270,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static int Import()
         {
-            var keyManagement = GetCipher() as IKeyManagement;
-
-            if (keyManagement != null)
+            if (GetCipher() is IKeyManagement keyManagement)
                 keyManagement.ImportSymmetricKey(_key);
             return 0;
         }
 
         static int Export()
         {
-            var keyManagement = GetCipher() as IKeyManagement;
-
-            if (keyManagement != null)
+            if (GetCipher() is IKeyManagement keyManagement)
             {
                 _key = keyManagement.ExportSymmetricKey();
                 Console.WriteLine(BitConverter.ToString(_key));

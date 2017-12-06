@@ -15,11 +15,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (element == null)
                 throw new ArgumentNullException(nameof(element));
 
-            var nameAttribute = element.Attribute(XNames.Attributes.Name);
-
-            return nameAttribute != null
-                        ? nameAttribute.Value
-                        : null;
+            return element.Attribute(XNames.Attributes.Name)?.Value;
         }
 
         static Type ConvertTo(XElement element)
@@ -82,9 +78,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return null;
 
             var type = DataSerialization.GetType(element);
-            Func<Type, XElement, MemberInfo> getMemberInfo;
 
-            if (!_memberInfoDeserializers.TryGetValue(element.Name, out getMemberInfo))
+            if (!_memberInfoDeserializers.TryGetValue(element.Name, out var getMemberInfo))
                 throw new SerializationException("Expected a member info type of element.");
 
             return getMemberInfo(type, element);
@@ -98,9 +93,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (element == null)
                 return null;
 
-            Func<Type, XElement, MemberInfo> getMemberInfo;
 
-            if (!_memberInfoDeserializers.TryGetValue(element.Name, out getMemberInfo))
+            if (!_memberInfoDeserializers.TryGetValue(element.Name, out var getMemberInfo))
                 throw new SerializationException("Expected a member info type of element.");
 
             return getMemberInfo(type, element);
@@ -127,7 +121,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static MethodInfo GetMethodInfo(Type type, XElement element)
         {
-            if (element != null  &&  type == null)
+            if (element != null && type == null)
                 throw new ArgumentNullException(nameof(type));
 
             return element == null

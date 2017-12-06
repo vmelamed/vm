@@ -18,31 +18,27 @@ namespace vm.Aspects.Wcf.Bindings
         public static TransferMode GetTransferMode(
             this Binding binding)
         {
-            if (binding == null)
+            switch (binding)
+            {
+            case null:
                 throw new ArgumentNullException(nameof(binding));
 
-            var netTcpBinding = binding as NetTcpBinding;
+            case NetTcpBinding t:
+                return t.TransferMode;
 
-            if (netTcpBinding != null)
-                return netTcpBinding.TransferMode;
+            case NetNamedPipeBinding p:
+                return p.TransferMode;
 
-            var netNamedPipeBinding = binding as NetNamedPipeBinding;
+            case BasicHttpBinding b:
+                return b.TransferMode;
 
-            if (netNamedPipeBinding != null)
-                return netNamedPipeBinding.TransferMode;
+            case WebHttpBinding w:
+                return w.TransferMode;
 
-            var basicHttpBinding = binding as BasicHttpBinding;
-
-            if (basicHttpBinding != null)
-                return basicHttpBinding.TransferMode;
-
-            var webHttpBinding = binding as WebHttpBinding;
-
-            if (webHttpBinding != null)
-                return webHttpBinding.TransferMode;
-
-            // only the bindings above support true streaming
-            return TransferMode.Buffered;
+            default:
+                // only the bindings above support true streaming
+                return TransferMode.Buffered;
+            }
         }
 
         /// <summary>

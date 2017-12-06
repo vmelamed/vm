@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -11,12 +11,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     public class DpapiCipherTest1 : GenericCipherTest<DpapiCipher>
     {
         public override ICipherAsync GetCipher(bool base64 = false)
-        {
-            var cipher = new DpapiCipher();
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new DpapiCipher()
+            {
+                Base64Encoded = base64,
+            };
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
         {
@@ -98,7 +96,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
                 var encrypted = target.Encrypt(input);
-                var output =  target.Decrypt(encrypted);
+                var output = target.Decrypt(encrypted);
 
                 Assert.IsTrue(input.SequenceEqual(output));
             }
@@ -114,7 +112,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
                 var encrypted = target.Encrypt(input);
-                var output =  target.Decrypt(encrypted);
+                var output = target.Decrypt(encrypted);
 
                 Assert.IsTrue(input.SequenceEqual(output));
             }
@@ -131,7 +129,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
                 var input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
                 var encrypted = target.Encrypt(input);
-                var output =  target.Decrypt(encrypted);
+                var output = target.Decrypt(encrypted);
 
                 Assert.IsTrue(input.SequenceEqual(output));
             }

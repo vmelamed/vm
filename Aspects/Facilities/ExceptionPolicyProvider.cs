@@ -137,12 +137,11 @@ namespace vm.Aspects.Facilities
         {
             // gather all policies and merge the ones with the same names
             var policyEntries = new Dictionary<string, List<ExceptionPolicyEntry>>();
-            List<ExceptionPolicyEntry> list;
 
             // merge all policy definitions
             foreach (var provider in ServiceLocator.Current.GetAllInstances<IExceptionPolicyProvider>())
                 foreach (var policyDefinition in provider.ExceptionPolicyEntries)
-                    if (!policyEntries.TryGetValue(policyDefinition.Key, out list))
+                    if (!policyEntries.TryGetValue(policyDefinition.Key, out var list))
                         // add a new policy
                         policyEntries[policyDefinition.Key] = policyDefinition.Value.ToList();
                     else

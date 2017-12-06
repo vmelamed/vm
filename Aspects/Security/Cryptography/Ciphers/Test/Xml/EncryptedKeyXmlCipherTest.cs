@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
@@ -19,9 +19,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            var keyManagement = GetCipherImpl() as IKeyManagement;
 
-            if (keyManagement != null &&
+            if (GetCipherImpl() is IKeyManagement keyManagement &&
                 keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
@@ -81,9 +80,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
             GC.Collect();
 
-            EncryptedKeyXmlCipher collected;
-
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
         #endregion
     }

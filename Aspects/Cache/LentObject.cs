@@ -24,13 +24,8 @@ namespace vm.Aspects.Cache
             T instance,
             ObjectPool<T> pool)
         {
-            if (instance == null)
-                throw new ArgumentNullException(nameof(instance));
-            if (pool == null)
-                throw new ArgumentNullException(nameof(pool));
-
-            _instance = instance;
-            _pool     = pool;
+            _instance = instance ?? throw new ArgumentNullException(nameof(instance));
+            _pool     = pool ?? throw new ArgumentNullException(nameof(pool));
         }
 
         /// <summary>

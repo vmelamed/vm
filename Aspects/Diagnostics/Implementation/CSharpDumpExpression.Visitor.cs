@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -30,12 +29,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitConstant(
             ConstantExpression node)
         {
-            Action<TextWriter, object> writeValue;
-
             if (node.Value == null)
                 _writer.Write("null");
             else
-            if (_dumpBasicValues.TryGetValue(node.Type, out writeValue))
+            if (_dumpBasicValues.TryGetValue(node.Type, out var writeValue))
                 writeValue(_writer, node.Value);
             else
             if (node.Type.IsEnum)
@@ -243,9 +240,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitMember(
             MemberExpression node)
         {
-            ExpressionMetadata meta;
-
-            _metadata.TryGetValue(node.NodeType, out meta);
+            _metadata.TryGetValue(node.NodeType, out var meta);
 
             Visit(node.Expression, meta);
             _writer.Write(meta.Operator);
@@ -257,9 +252,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitBinary(
             BinaryExpression node)
         {
-            ExpressionMetadata meta;
-
-            _metadata.TryGetValue(node.NodeType, out meta);
+            _metadata.TryGetValue(node.NodeType, out var meta);
 
             Visit(node.Left, meta);
             _writer.Write(meta.Operator);
@@ -281,9 +274,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitUnary(
             UnaryExpression node)
         {
-            ExpressionMetadata meta;
-
-            _metadata.TryGetValue(node.NodeType, out meta);
+            _metadata.TryGetValue(node.NodeType, out var meta);
 
             if (!meta.IsPostfix)
             {
@@ -508,9 +499,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (node.Type != typeof(void))
             {
                 // test ? a : b
-                ExpressionMetadata meta;
 
-                _metadata.TryGetValue(node.NodeType, out meta);
+                _metadata.TryGetValue(node.NodeType, out var meta);
                 Visit(node.Test, meta);
                 _writer.Write(" ? ");
                 Visit(node.IfTrue, meta);
@@ -585,7 +575,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             var first = true;
 
-            for (; i<node.Arguments.Count; i++)
+            for (; i < node.Arguments.Count; i++)
             {
                 var a = node.Arguments[i];
                 if (first)

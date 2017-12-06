@@ -238,13 +238,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                 throw new ArgumentNullException(nameof(efRepository));
 
             long id = -1L;
-            HiLoIdentityGenerator generator;
             var entitySetName = efRepository.ObjectContext.GetEntitySetName<T>() ?? DefaultEntitySetName;
 
             // make sure that the _generators hash table is accessible from this thread only
             lock (_sync)
             {
-                if (_generators.TryGetValue(entitySetName, out generator))
+                if (_generators.TryGetValue(entitySetName, out var generator))
                     id = generator.GetId();
                 // if GetId returns -1, we'll need a fresh generator from the database with its own new HighValue.
 
@@ -268,13 +267,12 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                 throw new ArgumentNullException(nameof(efRepository));
 
             long id = -1L;
-            HiLoIdentityGenerator generator;
             var entitySetName = efRepository.ObjectContext.GetEntitySetName(objectsType) ?? DefaultEntitySetName;
 
             // make sure that the _generators hash table is accessible from this thread only
             lock (_sync)
             {
-                if (_generators.TryGetValue(entitySetName, out generator))
+                if (_generators.TryGetValue(entitySetName, out var generator))
                     id = generator.GetId();
                 // if GetId returns -1, we'll need a fresh generator from the database with its own new HighValue.
 

@@ -12,7 +12,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class ClonedLightCipherTest
     {
-        const string keyFileName = "duplicate.key";
+        const string _keyFileName = "duplicate.key";
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -22,7 +22,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         protected virtual EncryptedKeyCipher GetCipher(bool base64 = false)
         {
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
             {
                 cipher.Base64Encoded = base64;
                 return cipher.CloneLightCipher() as EncryptedKeyCipher;
@@ -86,9 +86,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void GetDuplicateWithShouldEncryptIVTest()
         {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
+            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+            {
+                ShouldEncryptIV = true,
+            };
 
-            cipher.ShouldEncryptIV = true;
             cipher.CloneLightCipher();
         }
 

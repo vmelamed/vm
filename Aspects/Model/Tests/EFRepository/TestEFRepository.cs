@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure.MappingViews;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using vm.Aspects.Facilities;
-using vm.Aspects.Model.EFRepository;
-using vm.Aspects.Model.EFRepository.Tests;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Model.Tests;
 
@@ -64,17 +61,13 @@ namespace vm.Aspects.Model.EFRepository.Tests
                                      (e.State == System.Data.Entity.EntityState.Modified || e.GetModifiedProperties().Any()))
                          .Select(e =>
                              {
-                                 var xe = e.Entity as TestXEntity;
-
-                                 if (xe != null)
+                                 if (e.Entity is TestXEntity xe)
                                  {
                                      xe.SetUpdated(now.Value);
                                      return e;
                                  }
 
-                                 var te = e.Entity as TestEntity;
-
-                                 if (te != null)
+                                 if (e.Entity is TestEntity te)
                                  {
                                      te.SetUpdated(now.Value);
                                      return e;

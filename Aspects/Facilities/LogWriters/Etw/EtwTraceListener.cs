@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 namespace vm.Aspects.Facilities.LogWriters.Etw
 {
@@ -34,17 +34,13 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (Filter != null  &&  !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
                 return;
 
-            var logEntry = data as LogEntry;
-
-            if (logEntry != null)
+            if (data is LogEntry logEntry)
             {
                 EtwLogEntryEventSource.Log.WriteLogEntry(logEntry);
                 return;
             }
 
-            var stringData = data as string;
-
-            if (stringData != null)
+            if (data is string stringData)
             {
                 EtwLogEntryEventSource.Log.Trace(id, stringData, source, eventType);
                 return;
@@ -102,9 +98,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             {
                 foreach (var d in data)
                 {
-                    var s = d as string;
-
-                    if (s != null)
+                    if (d is string s)
                         writer.WriteLine(s);
                     else
                         d.DumpText(writer);

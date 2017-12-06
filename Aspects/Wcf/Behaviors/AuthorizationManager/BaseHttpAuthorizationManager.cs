@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
@@ -31,10 +31,8 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         {
             if (wcfContext == null)
                 wcfContext = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
-            if (wcfContext == null)
-                throw new ArgumentNullException(nameof(wcfContext));
 
-            WcfContext = wcfContext;
+            WcfContext = wcfContext ?? throw new ArgumentNullException(nameof(wcfContext));
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
         /// <returns>IPrincipal if the call is allowed to be unauthenticated, otherwise <see langword="null"/>.</returns>
         protected IPrincipal AllowedUnauthenticated()
         {
-            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS"  &&
+            var isPreflight = WebOperationContext.Current.IncomingRequest.Method == "OPTIONS" &&
                               (WcfContext.OperationAction?.EndsWith(Constants.PreflightSuffix, StringComparison.OrdinalIgnoreCase) == true);
             var allowUnauthenticated = isPreflight
                                             ? new AllowUnauthenticatedAttribute()
@@ -65,9 +63,10 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             if (allowUnauthenticated?.UnauthenticatedCallsAllowed != true)
                 return null;
 
-            var claims = new List<Claim>();
-
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name));
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, allowUnauthenticated.Name),
+            };
 
             if (!allowUnauthenticated.Role.IsNullOrWhiteSpace())
                 claims.Add(new Claim(ClaimTypes.Role, allowUnauthenticated.Role));

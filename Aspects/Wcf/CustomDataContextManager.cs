@@ -23,7 +23,7 @@ namespace vm.Aspects.Wcf
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
-            
+
             return new SortedDictionary<string, string>
             {
                 { key, value }
@@ -44,7 +44,7 @@ namespace vm.Aspects.Wcf
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
-            
+
             return new SortedDictionary<string, string>(context)
             {
                 { key, value }
@@ -101,7 +101,7 @@ namespace vm.Aspects.Wcf
                 throw new ArgumentNullException(nameof(innerChannel));
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
-            
+
             return CreateContext(innerChannel.GetProperty<IContextManager>().GetContext(), key, value);
         }
 
@@ -153,12 +153,9 @@ namespace vm.Aspects.Wcf
         public static string GetContext(
             string key)
         {
-            object contextProperty;
-            string value;
-
             if (OperationContext.Current != null &&
-                OperationContext.Current.IncomingMessageProperties.TryGetValue(ContextMessageProperty.Name, out contextProperty) &&
-                ((ContextMessageProperty)contextProperty).Context.TryGetValue(key, out value))
+                OperationContext.Current.IncomingMessageProperties.TryGetValue(ContextMessageProperty.Name, out var contextProperty) &&
+                ((ContextMessageProperty)contextProperty).Context.TryGetValue(key, out var value))
                 return value;
             else
                 return null;

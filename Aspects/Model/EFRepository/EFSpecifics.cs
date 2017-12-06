@@ -213,9 +213,7 @@ namespace vm.Aspects.Model.EFRepository
                                                  (pi.PropertyType.IsPrimitive || pi.PropertyType==typeof(string) || pi.PropertyType==typeof(DateTime))))
             {
                 // find a function that can change the property
-                Func<object, object> change;
-
-                if (!_changeValue.TryGetValue(Type.GetTypeCode(pi.PropertyType), out change))
+                if (!_changeValue.TryGetValue(Type.GetTypeCode(pi.PropertyType), out var change))
                     continue;
 
                 // change the property's value and see if the state of the object changes too
@@ -353,7 +351,7 @@ namespace vm.Aspects.Model.EFRepository
             bool isCollection = associated.GetType().IsGenericType && (associated.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))  ||
                                 associated.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(ICollection<>))) != null;
 
-            var isLoaded =  isCollection
+            var isLoaded = isCollection
                                 ? ownerEntry.Collection(propertyName).IsLoaded
                                 : ownerEntry.Reference(propertyName).IsLoaded;
 
@@ -423,7 +421,7 @@ namespace vm.Aspects.Model.EFRepository
             bool isCollection = associated.GetType().IsGenericType && (associated.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))  ||
                                 associated.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && (i.GetGenericTypeDefinition() == typeof(ICollection<>))) != null;
 
-            var isLoaded =  isCollection
+            var isLoaded = isCollection
                                 ? ownerEntry.Collection(propertyName).IsLoaded
                                 : ownerEntry.Reference(propertyName).IsLoaded;
 
@@ -576,9 +574,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>System.Data.Entity.EntityState.</returns>
         public static EFEntityState ConvertState(EntityState state)
         {
-            EFEntityState outState;
-
-            if (!_stateTranslation.TryGetValue(state, out outState))
+            if (!_stateTranslation.TryGetValue(state, out var outState))
                 outState = EFEntityState.Unchanged;
 
             return outState;

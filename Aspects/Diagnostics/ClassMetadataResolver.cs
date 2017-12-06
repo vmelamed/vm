@@ -135,14 +135,13 @@ namespace vm.Aspects.Diagnostics
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            ClassDumpData dumpData;
 
             try
             {
                 TypesDumpDataSync.EnterReadLock();
-                if (TypesDumpData.TryGetValue(type, out dumpData))
+                if (TypesDumpData.TryGetValue(type, out var dumpData))
                     return dumpData;
-                if (type.IsGenericType  &&
+                if (type.IsGenericType &&
                     TypesDumpData.TryGetValue(type.GetGenericTypeDefinition(), out dumpData))
                     return dumpData;
             }
@@ -177,9 +176,8 @@ namespace vm.Aspects.Diagnostics
             TypesDumpDataSync.EnterWriteLock();
             try
             {
-                ClassDumpData dumpData;
 
-                if (!replace  &&  TypesDumpData.TryGetValue(type, out dumpData))
+                if (!replace && TypesDumpData.TryGetValue(type, out var dumpData))
                 {
                     if (dumpData == classDumpData)
                         return;

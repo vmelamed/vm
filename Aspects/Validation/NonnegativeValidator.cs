@@ -25,10 +25,7 @@ namespace vm.Aspects.Validation
             bool negated)
             : base(messageTemplate, tag, negated)
         {
-            if (zero == null)
-                throw new ArgumentNullException(nameof(zero));
-
-            _zero = zero;
+            _zero = zero ?? throw new ArgumentNullException(nameof(zero));
         }
 
         /// <summary>

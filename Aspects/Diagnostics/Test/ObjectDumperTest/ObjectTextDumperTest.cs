@@ -69,7 +69,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
         PrivateType GetDumperClassAccessor() => new PrivateType(typeof(ObjectTextDumper));
 
-        Stopwatch sw = new Stopwatch();
+        Stopwatch _sw = new Stopwatch();
 
         [TestMethod]
         public void TestIsBasicType()
@@ -237,10 +237,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         {
             var target = dumperFactory(w);
 
-            sw.Reset();
-            sw.Start();
+            _sw.Reset();
+            _sw.Start();
             target.Dump(obj, metadata, classDumpAttribute);
-            sw.Stop();
+            _sw.Stop();
 
             var result = w.GetStringBuilder().ToString();
 
@@ -249,17 +249,17 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             return result;
         }
 
-        const string FirstDump  = "First dump";
-        const string SecondDump = "Second dump";
-        const string ThirdDump  = "Third dump";
+        const string _firstDump  = "First dump";
+        const string _secondDump = "Second dump";
+        const string _thirdDump  = "Third dump";
 
         void AssertResult(
             string expected,
             string actual,
             string dumpId)
         {
-            TestContext.WriteLine("{0} ({1}):{2}", dumpId, sw.Elapsed, actual);
-            Debug.WriteLine("{0} ({1}):{2}", dumpId, sw.Elapsed, actual);
+            TestContext.WriteLine("{0} ({1}):{2}", dumpId, _sw.Elapsed, actual);
+            Debug.WriteLine("{0} ({1}):{2}", dumpId, _sw.Elapsed, actual);
             Assert.AreEqual(expected, actual, $"{dumpId} assertion failed.");
         }
 
@@ -280,7 +280,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             {
                 var actual1 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResult(expected, actual1, FirstDump);
+                AssertResult(expected, actual1, _firstDump);
 
                 // --------------------------
 
@@ -288,7 +288,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 {
                     var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResult(expected, actual2, SecondDump);
+                    AssertResult(expected, actual2, _secondDump);
                 }
             }
             if (ObjectTextDumper.UseDumpScriptCache)
@@ -296,7 +296,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 {
                     var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResult(expected, actual3, ThirdDump);
+                    AssertResult(expected, actual3, _thirdDump);
                 }
         }
 
@@ -1231,9 +1231,10 @@ ExpandoObject[]: (System.Dynamic.ExpandoObject, System.Core, Version=4.0.0.0, Cu
             var permissionSet = SecurityManager.GetStandardSandbox(evidence);
 
             // create the app domain:
-            AppDomainSetup setup = new AppDomainSetup();
-
-            setup.ApplicationBase = Path.GetDirectoryName(typeof(T).Assembly.Location);
+            AppDomainSetup setup = new AppDomainSetup
+            {
+                ApplicationBase = Path.GetDirectoryName(typeof(T).Assembly.Location),
+            };
 
             AppDomain domain = AppDomain.CreateDomain(
                                     "TestSandbox",

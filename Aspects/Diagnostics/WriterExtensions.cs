@@ -16,8 +16,8 @@ namespace vm.Aspects.Diagnostics
 {
     static class WriterExtensions
     {
-        static readonly IReadOnlyDictionary<Type,Func<object,ulong>> _castsToUlong = new ReadOnlyDictionary<Type,Func<object,ulong>>(
-            new Dictionary<Type,Func<object,ulong>>()
+        static readonly IReadOnlyDictionary<Type, Func<object, ulong>> _castsToUlong = new ReadOnlyDictionary<Type, Func<object, ulong>>(
+            new Dictionary<Type, Func<object, ulong>>()
             {
                 [typeof(byte)]           = v => (ulong)(byte)v,
                 [typeof(sbyte)]          = v => (ulong)(sbyte)v & 0xFF,
@@ -205,10 +205,9 @@ namespace vm.Aspects.Diagnostics
                     dumpMaxLength = dumpAttribute.MaxLength;
             }
 
-            Action<TextWriter, object, int> dump;
             var type = value.GetType();
 
-            if (!_dumpBasicValues.TryGetValue(type, out dump))
+            if (!_dumpBasicValues.TryGetValue(type, out var dump))
                 if (type.IsEnum)
                     dump = DumpEnumValue;
                 else
@@ -315,19 +314,19 @@ namespace vm.Aspects.Diagnostics
         public static IReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>> _memberInfoDumpers = new ReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>>(
             new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
             {
-                [typeof(Type)]              = (w,mi) => w.Dumped((Type)mi),
-                [typeof(TypeInfo)]          = (w,mi) => w.Dumped((Type)mi),
+                [typeof(Type)]              = (w, mi) => w.Dumped((Type)mi),
+                [typeof(TypeInfo)]          = (w, mi) => w.Dumped((Type)mi),
 
-                [typeof(EventInfo)]         = (w,mi) => w.Dumped((EventInfo)mi),
-                [typeof(ComAwareEventInfo)] = (w,mi) => w.Dumped((EventInfo)mi),
+                [typeof(EventInfo)]         = (w, mi) => w.Dumped((EventInfo)mi),
+                [typeof(ComAwareEventInfo)] = (w, mi) => w.Dumped((EventInfo)mi),
 
-                [typeof(FieldInfo)]         = (w,mi) => w.Dumped((FieldInfo)mi),
-                [typeof(FieldBuilder)]      = (w,mi) => w.Dumped((FieldInfo)mi),
+                [typeof(FieldInfo)]         = (w, mi) => w.Dumped((FieldInfo)mi),
+                [typeof(FieldBuilder)]      = (w, mi) => w.Dumped((FieldInfo)mi),
 
-                [typeof(PropertyInfo)]      = (w,mi) => w.Dumped((PropertyInfo)mi),
-                [typeof(PropertyBuilder)]   = (w,mi) => w.Dumped((PropertyInfo)mi),
+                [typeof(PropertyInfo)]      = (w, mi) => w.Dumped((PropertyInfo)mi),
+                [typeof(PropertyBuilder)]   = (w, mi) => w.Dumped((PropertyInfo)mi),
 
-                [typeof(MethodInfo)]        = (w,mi) => w.Dumped((MethodInfo)mi),
+                [typeof(MethodInfo)]        = (w, mi) => w.Dumped((MethodInfo)mi),
             });
 
         static bool Dumped(
@@ -522,7 +521,7 @@ namespace vm.Aspects.Diagnostics
             if (unindent == null)
                 throw new ArgumentNullException(nameof(unindent));
 
-            var sequenceType  = sequence.GetType();
+            var sequenceType = sequence.GetType();
             var typeArguments = sequenceType.DictionaryTypeArguments();
 
             if (typeArguments == null)
@@ -530,7 +529,7 @@ namespace vm.Aspects.Diagnostics
 
             Debug.Assert(typeArguments.Length == 2);
 
-            var keyType   = typeArguments[0];
+            var keyType = typeArguments[0];
             var valueType = typeArguments[1];
 
             int count = 0;
@@ -650,9 +649,7 @@ namespace vm.Aspects.Diagnostics
                         ? count.ToString(CultureInfo.InvariantCulture)
                         : string.Empty);
 
-            var bytes = sequence as byte[];
-
-            if (bytes != null)
+            if (sequence is byte[] bytes)
             {
                 // dump no more than max elements from the sequence:
                 writer.Write(BitConverter.ToString(bytes, 0, max));

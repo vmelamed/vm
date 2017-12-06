@@ -16,10 +16,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             {
                 if (objectTextDumper == null)
                     throw new ArgumentNullException(nameof(objectTextDumper));
-                if (objectType == null)
-                    throw new ArgumentNullException(nameof(objectType));
 
-                ObjectType             = objectType;
+                ObjectType             = objectType ?? throw new ArgumentNullException(nameof(objectType));
                 ClassDumpData          = classDumpData;
                 PropertiesBindingFlags = objectTextDumper.PropertiesBindingFlags;
                 FieldsBindingFlags     = objectTextDumper.FieldsBindingFlags;
@@ -58,7 +56,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             public static bool operator ==(ScriptLookup left, ScriptLookup right) => left.Equals(right);
 
-            public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left==right);
+            public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left == right);
             #endregion
         };
 

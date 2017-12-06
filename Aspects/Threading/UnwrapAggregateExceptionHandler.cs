@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using System;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Threading
@@ -40,10 +40,8 @@ namespace vm.Aspects.Threading
                 innerException == exception)
                 return exception;
 
-            Exception newException;
-
             // pass the inner exception to the requested exception handler
-            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out newException))
+            if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out var newException))
                 if (newException != null)
                 {
                     if (handlingInstanceId != default(Guid))

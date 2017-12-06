@@ -85,7 +85,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var stack = new Stack<XElement>();
 
             // pop the expressions:
-            for (var i = 0; i<numberOfExpressions; i++)
+            for (var i = 0; i < numberOfExpressions; i++)
                 stack.Push(_elements.Pop());
 
             return stack;
@@ -134,7 +134,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                           from a in body.Descendants(XNames.Elements.Parameter)
                           let pName = p.Attribute(XNames.Attributes.Name).Value
                           let aa = a.Attribute(XNames.Attributes.Name)
-                          let aName = aa != null ? aa.Value : null
+                          let aName = aa?.Value
                           where aName == pName
                           select a;
 
@@ -156,7 +156,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
         static XElement ReplaceParameterWithReference(XElement parameter, XElement body)
         {
-            if (parameter != null  &&  body == null)
+            if (parameter != null && body == null)
                 throw new ArgumentNullException(nameof(body));
 
             if (parameter == null)
@@ -167,7 +167,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             // replace all parameters in the body...
             var varRefs = from p in body.Descendants(XNames.Elements.Parameter)
                           let aa = p.Attribute(XNames.Attributes.Name)
-                          let aName = aa != null ? aa.Value : null
+                          let aName = aa?.Value
                           where aName == pName
                           select p;
 
@@ -220,35 +220,26 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>An XML element or <see langword="null"/> if <paramref name="memberInfo"/> is <see langword="null"/>.</returns>
         static XElement VisitMemberInfo(MemberInfo memberInfo)
         {
-            if (memberInfo == null)
+            switch (memberInfo)
+            {
+            case PropertyInfo p:
+                return VisitPropertyInfo(p);
+
+            case ConstructorInfo c:
+                return VisitConstructorInfo(c);
+
+            case MethodInfo m:
+                return VisitMemberInfo(m);
+
+            case FieldInfo f:
+                return VisitFieldInfo(f);
+
+            case EventInfo e:
+                return VisitEventInfo(e);
+
+            default:
                 return null;
-
-            var property = memberInfo as PropertyInfo;
-
-            if (property != null)
-                return VisitPropertyInfo(property);
-
-            var constructor = memberInfo as ConstructorInfo;
-
-            if (constructor != null)
-                return VisitConstructorInfo(constructor);
-
-            var method = memberInfo as MethodInfo;
-
-            if (method != null)
-                return VisitMemberInfo(method);
-
-            var field = memberInfo as FieldInfo;
-
-            if (field != null)
-                return VisitFieldInfo(field);
-
-            var @event = memberInfo as EventInfo;
-
-            if (@event != null)
-                return VisitEventInfo(@event);
-
-            return null;
+            }
         }
 
         /// <summary>
@@ -268,16 +259,16 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 if (methodInfo.IsPrivate)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
                 else
-                    if (methodInfo.IsAssembly)
+                if (methodInfo.IsAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
                 else
-                        if (methodInfo.IsFamily)
+                if (methodInfo.IsFamily)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
                 else
-                            if (methodInfo.IsFamilyAndAssembly)
+                if (methodInfo.IsFamilyAndAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
                 else
-                                if (methodInfo.IsFamilyOrAssembly)
+                if (methodInfo.IsFamilyOrAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
 
@@ -309,16 +300,16 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 if (constructorInfo.IsPrivate)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
                 else
-                    if (constructorInfo.IsAssembly)
+                if (constructorInfo.IsAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
                 else
-                        if (constructorInfo.IsFamily)
+                if (constructorInfo.IsFamily)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
                 else
-                            if (constructorInfo.IsFamilyAndAssembly)
+                if (constructorInfo.IsFamilyAndAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
                 else
-                                if (constructorInfo.IsFamilyOrAssembly)
+                if (constructorInfo.IsFamilyOrAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
 
@@ -382,19 +373,18 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 if (fieldInfo.IsAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Assembly);
                 else
-                    if (fieldInfo.IsFamily)
+                if (fieldInfo.IsFamily)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Family);
                 else
-                        if (fieldInfo.IsPrivate)
+                if (fieldInfo.IsPrivate)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.Private);
                 else
-                            if (fieldInfo.IsFamilyAndAssembly)
+                if (fieldInfo.IsFamilyAndAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyAndAssembly);
                 else
-                                if (fieldInfo.IsFamilyOrAssembly)
+                if (fieldInfo.IsFamilyOrAssembly)
                     visibility = new XAttribute(XNames.Attributes.Visibility, XNames.Attributes.FamilyOrAssembly);
             }
-
 
             return new XElement(
                     XNames.Elements.Field,
