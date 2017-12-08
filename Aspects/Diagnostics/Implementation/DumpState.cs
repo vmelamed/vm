@@ -55,22 +55,13 @@ namespace vm.Aspects.Diagnostics.Implementation
             DumpScript dumpScript,
             bool isTopLevelClass)
         {
-            if (instance == null)
-                throw new ArgumentNullException(nameof(instance));
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            if (instanceDumpAttribute == null)
-                throw new ArgumentNullException(nameof(instanceDumpAttribute));
-            if (dumper == null)
-                throw new ArgumentNullException(nameof(dumper));
-
-            _dumper               = dumper;
+            _dumper               = dumper ?? throw new ArgumentNullException(nameof(dumper));
             _isTopLevelClass      = isTopLevelClass;
-            Instance              = instance;
+            Instance              = instance ?? throw new ArgumentNullException(nameof(instance));
             InstanceType          = instance.GetType();
-            CurrentType           = type;
+            CurrentType           = type ?? throw new ArgumentNullException(nameof(type));
             ClassDumpData         = classDumpData;
-            InstanceDumpAttribute = instanceDumpAttribute;
+            InstanceDumpAttribute = instanceDumpAttribute ?? throw new ArgumentNullException(nameof(instanceDumpAttribute));
             DumpScript            = dumpScript;
 
             if (_isTopLevelClass)
@@ -439,8 +430,8 @@ namespace vm.Aspects.Diagnostics.Implementation
                 pi = InstanceType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags);
             }
 
-            var fi       = CurrentProperty as FieldInfo;
-            Type type    = null;
+            var fi = CurrentProperty as FieldInfo;
+            Type type = null;
             object value = null;
 
             try
@@ -570,8 +561,8 @@ namespace vm.Aspects.Diagnostics.Implementation
                 throw new ArgumentNullException(nameof(dumpAttribute));
 
             var sequenceType = sequence.GetType();
-            var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
-            var dumpCustom   = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
+            var isCustom = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
+            var dumpCustom = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
 
             if (isCustom  &&  !dumpCustom)
                 return false;
@@ -622,7 +613,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             // did they specify DumpAttribute.DumpMethod?
             var dumpMethodName = CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass      = CurrentPropertyDumpAttribute.DumpClass;
+            var dumpClass = CurrentPropertyDumpAttribute.DumpClass;
 
             if (dumpClass == null  &&  dumpMethodName.IsNullOrWhiteSpace())
                 return false;
@@ -630,7 +621,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (dumpMethodName.IsNullOrWhiteSpace())
                 dumpMethodName = "Dump";
 
-            MethodInfo dumpMethod  = null;  // best match
+            MethodInfo dumpMethod = null;  // best match
             MethodInfo dumpMethod2 = null;  // second best
 
             // try the external class if specified

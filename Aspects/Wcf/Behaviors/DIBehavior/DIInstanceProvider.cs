@@ -142,12 +142,11 @@ namespace vm.Aspects.Wcf.Behaviors
         {
             get
             {
-                IUnityContainer current;
                 var instanceContext = OperationContext.Current?.InstanceContext;
 
                 if (instanceContext != null)
                     using (_sync.ReaderLock())
-                        if (_containers.TryGetValue(instanceContext, out current))
+                        if (_containers.TryGetValue(instanceContext, out var current))
                             return current;
 
                 return DIContainer.Root;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Deployment.Internal.CodeSigning;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +10,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -20,14 +20,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     /// </summary>
     public class RsaXmlSigner : IXmlSigner
     {
-        const int Sha1ProviderType   = 1;
-        const int Sha256ProviderType = 24;
-        const int DsaProviderType    = 13;
+        const int _sha1ProviderType = 1;
+        const int _sha256ProviderType = 24;
+        const int _dsaProviderType = 13;
 
-        const string XPathAllAttributes    = "//@{0}";
-        const string XPathRootElement      = "/*";
-        const string XmlSignatureLocalName = "Signature";
-        const string XmlSignedIdFormat     = "signed-{0}";
+        const string _xPathAllAttributes = "//@{0}";
+        const string _xPathRootElement = "/*";
+        const string _xmlSignatureLocalName = "Signature";
+        const string _xmlSignedIdFormat = "signed-{0}";
 
         readonly string _hashAlgorithmName;
         readonly string _canonicalizationMethod;
@@ -118,16 +118,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 _canonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
                 _signatureMethod        = XmlConstants.XmlDsigRSAPKCS1SHA256Url;
                 _digestMethod           = XmlConstants.Sha256DigestMethod;
-                providerType            = Sha256ProviderType;
+                providerType            = _sha256ProviderType;
                 break;
 
 #pragma warning disable 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
             case Algorithms.Hash.Sha1:
 #pragma warning restore 0612, 0618 // Type or member is obsolete
-                    _canonicalizationMethod = SignedXml.XmlDsigCanonicalizationUrl;
+                _canonicalizationMethod = SignedXml.XmlDsigCanonicalizationUrl;
                 _signatureMethod        = SignedXml.XmlDsigRSASHA1Url;
                 _digestMethod           = XmlConstants.Sha1DigestMethod;
-                providerType            = Sha1ProviderType;
+                providerType            = _sha1ProviderType;
                 break;
 
             default:
@@ -291,7 +291,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             if (SignatureLocation != SignatureLocation.Detached)
                 signature = document;
 
-            var signatureElement = signature.GetElementsByTagName(XmlSignatureLocalName)
+            var signatureElement = signature.GetElementsByTagName(_xmlSignatureLocalName)
                                             .OfType<XmlElement>()
                                             .FirstOrDefault();
 
@@ -323,7 +323,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             if (SignatureLocation == SignatureLocation.Enveloping)
                 // ignore the path - it doesn't make sense - always sign the document's root element and import it into /Signature/Object
-                xmlPath = XPathRootElement;
+                xmlPath = _xPathRootElement;
 
             if (xmlPath != null)
             {
@@ -367,7 +367,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 foreach (var name in nameIds)
                     xmlIds.UnionWith(
                         document.SelectNodes(
-                                    string.Format(CultureInfo.InvariantCulture, XPathAllAttributes, name),
+                                    string.Format(CultureInfo.InvariantCulture, _xPathAllAttributes, name),
                                     nsManager)
                                 .OfType<XmlAttribute>()
                                 .Select(a => a.Value)
@@ -397,9 +397,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         // find a unique ID - any one of the set should do
                         foreach (var name in nameIds)
                         {
-                            var attribute = element.SelectSingleNode("@"+name, nsManager) as XmlAttribute;
-
-                            if (attribute!=null  &&  attribute.Value != null)
+                            if (element.SelectSingleNode("@" + name, nsManager) is XmlAttribute attribute && attribute.Value != null)
                             {
                                 xmlId = attribute.Value;
                                 break;
@@ -419,9 +417,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                     }
 
                     // create the reference object
-                    var reference = new Reference("#"+xmlId);
-
-                    reference.DigestMethod = _digestMethod;
+                    var reference = new Reference("#" + xmlId)
+                    {
+                        DigestMethod = _digestMethod
+                    };
 
                     switch (HashAlgorithmName)
                     {
@@ -430,7 +429,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         break;
 
 #pragma warning disable 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
-                        case Algorithms.Hash.Sha1:
+                    case Algorithms.Hash.Sha1:
                         reference.AddTransform(new XmlDsigC14NTransform());
                         break;
 #pragma warning restore 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
@@ -460,7 +459,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string xmlId;
 
             do
-                xmlId = string.Format(CultureInfo.InvariantCulture, XmlSignedIdFormat, ++id);
+                xmlId = string.Format(CultureInfo.InvariantCulture, _xmlSignedIdFormat, ++id);
             while (xmlIds.Contains(xmlId));
 
             xmlIds.Add(xmlId);

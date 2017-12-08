@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Security;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -10,12 +10,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     public class PasswordProtectedKeyCipherTest : GenericCipherTest<PasswordProtectedKeyCipher>
     {
         public override ICipherAsync GetCipher(bool base64 = false)
-        {
-            var cipher = new PasswordProtectedKeyCipher("password");
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new PasswordProtectedKeyCipher("password")
+            {
+                Base64Encoded = base64,
+            };
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
         {
@@ -109,9 +107,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             GC.Collect();
 
-            PasswordProtectedKeyCipher collected;
 
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
         #endregion
 

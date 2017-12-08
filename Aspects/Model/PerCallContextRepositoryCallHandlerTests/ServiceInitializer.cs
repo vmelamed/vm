@@ -19,10 +19,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             [Dependency("transient")]
             IRepository repository)
         {
-            if (repository == null)
-                throw new ArgumentNullException(nameof(repository));
-
-            _repository = repository;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         public bool IsInitialized { get; private set; }
@@ -80,9 +77,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
             }
             catch (Exception x)
             {
-                Exception y;
-
-                if (Facility.ExceptionManager.HandleException(x, ExceptionPolicyProvider.LogAndRethrowPolicyName, out y)  &&  y != null)
+                if (Facility.ExceptionManager.HandleException(x, ExceptionPolicyProvider.LogAndRethrowPolicyName, out var y) && y != null)
                     throw y;
 
                 throw;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Common;
@@ -10,8 +12,6 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -69,9 +69,7 @@ namespace vm.Aspects.Model.EFRepository
 
                 DoRegisterCommon(container, registrations, true);
 
-                var clock = ServiceLocator.Current.GetInstance<IClock>() as TestClock;
-
-                if (clock != null)
+                if (ServiceLocator.Current.GetInstance<IClock>() is TestClock clock)
                     clock.StartTime = DateTime.Parse("2016-01-01T00:00:00.0000000Z", CultureInfo.InvariantCulture);
             }
 

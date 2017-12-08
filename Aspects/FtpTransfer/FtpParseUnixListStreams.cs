@@ -56,14 +56,11 @@ namespace vm.Aspects.FtpTransfer
             if (match == null)
                 throw new ArgumentNullException(nameof(match));
 
-            int num;
-            DateTime dt;
-
             return new FtpFileListEntry
             {
                 IsFolder     = string.Compare(match.Groups["dir"].Value, "d", StringComparison.OrdinalIgnoreCase) == 0,
                 AccessRights = match.Groups["access"].Value,
-                Number       = int.TryParse(match.Groups["num"].Value, out num) ? num : 0,
+                Number       = int.TryParse(match.Groups["num"].Value, out var num) ? num : 0,
                 Owner        = match.Groups["owner"].Value,
                 Group        = match.Groups["group"].Value,
                 Name         = match.Groups["name"].Value,
@@ -72,7 +69,7 @@ namespace vm.Aspects.FtpTransfer
                                                       _dateTimeFormats,
                                                       CultureInfo.InvariantCulture,
                                                       DateTimeStyles.AllowInnerWhite | DateTimeStyles.AssumeLocal | DateTimeStyles.AdjustToUniversal,
-                                                      out dt)
+                                                      out var dt)
                                     ? dt
                                     : Facility.Clock.UtcNow,
             };

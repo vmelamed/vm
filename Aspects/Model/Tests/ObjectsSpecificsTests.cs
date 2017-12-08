@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Transactions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Model.InMemory;
 using vm.Aspects.Model.Repository;
 
@@ -38,9 +38,10 @@ namespace vm.Aspects.Model.Tests
 
                 Assert.IsFalse(GetSpecifics().IsProxy(e1));
 
-                var e2 = new TestEntity();
-
-                e2.Id = target.GetStoreId<TestEntity, long>();
+                var e2 = new TestEntity
+                {
+                    Id = target.GetStoreId<TestEntity, long>(),
+                };
 
                 Assert.IsFalse(GetSpecifics().IsProxy(e2));
             }
@@ -61,7 +62,7 @@ namespace vm.Aspects.Model.Tests
                 id = target.GetStoreId<TestEntity, long>();
                 principal = target.CreateEntity<TestEntity>();
                 principal.Id = id;
-                principal.Name = "principal"+id;
+                principal.Name = "principal" + id;
 
                 associated = target.CreateEntity<TestXEntity>();
                 associated.Id = target.GetStoreId<TestEntity, long>();
@@ -89,7 +90,7 @@ namespace vm.Aspects.Model.Tests
                 Assert.IsTrue(target.IsInitialized);
 
                 var seq = target.Entities<TestEntity>()
-                                .Where(e => e.Id==id);
+                                .Where(e => e.Id == id);
                 principal = GetSpecifics().FetchAlso(seq, e => e.XEntity)
                                           .FirstOrDefault();
                 associated = principal.XEntity;

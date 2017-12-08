@@ -13,7 +13,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Maps OID-s to algorithm names.
         /// </summary>
-        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification="N/A")]
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "N/A")]
         static readonly IDictionary<string, string> HashAlgorithms = new Dictionary<string, string>(
             new Dictionary<string, string>
             {
@@ -74,9 +74,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (certificate == null)
                 throw new ArgumentNullException(nameof(certificate));
 
-            string hashAlgorithmName;
-
-            if (HashAlgorithms.TryGetValue(certificate.SignatureAlgorithm.Value, out hashAlgorithmName))
+            if (HashAlgorithms.TryGetValue(certificate.SignatureAlgorithm.Value, out var hashAlgorithmName))
                 return hashAlgorithmName;
 
             throw new NotSupportedException(

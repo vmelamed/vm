@@ -48,10 +48,7 @@ namespace vm.Aspects.Threading
             Func<T, Exception, int, Task<bool>> isSuccessAsync = null,
             Func<T, Exception, int, Task<T>> epilogueAsync = null)
         {
-            if (operationAsync == null)
-                throw new ArgumentNullException(nameof(operationAsync));
-
-            _operationAsync = operationAsync;
+            _operationAsync = operationAsync ?? throw new ArgumentNullException(nameof(operationAsync));
             _isFailureAsync = isFailureAsync ?? RetryConstants.IsFailureAsync;
             _isSuccessAsync = isSuccessAsync ?? RetryConstants.IsSuccessAsync;
             _epilogueAsync  = epilogueAsync  ?? RetryConstants.EpilogueAsync;

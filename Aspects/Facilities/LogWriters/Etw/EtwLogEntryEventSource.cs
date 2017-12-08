@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -6,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities.LogWriters.Etw
 {
@@ -22,7 +22,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         /// </summary>
         public static EtwLogEntryEventSource Log { get; }
 
-        static readonly IReadOnlyDictionary<TraceEventType, Action<int,int,string,string,string,string,string>> _writeLogEntry;
+        static readonly IReadOnlyDictionary<TraceEventType, Action<int, int, string, string, string, string, string>> _writeLogEntry;
         static readonly IReadOnlyDictionary<TraceEventType, Action<string>> _writeMessage;
         static readonly IReadOnlyDictionary<TraceEventType, Action<string>> _dumpObject;
         static readonly IReadOnlyDictionary<TraceEventType, Action<int, string, string>> _trace;
@@ -129,9 +129,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled(eventType, Keywords.ELLab | Keywords.Message))
                 return;
 
-            Action<string> writeMessage;
-
-            if (!_writeMessage.TryGetValue(eventType, out writeMessage))
+            if (!_writeMessage.TryGetValue(eventType, out var writeMessage))
                 writeMessage = Log.InformationalMessage;
 
             writeMessage(message);
@@ -152,9 +150,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
 
             var dataDump = data.DumpString();
 
-            Action<string> dumpObject;
-
-            if (!_dumpObject.TryGetValue(eventType, out dumpObject))
+            if (!_dumpObject.TryGetValue(eventType, out var dumpObject))
                 dumpObject = Log.InformationalDumpObject;
 
             dumpObject(dataDump);
@@ -177,9 +173,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled(eventType, Keywords.ELLab | Keywords.Trace))
                 return;
 
-            Action<int, string, string> trace;
-
-            if (!_trace.TryGetValue(eventType, out trace))
+            if (!_trace.TryGetValue(eventType, out var trace))
                 trace = Log.InformationalTrace;
 
             trace(id, source, text);
@@ -199,15 +193,13 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
             if (!IsEnabled(logEntry.Severity, Keywords.ELLab | Keywords.LogEntry))
                 return;
 
-            var severity           = logEntry.Severity.ToString();
-            var message            = logEntry.Message;
-            var messages           = logEntry.ErrorMessages;
-            var categories         = DumpCategories(logEntry.Categories);
+            var severity = logEntry.Severity.ToString();
+            var message = logEntry.Message;
+            var messages = logEntry.ErrorMessages;
+            var categories = DumpCategories(logEntry.Categories);
             var extendedProperties = DumpExtendedProperties(logEntry.ExtendedProperties);
 
-            Action<int, int, string, string, string, string, string> writeLogEntry;
-
-            if (!_writeLogEntry.TryGetValue(logEntry.Severity, out writeLogEntry))
+            if (!_writeLogEntry.TryGetValue(logEntry.Severity, out var writeLogEntry))
                 writeLogEntry = Log.InformationalLogEntry;
 
             writeLogEntry(

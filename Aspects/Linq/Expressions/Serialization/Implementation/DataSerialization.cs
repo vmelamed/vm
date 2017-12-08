@@ -232,10 +232,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 throw new SerializationException(
                             $"Don't know how to serialize type \"{type.AssemblyQualifiedName}\".");
 
-            Action<object, Type, XElement> serializer;
-
             // get the serializer from the table, or
-            if (_constantSerializers.TryGetValue(type, out serializer))
+            if (_constantSerializers.TryGetValue(type, out var serializer))
                 return serializer;
 
             // if it is an enum - return the SerializeEnum
@@ -364,10 +362,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (nullable == null)
                 return;
 
-            Action<object, Type, XElement> serializer;
-
             // get the serializer for the type argument from the table or
-            if (_constantSerializers.TryGetValue(typeArgument, out serializer))
+            if (_constantSerializers.TryGetValue(typeArgument, out var serializer))
                 serializer(nullable, typeArgument, nullableElement);
             else
             {
@@ -479,9 +475,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             type = GetType(element);
 
-            var constructor           = type.GetConstructors()[0];
+            var constructor = type.GetConstructors()[0];
             var constructorParameters = constructor.GetParameters();
-            var parameters            = new object[constructorParameters.Length];
+            var parameters = new object[constructorParameters.Length];
 
             for (var i = 0; i < constructorParameters.Length; i++)
             {

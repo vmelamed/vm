@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -10,20 +10,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     public class EncryptedNewKeyCipherTest : GenericCipherTest<EncryptedNewKeyCipher>
     {
         public override ICipherAsync GetCipher(bool base64 = false)
-        {
-            var cipher = new EncryptedNewKeyCipher(CertificateFactory.GetDecryptingCertificate());
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new EncryptedNewKeyCipher(CertificateFactory.GetDecryptingCertificate())
+            {
+                Base64Encoded = base64,
+            };
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
-        {
-            var cipher = new EncryptedNewKeyCipher(CertificateFactory.GetEncryptingCertificate());
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new EncryptedNewKeyCipher(CertificateFactory.GetEncryptingCertificate())
+            {
+                Base64Encoded = base64,
+            };
 
         #region Test disabled IKeyManagement
         [TestMethod]
@@ -112,9 +108,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             GC.Collect();
 
-            EncryptedNewKeyCipher collected;
 
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
         #endregion
 

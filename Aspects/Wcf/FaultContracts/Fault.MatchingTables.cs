@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -11,8 +13,6 @@ using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Threading;
@@ -34,10 +34,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             if (!typeof(Exception).IsAssignableFrom(exceptionType))
                 throw new ArgumentException("The argument must be an exception type.");
 
-            Type faultType;
-
             using (_lock.ReaderLock())
-                return _exceptionToFault.TryGetValue(exceptionType, out faultType)
+                return _exceptionToFault.TryGetValue(exceptionType, out var faultType)
                             ? faultType
                             : null;
         }
@@ -55,10 +53,8 @@ namespace vm.Aspects.Wcf.FaultContracts
             if (!typeof(Fault).IsAssignableFrom(faultType))
                 throw new ArgumentException("The argument must be a fault type.");
 
-            Type exceptionType;
-
             using (_lock.ReaderLock())
-                return _faultToException.TryGetValue(faultType, out exceptionType)
+                return _faultToException.TryGetValue(faultType, out var exceptionType)
                         ? exceptionType
                         : null;
         }
@@ -95,9 +91,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             {
                 if (!force)
                 {
-                    Type existing;
-
-                    if (_exceptionToFault.TryGetValue(typeof(TException), out existing)  &&  existing != typeof(TFault))
+                    if (_exceptionToFault.TryGetValue(typeof(TException), out var existing) && existing != typeof(TFault))
                         throw new InvalidOperationException($"The type {typeof(TException).Name} is already mapped to {existing.Name}.");
 
                     if (_faultToException.TryGetValue(typeof(TFault), out existing)  &&  existing != typeof(TException))
@@ -175,9 +169,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             if (!typeof(Exception).IsAssignableFrom(exceptionType))
                 throw new ArgumentException("The argument must be Exception or descendant type.");
 
-            Func<Exception, Fault> factory;
-
-            if (_exceptionToFaultFactories.TryGetValue(exceptionType, out factory))
+            if (_exceptionToFaultFactories.TryGetValue(exceptionType, out var factory))
                 return factory;
             else
                 return null;
@@ -204,9 +196,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             if (!typeof(Fault).IsAssignableFrom(faultType))
                 throw new ArgumentException("The argument must be Exception or descendant type.");
 
-            Func<Fault, Exception> factory;
-
-            if (_faultToExceptionFactories.TryGetValue(faultType, out factory))
+            if (_faultToExceptionFactories.TryGetValue(faultType, out var factory))
                 return factory;
             else
                 return null;
@@ -443,7 +433,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                                                             {
                                                                 CheckFault<ObjectNotFoundFault>(f);
 
-                                                                var x = new ObjectNotFoundException(((ObjectNotFoundFault)f).ObjectIdentifier,null,f.Message);
+                                                                var x = new ObjectNotFoundException(((ObjectNotFoundFault)f).ObjectIdentifier, null, f.Message);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
                                                                 return x.PopulateData(f);
                                                             },
@@ -451,7 +441,7 @@ namespace vm.Aspects.Wcf.FaultContracts
                                                             {
                                                                 CheckFault<Fault>(f);
 
-                                                                var x = new ObjectIdentifierNotUniqueException(((ObjectIdentifierNotUniqueFault)f).ObjectIdentifier,null,f.Message);
+                                                                var x = new ObjectIdentifierNotUniqueException(((ObjectIdentifierNotUniqueFault)f).ObjectIdentifier, null, f.Message);
                                                                 x.Data["ObjectType"] = ((ObjectNotFoundFault)f).ObjectType;
                                                                 return x.PopulateData(f);
                                                             },
@@ -459,7 +449,7 @@ namespace vm.Aspects.Wcf.FaultContracts
             [typeof(RepeatableOperationFault)]              = f => { CheckFault<Fault>(f); return new RepeatableOperationException(f.Message).PopulateData(f); },
             [typeof(SerializationFault)]                    = f => { CheckFault<Fault>(f); return new SerializationException(f.Message).PopulateData(f); },
             [typeof(UnauthorizedAccessFault)]               = f => { CheckFault<Fault>(f); return new UnauthorizedAccessException(f.Message).PopulateData(f); },
-            [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message,null,((XmlFault)f).LineNumber,((XmlFault)f).LinePosition).PopulateData(f); },
+            [typeof(XmlFault)]                              = f => { CheckFault<Fault>(f); return new XmlException(f.Message, null, ((XmlFault)f).LineNumber, ((XmlFault)f).LinePosition).PopulateData(f); },
             [typeof(AuthenticationFault)]                   = f => { CheckFault<Fault>(f); return new AuthenticationException(f.Message).PopulateData(f); },
             [typeof(InvalidObjectFault)]                    = f =>
                                                             {

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace vm.Aspects.Policies
 {
@@ -73,11 +73,8 @@ namespace vm.Aspects.Policies
             ValidatorFactory validatorFactory,
             int handlerOrder)
         {
-            if (validatorFactory == null)
-                throw new ArgumentNullException(nameof(validatorFactory));
-
             _ruleSet          = ruleset;
-            _validatorFactory = validatorFactory;
+            _validatorFactory = validatorFactory ?? throw new ArgumentNullException(nameof(validatorFactory));
             Order             = handlerOrder;
         }
         #endregion
@@ -158,9 +155,7 @@ namespace vm.Aspects.Policies
             var parameterValidator = CreateParameterValidator(parameterInfo, parameterValue);
 
             Validator typeValidator = null;
-            var parameterType = parameterValue != null
-                                    ? parameterValue.GetType()
-                                    : null;
+            var parameterType = parameterValue?.GetType();
 
             // get the parameters defined on the parameter's type
             if (parameterType != null &&
@@ -207,7 +202,7 @@ namespace vm.Aspects.Policies
                 // get the type of the parameter either from the parameter value or from the parameter info if the value is null
                 compositeBuilder.AddValueValidator(
                     descriptor.CreateValidator(
-                        parameterValue!=null
+                        parameterValue != null
                             ? parameterValue.GetType()
                             : parameterInfo.ParameterType,
                         null,

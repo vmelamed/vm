@@ -69,12 +69,11 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             }
 
             var exceptions = new List<Exception>();
-            SecurityToken token;
 
             foreach (var tvp in _tokenValidationParameters)
                 try
                 {
-                    var claimsPrincipal = _tokenHandler.ValidateToken(jwt, tvp.Value, out token);
+                    var claimsPrincipal = _tokenHandler.ValidateToken(jwt, tvp.Value, out var token);
 
                     operationContext.SetPrincipal(claimsPrincipal);
                     return true;

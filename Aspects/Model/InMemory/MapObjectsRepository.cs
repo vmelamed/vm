@@ -90,9 +90,8 @@ namespace vm.Aspects.Model.InMemory
                 throw new InvalidOperationException("The repository does not support this type.");
 
             var type = typeof(T);
-            List<DomainEntity<long, string>> list;
 
-            if (_entities.TryGetValue(type, out list))
+            if (_entities.TryGetValue(type, out var list))
                 return list;
 
             // search for base or derived type entry

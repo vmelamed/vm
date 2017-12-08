@@ -14,15 +14,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 Type type,
                 string name)
             {
-                if (type == null)
-                    throw new ArgumentNullException(nameof(type));
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
                 if (name.IsNullOrWhiteSpace())
                     name = string.Empty;
 
-                Type = type;
+                Type = type ?? throw new ArgumentNullException(nameof(type));
                 Name = name;
             }
 

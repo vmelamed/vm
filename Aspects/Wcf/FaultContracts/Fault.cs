@@ -31,9 +31,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Fault()
         {
-            HttpStatusCode code;
-
-            HttpStatusCode = FaultToHttpStatusCode.TryGetValue(GetType(), out code)
+            HttpStatusCode = FaultToHttpStatusCode.TryGetValue(GetType(), out var code)
                                     ? code
                                     : HttpStatusCode.InternalServerError;
 
@@ -114,7 +112,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         {
             get
             {
-                
+
                 return null;
             }
             set
@@ -214,9 +212,7 @@ namespace vm.Aspects.Wcf.FaultContracts
         public static string GetHttpStatusDescription(
             HttpStatusCode code)
         {
-            string description;
-
-            return HttpStatusDescriptions.TryGetValue(code, out description) ? description : null;
+            return HttpStatusDescriptions.TryGetValue(code, out var description) ? description : null;
         }
         #endregion
     }

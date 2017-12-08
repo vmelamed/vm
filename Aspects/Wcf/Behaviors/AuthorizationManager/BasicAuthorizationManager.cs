@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
@@ -16,8 +16,12 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
     /// <seealso cref="ServiceAuthorizationManager" />
     public class BasicAuthorizationManager : BaseHttpAuthorizationManager
     {
-        const string BasicPrefix = "Basic";
-        readonly string _realm   = "vm.Aspects";
+        /// <summary>
+        /// The prefix of the basic authentication header value.
+        /// </summary>
+        public const string BasicPrefix = "Basic";
+
+        readonly string _realm = "vm.Aspects";
 
         readonly IBasicAuthenticate _authentication;
 
@@ -41,13 +45,10 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
             // if not injected by DI, try the CSL - if still not defined, throw exception
             if (authentication == null)
                 authentication = ServiceLocator.Current.GetInstance<IBasicAuthenticate>();
-            if (authentication == null)
-                throw new ArgumentNullException(nameof(authentication));
-
-            _authentication = authentication;
+            _authentication = authentication ?? throw new ArgumentNullException(nameof(authentication));
 
             if (!realm.IsNullOrWhiteSpace())
-                _realm      = realm;
+                _realm = realm;
         }
 
         /// <summary>
@@ -86,23 +87,24 @@ namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
                 }
             }
 
-            var headerParts = authorizationHeader.Split(new char[]{ ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var headerParts = authorizationHeader.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (!headerParts[0].Equals(BasicPrefix, StringComparison.OrdinalIgnoreCase))
                 return false;
 
-            var credentials   = Encoding.ASCII.GetString(
+            var credentials = Encoding.ASCII.GetString(
                                                 Convert.FromBase64String(authorizationHeader.Substring(6)))
                                                     .Split(':');
-            var userName      = credentials[0];
-            var password      = credentials[1];
+            var userName = credentials[0];
+            var password = credentials[1];
             var authenticated = _authentication.Authenticate(userName, password);
 
             if (authenticated)
             {
-                var claims = new List<Claim>();
-
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, userName));
+                var claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userName),
+                };
 
                 operationContext.SetPrincipal(
                     new ClaimsPrincipal(

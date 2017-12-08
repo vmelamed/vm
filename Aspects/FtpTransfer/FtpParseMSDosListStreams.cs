@@ -58,19 +58,16 @@ namespace vm.Aspects.FtpTransfer
             if (match == null)
                 throw new ArgumentNullException(nameof(match));
 
-            int num;
-            DateTime dt;
-
             return new FtpFileListEntry
             {
                 IsFolder = !string.IsNullOrWhiteSpace(match.Groups["isDir"].Value),
                 Name     = match.Groups["name"].Value,
-                FileSize = int.TryParse(match.Groups["size"].Value, out num) ? num : 0,
+                FileSize = int.TryParse(match.Groups["size"].Value, out var num) ? num : 0,
                 Created  = DateTime.TryParseExact(match.Groups["date"].Value,
                                                   _dateTimeFormats,
                                                   CultureInfo.InvariantCulture,
                                                   DateTimeStyles.AllowInnerWhite | DateTimeStyles.AssumeLocal | DateTimeStyles.AdjustToUniversal,
-                                                  out dt)
+                                                  out var dt)
                                 ? dt
                                 : Facility.Clock.UtcNow,
             };

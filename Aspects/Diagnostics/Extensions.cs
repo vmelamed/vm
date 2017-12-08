@@ -306,9 +306,7 @@ namespace vm.Aspects
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            string typeName;
-
-            if (_cSharpTypeName.TryGetValue(type, out typeName))
+            if (_cSharpTypeName.TryGetValue(type, out var typeName))
                 return typeName;
 
             typeName = type.Name;

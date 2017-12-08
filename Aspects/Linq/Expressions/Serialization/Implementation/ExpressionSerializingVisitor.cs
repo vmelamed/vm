@@ -409,9 +409,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (_labelTargetsUid == null)
                 _labelTargetsUid = new Dictionary<LabelTarget, string>();
 
-            string uid;
-
-            if (!_labelTargetsUid.TryGetValue(target, out uid))
+            if (!_labelTargetsUid.TryGetValue(target, out var uid))
             {
                 uid = $"L{++lastLabelUid}";
                 _labelTargetsUid[target] = uid;
@@ -486,7 +484,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                                                             (n, e) =>
                                                                             {
                                                                                 var expression = node.Value != null ? _elements.Pop() : null;
-                                                                                var kind       = new StringBuilder(node.Kind.ToString());
+                                                                                var kind = new StringBuilder(node.Kind.ToString());
 
                                                                                 kind[0] = char.ToLowerInvariant(kind[0]);
 
@@ -581,7 +579,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             var switchCase = base.VisitSwitchCase(node);
 
             var caseExpression = _elements.Pop();
-            var testValues     = new Stack<XElement>();
+            var testValues = new Stack<XElement>();
 
             for (int i = 0; i<node.TestValues.Count(); i++)
                 testValues.Push(
@@ -653,8 +651,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             var catchBlock = base.VisitCatchBlock(node);
 
-            var body     = _elements.Pop();
-            var filter   = node.Filter!=null
+            var body = _elements.Pop();
+            var filter = node.Filter!=null
                                 ? new XElement(
                                         XNames.Elements.Filter,
                                         _elements.Pop())

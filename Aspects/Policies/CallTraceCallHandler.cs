@@ -129,10 +129,7 @@ namespace vm.Aspects.Policies
         public CallTraceCallHandler(
             LogWriter logWriter)
         {
-            if (logWriter == null)
-                throw new ArgumentNullException(nameof(logWriter));
-
-            LogWriter = logWriter;
+            LogWriter = logWriter ?? throw new ArgumentNullException(nameof(logWriter));
         }
 
         #region Overridables
@@ -538,9 +535,7 @@ namespace vm.Aspects.Policies
             writer.WriteLine();
             writer.Write($"Caller Identity: {callData.Identity.Name}");
 
-            var claimsIdentity = callData.Identity as ClaimsIdentity;
-
-            if (claimsIdentity != null)
+            if (callData.Identity is ClaimsIdentity claimsIdentity)
                 claimsIdentity.DumpText(writer, 2);
             else
             {

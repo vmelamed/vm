@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -58,8 +58,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                     throw new ArgumentNullException("The argument \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
                 }
 
-            _signer = new RsaXmlSigner(signCertificate, hashAlgorithmName);
-            _signer.SignatureLocation = SignatureLocation.Enveloped;
+            _signer = new RsaXmlSigner(signCertificate, hashAlgorithmName)
+            {
+                SignatureLocation = SignatureLocation.Enveloped,
+            };
         }
 
         #region Xml signing
