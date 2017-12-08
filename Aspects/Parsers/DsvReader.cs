@@ -113,12 +113,12 @@ namespace vm.Aspects.Parsers
             string fileSeparators = DefaultFileSeparators,
             string fieldMark = DefaultFieldMark)
         {
-            if (string.IsNullOrWhiteSpace(fieldSeparators))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldSeparators));
-            if (string.IsNullOrWhiteSpace(recordSeparators))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(recordSeparators));
-            if (string.IsNullOrWhiteSpace(fieldMark))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldMark));
+            if (fieldSeparators == null)
+                throw new ArgumentNullException(nameof(fieldSeparators));
+            if (recordSeparators == null)
+                throw new ArgumentNullException(nameof(recordSeparators));
+            if (fieldMark == null)
+                throw new ArgumentNullException(nameof(fieldMark));
 
             // the record separators always include CR/LF
             if (recordSeparators.IndexOf(CR) < 0)
