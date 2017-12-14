@@ -370,7 +370,7 @@ namespace <#= sourceCodeNamespace.FullName #>
         var type = GetType(method.Type as CodeTypeRef2);
         var isAsync = type == "Task"  || type.StartsWith("Task<");
 
-        Write("public {0}{1} {2}", isAsync ? "async " : "", type, method.Name);
+        Write("public {0} {1}", type, method.Name);
         WriteLine("(");
 
         PushIndent("    ");
@@ -381,7 +381,7 @@ namespace <#= sourceCodeNamespace.FullName #>
             p => Write("{0} {1}", GetType(p.Type), p.Name),
             () => WriteLine(","));
 
-        Write(") => {0}Proxy.{1}", isAsync ? "await " : "", method.Name);
+        Write(") => WrapOperation(() => Proxy.{0}", method.Name);
 
         // write arguments
         SeparatedList(
@@ -389,26 +389,8 @@ namespace <#= sourceCodeNamespace.FullName #>
             p => Write("{0}", p.Name),
             () => Write(", "),
             () => Write("("),
-            () => WriteLine(");"));
+            () => WriteLine("));"));
 
         PopIndent();
-
-        /*
-        PopIndent();
-        WriteLine(")");
-        WriteLine("{");
-        PushIndent("    ");
-        if (type != "void"  &&  type != "Task")
-            Write("return ");
-        Write("{0}Proxy.{1}(", isAsync ? "await " : "", method.Name);
-        // write arguments
-        SeparatedList(
-            method.Parameters.OfType<CodeParameter>(),
-            p => Write("{0}", p.Name),
-            () => Write(", "));
-        WriteLine(");");
-        PopIndent();
-        WriteLine("}");
-        */
     }
 #>
