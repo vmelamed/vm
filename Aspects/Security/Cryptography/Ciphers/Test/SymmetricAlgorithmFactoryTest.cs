@@ -128,9 +128,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             Thread.Sleep(1000);
             GC.Collect();
 
-            SymmetricAlgorithmFactory collected;
 
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
 
         [TestMethod]

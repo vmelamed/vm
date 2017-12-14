@@ -154,9 +154,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
 
             GC.Collect();
 
-            EncryptedNewKeySignedXmlCipher collected;
 
-            Assert.IsFalse(target.TryGetTarget(out collected));
+            Assert.IsFalse(target.TryGetTarget(out var collected));
         }
         #endregion
     }

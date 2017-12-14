@@ -30,9 +30,7 @@ namespace vm.Aspects
 
             if (memberExpression == null)
             {
-                var unaryExpression = lambda.Body as UnaryExpression;
-
-                if (unaryExpression != null)
+                if (lambda.Body is UnaryExpression unaryExpression)
                     memberExpression = unaryExpression.Operand as MemberExpression;
             }
 

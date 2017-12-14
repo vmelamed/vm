@@ -12,10 +12,7 @@ namespace vm.Aspects.Diagnostics
 
         public ClassDumpData(Type metadata, DumpAttribute dumpAttribute = null)
         {
-            if (metadata == null)
-                throw new ArgumentNullException(nameof(metadata));
-
-            _metadata = metadata;
+            _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
 
             if (dumpAttribute == null)
             {

@@ -113,12 +113,12 @@ namespace vm.Aspects.Parsers
             string fileSeparators = DefaultFileSeparators,
             string fieldMark = DefaultFieldMark)
         {
-            if (string.IsNullOrWhiteSpace(fieldSeparators))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldSeparators));
-            if (string.IsNullOrWhiteSpace(recordSeparators))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(recordSeparators));
-            if (string.IsNullOrWhiteSpace(fieldMark))
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(fieldMark));
+            if (fieldSeparators == null)
+                throw new ArgumentNullException(nameof(fieldSeparators));
+            if (recordSeparators == null)
+                throw new ArgumentNullException(nameof(recordSeparators));
+            if (fieldMark == null)
+                throw new ArgumentNullException(nameof(fieldMark));
 
             // the record separators always include CR/LF
             if (recordSeparators.IndexOf(CR) < 0)
@@ -188,10 +188,7 @@ namespace vm.Aspects.Parsers
         public IEnumerable<string[]> Read(
             TextReader reader)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-
-            _reader = reader;
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
             while (!IsFileSeparator(PeekNextChar()))
                 yield return GetRecord();
@@ -204,10 +201,12 @@ namespace vm.Aspects.Parsers
         /// <returns>Array of string values.</returns>
         string[] GetRecord()
         {
-            var values = new List<string>();
+            var values = new List<string>
+            {
+                // get the values from a single line:
+                GetField(),
+            };
 
-            // get the values from a single line:
-            values.Add(GetField());
             while (!IsEndOfRecordOrFile(PeekNextChar()))
             {
                 SkipFieldsSeparator();
@@ -285,7 +284,7 @@ namespace vm.Aspects.Parsers
                 throw new InvalidDataException(
                                 $"Expected records separating character at line {_line}, column {_column}. Got '{c}'->{char.GetNumericValue(c)}");
 
-            while (!IsFileSeparator(c) && c!=LF)
+            while (!IsFileSeparator(c) && c != LF)
                 c = ReadNextChar();
 
             return PeekNextChar();
@@ -372,7 +371,7 @@ namespace vm.Aspects.Parsers
         {
             var c = unchecked((char)_reader.Read());
 
-            if (c==LF)
+            if (c == LF)
             {
                 _line++;
                 _column = 1;
@@ -448,7 +447,7 @@ namespace vm.Aspects.Parsers
             if (qualifications == null)
                 throw new ArgumentNullException(nameof(qualifications));
 
-            for (var i = 0; i<qualifications.Length; i++)
+            for (var i = 0; i < qualifications.Length; i++)
                 if (qualifications[i] == character)
                     return true;
 

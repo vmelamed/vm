@@ -54,9 +54,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (parentNode == null)
                 throw new ArgumentNullException(nameof(parentNode));
 
-            ExpressionMetadata parentMeta;
-
-            _metadata.TryGetValue(parentNode.NodeType, out parentMeta);
+            _metadata.TryGetValue(parentNode.NodeType, out var parentMeta);
 
             return Visit(node, parentMeta);
         }
@@ -68,12 +66,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (node == null)
                 throw new ArgumentNullException(nameof(node));
 
-            ExpressionMetadata meta;
+            _metadata.TryGetValue(node.NodeType, out var meta);
 
-            _metadata.TryGetValue(node.NodeType, out meta);
-
-            if (meta.Weight > parentMeta.Weight  ||
-                meta.Weight == parentMeta.Weight  &&  meta.LeftAssociative == parentMeta.LeftAssociative)
+            if (meta.Weight > parentMeta.Weight ||
+                meta.Weight == parentMeta.Weight && meta.LeftAssociative == parentMeta.LeftAssociative)
                 Visit(node);
             else
             {
@@ -146,14 +142,14 @@ namespace vm.Aspects.Diagnostics.Implementation
                 [ExpressionType.Constant]               = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
                 [ExpressionType.Parameter]              = new ExpressionMetadata { Weight = 15, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "" },
 
-                [ExpressionType.MemberAccess]           = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "." },
-                [ExpressionType.Invoke]                 = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
-                [ExpressionType.Call]                   = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
-                [ExpressionType.Index]                  = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
-                [ExpressionType.ArrayIndex]             = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "" },
-                [ExpressionType.PostIncrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "++" },
-                [ExpressionType.PostDecrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "--" },
-                [ExpressionType.New]                    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true,  IsChecked = false, Operator = "new " },
+                [ExpressionType.MemberAccess]           = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "." },
+                [ExpressionType.Invoke]                 = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "" },
+                [ExpressionType.Call]                   = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "" },
+                [ExpressionType.Index]                  = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "" },
+                [ExpressionType.ArrayIndex]             = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "" },
+                [ExpressionType.PostIncrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "++" },
+                [ExpressionType.PostDecrementAssign]    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "--" },
+                [ExpressionType.New]                    = new ExpressionMetadata { Weight = 14, LeftAssociative =  true, IsPostfix = true, IsChecked = false, Operator = "new " },
 
                 [ExpressionType.NegateChecked]          = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked =  true, Operator = "-" },
                 [ExpressionType.Negate]                 = new ExpressionMetadata { Weight = 13, LeftAssociative =  true, IsPostfix = false, IsChecked = false, Operator = "-" },

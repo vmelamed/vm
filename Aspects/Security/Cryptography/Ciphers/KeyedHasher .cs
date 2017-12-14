@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -153,10 +153,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] hash)
         {
             if (dataStream == null)
-                return hash==null;
+                return hash == null;
 
             InitializeHashKey();
-            if (hash.Length != _hashAlgorithm.HashSize/8)
+            if (hash.Length != _hashAlgorithm.HashSize / 8)
                 return false;
 
             using (var hashStream = CreateHashStream(_hashAlgorithm))
@@ -204,10 +204,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] hash)
         {
             if (data == null)
-                return hash==null;
+                return hash == null;
 
             InitializeHashKey();
-            if (hash.Length != _hashAlgorithm.HashSize/8)
+            if (hash.Length != _hashAlgorithm.HashSize / 8)
                 return false;
 
             using (var hashStream = CreateHashStream(_hashAlgorithm))
@@ -262,12 +262,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] hash)
         {
             if (dataStream == null)
-                return hash==null;
+                return hash == null;
             if (!dataStream.CanRead)
                 throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
             await InitializeHashKeyAsync();
-            if (hash.Length != _hashAlgorithm.HashSize/8)
+            if (hash.Length != _hashAlgorithm.HashSize / 8)
                 return false;
 
             using (var hashStream = CreateHashStream(_hashAlgorithm))
@@ -385,7 +385,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The argument "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument " + nameof(certificate) + " was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _publicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
@@ -497,7 +497,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!hashStream.HasFlushedFinalBlock)
                 hashStream.FlushFinalBlock();
 
-            var hash = new byte[_hashAlgorithm.HashSize/8];
+            var hash = new byte[_hashAlgorithm.HashSize / 8];
 
             _hashAlgorithm.Hash.CopyTo(hash, 0);
 
@@ -597,12 +597,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             InitializeHashKey();
 
-            var hasher = new KeyedHasher();
+            var hasher = new KeyedHasher
+            {
+                _hashAlgorithm       = KeyedHashAlgorithm.Create(_hashAlgorithm.GetType().FullName),
+                IsHashKeyInitialized = true,
+                KeyStorage           = null,
+            };
 
-            hasher._hashAlgorithm       = KeyedHashAlgorithm.Create(_hashAlgorithm.GetType().FullName);
-            hasher._hashAlgorithm.Key   = (byte[])_hashAlgorithm.Key.Clone();
-            hasher.IsHashKeyInitialized = true;
-            hasher.KeyStorage          = null;
+            hasher._hashAlgorithm.Key = (byte[])_hashAlgorithm.Key.Clone();
 
             return hasher;
         }

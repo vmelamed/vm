@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using vm.Aspects.Wcf.FaultContracts;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -56,17 +56,11 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (expectedFaults == null)
                 throw new ArgumentNullException(nameof(expectedFaults));
 
-            Func<Exception, Type[], Exception> handler;
-
-            if (_exceptionDispatcher.TryGetValue(exception.GetType(), out handler))
+            if (_exceptionDispatcher.TryGetValue(exception.GetType(), out var handler))
                 return handler(exception, expectedFaults);
             else
-            {
-                var faultException = exception as FaultException;
-
-                if (faultException != null)
-                    return faultException.ToException();
-            }
+                if (exception is FaultException faultException)
+                return faultException.ToException();
 
             return exception;
         }
@@ -99,9 +93,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (!(x is ProtocolException))
                 throw new ArgumentException("The argument must be a ProtocolException.");
 
-            string responseText;
-
-            var fault = ProtocolExceptionToWebFaultResolver.Resolve((ProtocolException)x, expectedFaults, out responseText);
+            var fault = ProtocolExceptionToWebFaultResolver.Resolve((ProtocolException)x, expectedFaults, out var responseText);
 
             return GetFaultException(fault, responseText);
         }
@@ -116,9 +108,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (!(x is WebException))
                 throw new ArgumentException("The argument must be a WebException.");
 
-            string responseText;
-
-            var fault = ProtocolExceptionToWebFaultResolver.Resolve((WebException)x, expectedFaults, out responseText);
+            var fault = ProtocolExceptionToWebFaultResolver.Resolve((WebException)x, expectedFaults, out var responseText);
 
             if (fault != null)
                 return GetFaultException(fault, responseText);

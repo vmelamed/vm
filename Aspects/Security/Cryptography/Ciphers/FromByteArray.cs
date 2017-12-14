@@ -121,8 +121,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(short);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -157,8 +156,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(ushort);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -193,8 +191,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(int);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -229,8 +226,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(uint);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -265,8 +261,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(long);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -301,8 +296,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(ulong);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -337,8 +331,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(float);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -373,8 +366,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(double);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -414,8 +406,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(int) * 4;
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -467,8 +458,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = sizeof(long);
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);
@@ -503,8 +493,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 return null;
 
             var elementSize = 16;
-            int reminder;
-            var count = Math.DivRem(data.Length, elementSize, out reminder);
+            var count = Math.DivRem(data.Length, elementSize, out var reminder);
 
             if (reminder != 0)
                 throw new ArgumentException(Resources.InvalidEncryptedArray);

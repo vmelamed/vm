@@ -96,11 +96,10 @@ namespace vm.Aspects.Wcf.Bindings
                 if (!_defaultSendTimeout.HasValue)
                 {
                     var timeoutString = Config[Constants.SendTimeoutAppSettingName];
-                    TimeSpan tmo;
 
                     lock (_syncTimeouts)
                         if (!timeoutString.IsNullOrEmpty() &&
-                            TimeSpan.TryParse(timeoutString, out tmo))
+                            TimeSpan.TryParse(timeoutString, out var tmo))
                             _defaultSendTimeout = tmo;
                         else
                             _defaultSendTimeout = Constants.DefaultSendTimeout;
@@ -123,11 +122,10 @@ namespace vm.Aspects.Wcf.Bindings
                 if (!_defaultReceiveTimeout.HasValue)
                 {
                     var timeoutString = Config[Constants.ReceiveTimeoutAppSettingName];
-                    TimeSpan tmo;
 
                     lock (_syncTimeouts)
                         if (!timeoutString.IsNullOrEmpty() &&
-                        TimeSpan.TryParse(timeoutString, out tmo))
+                        TimeSpan.TryParse(timeoutString, out var tmo))
                             _defaultReceiveTimeout = tmo;
                         else
                             _defaultReceiveTimeout = Constants.DefaultReceiveTimeout;
@@ -150,11 +148,10 @@ namespace vm.Aspects.Wcf.Bindings
                 if (_defaultTransactionTimeout == null)
                 {
                     var timeoutString = Config[Constants.TransactionTimeoutAppSettingName];
-                    TimeSpan tmo;
 
                     lock (_syncTimeouts)
                         if (!timeoutString.IsNullOrEmpty() &&
-                            TimeSpan.TryParse(timeoutString, out tmo) &&
+                            TimeSpan.TryParse(timeoutString, out var tmo) &&
                             tmo >= new TimeSpan(0, 0, 30) &&  // make sure the transaction timeout is reasonable: between 30s and 1hr
                             tmo <= new TimeSpan(1, 0, 0))
                             _defaultTransactionTimeout = tmo.ToString();
@@ -173,10 +170,7 @@ namespace vm.Aspects.Wcf.Bindings
         protected BindingConfigurator(
             Lazy<IConfigurationProvider> config)
         {
-            if (config == null)
-                throw new ArgumentNullException(nameof(config));
-
-            _config = config;
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         /// <summary>

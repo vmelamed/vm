@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -162,15 +162,11 @@ namespace vm.Aspects.Policies
             if (methodReturn.Exception != null)
                 throw methodReturn.Exception;
 
-            var taskResult = methodReturn.ReturnValue as Task<TResult>;
-
-            if (taskResult != null)
+            if (methodReturn.ReturnValue is Task<TResult> taskResult)
                 return await taskResult;
 
-            var task = methodReturn.ReturnValue as Task;
-
             // in case the target method does not return Task<Result>, it must be just Task (see GetContinueWith), 
-            if (task != null)
+            if (methodReturn.ReturnValue is Task task)
                 await task;
 
             // - we'll return Task<bool>, so return the default value false.

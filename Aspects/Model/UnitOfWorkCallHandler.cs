@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
@@ -49,7 +49,7 @@ namespace vm.Aspects.Model
             if (!(input.Target is IHasRepository))
                 throw new InvalidOperationException($"{nameof(UnitOfWorkCallHandler)} can be used only with services that implement {nameof(IHasRepository)}. Either implement it in {input.Target.GetType().Name} or remove this handler from the pipeline.");
 
-            if (CreateTransactionScope  &&  Transaction.Current != null)
+            if (CreateTransactionScope && Transaction.Current != null)
             {
                 Facility.LogWriter.LogInfo(
                     "WARNING: The method {0} is called in the context of an existing transaction {1}/{2} and a new transaction scope is requested. Is this intended?",
@@ -97,6 +97,12 @@ namespace vm.Aspects.Model
             {
                 if (methodReturn.Exception != null)
                 {
+                    if (methodReturn.Exception is AggregateException ax)
+                    {
+                        if (ax.InnerExceptions.Count == 1 && ax.InnerExceptions[0].IsTransient())
+                            return input.CreateExceptionMethodReturn(new RepeatableOperationException(ax.InnerExceptions[0]));
+                    }
+                    else
                     if (methodReturn.Exception.IsTransient())
                         return input.CreateExceptionMethodReturn(new RepeatableOperationException(methodReturn.Exception));
 
@@ -109,13 +115,22 @@ namespace vm.Aspects.Model
                 var repository = hasRepository.Repository;
 
                 if (repository == null)
-                    throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
+                    throw new InvalidOperationException(nameof(IHasRepository) + " must return a non-null repository.");
 
                 // commit
                 repository.CommitChanges();
                 transactionScope?.Complete();
 
                 return methodReturn;
+            }
+            catch (AggregateException x)
+            {
+                VmAspectsEventSource.Log.CallHandlerFails(input, x);
+
+                if (x.InnerExceptions.Count == 1 && x.InnerExceptions[0].IsTransient())
+                    return input.CreateExceptionMethodReturn(new RepeatableOperationException(x.InnerExceptions[0]));
+
+                throw;
             }
             catch (Exception x)
             {
@@ -158,12 +173,10 @@ namespace vm.Aspects.Model
                 if (methodReturn.Exception != null)
                 {
                     var x = methodReturn.Exception;
-                    var ax = x as AggregateException;
 
-                    if (ax != null)
+                    if (x is AggregateException ax)
                     {
-                        if (ax.InnerExceptions.Count == 1  &&
-                            ax.InnerExceptions[0].IsTransient())
+                        if (ax.InnerExceptions.Count == 1 && ax.InnerExceptions[0].IsTransient())
                             throw new RepeatableOperationException(ax.InnerExceptions[0]);
                     }
                     else
@@ -179,7 +192,7 @@ namespace vm.Aspects.Model
                 var repository = hasRepository.Repository;
 
                 if (repository == null)
-                    throw new InvalidOperationException(nameof(IHasRepository)+" must return a non-null repository.");
+                    throw new InvalidOperationException(nameof(IHasRepository) + " must return a non-null repository.");
 
                 await repository.CommitChangesAsync();
 
@@ -189,15 +202,20 @@ namespace vm.Aspects.Model
             }
             catch (AggregateException x)
             {
-                if (x.InnerExceptions.Count == 1  &&
-                    x.InnerExceptions[0].IsTransient())
+                VmAspectsEventSource.Log.CallHandlerFails(input, x);
+
+                if (x.InnerExceptions.Count == 1 && x.InnerExceptions[0].IsTransient())
                     throw new RepeatableOperationException(x.InnerExceptions[0]);
 
-                throw x;
+                throw;
             }
             catch (Exception x)
             {
                 VmAspectsEventSource.Log.CallHandlerFails(input, x);
+
+                if (x.IsTransient())
+                    throw new RepeatableOperationException(x);
+
                 throw;
             }
             finally

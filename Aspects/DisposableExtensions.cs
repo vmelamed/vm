@@ -19,9 +19,7 @@ namespace vm.Aspects
             if (!lazy.IsValueCreated)
                 return;
 
-            var disposable = lazy.Value as IDisposable;
-
-            if (disposable != null)
+            if (lazy.Value is IDisposable disposable)
                 disposable.Dispose();
         }
 
@@ -31,9 +29,7 @@ namespace vm.Aspects
         /// <param name="instance">The object.</param>
         public static void Dispose(this object instance)
         {
-            var disposable = instance as IDisposable;
-
-            if (disposable != null)
+            if (instance is IDisposable disposable)
                 disposable.Dispose();
         }
     }

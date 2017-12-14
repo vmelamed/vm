@@ -37,9 +37,7 @@ namespace vm.Aspects.Diagnostics
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
 
-            var dumpWriter = writer as DumpTextWriter;
-
-            if (dumpWriter != null)
+            if (writer is DumpTextWriter dumpWriter)
             {
                 dumpWriter.Indent = indentLevel;
                 if (indentSize > 0)
@@ -73,9 +71,7 @@ namespace vm.Aspects.Diagnostics
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
 
-            var dumpWriter = writer as DumpTextWriter;
-
-            if (dumpWriter != null)
+            if (writer is DumpTextWriter dumpWriter)
             {
                 dumpWriter.Indent = indentLevel;
                 if (indentSize > 0)

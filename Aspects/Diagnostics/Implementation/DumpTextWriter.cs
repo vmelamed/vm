@@ -42,10 +42,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             int maxLength = DefaultMaxLength)
             : base(writer.FormatProvider)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
-            _writer    = writer;
+            _writer    = writer ?? throw new ArgumentNullException(nameof(writer));
             _maxLength = maxLength;
         }
 
@@ -167,10 +164,8 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         string GetIndent()
         {
-            string indent;
-
-            if (!_indents.TryGetValue(_indent, out indent))
-                indent = _indents[_indent] = new string(' ', _indent*_indentSize);
+            if (!_indents.TryGetValue(_indent, out var indent))
+                indent = _indents[_indent] = new string(' ', _indent * _indentSize);
 
             return indent;
         }

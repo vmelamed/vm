@@ -241,10 +241,7 @@ namespace vm.Aspects.Wcf.Services
         public virtual ICreateServiceHost SetEndpointProvider(
             Func<IEnumerable<ServiceEndpoint>> provideEndpoints)
         {
-            if (provideEndpoints == null)
-                throw new ArgumentNullException(nameof(provideEndpoints));
-
-            _provideEndpoints = provideEndpoints;
+            _provideEndpoints = provideEndpoints ?? throw new ArgumentNullException(nameof(provideEndpoints));
             return this;
         }
 
@@ -255,10 +252,7 @@ namespace vm.Aspects.Wcf.Services
         public virtual ICreateServiceHost SetServiceRegistrar(
             Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
         {
-            if (registrar == null)
-                throw new ArgumentNullException(nameof(registrar));
-
-            _serviceRegistrar = registrar;
+            _serviceRegistrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
             return this;
         }
 
@@ -362,12 +356,10 @@ namespace vm.Aspects.Wcf.Services
         /// <returns>The Type of the service.</returns>
         protected virtual Type FindServiceTypeInDIContainer()
         {
-            ContainerRegistration registration;
-
             if (!DIContainer
                     .Root
                     .GetRegistrationsSnapshot()
-                    .TryGetValue(new RegistrationLookup(typeof(TContract)), out registration))
+                    .TryGetValue(new RegistrationLookup(typeof(TContract)), out var registration))
                 return null;
 
             return registration.MappedToType;

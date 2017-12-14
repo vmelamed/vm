@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
-using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Facilities.Diagnostics
 {
@@ -77,9 +77,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             if (!IsEnabled(eventLevel, Keywords.vmAspects | Keywords.Trace))
                 return;
 
-            Action<string> writeMessage;
-
-            if (!_traces.TryGetValue(eventLevel, out writeMessage))
+            if (!_traces.TryGetValue(eventLevel, out var writeMessage))
                 writeMessage = Log.InformationalTrace;
 
             writeMessage(text);
@@ -150,9 +148,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             if (!IsEnabled(eventLevel, Keywords.vmAspects | Keywords.Dump))
                 return;
 
-            Action<string, string> dump;
-
-            if (!_dumps.TryGetValue(eventLevel, out dump))
+            if (!_dumps.TryGetValue(eventLevel, out var dump))
                 dump = Log.VerboseDump;
 
             dump(description, reference.DumpString());
@@ -230,9 +226,7 @@ namespace vm.Aspects.Facilities.Diagnostics
             if (!IsEnabled(eventLevel, Keywords.vmAspects | Keywords.Exception))
                 return;
 
-            Action<string, string, string> writeException;
-
-            if (!_exceptions.TryGetValue(eventLevel, out writeException))
+            if (!_exceptions.TryGetValue(eventLevel, out var writeException))
                 writeException = Log.ErrorException;
 
             Debug.Assert(writeException != null);

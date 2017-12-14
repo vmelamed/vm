@@ -94,8 +94,7 @@ namespace TraceEventSamples
                 s_processNameCache.Clear();
             s_processNameCacheLastUpdate = now;
 
-            string ret = null;
-            if (!s_processNameCache.TryGetValue(processID, out ret))
+            if (!s_processNameCache.TryGetValue(processID, out var ret))
             {
                 Process proc = null;
                 try { proc = Process.GetProcessById(processID); }

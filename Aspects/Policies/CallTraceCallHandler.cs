@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 
@@ -128,10 +129,7 @@ namespace vm.Aspects.Policies
         public CallTraceCallHandler(
             LogWriter logWriter)
         {
-            if (logWriter == null)
-                throw new ArgumentNullException(nameof(logWriter));
-
-            LogWriter = logWriter;
+            LogWriter = logWriter ?? throw new ArgumentNullException(nameof(logWriter));
         }
 
         #region Overridables
@@ -157,8 +155,17 @@ namespace vm.Aspects.Policies
             if (callData == null)
                 throw new ArgumentNullException(nameof(callData));
 
-            var attribute = input.MethodBase.GetMethodCustomAttribute<CallTraceAttribute>()  ??
+            var attribute = input.MethodBase.GetMethodCustomAttribute<CallTraceAttribute>() ??
                             input.Target.GetType().GetCustomAttribute<CallTraceAttribute>();
+
+            if (attribute == null &&
+                input.MethodBase.ReflectedType != input.Target.GetType() &&
+                input.MethodBase.DeclaringType != input.Target.GetType())
+                attribute = input.Target.GetType()
+                                        .GetMethod(
+                                                input.MethodBase.Name,
+                                                input.MethodBase.GetParameters().Select(pi => pi.ParameterType).ToArray())
+                                        ?.GetMethodCustomAttribute<CallTraceAttribute>();
 
             callData.Trace = attribute?.Trace ?? true;
 
@@ -168,7 +175,8 @@ namespace vm.Aspects.Policies
                     callData.CallStack = Environment.StackTrace;
 
                 if (IncludePrincipal)
-                    callData.Identity = ServiceSecurityContext.Current?.PrimaryIdentity != null  &&  !(ServiceSecurityContext.Current.PrimaryIdentity is GenericIdentity)
+                    callData.Identity = ServiceSecurityContext.Current?.PrimaryIdentity != null &&
+                                        !(ServiceSecurityContext.Current.PrimaryIdentity is GenericIdentity)
                                             ? ServiceSecurityContext.Current.PrimaryIdentity
                                             : Thread.CurrentPrincipal.Identity;
             }
@@ -186,7 +194,7 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            if (!callData.Trace  ||  !LogWriter.IsLoggingEnabled())
+            if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return null;
 
             if (LogBeforeCall)
@@ -236,10 +244,10 @@ namespace vm.Aspects.Policies
             new LogEntry
             {
                 Categories = new[] { category },
-                Severity   = Severity,
-                EventId    = EventId,
-                Priority   = Priority,
-                Title      = Title,
+                Severity = Severity,
+                EventId = EventId,
+                Priority = Priority,
+                Title = Title,
             };
 
         /// <summary>
@@ -254,10 +262,10 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             CallTraceData callData)
         {
-            if (!callData.Trace  ||  !LogWriter.IsLoggingEnabled())
+            if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return base.DoInvoke(input, getNext, callData);
 
-            var takeTime = LogAfterCall  &&  IncludeCallTime;
+            var takeTime = LogAfterCall && IncludeCallTime;
 
             if (takeTime)
             {
@@ -267,7 +275,7 @@ namespace vm.Aspects.Policies
 
             var methodReturn = base.DoInvoke(input, getNext, callData);
 
-            if (takeTime  &&  !methodReturn.IsAsyncCall())
+            if (takeTime && !methodReturn.IsAsyncCall())
                 callData.CallTimer.Stop();
 
             return methodReturn;
@@ -286,15 +294,15 @@ namespace vm.Aspects.Policies
             CallTraceData callData)
         {
             // async methods are always dumped in ContinueWith
-            if (!callData.Trace  ||  !LogWriter.IsLoggingEnabled()  ||  methodReturn.IsAsyncCall())
+            if (!callData.Trace || !LogWriter.IsLoggingEnabled() || methodReturn.IsAsyncCall())
                 return methodReturn;
 
-            callData.ReturnValue  = methodReturn.ReturnValue;
+            callData.ReturnValue = methodReturn.ReturnValue;
             callData.OutputValues = methodReturn.Outputs;
-            callData.Exception    = methodReturn.Exception;
+            callData.Exception = methodReturn.Exception;
 
             // if necessary wait for the async LogBeforeCall to finish
-            if (callData.LogBeforeCall != null  &&  !callData.LogBeforeCall.IsCompleted)
+            if (callData.LogBeforeCall != null && !callData.LogBeforeCall.IsCompleted)
                 callData.LogBeforeCall.GetAwaiter().GetResult();
 
             LogPostInvoke(input, callData).GetAwaiter().GetResult();
@@ -316,7 +324,7 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             CallTraceData callData)
         {
-            if (!callData.Trace  ||  !LogWriter.IsLoggingEnabled())
+            if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return await base.ContinueWith<TResult>(input, methodReturn, callData);
 
             TResult result = default(TResult);
@@ -327,18 +335,18 @@ namespace vm.Aspects.Policies
 
                 callData.CallTimer?.Stop();
 
-                callData.ReturnValue  = result;
+                callData.ReturnValue = result;
                 callData.OutputValues = methodReturn.Outputs;
-                callData.Exception    = methodReturn.Exception;
+                callData.Exception = methodReturn.Exception;
 
             }
             catch (Exception x)
             {
-                callData.Exception    = x;
+                callData.Exception = x;
             }
 
             // if necessary wait for the async LogBeforeCall to finish
-            if (callData.LogBeforeCall != null  &&  !callData.LogBeforeCall.IsCompleted)
+            if (callData.LogBeforeCall != null && !callData.LogBeforeCall.IsCompleted)
                 await callData.LogBeforeCall;
 
             // now LogPostInvoke
@@ -464,7 +472,7 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
-            for (int i = 0; i<input.Arguments.Count; i++)
+            for (int i = 0; i < input.Arguments.Count; i++)
             {
                 var pi = input.Arguments.GetParameterInfo(i);
 
@@ -527,9 +535,7 @@ namespace vm.Aspects.Policies
             writer.WriteLine();
             writer.Write($"Caller Identity: {callData.Identity.Name}");
 
-            var claimsIdentity = callData.Identity as ClaimsIdentity;
-
-            if (claimsIdentity != null)
+            if (callData.Identity is ClaimsIdentity claimsIdentity)
                 claimsIdentity.DumpText(writer, 2);
             else
             {
@@ -574,11 +580,11 @@ Name:               {callData.Identity.Name}");
 
             writer.Write("(");
             writer.Indent(2);
-            for (var i = 0; i<input.Inputs.Count; i++)
+            for (var i = 0; i < input.Inputs.Count; i++)
             {
                 // dump the parameter
                 DumpParameter(writer, input.Inputs.GetParameterInfo(i), input.Inputs[i]);
-                if (i != input.Inputs.Count-1)
+                if (i != input.Inputs.Count - 1)
                     writer.Write(",");
             }
             writer.Write(");");
@@ -606,7 +612,7 @@ Name:               {callData.Identity.Name}");
             var outValueIndex = 0;
 
             // dump the parameters
-            for (int i = 0; i<input.Arguments.Count; i++)
+            for (int i = 0; i < input.Arguments.Count; i++)
             {
                 var pi = input.Arguments.GetParameterInfo(i);
                 var hasOutValue = pi.IsOut || pi.ParameterType.IsByRef;
@@ -618,7 +624,7 @@ Name:               {callData.Identity.Name}");
                     DumpOutputParameter(writer, pi, input.Inputs[i], hasOutValue, outValue);
                 }
 
-                if (i != input.Inputs.Count-1)
+                if (i != input.Inputs.Count - 1)
                     writer.Write(",");
             }
 
@@ -734,11 +740,11 @@ Name:               {callData.Identity.Name}");
                 callData.Exception.DumpText(writer, 2);
             }
             else
-            if (IncludeReturnValue  &&  callData.ReturnValue!=null)
+            if (IncludeReturnValue && callData.ReturnValue != null)
             {
                 var methodInfo = input.MethodBase as MethodInfo;
 
-                if (methodInfo == null || methodInfo.ReturnType == typeof(void)  ||  methodInfo.ReturnType == typeof(Task))
+                if (methodInfo == null || methodInfo.ReturnType == typeof(void) || methodInfo.ReturnType == typeof(Task))
                     return;
 
                 writer.WriteLine();

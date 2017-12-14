@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
 
@@ -111,10 +111,8 @@ namespace vm.Aspects.Wcf.Services
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
-            if (certificate == null)
-                throw new ArgumentNullException(nameof(certificate));
 
-            host.Credentials.ServiceCertificate.Certificate = certificate;
+            host.Credentials.ServiceCertificate.Certificate = certificate ?? throw new ArgumentNullException(nameof(certificate));
             return host;
         }
 
@@ -207,11 +205,8 @@ namespace vm.Aspects.Wcf.Services
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
 
-
-            Func<ServiceHost, ServiceEndpoint> AddMexEndpoint;
-
             foreach (var baseAddress in host.BaseAddresses)
-                if (_mexEndpoints.TryGetValue(baseAddress.Scheme, out AddMexEndpoint))
+                if (_mexEndpoints.TryGetValue(baseAddress.Scheme, out var AddMexEndpoint))
                     AddMexEndpoint(host);
 
             return host;
@@ -265,9 +260,7 @@ namespace vm.Aspects.Wcf.Services
 
                 if (ep != null)
                 {
-                    var epb = ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() as WebHttpBehavior;
-
-                    if (epb != null)
+                    if (ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() is WebHttpBehavior epb)
                         epb.HelpEnabled = false;
                 }
             }
@@ -279,9 +272,7 @@ namespace vm.Aspects.Wcf.Services
 
                 if (ep != null)
                 {
-                    var epb = ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() as WebHttpBehavior;
-
-                    if (epb != null)
+                    if (ep.EndpointBehaviors.Where(b => b is WebHttpBehavior).FirstOrDefault() is WebHttpBehavior epb)
                         epb.HelpEnabled = false;
                 }
             }

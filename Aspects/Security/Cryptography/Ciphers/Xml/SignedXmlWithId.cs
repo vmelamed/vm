@@ -57,14 +57,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             var nsManager = XmlConstants.GetXmlNamespaceManager(document);
 
             foreach (var idName in _idAttributeNames)
-            {
-                var element = document.SelectSingleNode(
+                if (document.SelectSingleNode(
                                         string.Format(CultureInfo.InvariantCulture, xmlIdXPathFormat, idName, idValue),
-                                        nsManager) as XmlElement;
-
-                if (element != null)
+                                        nsManager) is XmlElement element)
                     return element;
-            }
 
             return null;
         }

@@ -129,24 +129,21 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (mi == null)
                 throw new ArgumentNullException(nameof(mi));
 
-            var blockBody   = EndScriptSegment();
+            var blockBody = EndScriptSegment();
             var isReference = true;
-            var isNullable  = false;
-            var pi          = mi as PropertyInfo;
+            var isNullable = false;
 
-            if (pi != null)
+            if (mi is PropertyInfo pi)
             {
                 isReference = !pi.PropertyType.IsValueType;
-                isNullable  = !isReference  &&  pi.PropertyType.IsGenericType  &&  pi.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>)  &&  pi.PropertyType.GetGenericArguments()[0].IsBasicType();
+                isNullable  = !isReference && pi.PropertyType.IsGenericType && pi.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) && pi.PropertyType.GetGenericArguments()[0].IsBasicType();
             }
             else
             {
-                var fi = mi as FieldInfo;
-
-                if (fi != null)
+                if (mi is FieldInfo fi)
                 {
                     isReference = !fi.FieldType.IsValueType;
-                    isNullable  = !isReference  &&  fi.FieldType.IsGenericType  &&  fi.FieldType.GetGenericTypeDefinition() == typeof(Nullable<>)  &&  fi.FieldType.GetGenericArguments()[0].IsBasicType();
+                    isNullable  = !isReference && fi.FieldType.IsGenericType && fi.FieldType.GetGenericTypeDefinition() == typeof(Nullable<>) && fi.FieldType.GetGenericArguments()[0].IsBasicType();
                 }
             }
 

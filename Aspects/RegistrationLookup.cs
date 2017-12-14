@@ -19,10 +19,7 @@ namespace vm.Aspects
             Type type,
             string name = null)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
-            RegisteredType = type;
+            RegisteredType = type ?? throw new ArgumentNullException(nameof(type));
 
             if (name.IsNullOrEmpty())
                 Name = string.Empty;

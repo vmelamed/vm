@@ -296,9 +296,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             {
                 Symmetric.Dispose();
 
-                var disposable = KeyStorage as IDisposable;
-
-                if (disposable != null)
+                if (KeyStorage is IDisposable disposable)
                     disposable.Dispose();
             }
         }

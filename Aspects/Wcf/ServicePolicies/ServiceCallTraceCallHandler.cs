@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using System;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies
@@ -76,15 +76,12 @@ namespace vm.Aspects.Wcf.ServicePolicies
                 }
             }
 
-            object property;
-
-            if (IncludeCallerAddress  &&
+            if (IncludeCallerAddress &&
                 OperationContext.Current?.IncomingMessageProperties != null &&
-                OperationContext.Current.IncomingMessageProperties.TryGetValue(RemoteEndpointMessageProperty.Name, out property))
+                OperationContext.Current.IncomingMessageProperties.TryGetValue(RemoteEndpointMessageProperty.Name, out var property))
             {
-                var endpointMessageProperty = property as RemoteEndpointMessageProperty;
 
-                if (endpointMessageProperty != null)
+                if (property is RemoteEndpointMessageProperty endpointMessageProperty)
                 {
                     serviceCallData.CallerAddress = $"{endpointMessageProperty.Address}:{endpointMessageProperty.Port}";
                     // just in case someone needs it up the stack:
@@ -152,7 +149,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
             if (!IncludeCustomContext)
                 return;
 
-            var wcfCallData  = (ServiceCallTraceData)callData;
+            var wcfCallData = (ServiceCallTraceData)callData;
             var contextValue = wcfCallData.CustomContext;
 
             writer.WriteLine();

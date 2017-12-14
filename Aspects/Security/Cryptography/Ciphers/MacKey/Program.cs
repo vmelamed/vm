@@ -14,7 +14,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
         const string CreateCommand = "create";
         const string ImportCommand = "import";
         const string ExportCommand = "export";
-        const string HelpCommand   = "help";
+        const string HelpCommand = "help";
 
         const string RexByteArray = @"(?i:((-|\s|\?)?[0-9a-f][0-9a-f])*)";
 
@@ -270,18 +270,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
 
         static int Import()
         {
-            var keyManagement = GetHasher() as IKeyManagement;
-
-            if (keyManagement != null)
+            if (GetHasher() is IKeyManagement keyManagement)
                 keyManagement.ImportSymmetricKey(_key);
             return 0;
         }
 
         static int Export()
         {
-            var keyManagement = GetHasher() as IKeyManagement;
-
-            if (keyManagement != null)
+            if (GetHasher() is IKeyManagement keyManagement)
             {
                 _key = keyManagement.ExportSymmetricKey();
                 Console.WriteLine(BitConverter.ToString(_key));

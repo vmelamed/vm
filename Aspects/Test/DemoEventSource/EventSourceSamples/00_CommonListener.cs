@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Diagnostics.Tracing;
+using System;
 using System.IO;
 using System.Linq;
-using Microsoft.Diagnostics.Tracing;
 
 namespace EventSourceSamples
 {
@@ -20,7 +20,7 @@ namespace EventSourceSamples
     /// </summary>
     public class ConsoleEventListener : EventListener
     {
-        static TextWriter Out = AllSamples.Out;
+        static TextWriter _out = AllSamples.Out;
 
         /// <summary>
         /// Override this method to get a list of all the eventSources that exist.  
@@ -28,7 +28,7 @@ namespace EventSourceSamples
         protected override void OnEventSourceCreated(EventSource eventSource)
         {
             // Because we want to turn on every EventSource, we subscribe to a callback that triggers
-            // when new EventSources are created.  It is also fired when the EventListner is created
+            // when new EventSources are created.  It is also fired when the EventListener is created
             // for all pre-existing EventSources.  Thus this callback get called once for every 
             // EventSource regardless of the order of EventSource and EventListener creation.  
 
@@ -43,7 +43,7 @@ namespace EventSourceSamples
         protected override void OnEventWritten(EventWrittenEventArgs eventData)
         {
             // report all event information
-            Out.Write("  Event {0} ", eventData.EventName);
+            _out.Write("  Event {0} ", eventData.EventName);
 
             // Don't display activity information, as that's not used in the demos
             // Out.Write(" (activity {0}{1}) ", ShortGuid(eventData.ActivityId), 
@@ -52,11 +52,11 @@ namespace EventSourceSamples
             // Events can have formatting strings 'the Message property on the 'Event' attribute.  
             // If the event has a formatted message, print that, otherwise print out argument values.  
             if (eventData.Message != null)
-                Out.WriteLine(eventData.Message, eventData.Payload != null ? eventData.Payload.ToArray() : null);
+                _out.WriteLine(eventData.Message, eventData.Payload?.ToArray());
             else
             {
-                string[] sargs = eventData.Payload != null ? eventData.Payload.Select(o => o.ToString()).ToArray() : null;
-                Out.WriteLine("({0}).", sargs != null ? string.Join(", ", sargs) : "");
+                string[] sargs = eventData.Payload?.Select(o => o.ToString())?.ToArray();
+                _out.WriteLine("({0}).", sargs != null ? string.Join(", ", sargs) : "");
             }
         }
 

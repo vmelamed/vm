@@ -39,9 +39,7 @@ namespace vm.Aspects.Wcf
                 if (!_contextSlots.TryGetValue(slotName, out entry))
                     return null;
 
-                var disposed = entry as IIsDisposed;
-
-                if (disposed != null  &&  disposed.IsDisposed)
+                if (entry is IIsDisposed disposed && disposed.IsDisposed)
                 {
                     using (_lock.WriterLock())
                         _contextSlots.Remove(slotName);
@@ -68,9 +66,7 @@ namespace vm.Aspects.Wcf
 
             using (_lock.WriterLock())
             {
-                object oldEntry;
-
-                if (_contextSlots.TryGetValue(slotName, out oldEntry))
+                if (_contextSlots.TryGetValue(slotName, out var oldEntry))
                     oldEntry.Dispose();
 
                 _contextSlots[slotName] = entry;

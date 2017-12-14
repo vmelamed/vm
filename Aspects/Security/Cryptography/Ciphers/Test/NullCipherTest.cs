@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -7,12 +7,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     public class NullCipherTest : GenericCipherTest<NullCipher>
     {
         public override ICipherAsync GetCipher(bool base64 = false)
-        {
-            var cipher = new NullCipher();
-
-            cipher.Base64Encoded = base64;
-            return cipher;
-        }
+            => new NullCipher
+            {
+                Base64Encoded = base64,
+            };
 
         public override ICipherAsync GetPublicCertCipher(bool base64 = false)
         {

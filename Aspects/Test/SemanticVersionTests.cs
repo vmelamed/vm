@@ -95,9 +95,8 @@ namespace vm.Aspects.Tests
             string prerelease,
             string build)
         {
-            SemanticVersion target;
 
-            var success = SemanticVersion.TryParse(version, out target);
+            var success = SemanticVersion.TryParse(version, out var target);
 
             Assert.AreEqual(successfulParse, success);
 
@@ -139,11 +138,9 @@ namespace vm.Aspects.Tests
             bool isLess,
             bool isEqual)
         {
-            SemanticVersion leftVersion;
-            SemanticVersion rightVersion;
 
-            SemanticVersion.TryParse(left, out leftVersion);
-            SemanticVersion.TryParse(right, out rightVersion);
+            SemanticVersion.TryParse(left, out var leftVersion);
+            SemanticVersion.TryParse(right, out var rightVersion);
 
             var result = leftVersion.CompareTo(rightVersion);
 

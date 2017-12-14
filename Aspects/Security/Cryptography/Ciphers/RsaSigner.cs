@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -52,7 +52,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public RsaSigner(
             X509Certificate2 signCertificate = null,
             string hashAlgorithmName = null)
-            : base(hashAlgorithmName==null ? signCertificate.HashAlgorithm() : hashAlgorithmName, 0)
+            : base(hashAlgorithmName ?? signCertificate.HashAlgorithm(), 0)
         {
             if (signCertificate == null)
                 try
@@ -61,7 +61,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 }
                 catch (ActivationException x)
                 {
-                    throw new ArgumentNullException("The argument "+nameof(signCertificate)+" was null and could not be resolved from the Common Service Locator.", x);
+                    throw new ArgumentNullException("The argument " + nameof(signCertificate) + " was null and could not be resolved from the Common Service Locator.", x);
                 }
 
             _asymmetric = signCertificate.HasPrivateKey
@@ -103,12 +103,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Stream dataStream,
             byte[] signature)
         {
-            if (dataStream != null  &&  signature == null)
+            if (dataStream != null && signature == null)
                 throw new ArgumentNullException(nameof(signature));
-            if (dataStream != null  &&  !dataStream.CanRead)
+            if (dataStream != null && !dataStream.CanRead)
                 throw new ArgumentException(Resources.StreamNotReadable, nameof(dataStream));
 
-            if (dataStream==null)
+            if (dataStream == null)
                 return signature == null;
 
             var hash = base.Hash(dataStream);
@@ -150,7 +150,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             byte[] data,
             byte[] signature)
         {
-            if (data != null  &&  signature == null)
+            if (data != null && signature == null)
                 throw new ArgumentNullException(nameof(signature));
 
             if (data == null)

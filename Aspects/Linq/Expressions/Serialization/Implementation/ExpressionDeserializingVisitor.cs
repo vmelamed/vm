@@ -161,19 +161,17 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             var name = GetName(element);
             var type = DataSerialization.GetType(element);
-            ParameterExpression parameter;
 
             if (type == null &&
-                _references.TryGetValue(name, out parameter))
+                _references.TryGetValue(name, out var parameter))
                 return parameter;
 
             parameter = Expression.Parameter(type, name);
 
-            ParameterExpression reference;
 
-            if (_references.TryGetValue(name, out reference) &&
-                reference.CanReduce == parameter.CanReduce   &&
-                reference.IsByRef   == parameter.IsByRef     &&
+            if (_references.TryGetValue(name, out var reference) &&
+                reference.CanReduce == parameter.CanReduce &&
+                reference.IsByRef   == parameter.IsByRef &&
                 reference.NodeType  == parameter.NodeType)
                 return reference;
 
@@ -407,9 +405,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             if (_uidLabelTargets == null)
                 _uidLabelTargets = new Dictionary<string, LabelTarget>();
 
-            LabelTarget target;
-
-            if (!_uidLabelTargets.TryGetValue(uid, out target))
+            if (!_uidLabelTargets.TryGetValue(uid, out var target))
             {
                 target = type != null
                             ? name != null
