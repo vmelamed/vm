@@ -438,7 +438,8 @@ namespace vm.Aspects.Wcf.Clients
         /// </example>
         /// <returns>OperationContextScope.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public OperationContextScope CreateOperationContextScope() => new OperationContextScope((IContextChannel)Proxy);
+        public OperationContextScope CreateOperationContextScope()
+            => new OperationContextScope((IContextChannel)Proxy);
 
         /// <summary>
         /// This method can be used to wrap a synchronous call on the <see cref="Proxy"/> in a new <see cref="OperationContext"/> different from the current.

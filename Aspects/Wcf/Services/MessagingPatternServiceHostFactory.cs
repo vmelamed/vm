@@ -102,6 +102,18 @@ namespace vm.Aspects.Wcf.Services
 
         #region Properties
         /// <summary>
+        /// Gets the type of the service contract.
+        /// </summary>
+        /// <value>The service contract type.</value>
+        public static readonly Type ServiceContractType = typeof(TContract);
+
+        /// <summary>
+        /// Gets the type of the service.
+        /// </summary>
+        /// <value>The service type.</value>
+        public static readonly Type ServiceType = typeof(TService);
+
+        /// <summary>
         /// Gets the binding pattern.
         /// </summary>
         public string MessagingPattern { get; }

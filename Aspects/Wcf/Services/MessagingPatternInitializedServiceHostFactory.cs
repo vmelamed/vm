@@ -173,6 +173,14 @@ namespace vm.Aspects.Wcf.Services
         }
         #endregion
 
+        #region Properties
+        /// <summary>
+        /// Gets the type of the service contract.
+        /// </summary>
+        /// <value>The service contract type.</value>
+        public static readonly Type ServiceInitializerType = typeof(TInitializer);
+        #endregion
+
         /// <summary>
         /// Initializes the DI container with all necessary registrations. The overloads should always call this method last.
         /// </summary>
