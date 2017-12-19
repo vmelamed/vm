@@ -420,7 +420,7 @@
       <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
-      <Version>5.2.0-preview1-408290725</Version>
+      <Version>5.1.5</Version>
     </PackageReference>
     <PackageReference Include="Unity">
       <Version>4.0.1</Version>

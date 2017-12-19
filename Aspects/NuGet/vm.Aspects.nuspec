@@ -22,7 +22,7 @@
         <dependencies>
             <group>
                 <dependency id="System.IdentityModel.Tokens.Jwt"
-                            version="5.1.4" />
+                            version="5.1.5" />
                 <dependency id="EntityFramework"
                             version="6.2.0" />
                 <dependency id="Newtonsoft.Json"
