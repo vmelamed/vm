@@ -13,7 +13,6 @@ namespace vm.Aspects.Model
     [MetadataType(typeof(MoneyMetadata))]
     [Serializable]
     [DebuggerDisplay("{GetType().Name, nq} {Value} {Currency,nq}")]
-    [DataContract(Namespace = "urn:service:vm.Aspects.Model")]
     public sealed partial class Money : ICloneable, IEquatable<Money>, IComparable<Money>, IComparable, IFormattable, ISerializable
     {
         #region Properties
@@ -22,7 +21,6 @@ namespace vm.Aspects.Model
         /// ATTENTION: Although the property has a setter, please treat the class as immutable.
         /// The setter is there only so that it can be retrieved with an ORM.
         /// </summary>
-        [DataMember]
         public decimal Value { get; set; }
 
         /// <summary>
@@ -37,7 +35,6 @@ namespace vm.Aspects.Model
         /// The setter is there only so that it can be retrieved with an ORM.
         /// </remarks>
         [Editable(false, AllowInitialValue = true)]
-        [DataMember]
         public string Currency { get; set; }
         #endregion
 
