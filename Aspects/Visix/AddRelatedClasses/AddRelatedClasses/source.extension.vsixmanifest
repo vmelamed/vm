@@ -20,10 +20,6 @@
                     DisplayName="Microsoft .NET Framework"
                     d:Source="Manual"
                     Version="[4.6,)" />
-        <Dependency Id="Microsoft.VisualStudio.MPF.14.0"
-                    DisplayName="Visual Studio MPF 14.0"
-                    d:Source="Installed"
-                    Version="[15.0,16.0)" />
     </Dependencies>
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage"
@@ -35,8 +31,5 @@
         <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor"
                       Version="[15.0.26606.0,16.0)"
                       DisplayName="Visual Studio core editor" />
-        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices"
-                      Version="[15.0.27019.1,16.0)"
-                      DisplayName="C# and Visual Basic" />
     </Prerequisites>
 </PackageManifest>
