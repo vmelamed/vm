@@ -30,6 +30,13 @@ namespace vm.Aspects.Model.Repository
         bool IsInitialized { get; }
 
         /// <summary>
+        /// Waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        IRepository WaitIsInitialized(Action query = null);
+
+        /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
         /// </summary>
         OptimisticConcurrencyStrategy OptimisticConcurrencyStrategy { get; set; }
@@ -267,7 +274,14 @@ namespace vm.Aspects.Model.Repository
         /// Initializes the repository asynchronously.
         /// </summary>
         /// <returns>this</returns>
-        Task<IRepository> InitializeAsync();
+        Task<IRepository> InitializeAsync(Func<Task> query = null);
+
+        /// <summary>
+        /// Asynchronously waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        Task<IRepository> WaitIsInitializedAsync(Func<Task> query = null);
 
         /// <summary>
         /// Gets asynchronously an entity of type <typeparamref name="T"/> from the repository where the entity is referred to by repository ID.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -11,11 +12,16 @@ namespace vm.Aspects.Model.EFRepository
     using System.Reflection;
     using System.Security;
     using System.Threading;
+
     using Exceptions;
+
     using Facilities.Diagnostics;
+
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.Practices.Unity;
+
     using Threading;
+
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;
 
@@ -23,6 +29,9 @@ namespace vm.Aspects.Model.EFRepository
     {
         readonly static ReaderWriterLockSlim _latchesSync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         readonly static IDictionary<Type, Latch> _latches = new Dictionary<Type, Latch>();
+
+        readonly static ReaderWriterLockSlim _eventsSync = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        readonly static IDictionary<Type, ManualResetEvent> _events = new Dictionary<Type, ManualResetEvent>();
 
         Latch GetLatch()
         {
@@ -36,9 +45,28 @@ namespace vm.Aspects.Model.EFRepository
 
                 using (_latchesSync.WriterLock())
                 {
-                    latch = new Latch();
-                    _latches[myType] = latch;
-                    return latch;
+                    if (_latches.TryGetValue(myType, out latch))
+                        return latch;
+                    return _latches[myType] = new Latch();
+                }
+            }
+        }
+
+        ManualResetEvent GetEvent()
+        {
+            ManualResetEvent @event = null;
+            Type myType = GetType();
+
+            using (_eventsSync.UpgradableReaderLock())
+            {
+                if (_events.TryGetValue(myType, out @event))
+                    return @event;
+
+                using (_eventsSync.WriterLock())
+                {
+                    if (_events.TryGetValue(myType, out @event))
+                        return @event;
+                    return _events[myType] = new ManualResetEvent(false);
                 }
             }
         }
@@ -50,9 +78,11 @@ namespace vm.Aspects.Model.EFRepository
         /// <returns>this</returns>
         public virtual IRepository Initialize(Action query = null)
         {
-            if (GetLatch().Latched())
-                DoInitialize(query);
+            if (!GetLatch().Latched())
+                return this;
 
+            DoInitialize(query);
+            GetEvent().Set();
             return this;
         }
 
@@ -139,6 +169,18 @@ namespace vm.Aspects.Model.EFRepository
         /// 	<see langword="true"/> if this instance is initialized; otherwise, <see langword="false"/>.
         /// </value>
         public virtual bool IsInitialized => GetLatch().IsLatched;
+
+        /// <summary>
+        /// Waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        public IRepository WaitIsInitialized(Action query = null)
+        {
+            Initialize();
+            GetEvent().WaitOne();
+            return this;
+        }
 
         /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
@@ -535,7 +577,52 @@ namespace vm.Aspects.Model.EFRepository
         /// Initializes the repository asynchronously.
         /// </summary>
         /// <returns>this</returns>
-        public virtual Task<IRepository> InitializeAsync() => Task.Run(() => Initialize());
+        public virtual async Task<IRepository> InitializeAsync(Func<Task> query = null)
+            => await Task.Run(
+                            async () =>
+                            {
+                                if (!GetLatch().Latched())
+                                    return this;
+
+                                await DoInitializeAsync(query);
+                                GetEvent().Set();
+                                return this;
+                            });
+
+        /// <summary>
+        /// Performs the actual initialization (always called from a synchronized context, i.e. from within a lock).
+        /// Always call the base class's implementation first.
+        /// </summary>
+        protected virtual async Task DoInitializeAsync(Func<Task> query)
+        {
+            try
+            {
+                VmAspectsEventSource.Log.EFRepositoryInitializationStart(this);
+                SetDatabaseInitializer();
+                Database.Initialize(false);
+
+                if (query != null)
+                    await query.Invoke();
+                VmAspectsEventSource.Log.EFRepositoryInitializationStop(this);
+            }
+            catch (Exception x)
+            {
+                VmAspectsEventSource.Log.EFRepositoryInitializationFailed(this, x);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        public async Task<IRepository> WaitIsInitializedAsync(Func<Task> query = null)
+        {
+            await InitializeAsync(query);
+            GetEvent().WaitOne();
+            return this;
+        }
 
         /// <summary>
         /// Gets asynchronously an entity of type <typeparamref name="T" /> from the repository where the entity is referred to by repository ID.

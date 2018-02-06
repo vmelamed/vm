@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using vm.Aspects.Exceptions;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
@@ -24,6 +25,10 @@ namespace vm.Aspects.Model.InMemory
         /// The latch controls the initialization of the repository.
         /// </summary>
         static readonly Latch _latch = new Latch();
+        /// <summary>
+        /// The event that signals end of initialization
+        /// </summary>
+        static readonly ManualResetEvent _event = new ManualResetEvent(false);
         /// <summary>
         /// The objects container.
         /// </summary>
@@ -65,6 +70,18 @@ namespace vm.Aspects.Model.InMemory
         public bool IsInitialized => _latch.IsLatched;
 
         /// <summary>
+        /// Waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        public IRepository WaitIsInitialized(Action query = null)
+        {
+            Initialize(query);
+            _event.WaitOne();
+            return this;
+        }
+
+        /// <summary>
         /// Gets or sets the optimistic concurrency strategy - caller wins vs. store wins (the default).
         /// Here it really doesn't matter as all in memory operations are synchronized and concurrency conflicts will not happen.
         /// </summary>
@@ -76,11 +93,12 @@ namespace vm.Aspects.Model.InMemory
         /// <returns>IRepository.</returns>
         public IRepository Initialize(Action query = null)
         {
-            if (_latch.Latched())
-                Reset();
+            if (!_latch.Latched())
+                return this;
 
+            Reset();
             query?.Invoke();
-
+            _event.Set();
             return this;
         }
 
@@ -541,7 +559,28 @@ namespace vm.Aspects.Model.InMemory
         /// Initializes the repository asynchronously.
         /// </summary>
         /// <returns>this</returns>
-        public Task<IRepository> InitializeAsync() => Task.FromResult(Initialize());
+        public async Task<IRepository> InitializeAsync(Func<Task> query = null)
+        {
+            if (!_latch.Latched())
+                return this;
+
+            Reset();
+            await query?.Invoke();
+            _event.Set();
+            return this;
+        }
+
+        /// <summary>
+        /// Waits until the repository is initialized.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>IRepository.</returns>
+        public async Task<IRepository> WaitIsInitializedAsync(Func<Task> query = null)
+        {
+            await InitializeAsync(query);
+            _event.WaitOne();
+            return this;
+        }
 
         /// <summary>
         /// Gets asynchronously an entity of type <typeparamref name="T" /> from the repository where the entity is referred to by repository ID.
