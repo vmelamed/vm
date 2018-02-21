@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Transactions;
+
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
 
@@ -24,32 +25,32 @@ namespace vm.Aspects.Model
         /// <code><![CDATA[x == null]]></code></param>
         /// <param name="epilogue">A delegate invoked after the unit of work has been tried unsuccessfully <c>maxRetries</c>. Can be <see langword="null" /> in which case a default implementation will be invoked.
         /// <code><![CDATA[(r, x, i) => { if (x != null) throw x; else return r; }]]></code></param>
-        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy for the repository.</param>
         /// <param name="repositoryResolveName">The resolve name of the repository.</param>
+        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy for the repository.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
-        /// <param name="transactionScopeFactory">The transaction scope factory.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> [create transaction scope].</param>
+        /// <param name="transactionScopeFactory">The transaction scope factory.</param>
         public RetryUnitOfWork(
             Func<IRepository, int, T> work,
             Func<T, Exception, int, bool> isFailure = null,
             Func<T, Exception, int, bool> isSuccess = null,
             Func<T, Exception, int, T> epilogue = null,
-            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
             string repositoryResolveName = null,
+            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
             Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
-            Func<TransactionScope> transactionScopeFactory = null,
-            bool createTransactionScope = false)
+            bool createTransactionScope = false,
+            Func<TransactionScope> transactionScopeFactory = null)
             : base(
                 i => new UnitOfWork(
-                                optimisticConcurrencyStrategy,
                                 repositoryResolveName,
+                                optimisticConcurrencyStrategy,
                                 repositoryFactory,
                                 createTransactionScope,
                                 transactionScopeFactory)
                             .WorkFunc(r => work(r, i)),
                 isFailure: isFailure ?? RetryUnitOfWorkConstants.IsFailure,
                 isSuccess: isSuccess ?? RetryConstants.IsSuccessResult,
-                epilogue:  epilogue  ?? RetryConstants.Epilogue)
+                epilogue: epilogue  ?? RetryConstants.Epilogue)
         {
         }
     }

@@ -2,7 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
+
 using Microsoft.Practices.ServiceLocation;
+
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Model.Repository;
@@ -96,20 +98,20 @@ namespace vm.Aspects.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWork" /> class.
         /// </summary>
-        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy.</param>
         /// <param name="repositoryResolveName">The repository resolve name.</param>
+        /// <param name="optimisticConcurrencyStrategy">The optimistic concurrency strategy.</param>
         /// <param name="repositoryFactory">The repository factory.</param>
         /// <param name="createTransactionScope">if set to <see langword="true" /> the <see cref="WorkAction" /> and <see cref="WorkFunc" /> will create a transaction scope for the unit of work.</param>
         /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
         public UnitOfWork(
-            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy,
             string repositoryResolveName = null,
+            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
             Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
             bool createTransactionScope = false,
             Func<TransactionScope> transactionScopeFactory = null)
         {
-            OptimisticConcurrencyStrategy  = optimisticConcurrencyStrategy;
             RepositoryResolveName          = repositoryResolveName;
+            OptimisticConcurrencyStrategy  = optimisticConcurrencyStrategy;
             _repositoryFactory             = repositoryFactory ?? DefaultRepositoryFactory;
             CreateTransactionScope         = createTransactionScope;
             _transactionScopeFactory       = transactionScopeFactory ?? DefaultTransactionScopeFactory;
