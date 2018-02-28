@@ -38,7 +38,7 @@ namespace vm.Aspects.Model
             Func<T, Exception, int, Task<bool>> isSuccess = null,
             Func<T, Exception, int, Task<T>> epilogue = null,
             string repositoryResolveName = null,  // ClientWins probably doesn't make a lot of sense here
-            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
+            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.None,
             Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
             bool createTransactionScope = false,
             Func<TransactionScope> transactionScopeFactory = null)

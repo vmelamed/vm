@@ -672,8 +672,10 @@ namespace vm.Aspects.Model.EFRepository
 
                         if (OptimisticConcurrencyStrategy != OptimisticConcurrencyStrategy.ClientWins)
                         {
-                            // load the current values into the entity to communicate them to the client if needed
-                            entry.CurrentValues.SetValues(entry.GetDatabaseValues());
+                            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                                // load the current values into the entity to communicate them to the client
+                                entry.CurrentValues.SetValues(entry.GetDatabaseValues());
+
                             throw;
                         }
 
@@ -681,7 +683,7 @@ namespace vm.Aspects.Model.EFRepository
                             // we should not be retrying anymore
                             throw new RepeatableOperationException("IRepository.CommitChangesAsync failed too many times.", cx);
 
-                        // load the current DB values as original - as if we knew there was a update and we are overwriting the updated values with what the client told us,
+                        // load the current DB values as original - as if we knew there was an update and we are overwriting the updated values with what the client told us,
                         entry.OriginalValues.SetValues(entry.GetDatabaseValues());
 
                         // try again
@@ -724,8 +726,10 @@ namespace vm.Aspects.Model.EFRepository
 
                         if (OptimisticConcurrencyStrategy != OptimisticConcurrencyStrategy.ClientWins)
                         {
-                            // load the current values into the entity to communicate them to the client if needed
-                            entry.CurrentValues.SetValues(await entry.GetDatabaseValuesAsync());
+                            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                                // load the current values into the entity to communicate them to the client
+                                entry.CurrentValues.SetValues(await entry.GetDatabaseValuesAsync());
+
                             throw;
                         }
 
@@ -754,8 +758,10 @@ namespace vm.Aspects.Model.EFRepository
 
                         if (OptimisticConcurrencyStrategy != OptimisticConcurrencyStrategy.ClientWins)
                         {
-                            // load the current values into the entity to communicate them to the client if needed
-                            entry.CurrentValues.SetValues(await entry.GetDatabaseValuesAsync());
+                            if (OptimisticConcurrencyStrategy == OptimisticConcurrencyStrategy.StoreWins)
+                                // load the current values into the entity to communicate them to the client
+                                entry.CurrentValues.SetValues(await entry.GetDatabaseValuesAsync());
+
                             throw;
                         }
 

@@ -345,6 +345,8 @@
     <Compile Include="Behaviors\Validating\ValidatingBindingElement.cs" />
     <Compile Include="Behaviors\Validating\ValidatingBindingElementExtension.cs" />
     <Compile Include="Behaviors\Validating\ValidatingParameterInspector.cs" />
+    <Compile Include="UriComparer.cs" />
+    <Compile Include="UriExtensions.cs" />
     <Compile Include="WcfTypesExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -402,25 +404,25 @@
       <Version>1.1.28</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent">
-      <Version>1.0.41</Version>
+      <Version>2.0.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Logging">
-      <Version>5.2.0-preview1-408290725</Version>
+      <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Protocols">
-      <Version>5.2.0-preview1-408290725</Version>
+      <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
-      <Version>5.2.0-preview1-408290725</Version>
+      <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens">
-      <Version>5.2.0-preview1-408290725</Version>
+      <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.3</Version>
+      <Version>11.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
-      <Version>5.1.5</Version>
+      <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Unity">
       <Version>4.0.1</Version>

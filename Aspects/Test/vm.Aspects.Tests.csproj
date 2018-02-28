@@ -288,7 +288,7 @@
       <Version>6.0.1304</Version>
     </PackageReference>
     <PackageReference Include="Moq">
-      <Version>4.7.145</Version>
+      <Version>4.8.2</Version>
     </PackageReference>
     <PackageReference Include="Unity">
       <Version>4.0.1</Version>

@@ -105,7 +105,7 @@ namespace vm.Aspects.Model
         /// <param name="transactionScopeFactory">The transaction scope factory if <see langword="null" /> a default factory will be used.</param>
         public UnitOfWork(
             string repositoryResolveName = null,
-            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.StoreWins,
+            OptimisticConcurrencyStrategy optimisticConcurrencyStrategy = OptimisticConcurrencyStrategy.None,
             Func<OptimisticConcurrencyStrategy, string, IRepository> repositoryFactory = null,
             bool createTransactionScope = false,
             Func<TransactionScope> transactionScopeFactory = null)
