@@ -400,12 +400,6 @@
     <PackageReference Include="EnterpriseLibrary.Validation">
       <Version>6.0.1304</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Diagnostics.Tracing.EventSource">
-      <Version>1.1.28</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent">
-      <Version>2.0.5</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Logging">
       <Version>5.2.1</Version>
     </PackageReference>

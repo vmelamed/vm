@@ -8,13 +8,25 @@ namespace vm.Aspects.Wcf
     /// </summary>
     public static class UriExtensions
     {
-        const string _loopback  = "127.0.0.1";
-        const string _localhost = "localhost";
+        /// <summary>
+        /// The loopback address 127.0.0.1.
+        /// </summary>
+        public const string Loopback  = "127.0.0.1";
+
+        /// <summary>
+        /// The localhost
+        /// </summary>
+        public const string Localhost = "localhost";
+
+        /// <summary>
+        /// The localhost
+        /// </summary>
+        public const string LoopbackV6 = "::1";
 
         /// <summary>
         /// The DNS name of this host
         /// </summary>
-        public static readonly string ThisHost = Dns.GetHostEntry(_localhost).HostName;
+        public static readonly string ThisHost = Dns.GetHostEntry(Localhost).HostName;
 
         /// <summary>
         /// Determines whether the specified URI is hosted on the local machine.
@@ -28,8 +40,9 @@ namespace vm.Aspects.Wcf
                 throw new ArgumentNullException(nameof(resource));
 
             return resource.Host.Equals(ThisHost, StringComparison.OrdinalIgnoreCase)   ||
-                   resource.Host.Equals(_loopback, StringComparison.OrdinalIgnoreCase)  ||
-                   resource.Host.Equals(_localhost, StringComparison.OrdinalIgnoreCase);
+                   resource.Host.Equals(Loopback, StringComparison.OrdinalIgnoreCase)   ||
+                   resource.Host.Equals(Localhost, StringComparison.OrdinalIgnoreCase)  ||
+                   resource.Host.Equals(LoopbackV6, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace vm.Aspects.Facilities.Diagnostics
         }
 
         // The length of the end of line sequence.
-        static int NewLineSize = Environment.NewLine.Length * sizeof(char);
+        static int _newLineSize = Environment.NewLine.Length * sizeof(char);
 
         /// <summary>
         /// Optionally strips the leading CR-LF of two text fields of the event and writes them to the log.
@@ -83,8 +83,8 @@ namespace vm.Aspects.Facilities.Diagnostics
 
             if (text.StartsWith(Environment.NewLine, StringComparison.OrdinalIgnoreCase))
             {
-                eventData->DataPointer += NewLineSize;
-                eventData->Size        -= NewLineSize;
+                eventData->DataPointer += _newLineSize;
+                eventData->Size        -= _newLineSize;
             }
         }
 

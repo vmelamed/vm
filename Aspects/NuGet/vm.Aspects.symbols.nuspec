@@ -33,18 +33,6 @@
                             version="11.0.1" />
                 <dependency id="AspectObjectDumper"
                             version="1.9.10" />
-                <dependency id="Microsoft.Diagnostics.Tracing.EventSource"
-                            version="1.1.28" />
-                <dependency id="Microsoft.Diagnostics.Tracing.TraceEvent"
-                            version="2.0.5" />
-                <dependency id="Microsoft.IdentityModel.Logging"
-                            version="5.2.1" />
-                <dependency id="Microsoft.IdentityModel.Protocols"
-                            version="5.2.1" />
-                <dependency id="Microsoft.IdentityModel.Protocols.OpenIdConnect"
-                            version="5.2.1" />
-                <dependency id="Microsoft.IdentityModel.Tokens"
-                            version="5.2.1" />
             </group>
 
             <group>
