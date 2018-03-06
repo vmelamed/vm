@@ -27,11 +27,6 @@ namespace vm.Aspects.Wcf.Clients
         TContract _proxy;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the calls to the delegates passed in <see cref="Invoke"/> should be wrapped with new operation context scope. Required for services calling other services.
-        /// </summary>
-        public bool WrapWithOperationContextScope { get; set; }
-
-        /// <summary>
         /// Gets or sets the channel factory.
         /// </summary>
         /// <value>The channel factory.</value>
