@@ -9,7 +9,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
+
 using Microsoft.Practices.ServiceLocation;
+
 using vm.Aspects.Wcf.Bindings;
 
 namespace vm.Aspects.Wcf.Clients
@@ -29,6 +31,12 @@ namespace vm.Aspects.Wcf.Clients
         /// </summary>
         /// <value>The channel factory.</value>
         public ChannelFactory<TContract> ChannelFactory { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the client invocations must be wrapped with a new operation context scope.
+        /// </summary>
+        /// <value><c>true</c> if [wrap with operation context scope]; otherwise, <c>false</c>.</value>
+        public bool WrapWithOperationContextScope { get; set; }
 
         /// <summary>
         /// Gets or creates the proxy of the service.
@@ -459,9 +467,12 @@ namespace vm.Aspects.Wcf.Clients
         /// }
         /// ]]>
         /// </example>
-        public T WrapOperation<T>(Func<T> proxyCall)
+        public T Invoke<T>(Func<T> proxyCall)
         {
-            using (CreateOperationContextScope())
+            if (WrapWithOperationContextScope)
+                using (CreateOperationContextScope())
+                    return proxyCall();
+            else
                 return proxyCall();
         }
 
@@ -481,9 +492,12 @@ namespace vm.Aspects.Wcf.Clients
         /// }
         /// ]]>
         /// </example>
-        public void WrapOperation(Action proxyCall)
+        public void Invoke(Action proxyCall)
         {
-            using (CreateOperationContextScope())
+            if (WrapWithOperationContextScope)
+                using (CreateOperationContextScope())
+                    proxyCall();
+            else
                 proxyCall();
         }
 
