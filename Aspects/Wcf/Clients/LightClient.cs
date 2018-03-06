@@ -38,6 +38,12 @@ namespace vm.Aspects.Wcf.Clients
         public ChannelFactory<TContract> ChannelFactory { get; private set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the client invocations must be wrapped with a new operation context scope.
+        /// </summary>
+        /// <value><c>true</c> if [wrap with operation context scope]; otherwise, <c>false</c>.</value>
+        public bool WrapWithOperationContextScope { get; set; }
+
+        /// <summary>
         /// Gets or creates the proxy of the service.
         /// </summary>
         public TContract Proxy
@@ -493,7 +499,10 @@ namespace vm.Aspects.Wcf.Clients
         /// </example>
         public void Invoke(Action proxyCall)
         {
-            using (CreateOperationContextScope())
+            if (WrapWithOperationContextScope)
+                using (CreateOperationContextScope())
+                    proxyCall();
+            else
                 proxyCall();
         }
 
