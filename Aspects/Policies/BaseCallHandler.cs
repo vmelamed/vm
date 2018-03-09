@@ -1,9 +1,10 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace vm.Aspects.Policies
 {
@@ -58,8 +59,59 @@ namespace vm.Aspects.Policies
             IsContinueWithOverridden = _continueWithGeneric.GetBaseDefinition().DeclaringType != _continueWithGeneric.DeclaringType;
         }
 
+        #region ICallHandler implementation
         /// <summary>
-        /// Prepares the per-call custom data specific to the handler.
+        /// Order in which the handler will be executed
+        /// </summary>
+        public int Order { get; set; }
+
+        /// <summary>
+        /// Implement this method to execute your call-handler process. Here it is implemented like a call template:
+        /// <list type="number">
+        /// <item><see cref="Prepare"/> builds the "call data" context for the subsequent phases of this call</item>
+        /// </list>
+        /// </summary>
+        /// <param name="input">Inputs to the current call to the target.</param>
+        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
+        /// chain.</param>
+        /// <returns>Return value from the target.</returns>
+        /// <exception cref="ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
+        public virtual IMethodReturn Invoke(
+            IMethodInvocation input,
+            GetNextHandlerDelegate getNext)
+        {
+            try
+            {
+                if (input == null)
+                    throw new ArgumentNullException(nameof(input));
+                if (getNext == null)
+                    throw new ArgumentNullException(nameof(getNext));
+
+                // 1. Prepare/builds the "call data" context for the subsequent phases of this call
+                var callData = Prepare(input);
+
+                // 2. PreInvoke does things that need to be done before invoking the next aspect in the pipeline (e.g. parameter validation or generate a call audit in the logs)
+                var methodReturn = PreInvoke(input, callData);
+
+                // 3. If the PreInvoke was successful, call DoInvoke to invoke the next aspect or final object in the pipeline.
+                if (methodReturn == null)
+                    methodReturn = DoInvoke(input, getNext, callData);
+
+                // 4. PostInvoke does things that need to be done after the actual work is done, e.g. audit the output in the logs, or end the transaction, or process the exception from the invoke, etc.
+                return PostInvoke(input, methodReturn, callData);
+            }
+            catch (Exception x)
+            {
+                // we should not have exceptions thrown outside the aspect - log, pass the exception on as a return result and swallow it.
+                return input.CreateExceptionMethodReturn(
+                                new InvalidOperationException("Call handlers cannot throw exceptions. Caught in "+GetType().FullName, x));
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// builds the "call data" context for the subsequent phases of this call.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>T.</returns>
@@ -111,9 +163,9 @@ namespace vm.Aspects.Policies
 
             if (continueWith == null)
                 return methodReturn;
-
-            // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result data
-            return input.CreateMethodReturn(
+            else
+                // attach the ContinueWith to the Task found in methodReturn.ReturnValue and put the new task in the result data
+                return input.CreateMethodReturn(
                                 continueWith.Invoke(this, new object[] { input, methodReturn, callData }));
         }
 
@@ -194,48 +246,5 @@ namespace vm.Aspects.Policies
 
             return _continueWithGeneric.MakeGenericMethod(returnedTaskResultType);
         }
-
-        #region ICallHandler implementation
-        /// <summary>
-        /// Order in which the handler will be executed
-        /// </summary>
-        public int Order { get; set; }
-
-        /// <summary>
-        /// Implement this method to execute your handler processing.
-        /// </summary>
-        /// <param name="input">Inputs to the current call to the target.</param>
-        /// <param name="getNext">Delegate to execute to get the next delegate in the handler
-        /// chain.</param>
-        /// <returns>Return value from the target.</returns>
-        /// <exception cref="ArgumentNullException">thrown when <paramref name="input" /> or <paramref name="getNext" /> are <see langword="null" />.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "protocol")]
-        public virtual IMethodReturn Invoke(
-            IMethodInvocation input,
-            GetNextHandlerDelegate getNext)
-        {
-            try
-            {
-                if (input == null)
-                    throw new ArgumentNullException(nameof(input));
-                if (getNext == null)
-                    throw new ArgumentNullException(nameof(getNext));
-
-                var callData = Prepare(input);
-
-                var methodReturn = PreInvoke(input, callData);
-
-                if (methodReturn == null)
-                    methodReturn = DoInvoke(input, getNext, callData);
-
-                return PostInvoke(input, methodReturn, callData);
-            }
-            catch (Exception x)
-            {
-                return input.CreateExceptionMethodReturn(
-                                new InvalidOperationException("Call handlers cannot throw exceptions. Caught in "+GetType().FullName, x));
-            }
-        }
-        #endregion
     }
 }

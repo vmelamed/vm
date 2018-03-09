@@ -31,7 +31,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailure">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.IsFailure"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryDefaults.IsFailure"/>.
         /// Note that <paramref name="isFailure"/> is always called before <paramref name="isSuccess"/>.
         /// The operation will be retried if <paramref name="isFailure"/> and <paramref name="isSuccess"/> return <see langword="false"/>.
         /// </param>
@@ -51,9 +51,9 @@ namespace vm.Aspects.Threading
             Func<T, Exception, int, T> epilogue = null)
         {
             _operation = operation ?? throw new ArgumentNullException(nameof(operation));
-            _isFailure = isFailure ?? RetryConstants.IsFailure;
-            _isSuccess = isSuccess ?? RetryConstants.IsSuccess;
-            _epilogue  = epilogue  ?? RetryConstants.Epilogue;
+            _isFailure = isFailure ?? RetryDefaults.IsFailure;
+            _isSuccess = isSuccess ?? RetryDefaults.IsSuccess;
+            _epilogue  = epilogue  ?? RetryDefaults.Epilogue;
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace vm.Aspects.Threading
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public T Start(
-            int maxRetries = RetryConstants.DefaultMaxRetries,
-            int minDelay = RetryConstants.DefaultMinDelay,
-            int maxDelay = RetryConstants.DefaultMaxDelay)
+            int maxRetries = RetryDefaults.DefaultMaxRetries,
+            int minDelay = RetryDefaults.DefaultMinDelay,
+            int maxDelay = RetryDefaults.DefaultMaxDelay)
         {
             if (maxRetries <= 1)
                 throw new ArgumentException("The retries must be more than one.");

@@ -49,8 +49,8 @@ namespace vm.Aspects.Model
                                 transactionScopeFactory)
                             .WorkFunc(r => work(r, i)),
                 isFailure: isFailure ?? RetryUnitOfWorkConstants.IsFailure,
-                isSuccess: isSuccess ?? RetryConstants.IsSuccessResult,
-                epilogue: epilogue  ?? RetryConstants.Epilogue)
+                isSuccess: isSuccess ?? RetryDefaults.IsSuccessResult,
+                epilogue: epilogue  ?? RetryDefaults.Epilogue)
         {
         }
     }
