@@ -51,8 +51,8 @@ namespace vm.Aspects.Model
                     transactionScopeFactory)
                                 .WorkFuncAsync(async r => await work(r, i)),
                 isFailure ?? RetryUnitOfWorkConstants.IsFailureAsync,
-                isSuccess ?? RetryConstants.IsSuccessResultAsync,
-                epilogue ?? RetryConstants.EpilogueAsync)
+                isSuccess ?? RetryDefaults.IsSuccessResultAsync,
+                epilogue ?? RetryDefaults.EpilogueAsync)
         {
         }
     }

@@ -29,7 +29,7 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <param name="isFailureAsync">
         /// Caller supplied delegate which determines if the operation failed. 
-        /// If <see langword="null"/> the object will invoke <see cref="RetryConstants.IsFailureAsync"/>.
+        /// If <see langword="null"/> the object will invoke <see cref="RetryDefaults.IsFailureAsync"/>.
         /// Note that <paramref name="isFailureAsync"/> is always called before <paramref name="isSuccessAsync"/>.
         /// The operation will be retried if <paramref name="isFailureAsync"/> and <paramref name="isSuccessAsync"/> return <see langword="false"/>.
         /// </param>
@@ -49,9 +49,9 @@ namespace vm.Aspects.Threading
             Func<T, Exception, int, Task<T>> epilogueAsync = null)
         {
             _operationAsync = operationAsync ?? throw new ArgumentNullException(nameof(operationAsync));
-            _isFailureAsync = isFailureAsync ?? RetryConstants.IsFailureAsync;
-            _isSuccessAsync = isSuccessAsync ?? RetryConstants.IsSuccessAsync;
-            _epilogueAsync  = epilogueAsync  ?? RetryConstants.EpilogueAsync;
+            _isFailureAsync = isFailureAsync ?? RetryDefaults.IsFailureAsync;
+            _isSuccessAsync = isSuccessAsync ?? RetryDefaults.IsSuccessAsync;
+            _epilogueAsync  = epilogueAsync  ?? RetryDefaults.EpilogueAsync;
         }
 
         /// <summary>
@@ -69,9 +69,9 @@ namespace vm.Aspects.Threading
         /// </param>
         /// <returns>The result of the last successful operation or the result from the epilogue lambda.</returns>
         public async Task<T> StartAsync(
-            int maxRetries = RetryConstants.DefaultMaxRetries,
-            int minDelay = RetryConstants.DefaultMinDelay,
-            int maxDelay = RetryConstants.DefaultMaxDelay)
+            int maxRetries = RetryDefaults.DefaultMaxRetries,
+            int minDelay = RetryDefaults.DefaultMinDelay,
+            int maxDelay = RetryDefaults.DefaultMaxDelay)
         {
             if (maxRetries <= 1)
                 throw new ArgumentException("The retries must be more than one.");

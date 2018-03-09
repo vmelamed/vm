@@ -22,7 +22,7 @@ namespace vm.Aspects.Model
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
         public static bool IsFailure<T>(T result, Exception exception, int attempt)
-            => RetryConstants.IsFailure(result, exception, attempt) && !exception.IsTransient();
+            => RetryDefaults.IsFailure(result, exception, attempt) && !exception.IsTransient();
 
         /// <summary>
         /// The default method testing if the operation has failed is:
@@ -35,6 +35,6 @@ namespace vm.Aspects.Model
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation failed and cannot be retried, <see langword="false" /> otherwise.</returns>
         public static Task<bool> IsFailureAsync<T>(T result, Exception exception, int attempt)
-            => Task.FromResult(RetryConstants.IsFailure(result, exception, attempt) && !exception.IsTransient());
+            => Task.FromResult(RetryDefaults.IsFailure(result, exception, attempt) && !exception.IsTransient());
     }
 }
