@@ -265,6 +265,7 @@
     <Compile Include="IListExtensions.cs" />
     <Compile Include="LambdaExpressionExtensions.cs" />
     <Compile Include="PerCallContextLifetimeManager.cs" />
+    <Compile Include="Policies\ActivityTracer.cs" />
     <Compile Include="Policies\BaseCallHandler.cs" />
     <Compile Include="Policies\CallTraceAttribute.cs" />
     <Compile Include="Policies\CallTraceCallHandler.cs" />
@@ -272,6 +273,7 @@
     <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
     <Compile Include="Policies\ICallHandlerExtensions.cs" />
     <Compile Include="Policies\ActivityTracerCallHandler.cs" />
+    <Compile Include="Policies\NongenericBaseCallHandler.cs" />
     <Compile Include="Policies\ParameterValidatingCallHandler.cs" />
     <Compile Include="Policies\PolicyDefinitionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
