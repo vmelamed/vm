@@ -53,7 +53,7 @@ namespace vm.Aspects.Policies
             if (methodReturn == null)
                 throw new ArgumentNullException(nameof(methodReturn));
 
-            if (!(methodReturn.ReturnValue is Task task)  ||  task.IsCompleted)
+            if (!(methodReturn.ReturnValue is Task))
                 Cleanup(callData);
 
             return methodReturn;

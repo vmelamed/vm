@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,6 +9,10 @@ using System.Security.Principal;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
 
@@ -140,7 +142,13 @@ namespace vm.Aspects.Policies
         /// <returns>T.</returns>
         protected override CallTraceData Prepare(
             IMethodInvocation input)
-            => InitializeCallData(new CallTraceData(), input);
+
+        {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
+            return InitializeCallData(new CallTraceData(), input);
+        }
 
         /// <summary>
         /// Initializes the call data.
@@ -155,17 +163,20 @@ namespace vm.Aspects.Policies
             if (callData == null)
                 throw new ArgumentNullException(nameof(callData));
 
-            var attribute = input.MethodBase.GetMethodCustomAttribute<CallTraceAttribute>() ??
-                            input.Target.GetType().GetCustomAttribute<CallTraceAttribute>();
+            var targetType = input.Target.GetType();
 
-            if (attribute == null &&
-                input.MethodBase.ReflectedType != input.Target.GetType() &&
-                input.MethodBase.DeclaringType != input.Target.GetType())
-                attribute = input.Target.GetType()
-                                        .GetMethod(
-                                                input.MethodBase.Name,
-                                                input.MethodBase.GetParameters().Select(pi => pi.ParameterType).ToArray())
-                                        ?.GetMethodCustomAttribute<CallTraceAttribute>();
+            // get the call-trace attribute from the target method or the class/interface defining the method
+            var attribute = input.MethodBase.GetMethodCustomAttribute<CallTraceAttribute>() ??
+                            targetType.GetCustomAttribute<CallTraceAttribute>();
+
+            // if we couldn't find an attribute, try to get an attribute from the method override on the current target class
+            if (attribute == null  &&
+                input.MethodBase.ReflectedType != targetType &&
+                input.MethodBase.DeclaringType != targetType)
+                attribute = targetType.GetMethod(
+                                        input.MethodBase.Name,
+                                        input.MethodBase.GetParameters().Select(pi => pi.ParameterType).ToArray())
+                                            ?.GetMethodCustomAttribute<CallTraceAttribute>();
 
             callData.Trace = attribute?.Trace ?? true;
 
@@ -194,6 +205,9 @@ namespace vm.Aspects.Policies
             IMethodInvocation input,
             CallTraceData callData)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
             if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return null;
 
@@ -204,7 +218,6 @@ namespace vm.Aspects.Policies
                 if (LogWriter.ShouldLog(entry))
                 {
                     callData.BeforeCallLogEntry = entry;
-
                     Action logBeforeCall = () => Facility
                                                     .ExceptionManager
                                                     .Process(
@@ -244,10 +257,10 @@ namespace vm.Aspects.Policies
             new LogEntry
             {
                 Categories = new[] { category },
-                Severity = Severity,
-                EventId = EventId,
-                Priority = Priority,
-                Title = Title,
+                Severity   = Severity,
+                EventId    = EventId,
+                Priority   = Priority,
+                Title      = Title,
             };
 
         /// <summary>
@@ -262,6 +275,11 @@ namespace vm.Aspects.Policies
             GetNextHandlerDelegate getNext,
             CallTraceData callData)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (getNext == null)
+                throw new ArgumentNullException(nameof(getNext));
+
             if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return base.DoInvoke(input, getNext, callData);
 
@@ -297,12 +315,12 @@ namespace vm.Aspects.Policies
             if (!callData.Trace || !LogWriter.IsLoggingEnabled() || methodReturn.IsAsyncCall())
                 return methodReturn;
 
-            callData.ReturnValue = methodReturn.ReturnValue;
+            callData.ReturnValue  = methodReturn.ReturnValue;
             callData.OutputValues = methodReturn.Outputs;
-            callData.Exception = methodReturn.Exception;
+            callData.Exception    = methodReturn.Exception;
 
             // if necessary wait for the async LogBeforeCall to finish
-            if (callData.LogBeforeCall != null && !callData.LogBeforeCall.IsCompleted)
+            if (callData.LogBeforeCall != null && !input.IsAsyncCall())
                 callData.LogBeforeCall.GetAwaiter().GetResult();
 
             LogPostInvoke(input, callData).GetAwaiter().GetResult();

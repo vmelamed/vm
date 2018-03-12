@@ -25,43 +25,27 @@ namespace vm.Aspects.Policies
     /// <seealso cref="ICallHandler" />
     public abstract class BaseCallHandler<T> : NongenericBaseCallHandler, ICallHandler
     {
-        readonly MethodIsOverridden _continueWith;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseCallHandler{T}"/> class.
         /// </summary>
         protected BaseCallHandler()
         {
-            // Get the method info for an overridden ContinueWith, if exists in the inheriting call handler:
-            //
-            // protected virtual async Task<TResult> ContinueWith<TResult>(IMethodInvocation input, IMethodReturn methodReturn, T callData);
-            //
-            using (SyncContinueWithGenericMethods.UpgradableReaderLock())
-                if (!ContinueWithGenericMethods.TryGetValue(GetType(), out MethodIsOverridden methodIsOverridden))
+            // Get the method info for an overridden ContinueWith<TResult>, if exists in the inheriting call handler:
+            using (SyncHandlerToGenericContinueWith.UpgradableReaderLock())
+                if (!HandlerToGenericContinueWith.TryGetValue(GetType(), out MethodInfo continueWithGeneric))
                 {
-                    var continueWithGeneric = GetType()
-                                                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                                                .Where(
-                                                    m =>
-                                                    {
-                                                        if (m.IsGenericMethod               &&
-                                                            m.Name == nameof(ContinueWith)  &&
-                                                            m.GetGenericArguments().Count() == 1)
-                                                        {
-                                                            var parameters = m.GetParameters();
+                    continueWithGeneric = GetType().GetMethod(
+                                                            nameof(ContinueWith),
+                                                            BindingFlags.Instance | BindingFlags.NonPublic,
+                                                            null,
+                                                            new[] { typeof(IMethodInvocation), typeof(IMethodReturn), typeof(T) },
+                                                            null);
 
-                                                            return parameters.Count()          == 3                          &&
-                                                                   parameters[0].ParameterType == typeof(IMethodInvocation)  &&
-                                                                   parameters[1].ParameterType == typeof(IMethodReturn)      &&
-                                                                   parameters[2].ParameterType == typeof(T);
-                                                        }
-                                                        else
-                                                            return false;
-                                                    })
-                                                .Single();
+                    var isOverridden = continueWithGeneric.IsOverridden() ||
+                                       GetType().GetMethods().Any(mi => mi.Name == nameof(DoContinueWith) && mi.IsOverridden());
 
-                    using (SyncContinueWithGenericMethods.WriterLock())
-                        ContinueWithGenericMethods[GetType()] = new MethodIsOverridden(continueWithGeneric);
+                    using (SyncHandlerToGenericContinueWith.WriterLock())
+                        HandlerToGenericContinueWith[GetType()] = isOverridden ? continueWithGeneric : null;
                 }
         }
 
@@ -104,7 +88,8 @@ namespace vm.Aspects.Policies
                 if (methodReturn == null)
                     methodReturn = DoInvoke(input, getNext, callData);
 
-                // 4. PostInvoke does things that need to be done after the actual work is done, e.g. audit the output in the logs, or end the transaction, or process the exception from the invoke, etc.
+                // 4. PostInvoke does things that need to be done after the actual work is done,
+                //    e.g. audit the output in the logs, or end the transaction, or process the exception from the invoke, etc.
                 return PostInvoke(input, methodReturn, callData);
             }
             catch (Exception x)
@@ -170,15 +155,16 @@ namespace vm.Aspects.Policies
             if (getNext == null)
                 throw new ArgumentNullException(nameof(getNext));
 
-            var continueWith = GetContinueWith(input);
+            // call the target method
             var methodReturn = getNext().Invoke(input, getNext);
+            var continueWith = GetContinueWith(input);
 
             if (continueWith == null)
                 return methodReturn;
 
             try
             {
-                // ContinueWith will return a new task that will invoke asynchronously the target method and then will continue with its own post processing
+                // ContinueWith should return a new task that awaits the target method and then will await its own post processing
                 return input.CreateMethodReturn(
                                 continueWith.Invoke(this, new object[] { input, methodReturn, callData }));
             }
@@ -232,22 +218,25 @@ namespace vm.Aspects.Policies
             if (methodReturn == null)
                 throw new ArgumentNullException(nameof(methodReturn));
 
-            // if the call already failed - throw the exception - DoInvoke should catch it
-            if (methodReturn.Exception != null)
-                throw methodReturn.Exception;
-
             // if the method returns Task<T> await the task's completion and return the result
             if (methodReturn.ReturnValue is Task<TResult> taskResult)
-                return await DoContinueWith(
+            {
+                var result = await taskResult;
+
+                await DoContinueWith(
                                 input,
                                 methodReturn,
                                 callData,
-                                await taskResult);
+                                result);
 
-            // if the method is plain Task - await the task's completion and return Task<bool> equal to Task.FromResult(false);
+                return result;
+            }
+
+            // if the method is plain Task - await the task's completion and return a default value (false) that is ignored anyway;
             if (methodReturn.ReturnValue is Task task)
             {
                 await task;
+
                 await DoContinueWith(
                                 input,
                                 methodReturn,
@@ -296,7 +285,7 @@ namespace vm.Aspects.Policies
         }
 
         /// <summary>
-        /// Creates and caches a new, invokable continue-with method out of ContinueWith&lt;T&gt; for each method called on the target.
+        /// Creates and caches a new, closed/invokable continue-with method out of ContinueWith&lt;T&gt; for each method called on the target.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>MethodInfo.</returns>
@@ -306,30 +295,28 @@ namespace vm.Aspects.Policies
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
 
-            var handlerForMethod = new HandlerForMethod(GetType(), input.MethodBase);
+            if (!input.IsAsyncCall())
+                return null;
 
-            using (SyncMethodToContinueWith.UpgradableReaderLock())
-            {
+            var returnType = ((MethodInfo)input.MethodBase).ReturnType;
+            var handlerTypeReturnType = new HandlerTypeReturnType(GetType(), returnType);
+            MethodInfo continueWith;
 
-                // if we have it cached already - return it
-                if (MethodToContinueWith.TryGetValue(handlerForMethod, out MethodInfo methodInfo))
-                    return methodInfo;
+            // if we have it cached already - return it
+            using (SyncMethodToContinueWith.ReaderLock())
+                if (HandlerTypeReturnTypeToContinueWith.TryGetValue(handlerTypeReturnType, out continueWith))
+                    return continueWith;
 
-                if (input.IsAsyncCall() && _continueWith.IsOverridden)
-                {
-                    var resultType       = input.ResultType();
-                    var resultTypeOfTask = resultType.IsGenericType
-                                                        ? resultType.GetGenericArguments()[0]
-                                                        : typeof(bool);
+            // get the continueWith MethodInfo
+            MethodInfo genericContinueWith;
 
-                    methodInfo = _continueWith.MethodInfo.MakeGenericMethod(resultTypeOfTask);
-                }
-                else
-                    methodInfo = null;  // effectively return directly the Task from the actual call. The caller will await it, i.e. there is no continue-with in the current call handler.
+            using (SyncHandlerToGenericContinueWith.ReaderLock())
+                genericContinueWith = HandlerToGenericContinueWith[GetType()];        // if it is not overridden, it will be null!
 
-                using (SyncMethodToContinueWith.WriterLock())
-                    return MethodToContinueWith[handlerForMethod] = methodInfo;
-            }
+            continueWith = genericContinueWith?.MakeGenericMethod(returnType);
+
+            using (SyncMethodToContinueWith.WriterLock())
+                return HandlerTypeReturnTypeToContinueWith[handlerTypeReturnType] = continueWith;
         }
     }
 }

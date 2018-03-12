@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+
 using vm.Aspects.Threading;
 
 namespace vm.Aspects
@@ -89,6 +90,22 @@ namespace vm.Aspects
                     isVirtual = accessor.IsVirtual;
 
             return isVirtual;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="MethodInfo"/> object represents a method that is overridden.
+        /// </summary>
+        /// <param name="mi">The <see cref="MethodInfo"/>.</param>
+        /// <returns><c>true</c> if the specified <see cref="MethodInfo"/> is overridden; otherwise, <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">mi</exception>
+        public static bool IsOverridden(
+            this MethodInfo mi)
+        {
+            if (mi == null)
+                throw new ArgumentNullException(nameof(mi));
+
+            return mi.IsVirtual  &&
+                   mi.GetBaseDefinition().DeclaringType != mi.DeclaringType;
         }
 
         /// <summary>
