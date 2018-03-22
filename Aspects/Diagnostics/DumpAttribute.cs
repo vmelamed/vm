@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
@@ -278,7 +279,8 @@ namespace vm.Aspects.Diagnostics
             => this == Default;
 
         #region ICloneable Members
-        object ICloneable.Clone() => Clone();
+        object ICloneable.Clone()
+            => Clone();
         #endregion
 
         /// <summary>
@@ -318,7 +320,7 @@ namespace vm.Aspects.Diagnostics
         {
             if (ReferenceEquals(this, other))
                 return true;
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
 
             return Order           == other.Order            &&
@@ -345,7 +347,8 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="DumpAttribute"/> and 
         /// properties of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj) => Equals(obj as DumpAttribute);
+        public override bool Equals(object obj)
+            => Equals(obj as DumpAttribute);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="DumpAttribute"/> and its derived types.
@@ -355,17 +358,20 @@ namespace vm.Aspects.Diagnostics
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + Order.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + DumpNullValues.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Skip.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + RecurseDump.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty?.GetHashCode() ?? 0);
-            hashCode = Constants.HashMultiplier * hashCode + Mask.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + MaskValue.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + MaxLength.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + MaxDepth.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + LabelFormat.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + ValueFormat.GetHashCode();
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + Order.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + DumpNullValues.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Skip.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + RecurseDump.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty?.GetHashCode() ?? 0);
+                hashCode = Constants.HashMultiplier * hashCode + Mask.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + MaskValue.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + MaxLength.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + MaxDepth.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + LabelFormat.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + ValueFormat.GetHashCode();
+            }
 
             return hashCode;
         }
@@ -379,9 +385,10 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator ==(DumpAttribute left, DumpAttribute right) => ReferenceEquals(left, null)
-                                                                                    ? ReferenceEquals(right, null)
-                                                                                    : left.Equals(right);
+        public static bool operator ==(DumpAttribute left, DumpAttribute right)
+            => left is null
+                ? right is null
+                : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="DumpAttribute"/> objects.
@@ -392,7 +399,8 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(DumpAttribute left, DumpAttribute right) => !(left==right);
+        public static bool operator !=(DumpAttribute left, DumpAttribute right)
+            => !(left==right);
         #endregion
     }
 }

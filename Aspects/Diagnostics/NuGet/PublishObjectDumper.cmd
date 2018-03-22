@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmDumperVersion=1.9.10
+set vmDumperVersion=1.9.11
 
 cd %~dp0..
 del *.nupkg
@@ -15,22 +15,29 @@ set configuration
 set suffix
 
 NuGet Update -self
-
-rem ------- build for .NET 4.6.2 -------
-set FrameworkVersion=4.6.2
-set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
-
-del /q bin\pack%FrameworkVersionConst%\*.*
-msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
+Nuget restore -verbosity quiet
 
 rem ------- build for .NET 4.5.2 -------
 set FrameworkVersion=4.5.2
-set FrameworkVersionConst=DOTNET452
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
-del /q bin\pack%FrameworkVersionConst%\*.*
+del /q bin\pack%FrameworkVersion%\*.*
+msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- build for .NET 4.6.2 -------
+set FrameworkVersion=4.6.2
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack%FrameworkVersion%\*.*
+msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- build for .NET 4.7.1 -------
+set FrameworkVersion=4.7.1
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack%FrameworkVersion%\*.*
 msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

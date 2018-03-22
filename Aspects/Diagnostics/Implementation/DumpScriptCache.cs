@@ -14,7 +14,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                 ClassDumpData classDumpData,
                 ObjectTextDumper objectTextDumper)
             {
-                if (objectTextDumper == null)
+                if (objectTextDumper is null)
                     throw new ArgumentNullException(nameof(objectTextDumper));
 
                 ObjectType             = objectType ?? throw new ArgumentNullException(nameof(objectType));
@@ -33,30 +33,36 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             #region Identity rules implementation.
             #region IEquatable<ScriptLookup> Members
-            public bool Equals(ScriptLookup other) =>
-                ObjectType             == other.ObjectType              &&
-                ClassDumpData          == other.ClassDumpData           &&
-                PropertiesBindingFlags == other.PropertiesBindingFlags  &&
-                FieldsBindingFlags     == other.FieldsBindingFlags;
+            public bool Equals(ScriptLookup other)
+                => ObjectType             == other.ObjectType              &&
+                   ClassDumpData          == other.ClassDumpData           &&
+                   PropertiesBindingFlags == other.PropertiesBindingFlags  &&
+                   FieldsBindingFlags     == other.FieldsBindingFlags;
             #endregion
 
-            public override bool Equals(object obj) => obj is ScriptLookup ? Equals((ScriptLookup)obj) : false;
+            public override bool Equals(object obj)
+                => obj is ScriptLookup ? Equals((ScriptLookup)obj) : false;
 
             public override int GetHashCode()
             {
                 var hashCode = Constants.HashInitializer;
 
-                hashCode = Constants.HashMultiplier * hashCode + ObjectType.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + ClassDumpData.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + PropertiesBindingFlags.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + FieldsBindingFlags.GetHashCode();
+                unchecked
+                {
+                    hashCode = Constants.HashMultiplier * hashCode + ObjectType.GetHashCode();
+                    hashCode = Constants.HashMultiplier * hashCode + ClassDumpData.GetHashCode();
+                    hashCode = Constants.HashMultiplier * hashCode + PropertiesBindingFlags.GetHashCode();
+                    hashCode = Constants.HashMultiplier * hashCode + FieldsBindingFlags.GetHashCode();
+                }
 
                 return hashCode;
             }
 
-            public static bool operator ==(ScriptLookup left, ScriptLookup right) => left.Equals(right);
+            public static bool operator ==(ScriptLookup left, ScriptLookup right)
+                => left.Equals(right);
 
-            public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left == right);
+            public static bool operator !=(ScriptLookup left, ScriptLookup right)
+                => !(left == right);
             #endregion
         };
 

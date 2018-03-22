@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security;
 using System.Text.RegularExpressions;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
@@ -74,6 +75,24 @@ namespace vm.Aspects
         }
 
         /// <summary>
+        /// Dumps a LINQ expression as a C# text.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns>The C# text.</returns>
+        public static string DumpCSharpText(
+            this Expression expression)
+        {
+            if (expression == null)
+                return DumpUtilities.Null;
+
+            using (var visitor = new CSharpDumpExpression())
+            {
+                visitor.Visit(expression);
+                return visitor.DumpText;
+            }
+        }
+
+        /// <summary>
         /// Dumps the <paramref name="value" /> to a string.
         /// </summary>
         /// <param name="value">The object to dump.</param>
@@ -89,7 +108,6 @@ namespace vm.Aspects
         /// </param>
         /// <returns>The text dump of the object.</returns>
         [SuppressMessage("Microsoft.Security", "CA2136:TransparencyAnnotationsShouldNotConflictFxCopRule")]
-        [SecuritySafeCritical]
         public static string DumpString(
             this object value,
             int indentLevel = 0,
@@ -100,24 +118,6 @@ namespace vm.Aspects
             {
                 value.DumpText(writer, indentLevel, dumpMetadata, dumpAttribute);
                 return writer.GetStringBuilder().ToString();
-            }
-        }
-
-        /// <summary>
-        /// Dumps a LINQ expression as a C# text.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns>The C# text.</returns>
-        public static string DumpCSharpText(
-            this Expression expression)
-        {
-            if (expression == null)
-                return DumpUtilities.Null;
-
-            using (var visitor = new CSharpDumpExpression())
-            {
-                visitor.Visit(expression);
-                return visitor.DumpText;
             }
         }
 
@@ -251,26 +251,6 @@ namespace vm.Aspects
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
         public static bool IsNullOrEmpty(this string value) => string.IsNullOrEmpty(value);
 
-#if DOTNET40
-        static IDictionary<Type, string> _cSharpTypeName = new Dictionary<Type, string>
-        {
-            [typeof(bool)]    = "bool",
-            [typeof(byte)]    = "byte",
-            [typeof(sbyte)]   = "sbyte",
-            [typeof(char)]    = "char",
-            [typeof(short)]   = "short",
-            [typeof(int)]     = "int",
-            [typeof(long)]    = "long",
-            [typeof(ushort)]  = "ushort",
-            [typeof(uint)]    = "uint",
-            [typeof(ulong)]   = "ulong",
-            [typeof(float)]   = "float",
-            [typeof(double)]  = "double",
-            [typeof(decimal)] = "decimal",
-            [typeof(string)]  = "string",
-            [typeof(object)]  = "object",
-        };
-#else
         static readonly IReadOnlyDictionary<Type, string> _cSharpTypeName = new ReadOnlyDictionary<Type, string>(
             new Dictionary<Type, string>
             {
@@ -290,7 +270,6 @@ namespace vm.Aspects
                 [typeof(string)]  = "string",
                 [typeof(object)]  = "object",
             });
-#endif
 
         /// <summary>
         /// Gets the name of a type. In case the type is a EF dynamic proxy it will return only the first portion of the name, e.g.

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2011
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper", "vm.Aspects.Diagnostics.ObjectDumper.csproj", "{372A2FEF-C004-498C-B57F-CF0ACA66C37B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DebugUnitTest|Any CPU = DebugUnitTest|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{372A2FEF-C004-498C-B57F-CF0ACA66C37B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C357109-04E4-48A6-A3BF-80DFD553DAEB}
+	EndGlobalSection
+EndGlobal
