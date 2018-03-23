@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests</RootNamespace>
     <AssemblyName>vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -171,20 +172,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\vm.Aspects.csproj">
-      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
-      <Name>vm.Aspects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Wcf\vm.Aspects.Wcf.csproj">
-      <Project>{165DED1C-2F5B-4941-854C-EC928ADA3F32}</Project>
-      <Name>vm.Aspects.Wcf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\vm.Aspects.Model.csproj">
-      <Project>{7661A69C-6EB4-4190-BEC0-2C8DEF1E815F}</Project>
-      <Name>vm.Aspects.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Migrations\201703160126497_Initial.resx">
       <DependentUpon>201703160126497_Initial.cs</DependentUpon>
     </EmbeddedResource>
@@ -223,6 +210,20 @@
     <PackageReference Include="Unity.Interception">
       <Version>4.0.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\vm.Aspects.csproj">
+      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
+      <Name>vm.Aspects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Wcf\vm.Aspects.Wcf.csproj">
+      <Project>{165ded1c-2f5b-4941-854c-ec928ada3f32}</Project>
+      <Name>vm.Aspects.Wcf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vm.Aspects.Model.csproj">
+      <Project>{7661a69c-6eb4-4190-bec0-2c8def1e815f}</Project>
+      <Name>vm.Aspects.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

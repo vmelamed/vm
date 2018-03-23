@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 
@@ -13,20 +14,24 @@ namespace vm.Aspects.Policies
         /// <summary>
         /// Synchronizes the access to the dictionary <see cref="HandlerToGenericContinueWith"/>
         /// </summary>
-        protected static ReaderWriterLockSlim SyncHandlerToGenericContinueWith = new ReaderWriterLockSlim();
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        protected readonly static ReaderWriterLockSlim SyncHandlerToGenericContinueWith = new ReaderWriterLockSlim();
         /// <summary>
         /// The continue-with generic methods mapped to the type of the defining call handlers.
         /// </summary>
-        protected static IDictionary<Type, MethodInfo> HandlerToGenericContinueWith = new Dictionary<Type, MethodInfo>();
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        protected readonly static IDictionary<Type, MethodInfo> HandlerToGenericContinueWith = new Dictionary<Type, MethodInfo>();
 
         /// <summary>
         /// Synchronizes the access to the dictionary <see cref="HandlerTypeReturnTypeToContinueWith"/>
         /// </summary>
-        protected static ReaderWriterLockSlim SyncMethodToContinueWith = new ReaderWriterLockSlim();
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        protected readonly static ReaderWriterLockSlim SyncMethodToContinueWith = new ReaderWriterLockSlim();
         /// <summary>
         /// The continue with concrete/closed methods mapped to the handler type and the return type of the method being handled.
         /// </summary>
-        protected static IDictionary<HandlerTypeReturnType, MethodInfo> HandlerTypeReturnTypeToContinueWith = new Dictionary<HandlerTypeReturnType, MethodInfo>();
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        protected readonly static IDictionary<HandlerTypeReturnType, MethodInfo> HandlerTypeReturnTypeToContinueWith = new Dictionary<HandlerTypeReturnType, MethodInfo>();
 
         /// <summary>
         /// Struct HandlerTypeReturnType encapsulates a handler type and the return type of particular method being handled in that handler.

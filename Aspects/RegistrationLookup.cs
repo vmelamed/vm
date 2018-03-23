@@ -46,7 +46,7 @@ namespace vm.Aspects
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         public virtual bool Equals(RegistrationLookup other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -71,8 +71,11 @@ namespace vm.Aspects
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + RegisteredType.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Name.GetHashCode();
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + RegisteredType.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Name.GetHashCode();
+            }
 
             return hashCode;
         }
@@ -83,9 +86,8 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator ==(RegistrationLookup left, RegistrationLookup right) => ReferenceEquals(left, null)
-                                                                                                ? ReferenceEquals(right, null)
-                                                                                                : left.Equals(right);
+        public static bool operator ==(RegistrationLookup left, RegistrationLookup right)
+            => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Implements the != operator.
@@ -93,7 +95,8 @@ namespace vm.Aspects
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>The result of the operation.</returns>
-        public static bool operator !=(RegistrationLookup left, RegistrationLookup right) => !(left==right);
+        public static bool operator !=(RegistrationLookup left, RegistrationLookup right)
+            => !(left==right);
         #endregion
     }
 }

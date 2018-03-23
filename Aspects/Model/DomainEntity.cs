@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model
@@ -28,7 +29,7 @@ namespace vm.Aspects.Model
         /// The implementation assumes that the entity has identity when the <see cref="Key"/> is not equal to the default value of its type.
         /// E.g. if the type of the key is <see cref="string"/> the entity has identity if <c>Key!=null</c>.
         /// </remarks>
-        public override bool HasIdentity => !ReferenceEquals(Key, null)  &&  !Key.Equals(default(TKey));
+        public override bool HasIdentity => !Key.Equals(default(TKey));
 
         #region IHasStoreId<TId> Members
         /// <summary>
@@ -82,7 +83,7 @@ namespace vm.Aspects.Model
         public virtual bool Equals(
             DomainEntity<TId, TKey> other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -145,9 +146,7 @@ namespace vm.Aspects.Model
         /// </returns>
         public static bool operator ==(
             DomainEntity<TId, TKey> left,
-            DomainEntity<TId, TKey> right) => ReferenceEquals(left, null)
-                                                ? ReferenceEquals(right, null)
-                                                : left.Equals(right);
+            DomainEntity<TId, TKey> right) => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="DomainEntity{TId, TKey}"/> objects.

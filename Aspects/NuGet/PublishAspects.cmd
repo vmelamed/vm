@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmAspectsVersion=1.3.0
+set vmAspectsVersion=1.3.1
 
 cd %~dp0..
 del *.nupkg
@@ -15,30 +15,69 @@ if /i .%1. EQU .. (
 
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
-set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack%FrameworkVersionConst% /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
-del /q bin\pack%FrameworkVersionConst%
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
 msbuild vm.Aspects.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd Model
-del /q bin\pack%FrameworkVersionConst%
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
 msbuild vm.Aspects.Model.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Parsers
-del /q bin\pack%FrameworkVersionConst%
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
 msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\FtpTransfer
-del /q bin\pack%FrameworkVersionConst%
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
 msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Wcf
-del /q bin\pack%FrameworkVersionConst%
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
+msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..
+
+rem ------- .NET 4.7.1 -------
+set FrameworkVersion=4.7.1
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
+msbuild vm.Aspects.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd Model
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
+msbuild vm.Aspects.Model.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\Parsers
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
+msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\FtpTransfer
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
+msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\Wcf
+del /q bin\pack%FrameworkVersion%
+copy project.assets.json obj
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

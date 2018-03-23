@@ -180,7 +180,7 @@ namespace vm.Aspects
         /// </remarks>
         public bool Equals(SemanticVersion other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -222,10 +222,13 @@ namespace vm.Aspects
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + Major.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Minor.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Patch.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (Prerelease?.GetHashCode() ?? 0);
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + Major.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Minor.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Patch.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + (Prerelease?.GetHashCode() ?? 0);
+            }
 
             return hashCode;
         }
@@ -239,9 +242,8 @@ namespace vm.Aspects
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(SemanticVersion)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator ==(SemanticVersion left, SemanticVersion right) => ReferenceEquals(left, null)
-                                                                                ? ReferenceEquals(right, null)
-                                                                                : left.Equals(right);
+        public static bool operator ==(SemanticVersion left, SemanticVersion right)
+            => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="SemanticVersion"/> objects.
@@ -252,7 +254,8 @@ namespace vm.Aspects
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(SemanticVersion)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(SemanticVersion left, SemanticVersion right) => !(left==right);
+        public static bool operator !=(SemanticVersion left, SemanticVersion right)
+            => !(left==right);
         #endregion
 
         #region IComparable<SemanticVersion>

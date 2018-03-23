@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -10,7 +10,7 @@
         </summary>
         <description>
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.
-            Supports only .NET 4.6.2.
+            Supports .NET 4.6.2 and 4.7.1.
         </description>
         <releaseNotes>
             Added UriExtensions and UriComparer
@@ -18,26 +18,34 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2017</copyright>
+        <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
             <group>
+                <dependency id="System.Diagnostics.Tracing"
+                            version="4.3.0" />
                 <dependency id="System.IdentityModel.Tokens.Jwt"
                             version="5.2.1" />
-                <dependency id="System.Diagnostics.Tracing"
-                            version="4.3.0" />
-                <dependency id="System.Diagnostics.Tracing"
-                            version="4.3.0" />
-                <dependency id="EntityFramework"
-                            version="6.2.0" />
+                <dependency id="Microsoft.IdentityModel.Logging"
+                            version="5.2.1" />
+                <dependency id="Microsoft.IdentityModel.Protocols"
+                            version="5.2.1" />
+                <dependency id="Microsoft.IdentityModel.Protocols.OpenIdConnect"
+                            version="5.2.1" />
+                <dependency id="Microsoft.IdentityModel.Tokens"
+                            version="5.2.1" />
                 <dependency id="Newtonsoft.Json"
                             version="11.0.1" />
+                <dependency id="EntityFramework"
+                            version="6.2.0" />
                 <dependency id="AspectObjectDumper"
-                            version="1.9.10" />
+                            version="1.9.11" />
+                <dependency id="Ciphers"
+                            version="1.12.6" />
             </group>
 
             <group>
                 <dependency id="CommonServiceLocator"
-                            version="1.3" />
+                            version="1.3.0" />
                 <dependency id="Unity"
                             version="4.0.1" />
                 <dependency id="Unity.Interception"
@@ -60,39 +68,39 @@
         <tags></tags>
     </metadata>
     <files>
-        <file src="..\bin\packDOTNET462\vm.Aspects.dll"
+        <file src="..\bin\pack4.6.2\vm.Aspects.dll"
               target="lib\net462"/>
-        <file src="..\bin\packDOTNET462\vm.Aspects.pdb"
+        <file src="..\bin\pack4.6.2\vm.Aspects.pdb"
               target="lib\net462"/>
-        <file src="..\bin\packDOTNET462\vm.Aspects.xml"
+        <file src="..\bin\pack4.6.2\vm.Aspects.xml"
               target="lib\net462"/>
-        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.dll"
+        <file src="..\Model\bin\pack4.6.2\vm.Aspects.Model.dll"
               target="lib\net462"/>
-        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.pdb"
+        <file src="..\Model\bin\pack4.6.2\vm.Aspects.Model.pdb"
               target="lib\net462"/>
-        <file src="..\Model\bin\packDOTNET462\vm.Aspects.Model.xml"
+        <file src="..\Model\bin\pack4.6.2\vm.Aspects.Model.xml"
               target="lib\net462"/>
-        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.dll"
+        <file src="..\Wcf\bin\pack4.6.2\vm.Aspects.Wcf.dll"
               target="lib\net462"/>
-        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.pdb"
+        <file src="..\Wcf\bin\pack4.6.2\vm.Aspects.Wcf.pdb"
               target="lib\net462"/>
-        <file src="..\Wcf\bin\packDOTNET462\vm.Aspects.Wcf.xml"
+        <file src="..\Wcf\bin\pack4.6.2\vm.Aspects.Wcf.xml"
               target="lib\net462"/>
-        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.dll"
+        <file src="..\Parsers\bin\pack4.6.2\vm.Aspects.Parsers.dll"
               target="lib\net462"/>
-        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.pdb"
+        <file src="..\Parsers\bin\pack4.6.2\vm.Aspects.Parsers.pdb"
               target="lib\net462"/>
-        <file src="..\Parsers\bin\packDOTNET462\vm.Aspects.Parsers.xml"
+        <file src="..\Parsers\bin\pack4.6.2\vm.Aspects.Parsers.xml"
               target="lib\net462"/>
-        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.dll"
+        <file src="..\FtpTransfer\bin\pack4.6.2\vm.Aspects.FtpTransfer.dll"
               target="lib\net462"/>
-        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.pdb"
+        <file src="..\FtpTransfer\bin\pack4.6.2\vm.Aspects.FtpTransfer.pdb"
               target="lib\net462"/>
-        <file src="..\FtpTransfer\bin\packDOTNET462\vm.Aspects.FtpTransfer.xml"
+        <file src="..\FtpTransfer\bin\pack4.6.2\vm.Aspects.FtpTransfer.xml"
               target="lib\net462"/>
-        <file src="..\bin\packDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
+        <file src="..\bin\pack4.6.2\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
               target="lib\net462"/>
-        <file src="..\bin\packDOTNET462\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
+        <file src="..\bin\pack4.6.2\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
               target="lib\net462"/>
 
         <file src="..\**\*.cs"

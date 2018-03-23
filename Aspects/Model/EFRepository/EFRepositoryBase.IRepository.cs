@@ -9,6 +9,7 @@ using vm.Aspects.Model.Repository;
 namespace vm.Aspects.Model.EFRepository
 {
     using System.Data.Entity.Infrastructure;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Security;
     using System.Threading;
@@ -52,6 +53,7 @@ namespace vm.Aspects.Model.EFRepository
             }
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "This is the intent")]
         ManualResetEvent GetEvent()
         {
             ManualResetEvent @event = null;

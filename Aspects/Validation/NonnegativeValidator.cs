@@ -1,8 +1,10 @@
 ﻿using System;
+
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+
 using vm.Aspects.Properties;
 
 namespace vm.Aspects.Validation
@@ -42,8 +44,7 @@ namespace vm.Aspects.Validation
             string key,
             ValidationResults validationResults)
         {
-            var comparable = objectToValidate as IComparable;
-            var valid = comparable != null &&
+            var valid = objectToValidate is IComparable comparable &&
                         comparable.CompareTo(_zero) >= 0;
 
             if (Negated)

@@ -1,12 +1,14 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
+
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Wcf.Bindings;
@@ -178,6 +180,7 @@ namespace vm.Aspects.Wcf.Services
         /// Gets the type of the service contract.
         /// </summary>
         /// <value>The service contract type.</value>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static readonly Type ServiceInitializerType = typeof(TInitializer);
         #endregion
 

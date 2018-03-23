@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+
 using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Model
@@ -134,8 +135,11 @@ namespace vm.Aspects.Model
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + Currency.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Value.GetHashCode();
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + Currency.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Value.GetHashCode();
+            }
 
             return hashCode;
         }
@@ -150,12 +154,7 @@ namespace vm.Aspects.Model
         /// otherwise <see langword="false"/>.
         /// </returns>
         public static bool operator ==(Money left, Money right)
-        {
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
-
-            return left.Equals(right);
-        }
+            => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="Money"/> objects.
@@ -166,7 +165,8 @@ namespace vm.Aspects.Model
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(Money)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(Money left, Money right) => !(left == right);
+        public static bool operator !=(Money left, Money right)
+            => !(left == right);
 
         #region ICloneable
         /// <summary>

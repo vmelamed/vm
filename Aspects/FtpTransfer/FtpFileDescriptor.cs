@@ -56,7 +56,7 @@ namespace vm.Aspects.FtpTransfer
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         public virtual bool Equals(FtpFileListEntry other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -88,14 +88,17 @@ namespace vm.Aspects.FtpTransfer
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + IsFolder.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (AccessRights!=null ? AccessRights.GetHashCode() : 0);
-            hashCode = Constants.HashMultiplier * hashCode + Number.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (Owner!=null ? Owner.GetHashCode() : 0);
-            hashCode = Constants.HashMultiplier * hashCode + (Group!=null ? Group.GetHashCode() : 0);
-            hashCode = Constants.HashMultiplier * hashCode + FileSize.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + Created.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + (Name!=null ? Name.GetHashCode() : 0);
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + IsFolder.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + (AccessRights!=null ? AccessRights.GetHashCode() : 0);
+                hashCode = Constants.HashMultiplier * hashCode + Number.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + (Owner!=null ? Owner.GetHashCode() : 0);
+                hashCode = Constants.HashMultiplier * hashCode + (Group!=null ? Group.GetHashCode() : 0);
+                hashCode = Constants.HashMultiplier * hashCode + FileSize.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + Created.GetHashCode();
+                hashCode = Constants.HashMultiplier * hashCode + (Name!=null ? Name.GetHashCode() : 0);
+            }
 
             return hashCode;
         }
@@ -112,8 +115,8 @@ namespace vm.Aspects.FtpTransfer
         public static bool operator ==(
             FtpFileListEntry left,
             FtpFileListEntry right)
-            => ReferenceEquals(left, null)
-                        ? ReferenceEquals(right, null)
+            => left is null
+                        ? right is null
                         : left.Equals(right);
 
         /// <summary>

@@ -145,6 +145,7 @@ namespace vm.Aspects.Policies
         /// <param name="getNext">Get next aspect in the pipeline.</param>
         /// <param name="callData">The per-call data.</param>
         /// <returns>IMethodReturn.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "This is how it works.")]
         protected virtual IMethodReturn DoInvoke(
             IMethodInvocation input,
             GetNextHandlerDelegate getNext,

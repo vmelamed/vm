@@ -152,7 +152,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// </remarks>
         public virtual bool Equals(HiLoIdentityGenerator other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -192,7 +192,10 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + EntitySetName.GetHashCode();
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + EntitySetName.GetHashCode();
+            }
 
             return hashCode;
         }
@@ -206,7 +209,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(HiLoIdentityGenerator)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator ==(HiLoIdentityGenerator left, HiLoIdentityGenerator right) => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
+        public static bool operator ==(HiLoIdentityGenerator left, HiLoIdentityGenerator right)
+            => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="HiLoIdentityGenerator"/> objects.
@@ -217,7 +221,8 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(HiLoIdentityGenerator)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(HiLoIdentityGenerator left, HiLoIdentityGenerator right) => !(left==right);
+        public static bool operator !=(HiLoIdentityGenerator left, HiLoIdentityGenerator right)
+            => !(left==right);
         #endregion
 
         /// <summary>

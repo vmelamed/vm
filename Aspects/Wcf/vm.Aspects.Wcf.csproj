@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Wcf</RootNamespace>
     <AssemblyName>vm.Aspects.Wcf</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471</TargetFrameworkVersions>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
@@ -22,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;DOTNET462</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
@@ -78,7 +79,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DOTNET462</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\vm.Aspects.Wcf.XML</DocumentationFile>
@@ -137,7 +138,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;TEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;TEST</DefineConstants>
     <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -331,6 +332,7 @@
     <Compile Include="ServicePolicies\ServiceCallExceptionHandler.cs" />
     <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
     <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
+    <None Include="project.assets.json" />
     <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
     <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
     <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.Registrar.cs" />

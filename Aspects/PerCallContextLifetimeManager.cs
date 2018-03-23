@@ -4,7 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Threading;
+
 using Microsoft.Practices.Unity;
+
 using vm.Aspects.Threading;
 
 namespace vm.Aspects
@@ -95,7 +97,7 @@ namespace vm.Aspects
         /// </remarks>
         public virtual bool Equals(PerCallContextLifetimeManager<T> other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -135,8 +137,10 @@ namespace vm.Aspects
         {
             var hashCode = Constants.HashInitializer;
 
-            hashCode = Constants.HashMultiplier * hashCode + (_key?.GetHashCode() ?? 0);
-
+            unchecked
+            {
+                hashCode = Constants.HashMultiplier * hashCode + (_key?.GetHashCode() ?? 0);
+            }
             return hashCode;
         }
 
@@ -149,9 +153,8 @@ namespace vm.Aspects
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(PerCallContextLifetimeManager{T})"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator ==(PerCallContextLifetimeManager<T> left, PerCallContextLifetimeManager<T> right) => ReferenceEquals(left, null)
-                                                                                ? ReferenceEquals(right, null)
-                                                                                : left.Equals(right);
+        public static bool operator ==(PerCallContextLifetimeManager<T> left, PerCallContextLifetimeManager<T> right)
+            => left is null ? right is null : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="PerCallContextLifetimeManager{T}"/> objects.
@@ -162,7 +165,8 @@ namespace vm.Aspects
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(PerCallContextLifetimeManager{T})"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(PerCallContextLifetimeManager<T> left, PerCallContextLifetimeManager<T> right) => !(left==right);
+        public static bool operator !=(PerCallContextLifetimeManager<T> left, PerCallContextLifetimeManager<T> right)
+            => !(left==right);
         #endregion
 
         #region IDisposable pattern implementation

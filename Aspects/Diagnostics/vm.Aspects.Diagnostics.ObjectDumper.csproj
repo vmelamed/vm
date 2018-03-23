@@ -156,7 +156,7 @@
     <None Include="NuGet\ObjectDumper.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="NuGet\project.assets.json" />
+    <None Include="project.assets.json" />
     <None Include="NuGet\PublishObjectDumper.cmd" />
     <None Include="ObjectDumper.md" />
   </ItemGroup>

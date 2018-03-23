@@ -218,6 +218,7 @@ namespace vm.Aspects.Policies
                 if (LogWriter.ShouldLog(entry))
                 {
                     callData.BeforeCallLogEntry = entry;
+
                     Action logBeforeCall = () => Facility
                                                     .ExceptionManager
                                                     .Process(

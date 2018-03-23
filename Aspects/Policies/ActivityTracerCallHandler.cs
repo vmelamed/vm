@@ -25,12 +25,12 @@ namespace vm.Aspects.Policies
         protected override ActivityTracer Prepare(
             IMethodInvocation input)
         {
-            if (input == null)
+            if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            if (_traceManager == null)
+            if (_traceManager is null)
                 lock (_syncTraceManager)
-                    if (_traceManager == null)
+                    if (_traceManager is null)
                         _traceManager = new TraceManager(Facility.LogWriter);
 
             return new ActivityTracer(_traceManager.StartTrace(LogWriterFacades.General));
@@ -48,9 +48,9 @@ namespace vm.Aspects.Policies
             IMethodReturn methodReturn,
             ActivityTracer callData)
         {
-            if (input == null)
+            if (input is null)
                 throw new ArgumentNullException(nameof(input));
-            if (methodReturn == null)
+            if (methodReturn is null)
                 throw new ArgumentNullException(nameof(methodReturn));
 
             if (!(methodReturn.ReturnValue is Task))
@@ -94,7 +94,7 @@ namespace vm.Aspects.Policies
             return Task.FromResult(result);
         }
 
-        void Cleanup(ActivityTracer callData)
+        static void Cleanup(ActivityTracer callData)
         {
             callData.Tracer?.Dispose();
             callData.Tracer = null;
