@@ -1,5 +1,5 @@
 ﻿if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmExpressionSerializationVersion=1.0.113
+set vmExpressionSerializationVersion=1.0.114
 
 cd %~dp0..
 del *.nupkg
@@ -18,8 +18,15 @@ NuGet Update -self
 
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
-set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack\*.*
+msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- .NET 4.6.2 -------
+set FrameworkVersion=4.7.1
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
 msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+
 using vm.Aspects.Threading;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
@@ -78,7 +79,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <returns>The specified type.</returns>
         internal static Type GetType(string typeName)
         {
-            if (typeName.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(typeName))
                 return null;
 
             Type type;

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Linq.Expressions.Serialization", "vm.Aspects.Linq.Expressions.Serialization.csproj", "{628D6504-40E3-412A-827F-39F8644BA906}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DebugUnitTest|Any CPU = DebugUnitTest|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5114A76D-A09A-4378-BB22-C9EABB45B6CD}
+	EndGlobalSection
+EndGlobal

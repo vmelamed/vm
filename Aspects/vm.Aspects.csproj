@@ -355,7 +355,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AspectObjectDumper">
-      <Version>1.9.10</Version>
+      <Version>1.9.11</Version>
     </PackageReference>
     <PackageReference Include="CommonServiceLocator">
       <Version>1.3.0</Version>
