@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers.Utilities</RootNamespace>
     <AssemblyName>FileCrypt</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471</TargetFrameworkVersions>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="project.assets.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vm.Aspects.Security.Cryptography.Ciphers.csproj">

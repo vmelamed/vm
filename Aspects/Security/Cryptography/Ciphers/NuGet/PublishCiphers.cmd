@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmCiphersVersion=1.12.5
+set vmCiphersVersion=1.12.6
 
 cd %~dp0..
 del *.nupkg
@@ -18,8 +18,27 @@ NuGet Update -self
 
 rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
-set FrameworkVersionConst=DOTNET462
-set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:DefineConstants=%FrameworkVersionConst% /p:OutDir=bin\pack /m
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack\*.*
+msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+del /q EncryptedKey\bin\pack\*.*
+msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+del /q ProtectedKey\bin\pack\*.*
+msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+del /q MacKey\bin\pack\*.*
+msbuild MacKey\MacKey.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- .NET 4.6.2 -------
+set FrameworkVersion=4.7.1
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%

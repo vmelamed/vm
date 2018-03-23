@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
 using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -14,7 +15,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 Type type,
                 string name)
             {
-                if (name == null)
+                if (name is null)
                     throw new ArgumentNullException(nameof(name));
 
                 if (name.IsNullOrWhiteSpace())
@@ -45,7 +46,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// </remarks>
             public virtual bool Equals(TypeAndName other)
             {
-                if (ReferenceEquals(other, null))
+                if (other is null)
                     return false;
                 if (ReferenceEquals(this, other))
                     return true;
@@ -79,8 +80,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             {
                 var hashCode = 17;
 
-                hashCode = 37 * hashCode + Type.GetHashCode();
-                hashCode = 37 * hashCode + Name.GetHashCode();
+                unchecked
+                {
+                    hashCode = 37 * hashCode + Type.GetHashCode();
+                    hashCode = 37 * hashCode + Name.GetHashCode();
+                }
 
                 return hashCode;
             }
@@ -96,8 +100,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             /// </returns>
             public static bool operator ==(
                 TypeAndName left,
-                TypeAndName right) => ReferenceEquals(left, null)
-                                        ? ReferenceEquals(right, null)
+                TypeAndName right) => left is null
+                                        ? right is null
                                         : left.Equals(right);
 
             /// <summary>
@@ -158,7 +162,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected override IEnumerable<object> DoGetAllInstances(
             Type serviceType)
         {
-            if (serviceType == null)
+            if (serviceType is null)
                 throw new ArgumentNullException(nameof(serviceType));
 
             return _defaultServices.Where(kv => kv.Key.Type == serviceType)
@@ -185,7 +189,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             Type serviceType,
             string key)
         {
-            if (serviceType == null)
+            if (serviceType is null)
                 throw new ArgumentNullException(nameof(serviceType));
             if (key.IsNullOrWhiteSpace())
                 key = string.Empty;

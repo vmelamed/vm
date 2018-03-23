@@ -1,0 +1,458 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.6.2": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6.2/win": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6.2/win-x64": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6.2/win-x86": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.1": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.1/win": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.1/win-x64": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.1/win-x86": {
+      "CommonServiceLocator/1.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+        }
+      },
+      "Unity/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Practices.Unity.Configuration.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll": {},
+          "lib/net45/Microsoft.Practices.Unity.dll": {}
+        }
+      },
+      "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.1",
+        "dependencies": {
+          "CommonServiceLocator": "1.3.0"
+        },
+        "compile": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CommonServiceLocator/1.3.0": {
+      "sha512": "fbjO0SNwbOFPdwVfyqv+B7gIJ2CVBOFPKqn1mDDECK7KER8jFaOdcvroFYoAHa0ktPbxi5s+15qOLnA96f8GSA==",
+      "type": "package",
+      "path": "commonservicelocator/1.3.0",
+      "files": [
+        "CommonServiceLocator.1.3.0.nupkg.sha512",
+        "CommonServiceLocator.nuspec",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.XML",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.pdb"
+      ]
+    },
+    "Unity/4.0.1": {
+      "sha512": "FQxLlryE47Y5xY7wJfToUrwtyLsgNJK0jK6sPfNC3YUsjzSX7ILXLA4EX8zVxFPOaIMTJBXRIKrnQ/lsECLufg==",
+      "type": "package",
+      "path": "unity/4.0.1",
+      "files": [
+        "UnityConfiguration30.xsd",
+        "lib/net45/Microsoft.Practices.Unity.Configuration.XML",
+        "lib/net45/Microsoft.Practices.Unity.Configuration.dll",
+        "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.XML",
+        "lib/net45/Microsoft.Practices.Unity.RegistrationByConvention.dll",
+        "lib/net45/Microsoft.Practices.Unity.dll",
+        "lib/net45/Microsoft.Practices.Unity.xml",
+        "lib/portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10/Microsoft.Practices.Unity.dll",
+        "lib/portable-net45+wp80+win8+wpa81+MonoAndroid10+MonoTouch10/Microsoft.Practices.Unity.xml",
+        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.XML",
+        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.dll",
+        "lib/win8/Microsoft.Practices.Unity.RegistrationByConvention.pri",
+        "lib/win8/Microsoft.Practices.Unity.dll",
+        "lib/win8/Microsoft.Practices.Unity.xml",
+        "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.XML",
+        "lib/wp80/Microsoft.Practices.Unity.RegistrationByConvention.dll",
+        "lib/wp80/Microsoft.Practices.Unity.dll",
+        "lib/wp80/Microsoft.Practices.Unity.xml",
+        "unity.4.0.1.nupkg.sha512",
+        "unity.nuspec"
+      ]
+    },
+    "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+      "type": "project",
+      "path": "../vm.Aspects.Security.Cryptography.Ciphers.csproj",
+      "msbuildProject": "../vm.Aspects.Security.Cryptography.Ciphers.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.6.2": [
+      "CommonServiceLocator >= 1.3.0",
+      "Unity >= 4.0.1",
+      "vm.Aspects.Security.Cryptography.Ciphers >= 1.0.0"
+    ],
+    ".NETFramework,Version=v4.7.1": [
+      "CommonServiceLocator >= 1.3.0",
+      "Unity >= 4.0.1",
+      "vm.Aspects.Security.Cryptography.Ciphers >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Val\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\EncryptedKey\\EncryptedKey.csproj",
+      "projectName": "EncryptedKey",
+      "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\EncryptedKey\\EncryptedKey.csproj",
+      "packagesPath": "C:\\Users\\Val\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\EncryptedKey\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\Val\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net462",
+        "net471"
+       ],
+      "sources": {
+        "C:\\NuGet": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://nuget.org/api/v2/": {},
+        "https://www.myget.org/F/applicationinsights-sdk-labs/api/v3/index.json": {}
+      },
+      "frameworks": {
+        "net471": {
+          "projectReferences": {
+            "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj": {
+              "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net462": {
+        "dependencies": {
+          "CommonServiceLocator": {
+            "target": "Package",
+            "version": "[1.3.0, )"
+          },
+          "Unity": {
+            "target": "Package",
+            "version": "[4.0.1, )"
+          }
+        }
+      },
+      "net471": {
+        "dependencies": {
+          "CommonServiceLocator": {
+            "target": "Package",
+            "version": "[1.3.0, )"
+          },
+          "Unity": {
+            "target": "Package",
+            "version": "[4.0.1, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

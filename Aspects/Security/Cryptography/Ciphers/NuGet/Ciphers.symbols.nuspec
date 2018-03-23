@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ciphers</id>
-        <version>1.12.5</version>
+        <version>1.12.6</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -31,34 +31,63 @@
         <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net462"/>
-        <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.pdb"
               target="lib\net462"/>
-        <file src="..\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net462"/>
-        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
+        <file src="..\ProtectedKey\bin\pack4.6.2\Microsoft.Practices.ServiceLocation.dll"
               target="lib\net462"/>
-        <file src="..\EncryptedKey\bin\pack\EncryptedKey.exe"
+        <file src="..\EncryptedKey\bin\pack4.6.2\EncryptedKey.exe"
               target="tools\net462"/>
-        <file src="..\EncryptedKey\bin\pack\EncryptedKey.pdb"
+        <file src="..\EncryptedKey\bin\pack4.6.2\EncryptedKey.pdb"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\ProtectedKey.exe"
+        <file src="..\ProtectedKey\bin\pack4.6.2\ProtectedKey.exe"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\ProtectedKey.pdb"
+        <file src="..\ProtectedKey\bin\pack4.6.2\ProtectedKey.pdb"
               target="tools\net462"/>
-        <file src="..\MacKey\bin\pack\MacKey.exe"
+        <file src="..\MacKey\bin\pack4.6.2\MacKey.exe"
               target="tools\net462"/>
-        <file src="..\MacKey\bin\pack\MacKey.pdb"
+        <file src="..\MacKey\bin\pack4.6.2\MacKey.pdb"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\ProtectedKey\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+        <file src="..\ProtectedKey\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.pdb"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\ProtectedKey\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack\Microsoft.Practices.ServiceLocation.dll"
+        <file src="..\ProtectedKey\bin\pack4.6.2\Microsoft.Practices.ServiceLocation.dll"
               target="tools\net462"/>
+
+        <file src="..\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
+              target="lib\net471"/>
+        <file src="..\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+              target="lib\net471"/>
+        <file src="..\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.xml"
+              target="lib\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\Microsoft.Practices.ServiceLocation.dll"
+              target="lib\net471"/>
+        <file src="..\EncryptedKey\bin\pack4.7.1\EncryptedKey.exe"
+              target="tools\net471"/>
+        <file src="..\EncryptedKey\bin\pack4.7.1\EncryptedKey.pdb"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\ProtectedKey.exe"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\ProtectedKey.pdb"
+              target="tools\net471"/>
+        <file src="..\MacKey\bin\pack4.7.1\MacKey.exe"
+              target="tools\net471"/>
+        <file src="..\MacKey\bin\pack4.7.1\MacKey.pdb"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.pdb"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.xml"
+              target="tools\net471"/>
+        <file src="..\ProtectedKey\bin\pack4.7.1\Microsoft.Practices.ServiceLocation.dll"
+              target="tools\net471"/>
 
         <file src="..\**\*.cs"
               target="src" />

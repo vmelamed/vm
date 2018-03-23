@@ -1,7 +1,9 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
+
+using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -34,13 +36,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// may choose to use lower length signature key, e.g. the certificate may be for SHA256 but the caller may override that to SHA1. The caller 
         /// cannot specify higher length then the one on the certificate.
         /// </param>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// Thrown when either the <paramref name="exchangeCertificate" /> or the <paramref name="signCertificate"/> is <see langword="null" /> 
         /// and could not be resolved from the Common Service Locator.
         /// </exception>
         /// <remarks>
         /// Note that for XML signing the cipher supports only SHA1 and SHA256.
         /// </remarks>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Owned by this object, disposed in Dispose()")]
         public EncryptedNewKeySignedXmlCipher(
             X509Certificate2 exchangeCertificate = null,
             X509Certificate2 signCertificate = null,
