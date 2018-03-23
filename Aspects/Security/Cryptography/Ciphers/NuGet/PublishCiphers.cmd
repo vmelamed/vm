@@ -21,18 +21,26 @@ set FrameworkVersion=4.6.2
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q EncryptedKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q ProtectedKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q MacKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
@@ -41,18 +49,26 @@ set FrameworkVersion=4.7.1
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q EncryptedKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q ProtectedKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q MacKey\bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

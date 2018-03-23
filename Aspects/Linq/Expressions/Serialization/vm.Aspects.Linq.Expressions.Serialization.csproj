@@ -242,7 +242,7 @@
     </None>
     <None Include="NuGet\ExpressionSerialization.symbols.nuspec" />
     <None Include="NuGet\ExpressionSerialization.nuspec" />
-    <None Include="NuGet\project.assets.json" />
+    <None Include="project.assets.json" />
     <None Include="NuGet\PublishExpressionSerialization.cmd" />
   </ItemGroup>
   <ItemGroup>

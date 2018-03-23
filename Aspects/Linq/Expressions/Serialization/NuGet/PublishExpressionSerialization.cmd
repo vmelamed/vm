@@ -21,6 +21,8 @@ set FrameworkVersion=4.6.2
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
@@ -29,6 +31,8 @@ set FrameworkVersion=4.7.1
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack\*.*
+if not exist obj md obj
+copy /q project.assets.json obj
 msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
