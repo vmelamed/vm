@@ -30,7 +30,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// </remarks>
         public virtual bool Equals(Parameter other)
         {
-            if (ReferenceEquals(other, null))
+            if (other is null)
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
@@ -56,7 +56,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// The <see cref="Equals(object)"/> methods and the overloaded <c>operator==</c>-s test for business identity, 
         /// i.e. they test for business <i>same-ness</i> by comparing the business keys.
         /// </remarks>
-        public override bool Equals(object obj) => Equals(obj as Parameter);
+        public override bool Equals(object obj)
+            => Equals(obj as Parameter);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="Parameter"/> and its derived types.
@@ -66,9 +67,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         {
             var hashCode = 23;
 
-            hashCode = 17 * hashCode + Name.GetHashCode();
-            hashCode = 17 * hashCode + Type.GetHashCode();
-            hashCode = 17 * hashCode + IsByRef.GetHashCode();
+            unchecked
+            {
+                hashCode = 17 * hashCode + Name.GetHashCode();
+                hashCode = 17 * hashCode + Type.GetHashCode();
+                hashCode = 17 * hashCode + IsByRef.GetHashCode();
+            }
 
             return hashCode;
         }
@@ -82,9 +86,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <see langword="true"/> if the objects are considered to be equal (<see cref="Equals(Parameter)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator ==(Parameter left, Parameter right) => ReferenceEquals(left, null)
-                                                                                ? ReferenceEquals(right, null)
-                                                                                : left.Equals(right);
+        public static bool operator ==(Parameter left, Parameter right)
+            => left is null
+                    ? right is null
+                    : left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="Parameter"/> objects.
@@ -95,7 +100,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <see langword="true"/> if the objects are not considered to be equal (<see cref="Equals(Parameter)"/>);
         /// otherwise <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(Parameter left, Parameter right) => !(left==right);
+        public static bool operator !=(Parameter left, Parameter right)
+            => !(left==right);
         #endregion
     }
 }
