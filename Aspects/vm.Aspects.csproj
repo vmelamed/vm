@@ -333,7 +333,6 @@
     <None Include="..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="app.config" />
     <None Include="NuGet\PublishAspects.cmd" />
     <None Include="NuGet\vm.Aspects.symbols.nuspec">
       <SubType>Designer</SubType>

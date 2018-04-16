@@ -143,6 +143,9 @@
             "frameworks": {
                 "net462": {
                     "projectReferences": {}
+                },
+                "net471": {
+                    "projectReferences": {}
                 }
             }
         },

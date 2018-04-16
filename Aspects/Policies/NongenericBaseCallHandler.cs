@@ -7,7 +7,7 @@ using System.Threading;
 namespace vm.Aspects.Policies
 {
     /// <summary>
-    /// Class NongenericBaseCallHandler encapsulates static dictionaries/caches that are used in the inheriting <see cref="BaseCallHandler{T}"/>
+    /// Class NongenericBaseCallHandler encapsulates static dictionaries/caches that are used in the inheriting <see cref="BaseCallHandler{T}"/>-s.
     /// </summary>
     public abstract class NongenericBaseCallHandler
     {

@@ -1,10 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
+
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using vm.Aspects.Diagnostics;
+using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Policies.Tests
@@ -17,7 +23,16 @@ namespace vm.Aspects.Policies.Tests
         {
             try
             {
-                DIContainer.Initialize();
+                ClassMetadataRegistrar
+                    .RegisterMetadata()
+                    .Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
+                    .Register<ValidationResult, ValidationResultDumpMetadata>()
+                    .Register<ValidationResults, ValidationResultsDumpMetadata>()
+                    .Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
+                    ;
+
+                DIContainer
+                    .Initialize();
 
                 lock (DIContainer.Root)
                 {
@@ -28,22 +43,27 @@ namespace vm.Aspects.Policies.Tests
                         .UnsafeRegister(Facility.Registrar, registrations, true)
                         ;
 
-                    // enable interception and policy injection (AOP)
-                    DIContainer
-                        .Root
-                        .Configure<Interception>()
-                        .AddPolicy("testCallHandler")
-                            .AddMatchingRule<TagAttributeMatchingRule>(
-                                                new InjectionConstructor("testCallHandler", false))
+                    // add AOP policies
+                    DIContainer.Root.Configure<Interception>()
+                        .AddPolicy(BaseTestCalls.Track)
+                        .AddMatchingRule<TagAttributeMatchingRule>(
+                                            new InjectionConstructor(BaseTestCalls.Track, true))
+                        .AddCallHandler<TrackCallHandler>(
+                                            new ContainerControlledLifetimeManager())
+                        ;
 
-                            .AddCallHandler<CallTraceCallHandler>(
-                                    new ContainerControlledLifetimeManager())
-                            ;
+                    DIContainer.Root.Configure<Interception>()
+                        .AddPolicy(BaseTestCalls.Trace)
+                        .AddMatchingRule<TagAttributeMatchingRule>(
+                                            new InjectionConstructor(BaseTestCalls.Trace, true))
+                        .AddCallHandler<CallTraceCallHandler>(
+                                            new InjectionConstructor(Facility.LogWriter))
+                        ;
 
                     using (var writer = new StringWriter(CultureInfo.InvariantCulture))
                     {
                         DIContainer.Root.Dump(writer);
-                        Debug.Print(
+                        context.WriteLine(
 $@"
 Container registrations:
 ===============================

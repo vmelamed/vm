@@ -7,10 +7,12 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
+
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -501,5 +503,16 @@ $@"===============================
 ");
             }
         }
+
+        /// <summary>
+        /// Returns an array of injection members needed to configure a registration for policy injection.
+        /// </summary>
+        /// <returns>InjectionMember[].</returns>
+        public static InjectionMember[] PolicyInjection() =>
+            new InjectionMember[]
+            {
+                new Interceptor<InterfaceInterceptor>(),
+                new InterceptionBehavior<PolicyInjectionBehavior>()
+            };
     }
 }

@@ -23,7 +23,7 @@
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <copyright>Copyright © vm 2013-2017</copyright>
+        <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
             <dependency id="CommonServiceLocator"
                         version="1.3" />

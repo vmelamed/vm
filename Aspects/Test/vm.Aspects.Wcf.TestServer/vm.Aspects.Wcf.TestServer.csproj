@@ -204,7 +204,7 @@
       <Version>2.6.0-beta2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.Wcf">
-      <Version>0.27.0-build58385</Version>
+      <Version>0.28.0-build06820</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.WindowsServer">
       <Version>2.6.0-beta2</Version>

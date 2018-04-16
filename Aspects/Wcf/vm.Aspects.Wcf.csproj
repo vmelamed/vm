@@ -360,7 +360,6 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="app.config" />
     <None Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -415,7 +414,7 @@
       <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.1</Version>
+      <Version>11.0.2</Version>
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt">
       <Version>5.2.1</Version>

@@ -176,7 +176,6 @@ namespace vm.Aspects.Diagnostics
             TypesDumpDataSync.EnterWriteLock();
             try
             {
-
                 if (!replace && TypesDumpData.TryGetValue(type, out var dumpData))
                 {
                     if (dumpData == classDumpData)

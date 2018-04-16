@@ -236,14 +236,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\vm.Aspects.Linq.Expressions.Serialization.csproj">
-      <Project>{628d6504-40e3-412a-827f-39f8644ba906}</Project>
-      <Name>vm.Aspects.Linq.Expressions.Serialization</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AspectObjectDumper">
-      <Version>1.9.10</Version>
+      <Version>1.9.11</Version>
     </PackageReference>
     <PackageReference Include="CommonServiceLocator">
       <Version>1.3.0</Version>
@@ -392,6 +386,12 @@
     <Content Include="TestFiles\Unary\UnaryPlus.xml" />
     <Content Include="TestFiles\Uri.xml" />
     <Content Include="TestFiles\UShort.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\vm.Aspects.Linq.Expressions.Serialization.csproj">
+      <Project>{628d6504-40e3-412a-827f-39f8644ba906}</Project>
+      <Name>vm.Aspects.Linq.Expressions.Serialization</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

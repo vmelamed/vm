@@ -149,7 +149,6 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="App.config" />
     <None Include="NuGet\ObjectDumper.symbols.nuspec">
       <SubType>Designer</SubType>
     </None>

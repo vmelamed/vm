@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectExpressionSerialization</id>
-        <version>1.0.114</version>
+        <version>1.0.115</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -29,6 +29,7 @@
         </description>
         <releaseNotes>
             Rebuilt for .NET 4.7.1
+            Upgraded ObjectDumper
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</projectUrl>
