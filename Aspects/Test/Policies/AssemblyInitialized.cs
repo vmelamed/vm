@@ -59,18 +59,6 @@ namespace vm.Aspects.Policies.Tests
                         .AddCallHandler<CallTraceCallHandler>(
                                             new InjectionConstructor(Facility.LogWriter))
                         ;
-
-                    using (var writer = new StringWriter(CultureInfo.InvariantCulture))
-                    {
-                        DIContainer.Root.Dump(writer);
-                        context.WriteLine(
-$@"
-Container registrations:
-===============================
-{writer.GetStringBuilder()}
-===============================
-");
-                    }
                 }
             }
             catch (Exception x)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 
 using Microsoft.Practices.ServiceLocation;
@@ -45,6 +47,19 @@ namespace vm.Aspects.Policies.Tests
                         BaseTestCalls.Trace,
                         DIContainer.PolicyInjection())
                     ;
+
+
+                using (var writer = new StringWriter(CultureInfo.InvariantCulture))
+                {
+                    DIContainer.Root.Dump(writer);
+                    testContext.WriteLine(
+$@"
+Container registrations:
+===============================
+{writer.GetStringBuilder()}
+===============================
+");
+                }
             }
         }
 
