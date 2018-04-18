@@ -1,12 +1,14 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+
+using Unity.Attributes;
+using Unity.Interception.PolicyInjection.Pipeline;
 
 namespace vm.Aspects.Policies
 {

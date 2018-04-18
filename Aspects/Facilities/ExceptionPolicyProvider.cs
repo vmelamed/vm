@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
+using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
 
 namespace vm.Aspects.Facilities
 {
@@ -77,7 +81,7 @@ namespace vm.Aspects.Facilities
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

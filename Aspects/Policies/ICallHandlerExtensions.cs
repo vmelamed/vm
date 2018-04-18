@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
 
 namespace vm.Aspects.Policies
 {

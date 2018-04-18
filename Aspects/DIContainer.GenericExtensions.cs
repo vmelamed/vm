@@ -1,5 +1,8 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects
 {
@@ -52,7 +55,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(T), injectionMembers);
         }
 
@@ -103,7 +106,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(T), lifetimeManager, injectionMembers);
         }
 
@@ -154,7 +157,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(T), name, injectionMembers);
         }
 
@@ -208,9 +211,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(T), name, lifetimeManager, injectionMembers);
-        } 
+        }
         #endregion
 
         #region Conditionally register type mapping from TFrom to TTo
@@ -261,7 +264,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), injectionMembers);
         }
 
@@ -315,7 +318,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), lifetimeManager, injectionMembers);
         }
 
@@ -369,7 +372,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), name, injectionMembers);
         }
 
@@ -426,9 +429,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(typeof(TFrom), typeof(TTo), name, lifetimeManager, injectionMembers);
-        } 
+        }
         #endregion
 
         #region Conditionally register instance
@@ -476,7 +479,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
-            
+
             return container.RegisterInstanceIfNot(typeof(T), instance);
         }
 
@@ -528,7 +531,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(instance));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             return container.RegisterInstanceIfNot(typeof(T), instance, lifetimeManager);
         }
 
@@ -578,7 +581,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(container));
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
-            
+
             return container.RegisterInstanceIfNot(typeof(T), name, instance);
         }
 
@@ -633,9 +636,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(instance));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             return container.RegisterInstanceIfNot(typeof(T), name, instance, lifetimeManager);
-        } 
+        }
         #endregion
     }
 }

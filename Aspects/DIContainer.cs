@@ -8,10 +8,16 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using CommonServiceLocator;
+
 using Microsoft.Practices.Unity.Configuration;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity;
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.Interceptors.InstanceInterceptors.InterfaceInterception;
+using Unity.Interception.PolicyInjection;
+using Unity.Registration;
+using Unity.ServiceLocation;
 
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
@@ -234,7 +240,7 @@ namespace vm.Aspects
         /// ]]>
         /// </code>
         /// </example>
-        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot(
+        public static IDictionary<RegistrationLookup, IContainerRegistration> GetRegistrationsSnapshot(
             this IUnityContainer container)
         {
             if (container == null)
@@ -252,7 +258,7 @@ namespace vm.Aspects
         /// Gets a snapshot of the registrations in the specified container.
         /// Simply a short cut for <c>GetRegistrationDictionary(DIContainer.Root)</c>
         /// </summary>
-        public static IDictionary<RegistrationLookup, ContainerRegistration> GetRegistrationsSnapshot() => GetRegistrationsSnapshot(DIContainer.Root);
+        public static IDictionary<RegistrationLookup, IContainerRegistration> GetRegistrationsSnapshot() => GetRegistrationsSnapshot(DIContainer.Root);
 
         /// <summary>
         /// Registers the types and instances of the <see cref="ContainerRegistrar"/> in the specified container.
@@ -315,7 +321,7 @@ namespace vm.Aspects
         public static IUnityContainer UnsafeRegister(
             this IUnityContainer container,
             ContainerRegistrar registrar,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             bool isTest = false)
         {
             if (registrar == null)
@@ -396,7 +402,7 @@ namespace vm.Aspects
                                                 string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
                                         : item.MappedToType.Name;
                 var regName = item.Name ?? "[default]";
-                var lifetime = item.LifetimeManagerType.Name;
+                var lifetime = item.LifetimeManager.GetType().Name;
 
                 Debug.Assert(lifetime.Length > "LifetimeManager".Length);
 
@@ -456,7 +462,7 @@ namespace vm.Aspects
 
                 var resolveName = item.Name ?? "[default]";
 
-                var lifetime = item.LifetimeManagerType.Name;
+                var lifetime = item.LifetimeManager.GetType().Name;
                 Debug.Assert(lifetime.Length > "LifetimeManager".Length);
                 lifetime = lifetime.Substring(0, lifetime.Length - "LifetimeManager".Length);
 

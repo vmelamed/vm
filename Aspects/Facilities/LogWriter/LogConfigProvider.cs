@@ -4,12 +4,14 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using CommonServiceLocator;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
 
 namespace vm.Aspects.Facilities
 {
@@ -57,7 +59,7 @@ namespace vm.Aspects.Facilities
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -76,7 +78,7 @@ namespace vm.Aspects.Facilities
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoTestRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

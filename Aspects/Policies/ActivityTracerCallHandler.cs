@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
 
 using vm.Aspects.Facilities;
 

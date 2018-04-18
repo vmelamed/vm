@@ -1,5 +1,8 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects
 {

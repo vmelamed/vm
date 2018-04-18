@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Principal;
 using System.Threading.Tasks;
+
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
 
 namespace vm.Aspects.Policies
 {

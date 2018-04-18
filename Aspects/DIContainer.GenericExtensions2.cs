@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects
 {
@@ -48,7 +51,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             params InjectionMember[] injectionMembers)
         {
             if (container == null)
@@ -57,7 +60,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(T), injectionMembers);
         }
 
@@ -103,7 +106,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
         {
@@ -113,7 +116,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(T), lifetimeManager, injectionMembers);
         }
 
@@ -159,7 +162,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             params InjectionMember[] injectionMembers)
         {
@@ -169,7 +172,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(T), name, injectionMembers);
         }
 
@@ -217,7 +220,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
@@ -228,9 +231,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(T), name, lifetimeManager, injectionMembers);
-        } 
+        }
         #endregion
 
         #region Conditionally register type mapping from TFrom to TTo
@@ -276,7 +279,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<TFrom, TTo>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
             if (container == null)
@@ -285,7 +288,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), injectionMembers);
         }
 
@@ -333,7 +336,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<TFrom, TTo>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
@@ -343,7 +346,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), lifetimeManager, injectionMembers);
         }
 
@@ -391,7 +394,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<TFrom, TTo>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             params InjectionMember[] injectionMembers) where TTo : TFrom
         {
@@ -401,7 +404,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), name, injectionMembers);
         }
 
@@ -451,7 +454,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot<TFrom, TTo>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers) where TTo : TFrom
@@ -462,9 +465,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             return container.RegisterTypeIfNot(registrations, typeof(TFrom), typeof(TTo), name, lifetimeManager, injectionMembers);
-        } 
+        }
         #endregion
 
         #region Conditionally register instance
@@ -508,7 +511,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             T instance)
         {
             if (container == null)
@@ -517,7 +520,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
-            
+
             return container.RegisterInstanceIfNot(registrations, typeof(T), instance);
         }
 
@@ -562,7 +565,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             T instance,
             LifetimeManager lifetimeManager)
         {
@@ -574,7 +577,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(instance));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             return container.RegisterInstanceIfNot(registrations, typeof(T), instance, lifetimeManager);
         }
 
@@ -619,7 +622,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             T instance)
         {
@@ -629,7 +632,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
-            
+
             return container.RegisterInstanceIfNot(registrations, typeof(T), name, instance);
         }
 
@@ -676,7 +679,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot<T>(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             string name,
             T instance,
             LifetimeManager lifetimeManager)
@@ -689,9 +692,9 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(instance));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             return container.RegisterInstanceIfNot(registrations, typeof(T), name, instance, lifetimeManager);
-        } 
+        }
         #endregion
     }
 }

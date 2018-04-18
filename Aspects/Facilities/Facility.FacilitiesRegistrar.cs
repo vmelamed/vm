@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Injection;
+using Unity.Lifetime;
+using Unity.Registration;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -61,7 +67,7 @@ namespace vm.Aspects.Facilities
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -83,7 +89,7 @@ namespace vm.Aspects.Facilities
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoTestRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 RegisterCommon(container, registrations, true)
                     .RegisterInstanceIfNot<IClock>(registrations, new TestClock())
@@ -94,7 +100,7 @@ namespace vm.Aspects.Facilities
             [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will do it")]
             static IUnityContainer RegisterCommon(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations,
                 bool isTest = false)
             {
                 ClassMetadataRegistrar
