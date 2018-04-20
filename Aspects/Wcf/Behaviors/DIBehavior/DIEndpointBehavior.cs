@@ -2,7 +2,8 @@
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using Microsoft.Practices.Unity;
+
+using Unity.Lifetime;
 
 namespace vm.Aspects.Wcf.Behaviors
 {

@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Data.Entity.Core.Common;
@@ -12,6 +10,13 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+
+using Microsoft.Practices.ServiceLocation;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -47,7 +52,7 @@ namespace vm.Aspects.Model.EFRepository
             [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will own it.")]
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -60,7 +65,7 @@ namespace vm.Aspects.Model.EFRepository
             [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Unity will own it.")]
             protected override void DoTestRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -102,7 +107,7 @@ namespace vm.Aspects.Model.EFRepository
             [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
             static void DoRegisterCommon(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations,
                 bool isTest)
             {
                 RegisterMetadata();

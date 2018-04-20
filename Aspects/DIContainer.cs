@@ -402,7 +402,7 @@ namespace vm.Aspects
                                                 string.Join(", ", item.MappedToType.GenericTypeArguments.Select(ta => ta.Name)))
                                         : item.MappedToType.Name;
                 var regName = item.Name ?? "[default]";
-                var lifetime = item.LifetimeManager.GetType().Name;
+                var lifetime = item.LifetimeManager.LifetimeType.Name;
 
                 Debug.Assert(lifetime.Length > "LifetimeManager".Length);
 
@@ -462,7 +462,7 @@ namespace vm.Aspects
 
                 var resolveName = item.Name ?? "[default]";
 
-                var lifetime = item.LifetimeManager.GetType().Name;
+                var lifetime = item.LifetimeManager.LifetimeType.Name;
                 Debug.Assert(lifetime.Length > "LifetimeManager".Length);
                 lifetime = lifetime.Substring(0, lifetime.Length - "LifetimeManager".Length);
 

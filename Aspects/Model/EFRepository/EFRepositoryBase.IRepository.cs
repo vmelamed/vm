@@ -19,9 +19,10 @@ namespace vm.Aspects.Model.EFRepository
     using Facilities.Diagnostics;
 
     using Microsoft.Practices.ServiceLocation;
-    using Microsoft.Practices.Unity;
 
     using Threading;
+
+    using Unity.Exceptions;
 
     using EFEntityState = System.Data.Entity.EntityState;
     using EntityState = Repository.EntityState;

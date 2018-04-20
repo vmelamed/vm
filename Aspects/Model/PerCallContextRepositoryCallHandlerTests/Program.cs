@@ -5,9 +5,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity;
+using Unity.Injection;
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.PolicyInjection.MatchingRules;
+
 using vm.Aspects.Wcf;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests

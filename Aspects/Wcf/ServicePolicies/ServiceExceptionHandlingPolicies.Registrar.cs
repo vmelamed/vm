@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+using Unity;
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
 
@@ -16,7 +16,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
         {
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

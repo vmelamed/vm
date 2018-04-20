@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Injection;
+using Unity.Lifetime;
+using Unity.Registration;
+
 using vm.Aspects.Model.EFRepository;
 using vm.Aspects.Model.Repository;
 
@@ -15,7 +20,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         {
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -27,7 +32,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             protected override void DoTestRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -39,7 +44,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
 
             IUnityContainer RegisterCommon(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations,
                 bool isTest)
             {
                 container

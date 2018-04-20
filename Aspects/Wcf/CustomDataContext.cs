@@ -12,8 +12,11 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
+
+using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.ServiceLocation;
+
 using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Wcf

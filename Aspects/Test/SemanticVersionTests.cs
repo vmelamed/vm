@@ -95,7 +95,6 @@ namespace vm.Aspects.Tests
             string prerelease,
             string build)
         {
-
             var success = SemanticVersion.TryParse(version, out var target);
 
             Assert.AreEqual(successfulParse, success);

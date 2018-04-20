@@ -5,7 +5,10 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Threading;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Threading;
 

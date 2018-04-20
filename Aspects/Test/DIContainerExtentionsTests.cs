@@ -1,6 +1,10 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects.Tests
 {

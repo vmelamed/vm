@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
-using Microsoft.Practices.ServiceLocation;
+
+using CommonServiceLocator;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {

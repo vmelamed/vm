@@ -1,9 +1,12 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
+
+using Microsoft.Practices.ServiceLocation;
+
+using Unity.Attributes;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;

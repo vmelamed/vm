@@ -1,11 +1,13 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+
+using CommonServiceLocator;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager

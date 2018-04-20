@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using vm.Aspects.Diagnostics;
-using vm.Aspects.Facilities;
+
 using vm.Aspects.Model.InMemory;
 using vm.Aspects.Model.Repository;
 
@@ -28,7 +25,7 @@ namespace vm.Aspects.Model.Tests
         {
             MapObjectsRepository.Reset();
         }
-        
+
         // Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup]
         //public static void ClassCleanup()

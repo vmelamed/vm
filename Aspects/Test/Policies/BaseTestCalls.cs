@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.Interception.PolicyInjection.MatchingRules;
 
 namespace vm.Aspects.Policies.Tests
 {

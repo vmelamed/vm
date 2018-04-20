@@ -177,7 +177,7 @@
       <Version>6.0.1304</Version>
     </PackageReference>
     <PackageReference Include="Unity">
-      <Version>5.8.5</Version>
+      <Version>5.8.6</Version>
     </PackageReference>
     <PackageReference Include="Unity.Interception">
       <Version>5.5.1</Version>

@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
+
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
+
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
@@ -104,7 +108,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <see cref="AggregateException"/>-s are logged and those with a single inner exception, processes the inner exception.
         /// <see cref="DbUpdateConcurrencyException"/> are logged as info and swallowed.
         /// Exceptions for which <see cref="IOrmSpecifics.IsTransient"/> is <see langword="true"/> are logged as warnings and 
-        /// rethrown wrapped in a new <see cref="RepeatableOperationException"/>;
+        /// re-thrown wrapped in a new <see cref="RepeatableOperationException"/>;
         /// The rest of the exceptions are re-thrown.
         /// </summary>
         /// <param name="logExceptionTitle">The log exception title.</param>
@@ -223,7 +227,7 @@ namespace vm.Aspects.Model.EFRepository
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

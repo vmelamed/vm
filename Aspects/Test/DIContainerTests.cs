@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using CommonServiceLocator;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
 
 namespace vm.Aspects.Tests
 {
@@ -196,9 +199,9 @@ namespace vm.Aspects.Tests
             TestContext.WriteLine("{0}", dump);
             Assert.AreEqual(
 @"Container has 3 Registrations:
-+ InjectionPolicy  'Microsoft.Practices.Unity.InterceptionExtension.AttributeDrivenPolicy, Microsoft.Practices.Unity.Interception, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f'  ContainerControlled
++ InjectionPolicy -> AttributeDrivenPolicy  'Unity.Interception.PolicyInjection.Policies.AttributeDrivenPolicy, Unity.Interception, Version=5.5.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0'  ContainerControlled
 + ITestTarget -> TestTargetFromTestConfigBox  '[default]'  Transient
-+ IUnityContainer  '[default]'  Container
++ IUnityContainer -> UnityContainer  '[default]'  Container
 ", dump);
         }
     }

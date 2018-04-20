@@ -1,16 +1,20 @@
 ﻿using System;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects.Tests
 {
     /// <summary>
-    /// Summary description for DIContainerExtentionsTests
+    /// Summary description for DIContainerExtensionsTests
     /// </summary>
     [TestClass]
     [DeploymentItem(".\\test.config")]
     [DeploymentItem(".\\testWithError.config")]
-    public class DIContainerGenericExtentions2Tests
+    public class DIContainerGenericExtensions2Tests
     {
         /// <summary>
         ///Gets or sets the test context which provides

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+
+using CommonServiceLocator;
+
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Practices.ServiceLocation;
 
 namespace vm.Aspects.Wcf.Behaviors.AuthorizationManager
 {

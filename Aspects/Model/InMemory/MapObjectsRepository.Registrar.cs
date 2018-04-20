@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.InMemory
@@ -26,7 +29,7 @@ namespace vm.Aspects.Model.InMemory
             /// <exception cref="System.NotImplementedException"></exception>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

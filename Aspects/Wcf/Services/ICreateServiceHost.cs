@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
 
 namespace vm.Aspects.Wcf.Services
 {
@@ -25,7 +27,7 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <param name="registrar">The registration method.</param>
         ICreateServiceHost SetServiceRegistrar(
-            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar);
+            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, IContainerRegistration>> registrar);
 
         /// <summary>
         /// Registers the service's contract and implementation types in the DI container

@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity;
+using Unity.Injection;
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.PolicyInjection.MatchingRules;
+using Unity.Interception.PolicyInjection.Policies;
+using Unity.Lifetime;
+using Unity.Registration;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -22,7 +29,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         {
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

@@ -5,8 +5,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.MatchingRules;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;

@@ -2,8 +2,11 @@
 using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.EFRepository;
 using vm.Aspects.Model.InMemory;

@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
+
 using Microsoft.ApplicationInsights.Wcf;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.MatchingRules;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Wcf.Behaviors;
 

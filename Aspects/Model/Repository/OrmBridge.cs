@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using Unity.Exceptions;
+
 using vm.Aspects.Model.InMemory;
 
 namespace vm.Aspects.Model.Repository

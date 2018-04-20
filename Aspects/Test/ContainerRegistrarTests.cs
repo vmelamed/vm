@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Moq;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
 
 namespace vm.Aspects.Tests
 {
@@ -80,7 +84,7 @@ namespace vm.Aspects.Tests
 
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));
@@ -92,7 +96,7 @@ namespace vm.Aspects.Tests
 
             protected override void DoTestRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

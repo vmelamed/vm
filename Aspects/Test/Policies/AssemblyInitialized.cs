@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Configuration;
-using System.Globalization;
-using System.IO;
 
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+using Unity.Injection;
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.PolicyInjection.MatchingRules;
+using Unity.Lifetime;
 
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;

@@ -192,10 +192,6 @@
     <NoWarn>3001, 3002, 3003</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Externals\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -420,7 +416,7 @@
       <Version>5.2.1</Version>
     </PackageReference>
     <PackageReference Include="Unity">
-      <Version>5.8.5</Version>
+      <Version>5.8.6</Version>
     </PackageReference>
     <PackageReference Include="Unity.Interception">
       <Version>5.5.1</Version>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +7,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+
+using Unity.Lifetime;
 
 namespace vm.Aspects.Wcf.Behaviors
 {

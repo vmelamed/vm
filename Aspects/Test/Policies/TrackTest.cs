@@ -3,9 +3,11 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using CommonServiceLocator;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
 
 using vm.Aspects.Facilities;
 

@@ -1,6 +1,9 @@
 ﻿using System.Linq;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.Tests

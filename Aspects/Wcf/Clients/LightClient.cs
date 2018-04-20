@@ -10,7 +10,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using vm.Aspects.Wcf.Bindings;
 
