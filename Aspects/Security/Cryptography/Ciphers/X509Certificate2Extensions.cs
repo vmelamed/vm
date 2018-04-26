@@ -20,8 +20,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 #pragma warning disable 0612, 0618 // Type or member is obsolete
                 // no sign
                 { "1.2.840.113549.2.5",     Algorithms.Hash.MD5    },
-                { "1.3.14.3.2.18",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.26",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.18",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.26",          Algorithms.Hash.Sha1   },
 #pragma warning restore 0612, 0618 // Type or member is obsolete
 
                 { "2.16.840.1.101.3.4.2.1", Algorithms.Hash.Sha256 },
@@ -30,21 +30,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
 #pragma warning disable 0612, 0618 // Type or member is obsolete
                 // DSA
-                { "1.3.14.3.2.12",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.13",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.27",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.28",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.12",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.13",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.27",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.28",          Algorithms.Hash.Sha1   },
                 { "1.2.840.10040.4.3",      Algorithms.Hash.Sha1   },
 
                 // RSA
-                { "1.3.14.3.2.3",           Algorithms.Hash.MD5    },
-                { "1.3.14.3.2.25",          Algorithms.Hash.MD5    },
+                { "1.4.04.3.2.3",           Algorithms.Hash.MD5    },
+                { "1.4.04.3.2.25",          Algorithms.Hash.MD5    },
                 // { "1.2.840.113549.1.1.1",   Algorithms.Hash.MD5    }, ???
 
                 { "1.2.840.113549.1.1.4",   Algorithms.Hash.MD5    },
-                { "1.3.14.3.2.11",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.15",          Algorithms.Hash.Sha1   },
-                { "1.3.14.3.2.29",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.11",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.15",          Algorithms.Hash.Sha1   },
+                { "1.4.04.3.2.29",          Algorithms.Hash.Sha1   },
                 { "1.2.840.113549.1.1.5",   Algorithms.Hash.Sha1   },
 #pragma warning restore 0612, 0618 // Type or member is obsolete
 

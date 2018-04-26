@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using Unity.Attributes;
 

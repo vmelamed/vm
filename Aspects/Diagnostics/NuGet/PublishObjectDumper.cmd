@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmDumperVersion=1.9.11
+set vmDumperVersion=1.10.0
 
 cd %~dp0..
 del *.nupkg

@@ -125,6 +125,14 @@ namespace vm.Aspects.Policies
         #endregion
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CallTraceCallHandler"/> class with the default log writer facility.
+        /// </summary>
+        public CallTraceCallHandler()
+            : this(Facility.LogWriter)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CallTraceCallHandler"/> class.
         /// </summary>
         /// <param name="logWriter">The log writer.</param>

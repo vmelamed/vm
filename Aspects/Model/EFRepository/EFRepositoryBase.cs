@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using Unity.Exceptions;
 

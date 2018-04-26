@@ -4,7 +4,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+
 using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
@@ -86,7 +88,7 @@ namespace vm.Aspects.Facilities
                     throw new ArgumentNullException(nameof(registrations));
 
                 container
-                    .RegisterInstanceIfNot<LoggingConfiguration>(registrations, TestLogConfigurationResolveName, ConfigureTestLog());
+                    .RegisterInstanceIfNot<LoggingConfiguration>(registrations, ConfigureTestLog());
             }
         }
 
@@ -98,6 +100,7 @@ namespace vm.Aspects.Facilities
         static LoggingConfiguration ConfigureDebugLog()
         {
             // configure a log that outputs everything in the debugger output window:
+
             var logConfig = new LoggingConfiguration();
             var traceListener = new AsynchronousTraceListenerWrapper(new DefaultTraceListener());
 
@@ -233,8 +236,9 @@ namespace vm.Aspects.Facilities
                 // wrap and throw
                 throw new ConfigurationErrorsException(
                             string.Format(
-                                    "There was an error loading the configuration from {0}.",
-                                    string.IsNullOrWhiteSpace(configFileName) ? "the system configuration file" : configFileName),
+                                    "There was an error loading the configuration from {0}: {1}",
+                                    configFileName.IsNullOrWhiteSpace() ? "the configuration file" : configFileName,
+                                    x.Message),
                             x);
             }
         }

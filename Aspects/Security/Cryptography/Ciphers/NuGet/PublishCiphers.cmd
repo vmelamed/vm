@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmCiphersVersion=1.12.6
+set vmCiphersVersion=1.13.0
 
 cd %~dp0..
 del *.nupkg
@@ -22,25 +22,25 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 
 del /q bin\pack\*.*
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q EncryptedKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist EncryptedKey\obj md EncryptedKey\obj
+copy /y EncryptedKey\project.assets.json EncryptedKey\obj
 msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q ProtectedKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist ProtectedKey\obj md ProtectedKey\obj
+copy /y ProtectedKey\project.assets.json ProtectedKey\obj
 msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q MacKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist MacKey\obj md MacKey\obj
+copy /y MacKey\project.assets.json MacKey\obj
 msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
@@ -50,25 +50,25 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 
 del /q bin\pack\*.*
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q EncryptedKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist EncryptedKey\obj md EncryptedKey\obj
+copy /y EncryptedKey\project.assets.json EncryptedKey\obj
 msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q ProtectedKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist ProtectedKey\obj md ProtectedKey\obj
+copy /y ProtectedKey\project.assets.json ProtectedKey\obj
 msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 del /q MacKey\bin\pack\*.*
-if not exist obj md obj
-copy /q project.assets.json obj
+if not exist MacKey\obj md MacKey\obj
+copy /y MacKey\project.assets.json MacKey\obj
 msbuild MacKey\MacKey.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

@@ -2,7 +2,7 @@
 
 namespace vm.Aspects.Policies.Tests
 {
-    interface ITestCalls
+    public interface ITestCalls
     {
         void Test1();
 

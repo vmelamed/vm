@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using Unity;
 using Unity.Lifetime;

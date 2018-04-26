@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Model
 {

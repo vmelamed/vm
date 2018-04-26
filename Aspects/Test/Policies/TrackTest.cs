@@ -3,11 +3,10 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
-using CommonServiceLocator;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Unity;
+using Unity.Lifetime;
 
 using vm.Aspects.Facilities;
 
@@ -43,7 +42,10 @@ namespace vm.Aspects.Policies.Tests
                         registrations,
                         BaseTestCalls.Track,
                         DIContainer.PolicyInjection())
+                    ;
 
+                DIContainer
+                    .Root
                     .RegisterTypeIfNot<ITestCalls, TraceTestCalls>(
                         registrations,
                         BaseTestCalls.Trace,
@@ -84,6 +86,7 @@ Container registrations:
             string resolveName,
             string expected)
         {
+            //var target = ServiceLocator.Current.GetInstance<ITestCalls>(resolveName);
             var target = DIContainer.Root.Resolve<ITestCalls>(resolveName);
 
             test(target);
@@ -99,7 +102,10 @@ Container registrations:
             string resolveName,
             string expected)
         {
-            await test(ServiceLocator.Current.GetInstance<ITestCalls>(resolveName));
+            //var target = ServiceLocator.Current.GetInstance<ITestCalls>(resolveName);
+            var target = DIContainer.Root.Resolve<ITestCalls>(resolveName);
+
+            await test(target);
 
             var actual = string.Join("\r\n", TestTraceListener.Messages);
 
@@ -112,6 +118,12 @@ Container registrations:
         public void TrackTest11()
         {
             RunTest(t => t.Test1(), BaseTestCalls.Track, @"");
+        }
+
+        [TestMethod]
+        public void TraceTest11()
+        {
+            RunTest(t => t.Test1(), BaseTestCalls.Trace, @"");
         }
 
         [TestMethod]

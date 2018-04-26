@@ -517,8 +517,8 @@ $@"===============================
         public static InjectionMember[] PolicyInjection() =>
             new InjectionMember[]
             {
+                new InterceptionBehavior<PolicyInjectionBehavior>(),
                 new Interceptor<InterfaceInterceptor>(),
-                new InterceptionBehavior<PolicyInjectionBehavior>()
             };
     }
 }

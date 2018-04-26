@@ -3,7 +3,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using Unity.Attributes;
 

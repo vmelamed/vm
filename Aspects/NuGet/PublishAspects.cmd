@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmAspectsVersion=1.3.1
+set vmAspectsVersion=1.4.0
 
 cd %~dp0..
 del *.nupkg
@@ -19,35 +19,35 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd Model
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Model.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Parsers
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\FtpTransfer
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Wcf
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
@@ -59,35 +59,35 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd Model
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Model.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Parsers
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\FtpTransfer
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 cd ..\Wcf
 del /q bin\pack%FrameworkVersion%
 if not exist obj md obj
-copy /q project.assets.json obj
+copy /y project.assets.json obj
 msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 

@@ -2,115 +2,118 @@
     "version": 3,
     "targets": {
         ".NETFramework,Version=v4.6.2": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x64": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x86": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net45/CommonServiceLocator.dll": {}
                 }
             }
         },
 
         ".NETFramework,Version=v4.7.1": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win-x64": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win-x86": {
-            "CommonServiceLocator/1.3.0": {
+            "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 },
                 "runtime": {
-                    "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll": {}
+                    "lib/net47/CommonServiceLocator.dll": {}
                 }
             }
         }
     },
     "libraries": {
-        "CommonServiceLocator/1.3.0": {
-            "sha512": "fbjO0SNwbOFPdwVfyqv+B7gIJ2CVBOFPKqn1mDDECK7KER8jFaOdcvroFYoAHa0ktPbxi5s+15qOLnA96f8GSA==",
+        "CommonServiceLocator/2.0.3": {
+            "sha512": "AWao0d/oTooOpf4IXPFP+Ol7VrT/r9pAg0/cMYk2se3QaibYUHdlk93blt5pe7ByGeJoBd7ZNE/gZsAI54UCpA==",
             "type": "package",
-            "path": "commonservicelocator/1.3.0",
+            "path": "commonservicelocator/2.0.3",
             "files": [
-                "CommonServiceLocator.1.3.0.nupkg.sha512",
-                "CommonServiceLocator.nuspec",
-                "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.XML",
-                "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.dll",
-                "lib/portable-net4+sl5+netcore45+wpa81+wp8/Microsoft.Practices.ServiceLocation.pdb"
+                "commonservicelocator.2.0.3.nupkg.sha512",
+                "commonservicelocator.nuspec",
+                "lib/net40/CommonServiceLocator.dll",
+                "lib/net45/CommonServiceLocator.dll",
+                "lib/net47/CommonServiceLocator.dll",
+                "lib/netcoreapp1.0/CommonServiceLocator.dll",
+                "lib/netstandard1.0/CommonServiceLocator.dll",
+                "lib/netstandard2.0/CommonServiceLocator.dll"
             ]
         }
     },
     "projectFileDependencyGroups": {
         ".NETFramework,Version=v4.6.2": [
-            "CommonServiceLocator >= 1.3.0"
+            "CommonServiceLocator >= 2.0.3"
         ],
         ".NETFramework,Version=v4.7.1": [
-            "CommonServiceLocator >= 1.3.0"
+            "CommonServiceLocator >= 2.0.3"
         ]
     },
     "packageFolders": {
@@ -154,7 +157,7 @@
                 "dependencies": {
                     "CommonServiceLocator": {
                         "target": "Package",
-                        "version": "[1.3.0, )"
+                        "version": "[2.0.3, )"
                     }
                 }
             },
@@ -162,7 +165,7 @@
                 "dependencies": {
                     "CommonServiceLocator": {
                         "target": "Package",
-                        "version": "[1.3.0, )"
+                        "version": "[2.0.3, )"
                     }
                 }
             }

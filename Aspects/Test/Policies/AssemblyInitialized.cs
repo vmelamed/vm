@@ -2,13 +2,13 @@
 using System.Configuration;
 
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Unity;
 using Unity.Injection;
 using Unity.Interception.ContainerIntegration;
 using Unity.Interception.PolicyInjection.MatchingRules;
+using Unity.Interception.PolicyInjection.Pipeline;
 using Unity.Lifetime;
 
 using vm.Aspects.Diagnostics;
@@ -46,20 +46,25 @@ namespace vm.Aspects.Policies.Tests
                         ;
 
                     // add AOP policies
-                    DIContainer.Root.Configure<Interception>()
+                    DIContainer
+                        .Root
+                        .Configure<Interception>()
                         .AddPolicy(BaseTestCalls.Track)
                         .AddMatchingRule<TagAttributeMatchingRule>(
-                                            new InjectionConstructor(BaseTestCalls.Track, true))
+                                            new InjectionConstructor(BaseTestCalls.Track, false))
                         .AddCallHandler<TrackCallHandler>(
-                                            new ContainerControlledLifetimeManager())
+                                            new ContainerControlledLifetimeManager(),
+                                            new InjectionProperty(nameof(ICallHandler.Order), 1))
                         ;
 
-                    DIContainer.Root.Configure<Interception>()
+                    DIContainer
+                        .Root
+                        .Configure<Interception>()
                         .AddPolicy(BaseTestCalls.Trace)
                         .AddMatchingRule<TagAttributeMatchingRule>(
-                                            new InjectionConstructor(BaseTestCalls.Trace, true))
+                                            new InjectionConstructor(BaseTestCalls.Trace, false))
                         .AddCallHandler<CallTraceCallHandler>(
-                                            new InjectionConstructor(Facility.LogWriter))
+                                            new InjectionProperty(nameof(ICallHandler.Order), 2))
                         ;
                 }
             }

@@ -4,7 +4,7 @@ using Unity.Interception.PolicyInjection.MatchingRules;
 
 namespace vm.Aspects.Policies.Tests
 {
-    abstract class BaseTestCalls : ITestCalls
+    public abstract class BaseTestCalls : ITestCalls
     {
         public const string Trace = nameof(Trace);
         public const string Track = nameof(Track);
@@ -41,13 +41,13 @@ namespace vm.Aspects.Policies.Tests
         }
     }
 
-    [Tag(BaseTestCalls.Track)]
-    class TrackTestCalls : BaseTestCalls
+    [Tag(Track)]
+    public class TrackTestCalls : BaseTestCalls
     {
     }
 
-    [Tag(BaseTestCalls.Trace)]
-    class TraceTestCalls : BaseTestCalls
+    [Tag(Trace)]
+    public class TraceTestCalls : BaseTestCalls
     {
     }
 }

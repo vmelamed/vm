@@ -6,7 +6,7 @@ using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Policies.Tests
 {
-    class TrackCallHandler : BaseCallHandler<bool>
+    public class TrackCallHandler : BaseCallHandler<bool>
     {
         protected override bool Prepare(
             IMethodInvocation input)

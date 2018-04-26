@@ -18,7 +18,7 @@ namespace vm.Aspects.Model.EFRepository
 
     using Facilities.Diagnostics;
 
-    using Microsoft.Practices.ServiceLocation;
+    using CommonServiceLocator;
 
     using Threading;
 
