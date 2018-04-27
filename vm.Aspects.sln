@@ -82,6 +82,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Model.PerCallCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Policies.Tests", "Aspects\Test\Policies\vm.Aspects.Policies.Tests.csproj", "{03A5DE9A-DAFB-4990-A7D5-EB3F0FEE93B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiAopTest", "Aspects\Test\DiAopTest\DiAopTest.csproj", "{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiAopTest2", "Aspects\Test\DiAopTest2\DiAopTest2.csproj", "{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -233,6 +237,18 @@ Global
 		{03A5DE9A-DAFB-4990-A7D5-EB3F0FEE93B8}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
 		{03A5DE9A-DAFB-4990-A7D5-EB3F0FEE93B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03A5DE9A-DAFB-4990-A7D5-EB3F0FEE93B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -254,6 +270,8 @@ Global
 		{CE457F4A-6E53-4B4F-A0B6-60BF0502D501} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 		{8F6341D2-9E16-40EC-A7B3-287E6FB0A749} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 		{03A5DE9A-DAFB-4990-A7D5-EB3F0FEE93B8} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
+		{8BB08695-FD8A-4A4A-B844-9DF9FBA10540} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
+		{6D2AFAF0-A95E-4ABE-A64C-6810AF708AAE} = {B2E493FE-EFCF-4D0B-84C5-5C75B0D361B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.WCF.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.Integration.WCF.6.0.1304.0\lib\NET45

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+
 using Unity;
 using Unity.Injection;
 using Unity.Interception.ContainerIntegration;
-using Unity.Interception.Interceptors.InstanceInterceptors.InterfaceInterception;
+using Unity.Interception.Interceptors.InstanceInterceptors.TransparentProxyInterception;
 using Unity.Interception.PolicyInjection;
 using Unity.Interception.PolicyInjection.MatchingRules;
 using Unity.Interception.PolicyInjection.Pipeline;
@@ -15,6 +18,8 @@ using Unity.Lifetime;
 using Unity.Registration;
 
 using vm.Aspects;
+using vm.Aspects.Diagnostics;
+using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 using vm.Aspects.Policies;
 
@@ -179,98 +184,104 @@ namespace DiAopTest
         void UploadLogo(string tenant, byte[] logo);
     }
 
-    [Tag("test")]
-    class TenantStore : ITenantStore
+    abstract class TenantStoreBase
     {
-        IList<Tenant> _store = new List<Tenant>();
+        protected IList<Tenant> _store = new List<Tenant>();
 
-        public void Initialize()
+    }
+
+    [Tag("test")]
+    class TenantStore : TenantStoreBase, ITenantStore
+    {
+        public virtual void Initialize()
         {
         }
 
-        public Tenant GetTenant(string tenant) => _store.First(t => t.Name == tenant);
+        public virtual Tenant GetTenant(string tenant) => _store.First(t => t.Name == tenant);
 
-        public IEnumerable<string> GetTenantNames() => _store.Select(t => t.Name);
+        public virtual IEnumerable<string> GetTenantNames() => _store.Select(t => t.Name);
 
-        public void SaveTenant(Tenant tenant) => _store.Add(tenant);
+        public virtual void SaveTenant(Tenant tenant) => _store.Add(tenant);
 
-        public void UploadLogo(string tenant, byte[] logo) => GetTenant(tenant).Logo = logo;
+        public virtual void UploadLogo(string tenant, byte[] logo) => GetTenant(tenant).Logo = logo;
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            var container = DIContainer.Initialize();
-
-            container.AddNewExtension<Interception>();
-
-            var first  = new InjectionProperty("Order", 1);
-            var second = new InjectionProperty("Order", 2);
-            var third  = new InjectionProperty("Order", 3);
-
-            container.Configure<Interception>()
-                .AddPolicy("caching")
-                .AddMatchingRule<TagAttributeMatchingRule>(
-                    new InjectionConstructor("test", false))
-                .AddMatchingRule<MemberNameMatchingRule>(
-                    new InjectionConstructor(new[] { "Get*", "Save*" }, true))
-                .AddCallHandler<CachingCallHandler>(
-                    new ContainerControlledLifetimeManager(),
-                    first)
-                .AddCallHandler<LoggingCallHandler>(
-                    new ContainerControlledLifetimeManager(),
-                    second)
-                .AddCallHandler<TrackCallHandler>(
-                    new ContainerControlledLifetimeManager(),
-                    third)
-                .AddCallHandler<CallTraceCallHandler>()
+            ClassMetadataRegistrar
+                .RegisterMetadata()
+                .Register<ArgumentValidationException, ArgumentValidationExceptionDumpMetadata>()
+                .Register<ValidationResult, ValidationResultDumpMetadata>()
+                .Register<ValidationResults, ValidationResultsDumpMetadata>()
+                .Register<ConfigurationErrorsException, ConfigurationErrorsExceptionDumpMetadata>()
                 ;
 
-            //container.Configure<Interception>()
-            //    .AddPolicy("caching")
-            //    .AddMatchingRule<TagAttributeMatchingRule>(
-            //        new InjectionConstructor("test", false))
-            //    .AddMatchingRule<MemberNameMatchingRule>(
-            //        new InjectionConstructor(new[] { "Get*", "Save*" }, true))
-            //    .AddCallHandler<CachingCallHandler>(
-            //        new ContainerControlledLifetimeManager(),
-            //        first);
+            var container = DIContainer.Initialize();
 
-            //container.Configure<Interception>()
-            //    .AddPolicy("logging")
-            //    .AddMatchingRule<TagAttributeMatchingRule>(
-            //        new InjectionConstructor("test", false))
-            //    .AddCallHandler<LoggingCallHandler>(
-            //        new ContainerControlledLifetimeManager(),
-            //        second);
-
-            //container.Configure<Interception>()
-            //    .AddPolicy("tracking")
-            //    .AddMatchingRule<TagAttributeMatchingRule>(
-            //        new InjectionConstructor("test", false))
-            //    .AddCallHandler<TrackCallHandler>(
-            //        new ContainerControlledLifetimeManager(),
-            //        third);
-
-            container
-                .Register(Facility.Registrar, true);
-
-            lock (DIContainer.Root)
+            lock (container)
             {
                 var registrations = DIContainer.Root.GetRegistrationsSnapshot();
+                var interception = container.Configure<Interception>();
+
+
+                //container.AddNewExtension<Interception>();
+
+                interception
+                    .AddPolicy("test")
+                    .AddMatchingRule<TagAttributeMatchingRule>(
+                        new InjectionConstructor("test", false))
+                    //.AddMatchingRule<MemberNameMatchingRule>(
+                    //    new InjectionConstructor(new[] { "Get*", "Save*" }, true))
+                    .AddCallHandler<CachingCallHandler>(
+                        new ContainerControlledLifetimeManager())
+                    .AddCallHandler<LoggingCallHandler>(
+                        new ContainerControlledLifetimeManager())
+                    .AddCallHandler<TrackCallHandler>(
+                        new ContainerControlledLifetimeManager())
+                    .AddCallHandler<CallTraceCallHandler>()
+                    ;
+
+                //container.Configure<Interception>()
+                //    .AddPolicy("caching")
+                //    .AddMatchingRule<TagAttributeMatchingRule>(
+                //        new InjectionConstructor("test", false))
+                //    .AddMatchingRule<MemberNameMatchingRule>(
+                //        new InjectionConstructor(new[] { "Get*", "Save*" }, true))
+                //    .AddCallHandler<CachingCallHandler>(
+                //        new ContainerControlledLifetimeManager(),
+                //        first);
+
+                //container.Configure<Interception>()
+                //    .AddPolicy("logging")
+                //    .AddMatchingRule<TagAttributeMatchingRule>(
+                //        new InjectionConstructor("test", false))
+                //    .AddCallHandler<LoggingCallHandler>(
+                //        new ContainerControlledLifetimeManager(),
+                //        second);
+
+                //container.Configure<Interception>()
+                //    .AddPolicy("tracking")
+                //    .AddMatchingRule<TagAttributeMatchingRule>(
+                //        new InjectionConstructor("test", false))
+                //    .AddCallHandler<TrackCallHandler>(
+                //        new ContainerControlledLifetimeManager(),
+                //        third);
 
                 container
-                    .Register(Facility.Registrar)
+                    .Register(Facility.Registrar, true)
+
                     .RegisterTypeIfNot<ITenantStore, TenantStore>(
                         registrations,
+                        "test",
                         new InterceptionBehavior<PolicyInjectionBehavior>(),
-                        new Interceptor<InterfaceInterceptor>());
+                        new Interceptor<TransparentProxyInterceptor>());
             }
 
             DIContainer.Root.DebugDump();
 
-            var store = container.Resolve<ITenantStore>();
+            var store = container.Resolve<ITenantStore>("test");
 
             store.SaveTenant(new Tenant { Name = "gogo" });
             store.UploadLogo("gogo", new byte[] { 1, 2, 3, });
