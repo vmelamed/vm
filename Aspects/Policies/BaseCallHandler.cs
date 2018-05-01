@@ -299,14 +299,16 @@ namespace vm.Aspects.Policies
             if (!input.IsAsyncCall())
                 return null;
 
-            var returnType = ((MethodInfo)input.MethodBase).ReturnType;
+            var returnType            = ((MethodInfo)input.MethodBase).ReturnType;
+            var resultType            = returnType.IsGenericType
+                                            ? returnType.GetGenericArguments()[0]
+                                            : typeof(bool);
             var handlerTypeReturnType = new HandlerTypeReturnType(GetType(), returnType);
-            MethodInfo continueWith;
 
             // if we have it cached already - return it
             using (SyncMethodToContinueWith.ReaderLock())
-                if (HandlerTypeReturnTypeToContinueWith.TryGetValue(handlerTypeReturnType, out continueWith))
-                    return continueWith;
+                if (HandlerTypeReturnTypeToContinueWith.TryGetValue(handlerTypeReturnType, out MethodInfo cachedContinueWith))
+                    return cachedContinueWith;
 
             // get the continueWith MethodInfo
             MethodInfo genericContinueWith;
@@ -314,7 +316,7 @@ namespace vm.Aspects.Policies
             using (SyncHandlerToGenericContinueWith.ReaderLock())
                 genericContinueWith = HandlerToGenericContinueWith[GetType()];        // if it is not overridden, it will be null!
 
-            continueWith = genericContinueWith?.MakeGenericMethod(returnType);
+            var continueWith = genericContinueWith?.MakeGenericMethod(resultType);
 
             using (SyncMethodToContinueWith.WriterLock())
                 return HandlerTypeReturnTypeToContinueWith[handlerTypeReturnType] = continueWith;
