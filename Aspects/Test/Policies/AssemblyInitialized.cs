@@ -45,6 +45,7 @@ namespace vm.Aspects.Policies.Tests
                         .UnsafeRegister(Facility.Registrar, registrations, true)
                         ;
 
+
                     // add AOP policies
                     DIContainer
                         .Root

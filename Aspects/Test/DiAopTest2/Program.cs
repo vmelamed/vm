@@ -32,8 +32,7 @@ namespace DiAopTest2
 
             tracker.Test1();
 
-            Debug.WriteLine(
-                string.Format("\n{0}\nThat's it Val!", string.Join("\n\n", TestTraceListener.Messages)));
+            Debug.WriteLine(Facility.LogWriter.GetTestLogText());
         }
 
         static void InitializeContainer()

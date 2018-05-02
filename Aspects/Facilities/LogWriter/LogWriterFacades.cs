@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities
@@ -843,5 +845,43 @@ namespace vm.Aspects.Facilities
             return logger.EmailMessage(TraceEventType.Critical, format, args);
         }
         #endregion
+
+        /// <summary>
+        /// Gets the text of the test log so far (presuming that there is only one).
+        /// </summary>
+        public static string GetTestLogText(
+            this LogWriter logger,
+            bool resetTestLog = false)
+        {
+            string logText = null;
+
+            logger.Configure(
+                logConfig =>
+                {
+                    var testLog = logConfig
+                                .AllTraceListeners
+                                .FirstOrDefault(l => l is TestTraceListener) as TestTraceListener;
+
+                    if (testLog == null)
+                        return;
+
+                    logText = testLog.LogText;
+
+                    if (resetTestLog)
+                        testLog.Reset();
+                });
+
+            return logText;
+        }
+
+        /// <summary>
+        /// Resets the text of the test log (presuming that there is only one).
+        /// </summary>
+        public static void ResetTestLog(
+            this LogWriter logger)
+            => logger.Configure(
+                        logConfig => (logConfig
+                                        .AllTraceListeners
+                                        .FirstOrDefault(l => l is TestTraceListener) as TestTraceListener)?.Reset());
     }
 }

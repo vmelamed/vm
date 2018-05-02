@@ -94,9 +94,8 @@ Container registrations:
 
                 test(target);
 
-                actual = string.Join("\r\n", TestTraceListener.Messages);
+                actual = Facility.LogWriter.GetTestLogText(true);
 
-                TestTraceListener.Reset();
                 TestContext.WriteLine($"Actual: <{actual}>\nRegex expected: <{regexExpected}>");
                 Assert.IsTrue(Regex.IsMatch(actual, regexExpected), $"The actual result does not match the regular expression for the expected result.");
             }
@@ -106,9 +105,8 @@ Container registrations:
             }
             catch
             {
-                actual = string.Join("\r\n", TestTraceListener.Messages);
+                actual = Facility.LogWriter.GetTestLogText(true);
 
-                TestTraceListener.Reset();
                 TestContext.WriteLine($"Actual when throwing exception: <{actual}>\n");
                 throw;
             }
@@ -127,9 +125,8 @@ Container registrations:
 
                 await test(target);
 
-                actual = string.Join("\r\n", TestTraceListener.Messages);
+                actual = Facility.LogWriter.GetTestLogText(true);
 
-                TestTraceListener.Reset();
                 TestContext.WriteLine($"Actual: <{actual}>\nRegex expected: <{regexExpected}>");
                 Assert.IsTrue(Regex.IsMatch(actual, regexExpected), $"The actual result does not match the regular expression for the expected result.");
             }
@@ -139,9 +136,8 @@ Container registrations:
             }
             catch
             {
-                actual = string.Join("\r\n", TestTraceListener.Messages);
+                actual = Facility.LogWriter.GetTestLogText(true);
 
-                TestTraceListener.Reset();
                 TestContext.WriteLine($"Actual when throwing exception: <{actual}>\n");
                 throw;
             }
@@ -172,7 +168,7 @@ Container registrations:
         {
             try
             {
-                RunTest(t => t.AsyncTest1(), BaseTestCalls.Track, string.Format(TrackAsyncTestRegexTemplate, "1", "")).Wait();
+                RunTest(t => t.AsyncTest1(), BaseTestCalls.Track, string.Format(AsyncTrackTestRegexTemplate, "1", "")).Wait();
             }
             catch (AggregateException ax)
             {
@@ -188,7 +184,7 @@ Container registrations:
         {
             try
             {
-                RunTest(t => t.AsyncTest2(), BaseTestCalls.Track, string.Format(TrackAsyncTestRegexTemplate, "2", "<TResult>")).Wait();
+                RunTest(t => t.AsyncTest2(), BaseTestCalls.Track, string.Format(AsyncTrackTestRegexTemplate, "2", "<TResult>")).Wait();
             }
             catch (AggregateException ax)
             {
@@ -204,7 +200,7 @@ Container registrations:
         {
             try
             {
-                RunTest(t => t.AsyncTest3("23"), BaseTestCalls.Track, string.Format(TrackAsyncTestRegexTemplate, "3", "<TResult>")).Wait();
+                RunTest(t => t.AsyncTest3("23"), BaseTestCalls.Track, string.Format(AsyncTrackTestRegexTemplate, "3", "<TResult>")).Wait();
             }
             catch (AggregateException ax)
             {
@@ -281,176 +277,44 @@ Container registrations:
             }
         }
 
-        const string TrackTestRegexTemplate = @"Trace Information: 0 : Timestamp: .+
-Message: Test{0}: Prepare
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: Test{0}: Pre-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: Test{0}: Do-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: Test{0}: Post-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
+        const string TrackTestRegexTemplate = @"
+\[00000000-0000-0000-0000-000000000000\]: Test{0}: Prepare
+
+\[00000000-0000-0000-0000-000000000000\]: Test{0}: Pre-invoke
+
+\[00000000-0000-0000-0000-000000000000\]: Test{0}: Do-invoke
+
+\[00000000-0000-0000-0000-000000000000\]: Test{0}: Post-invoke
 ";
-        const string TrackAsyncTestRegexTemplate = @"Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: Prepare
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: Pre-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: Do-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: ContinueWith
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: Post-invoke
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
-Trace Information: 0 : Timestamp: .+
-Message: AsyncTest{0}: Task{1} DoContinueWith
-Category: Trace
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: .+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:.+
-Extended Properties: 
+        const string AsyncTrackTestRegexTemplate = @"
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: Prepare
+
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: Pre-invoke
+
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: Do-invoke
+
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: ContinueWith
+
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: Post-invoke
+
+\[00000000-0000-0000-0000-000000000000\]: AsyncTest{0}: Task{1} DoContinueWith
 ";
-        const string TraceTestRegexTemplate = @"Call End Information: \d+ : Timestamp: .+
-Message: 
+        const string TraceTestRegexTemplate = @"
+\[00000000-0000-0000-0000-000000000000\]: 
   Caller Identity: 
-    GenericIdentity \(System\.Security\.Principal\.GenericIdentity, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\): 
+    GenericIdentity \(System\.Security\.Principal\.GenericIdentity, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\): 
       AuthenticationType       = 
       Name                     = 
       IsAuthenticated          = False
-      Claims                   = <get_Claims>d__51\[\]: \(System\.Security\.Claims\.ClaimsIdentity\+<get_Claims>d__51, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\)
-        Claim \(System.Security.Claims.Claim, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\): 
+      Claims                   = <get_Claims>d__51\[\]: \(System\.Security\.Claims\.ClaimsIdentity\+<get_Claims>d__51, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\)
+        Claim \(System.Security.Claims.Claim, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\): 
           Type                     = http://schemas\.xmlsoap\.org/ws/2005/05/identity/claims/name
           Value                    = 
           ValueType                = http://www\.w3\.org/2001/XMLSchema#string
-      ExternalClaims           = Collection<IEnumerable<Claim>>\[0\]: \(System\.Collections\.ObjectModel\.Collection`1\[\[System\.Collections\.Generic\.IEnumerable`1\[\[System\.Security\.Claims\.Claim, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\]\], mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\]\], mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F0-9]+\)
+      ExternalClaims           = Collection<IEnumerable<Claim>>\[0\]: \(System\.Collections\.ObjectModel\.Collection`1\[\[System\.Collections\.Generic\.IEnumerable`1\[\[System\.Security\.Claims\.Claim, mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\]\], mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\]\], mscorlib, Version=[\d\.]+, Culture=neutral, PublicKeyToken=[a-fA-F\d]+\)
   TraceTestCalls.{0}Test{1}\({2}\);{3}
-  Call duration: [\.0-9]+
+  Call duration: [                                                                                                                                                                                                                                                                                    \d\.]+
 
-Category: Call End
-Priority: -1
-EventId: 0
-Severity: Information
-Title:
-Machine: .+
-App Domain: UnitTestAdapter: Running test
-ProcessId: \d+
-Process Name: .+
-Thread Name: 
-Win32 ThreadId:\d+
-Extended Properties: 
 ";
     }
 }

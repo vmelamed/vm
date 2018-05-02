@@ -291,7 +291,7 @@ namespace DiAopTest
             t.Logo = new byte[] { 11, 12, 13, };
 
             Debug.WriteLine(
-                string.Format("\n{0}\nThat's it Val!", string.Join("\n\n", TestTraceListener.Messages)));
+                string.Format("\n{0}\nThat's it Val!", Facility.LogWriter.GetTestLogText()));
         }
     }
 
