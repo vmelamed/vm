@@ -217,6 +217,10 @@
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
     <Compile Include="ApiVersionAttribute.cs" />
+    <Compile Include="Cache\Associative.NWaySet\Entry.cs" />
+    <Compile Include="Cache\Associative.NWaySet\EntrySet.cs" />
+    <Compile Include="Cache\Associative.NWaySet\NWaySetAssociativeCache.cs" />
+    <Compile Include="Cache\Associative.NWaySet\NWaySetAssociativeCache.Enumerator.cs" />
     <Compile Include="Cache\LentObject.cs" />
     <Compile Include="Cache\ObjectPool.cs" />
     <Compile Include="Constants.cs" />
@@ -388,6 +392,9 @@
     <PackageReference Include="Unity.Interception">
       <Version>4.0.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Container\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
