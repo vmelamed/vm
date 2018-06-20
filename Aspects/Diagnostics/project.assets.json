@@ -218,11 +218,11 @@
     "project": {
         "version": "1.0.0",
         "restore": {
-            "projectUniqueName": "C:\\Projects\\GitRepos\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
+            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
             "projectName": "vm.Aspects.Diagnostics.ObjectDumper",
-            "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
+            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
             "packagesPath": "C:\\Users\\Valo\\.nuget\\packages\\",
-            "outputPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Diagnostics\\obj\\",
+            "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\obj\\",
             "projectStyle": "PackageReference",
             "skipContentFileWrite": true,
             "configFilePaths": [

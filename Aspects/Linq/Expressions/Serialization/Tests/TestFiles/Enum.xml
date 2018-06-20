@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!-- three -->
+<!-- Three -->
 <expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
     <constant>
-        <enum type="vm.Aspects.Linq.Expressions.Serialization.Tests.EnumTest, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">three</enum>
+        <enum type="vm.Aspects.Linq.Expressions.Serialization.Tests.EnumTest, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">Three</enum>
     </constant>
 </expression>
 

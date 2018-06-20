@@ -1,5 +1,5 @@
 ﻿if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmExpressionSerializationVersion=1.1.0
+set vmExpressionSerializationVersion=1.1.1
 
 cd %~dp0..
 del *.nupkg
@@ -28,6 +28,16 @@ if errorlevel 1 goto exit
 
 rem ------- .NET 4.7.1 -------
 set FrameworkVersion=4.7.1
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack%FrameworkVersion%\*.*
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.Linq.Expressions.Serialization.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+rem ------- .NET 4.7.2 -------
+set FrameworkVersion=4.7.2
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
 del /q bin\pack%FrameworkVersion%\*.*
