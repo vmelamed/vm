@@ -274,9 +274,7 @@ namespace vm.Aspects.Model.EFRepository
             if (entityEntry == null)
                 throw new ArgumentNullException(nameof(entityEntry));
 
-            IValidatable validatable = entityEntry.Entity as IValidatable;
-
-            if (validatable == null)
+            if (!(entityEntry.Entity is IValidatable validatable))
                 return base.ValidateEntity(entityEntry, items);
 
             var results = validatable.Validate();

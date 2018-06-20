@@ -228,16 +228,16 @@ namespace vm.Aspects.Policies
                 {
                     callData.BeforeCallLogEntry = entry;
 
-                    Action logBeforeCall = () => Facility
+                    void LogBefore() => Facility
                                                     .ExceptionManager
                                                     .Process(
                                                         () => LogBeforeCallData(input, callData),
                                                         ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
                     if (LogAsynchronously)
-                        callData.LogBeforeCall = Task.Run(logBeforeCall);
+                        callData.LogBeforeCall = Task.Run(() => LogBefore());
                     else
-                        logBeforeCall();
+                        LogBefore();
                 }
             }
 

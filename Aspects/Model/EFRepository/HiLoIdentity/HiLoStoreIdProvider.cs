@@ -120,10 +120,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-
-            var provider = this as IStoreUniqueId<TId>;
-
-            if (provider == null)
+            if (!(this is IStoreUniqueId<TId> provider))
                 throw new NotSupportedException("The store ID provider does not support generating ID-s of type "+typeof(TId).FullName);
 
             return provider;

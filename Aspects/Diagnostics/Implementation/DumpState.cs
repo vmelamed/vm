@@ -276,9 +276,8 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public void DumpExpressionCSharpText()
         {
-            var expression = Instance as Expression;
 
-            if (expression == null  ||  _dumper.IsSubExpression)
+            if (!(Instance is Expression expression)  ||  _dumper.IsSubExpression)
                 return;
 
             // this is the highest level expression. all
@@ -505,9 +504,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             bool enumerateCustom = false,
             bool newLineForCustom = false)
         {
-            var sequence = value as IEnumerable;
 
-            if (sequence == null)
+            if (!(value is IEnumerable sequence))
                 return false;
 
             return DumpedDictionary(sequence, mi, dumpAttribute)  ||

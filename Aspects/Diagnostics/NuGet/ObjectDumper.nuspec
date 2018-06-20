@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>AspectObjectDumper</id>
-        <version>1.10.0</version>
+        <version>1.10.2</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -10,26 +10,26 @@
         </summary>
         <description>
             Features:
-            * The dump output is separated from the targeted dump media by the familiar TextWriter interface.
+            * The dump output is separated from the targeted dump media by the familiar TextWriter interface
             * The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
-            * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties.
-            * The dump is recursive: the complex members of the dumped object are dumped indented.
+            * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties
+            * The dump is recursive: the complex members of the dumped object are dumped indented
             * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
-            * Handles circular references.
+            * Handles circular references
             * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
-                - the order in which the properties are dumped;
-                - formatting of the property names and/or values;
-                - suppressing the dump of some uninteresting properties;
-                - masking the values of sensitive properties (e.g. PII);
-                - the depth of the recursion into complex members;
-                - the maximum number of dumped elements of sequence properties.
-            * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute.
-            * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes.
-            * Built and tested with .NET 4.5.2, 4.6.2, 4.7.1.
+                - the order in which the properties are dumped
+                - formatting of the property names and/or values
+                - suppressing the dump of some uninteresting properties
+                - masking the values of sensitive properties (e.g. PII)
+                - the depth of the recursion into complex members
+                - the maximum number of dumped elements of sequence properties
+            * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
+            * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
+            * Built and tested with .NET 4.5.2, 4.6.2, 4.7.1, 4.7.2
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
-            Updated the CommonServiceLocator to version 2.0.3.
+            Rebuilt for .net 4.7.2 and C# 7.2.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
@@ -56,5 +56,10 @@
               target="lib\net471"/>
         <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectDumper.xml"
               target="lib\net471"/>
+
+        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectDumper.dll"
+              target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectDumper.xml"
+              target="lib\net472"/>
     </files>
 </package>

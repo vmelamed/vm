@@ -859,8 +859,9 @@ namespace vm.Aspects.Facilities
                 logConfig =>
                 {
                     var testLog = logConfig
-                                .AllTraceListeners
-                                .FirstOrDefault(l => l is TestTraceListener) as TestTraceListener;
+                                    .AllTraceListeners
+                                    .OfType<TestTraceListener>()
+                                    .FirstOrDefault();
 
                     if (testLog == null)
                         return;
@@ -882,6 +883,7 @@ namespace vm.Aspects.Facilities
             => logger.Configure(
                         logConfig => (logConfig
                                         .AllTraceListeners
-                                        .FirstOrDefault(l => l is TestTraceListener) as TestTraceListener)?.Reset());
+                                        .OfType<TestTraceListener>()
+                                        .FirstOrDefault())?.Reset());
     }
 }

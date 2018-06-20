@@ -71,6 +71,7 @@
     <CodeContractsRuntimeCheckingLevel>ReleaseRequires</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -180,7 +181,7 @@
       <Version>5.8.6</Version>
     </PackageReference>
     <PackageReference Include="Unity.Interception">
-      <Version>5.5.2</Version>
+      <Version>5.5.3</Version>
     </PackageReference>
   </ItemGroup>
   <Choose>

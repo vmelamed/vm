@@ -14,7 +14,7 @@ namespace vm.Aspects.Diagnostics.Implementation
     static class PropertyDumpResolver
     {
         static Dictionary<Tuple<MemberInfo, Type>, DumpAttribute> _propertyDumpMap = new Dictionary<Tuple<MemberInfo, Type>, DumpAttribute>();
-        static ReaderWriterLockSlim _lockPropertyDumpMap                           = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        static readonly ReaderWriterLockSlim _lockPropertyDumpMap                  = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         /// <summary>
         /// Gets the synchronization object of the cache/dictionary of property info-dump attributes.

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 
-using Microsoft.ApplicationInsights.Wcf;
-
 using Unity.Interception.PolicyInjection.MatchingRules;
 
 using vm.Aspects.Facilities;
@@ -12,7 +10,6 @@ namespace vm.Aspects.Wcf.TestServer
 {
     [DIBehavior]
     [Tag("ServicePolicy")]
-    [ServiceTelemetry]
     [ServiceBehavior(
         InstanceContextMode = InstanceContextMode.PerCall,
         ConcurrencyMode = ConcurrencyMode.Multiple)]
