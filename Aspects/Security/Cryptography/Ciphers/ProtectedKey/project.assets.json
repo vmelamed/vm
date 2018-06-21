@@ -97,6 +97,7 @@
                 }
             }
         },
+
         ".NETFramework,Version=v4.7.1": {
             "CommonServiceLocator/2.0.3": {
                 "type": "package",
@@ -169,7 +170,8 @@
                 }
             }
         },
-        ".NETFramework,Version=v4.7.1/win-x86": {
+
+        ".NETFramework,Version=v4.7.2": {
             "CommonServiceLocator/2.0.3": {
                 "type": "package",
                 "compile": {
@@ -181,7 +183,79 @@
             },
             "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
                 "type": "project",
-                "framework": ".NETFramework,Version=v4.7.1/win-x86",
+                "framework": ".NETFramework,Version=v4.7.2",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                },
+                "runtime": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+                "type": "project",
+                "framework": ".NETFramework,Version=v4.7.2/win",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                },
+                "runtime": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x64": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+                "type": "project",
+                "framework": ".NETFramework,Version=v4.7.2/win-x64",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                },
+                "runtime": {
+                    "bin/placeholder/vm.Aspects.Security.Cryptography.Ciphers.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x86": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "vm.Aspects.Security.Cryptography.Ciphers/1.0.0": {
+                "type": "project",
+                "framework": ".NETFramework,Version=v4.7.2/win-x86",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
                 },
@@ -224,28 +298,33 @@
         ".NETFramework,Version=v4.7.1": [
             "CommonServiceLocator >= 2.0.3",
             "vm.Aspects.Security.Cryptography.Ciphers >= 1.0.0"
+        ],
+        ".NETFramework,Version=v4.7.2": [
+            "CommonServiceLocator >= 2.0.3",
+            "vm.Aspects.Security.Cryptography.Ciphers >= 1.0.0"
         ]
     },
     "packageFolders": {
-        "C:\\Users\\Val\\.nuget\\packages\\": {}
+        "C:\\Users\\valo\\.nuget\\packages\\": {}
     },
     "project": {
         "version": "1.0.0",
         "restore": {
-            "projectUniqueName": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\ProtectedKey.csproj",
+            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\ProtectedKey.csproj",
             "projectName": "ProtectedKey",
-            "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\ProtectedKey.csproj",
-            "packagesPath": "C:\\Users\\Val\\.nuget\\packages\\",
-            "outputPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\obj\\",
+            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\ProtectedKey.csproj",
+            "packagesPath": "C:\\Users\\valo\\.nuget\\packages\\",
+            "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\ProtectedKey\\obj\\",
             "projectStyle": "PackageReference",
             "skipContentFileWrite": true,
             "configFilePaths": [
-                "C:\\Users\\Val\\AppData\\Roaming\\NuGet\\NuGet.Config",
+                "C:\\Users\\valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
                 "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
             ],
             "originalTargetFrameworks": [
                 "net462",
-                "net471"
+                "net471",
+                "net472"
             ],
             "sources": {
                 "C:\\NuGet": {},
@@ -255,12 +334,23 @@
             },
             "frameworks": {
                 "net462": {
-                    "projectReferences": {}
+                    "projectReferences": {
+                        "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj": {
+                            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj"
+                        }
+                    }
                 },
                 "net471": {
                     "projectReferences": {
-                        "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj": {
-                            "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj"
+                        "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj": {
+                            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj"
+                        }
+                    }
+                },
+                "net472": {
+                    "projectReferences": {
+                        "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj": {
+                            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj"
                         }
                     }
                 }
@@ -276,6 +366,14 @@
                 }
             },
             "net471": {
+                "dependencies": {
+                    "CommonServiceLocator": {
+                        "target": "Package",
+                        "version": "[2.0.3, )"
+                    }
+                }
+            },
+            "net472": {
                 "dependencies": {
                     "CommonServiceLocator": {
                         "target": "Package",

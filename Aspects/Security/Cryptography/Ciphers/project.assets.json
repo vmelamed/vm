@@ -45,6 +45,7 @@
                 }
             }
         },
+
         ".NETFramework,Version=v4.7.1": {
             "CommonServiceLocator/2.0.3": {
                 "type": "package",
@@ -88,6 +89,51 @@
                     "lib/net47/CommonServiceLocator.dll": {}
                 }
             }
+        },
+
+        ".NETFramework,Version=v4.7.2": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x64": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x86": {
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            }
         }
     },
     "libraries": {
@@ -113,28 +159,32 @@
         ],
         ".NETFramework,Version=v4.7.1": [
             "CommonServiceLocator >= 2.0.3"
+        ],
+        ".NETFramework,Version=v4.7.2": [
+            "CommonServiceLocator >= 2.0.3"
         ]
     },
     "packageFolders": {
-        "C:\\Users\\Val\\.nuget\\packages\\": {}
+        "C:\\Users\\Valo\\.nuget\\packages\\": {}
     },
     "project": {
         "version": "1.0.0",
         "restore": {
-            "projectUniqueName": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj",
+            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj",
             "projectName": "vm.Aspects.Security.Cryptography.Ciphers",
-            "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj",
-            "packagesPath": "C:\\Users\\Val\\.nuget\\packages\\",
-            "outputPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\obj\\",
+            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\vm.Aspects.Security.Cryptography.Ciphers.csproj",
+            "packagesPath": "C:\\Users\\Valo\\.nuget\\packages\\",
+            "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Security\\Cryptography\\Ciphers\\obj\\",
             "projectStyle": "PackageReference",
             "skipContentFileWrite": true,
             "configFilePaths": [
-                "C:\\Users\\Val\\AppData\\Roaming\\NuGet\\NuGet.Config",
+                "C:\\Users\\Valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
                 "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
             ],
             "originalTargetFrameworks": [
                 "net462",
-                "net471"
+                "net471",
+                "net472"
             ],
             "sources": {
                 "C:\\NuGet": {},
@@ -147,6 +197,9 @@
                     "projectReferences": {}
                 },
                 "net471": {
+                    "projectReferences": {}
+                },
+                "net472": {
                     "projectReferences": {}
                 }
             }
@@ -161,6 +214,14 @@
                 }
             },
             "net471": {
+                "dependencies": {
+                    "CommonServiceLocator": {
+                        "target": "Package",
+                        "version": "[2.0.3, )"
+                    }
+                }
+            },
+            "net472": {
                 "dependencies": {
                     "CommonServiceLocator": {
                         "target": "Package",

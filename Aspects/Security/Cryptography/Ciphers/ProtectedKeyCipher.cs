@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -896,12 +897,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         {
             base.CopyTo(cipher);
 
-            var c = cipher as ProtectedKeyCipher;
-
-            if (c == null)
-                return;
-
-            c.Base64Encoded = Base64Encoded;
+            if (cipher is ProtectedKeyCipher c)
+                c.Base64Encoded = Base64Encoded;
         }
     }
 }
