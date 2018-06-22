@@ -7,7 +7,7 @@
 [assembly: AssemblyInformationalVersion("1.4.0")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
-    "vm.Aspects.Test, " +
+    "vm.Aspects.Tests, " +
     "PublicKey=00240000048000009400000006020000002400005253413100040000010001004b151837822bdb" +
               "b18296865918eb87882f2528630f673f17668fff4c6e51b8563b1985ec7ec5e6877611068c595a" +
               "e297a32e3bf9d71a5b479a59705f0688e91f086f20fa0772135ee08f693d5310ce18761d4f71ed" +
