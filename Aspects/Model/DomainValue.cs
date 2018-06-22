@@ -34,7 +34,7 @@ namespace vm.Aspects.Model
             get { return _id; }
             set
             {
-                if (!_id.Equals(default(TId)))
+                if (!_id.Equals(default))
                     throw new InvalidOperationException("Once the value of the property is set it cannot be changed.");
                 _id = value;
             }

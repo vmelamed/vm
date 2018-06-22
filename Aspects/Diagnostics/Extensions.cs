@@ -148,7 +148,7 @@ namespace vm.Aspects
         internal static bool IsDynamicObject(
             this object obj)
         {
-            if (ReferenceEquals(obj, null))
+            if (obj is null)
                 return false;
 
             // TODO: we need a better test here (http://stackoverflow.com/questions/43769230/how-to-find-out-if-an-object-is-a-dynamic-object)

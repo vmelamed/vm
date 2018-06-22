@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {

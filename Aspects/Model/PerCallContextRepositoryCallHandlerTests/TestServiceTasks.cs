@@ -6,8 +6,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using CommonServiceLocator;
+
+using Unity.Interception.PolicyInjection.MatchingRules;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Threading;
@@ -167,14 +170,14 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
-        static DateTime _when = default(DateTime);
+        static DateTime _when = default;
 
         static void ThrowRandomException(
             Entity e = null,
             Value v = null)
         {
             using (_sync.UpgradableReaderLock())
-                if (_when == default(DateTime))
+                if (_when == default)
                 {
                     using (_sync.WriterLock())
                         _when = DateTime.Now.AddMilliseconds(_random.Next(500));

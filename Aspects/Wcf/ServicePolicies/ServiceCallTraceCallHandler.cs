@@ -1,10 +1,13 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+
+using Unity.Interception.PolicyInjection.Pipeline;
+
 using vm.Aspects.Policies;
 
 namespace vm.Aspects.Wcf.ServicePolicies

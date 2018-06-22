@@ -10,9 +10,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using CommonServiceLocator;
+
+using Unity.Exceptions;
+
 using vm.Aspects.Model.EFRepository.HiLoIdentity;
 using vm.Aspects.Model.Repository;
 using vm.Aspects.Validation;
@@ -51,7 +54,7 @@ namespace vm.Aspects.Model.EFRepository
         {
             get
             {
-                
+
                 return ((IObjectContextAdapter)this).ObjectContext;
             }
         }
@@ -267,13 +270,11 @@ namespace vm.Aspects.Model.EFRepository
             DbEntityEntry entityEntry,
             IDictionary<object, object> items)
         {
-            
+
             if (entityEntry == null)
                 throw new ArgumentNullException(nameof(entityEntry));
 
-            IValidatable validatable = entityEntry.Entity as IValidatable;
-
-            if (validatable == null)
+            if (!(entityEntry.Entity is IValidatable validatable))
                 return base.ValidateEntity(entityEntry, items);
 
             var results = validatable.Validate();
@@ -303,7 +304,7 @@ namespace vm.Aspects.Model.EFRepository
                 throw new ArgumentNullException(nameof(results));
             if (errors == null)
                 throw new ArgumentNullException(nameof(errors));
-            
+
             foreach (var r in results)
             {
                 errors.Add(new DbValidationError(r.Key, r.Message));

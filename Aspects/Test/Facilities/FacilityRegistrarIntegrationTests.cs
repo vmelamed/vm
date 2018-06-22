@@ -1,10 +1,12 @@
-﻿using System;
+﻿using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Tests.Facilities

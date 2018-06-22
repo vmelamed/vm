@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace vm.Aspects.Facilities
 {
@@ -11,68 +12,47 @@ namespace vm.Aspects.Facilities
     /// Class TestTraceListener. Stores the messages in <see cref="T:IList{string}"/>.
     /// </summary>
     [ConfigurationElementType(typeof(CustomTraceListenerData))]
-    public class TestTraceListener : TraceListener
+    public class TestTraceListener : FormattedTextWriterTraceListener
     {
         /// <summary>
-        /// Synchronization object.
+        /// Initializes a new instance of the <see cref="TestTraceListener" /> class.
         /// </summary>
-        static object _sync = new object();
-        /// <summary>
-        /// The list of messages.
-        /// </summary>
-        static IList<string> _messages = new List<string> { string.Empty };
-
-        /// <summary>
-        /// Gets all messages written to the moment.
-        /// </summary>
-        public static IReadOnlyCollection<string> Messages
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public TestTraceListener()
+            : base(new StringWriter(), new TextFormatter(@"
+[{property(ActivityId)}]: {message}
+{dictionary(    {key} - {value}{newline})}"))
         {
-            get
-            {
-                lock (_sync)
-                    return new ReadOnlyCollection<string>(_messages.ToList());
-            }
         }
 
         /// <summary>
         /// Resets the messages.
         /// </summary>
-        public static void Reset()
+        public void Reset()
         {
-            lock (_sync)
-                _messages = new List<string> { string.Empty };
+            Writer.Dispose();
+            Writer = new StringWriter();
         }
 
         /// <summary>
-        /// When overridden in a derived class, writes the specified message to the listener you create in the derived class.
-        /// Here appends the argument <paramref name="message"/> to the last message in the list.
+        /// Gets the text of the log so far.
         /// </summary>
-        /// <param name="message">A message to write.</param>
-        public override void Write(
-            string message)
-        {
-            lock (_sync)
-            {
-                var msg = _messages.Last() + message;
-
-                _messages.RemoveAt(_messages.Count() - 1);
-                _messages.Add(msg);
-            }
-        }
+        public string LogText => ((StringWriter)Writer).GetStringBuilder().ToString();
 
         /// <summary>
-        /// When overridden in a derived class, writes a message to the listener you create in the derived class, followed by a line terminator.
-        /// Here appends the argument <paramref name="message"/> to the last message in the list and adds a new empty message to the list.
+        /// Disposes this object.
         /// </summary>
-        /// <param name="message">A message to write.</param>
-        public override void WriteLine(
-            string message)
+        /// <param name="disposing"><see langword="true" /> to release managed resources; if <see langword="false" />, <see cref="M:System.Diagnostics.TextWriterTraceListener.Dispose(System.Boolean)" /> has no effect.</param>
+        protected override void Dispose(
+            bool disposing)
         {
-            lock (_sync)
+            if (disposing)
             {
-                Write(message);
-                _messages.Add(string.Empty);
+                Writer.Dispose();
+                Formatter.Dispose();
             }
+
+            base.Dispose(disposing);
         }
     }
 }

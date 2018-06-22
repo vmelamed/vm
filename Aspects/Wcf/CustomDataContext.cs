@@ -12,8 +12,11 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using System.Text;
+
+using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.ServiceLocation;
+
 using vm.Aspects.Wcf.Behaviors;
 
 namespace vm.Aspects.Wcf
@@ -32,7 +35,7 @@ namespace vm.Aspects.Wcf
         static string _name;
         static string _namespace;
         static string _webHeaderName;
-        static object _syncInitialize = new object();
+        static readonly object _syncInitialize = new object();
         static IWcfContextUtilities _contextUtilities = ServiceLocator.Current.GetInstance<IWcfContextUtilities>();
 
         /// <summary>
@@ -143,7 +146,7 @@ namespace vm.Aspects.Wcf
         /// Initializes a new instance of the <see cref="T:vm.Aspects.Wcf.CustomContext{T}"/> class with the default value of <typeparamref name="T"/>.
         /// </summary>
         public CustomDataContext()
-            : this(default(T))
+            : this(default)
         {
             Initialize();
         }

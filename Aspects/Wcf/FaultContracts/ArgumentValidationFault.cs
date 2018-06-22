@@ -4,15 +4,17 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
+
 using vm.Aspects.Diagnostics;
+using vm.Aspects.Policies;
 using vm.Aspects.Wcf.FaultContracts.Metadata;
 
 namespace vm.Aspects.Wcf.FaultContracts
 {
     /// <summary>
-    /// Mirrors the <see cref="ArgumentValidationException"/> from the Enterprise Library.
+    /// Mirrors the <see cref="ArgumentValidationException"/>.
     /// </summary>
     [DataContract(Namespace = "urn:service:vm.Aspects.Wcf")]
     [MetadataType(typeof(ArgumentValidationFaultMetadata))]

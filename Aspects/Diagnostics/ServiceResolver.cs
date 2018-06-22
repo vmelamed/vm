@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 using vm.Aspects.Diagnostics.Implementation;
 
 namespace vm.Aspects.Diagnostics
@@ -16,7 +16,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// <param name="serviceType">Type of service requested.</param>
         /// <returns>Sequence of service instance objects.</returns>
-        /// <exception cref="Microsoft.Practices.ServiceLocation.ActivationException">Thrown if the service type is not supported.</exception>
+        /// <exception cref="CommonServiceLocator.ActivationException">Thrown if the service type is not supported.</exception>
         protected override IEnumerable<object> DoGetAllInstances(
             Type serviceType)
         {
@@ -37,7 +37,7 @@ namespace vm.Aspects.Diagnostics
         /// <param name="serviceType">Type of instance requested.</param>
         /// <param name="key">Name of registered service you want. May be null.</param>
         /// <returns>The requested service instance.</returns>
-        /// <exception cref="Microsoft.Practices.ServiceLocation.ActivationException">
+        /// <exception cref="CommonServiceLocator.ActivationException">
         /// Thrown if the service type is not supported.
         /// </exception>
         protected override object DoGetInstance(

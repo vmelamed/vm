@@ -15,7 +15,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
     /// </summary>
     public static class DataSerialization
     {
-        const string anonymousTypePrefix = "<>f__AnonymousType";
+        const string _anonymousTypePrefix = "<>f__AnonymousType";
 
         #region constant serializers
         /// <summary>
@@ -51,33 +51,33 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <summary>
         /// The map of base type constants de-serializers
         /// </summary>
-        static IDictionary<XName, Func<XElement, Type, object>> _constantDeserializers = new Dictionary<XName, Func<XElement, Type, object>>
+        static readonly IDictionary<XName, Func<XElement, Type, object>> _constantDeserializers = new Dictionary<XName, Func<XElement, Type, object>>
         {
-            { XNames.Elements.Boolean,       (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToBoolean(x.Value)  : default(bool)       },
-            { XNames.Elements.UnsignedByte,  (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToByte(x.Value)     : default(byte)       },
-            { XNames.Elements.Byte,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToSByte(x.Value)    : default(sbyte)      },
-            { XNames.Elements.Short,         (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt16(x.Value)    : default(short)      },
-            { XNames.Elements.UnsignedShort, (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt16(x.Value)   : default(ushort)     },
-            { XNames.Elements.Int,           (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt32(x.Value)    : default(int)        },
-            { XNames.Elements.UnsignedInt,   (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt32(x.Value)   : default(uint)       },
-            { XNames.Elements.Long,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt64(x.Value)    : default(long)       },
-            { XNames.Elements.UnsignedLong,  (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt64(x.Value)   : default(ulong)      },
-            { XNames.Elements.Float,         (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToSingle(x.Value)   : default(float)      },
-            { XNames.Elements.Double,        (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDouble(x.Value)   : default(double)     },
-            { XNames.Elements.Decimal,       (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDecimal(x.Value)  : default(decimal)    },
-            { XNames.Elements.Guid,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToGuid(x.Value)     : default(Guid)       },
-            { XNames.Elements.Duration,      (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToTimeSpan(x.Value) : default(TimeSpan)   },
-            { XNames.Elements.AnyURI,        (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? new Uri(x.Value)               : null                },
-            { XNames.Elements.String,        (x, t) => x.Value                                                                                    },
-            { XNames.Elements.DBNull,        (x, t) => DBNull.Value                                                                               },
+            { XNames.Elements.Boolean,       (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToBoolean(x.Value)  : default },
+            { XNames.Elements.UnsignedByte,  (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToByte(x.Value)     : default },
+            { XNames.Elements.Byte,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToSByte(x.Value)    : default },
+            { XNames.Elements.Short,         (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt16(x.Value)    : default },
+            { XNames.Elements.UnsignedShort, (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt16(x.Value)   : default },
+            { XNames.Elements.Int,           (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt32(x.Value)    : default },
+            { XNames.Elements.UnsignedInt,   (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt32(x.Value)   : default },
+            { XNames.Elements.Long,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToInt64(x.Value)    : default },
+            { XNames.Elements.UnsignedLong,  (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToUInt64(x.Value)   : default },
+            { XNames.Elements.Float,         (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToSingle(x.Value)   : default },
+            { XNames.Elements.Double,        (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDouble(x.Value)   : default },
+            { XNames.Elements.Decimal,       (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDecimal(x.Value)  : default },
+            { XNames.Elements.Guid,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToGuid(x.Value)     : default },
+            { XNames.Elements.Duration,      (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToTimeSpan(x.Value) : default },
+            { XNames.Elements.AnyURI,        (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? new Uri(x.Value)               : null    },
+            { XNames.Elements.String,        (x, t) => x.Value                                                                        },
+            { XNames.Elements.DBNull,        (x, t) => DBNull.Value                                                                   },
             { XNames.Elements.Char,          (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? Convert.ToChar(Convert.ToInt32(x.Value, CultureInfo.InvariantCulture))
-                                                                                                                            : default(char)       },
+                                                                                                                            : default },
             { XNames.Elements.DateTime,      (x, t) => !string.IsNullOrWhiteSpace(x.Value) ? XmlConvert.ToDateTime(x.Value, XmlDateTimeSerializationMode.RoundtripKind)
-                                                                                                                            : default(DateTime)   },
-            { XNames.Elements.Nullable,      DeserializeNullable                                                                                  },
-            { XNames.Elements.Enum,          DeserializeEnum                                                                                      },
-            { XNames.Elements.Custom,        DeserializeCustom                                                                                    },
-            { XNames.Elements.Anonymous,     DeserializeAnonymous                                                                                 },
+                                                                                                                            : default },
+            { XNames.Elements.Nullable,      DeserializeNullable                                                                      },
+            { XNames.Elements.Enum,          DeserializeEnum                                                                          },
+            { XNames.Elements.Custom,        DeserializeCustom                                                                        },
+            { XNames.Elements.Anonymous,     DeserializeAnonymous                                                                     },
         };
         #endregion
 
@@ -154,7 +154,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return true;
 
             // yes if it is an anonymous type and all of its properties serializable (recursively)
-            if (type.Name.StartsWith(anonymousTypePrefix, StringComparison.Ordinal))
+            if (type.Name.StartsWith(_anonymousTypePrefix, StringComparison.Ordinal))
             {
                 var properties = type.GetProperties();
 
@@ -247,7 +247,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             // if it is an anonymous - get anonymous serializer or
             if (type.IsGenericType &&
-                type.Name.StartsWith(anonymousTypePrefix, StringComparison.Ordinal))
+                type.Name.StartsWith(_anonymousTypePrefix, StringComparison.Ordinal))
                 return SerializeAnonymous;
 
             // get general object serializer
@@ -560,7 +560,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             typeString = typeAttribute.Value;
 
-            if (typeString.StartsWith(anonymousTypePrefix, StringComparison.Ordinal))
+            if (typeString.StartsWith(_anonymousTypePrefix, StringComparison.Ordinal))
                 return DeserializeAnonymous(element, type);
 
             var serializer = new DataContractSerializer(TypeNameResolver.GetType(typeString));

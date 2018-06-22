@@ -1,9 +1,11 @@
-﻿using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
+
+using Unity.Interception.PolicyInjection.Pipeline;
+
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;

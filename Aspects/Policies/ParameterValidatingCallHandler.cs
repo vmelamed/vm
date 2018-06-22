@@ -1,15 +1,39 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+
+using Unity.Attributes;
+using Unity.Interception.PolicyInjection.Pipeline;
+
 namespace vm.Aspects.Policies
 {
+    /// <summary>
+    /// Specifies where the information for validation should come from.
+    /// </summary>
+    public enum SpecificationSource
+    {
+        /// <summary>
+        /// Configuration and type attributes.
+        /// </summary>
+        Both = 0,
+        /// <summary>
+        /// Type attributes only, ignoring configuration.
+        /// </summary>
+        Attributes,
+        /// <summary>
+        /// Configuration only, ignoring type attributes.
+        /// </summary>
+        Configuration,
+        /// <summary>
+        /// Only use attributes on the parameters themselves; ignore types and configuration.
+        /// </summary>
+        ParameterAttributesOnly
+    }
+
     /// <summary>
     /// Class ParameterValidatingCallHandler performs parameter validation based on validation attributes applied to the methods' parameters.
     /// </summary>

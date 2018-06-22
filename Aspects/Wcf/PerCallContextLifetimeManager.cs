@@ -1,5 +1,8 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Remoting.Messaging;
+
+using Unity.Lifetime;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf
@@ -15,21 +18,25 @@ namespace vm.Aspects.Wcf
         /// <summary>
         /// Gets the key of the object stored in the call context.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string Key => Facility.GuidGenerator.NewGuid().ToString("N");
 
         /// <summary>
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
+        /// <param name="container">The container.</param>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue() => CallContext.LogicalGetData(Key);
+        public override object GetValue(
+            ILifetimeContainer container = null) => CallContext.LogicalGetData(Key);
 
         /// <summary>
         /// Stores the given value into backing store for retrieval later.
         /// </summary>
         /// <param name="newValue">The object being stored.</param>
+        /// <param name="container">The container.</param>
         public override void SetValue(
-            object newValue)
+            object newValue,
+            ILifetimeContainer container = null)
         {
             if (newValue == null)
                 RemoveValue();
@@ -40,7 +47,9 @@ namespace vm.Aspects.Wcf
         /// <summary>
         /// Remove the given object from backing store.
         /// </summary>
-        public override void RemoveValue()
+        /// <param name="container">The container.</param>
+        public override void RemoveValue(
+            ILifetimeContainer container = null)
         {
             object value = CallContext.LogicalGetData(Key);
 
@@ -49,5 +58,11 @@ namespace vm.Aspects.Wcf
 
             value?.Dispose();
         }
+
+        /// <summary>
+        /// Called when [create lifetime manager].
+        /// </summary>
+        /// <returns>LifetimeManager.</returns>
+        protected override LifetimeManager OnCreateLifetimeManager() => this;
     }
 }

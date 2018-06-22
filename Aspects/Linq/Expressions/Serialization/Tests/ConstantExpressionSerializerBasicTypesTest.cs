@@ -173,14 +173,14 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public void TestBasicConstantEnum()
         {
             TestConstant(
-                EnumTest.three,
+                EnumTest.Three,
                 "TestFiles\\Enum.xml");
         }
 
         [TestMethod]
         public void TestBasicConstantEnumFlags()
         {
-            EnumFlagsTest value = EnumFlagsTest.one | EnumFlagsTest.three;
+            EnumFlagsTest value = EnumFlagsTest.One | EnumFlagsTest.Three;
 
             TestConstant(
                 value,

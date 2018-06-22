@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The DefaultServiceLocator wraps the <see cref="Microsoft.Practices.ServiceLocation.ServiceLocator"/>.
-    /// The idea is that if the users have IoC container which has implementation of <see cref="Microsoft.Practices.ServiceLocation.IServiceLocator"/>
+    /// The DefaultServiceLocator wraps the <see cref="CommonServiceLocator.ServiceLocator"/>.
+    /// The idea is that if the users have IoC container which has implementation of <see cref="CommonServiceLocator.IServiceLocator"/>
     /// (as most do - see https://commonservicelocator.codeplex.com/) they could put their implementation of some required services in the container 
     /// of their choice, otherwise in either case the dumper will resolve the services from this class.
     /// </summary>

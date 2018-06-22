@@ -102,9 +102,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 throw new ArgumentNullException(nameof(baseVisit));
 
             var reducedNode = baseVisit(expressionNode);
-            var node = reducedNode as E;
 
-            if (node == null)
+            if (!(reducedNode is E node))
                 return reducedNode;
 
             var nodeName = new StringBuilder(reducedNode.NodeType.ToString());
@@ -399,7 +398,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         IDictionary<LabelTarget, string> _labelTargetsUid;
-        int lastLabelUid;
+        int _lastLabelUid;
 
         string GetLabelTargetUid(LabelTarget target)
         {
@@ -411,7 +410,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 
             if (!_labelTargetsUid.TryGetValue(target, out var uid))
             {
-                uid = $"L{++lastLabelUid}";
+                uid = $"L{++_lastLabelUid}";
                 _labelTargetsUid[target] = uid;
             }
 

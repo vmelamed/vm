@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Threading;
 
-using Microsoft.Practices.Unity;
+using Unity.Lifetime;
 
 using vm.Aspects.Threading;
 
@@ -35,7 +35,8 @@ namespace vm.Aspects
         /// Retrieve a value from the backing store associated with this Lifetime policy.
         /// </summary>
         /// <returns>the object desired, or null if no such object is currently stored.</returns>
-        public override object GetValue()
+        public override object GetValue(
+            ILifetimeContainer container = null)
         {
             using (_sync.ReaderLock())
                 return CallContext.LogicalGetData(_key);
@@ -45,7 +46,11 @@ namespace vm.Aspects
         /// Stores the given value into backing store for retrieval later.
         /// </summary>
         /// <param name="newValue">The object being stored.</param>
-        public override void SetValue(object newValue)
+        /// <param name="container">The container.</param>
+        /// <exception cref="ArgumentException">newValue</exception>
+        public override void SetValue(
+            object newValue,
+            ILifetimeContainer container = null)
         {
             if (newValue == null)
                 RemoveValue();
@@ -62,7 +67,8 @@ namespace vm.Aspects
         /// <summary>
         /// Remove the given object from backing store.
         /// </summary>
-        public override void RemoveValue()
+        public override void RemoveValue(
+            ILifetimeContainer container = null)
         {
             object value;
 
@@ -74,6 +80,12 @@ namespace vm.Aspects
 
             value.Dispose();
         }
+
+        /// <summary>
+        /// Called when the lifetime manager is created.
+        /// </summary>
+        /// <returns>LifetimeManager.</returns>
+        protected override LifetimeManager OnCreateLifetimeManager() => this;
 
         #region Identity rules implementation.
         #region IEquatable<PerCallContextLifetimeManager<T>> Members

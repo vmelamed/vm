@@ -6,7 +6,9 @@ using System.Data.Entity.Infrastructure.MappingViews;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.Practices.Unity;
+
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects.Model.EFRepository
 {
@@ -51,20 +53,21 @@ namespace vm.Aspects.Model.EFRepository
         /// Generates the mapping views cache.
         /// </summary>
         /// <exception cref="EdmSchemaException"></exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         public void Generate()
         {
             if (!Directory.Exists(_cachePath))
                 Directory.CreateDirectory(_cachePath);
 
             // try to resolve the real repository in the DI container
-            ContainerRegistration registration;
+            IContainerRegistration registration;
 
             lock (DIContainer.Root)
                 registration = DIContainer
                                 .Root
                                 .GetRegistrationsSnapshot()
                                 .FirstOrDefault(kv => kv.Value.MappedToType == typeof(T) &&
-                                                      kv.Value.LifetimeManagerType == typeof(TransientLifetimeManager))
+                                                      kv.Value.LifetimeManager.LifetimeType == typeof(TransientLifetimeManager))
                                 .Value
                                 ;
 

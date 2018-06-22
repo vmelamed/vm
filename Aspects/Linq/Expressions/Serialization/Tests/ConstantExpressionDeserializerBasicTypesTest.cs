@@ -164,7 +164,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         {
             TestConstant(
                 "TestFiles\\Enum.xml",
-                Expression.Constant(EnumTest.three));
+                Expression.Constant(EnumTest.Three));
         }
 
         [TestMethod]
@@ -172,7 +172,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         {
             TestConstant(
                 "TestFiles\\EnumFlags.xml",
-                Expression.Constant(EnumFlagsTest.one | EnumFlagsTest.three));
+                Expression.Constant(EnumFlagsTest.One | EnumFlagsTest.Three));
         }
 
         [TestMethod]

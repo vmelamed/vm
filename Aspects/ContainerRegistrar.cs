@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Registration;
+
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Threading;
 
@@ -124,7 +127,7 @@ namespace vm.Aspects
         /// </remarks>
         public IUnityContainer UnsafeRegister(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             bool isTest = false)
         {
             if (container == null)
@@ -157,7 +160,7 @@ namespace vm.Aspects
         /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
         protected abstract void DoRegister(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations);
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations);
 
         /// <summary>
         /// The inheriting types should override this method if they need to register different configuration for unit testing purposes.
@@ -168,7 +171,7 @@ namespace vm.Aspects
         /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
         protected virtual void DoTestRegister(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations)
         {
             if (container == null)
                 throw new ArgumentNullException(nameof(container));

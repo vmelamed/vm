@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using CommonServiceLocator;
+
+using Unity.Attributes;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Model.Repository;
 
@@ -51,7 +54,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <summary>
         /// The default transaction timeout. 
         /// </summary>
-        static readonly TimeSpan DefaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
+        static readonly TimeSpan _defaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
 
         /// <summary>
         /// Specifies the default isolation level of the transactions: Serializable
@@ -117,10 +120,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-
-            var provider = this as IStoreUniqueId<TId>;
-
-            if (provider == null)
+            if (!(this is IStoreUniqueId<TId> provider))
                 throw new NotSupportedException("The store ID provider does not support generating ID-s of type "+typeof(TId).FullName);
 
             return provider;
@@ -134,9 +134,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return DoGetNew<T>(efRepository);
@@ -151,9 +149,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return DoGetNew(objectsType, efRepository);
@@ -167,9 +163,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             var id = DoGetNew<T>(efRepository);
@@ -190,9 +184,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             var id = DoGetNew(objectsType, efRepository);
@@ -306,7 +298,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                                                 new TransactionOptions
                                                 {
                                                     IsolationLevel = DefaultIsolationLevel,
-                                                    Timeout        = DefaultTransactionTimeout,
+                                                    Timeout        = _defaultTransactionTimeout,
                                                 });
 
             try

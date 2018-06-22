@@ -10,6 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -73,9 +74,7 @@ namespace vm.Aspects.Model.EFRepository
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             if (efRepository.ObjectContext.Connection.State == ConnectionState.Open &&
@@ -177,9 +176,7 @@ namespace vm.Aspects.Model.EFRepository
             if (!IsProxy(reference))
                 return false;
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var dbEntry = efRepository
@@ -276,9 +273,7 @@ namespace vm.Aspects.Model.EFRepository
                 return true;
 
             // get the current repository which can tell if the object is loaded
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));
@@ -336,9 +331,7 @@ namespace vm.Aspects.Model.EFRepository
                 return true;
 
             // get the current repository which can tell if the object is loaded
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));
@@ -406,9 +399,7 @@ namespace vm.Aspects.Model.EFRepository
                 return true;
 
             // get the current repository which can tell if the object is loaded
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var ownerEntry = efRepository.ChangeTracker.Entries().FirstOrDefault(e => ReferenceEquals(e.Entity, principal));

@@ -6,8 +6,12 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+using CommonServiceLocator;
+
+using Unity;
+using Unity.Exceptions;
+using Unity.Lifetime;
+using Unity.Registration;
 
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
@@ -200,7 +204,7 @@ namespace vm.Aspects.Wcf.Services
         /// </code></remarks>
         protected override IUnityContainer DoRegisterDefaults(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations)
         {
             ObtainInitializerResolveName();
 

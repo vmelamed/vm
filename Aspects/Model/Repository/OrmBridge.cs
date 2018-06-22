@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity;
+
+using CommonServiceLocator;
+
+using Unity.Exceptions;
+
 using vm.Aspects.Model.InMemory;
 
 namespace vm.Aspects.Model.Repository
@@ -14,7 +17,7 @@ namespace vm.Aspects.Model.Repository
     /// </summary>
     public static class OrmBridge
     {
-        static object _sync = new object();
+        static readonly object _sync = new object();
         static IOrmSpecifics _ormSpecifics;
 
         /// <summary>

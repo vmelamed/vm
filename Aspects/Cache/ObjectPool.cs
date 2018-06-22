@@ -57,7 +57,7 @@ namespace vm.Aspects.Cache
     /// </example>
     public class ObjectPool<T> : IDisposable, IIsDisposed where T : class
     {
-        object _sync = new object();
+        readonly object _sync = new object();
         int _poolSize;
         bool _isInitialized;
         SemaphoreSlim _semaphore;
@@ -191,7 +191,7 @@ namespace vm.Aspects.Cache
         /// <returns>A task object representing the process of lending an object from the pool.</returns>
         public async Task<LentObject<T>> LendObjectAsync(
             int waitMilliseconds = Timeout.Infinite,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             if (waitMilliseconds < -1)
                 throw new ArgumentException("The timeout must be greater or equal to -1 (infinite).");

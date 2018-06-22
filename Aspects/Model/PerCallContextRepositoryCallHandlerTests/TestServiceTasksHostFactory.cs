@@ -1,6 +1,9 @@
-﻿using Microsoft.Practices.Unity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
+
+using Unity;
+using Unity.Registration;
+
 using vm.Aspects.Wcf.Services;
 
 namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
@@ -9,7 +12,7 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
     {
         protected override IUnityContainer DoRegisterDefaults(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations) => base.DoRegisterDefaults(container, registrations)
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations) => base.DoRegisterDefaults(container, registrations)
                                                                                          .UnsafeRegister(TestService.Registrar, registrations)
                                                                                          ;
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.PolicyInjection.Pipeline;
+using Unity.Lifetime;
 
 namespace vm.Aspects.Policies
 {

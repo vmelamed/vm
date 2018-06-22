@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects.Tests
 {
@@ -62,7 +66,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
 
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode));
             }
@@ -76,7 +80,7 @@ namespace vm.Aspects.Tests
             {
                 var regs = DIContainer.Root.GetRegistrationsSnapshot();
 
-                DIContainer.Root.RegisterTypeIfNot(regs,  (Type)null);
+                DIContainer.Root.RegisterTypeIfNot(regs, (Type)null);
             }
         }
 
@@ -87,7 +91,7 @@ namespace vm.Aspects.Tests
             lock (DIContainer.Root)
             {
                 var regs = DIContainer.Root.GetRegistrationsSnapshot();
-                DIContainer.Root.RegisterTypeIfNot(regs,  typeof(TestTargetFromCode), (InjectionMember[])null);
+                DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode), (InjectionMember[])null);
             }
         }
 
@@ -103,7 +107,7 @@ namespace vm.Aspects.Tests
             lock (DIContainer.Root)
             {
                 var regs = DIContainer.Root.GetRegistrationsSnapshot();
-                DIContainer.Root.RegisterTypeIfNot(regs,  typeof(TestTargetFromCode));
+                DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode));
             }
 
             // Assert
@@ -129,7 +133,7 @@ namespace vm.Aspects.Tests
             lock (DIContainer.Root)
             {
                 var regs = DIContainer.Root.GetRegistrationsSnapshot();
-                DIContainer.Root.RegisterTypeIfNot(regs,  typeof(TestTargetFromCode));
+                DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode));
             }
 
             // Assert
@@ -163,7 +167,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
 
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode), new TransientLifetimeManager());
             }
@@ -262,7 +266,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode), "test");
             }
         }
@@ -360,7 +364,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(TestTargetFromCode), "test", new TransientLifetimeManager());
             }
         }
@@ -460,7 +464,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(ITestTarget), typeof(TestTargetFromCode));
             }
         }
@@ -560,7 +564,7 @@ namespace vm.Aspects.Tests
 
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 container.RegisterTypeIfNot(regs, typeof(ITestTarget), typeof(TestTargetFromCode), new TransientLifetimeManager());
             }
         }
@@ -658,7 +662,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(ITestTarget), typeof(TestTargetFromCode), "test");
             }
         }
@@ -756,7 +760,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterTypeIfNot(regs, typeof(ITestTarget), typeof(TestTargetFromCode), "test", new TransientLifetimeManager());
             }
         }
@@ -856,7 +860,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterInstanceIfNot(regs, typeof(ITestTarget), new TestTargetFromCode());
             }
         }
@@ -972,7 +976,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterInstanceIfNot(regs, typeof(ITestTarget), new TestTargetFromCode(), new ContainerControlledLifetimeManager());
             }
         }
@@ -1084,7 +1088,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterInstanceIfNot(regs, typeof(ITestTarget), "test", new TestTargetFromCode());
             }
         }
@@ -1183,7 +1187,7 @@ namespace vm.Aspects.Tests
         {
             lock (DIContainer.Root)
             {
-                IDictionary<RegistrationLookup, ContainerRegistration> regs = null;
+                IDictionary<RegistrationLookup, IContainerRegistration> regs = null;
                 DIContainer.Root.RegisterInstanceIfNot(regs, typeof(ITestTarget), "test", new TestTargetFromCode(), new ContainerControlledLifetimeManager());
             }
         }

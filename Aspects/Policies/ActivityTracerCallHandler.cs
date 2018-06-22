@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
 
 using vm.Aspects.Facilities;
 
@@ -14,7 +15,7 @@ namespace vm.Aspects.Policies
     /// <seealso cref="BaseCallHandler{Guid}" />
     public class ActivityTracerCallHandler : BaseCallHandler<ActivityTracer>
     {
-        static object _syncTraceManager = new object();
+        static readonly object _syncTraceManager = new object();
         static TraceManager _traceManager;
 
         /// <summary>

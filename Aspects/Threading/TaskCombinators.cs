@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Threading
@@ -78,7 +79,7 @@ namespace vm.Aspects.Threading
                     throw new AggregateException(exceptions);
             }
 
-            return default(T);
+            return default;
         }
 
         /// <summary>

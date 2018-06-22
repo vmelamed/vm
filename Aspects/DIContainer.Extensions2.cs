@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 namespace vm.Aspects
 {
@@ -48,7 +51,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             params InjectionMember[] injectionMembers)
         {
@@ -60,7 +63,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterType(type, injectionMembers);
             return container;
@@ -108,7 +111,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             LifetimeManager lifetimeManager,
             params InjectionMember[] injectionMembers)
@@ -121,7 +124,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterType(type, lifetimeManager, injectionMembers);
             return container;
@@ -169,7 +172,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             string name,
             params InjectionMember[] injectionMembers)
@@ -182,7 +185,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterType(type, name, injectionMembers);
             return container;
@@ -232,7 +235,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             string name,
             LifetimeManager lifetimeManager,
@@ -246,7 +249,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterType(type, name, lifetimeManager, injectionMembers);
 
@@ -297,7 +300,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type typeFrom,
             Type typeTo,
             params InjectionMember[] injectionMembers)
@@ -312,7 +315,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(typeTo));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom)))
                 container.RegisterType(typeFrom, typeTo, injectionMembers);
 
@@ -363,7 +366,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type typeFrom,
             Type typeTo,
             LifetimeManager lifetimeManager,
@@ -379,7 +382,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(typeTo));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom)))
                 container.RegisterType(typeFrom, typeTo, lifetimeManager, injectionMembers);
 
@@ -430,7 +433,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type typeFrom,
             Type typeTo,
             string name,
@@ -446,7 +449,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(typeTo));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom, name)))
                 container.RegisterType(typeFrom, typeTo, name, injectionMembers);
 
@@ -499,7 +502,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterTypeIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type typeFrom,
             Type typeTo,
             string name,
@@ -516,7 +519,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(typeTo));
             if (injectionMembers == null)
                 throw new ArgumentNullException(nameof(injectionMembers));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(typeFrom, name)))
                 container.RegisterType(typeFrom, typeTo, name, lifetimeManager, injectionMembers);
 
@@ -565,7 +568,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             object instance)
         {
@@ -575,7 +578,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterInstance(type, instance);
 
@@ -623,7 +626,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             object instance,
             LifetimeManager lifetimeManager)
@@ -636,7 +639,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type)))
                 container.RegisterInstance(type, instance, lifetimeManager);
             return container;
@@ -683,7 +686,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             string name,
             object instance)
@@ -694,7 +697,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(registrations));
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterInstance(type, name, instance);
 
@@ -744,7 +747,7 @@ namespace vm.Aspects
         /// </example>
         public static IUnityContainer RegisterInstanceIfNot(
             this IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations,
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations,
             Type type,
             string name,
             object instance,
@@ -758,7 +761,7 @@ namespace vm.Aspects
                 throw new ArgumentNullException(nameof(type));
             if (lifetimeManager == null)
                 throw new ArgumentNullException(nameof(lifetimeManager));
-            
+
             if (!registrations.ContainsKey(new RegistrationLookup(type, name)))
                 container.RegisterInstance(type, name, instance, lifetimeManager);
 

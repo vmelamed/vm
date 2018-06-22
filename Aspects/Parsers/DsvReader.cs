@@ -352,13 +352,9 @@ namespace vm.Aspects.Parsers
             if (c != -1)
                 return unchecked((char)c);
 
-            var streamReader = _reader as StreamReader;
-
-            if (streamReader == null)
-                return unchecked((char)c);
-
-            while (!streamReader.EndOfStream && c == -1)
-                c = _reader.Peek();
+            if (_reader is StreamReader streamReader)
+                while (!streamReader.EndOfStream && c == -1)
+                    c = _reader.Peek();
 
             return unchecked((char)c);
         }

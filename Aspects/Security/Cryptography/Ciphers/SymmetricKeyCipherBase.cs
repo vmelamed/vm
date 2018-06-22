@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {

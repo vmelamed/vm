@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+
+using CommonServiceLocator;
+
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.ServiceLocation;
+
 using vm.Aspects.Threading;
 
 namespace vm.Aspects.Facilities

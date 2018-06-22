@@ -41,15 +41,15 @@ namespace vm.Aspects.Validation.Tests
         //
         #endregion
 
-        const string BoundString = "2006-01-20T00:00:00.0000000";
-        DateTime _bound = DateTime.ParseExact(BoundString, "o", CultureInfo.InvariantCulture);
+        const string _boundString = "2006-01-20T00:00:00.0000000";
+        readonly DateTime _bound = DateTime.ParseExact(_boundString, "o", CultureInfo.InvariantCulture);
 
         public void TestValidators(DateTime value)
         {
             Helper.TestValidator<DateTime>(TestContext, new NotBeforeValidatorAttribute(_bound), value, value >= _bound);
             Helper.TestValidator<DateTime>(TestContext, new NotAfterValidatorAttribute(_bound), value, value <= _bound);
-            Helper.TestValidator<DateTime>(TestContext, new NotBeforeValidatorAttribute(BoundString), value, value >= _bound);
-            Helper.TestValidator<DateTime>(TestContext, new NotAfterValidatorAttribute(BoundString), value, value <= _bound);
+            Helper.TestValidator<DateTime>(TestContext, new NotBeforeValidatorAttribute(_boundString), value, value >= _bound);
+            Helper.TestValidator<DateTime>(TestContext, new NotAfterValidatorAttribute(_boundString), value, value <= _bound);
         }
 
         [TestMethod]

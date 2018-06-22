@@ -6,17 +6,17 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     public enum EnumTest
     {
-        one,
-        two,
-        three,
+        One,
+        Two,
+        Three,
     };
 
     [Flags]
     public enum EnumFlagsTest
     {
-        one = 1,
-        two = 2,
-        three = 4,
+        One = 1,
+        Two = 2,
+        Three = 4,
     }
 
     [DataContract(Namespace = "urn:vm.AspectsTest.Diagnostics", IsReference = true)]
@@ -196,13 +196,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 
     class TestMethods
     {
-        int a = 3;
+        readonly int _a = 3;
 
         public static int Method1() => 1;
 
         public static int Method2(int i, string s) => i;
 
-        public int Method3(int i, double d) => i+a;
+        public int Method3(int i, double d) => i+_a;
     }
 
     class Inner

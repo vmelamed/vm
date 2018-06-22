@@ -18,7 +18,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Wcf.Behaviors
 {

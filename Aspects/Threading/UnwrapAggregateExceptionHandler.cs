@@ -1,6 +1,8 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using System;
+﻿using System;
 using System.Linq;
+
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Threading
@@ -44,7 +46,7 @@ namespace vm.Aspects.Threading
             if (Facility.ExceptionManager.HandleException(innerException, _exceptionPolicyName, out var newException))
                 if (newException != null)
                 {
-                    if (handlingInstanceId != default(Guid))
+                    if (handlingInstanceId != default)
                         newException.Data["HandlingInstanceId"] = handlingInstanceId;
                     return newException;
                 }
@@ -63,7 +65,7 @@ namespace vm.Aspects.Threading
         /// <returns>The single inner exception or the argument.</returns>
         public static Exception Unwrap(
             AggregateException exception,
-            Guid handlingInstanceId = default(Guid))
+            Guid handlingInstanceId = default)
         {
             Exception x = exception;
 

@@ -11,7 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
 
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Facilities;
@@ -124,6 +125,14 @@ namespace vm.Aspects.Policies
         #endregion
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CallTraceCallHandler"/> class with the default log writer facility.
+        /// </summary>
+        public CallTraceCallHandler()
+            : this(Facility.LogWriter)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CallTraceCallHandler"/> class.
         /// </summary>
         /// <param name="logWriter">The log writer.</param>
@@ -219,16 +228,16 @@ namespace vm.Aspects.Policies
                 {
                     callData.BeforeCallLogEntry = entry;
 
-                    Action logBeforeCall = () => Facility
+                    void LogBefore() => Facility
                                                     .ExceptionManager
                                                     .Process(
                                                         () => LogBeforeCallData(input, callData),
                                                         ExceptionPolicyProvider.LogAndSwallowPolicyName);
 
                     if (LogAsynchronously)
-                        callData.LogBeforeCall = Task.Run(logBeforeCall);
+                        callData.LogBeforeCall = Task.Run(() => LogBefore());
                     else
-                        logBeforeCall();
+                        LogBefore();
                 }
             }
 
@@ -346,7 +355,7 @@ namespace vm.Aspects.Policies
             if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return await base.ContinueWith<TResult>(input, methodReturn, callData);
 
-            TResult result = default(TResult);
+            TResult result = default;
 
             try
             {

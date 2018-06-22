@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Injection;
+using Unity.Registration;
+
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Wcf.Bindings
@@ -25,7 +29,7 @@ namespace vm.Aspects.Wcf.Bindings
             /// <param name="registrations">The registrations dictionary used for faster lookup of the existing registrations.</param>
             protected override void DoRegister(
                 IUnityContainer container,
-                IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+                IDictionary<RegistrationLookup, IContainerRegistration> registrations)
             {
                 if (container == null)
                     throw new ArgumentNullException(nameof(container));

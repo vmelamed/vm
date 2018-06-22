@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Transactions;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 using vm.Aspects.Exceptions;
 using vm.Aspects.Facilities.Diagnostics;

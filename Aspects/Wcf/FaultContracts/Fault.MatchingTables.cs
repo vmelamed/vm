@@ -1,6 +1,4 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -13,8 +11,12 @@ using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Threading;
 using System.Xml;
+
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Exceptions;
+using vm.Aspects.Policies;
 using vm.Aspects.Threading;
 
 namespace vm.Aspects.Wcf.FaultContracts

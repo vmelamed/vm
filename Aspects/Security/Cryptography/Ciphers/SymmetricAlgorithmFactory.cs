@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -25,7 +25,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Possibly implements the resolution strategy and initializes the factory with the appropriate values.
         /// </summary>
         /// <param name="symmetricAlgorithmName">Name of the symmetric algorithm.</param>
-        /// <exception cref="Microsoft.Practices.ServiceLocation.ActivationException"></exception>
+        /// <exception cref="CommonServiceLocator.ActivationException"></exception>
         public void Initialize(
             string symmetricAlgorithmName = null)
         {

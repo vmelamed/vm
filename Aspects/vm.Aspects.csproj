@@ -1,396 +1,298 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>vm.Aspects</RootNamespace>
-    <AssemblyName>vm.Aspects</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkVersions>net462;net471</TargetFrameworkVersions>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\vm.Aspects.XML</DocumentationFile>
-    <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>True</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>True</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption>
-    </CodeContractsSQLServerOption>
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>3001, 3002, 3003</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\vm.Aspects.XML</DocumentationFile>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>3001, 3002, 3003</NoWarn>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugUnitTest\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;TEST</DefineConstants>
-    <DocumentationFile>bin\Debug\vm.Aspects.XML</DocumentationFile>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>True</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>True</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>True</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption>
-    </CodeContractsSQLServerOption>
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>3001, 3002, 3003</NoWarn>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection, Version=6.1.0.0, Culture=neutral, PublicKeyToken=39c66c470a75c367, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Common Items\AssemblyInfo.global.cs">
-      <Link>Properties\AssemblyInfo.global.cs</Link>
-    </Compile>
-    <Compile Include="ApiVersionAttribute.cs" />
-    <Compile Include="Cache\LentObject.cs" />
-    <Compile Include="Cache\ObjectPool.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="ContainerRegistrar.cs" />
-    <Compile Include="DIContainer.cs" />
-    <Compile Include="DIContainer.Extensions.cs" />
-    <Compile Include="DIContainer.Extensions2.cs" />
-    <Compile Include="DIContainer.GenericExtensions.cs" />
-    <Compile Include="DIContainer.GenericExtensions2.cs" />
-    <Compile Include="DisposableExtensions.cs" />
-    <Compile Include="EnumFlagsExtensions.cs" />
-    <Compile Include="Exceptions\BusinessException.cs" />
-    <Compile Include="Exceptions\InvalidObjectException.cs" />
-    <Compile Include="Exceptions\ObjectException.cs" />
-    <Compile Include="Exceptions\ObjectIdentifierNotUniqueException.cs" />
-    <Compile Include="Exceptions\ObjectNotFoundException.cs" />
-    <Compile Include="Exceptions\RepeatableOperationException.cs" />
-    <Compile Include="Facilities\ConfigProviders\AppConfigProvider.cs" />
-    <Compile Include="Facilities\Clock.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsBaseEventSource.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Constants.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.EFRepository.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Retry.cs" />
-    <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.WCF.cs" />
-    <Compile Include="Facilities\LogWriters\DumpExceptionFormatter.cs" />
-    <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryBaseEventSource.cs" />
-    <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryEventSource.Constants.cs" />
-    <Compile Include="Facilities\LogWriters\Etw\EtwTraceListener.cs" />
-    <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryEventSource.cs" />
-    <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
-    <Compile Include="Facilities\Facility.cs" />
-    <Compile Include="Facilities\Facility.FacilitiesRegistrar.cs" />
-    <Compile Include="Facilities\GuidGenerator.cs" />
-    <Compile Include="Facilities\IClock.cs" />
-    <Compile Include="Facilities\ConfigProviders\IConfigurationProvider.cs" />
-    <Compile Include="Facilities\IExceptionPolicyProvider.cs" />
-    <Compile Include="Facilities\IGuidGenerator.cs" />
-    <Compile Include="Facilities\LogWriter\LogConfigProvider.cs" />
-    <Compile Include="Facilities\LogWriter\LogWriterFacades.cs" />
-    <Compile Include="Facilities\TestClock.cs" />
-    <Compile Include="Facilities\TestGuidGenerator.cs" />
-    <Compile Include="Facilities\LogWriters\TestTraceListener.cs" />
-    <Compile Include="Facilities\ConfigProviders\WebConfigProvider.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IIsDisposed.cs" />
-    <Compile Include="IListExtensions.cs" />
-    <Compile Include="LambdaExpressionExtensions.cs" />
-    <Compile Include="PerCallContextLifetimeManager.cs" />
-    <Compile Include="Policies\ActivityTracer.cs" />
-    <Compile Include="Policies\BaseCallHandler.cs" />
-    <Compile Include="Policies\CallTraceAttribute.cs" />
-    <Compile Include="Policies\CallTraceCallHandler.cs" />
-    <Compile Include="Policies\CallTraceData.cs" />
-    <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
-    <Compile Include="Policies\ICallHandlerExtensions.cs" />
-    <Compile Include="Policies\ActivityTracerCallHandler.cs" />
-    <Compile Include="Policies\NongenericBaseCallHandler.cs" />
-    <Compile Include="Policies\ParameterValidatingCallHandler.cs" />
-    <Compile Include="Policies\PolicyDefinitionExtensions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ReflectionExtensions.cs" />
-    <Compile Include="RegistrationLookup.cs" />
-    <Compile Include="RegularExpression.cs" />
-    <Compile Include="ResolveNameAttribute.cs" />
-    <Compile Include="Security\CertificateFactory.cs" />
-    <Compile Include="SemanticVersion.cs" />
-    <Compile Include="SemanticVersion.Metadata.cs">
-      <DependentUpon>SemanticVersion.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Threading\Latch.cs" />
-    <Compile Include="Threading\RetryConstants.cs" />
-    <Compile Include="Threading\UnwrapAggregateExceptionHandler.cs" />
-    <Compile Include="Threading\AsyncProducerConsumerCollection.cs" />
-    <Compile Include="Threading\ReaderSlimSync.cs" />
-    <Compile Include="Threading\ReaderWriterLockSlimExtensions.cs" />
-    <Compile Include="Threading\Retry.cs" />
-    <Compile Include="Threading\RetryTasks.cs" />
-    <Compile Include="Threading\TaskCombinators.cs" />
-    <Compile Include="Threading\UpgradeableReaderSlimSync.cs" />
-    <Compile Include="Threading\WriterSlimSync.cs" />
-    <Compile Include="Validation\AbaRoutingNumberValidator.cs" />
-    <Compile Include="Validation\AbaRoutingNumberValidatorAttribute.cs" />
-    <Compile Include="Validation\LuhnValidator.cs" />
-    <Compile Include="Validation\LuhnValidatorAttribute.cs" />
-    <Compile Include="Validation\EnumDomainValidator.cs" />
-    <Compile Include="Validation\EnumDomainValidatorAttribute.cs" />
-    <Compile Include="Validation\IValidatable.cs" />
-    <Compile Include="Validation\IValidatableExtensions.cs" />
-    <Compile Include="Validation\NonemptyGuidValidator.cs" />
-    <Compile Include="Validation\NonemptyGuidValidatorAttribute.cs" />
-    <Compile Include="Validation\NonemptyStringValidator.cs" />
-    <Compile Include="Validation\NonemptyStringValidatorAttribute.cs" />
-    <Compile Include="Validation\NonnegativeValidator.cs" />
-    <Compile Include="Validation\NonnegativeValidatorAttribute.cs" />
-    <Compile Include="Validation\NotAfterValidatorAttribute.cs" />
-    <Compile Include="Validation\NotBeforeValidatorAttribute.cs" />
-    <Compile Include="Validation\OptionalStringLengthValidator.cs" />
-    <Compile Include="Validation\OptionalStringLengthValidatorAttribute.cs" />
-    <Compile Include="Validation\PositiveValidator.cs" />
-    <Compile Include="Validation\PositiveValidatorAttribute.cs" />
-    <Compile Include="Validation\UrlValidator.cs" />
-    <Compile Include="Validation\UrlValidatorAttribute.cs" />
-    <Compile Include="Validation\ValidatorsConstants.cs" />
-    <Compile Include="Validation\XmlStringValidator.cs" />
-    <Compile Include="Validation\XmlStringValidatorAttribute.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Common Items\vm.snk">
-      <Link>vm.snk</Link>
-    </None>
-    <None Include="NuGet\PublishAspects.cmd" />
-    <None Include="NuGet\vm.Aspects.symbols.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="NuGet\vm.Aspects.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="project.assets.json" />
-    <None Include="vm.Aspects.Messages.reg" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="..\Common Items\Dictionary.xml">
-      <Link>Dictionary.xml</Link>
-    </CodeAnalysisDictionary>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="AspectObjectDumper">
-      <Version>1.9.11</Version>
-    </PackageReference>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>1.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="EnterpriseLibrary.Common">
-      <Version>6.0.1304</Version>
-    </PackageReference>
-    <PackageReference Include="EnterpriseLibrary.ExceptionHandling">
-      <Version>6.0.1304</Version>
-    </PackageReference>
-    <PackageReference Include="EnterpriseLibrary.ExceptionHandling.Logging">
-      <Version>6.0.1304</Version>
-    </PackageReference>
-    <PackageReference Include="EnterpriseLibrary.Logging">
-      <Version>6.0.1304</Version>
-    </PackageReference>
-    <PackageReference Include="EnterpriseLibrary.Validation">
-      <Version>6.0.1304</Version>
-    </PackageReference>
-    <PackageReference Include="EntityFramework">
-      <Version>6.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Tracing">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Unity">
-      <Version>4.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Unity.Interception">
-      <Version>4.0.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+<Project ToolsVersion="14.0"
+         DefaultTargets="Build"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
+            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{B31AC12D-4197-4ED9-9768-0C9ABCAF38BF}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>vm.Aspects</RootNamespace>
+        <AssemblyName>vm.Aspects</AssemblyName>
+        <NoWarn>3001, 3002, 3003</NoWarn>
+        <Prefer32Bit>false</Prefer32Bit>
+        <FileAlignment>512</FileAlignment>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+        <TargetFrameworkProfile />
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <DocumentationFile>bin\Debug\vm.Aspects.XML</DocumentationFile>
+        <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <RunCodeAnalysis>true</RunCodeAnalysis>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <NoWarn>3001, 3002, 3003</NoWarn>
+        <Prefer32Bit>false</Prefer32Bit>
+        <FileAlignment>512</FileAlignment>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+        <TargetFrameworkProfile />
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <DocumentationFile>bin\Release\vm.Aspects.XML</DocumentationFile>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <NoWarn>3001, 3002, 3003</NoWarn>
+        <RunCodeAnalysis>false</RunCodeAnalysis>
+        <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <Prefer32Bit>false</Prefer32Bit>
+        <FileAlignment>512</FileAlignment>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+        <TargetFrameworkProfile />
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup>
+        <SignAssembly>true</SignAssembly>
+    </PropertyGroup>
+    <PropertyGroup>
+        <AssemblyOriginatorKeyFile>..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
+        <DebugSymbols>true</DebugSymbols>
+        <OutputPath>bin\DebugUnitTest\</OutputPath>
+        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;TEST</DefineConstants>
+        <DocumentationFile>bin\Debug\vm.Aspects.XML</DocumentationFile>
+        <DebugType>full</DebugType>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <ErrorReport>prompt</ErrorReport>
+        <CodeAnalysisRuleSet>..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <RunCodeAnalysis>true</RunCodeAnalysis>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <NoWarn>3001, 3002, 3003</NoWarn>
+        <Prefer32Bit>false</Prefer32Bit>
+        <FileAlignment>512</FileAlignment>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+        <TargetFrameworkProfile />
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.DataAnnotations" />
+        <Reference Include="System.Configuration" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Runtime.Serialization" />
+        <Reference Include="System.ServiceModel" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\Common Items\AssemblyInfo.global.cs">
+            <Link>Properties\AssemblyInfo.global.cs</Link>
+        </Compile>
+        <Compile Include="ApiVersionAttribute.cs" />
+        <Compile Include="Cache\LentObject.cs" />
+        <Compile Include="Cache\ObjectPool.cs" />
+        <Compile Include="Constants.cs" />
+        <Compile Include="ContainerRegistrar.cs" />
+        <Compile Include="DIContainer.cs" />
+        <Compile Include="DIContainer.Extensions.cs" />
+        <Compile Include="DIContainer.Extensions2.cs" />
+        <Compile Include="DIContainer.GenericExtensions.cs" />
+        <Compile Include="DIContainer.GenericExtensions2.cs" />
+        <Compile Include="DisposableExtensions.cs" />
+        <Compile Include="EnumFlagsExtensions.cs" />
+        <Compile Include="Exceptions\BusinessException.cs" />
+        <Compile Include="Exceptions\InvalidObjectException.cs" />
+        <Compile Include="Exceptions\ObjectException.cs" />
+        <Compile Include="Exceptions\ObjectIdentifierNotUniqueException.cs" />
+        <Compile Include="Exceptions\ObjectNotFoundException.cs" />
+        <Compile Include="Exceptions\RepeatableOperationException.cs" />
+        <Compile Include="Facilities\ConfigProviders\AppConfigProvider.cs" />
+        <Compile Include="Facilities\Clock.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsBaseEventSource.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Constants.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.EFRepository.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.Retry.cs" />
+        <Compile Include="Facilities\Diagnostics\VmAspectsEventSource.WCF.cs" />
+        <Compile Include="Facilities\LogWriters\DumpExceptionFormatter.cs" />
+        <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryBaseEventSource.cs" />
+        <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryEventSource.Constants.cs" />
+        <Compile Include="Facilities\LogWriters\Etw\EtwTraceListener.cs" />
+        <Compile Include="Facilities\LogWriters\Etw\EtwLogEntryEventSource.cs" />
+        <Compile Include="Facilities\ExceptionPolicyProvider.cs" />
+        <Compile Include="Facilities\Facility.cs" />
+        <Compile Include="Facilities\Facility.FacilitiesRegistrar.cs" />
+        <Compile Include="Facilities\GuidGenerator.cs" />
+        <Compile Include="Facilities\IClock.cs" />
+        <Compile Include="Facilities\ConfigProviders\IConfigurationProvider.cs" />
+        <Compile Include="Facilities\IExceptionPolicyProvider.cs" />
+        <Compile Include="Facilities\IGuidGenerator.cs" />
+        <Compile Include="Facilities\LogWriter\LogConfigProvider.cs" />
+        <Compile Include="Facilities\LogWriter\LogWriterFacades.cs" />
+        <Compile Include="Facilities\TestClock.cs" />
+        <Compile Include="Facilities\TestGuidGenerator.cs" />
+        <Compile Include="Facilities\LogWriters\TestTraceListener.cs" />
+        <Compile Include="Facilities\ConfigProviders\WebConfigProvider.cs" />
+        <Compile Include="GlobalSuppressions.cs" />
+        <Compile Include="IIsDisposed.cs" />
+        <Compile Include="IListExtensions.cs" />
+        <Compile Include="LambdaExpressionExtensions.cs" />
+        <Compile Include="PerCallContextLifetimeManager.cs" />
+        <Compile Include="Policies\ActivityTracer.cs" />
+        <Compile Include="Policies\ArgumentValidationException.cs" />
+        <Compile Include="Policies\BaseCallHandler.cs" />
+        <Compile Include="Policies\CallTraceAttribute.cs" />
+        <Compile Include="Policies\CallTraceCallHandler.cs" />
+        <Compile Include="Policies\CallTraceData.cs" />
+        <Compile Include="Policies\CodeAccessSecurityCallHandler.cs" />
+        <Compile Include="Policies\ICallHandlerExtensions.cs" />
+        <Compile Include="Policies\ActivityTracerCallHandler.cs" />
+        <Compile Include="Policies\NongenericBaseCallHandler.cs" />
+        <Compile Include="Policies\ParameterValidatingCallHandler.cs" />
+        <Compile Include="Policies\PolicyDefinitionExtensions.cs" />
+        <Compile Include="Policies\ValidationCallHandler.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Properties\Resources.Designer.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+        <Compile Include="ReflectionExtensions.cs" />
+        <Compile Include="RegistrationLookup.cs" />
+        <Compile Include="RegularExpression.cs" />
+        <Compile Include="ResolveNameAttribute.cs" />
+        <Compile Include="Security\CertificateFactory.cs" />
+        <Compile Include="SemanticVersion.cs" />
+        <Compile Include="SemanticVersion.Metadata.cs">
+            <DependentUpon>SemanticVersion.cs</DependentUpon>
+        </Compile>
+        <Compile Include="Threading\Latch.cs" />
+        <Compile Include="Threading\RetryConstants.cs" />
+        <Compile Include="Threading\UnwrapAggregateExceptionHandler.cs" />
+        <Compile Include="Threading\AsyncProducerConsumerCollection.cs" />
+        <Compile Include="Threading\ReaderSlimSync.cs" />
+        <Compile Include="Threading\ReaderWriterLockSlimExtensions.cs" />
+        <Compile Include="Threading\Retry.cs" />
+        <Compile Include="Threading\RetryTasks.cs" />
+        <Compile Include="Threading\TaskCombinators.cs" />
+        <Compile Include="Threading\UpgradeableReaderSlimSync.cs" />
+        <Compile Include="Threading\WriterSlimSync.cs" />
+        <Compile Include="Validation\AbaRoutingNumberValidator.cs" />
+        <Compile Include="Validation\AbaRoutingNumberValidatorAttribute.cs" />
+        <Compile Include="Validation\LuhnValidator.cs" />
+        <Compile Include="Validation\LuhnValidatorAttribute.cs" />
+        <Compile Include="Validation\EnumDomainValidator.cs" />
+        <Compile Include="Validation\EnumDomainValidatorAttribute.cs" />
+        <Compile Include="Validation\IValidatable.cs" />
+        <Compile Include="Validation\IValidatableExtensions.cs" />
+        <Compile Include="Validation\NonemptyGuidValidator.cs" />
+        <Compile Include="Validation\NonemptyGuidValidatorAttribute.cs" />
+        <Compile Include="Validation\NonemptyStringValidator.cs" />
+        <Compile Include="Validation\NonemptyStringValidatorAttribute.cs" />
+        <Compile Include="Validation\NonnegativeValidator.cs" />
+        <Compile Include="Validation\NonnegativeValidatorAttribute.cs" />
+        <Compile Include="Validation\NotAfterValidatorAttribute.cs" />
+        <Compile Include="Validation\NotBeforeValidatorAttribute.cs" />
+        <Compile Include="Validation\OptionalStringLengthValidator.cs" />
+        <Compile Include="Validation\OptionalStringLengthValidatorAttribute.cs" />
+        <Compile Include="Validation\PositiveValidator.cs" />
+        <Compile Include="Validation\PositiveValidatorAttribute.cs" />
+        <Compile Include="Validation\UrlValidator.cs" />
+        <Compile Include="Validation\UrlValidatorAttribute.cs" />
+        <Compile Include="Validation\ValidatorsConstants.cs" />
+        <Compile Include="Validation\XmlStringValidator.cs" />
+        <Compile Include="Validation\XmlStringValidatorAttribute.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\Common Items\vm.snk">
+            <Link>vm.snk</Link>
+        </None>
+        <None Include="NuGet\PublishAspects.cmd" />
+        <None Include="NuGet\vm.Aspects.symbols.nuspec">
+            <SubType>Designer</SubType>
+        </None>
+        <None Include="NuGet\vm.Aspects.nuspec">
+            <SubType>Designer</SubType>
+        </None>
+        <None Include="project.assets.json" />
+        <None Include="vm.Aspects.Messages.reg" />
+    </ItemGroup>
+    <ItemGroup>
+        <CodeAnalysisDictionary Include="..\Common Items\Dictionary.xml">
+            <Link>Dictionary.xml</Link>
+        </CodeAnalysisDictionary>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AspectObjectDumper">
+            <Version>1.10.2</Version>
+        </PackageReference>
+        <PackageReference Include="CommonServiceLocator">
+            <Version>2.0.3</Version>
+        </PackageReference>
+        <PackageReference Include="EnterpriseLibrary.Common">
+            <Version>6.0.1304</Version>
+        </PackageReference>
+        <PackageReference Include="EnterpriseLibrary.ExceptionHandling">
+            <Version>6.0.1304</Version>
+        </PackageReference>
+        <PackageReference Include="EnterpriseLibrary.ExceptionHandling.Logging">
+            <Version>6.0.1304</Version>
+        </PackageReference>
+        <PackageReference Include="EnterpriseLibrary.Logging">
+            <Version>6.0.1304</Version>
+        </PackageReference>
+        <PackageReference Include="EnterpriseLibrary.Validation">
+            <Version>6.0.1304</Version>
+        </PackageReference>
+        <PackageReference Include="EntityFramework">
+            <Version>6.2.0</Version>
+        </PackageReference>
+        <PackageReference Include="System.Diagnostics.Tracing">
+            <Version>4.3.0</Version>
+        </PackageReference>
+        <PackageReference Include="Unity">
+            <Version>5.8.6</Version>
+        </PackageReference>
+        <PackageReference Include="Unity.Configuration">
+            <Version>5.2.3</Version>
+        </PackageReference>
+        <PackageReference Include="Unity.Interception">
+            <Version>5.5.3</Version>
+        </PackageReference>
+        <PackageReference Include="Unity.Interception.Configuration">
+            <Version>5.1.5</Version>
+        </PackageReference>
+        <PackageReference Include="Unity.ServiceLocation">
+            <Version>2.1.1</Version>
+        </PackageReference>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

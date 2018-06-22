@@ -8,8 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace vm.Aspects.Properties
-{
+namespace vm.Aspects.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -20,313 +22,257 @@ namespace vm.Aspects.Properties
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    internal class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (resourceMan is null)
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("vm.Aspects.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to 
         /// The exception dump was truncated - it cannot exceed 32766 characters..
         /// </summary>
-        internal static string ExceptionDumpTruncated
-        {
-            get
-            {
+        internal static string ExceptionDumpTruncated {
+            get {
                 return ResourceManager.GetString("ExceptionDumpTruncated", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target Guid value is equal to the default Guid value of &apos;00000000-0000-0000-0000-000000000000&apos;..
         /// </summary>
-        internal static string ExEmptyGuid
-        {
-            get
-            {
+        internal static string ExEmptyGuid {
+            get {
                 return ResourceManager.GetString("ExEmptyGuid", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target value is from the specified enumeration&apos;s set of values..
         /// </summary>
-        internal static string ExFromEnumDomain
-        {
-            get
-            {
+        internal static string ExFromEnumDomain {
+            get {
                 return ResourceManager.GetString("ExFromEnumDomain", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The value is not negative..
         /// </summary>
-        internal static string ExNegatedNonnegativeValidation
-        {
-            get
-            {
+        internal static string ExNegatedNonnegativeValidation {
+            get {
                 return ResourceManager.GetString("ExNegatedNonnegativeValidation", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The value is negative..
         /// </summary>
-        internal static string ExNonnegativeValidation
-        {
-            get
-            {
+        internal static string ExNonnegativeValidation {
+            get {
                 return ResourceManager.GetString("ExNonnegativeValidation", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to This type does not implement IComparable..
         /// </summary>
-        internal static string ExNotComparable
-        {
-            get
-            {
+        internal static string ExNotComparable {
+            get {
                 return ResourceManager.GetString("ExNotComparable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target Guid value is not equal to the default Guid value of &apos;00000000-0000-0000-0000-000000000000&apos;..
         /// </summary>
-        internal static string ExNotEmptyGuid
-        {
-            get
-            {
+        internal static string ExNotEmptyGuid {
+            get {
                 return ResourceManager.GetString("ExNotEmptyGuid", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target value is not from the enumeration type&apos;s set of values..
         /// </summary>
-        internal static string ExNotFromEnumDomain
-        {
-            get
-            {
+        internal static string ExNotFromEnumDomain {
+            get {
                 return ResourceManager.GetString("ExNotFromEnumDomain", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The type of the target element is not System.Guid..
         /// </summary>
-        internal static string ExNotGuidType
-        {
-            get
-            {
+        internal static string ExNotGuidType {
+            get {
                 return ResourceManager.GetString("ExNotGuidType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The type of the target element is not nullable enumeration type..
         /// </summary>
-        internal static string ExNotNullableEnumType
-        {
-            get
-            {
+        internal static string ExNotNullableEnumType {
+            get {
                 return ResourceManager.GetString("ExNotNullableEnumType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string is neither null, nor empty, nor white space character(s) only..
         /// </summary>
-        internal static string ExNotNullOrEmptyString
-        {
-            get
-            {
+        internal static string ExNotNullOrEmptyString {
+            get {
                 return ResourceManager.GetString("ExNotNullOrEmptyString", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target type cannot be tested for being non-negative..
         /// </summary>
-        internal static string ExNotSignedNumber
-        {
-            get
-            {
+        internal static string ExNotSignedNumber {
+            get {
                 return ResourceManager.GetString("ExNotSignedNumber", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The type of the target element is not System.String..
         /// </summary>
-        internal static string ExNotStringType
-        {
-            get
-            {
+        internal static string ExNotStringType {
+            get {
                 return ResourceManager.GetString("ExNotStringType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target does not represent a valid ABA routing number..
         /// </summary>
-        internal static string ExNotValidAbaRoutingNumber
-        {
-            get
-            {
+        internal static string ExNotValidAbaRoutingNumber {
+            get {
                 return ResourceManager.GetString("ExNotValidAbaRoutingNumber", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string is not a valid number according to the Luhn algorithm..
         /// </summary>
-        internal static string ExNotValidLuhnNumber
-        {
-            get
-            {
+        internal static string ExNotValidLuhnNumber {
+            get {
                 return ResourceManager.GetString("ExNotValidLuhnNumber", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string does not represent a valid root URL (top and domain level parts are optional, e.g. Experian.com is missing).
         /// </summary>
-        internal static string ExNotValidUrl
-        {
-            get
-            {
+        internal static string ExNotValidUrl {
+            get {
                 return ResourceManager.GetString("ExNotValidUrl", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The validated string does not represent a well-formed document, or valid XML document, or the name of the document root element does not match the specified name..
         /// </summary>
-        internal static string ExNotValidXmlString
-        {
-            get
-            {
+        internal static string ExNotValidXmlString {
+            get {
                 return ResourceManager.GetString("ExNotValidXmlString", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string is either null, empty or white space character(s) only..
         /// </summary>
-        internal static string ExNullOrEmptyString
-        {
-            get
-            {
+        internal static string ExNullOrEmptyString {
+            get {
                 return ResourceManager.GetString("ExNullOrEmptyString", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The validated string is null, or empty, or consists of white-space characters only and does not represent a valid XML document..
         /// </summary>
-        internal static string ExNullXmlDocument
-        {
-            get
-            {
+        internal static string ExNullXmlDocument {
+            get {
                 return ResourceManager.GetString("ExNullXmlDocument", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The name of the root element of the XML ({0}) does not match the specified root name ({1})..
         /// </summary>
-        internal static string ExRootElementNotMatching
-        {
-            get
-            {
+        internal static string ExRootElementNotMatching {
+            get {
                 return ResourceManager.GetString("ExRootElementNotMatching", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target does represents a valid ABA routing number..
         /// </summary>
-        internal static string ExValidAbaRoutingNumber
-        {
-            get
-            {
+        internal static string ExValidAbaRoutingNumber {
+            get {
                 return ResourceManager.GetString("ExValidAbaRoutingNumber", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string is a valid number according to the Luhn algorithm..
         /// </summary>
-        internal static string ExValidLuhnNumber
-        {
-            get
-            {
+        internal static string ExValidLuhnNumber {
+            get {
                 return ResourceManager.GetString("ExValidLuhnNumber", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The target string represents a valid root URL (the top and domain level parts are optional, e.g. vm.com is missing).
         /// </summary>
-        internal static string ExValidUrl
-        {
-            get
-            {
+        internal static string ExValidUrl {
+            get {
                 return ResourceManager.GetString("ExValidUrl", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The validated string represents a well-formed and valid XML document; and the name of the document root element matches the specified name..
         /// </summary>
-        internal static string ExValidXmlString
-        {
-            get
-            {
+        internal static string ExValidXmlString {
+            get {
                 return ResourceManager.GetString("ExValidXmlString", resourceCulture);
             }
         }

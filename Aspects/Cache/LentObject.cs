@@ -12,7 +12,7 @@ namespace vm.Aspects.Cache
     /// <typeparam name="T">The type of the objects in the object pool.</typeparam>
     public class LentObject<T> : IDisposable, IIsDisposed where T : class
     {
-        T _instance;
+        readonly T _instance;
         ObjectPool<T> _pool;
 
         /// <summary>

@@ -3,8 +3,15 @@ using System.IdentityModel.Claims;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity;
+using Unity.Injection;
+using Unity.Interception.ContainerIntegration;
+using Unity.Interception.PolicyInjection.MatchingRules;
+using Unity.Interception.PolicyInjection.Policies;
+using Unity.Lifetime;
+using Unity.Registration;
+
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
@@ -15,7 +22,7 @@ namespace vm.Aspects.Wcf.TestServer
 {
     public class RequestResponseServiceHostFactory : MessagingPatternServiceHostFactory<IRequestResponse, RequestResponseService>
     {
-        AddressBinding[] _addressesAndBindings;
+        readonly AddressBinding[] _addressesAndBindings;
 
         public RequestResponseServiceHostFactory(
             AddressBinding[] addressesAndBindings,
@@ -56,7 +63,7 @@ namespace vm.Aspects.Wcf.TestServer
 
         protected override IUnityContainer DoRegisterDefaults(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations)
         {
             ClassMetadataRegistrar
                 .RegisterMetadata()

@@ -12,13 +12,16 @@ using System.ServiceModel.Description;
 using System.Threading.Tasks;
 
 using Microsoft.Practices.EnterpriseLibrary.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.Lifetime;
+using Unity.Registration;
 
 using vm.Aspects.Diagnostics;
 using vm.Aspects.Diagnostics.ExternalMetadata;
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
+using vm.Aspects.Policies;
 using vm.Aspects.Threading;
 using vm.Aspects.Wcf.Behaviors;
 using vm.Aspects.Wcf.Bindings;
@@ -94,7 +97,7 @@ namespace vm.Aspects.Wcf.Services
         where TService : TContract
     {
         Func<IEnumerable<ServiceEndpoint>> _provideEndpoints;
-        Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> _serviceRegistrar;
+        Action<IUnityContainer, Type, IDictionary<RegistrationLookup, IContainerRegistration>> _serviceRegistrar;
 
         /// <summary>
         /// Provides access to the initialize latch for the inheritors.
@@ -253,7 +256,7 @@ namespace vm.Aspects.Wcf.Services
         /// </summary>
         /// <param name="registrar">The registration method.</param>
         public virtual ICreateServiceHost SetServiceRegistrar(
-            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, ContainerRegistration>> registrar)
+            Action<IUnityContainer, Type, IDictionary<RegistrationLookup, IContainerRegistration>> registrar)
         {
             _serviceRegistrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
             return this;
@@ -383,7 +386,7 @@ namespace vm.Aspects.Wcf.Services
         /// </code></remarks>
         protected virtual IUnityContainer DoRegisterDefaults(
             IUnityContainer container,
-            IDictionary<RegistrationLookup, ContainerRegistration> registrations)
+            IDictionary<RegistrationLookup, IContainerRegistration> registrations)
         {
             if (container == null)
                 throw new ArgumentNullException(nameof(container));

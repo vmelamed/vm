@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 
-using Microsoft.Practices.Unity.InterceptionExtension;
+using Unity.Interception.PolicyInjection.Pipeline;
 
 using vm.Aspects.Facilities;
 
 namespace vm.Aspects.Policies.Tests
 {
-    class TrackCallHandler : BaseCallHandler<bool>
+    public class TrackCallHandler : BaseCallHandler<bool>
     {
         protected override bool Prepare(
             IMethodInvocation input)

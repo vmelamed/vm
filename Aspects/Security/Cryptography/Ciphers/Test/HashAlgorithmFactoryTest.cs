@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Microsoft.Practices.ServiceLocation;
+
+using CommonServiceLocator;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.Unity;
+
+using Unity;
+using Unity.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {

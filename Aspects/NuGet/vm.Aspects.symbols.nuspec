@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>vm.Aspects</id>
-        <version>1.3.1</version>
+        <version>1.4.0</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -10,10 +10,10 @@
         </summary>
         <description>
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.
-            Supports .NET 4.6.2 and 4.7.1.
+            Supports .NET 4.6.2, 4.7.1 and 4.7.2.
         </description>
         <releaseNotes>
-            Added UriExtensions and UriComparer
+            Targets also .NET 4.7.2
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -38,18 +38,24 @@
                 <dependency id="EntityFramework"
                             version="6.2.0" />
                 <dependency id="AspectObjectDumper"
-                            version="1.9.11" />
+                            version="1.10.0" />
                 <dependency id="Ciphers"
-                            version="1.12.6" />
+                            version="1.13.0" />
             </group>
 
             <group>
                 <dependency id="CommonServiceLocator"
-                            version="1.3.0" />
+                            version="2.0.3" />
                 <dependency id="Unity"
-                            version="4.0.1" />
+                            version="5.8.6" />
+                <dependency id="Unity.Configuration"
+                            version="5.2.2" />
                 <dependency id="Unity.Interception"
-                            version="4.0.1" />
+                            version="5.5.2" />
+                <dependency id="Unity.Interception.Configuration"
+                            version="5.1.5" />
+                <dependency id="Unity.ServiceLocation"
+                            version="2.1.1" />
             </group>
 
             <group>
@@ -98,10 +104,68 @@
               target="lib\net462"/>
         <file src="..\FtpTransfer\bin\pack4.6.2\vm.Aspects.FtpTransfer.xml"
               target="lib\net462"/>
-        <file src="..\bin\pack4.6.2\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll"
-              target="lib\net462"/>
-        <file src="..\bin\pack4.6.2\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml"
-              target="lib\net462"/>
+
+        <file src="..\bin\pack4.7.1\vm.Aspects.dll"
+              target="lib\net471"/>
+        <file src="..\bin\pack4.7.1\vm.Aspects.pdb"
+              target="lib\net471"/>
+        <file src="..\bin\pack4.7.1\vm.Aspects.xml"
+              target="lib\net471"/>
+        <file src="..\Model\bin\pack4.7.1\vm.Aspects.Model.dll"
+              target="lib\net471"/>
+        <file src="..\Model\bin\pack4.7.1\vm.Aspects.Model.pdb"
+              target="lib\net471"/>
+        <file src="..\Model\bin\pack4.7.1\vm.Aspects.Model.xml"
+              target="lib\net471"/>
+        <file src="..\Wcf\bin\pack4.7.1\vm.Aspects.Wcf.dll"
+              target="lib\net471"/>
+        <file src="..\Wcf\bin\pack4.7.1\vm.Aspects.Wcf.pdb"
+              target="lib\net471"/>
+        <file src="..\Wcf\bin\pack4.7.1\vm.Aspects.Wcf.xml"
+              target="lib\net471"/>
+        <file src="..\Parsers\bin\pack4.7.1\vm.Aspects.Parsers.dll"
+              target="lib\net471"/>
+        <file src="..\Parsers\bin\pack4.7.1\vm.Aspects.Parsers.pdb"
+              target="lib\net471"/>
+        <file src="..\Parsers\bin\pack4.7.1\vm.Aspects.Parsers.xml"
+              target="lib\net471"/>
+        <file src="..\FtpTransfer\bin\pack4.7.1\vm.Aspects.FtpTransfer.dll"
+              target="lib\net471"/>
+        <file src="..\FtpTransfer\bin\pack4.7.1\vm.Aspects.FtpTransfer.pdb"
+              target="lib\net471"/>
+        <file src="..\FtpTransfer\bin\pack4.7.1\vm.Aspects.FtpTransfer.xml"
+              target="lib\net471"/>
+
+        <file src="..\bin\pack4.7.2\vm.Aspects.dll"
+              target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.pdb"
+              target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.xml"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.dll"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.pdb"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.xml"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.dll"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.pdb"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.xml"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.dll"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.pdb"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.xml"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.dll"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.pdb"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.xml"
+              target="lib\net472"/>
 
         <file src="..\**\*.cs"
               target="src" />

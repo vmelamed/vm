@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -156,7 +156,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>
         /// Sequence of service instance objects.
         /// </returns>
-        /// <exception cref="Microsoft.Practices.ServiceLocation.ActivationException">
+        /// <exception cref="CommonServiceLocator.ActivationException">
         /// Thrown if the service type is not supported.
         /// </exception>
         protected override IEnumerable<object> DoGetAllInstances(
@@ -182,7 +182,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <returns>
         /// The requested service instance.
         /// </returns>
-        /// <exception cref="Microsoft.Practices.ServiceLocation.ActivationException">
+        /// <exception cref="CommonServiceLocator.ActivationException">
         /// Thrown if the service type is not supported.
         /// </exception>
         protected override object DoGetInstance(

@@ -8,7 +8,9 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity.InterceptionExtension;
+
+using Unity.Interception.PolicyInjection.Pipeline;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Policies;
 using vm.Aspects.Threading;
@@ -61,7 +63,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                     throw exceptionToThrow;
 
                 // if swallowed 
-                return default(TResult);
+                return default;
             }
         }
 

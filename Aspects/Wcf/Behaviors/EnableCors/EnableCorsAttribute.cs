@@ -8,7 +8,9 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.ServiceLocation;
+
+using CommonServiceLocator;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 

@@ -56,7 +56,7 @@ namespace vm.Aspects.Threading
         /// The default implementation is:
         /// </remarks>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "attempt")]
-        public static bool IsSuccessResult<T>(T result, Exception exception, int attempt) => exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default(T));
+        public static bool IsSuccessResult<T>(T result, Exception exception, int attempt) => exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default);
 
         /// <summary>
         /// The epilogue method throws the raised exception or returns the result of the operation: <code><![CDATA[public static T Epilogue(T result, Exception exception, int attempt) => exception!=null ? throw exception : result;]]></code>
@@ -94,7 +94,7 @@ namespace vm.Aspects.Threading
         /// <param name="attempt">The number of the current attempt.</param>
         /// <returns><see langword="true" /> if the operation succeeded and should not be retried, <see langword="false" /> otherwise.</returns>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "attempt")]
-        public static Task<bool> IsSuccessResultAsync<T>(T result, Exception exception, int attempt) => Task.FromResult(exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default(T)));
+        public static Task<bool> IsSuccessResultAsync<T>(T result, Exception exception, int attempt) => Task.FromResult(exception == null  &&  !EqualityComparer<T>.Default.Equals(result, default));
 
         /// <summary>
         /// The epilogue method throws the raised exception or returns the result of the operation: <code><![CDATA[public static Task<T> EpilogueAsync<T>(T result, Exception exception, int attempt) => exception!=null ? throw exception : Task.FromResult(result);]]></code>

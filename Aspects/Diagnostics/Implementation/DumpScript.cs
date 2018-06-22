@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics.Implementation
@@ -680,7 +681,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                         Expression.Assign(sequenceType, Expression.Call(sequence, _miGetType)),
                         Expression.Assign(n, _zero),
                         Expression.Assign(isArray, Expression.Property(sequenceType, _piIsArray)),
-                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount!=null ? expressionCount : _intMax)),
+                        Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount ?? _intMax)),
                         Expression.Assign(bytes, Expression.TypeAs(sequence, typeof(byte[]))),
 
                         //// if (!(sequenceType.IsArray || sequenceType.IsFromSystem())) WriteLine();
