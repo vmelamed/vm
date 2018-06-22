@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Json;
 using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using vm.Aspects.Wcf.Clients;
 
 namespace vm.Aspects.Wcf.FaultContracts
@@ -44,9 +45,7 @@ namespace vm.Aspects.Wcf.FaultContracts
 
             serializedFault = null;
 
-            var wx = exception.InnerException as WebException;
-
-            if (wx == null)
+            if (!(exception.InnerException is WebException wx))
                 return null;
 
             return Resolve(wx, expectedFaults, out serializedFault);

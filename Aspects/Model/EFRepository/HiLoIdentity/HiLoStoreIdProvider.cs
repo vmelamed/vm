@@ -54,7 +54,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
         /// <summary>
         /// The default transaction timeout. 
         /// </summary>
-        static readonly TimeSpan DefaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
+        static readonly TimeSpan _defaultTransactionTimeout = new TimeSpan(0, 0, DefaultTransactionTimeoutSeconds);
 
         /// <summary>
         /// Specifies the default isolation level of the transactions: Serializable
@@ -134,9 +134,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return DoGetNew<T>(efRepository);
@@ -151,9 +149,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             return DoGetNew(objectsType, efRepository);
@@ -167,9 +163,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             var id = DoGetNew<T>(efRepository);
@@ -190,9 +184,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
             if (repository == null)
                 throw new ArgumentNullException(nameof(repository));
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be derived from EFRepositoryBase.", nameof(repository));
 
             var id = DoGetNew(objectsType, efRepository);
@@ -306,7 +298,7 @@ namespace vm.Aspects.Model.EFRepository.HiLoIdentity
                                                 new TransactionOptions
                                                 {
                                                     IsolationLevel = DefaultIsolationLevel,
-                                                    Timeout        = DefaultTransactionTimeout,
+                                                    Timeout        = _defaultTransactionTimeout,
                                                 });
 
             try

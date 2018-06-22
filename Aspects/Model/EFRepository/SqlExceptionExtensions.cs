@@ -22,9 +22,7 @@ namespace vm.Aspects.Model.EFRepository
             if (exception==null)
                 return false;
 
-            var sqlException = exception as SqlException;
-
-            if (sqlException == null)
+            if (!(exception is SqlException sqlException))
                 sqlException = exception.InnerException as SqlException;
 
             if (sqlException == null)
@@ -46,9 +44,7 @@ namespace vm.Aspects.Model.EFRepository
             if (exception==null)
                 return false;
 
-            var sqlException = exception as SqlException;
-
-            if (sqlException == null)
+            if (!(exception is SqlException sqlException))
                 sqlException = exception.InnerException as SqlException;
 
             if (sqlException == null)

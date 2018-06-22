@@ -15,7 +15,7 @@ namespace vm.Aspects.Policies
     /// <seealso cref="BaseCallHandler{Guid}" />
     public class ActivityTracerCallHandler : BaseCallHandler<ActivityTracer>
     {
-        static object _syncTraceManager = new object();
+        static readonly object _syncTraceManager = new object();
         static TraceManager _traceManager;
 
         /// <summary>

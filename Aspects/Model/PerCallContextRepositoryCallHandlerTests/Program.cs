@@ -122,8 +122,8 @@ $@"
             Debug.WriteLine("-------------------------------");
         }
 
-        const int NumberOfTasks    = 100;
-        const int ConcurrencyLevel = 8;
+        const int _numberOfTasks    = 100;
+        const int _concurrencyLevel = 8;
 
         static void RunSync()
         {
@@ -132,7 +132,7 @@ $@"
             var failed     = 0;
 
             // initially add 100 entities
-            for (var i = 0; i<NumberOfTasks; i++)
+            for (var i = 0; i<_numberOfTasks; i++)
                 try
                 {
                     if (client == null)
@@ -148,7 +148,7 @@ $@"
                     failed++;
                 }
 
-            for (var i = 0; i<NumberOfTasks; i++)
+            for (var i = 0; i<_numberOfTasks; i++)
                 try
                 {
                     if (client == null)
@@ -169,27 +169,27 @@ $@"
 
             var counts = client.GetCounts();
 
-            Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
-            Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+            Debug.WriteLine($"Successfully made {successful}/{_numberOfTasks*2} synchronous calls. {failed}/{_numberOfTasks*2} calls failed.");
+            Console.WriteLine($"Successfully made {successful}/{_numberOfTasks*2} synchronous calls. {failed}/{_numberOfTasks*2} calls failed.");
             Console.WriteLine($"The service created {counts.Entities} entities and {counts.Values} values.");
             Console.WriteLine($"There are {client.CountOfEntities()} entities and {client.CountOfValues()} values in the database.");
         }
 
         static async Task RunAsync()
         {
-            var tasks      = new List<Task>(ConcurrencyLevel);
+            var tasks      = new List<Task>(_concurrencyLevel);
             var n          = 0;
             var successful = 0;
             var failed     = 0;
 
             try
             {
-                while (n < 2*NumberOfTasks || tasks.Any())
+                while (n < 2*_numberOfTasks || tasks.Any())
                 {
-                    if (n < 2*NumberOfTasks)
+                    if (n < 2*_numberOfTasks)
                         tasks.Add(GetTask(n++));
 
-                    if (tasks.Count() == ConcurrencyLevel || n >= 2*NumberOfTasks)
+                    if (tasks.Count() == _concurrencyLevel || n >= 2*_numberOfTasks)
                     {
                         Task task = null;
 
@@ -215,8 +215,8 @@ $@"
                 Debug.WriteLine(x.DumpString());
             }
 
-            Debug.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
-            Console.WriteLine($"Successfully made {successful}/{NumberOfTasks*2} synchronous calls. {failed}/{NumberOfTasks*2} calls failed.");
+            Debug.WriteLine($"Successfully made {successful}/{_numberOfTasks*2} synchronous calls. {failed}/{_numberOfTasks*2} calls failed.");
+            Console.WriteLine($"Successfully made {successful}/{_numberOfTasks*2} synchronous calls. {failed}/{_numberOfTasks*2} calls failed.");
 
             var client = GetAsyncClient();
             var counts = client.GetCountsAsync().Result;
@@ -231,7 +231,7 @@ $@"
             {
                 ITestServiceTasks client = GetAsyncClient();
 
-                if (index < NumberOfTasks)
+                if (index < _numberOfTasks)
                     await client.AddNewEntityAsync();
                 else
                     await client.UpdateEntitiesAsync();
@@ -240,20 +240,20 @@ $@"
             }
             catch (Exception)
             {
-                availableClients.Dispose();
+                _availableClients.Dispose();
                 throw;
             }
         }
 
-        static object _sync = new object();
-        static Queue<ITestServiceTasks> availableClients = new Queue<ITestServiceTasks>();
+        static readonly object _sync = new object();
+        static Queue<ITestServiceTasks> _availableClients = new Queue<ITestServiceTasks>();
 
         static ITestServiceTasks GetAsyncClient()
         {
-            if (availableClients.Any())
+            if (_availableClients.Any())
                 lock (_sync)
-                    if (availableClients.Any())
-                        return availableClients.Dequeue();
+                    if (_availableClients.Any())
+                        return _availableClients.Dequeue();
 
             return ServiceLocator.Current.GetInstance<ITestServiceTasks>("client");
         }
@@ -261,7 +261,7 @@ $@"
         static void ReleaseAsyncClient(ITestServiceTasks client)
         {
             lock (_sync)
-                availableClients.Enqueue(client);
+                _availableClients.Enqueue(client);
         }
     }
 }

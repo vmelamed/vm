@@ -10,10 +10,10 @@
         </summary>
         <description>
             A set of classes, utilities, etc. addressing various common cross-cutting concerns or extending existing similar libraries like Enterprise Library, Unity, etc.
-            Supports .NET 4.6.2 and 4.7.1.
+            Supports .NET 4.6.2, 4.7.1 and 4.7.2.
         </description>
         <releaseNotes>
-            Upgraded CommonServiceLocator 2.0.3 and Unity 5.8.6
+            Targets also .NET 4.7.2
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects</projectUrl>
@@ -135,6 +135,37 @@
               target="lib\net471"/>
         <file src="..\FtpTransfer\bin\pack4.7.1\vm.Aspects.FtpTransfer.xml"
               target="lib\net471"/>
+
+        <file src="..\bin\pack4.7.2\vm.Aspects.dll"
+              target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.pdb"
+              target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.xml"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.dll"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.pdb"
+              target="lib\net472"/>
+        <file src="..\Model\bin\pack4.7.2\vm.Aspects.Model.xml"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.dll"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.pdb"
+              target="lib\net472"/>
+        <file src="..\Wcf\bin\pack4.7.2\vm.Aspects.Wcf.xml"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.dll"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.pdb"
+              target="lib\net472"/>
+        <file src="..\Parsers\bin\pack4.7.2\vm.Aspects.Parsers.xml"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.dll"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.pdb"
+              target="lib\net472"/>
+        <file src="..\FtpTransfer\bin\pack4.7.2\vm.Aspects.FtpTransfer.xml"
+              target="lib\net472"/>
 
         <file src="..\**\*.cs"
               target="src" />

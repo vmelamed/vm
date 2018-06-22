@@ -17,7 +17,7 @@ namespace vm.Aspects.Model.Repository
     /// </summary>
     public static class OrmBridge
     {
-        static object _sync = new object();
+        static readonly object _sync = new object();
         static IOrmSpecifics _ormSpecifics;
 
         /// <summary>

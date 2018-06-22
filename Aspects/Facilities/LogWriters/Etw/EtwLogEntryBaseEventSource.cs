@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
+
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace vm.Aspects.Facilities.LogWriters.Etw
@@ -119,7 +120,7 @@ namespace vm.Aspects.Facilities.LogWriters.Etw
         }
 
         // The length of the end of line sequence.
-        static int NewLineSize = Environment.NewLine.Length * sizeof(char);
+        static readonly int NewLineSize = Environment.NewLine.Length * sizeof(char);
 
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         unsafe void AssignString(

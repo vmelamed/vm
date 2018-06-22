@@ -93,6 +93,46 @@ if errorlevel 1 goto exit
 
 cd ..
 
+rem ------- .NET 4.7.2 -------
+set FrameworkVersion=4.7.2
+set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
+
+del /q bin\pack%FrameworkVersion%
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd Model
+del /q bin\pack%FrameworkVersion%
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.Model.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\Parsers
+del /q bin\pack%FrameworkVersion%
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.Parsers.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\FtpTransfer
+del /q bin\pack%FrameworkVersion%
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.FtpTransfer.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..\Wcf
+del /q bin\pack%FrameworkVersion%
+if not exist obj md obj
+copy /y project.assets.json obj
+msbuild vm.Aspects.Wcf.csproj %commonBuildOptions%
+if errorlevel 1 goto exit
+
+cd ..
+
 rem ------- Package -------
 
 if /i .%suffix%. EQU .. (

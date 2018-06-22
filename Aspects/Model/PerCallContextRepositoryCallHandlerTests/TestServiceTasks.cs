@@ -170,14 +170,14 @@ namespace vm.Aspects.Model.PerCallContextRepositoryCallHandlerTests
         }
 
         static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
-        static DateTime _when = default(DateTime);
+        static DateTime _when = default;
 
         static void ThrowRandomException(
             Entity e = null,
             Value v = null)
         {
             using (_sync.UpgradableReaderLock())
-                if (_when == default(DateTime))
+                if (_when == default)
                 {
                     using (_sync.WriterLock())
                         _when = DateTime.Now.AddMilliseconds(_random.Next(500));

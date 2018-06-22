@@ -28,7 +28,7 @@ namespace vm.Aspects.Facilities.Diagnostics
         }
 
         // The length of the end of line sequence.
-        static int _newLineSize = Environment.NewLine.Length * sizeof(char);
+        static readonly int _newLineSize = Environment.NewLine.Length * sizeof(char);
 
         /// <summary>
         /// Optionally strips the leading CR-LF of two text fields of the event and writes them to the log.

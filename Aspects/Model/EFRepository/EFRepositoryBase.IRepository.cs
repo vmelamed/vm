@@ -14,11 +14,11 @@ namespace vm.Aspects.Model.EFRepository
     using System.Security;
     using System.Threading;
 
+    using CommonServiceLocator;
+
     using Exceptions;
 
     using Facilities.Diagnostics;
-
-    using CommonServiceLocator;
 
     using Threading;
 
@@ -748,9 +748,8 @@ namespace vm.Aspects.Model.EFRepository
                     }
                     catch (AggregateException ax)
                     {
-                        var cx = UnwrapAggregateExceptionHandler.Unwrap(ax) as DbUpdateConcurrencyException;
 
-                        if (cx == null)
+                        if (!(UnwrapAggregateExceptionHandler.Unwrap(ax) is DbUpdateConcurrencyException cx))
                             throw;
 
                         // catch (DbUpdateConcurrencyException cx)

@@ -2,7 +2,7 @@
     "version": 3,
     "targets": {
         ".NETFramework,Version=v4.6.2": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -111,21 +111,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -138,36 +123,27 @@
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
                 }
             },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
-                }
-            },
             "Unity/5.8.6": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             },
             "Unity.Abstractions/3.3.0": {
@@ -179,36 +155,34 @@
                     "lib/net45/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Configuration"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Runtime.Remoting"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 }
             },
             "Unity.Interception.Configuration/5.1.5": {
@@ -216,13 +190,13 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 }
             },
             "Unity.ServiceLocation/2.1.1": {
@@ -232,15 +206,15 @@
                     "Unity.Abstractions": "3.3.0"
                 },
                 "compile": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -349,21 +323,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -376,36 +335,27 @@
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
                 }
             },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
-                }
-            },
             "Unity/5.8.6": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             },
             "Unity.Abstractions/3.3.0": {
@@ -417,36 +367,34 @@
                     "lib/net45/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Configuration"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Runtime.Remoting"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 }
             },
             "Unity.Interception.Configuration/5.1.5": {
@@ -454,13 +402,13 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 }
             },
             "Unity.ServiceLocation/2.1.1": {
@@ -470,15 +418,15 @@
                     "Unity.Abstractions": "3.3.0"
                 },
                 "compile": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x64": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -587,21 +535,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -614,36 +547,27 @@
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
                 }
             },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
-                }
-            },
             "Unity/5.8.6": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             },
             "Unity.Abstractions/3.3.0": {
@@ -655,36 +579,34 @@
                     "lib/net45/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Configuration"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Runtime.Remoting"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 }
             },
             "Unity.Interception.Configuration/5.1.5": {
@@ -692,13 +614,13 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 }
             },
             "Unity.ServiceLocation/2.1.1": {
@@ -708,15 +630,15 @@
                     "Unity.Abstractions": "3.3.0"
                 },
                 "compile": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x86": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -825,21 +747,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -852,36 +759,27 @@
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
                 }
             },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
-                }
-            },
             "Unity/5.8.6": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {},
-                    "lib/net45/Unity.Abstractions.dll": {},
-                    "lib/net45/Unity.Configuration.dll": {},
-                    "lib/net45/Unity.Container.dll": {},
-                    "lib/net45/Unity.Interception.Configuration.dll": {},
-                    "lib/net45/Unity.Interception.dll": {},
-                    "lib/net45/Unity.RegistrationByConvention.dll": {},
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/CommonServiceLocator.dll": {},
+                    "lib/net46/Unity.Abstractions.dll": {},
+                    "lib/net46/Unity.Configuration.dll": {},
+                    "lib/net46/Unity.Container.dll": {},
+                    "lib/net46/Unity.Interception.Configuration.dll": {},
+                    "lib/net46/Unity.Interception.dll": {},
+                    "lib/net46/Unity.RegistrationByConvention.dll": {},
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             },
             "Unity.Abstractions/3.3.0": {
@@ -893,36 +791,34 @@
                     "lib/net45/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Configuration"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Configuration.dll": {}
+                    "lib/net46/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
                     "System.Runtime.Remoting"
                 ],
                 "compile": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.dll": {}
+                    "lib/net46/Unity.Interception.dll": {}
                 }
             },
             "Unity.Interception.Configuration/5.1.5": {
@@ -930,13 +826,13 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.Interception.Configuration.dll": {}
+                    "lib/net46/Unity.Interception.Configuration.dll": {}
                 }
             },
             "Unity.ServiceLocation/2.1.1": {
@@ -946,16 +842,16 @@
                     "Unity.Abstractions": "3.3.0"
                 },
                 "compile": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/Unity.ServiceLocation.dll": {}
+                    "lib/net46/Unity.ServiceLocation.dll": {}
                 }
             }
         },
 
         ".NETFramework,Version=v4.7.1": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -1064,21 +960,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -1089,15 +970,6 @@
                 },
                 "runtime": {
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
-                }
-            },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
                 }
             },
             "Unity/5.8.6": {
@@ -1132,10 +1004,9 @@
                     "lib/net47/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1148,10 +1019,9 @@
                     "lib/net47/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1169,7 +1039,7 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
                     "lib/net47/Unity.Interception.Configuration.dll": {}
@@ -1193,7 +1063,7 @@
             }
         },
         ".NETFramework,Version=v4.7.1/win": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -1302,21 +1172,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -1327,15 +1182,6 @@
                 },
                 "runtime": {
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
-                }
-            },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
                 }
             },
             "Unity/5.8.6": {
@@ -1370,10 +1216,9 @@
                     "lib/net47/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1386,10 +1231,9 @@
                     "lib/net47/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1407,7 +1251,7 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
                     "lib/net47/Unity.Interception.Configuration.dll": {}
@@ -1431,7 +1275,7 @@
             }
         },
         ".NETFramework,Version=v4.7.1/win-x64": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -1540,21 +1384,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -1565,15 +1394,6 @@
                 },
                 "runtime": {
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
-                }
-            },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
                 }
             },
             "Unity/5.8.6": {
@@ -1608,10 +1428,9 @@
                     "lib/net47/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1624,10 +1443,9 @@
                     "lib/net47/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1645,7 +1463,7 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
                     "lib/net47/Unity.Interception.Configuration.dll": {}
@@ -1669,7 +1487,7 @@
             }
         },
         ".NETFramework,Version=v4.7.1/win-x86": {
-            "AspectObjectDumper/1.10.0": {
+            "AspectObjectDumper/1.10.2": {
                 "type": "package",
                 "dependencies": {
                     "CommonServiceLocator": "2.0.3"
@@ -1778,21 +1596,6 @@
                     "lib/net45/EntityFramework.dll": {}
                 }
             },
-            "System.Configuration.ConfigurationManager/4.4.1": {
-                "type": "package",
-                "frameworkAssemblies": [
-                    "System",
-                    "System.Configuration",
-                    "System.Xml",
-                    "mscorlib"
-                ],
-                "compile": {
-                    "ref/net461/System.Configuration.ConfigurationManager.dll": {}
-                },
-                "runtime": {
-                    "lib/net461/System.Configuration.ConfigurationManager.dll": {}
-                }
-            },
             "System.Diagnostics.Tracing/4.3.0": {
                 "type": "package",
                 "frameworkAssemblies": [
@@ -1803,15 +1606,6 @@
                 },
                 "runtime": {
                     "lib/net462/System.Diagnostics.Tracing.dll": {}
-                }
-            },
-            "System.Reflection.Emit/4.3.0": {
-                "type": "package",
-                "compile": {
-                    "ref/net45/_._": {}
-                },
-                "runtime": {
-                    "lib/net45/_._": {}
                 }
             },
             "Unity/5.8.6": {
@@ -1846,10 +1640,9 @@
                     "lib/net47/Unity.Abstractions.dll": {}
                 }
             },
-            "Unity.Configuration/5.2.2": {
+            "Unity.Configuration/5.2.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Configuration.ConfigurationManager": "4.4.1",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1862,10 +1655,9 @@
                     "lib/net47/Unity.Configuration.dll": {}
                 }
             },
-            "Unity.Interception/5.5.2": {
+            "Unity.Interception/5.5.3": {
                 "type": "package",
                 "dependencies": {
-                    "System.Reflection.Emit": "4.3.0",
                     "Unity.Abstractions": "3.3.0"
                 },
                 "frameworkAssemblies": [
@@ -1883,7 +1675,856 @@
                 "dependencies": {
                     "Unity.Abstractions": "3.3.0",
                     "Unity.Configuration": "5.2.2",
-                    "Unity.Interception": "5.5.2"
+                    "Unity.Interception": "5.5.3"
+                },
+                "compile": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                }
+            },
+            "Unity.ServiceLocation/2.1.1": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.2",
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "compile": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            }
+        },
+
+        ".NETFramework,Version=v4.7.2": {
+            "AspectObjectDumper/1.10.2": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                },
+                "runtime": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                }
+            },
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Common/6.0.1304": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.ExceptionHandling": "6.0.0",
+                    "EnterpriseLibrary.Logging": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Validation/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations",
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                }
+            },
+            "EntityFramework/6.2.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations"
+                ],
+                "compile": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                },
+                "runtime": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                }
+            },
+            "System.Diagnostics.Tracing/4.3.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "ref/net462/System.Diagnostics.Tracing.dll": {}
+                },
+                "runtime": {
+                    "lib/net462/System.Diagnostics.Tracing.dll": {}
+                }
+            },
+            "Unity/5.8.6": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            },
+            "Unity.Abstractions/3.3.0": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                }
+            },
+            "Unity.Configuration/5.2.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Configuration"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                }
+            },
+            "Unity.Interception/5.5.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Runtime.Remoting"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Interception.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.dll": {}
+                }
+            },
+            "Unity.Interception.Configuration/5.1.5": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0",
+                    "Unity.Configuration": "5.2.2",
+                    "Unity.Interception": "5.5.3"
+                },
+                "compile": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                }
+            },
+            "Unity.ServiceLocation/2.1.1": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.2",
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "compile": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win": {
+            "AspectObjectDumper/1.10.2": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                },
+                "runtime": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                }
+            },
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Common/6.0.1304": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.ExceptionHandling": "6.0.0",
+                    "EnterpriseLibrary.Logging": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Validation/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations",
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                }
+            },
+            "EntityFramework/6.2.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations"
+                ],
+                "compile": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                },
+                "runtime": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                }
+            },
+            "System.Diagnostics.Tracing/4.3.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "ref/net462/System.Diagnostics.Tracing.dll": {}
+                },
+                "runtime": {
+                    "lib/net462/System.Diagnostics.Tracing.dll": {}
+                }
+            },
+            "Unity/5.8.6": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            },
+            "Unity.Abstractions/3.3.0": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                }
+            },
+            "Unity.Configuration/5.2.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Configuration"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                }
+            },
+            "Unity.Interception/5.5.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Runtime.Remoting"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Interception.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.dll": {}
+                }
+            },
+            "Unity.Interception.Configuration/5.1.5": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0",
+                    "Unity.Configuration": "5.2.2",
+                    "Unity.Interception": "5.5.3"
+                },
+                "compile": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                }
+            },
+            "Unity.ServiceLocation/2.1.1": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.2",
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "compile": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x64": {
+            "AspectObjectDumper/1.10.2": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                },
+                "runtime": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                }
+            },
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Common/6.0.1304": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.ExceptionHandling": "6.0.0",
+                    "EnterpriseLibrary.Logging": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Validation/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations",
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                }
+            },
+            "EntityFramework/6.2.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations"
+                ],
+                "compile": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                },
+                "runtime": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                }
+            },
+            "System.Diagnostics.Tracing/4.3.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "ref/net462/System.Diagnostics.Tracing.dll": {}
+                },
+                "runtime": {
+                    "lib/net462/System.Diagnostics.Tracing.dll": {}
+                }
+            },
+            "Unity/5.8.6": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            },
+            "Unity.Abstractions/3.3.0": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                }
+            },
+            "Unity.Configuration/5.2.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Configuration"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                }
+            },
+            "Unity.Interception/5.5.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Runtime.Remoting"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Interception.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.dll": {}
+                }
+            },
+            "Unity.Interception.Configuration/5.1.5": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0",
+                    "Unity.Configuration": "5.2.2",
+                    "Unity.Interception": "5.5.3"
+                },
+                "compile": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.Configuration.dll": {}
+                }
+            },
+            "Unity.ServiceLocation/2.1.1": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.2",
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "compile": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            }
+        },
+        ".NETFramework,Version=v4.7.2/win-x86": {
+            "AspectObjectDumper/1.10.2": {
+                "type": "package",
+                "dependencies": {
+                    "CommonServiceLocator": "2.0.3"
+                },
+                "compile": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                },
+                "runtime": {
+                    "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll": {}
+                }
+            },
+            "CommonServiceLocator/2.0.3": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Common/6.0.1304": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Common.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll": {}
+                }
+            },
+            "EnterpriseLibrary.ExceptionHandling.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.ExceptionHandling": "6.0.0",
+                    "EnterpriseLibrary.Logging": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Logging/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Logging.dll": {}
+                }
+            },
+            "EnterpriseLibrary.Validation/6.0.1304": {
+                "type": "package",
+                "dependencies": {
+                    "EnterpriseLibrary.Common": "6.0.0"
+                },
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations",
+                    "mscorlib"
+                ],
+                "compile": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                },
+                "runtime": {
+                    "lib/NET45/Microsoft.Practices.EnterpriseLibrary.Validation.dll": {}
+                }
+            },
+            "EntityFramework/6.2.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "System.ComponentModel.DataAnnotations"
+                ],
+                "compile": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                },
+                "runtime": {
+                    "lib/net45/EntityFramework.SqlServer.dll": {},
+                    "lib/net45/EntityFramework.dll": {}
+                }
+            },
+            "System.Diagnostics.Tracing/4.3.0": {
+                "type": "package",
+                "frameworkAssemblies": [
+                    "mscorlib"
+                ],
+                "compile": {
+                    "ref/net462/System.Diagnostics.Tracing.dll": {}
+                },
+                "runtime": {
+                    "lib/net462/System.Diagnostics.Tracing.dll": {}
+                }
+            },
+            "Unity/5.8.6": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/CommonServiceLocator.dll": {},
+                    "lib/net47/Unity.Abstractions.dll": {},
+                    "lib/net47/Unity.Configuration.dll": {},
+                    "lib/net47/Unity.Container.dll": {},
+                    "lib/net47/Unity.Interception.Configuration.dll": {},
+                    "lib/net47/Unity.Interception.dll": {},
+                    "lib/net47/Unity.RegistrationByConvention.dll": {},
+                    "lib/net47/Unity.ServiceLocation.dll": {}
+                }
+            },
+            "Unity.Abstractions/3.3.0": {
+                "type": "package",
+                "compile": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Abstractions.dll": {}
+                }
+            },
+            "Unity.Configuration/5.2.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Configuration"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Configuration.dll": {}
+                }
+            },
+            "Unity.Interception/5.5.3": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0"
+                },
+                "frameworkAssemblies": [
+                    "System.Runtime.Remoting"
+                ],
+                "compile": {
+                    "lib/net47/Unity.Interception.dll": {}
+                },
+                "runtime": {
+                    "lib/net47/Unity.Interception.dll": {}
+                }
+            },
+            "Unity.Interception.Configuration/5.1.5": {
+                "type": "package",
+                "dependencies": {
+                    "Unity.Abstractions": "3.3.0",
+                    "Unity.Configuration": "5.2.2",
+                    "Unity.Interception": "5.5.3"
                 },
                 "compile": {
                     "lib/net47/Unity.Interception.Configuration.dll": {}
@@ -1908,19 +2549,21 @@
         }
     },
     "libraries": {
-        "AspectObjectDumper/1.10.0": {
-            "sha512": "WOptHbYsGNrdhGhqm2V09KJU789yvlo6EW27TxApcqeLQ0pq72r8j4xtKp4prEj5PvBl+Ri5KO9rCqHklcNoEw==",
+        "AspectObjectDumper/1.10.2": {
+            "sha512": "9LqGIt3n9gYeoee2NLar8BGOnV3VGKI/FneP5rzEAEVUYmA1jRmhzqm/NI2tqP65+5pTTU1G5ZDifek0S4udgg==",
             "type": "package",
-            "path": "aspectobjectdumper/1.10.0",
+            "path": "aspectobjectdumper/1.10.2",
             "files": [
-                "aspectobjectdumper.1.10.0.nupkg.sha512",
+                "aspectobjectdumper.1.10.2.nupkg.sha512",
                 "aspectobjectdumper.nuspec",
                 "lib/net452/vm.Aspects.Diagnostics.ObjectDumper.XML",
                 "lib/net452/vm.Aspects.Diagnostics.ObjectDumper.dll",
                 "lib/net462/vm.Aspects.Diagnostics.ObjectDumper.XML",
                 "lib/net462/vm.Aspects.Diagnostics.ObjectDumper.dll",
                 "lib/net471/vm.Aspects.Diagnostics.ObjectDumper.XML",
-                "lib/net471/vm.Aspects.Diagnostics.ObjectDumper.dll"
+                "lib/net471/vm.Aspects.Diagnostics.ObjectDumper.dll",
+                "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.XML",
+                "lib/net472/vm.Aspects.Diagnostics.ObjectDumper.dll"
             ]
         },
         "CommonServiceLocator/2.0.3": {
@@ -2036,25 +2679,6 @@
                 "tools/migrate.exe"
             ]
         },
-        "System.Configuration.ConfigurationManager/4.4.1": {
-            "sha512": "jz3TWKMAeuDEyrPCK5Jyt4bzQcmzUIMcY9Ud6PkElFxTfnsihV+9N/UCqvxe1z5gc7jMYAnj7V1COMS9QKIuHQ==",
-            "type": "package",
-            "path": "system.configuration.configurationmanager/4.4.1",
-            "files": [
-                "LICENSE.TXT",
-                "THIRD-PARTY-NOTICES.TXT",
-                "lib/net461/System.Configuration.ConfigurationManager.dll",
-                "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll",
-                "ref/net461/System.Configuration.ConfigurationManager.dll",
-                "ref/net461/System.Configuration.ConfigurationManager.xml",
-                "ref/netstandard2.0/System.Configuration.ConfigurationManager.dll",
-                "ref/netstandard2.0/System.Configuration.ConfigurationManager.xml",
-                "system.configuration.configurationmanager.4.4.1.nupkg.sha512",
-                "system.configuration.configurationmanager.nuspec",
-                "useSharedDesignerContext.txt",
-                "version.txt"
-            ]
-        },
         "System.Diagnostics.Tracing/4.3.0": {
             "sha512": "rswfv0f/Cqkh78rA5S8eN8Neocz234+emGCtTF3lxPY96F+mmmUen6tbn0glN6PMvlKQb9bPAY5e9u7fgPTkKw==",
             "type": "package",
@@ -2143,40 +2767,6 @@
                 "system.diagnostics.tracing.nuspec"
             ]
         },
-        "System.Reflection.Emit/4.3.0": {
-            "sha512": "228FG0jLcIwTVJyz8CLFKueVqQK36ANazUManGaJHkO0icjiIypKW7YLWLIWahyIkdh5M7mV2dJepllLyA1SKg==",
-            "type": "package",
-            "path": "system.reflection.emit/4.3.0",
-            "files": [
-                "ThirdPartyNotices.txt",
-                "dotnet_library_license.txt",
-                "lib/MonoAndroid10/_._",
-                "lib/monotouch10/_._",
-                "lib/net45/_._",
-                "lib/netcore50/System.Reflection.Emit.dll",
-                "lib/netstandard1.3/System.Reflection.Emit.dll",
-                "lib/xamarinios10/_._",
-                "lib/xamarinmac20/_._",
-                "lib/xamarintvos10/_._",
-                "lib/xamarinwatchos10/_._",
-                "ref/MonoAndroid10/_._",
-                "ref/net45/_._",
-                "ref/netstandard1.1/System.Reflection.Emit.dll",
-                "ref/netstandard1.1/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/de/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/es/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/fr/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/it/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/ja/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/ko/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/ru/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/zh-hans/System.Reflection.Emit.xml",
-                "ref/netstandard1.1/zh-hant/System.Reflection.Emit.xml",
-                "ref/xamarinmac20/_._",
-                "system.reflection.emit.4.3.0.nupkg.sha512",
-                "system.reflection.emit.nuspec"
-            ]
-        },
         "Unity/5.8.6": {
             "sha512": "QEVj2UjwIMBhhhzxBsvfbpHmjPFWsK7NMd4/FniI6GTF0+0/bILEKyGmPe+J9FRIktV1X/Tf8cnhUMVwBunU3A==",
             "type": "package",
@@ -2193,36 +2783,36 @@
                 "lib/net40/Unity.ServiceLocation.dll",
                 "lib/net40/Unity.ServiceLocation.pdb",
                 "lib/net45/CommonServiceLocator.dll",
-                "lib/net45/CommonServiceLocator.pdb",
-                "lib/net45/Unity.Abstractions.dll",
-                "lib/net45/Unity.Abstractions.pdb",
-                "lib/net45/Unity.Configuration.dll",
-                "lib/net45/Unity.Configuration.pdb",
-                "lib/net45/Unity.Container.dll",
-                "lib/net45/Unity.Container.pdb",
-                "lib/net45/Unity.Interception.Configuration.dll",
-                "lib/net45/Unity.Interception.Configuration.pdb",
-                "lib/net45/Unity.Interception.dll",
-                "lib/net45/Unity.Interception.pdb",
-                "lib/net45/Unity.RegistrationByConvention.dll",
-                "lib/net45/Unity.RegistrationByConvention.pdb",
-                "lib/net45/Unity.ServiceLocation.dll",
-                "lib/net45/Unity.ServiceLocation.pdb",
                 "lib/net45/CommonServiceLocator.dll",
                 "lib/net45/CommonServiceLocator.pdb",
+                "lib/net45/CommonServiceLocator.pdb",
+                "lib/net45/Unity.Abstractions.dll",
                 "lib/net45/Unity.Abstractions.dll",
                 "lib/net45/Unity.Abstractions.pdb",
+                "lib/net45/Unity.Abstractions.pdb",
+                "lib/net45/Unity.Configuration.dll",
                 "lib/net45/Unity.Configuration.dll",
                 "lib/net45/Unity.Configuration.pdb",
+                "lib/net45/Unity.Configuration.pdb",
+                "lib/net45/Unity.Container.dll",
                 "lib/net45/Unity.Container.dll",
                 "lib/net45/Unity.Container.pdb",
+                "lib/net45/Unity.Container.pdb",
+                "lib/net45/Unity.Interception.Configuration.dll",
                 "lib/net45/Unity.Interception.Configuration.dll",
                 "lib/net45/Unity.Interception.Configuration.pdb",
+                "lib/net45/Unity.Interception.Configuration.pdb",
+                "lib/net45/Unity.Interception.dll",
                 "lib/net45/Unity.Interception.dll",
                 "lib/net45/Unity.Interception.pdb",
+                "lib/net45/Unity.Interception.pdb",
+                "lib/net45/Unity.RegistrationByConvention.dll",
                 "lib/net45/Unity.RegistrationByConvention.dll",
                 "lib/net45/Unity.RegistrationByConvention.pdb",
+                "lib/net45/Unity.RegistrationByConvention.pdb",
                 "lib/net45/Unity.ServiceLocation.dll",
+                "lib/net45/Unity.ServiceLocation.dll",
+                "lib/net45/Unity.ServiceLocation.pdb",
                 "lib/net45/Unity.ServiceLocation.pdb",
                 "lib/net47/CommonServiceLocator.dll",
                 "lib/net47/CommonServiceLocator.pdb",
@@ -2300,31 +2890,31 @@
                 "unity.abstractions.nuspec"
             ]
         },
-        "Unity.Configuration/5.2.2": {
-            "sha512": "VZZizrRN5xxPIM6VKmzkoonTCk/Dzl6jUKBrhKKmbsk0T8W4I3/5m5gUh+78jiysLmM6ezgvMCXEHPwQpt77Mw==",
+        "Unity.Configuration/5.2.3": {
+            "sha512": "mbg01peRQxyu/tH8OMNVl8UcebacPCsRzj53Gof8nXYK7rjMQ7Q8280ZtO7ZrM/iyTMrd7KB7iIp+po39qPhJw==",
             "type": "package",
-            "path": "unity.configuration/5.2.2",
+            "path": "unity.configuration/5.2.3",
             "files": [
                 "lib/net45/Unity.Configuration.dll",
-                "lib/net45/Unity.Configuration.dll",
+                "lib/net46/Unity.Configuration.dll",
                 "lib/net47/Unity.Configuration.dll",
                 "lib/netcoreapp2.0/Unity.Configuration.dll",
                 "lib/netstandard2.0/Unity.Configuration.dll",
-                "unity.configuration.5.2.2.nupkg.sha512",
+                "unity.configuration.5.2.3.nupkg.sha512",
                 "unity.configuration.nuspec"
             ]
         },
-        "Unity.Interception/5.5.2": {
-            "sha512": "YaCOazdLL9wklPFM20mY799JoHRd3g9DeeEmEYS/c6NKpZ6FOCvc3rlzeOn6gFSUZevG1MXOuzWmuyjfW0hMNQ==",
+        "Unity.Interception/5.5.3": {
+            "sha512": "lxLcKRgFB9DJ8LNQjZt1BYAGiCrN6CohNwuoXvtI6zOOBtN4tX8YR/DN+qfm1lh3s3mx9r2t0jIP/2NOkHx/iA==",
             "type": "package",
-            "path": "unity.interception/5.5.2",
+            "path": "unity.interception/5.5.3",
             "files": [
                 "lib/net45/Unity.Interception.dll",
-                "lib/net45/Unity.Interception.dll",
+                "lib/net46/Unity.Interception.dll",
                 "lib/net47/Unity.Interception.dll",
                 "lib/netcoreapp2.0/Unity.Interception.dll",
                 "lib/netstandard2.0/Unity.Interception.dll",
-                "unity.interception.5.5.2.nupkg.sha512",
+                "unity.interception.5.5.3.nupkg.sha512",
                 "unity.interception.nuspec"
             ]
         },
@@ -2361,7 +2951,7 @@
     },
     "projectFileDependencyGroups": {
         ".NETFramework,Version=v4.6.2": [
-            "AspectObjectDumper >= 1.10.0",
+            "AspectObjectDumper >= 1.10.2",
             "CommonServiceLocator >= 2.0.3",
             "EnterpriseLibrary.Common >= 6.0.1304",
             "EnterpriseLibrary.ExceptionHandling >= 6.0.1304",
@@ -2371,13 +2961,13 @@
             "EntityFramework >= 6.2.0",
             "System.Diagnostics.Tracing >= 4.3.0",
             "Unity >= 5.8.6",
-            "Unity.Configuration >= 5.2.2",
-            "Unity.Interception >= 5.5.2",
+            "Unity.Configuration >= 5.2.3",
+            "Unity.Interception >= 5.5.3",
             "Unity.Interception.Configuration >= 5.1.5",
             "Unity.ServiceLocation >= 2.1.1"
         ],
         ".NETFramework,Version=v4.7.1": [
-            "AspectObjectDumper >= 1.10.0",
+            "AspectObjectDumper >= 1.10.2",
             "CommonServiceLocator >= 2.0.3",
             "EnterpriseLibrary.Common >= 6.0.1304",
             "EnterpriseLibrary.ExceptionHandling >= 6.0.1304",
@@ -2387,44 +2977,62 @@
             "EntityFramework >= 6.2.0",
             "System.Diagnostics.Tracing >= 4.3.0",
             "Unity >= 5.8.6",
-            "Unity.Configuration >= 5.2.2",
-            "Unity.Interception >= 5.5.2",
+            "Unity.Configuration >= 5.2.3",
+            "Unity.Interception >= 5.5.3",
+            "Unity.Interception.Configuration >= 5.1.5",
+            "Unity.ServiceLocation >= 2.1.1"
+        ],
+        ".NETFramework,Version=v4.7.2": [
+            "AspectObjectDumper >= 1.10.2",
+            "CommonServiceLocator >= 2.0.3",
+            "EnterpriseLibrary.Common >= 6.0.1304",
+            "EnterpriseLibrary.ExceptionHandling >= 6.0.1304",
+            "EnterpriseLibrary.ExceptionHandling.Logging >= 6.0.1304",
+            "EnterpriseLibrary.Logging >= 6.0.1304",
+            "EnterpriseLibrary.Validation >= 6.0.1304",
+            "EntityFramework >= 6.2.0",
+            "System.Diagnostics.Tracing >= 4.3.0",
+            "Unity >= 5.8.6",
+            "Unity.Configuration >= 5.2.3",
+            "Unity.Interception >= 5.5.3",
             "Unity.Interception.Configuration >= 5.1.5",
             "Unity.ServiceLocation >= 2.1.1"
         ]
     },
     "packageFolders": {
-        "C:\\Users\\Val\\.nuget\\packages\\": {}
+        "C:\\Users\\valo\\.nuget\\packages\\": {}
     },
     "project": {
         "version": "1.0.0",
         "restore": {
-            "projectUniqueName": "C:\\Projects\\GitRepos\\vm\\Aspects\\vm.Aspects.csproj",
+            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\vm.Aspects.csproj",
             "projectName": "vm.Aspects",
-            "projectPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\vm.Aspects.csproj",
-            "packagesPath": "C:\\Users\\Val\\.nuget\\packages\\",
-            "outputPath": "C:\\Projects\\GitRepos\\vm\\Aspects\\obj\\",
+            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\vm.Aspects.csproj",
+            "packagesPath": "C:\\Users\\valo\\.nuget\\packages\\",
+            "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\obj\\",
             "projectStyle": "PackageReference",
             "skipContentFileWrite": true,
             "configFilePaths": [
-                "C:\\Users\\Val\\AppData\\Roaming\\NuGet\\NuGet.Config",
+                "C:\\Users\\valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
                 "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
             ],
             "originalTargetFrameworks": [
                 "net462",
-                "net471"
+                "net471",
+                "net472"
             ],
             "sources": {
-                "C:\\NuGet": {},
                 "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-                "https://nuget.org/api/v2/": {},
-                "https://www.myget.org/F/applicationinsights-sdk-labs/api/v3/index.json": {}
+                "https://api.nuget.org/v3/index.json": {}
             },
             "frameworks": {
                 "net462": {
                     "projectReferences": {}
                 },
                 "net471": {
+                    "projectReferences": {}
+                },
+                "net472": {
                     "projectReferences": {}
                 }
             }
@@ -2434,7 +3042,7 @@
                 "dependencies": {
                     "AspectObjectDumper": {
                         "target": "Package",
-                        "version": "[1.10.0, )"
+                        "version": "[1.10.2, )"
                     },
                     "CommonServiceLocator": {
                         "target": "Package",
@@ -2474,11 +3082,11 @@
                     },
                     "Unity.Configuration": {
                         "target": "Package",
-                        "version": "[5.2.2, )"
+                        "version": "[5.2.3, )"
                     },
                     "Unity.Interception": {
                         "target": "Package",
-                        "version": "[5.5.2, )"
+                        "version": "[5.5.3, )"
                     },
                     "Unity.Interception.Configuration": {
                         "target": "Package",
@@ -2494,7 +3102,7 @@
                 "dependencies": {
                     "AspectObjectDumper": {
                         "target": "Package",
-                        "version": "[1.10.0, )"
+                        "version": "[1.10.2, )"
                     },
                     "CommonServiceLocator": {
                         "target": "Package",
@@ -2534,11 +3142,71 @@
                     },
                     "Unity.Configuration": {
                         "target": "Package",
-                        "version": "[5.2.2, )"
+                        "version": "[5.2.3, )"
                     },
                     "Unity.Interception": {
                         "target": "Package",
-                        "version": "[5.5.2, )"
+                        "version": "[5.5.3, )"
+                    },
+                    "Unity.Interception.Configuration": {
+                        "target": "Package",
+                        "version": "[5.1.5, )"
+                    },
+                    "Unity.ServiceLocation": {
+                        "target": "Package",
+                        "version": "[2.1.1, )"
+                    }
+                }
+            },
+            "net472": {
+                "dependencies": {
+                    "AspectObjectDumper": {
+                        "target": "Package",
+                        "version": "[1.10.2, )"
+                    },
+                    "CommonServiceLocator": {
+                        "target": "Package",
+                        "version": "[2.0.3, )"
+                    },
+                    "EnterpriseLibrary.Common": {
+                        "target": "Package",
+                        "version": "[6.0.1304, )"
+                    },
+                    "EnterpriseLibrary.ExceptionHandling": {
+                        "target": "Package",
+                        "version": "[6.0.1304, )"
+                    },
+                    "EnterpriseLibrary.ExceptionHandling.Logging": {
+                        "target": "Package",
+                        "version": "[6.0.1304, )"
+                    },
+                    "EnterpriseLibrary.Logging": {
+                        "target": "Package",
+                        "version": "[6.0.1304, )"
+                    },
+                    "EnterpriseLibrary.Validation": {
+                        "target": "Package",
+                        "version": "[6.0.1304, )"
+                    },
+                    "EntityFramework": {
+                        "target": "Package",
+                        "version": "[6.2.0, )"
+                    },
+                    "System.Diagnostics.Tracing": {
+                        "target": "Package",
+                        "version": "[4.3.0, )"
+                    },
+                    "Unity": {
+                        "target": "Package",
+                        "version": "[5.8.6, )"
+                    },
+                    "Unity.Configuration": {
+                        "target": "Package",
+                        "version": "[5.2.3, )"
+                    },
+                    "Unity.Interception": {
+                        "target": "Package",
+                        "version": "[5.5.3, )"
                     },
                     "Unity.Interception.Configuration": {
                         "target": "Package",

@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 
@@ -111,9 +112,7 @@ namespace vm.Aspects.Wcf.Behaviors
             ref Message reply,
             object correlationState)
         {
-            string origin = correlationState as string;
-
-            if (origin == null)
+            if (!(correlationState is string origin))
                 return;
 
             var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];

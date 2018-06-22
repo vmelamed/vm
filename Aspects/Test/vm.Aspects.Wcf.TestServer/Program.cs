@@ -6,8 +6,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
+
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+
 using vm.Aspects.Facilities;
 using vm.Aspects.Facilities.Diagnostics;
 using vm.Aspects.Security;
@@ -30,7 +32,7 @@ namespace vm.Aspects.Wcf.TestServer
 
     class Program
     {
-        static AddressBinding[] addressesAndBindings1 =
+        static readonly AddressBinding[] _addressesAndBindings1 =
         {
             new AddressBinding { Address = "http://localhost:1480/basicHttp.svc",    BindingFactory = () => new BasicHttpBinding() },
             new AddressBinding { Address = "https://localhost:14443/basicHttps.svc", BindingFactory = () => new BasicHttpsBinding() },
@@ -42,7 +44,7 @@ namespace vm.Aspects.Wcf.TestServer
             new AddressBinding { Address = "http://localhost:1482/webHttp",          BindingFactory = () => new WebHttpBinding() },
         };
 
-        static AddressBinding[] addressesAndBindings2 =
+        static readonly AddressBinding[] _addressesAndBindings2 =
         {
             new AddressBinding { Address = "https://localhost:14443/basicHttp.svc",  BindingFactory = () => new BasicHttpBinding() },
             new AddressBinding { Address = "https://localhost:14444/basicHttps.svc", BindingFactory = () => new BasicHttpsBinding() },
@@ -54,22 +56,22 @@ namespace vm.Aspects.Wcf.TestServer
             new AddressBinding { Address = "net.tcp://localhost:14808/net.tcp.svc",  BindingFactory = () => new NetTcpBinding() },
         };
 
-        static AddressBinding[] addressesAndBindings3 =
+        static readonly AddressBinding[] _addressesAndBindings3 =
         {
             new AddressBinding { Address = "http://localhost:1483/wsHttp.svc",       BindingFactory = () => new WSHttpBinding() },
             new AddressBinding { Address = "net.tcp://localhost:14808/net.tcp.svc",  BindingFactory = () => new NetTcpBinding() },
         };
 
-        static AddressBinding[] addressesAndBindings4 =
+        static readonly AddressBinding[] _addressesAndBindings4 =
         {
             new AddressBinding { Address = "http://localhost:1480/basicHttp.svc",    BindingFactory = () => new BasicHttpBinding() },
             new AddressBinding { Address = "http://localhost:1483/wsHttp.svc",       BindingFactory = () => new WSHttpBinding() },
             new AddressBinding { Address = "net.tcp://localhost:14808/net.tcp.svc",  BindingFactory = () => new NetTcpBinding() },
         };
 
-        static PatternAddressesAndBindings[] patternsAddressesAndBindings =
+        static readonly PatternAddressesAndBindings[] _patternsAddressesAndBindings =
         {
-            new PatternAddressesAndBindings { PatternName = RequestResponseNoSecurityConfigurator.PatternName,                                  AddressesAndBindings = addressesAndBindings1 },
+            new PatternAddressesAndBindings { PatternName = RequestResponseNoSecurityConfigurator.PatternName,                                  AddressesAndBindings = _addressesAndBindings1 },
             //new PatternAddressesAndBindings { PatternName = RequestResponseConfigurator.PatternName,                                            AddressesAndBindings = addressesAndBindings2 },
             //new PatternAddressesAndBindings { PatternName = RequestResponseTransportConfigurator.PatternName,                                   AddressesAndBindings = addressesAndBindings2 },
             //new PatternAddressesAndBindings { PatternName = RequestResponseTransportClientWindowsAuthenticationConfigurator.PatternName,        AddressesAndBindings = addressesAndBindings2 },
@@ -90,7 +92,7 @@ namespace vm.Aspects.Wcf.TestServer
                 ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                foreach (var pattern in patternsAddressesAndBindings)
+                foreach (var pattern in _patternsAddressesAndBindings)
                     using (var host = new RequestResponseServiceHostFactory(pattern.AddressesAndBindings, pattern.PatternName).CreateHost())
                     {
                         try

@@ -122,7 +122,7 @@ namespace DiAopTest
 
     class CachingCallHandler : ICallHandler
     {
-        static object _sync = new object();
+        static readonly object _sync = new object();
         static IDictionary<string, object> _cache = new Dictionary<string, object>();
 
         public IMethodReturn Invoke(

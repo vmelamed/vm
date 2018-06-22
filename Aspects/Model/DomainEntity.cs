@@ -29,7 +29,7 @@ namespace vm.Aspects.Model
         /// The implementation assumes that the entity has identity when the <see cref="Key"/> is not equal to the default value of its type.
         /// E.g. if the type of the key is <see cref="string"/> the entity has identity if <c>Key!=null</c>.
         /// </remarks>
-        public override bool HasIdentity => !Key.Equals(default(TKey));
+        public override bool HasIdentity => !Key.Equals(default);
 
         #region IHasStoreId<TId> Members
         /// <summary>
@@ -49,7 +49,7 @@ namespace vm.Aspects.Model
             get { return _id; }
             set
             {
-                if (!_id.Equals(default(TId)))
+                if (!_id.Equals(default))
                     throw new InvalidOperationException("Once the value of the property is set it cannot be changed.");
 
                 _id = value;

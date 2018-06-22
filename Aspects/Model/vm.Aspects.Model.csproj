@@ -9,11 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Model</RootNamespace>
     <AssemblyName>vm.Aspects.Model</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <TargetFrameworkVersions>net462;net471</TargetFrameworkVersions>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <Prefer32Bit>false</Prefer32Bit>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,6 +31,12 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
     <NoWarn>3001, 3002, 3003</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -39,6 +49,13 @@
     <DocumentationFile>bin\Release\vm.Aspects.Model.XML</DocumentationFile>
     <NoWarn>3001, 3002, 3003</NoWarn>
     <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -183,7 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Ciphers">
-      <Version>1.13.0</Version>
+      <Version>1.13.1</Version>
     </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.2.0</Version>

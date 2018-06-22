@@ -1,0 +1,80 @@
+{
+  "version": 3,
+    "targets": {
+        ".NETFramework,Version=v4.6.2": {},
+        ".NETFramework,Version=v4.6.2/win": {},
+        ".NETFramework,Version=v4.6.2/win-x64": {},
+        ".NETFramework,Version=v4.6.2/win-x86": {},
+
+        ".NETFramework,Version=v4.7.1": {},
+        ".NETFramework,Version=v4.7.1/win": {},
+        ".NETFramework,Version=v4.7.1/win-x64": {},
+        ".NETFramework,Version=v4.7.1/win-x86": {},
+
+        ".NETFramework,Version=v4.7.2": {},
+        ".NETFramework,Version=v4.7.2/win": {},
+        ".NETFramework,Version=v4.7.2/win-x64": {},
+        ".NETFramework,Version=v4.7.2/win-x86": {}
+    },
+  "libraries": {},
+    "projectFileDependencyGroups": {
+        ".NETFramework,Version=v4.6.2": [],
+        ".NETFramework,Version=v4.7.1": [],
+        ".NETFramework,Version=v4.7.2": []
+    },
+  "packageFolders": {
+    "C:\\Users\\valo\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Parsers\\vm.Aspects.Parsers.csproj",
+      "projectName": "vm.Aspects.Parsers",
+      "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Parsers\\vm.Aspects.Parsers.csproj",
+      "packagesPath": "C:\\Users\\valo\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Parsers\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+        "originalTargetFrameworks": [
+            "net462",
+            "net471",
+            "net472"
+        ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+        "frameworks": {
+            "net462": {
+                "projectReferences": {}
+            },
+            "net471": {
+                "projectReferences": {}
+            },
+            "net472": {
+                "projectReferences": {}
+            }
+        }
+    },
+    "frameworks": {
+        "net462": {},
+        "net471": {},
+        "net472": {}
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

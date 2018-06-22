@@ -63,7 +63,7 @@ namespace vm.Aspects.Wcf.ServicePolicies
                     throw exceptionToThrow;
 
                 // if swallowed 
-                return default(TResult);
+                return default;
             }
         }
 

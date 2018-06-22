@@ -10,6 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -175,9 +176,7 @@ namespace vm.Aspects.Model.EFRepository
             if (!IsProxy(reference))
                 return false;
 
-            var efRepository = repository as EFRepositoryBase;
-
-            if (efRepository == null)
+            if (!(repository is EFRepositoryBase efRepository))
                 throw new ArgumentException("The repository must be implemented by EFRepositoryBase descendant.", nameof(repository));
 
             var dbEntry = efRepository

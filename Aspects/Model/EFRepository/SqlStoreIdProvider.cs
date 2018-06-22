@@ -1,4 +1,5 @@
 ﻿using System;
+
 using vm.Aspects.Model.Repository;
 
 namespace vm.Aspects.Model.EFRepository
@@ -22,10 +23,7 @@ namespace vm.Aspects.Model.EFRepository
         /// <exception cref="System.NotSupportedException">The store ID provider does not support generating ID-s of type +typeof(TId).FullName</exception>
         public IStoreUniqueId<TId> GetProvider<TId>() where TId : IEquatable<TId>
         {
-
-            var uniqueId = this as IStoreUniqueId<TId>;
-
-            if (uniqueId == null)
+            if (!(this is IStoreUniqueId<TId> uniqueId))
                 throw new NotSupportedException("The store ID provider does not support generating ID-s of type "+typeof(TId).FullName);
 
             return uniqueId;

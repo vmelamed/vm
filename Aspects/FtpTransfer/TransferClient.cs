@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using vm.Aspects;
 
 namespace vm.Aspects.FtpTransfer
 {

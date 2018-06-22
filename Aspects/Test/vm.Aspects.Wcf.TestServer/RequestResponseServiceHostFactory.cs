@@ -22,7 +22,7 @@ namespace vm.Aspects.Wcf.TestServer
 {
     public class RequestResponseServiceHostFactory : MessagingPatternServiceHostFactory<IRequestResponse, RequestResponseService>
     {
-        AddressBinding[] _addressesAndBindings;
+        readonly AddressBinding[] _addressesAndBindings;
 
         public RequestResponseServiceHostFactory(
             AddressBinding[] addressesAndBindings,

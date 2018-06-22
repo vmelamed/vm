@@ -88,7 +88,7 @@ namespace vm.Aspects.Policies
         [Serializable]
         private class ValidationResultsSerializationData : ISafeSerializationData
         {
-            ValidationResults _validationResults;
+            readonly ValidationResults _validationResults;
 
             public ValidationResultsSerializationData(ValidationResults validationResults)
             {

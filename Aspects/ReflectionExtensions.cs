@@ -178,6 +178,6 @@ namespace vm.Aspects
             return value;
         }
 
-        static T GenericDefault<T>() => default(T);
+        static T GenericDefault<T>() => default;
     }
 }

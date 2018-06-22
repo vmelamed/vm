@@ -115,7 +115,7 @@ namespace vm.Aspects.Policies
 
             // create a call data context data for the current handler
 
-            return default(T);
+            return default;
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace vm.Aspects.Policies
             }
 
             // - we'll return Task<bool>, so return the default value false.
-            return default(TResult);
+            return default;
         }
 
         /// <summary>

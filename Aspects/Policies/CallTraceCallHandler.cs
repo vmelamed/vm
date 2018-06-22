@@ -355,7 +355,7 @@ namespace vm.Aspects.Policies
             if (!callData.Trace || !LogWriter.IsLoggingEnabled())
                 return await base.ContinueWith<TResult>(input, methodReturn, callData);
 
-            TResult result = default(TResult);
+            TResult result = default;
 
             try
             {
