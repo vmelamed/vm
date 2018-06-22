@@ -86,7 +86,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
 
                 if (i < 0)
                 {
-                    value = default(TValue);
+                    value = default;
                     return false;
                 }
 
@@ -128,7 +128,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
                 var existingKeyIndex = -1;
                 var notUsedIndex     = -1;
                 var evictIndex       = -1;
-                var lastUsageStamp   = _cache.EvictionPolicy(0, long.MaxValue) ? 0 : long.MaxValue;
+                var lastUsageStamp   = _cache.Policies.EvictionPolicy(0, long.MaxValue) ? 0 : long.MaxValue;
 
                 for (var i = _entriesBegin; i < _entriesEnd; i++)
                 {
@@ -147,7 +147,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
 
                     // if we have an empty slot in the set, no need to evict anything
                     if (notUsedIndex == -1  &&
-                        _cache.EvictionPolicy(lastUsageStamp, _cache.Entries[i].UsageStamp))
+                        _cache.Policies.EvictionPolicy(lastUsageStamp, _cache.Entries[i].UsageStamp))
                     {
                         evictIndex = i;
                         lastUsageStamp  = _cache.Entries[i].UsageStamp;
@@ -157,7 +157,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
                 if (existingKeyIndex > -1)
                 {
                     // we have a hit - replace the value only:
-                    _cache.ReplaceValue(ref _cache.Entries[existingKeyIndex].Value, value);
+                    _cache.Policies.ReplaceValue(ref _cache.Entries[existingKeyIndex].Value, value);
                     _cache.Entries[existingKeyIndex].UsageStamp = NextUsage;
                     return;
                 }
@@ -219,7 +219,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
                 if (i < 0)
                     return false;
 
-                InitializeEntry(i, default(TKey), default(TValue), 0, 0);
+                InitializeEntry(i, default, default, 0, 0);
                 return true;
             }
             finally
@@ -247,7 +247,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
                 if (i < 0  ||  !_cache.Entries[i].Value.Equals(item.Value))
                     return false;
 
-                InitializeEntry(i, default(TKey), default(TValue), 0, 0);
+                InitializeEntry(i, default, default, 0, 0);
                 return true;
             }
             finally
@@ -265,7 +265,7 @@ namespace vm.Aspects.Cache.Associative.NWaySet
             try
             {
                 for (var i = _entriesBegin; i < _entriesEnd; i++)
-                    InitializeEntry(i, default(TKey), default(TValue), 0, 0);
+                    InitializeEntry(i, default, default, 0, 0);
                 _nextUsage = 0;
             }
             finally
@@ -308,8 +308,8 @@ namespace vm.Aspects.Cache.Associative.NWaySet
             int keyHash,
             long usageStamp)
         {
-            _cache.ReplaceKey(ref _cache.Entries[index].Key, key);
-            _cache.ReplaceValue(ref _cache.Entries[index].Value, value);
+            _cache.Policies.ReplaceKey(ref _cache.Entries[index].Key, key);
+            _cache.Policies.ReplaceValue(ref _cache.Entries[index].Value, value);
             _cache.Entries[index].KeyHash    = keyHash;
             _cache.Entries[index].UsageStamp = usageStamp;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Model.Tests
@@ -19,14 +20,16 @@ namespace vm.Aspects.Model.Tests
 
         public void AssertIsInitialized()
         {
+#pragma warning disable IDE0041 // Use 'is null' check
             Assert.IsTrue(!ReferenceEquals(_obj1, null) &&
                           !ReferenceEquals(_obj2, null) &&
                           !ReferenceEquals(_obj3, null) &&
                           !ReferenceEquals(_obj4, null));
+#pragma warning restore IDE0041 // Use 'is null' check
         }
 
         /// <summary>
-        /// Initializes the specified class with 4 objects of type T and a method which modifies its argumnt of type T.
+        /// Initializes the specified class with 4 objects of type T and a method which modifies its argument of type T.
         /// </summary>
         /// <param name="obj1">The obj1.</param>
         /// <param name="obj2">The obj2 must be a different instance from <paramref name="obj1"/> but considered to be equal to it.</param>
@@ -40,6 +43,7 @@ namespace vm.Aspects.Model.Tests
             T obj4,
             params Action<T>[] modifyingMethods)
         {
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(obj1, null))
                 throw new ArgumentNullException(nameof(obj1));
             if (ReferenceEquals(obj2, null))
@@ -48,6 +52,7 @@ namespace vm.Aspects.Model.Tests
                 throw new ArgumentNullException(nameof(obj3));
             if (ReferenceEquals(obj4, null))
                 throw new ArgumentNullException(nameof(obj4));
+#pragma warning restore IDE0041 // Use 'is null' check
 
             if (modifyingMethods == null)
                 throw new ArgumentNullException(nameof(modifyingMethods));

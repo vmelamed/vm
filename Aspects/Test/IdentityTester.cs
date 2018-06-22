@@ -20,10 +20,18 @@ namespace vm.Aspects.Tests
 
         public void AssertIsInitialized()
         {
+#pragma warning disable IDE0041 // Use 'is null' check
             Assert.IsTrue(!ReferenceEquals(_obj1, null) &&
+#pragma warning restore IDE0041 // Use 'is null' check
+#pragma warning disable IDE0041 // Use 'is null' check
                           !ReferenceEquals(_obj2, null) &&
+#pragma warning restore IDE0041 // Use 'is null' check
+#pragma warning disable IDE0041 // Use 'is null' check
                           !ReferenceEquals(_obj3, null) &&
+#pragma warning restore IDE0041 // Use 'is null' check
+#pragma warning disable IDE0041 // Use 'is null' check
                           !ReferenceEquals(_obj4, null));
+#pragma warning restore IDE0041 // Use 'is null' check
         }
 
         /// <summary>
@@ -41,13 +49,21 @@ namespace vm.Aspects.Tests
             T obj4,
             params Action<T>[] modifyingMethods)
         {
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(obj1, null))
+#pragma warning restore IDE0041 // Use 'is null' check
                 throw new ArgumentNullException(nameof(obj1));
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(obj2, null))
+#pragma warning restore IDE0041 // Use 'is null' check
                 throw new ArgumentNullException(nameof(obj2));
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(obj3, null))
+#pragma warning restore IDE0041 // Use 'is null' check
                 throw new ArgumentNullException(nameof(obj3));
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(obj4, null))
+#pragma warning restore IDE0041 // Use 'is null' check
                 throw new ArgumentNullException(nameof(obj4));
 
             if (modifyingMethods == null)
