@@ -1,298 +1,295 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0"
-         DefaultTargets="Build"
-         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
-            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{165DED1C-2F5B-4941-854C-EC928ADA3F32}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>vm.Aspects.Wcf</RootNamespace>
-        <AssemblyName>vm.Aspects.Wcf</AssemblyName>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Release\vm.Aspects.Wcf.XML</DocumentationFile>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-        <SignAssembly>true</SignAssembly>
-    </PropertyGroup>
-    <PropertyGroup>
-        <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\DebugUnitTest\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;TEST</DefineConstants>
-        <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
-        <DebugType>full</DebugType>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="System" />
-        <Reference Include="System.ComponentModel.DataAnnotations" />
-        <Reference Include="System.Configuration" />
-        <Reference Include="System.Core" />
-        <Reference Include="System.IdentityModel" />
-        <Reference Include="System.Messaging" />
-        <Reference Include="System.Runtime.Serialization" />
-        <Reference Include="System.ServiceModel" />
-        <Reference Include="System.ServiceModel.Activation" />
-        <Reference Include="System.ServiceModel.Web" />
-        <Reference Include="System.Web.Services" />
-        <Reference Include="System.Xml.Linq" />
-        <Reference Include="System.Data.DataSetExtensions" />
-        <Reference Include="Microsoft.CSharp" />
-        <Reference Include="System.Data" />
-        <Reference Include="System.Net.Http" />
-        <Reference Include="System.Xml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
-            <Link>Properties\AssemblyInfo.global.cs</Link>
-        </Compile>
-        <Compile Include="AsyncCallContext.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\AllowUnauthenticatedAttribute.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\BaseHttpAuthorizationManager.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\CustomAuthorizationBaseAttribute.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\BasicAuthenticationAttribute.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\BasicAuthorizationManager.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\IBasicAuthenticate.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\OpenIdAuthorizationAttribute.cs" />
-        <Compile Include="Behaviors\AuthorizationManager\OpenIdServiceAuthorizationManager.cs" />
-        <Compile Include="Behaviors\EnableCors\EnableCorsAttribute.cs" />
-        <Compile Include="Behaviors\EnableCors\EnableCorsEndpointBehavior.cs" />
-        <Compile Include="Behaviors\EnableCors\EnableCorsMessageInspector.cs" />
-        <Compile Include="Behaviors\IWcfContextUtilities.cs" />
-        <Compile Include="Behaviors\EnableCors\PreflightOperationBehavior.cs" />
-        <Compile Include="Behaviors\EnableCors\PreflightOperationInvoker.cs" />
-        <Compile Include="Behaviors\WcfContextUtilities.cs" />
-        <Compile Include="Bindings\BindingConfigurator.cs" />
-        <Compile Include="Bindings\BindingConfigurator.Registrar.cs" />
-        <Compile Include="Bindings\BindingExtensions.cs" />
-        <Compile Include="Bindings\ConfiguredBindingConfigurator.cs" />
-        <Compile Include="Bindings\FireAndForgetConfigurator.cs" />
-        <Compile Include="Bindings\FireAndForgetNoSecurityConfigurator.cs" />
-        <Compile Include="Bindings\MessagingPatternAttribute.cs" />
-        <Compile Include="Bindings\RequestResponseBasicAuthenticationConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseMessageClientCertificateAuthenticationConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseMessageClientWindowsAuthenticationConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseMessageConfiguratorBase.cs" />
-        <Compile Include="Bindings\RequestResponseNoSecurityConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseTransportClientCertificateAuthenticationConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseTransportClientWindowsAuthenticationConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseMessageConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseTransportConfigurator.cs" />
-        <Compile Include="Bindings\RequestResponseTxConfigurator.cs" />
-        <Compile Include="Bindings\StreamingNoSecurityConfigurator.cs" />
-        <Compile Include="Bindings\StreamingConfigurator.cs" />
-        <Compile Include="Bindings\WebContentTypeMapperDefaultJson.cs" />
-        <Compile Include="Clients\ClientTelemetryAttribute.cs" />
-        <Compile Include="Clients\ContextLightClient.cs" />
-        <Compile Include="Clients\ICallIntercept.cs" />
-        <Compile Include="Clients\InterceptorBehavior.cs" />
-        <Compile Include="Clients\InterceptorLightClient.cs" />
-        <Compile Include="Clients\LightClient.cs" />
-        <Compile Include="Constants.cs" />
-        <Compile Include="CustomDataContext.cs" />
-        <Compile Include="CustomDataContextManager.cs" />
-        <Compile Include="CustomDataContextTypeAttribute.cs" />
-        <Compile Include="DataContracts\DataTransferObject.cs" />
-        <Compile Include="DataContracts\DataMessageObject.cs" />
-        <Compile Include="Behaviors\DIBehavior\DIBehaviorAttribute.cs" />
-        <Compile Include="Behaviors\DIBehavior\DIBehaviorExtensionElement.cs" />
-        <Compile Include="Behaviors\DIBehavior\DIEndpointBehavior.cs" />
-        <Compile Include="Behaviors\DIBehavior\DIInstanceProvider.cs" />
-        <Compile Include="EndpointIdentityFactory.cs" />
-        <None Include="Behaviors\ExceptionShielding\ExceptionShieldingAttribute.cs" />
-        <None Include="Behaviors\ExceptionShielding\ExceptionShieldingBehavior.cs" />
-        <None Include="Behaviors\ExceptionShielding\ExceptionShieldingErrorHandler.cs" />
-        <Compile Include="FaultContracts\AggregateFault.cs" />
-        <Compile Include="FaultContracts\ArgumentFault.cs" />
-        <Compile Include="FaultContracts\ArgumentNullFault.cs" />
-        <Compile Include="FaultContracts\ArgumentValidationFault.cs" />
-        <Compile Include="FaultContracts\AuthenticationFault.cs" />
-        <Compile Include="FaultContracts\BusinessFault.cs" />
-        <Compile Include="FaultContracts\DbUpdateFault.cs" />
-        <Compile Include="FaultContracts\DataFault.cs" />
-        <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
-        <Compile Include="FaultContracts\ExceptionExtensions.cs" />
-        <Compile Include="FaultContracts\Fault.cs" />
-        <Compile Include="FaultContracts\Fault.MatchingTables.cs" />
-        <Compile Include="FaultContracts\FileNotFoundFault.cs" />
-        <Compile Include="FaultContracts\FormatFault.cs" />
-        <Compile Include="FaultContracts\InvalidOperationFault.cs" />
-        <Compile Include="FaultContracts\IOFault.cs" />
-        <Compile Include="FaultContracts\Metadata\AggregateFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ArgumentFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ArgumentValidationFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\FaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\FileNotFoundFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ObjectFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ValidationFaultElementMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ValidationFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\ValidationResultsFaultMetadata.cs" />
-        <Compile Include="FaultContracts\Metadata\XmlFaultMetadata.cs" />
-        <Compile Include="FaultContracts\NotImplementedFault.cs" />
-        <Compile Include="FaultContracts\ObjectFault.cs" />
-        <Compile Include="FaultContracts\ObjectIdentifierNotUniqueFault.cs" />
-        <Compile Include="FaultContracts\ObjectNotFoundFault.cs" />
-        <Compile Include="FaultContracts\PathTooLongFault.cs" />
-        <Compile Include="FaultContracts\ProtocolExceptionToWebFaultResolver.cs" />
-        <Compile Include="FaultContracts\RepeatableOperationFault.cs" />
-        <Compile Include="FaultContracts\SerializationFault.cs" />
-        <Compile Include="FaultContracts\UnauthorizedAccessFault.cs" />
-        <Compile Include="FaultContracts\InvalidObjectFault.cs" />
-        <Compile Include="FaultContracts\ValidationFaultElement.cs" />
-        <Compile Include="FaultContracts\ValidationResultsExtensions.cs" />
-        <Compile Include="FaultContracts\XmlFault.cs" />
-        <Compile Include="GlobalSuppressions.cs" />
-        <Compile Include="MimeTypes.cs" />
-        <Compile Include="Msmq\Utilities.cs" />
-        <Compile Include="OperationContextExtensions.cs" />
-        <Compile Include="PerCallContextLifetimeManager.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Properties\Resources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
-        <Compile Include="ServiceIdentity.cs" />
-        <Compile Include="ServicePolicies\ServiceCallTraceData.cs" />
-        <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandler.cs" />
-        <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.cs" />
-        <Compile Include="ServicePolicies\ServiceCallExceptionHandler.cs" />
-        <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
-        <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
-        <None Include="project.assets.json" />
-        <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
-        <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
-        <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.Registrar.cs" />
-        <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
-        <Compile Include="Services\ICreateServiceHost.cs" />
-        <Compile Include="Services\IInitializeService.cs" />
-        <Compile Include="Services\MessagingPatternInitializedServiceHostFactory.cs" />
-        <Compile Include="Services\MessagingPatternServiceHostFactory.cs" />
-        <Compile Include="Services\ServiceHostExtensions.cs" />
-        <Compile Include="Behaviors\Validating\ValidatingBehavior.cs" />
-        <Compile Include="Behaviors\Validating\ValidatingBehaviorAttribute.cs" />
-        <Compile Include="Behaviors\Validating\ValidatingBindingElement.cs" />
-        <Compile Include="Behaviors\Validating\ValidatingBindingElementExtension.cs" />
-        <Compile Include="Behaviors\Validating\ValidatingParameterInspector.cs" />
-        <Compile Include="UriComparer.cs" />
-        <Compile Include="UriExtensions.cs" />
-        <Compile Include="WcfTypesExtensions.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">
-            <Link>Dictionary.xml</Link>
-        </CodeAnalysisDictionary>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\..\Common Items\vm.snk">
-            <Link>vm.snk</Link>
-        </None>
-        <None Include="ApplicationInsights.config">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\vm.Aspects.csproj">
-            <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
-            <Name>vm.Aspects</Name>
-        </ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-        <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="EntityFramework">
-            <Version>6.2.0</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.IdentityModel.Logging">
-            <Version>5.2.2</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.IdentityModel.Protocols">
-            <Version>5.2.2</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
-            <Version>5.2.2</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens">
-            <Version>5.2.2</Version>
-        </PackageReference>
-        <PackageReference Include="Newtonsoft.Json">
-            <Version>11.0.2</Version>
-        </PackageReference>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt">
-            <Version>5.2.2</Version>
-        </PackageReference>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{165DED1C-2F5B-4941-854C-EC928ADA3F32}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>vm.Aspects.Wcf</RootNamespace>
+    <AssemblyName>vm.Aspects.Wcf</AssemblyName>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\vm.Aspects.Wcf.XML</DocumentationFile>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugUnitTest\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;TEST</DefineConstants>
+    <DocumentationFile>bin\Debug\vm.Aspects.Wcf.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
+      <Link>Properties\AssemblyInfo.global.cs</Link>
+    </Compile>
+    <Compile Include="AsyncCallContext.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\AllowUnauthenticatedAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BaseHttpAuthorizationManager.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\CustomAuthorizationBaseAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BasicAuthenticationAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\BasicAuthorizationManager.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\IBasicAuthenticate.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\OpenIdAuthorizationAttribute.cs" />
+    <Compile Include="Behaviors\AuthorizationManager\OpenIdServiceAuthorizationManager.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsAttribute.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsEndpointBehavior.cs" />
+    <Compile Include="Behaviors\EnableCors\EnableCorsMessageInspector.cs" />
+    <Compile Include="Behaviors\IWcfContextUtilities.cs" />
+    <Compile Include="Behaviors\EnableCors\PreflightOperationBehavior.cs" />
+    <Compile Include="Behaviors\EnableCors\PreflightOperationInvoker.cs" />
+    <Compile Include="Behaviors\WcfContextUtilities.cs" />
+    <Compile Include="Bindings\BindingConfigurator.cs" />
+    <Compile Include="Bindings\BindingConfigurator.Registrar.cs" />
+    <Compile Include="Bindings\BindingExtensions.cs" />
+    <Compile Include="Bindings\ConfiguredBindingConfigurator.cs" />
+    <Compile Include="Bindings\FireAndForgetConfigurator.cs" />
+    <Compile Include="Bindings\FireAndForgetNoSecurityConfigurator.cs" />
+    <Compile Include="Bindings\MessagingPatternAttribute.cs" />
+    <Compile Include="Bindings\RequestResponseBasicAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageClientCertificateAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageClientWindowsAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageConfiguratorBase.cs" />
+    <Compile Include="Bindings\RequestResponseNoSecurityConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportClientCertificateAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportClientWindowsAuthenticationConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseMessageConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTransportConfigurator.cs" />
+    <Compile Include="Bindings\RequestResponseTxConfigurator.cs" />
+    <Compile Include="Bindings\StreamingNoSecurityConfigurator.cs" />
+    <Compile Include="Bindings\StreamingConfigurator.cs" />
+    <Compile Include="Bindings\WebContentTypeMapperDefaultJson.cs" />
+    <Compile Include="Clients\ClientTelemetryAttribute.cs" />
+    <Compile Include="Clients\ContextLightClient.cs" />
+    <Compile Include="Clients\ICallIntercept.cs" />
+    <Compile Include="Clients\InterceptorBehavior.cs" />
+    <Compile Include="Clients\InterceptorLightClient.cs" />
+    <Compile Include="Clients\LightClient.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="CustomDataContext.cs" />
+    <Compile Include="CustomDataContextManager.cs" />
+    <Compile Include="CustomDataContextTypeAttribute.cs" />
+    <Compile Include="DataContracts\DataTransferObject.cs" />
+    <Compile Include="DataContracts\DataMessageObject.cs" />
+    <Compile Include="Behaviors\DIBehavior\DIBehaviorAttribute.cs" />
+    <Compile Include="Behaviors\DIBehavior\DIBehaviorExtensionElement.cs" />
+    <Compile Include="Behaviors\DIBehavior\DIEndpointBehavior.cs" />
+    <Compile Include="Behaviors\DIBehavior\DIInstanceProvider.cs" />
+    <Compile Include="EndpointIdentityFactory.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingAttribute.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingBehavior.cs" />
+    <None Include="Behaviors\ExceptionShielding\ExceptionShieldingErrorHandler.cs" />
+    <Compile Include="FaultContracts\AggregateFault.cs" />
+    <Compile Include="FaultContracts\ArgumentFault.cs" />
+    <Compile Include="FaultContracts\ArgumentNullFault.cs" />
+    <Compile Include="FaultContracts\ArgumentValidationFault.cs" />
+    <Compile Include="FaultContracts\AuthenticationFault.cs" />
+    <Compile Include="FaultContracts\BusinessFault.cs" />
+    <Compile Include="FaultContracts\DbUpdateFault.cs" />
+    <Compile Include="FaultContracts\DataFault.cs" />
+    <Compile Include="FaultContracts\DirectoryNotFoundFault.cs" />
+    <Compile Include="FaultContracts\ExceptionExtensions.cs" />
+    <Compile Include="FaultContracts\Fault.cs" />
+    <Compile Include="FaultContracts\Fault.MatchingTables.cs" />
+    <Compile Include="FaultContracts\FileNotFoundFault.cs" />
+    <Compile Include="FaultContracts\FormatFault.cs" />
+    <Compile Include="FaultContracts\InvalidOperationFault.cs" />
+    <Compile Include="FaultContracts\IOFault.cs" />
+    <Compile Include="FaultContracts\Metadata\AggregateFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ArgumentFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ArgumentValidationFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\FaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\FileNotFoundFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ObjectFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ValidationFaultElementMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ValidationFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\ValidationResultsFaultMetadata.cs" />
+    <Compile Include="FaultContracts\Metadata\XmlFaultMetadata.cs" />
+    <Compile Include="FaultContracts\NotImplementedFault.cs" />
+    <Compile Include="FaultContracts\ObjectFault.cs" />
+    <Compile Include="FaultContracts\ObjectIdentifierNotUniqueFault.cs" />
+    <Compile Include="FaultContracts\ObjectNotFoundFault.cs" />
+    <Compile Include="FaultContracts\PathTooLongFault.cs" />
+    <Compile Include="FaultContracts\ProtocolExceptionToWebFaultResolver.cs" />
+    <Compile Include="FaultContracts\RepeatableOperationFault.cs" />
+    <Compile Include="FaultContracts\SerializationFault.cs" />
+    <Compile Include="FaultContracts\UnauthorizedAccessFault.cs" />
+    <Compile Include="FaultContracts\InvalidObjectFault.cs" />
+    <Compile Include="FaultContracts\ValidationFaultElement.cs" />
+    <Compile Include="FaultContracts\ValidationResultsExtensions.cs" />
+    <Compile Include="FaultContracts\XmlFault.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="Msmq\Utilities.cs" />
+    <Compile Include="OperationContextExtensions.cs" />
+    <Compile Include="PerCallContextLifetimeManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceIdentity.cs" />
+    <Compile Include="ServicePolicies\ServiceCallTraceData.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.cs" />
+    <Compile Include="ServicePolicies\ServiceCallExceptionHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceCallTraceCallHandler.cs" />
+    <Compile Include="ServicePolicies\ServiceExceptionHandlingCallHandler.cs" />
+    <None Include="project.assets.json" />
+    <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.cs" />
+    <None Include="ServicePolicies\ServiceExceptionHandlingPolicies.Registrar.cs" />
+    <Compile Include="ServicePolicies\ServiceFaultFromExceptionHandlingPolicies.Registrar.cs" />
+    <Compile Include="ServicePolicies\ServiceParameterValidatingCallHandler.cs" />
+    <Compile Include="Services\ICreateServiceHost.cs" />
+    <Compile Include="Services\IInitializeService.cs" />
+    <Compile Include="Services\MessagingPatternInitializedServiceHostFactory.cs" />
+    <Compile Include="Services\MessagingPatternServiceHostFactory.cs" />
+    <Compile Include="Services\ServiceHostExtensions.cs" />
+    <Compile Include="Behaviors\Validating\ValidatingBehavior.cs" />
+    <Compile Include="Behaviors\Validating\ValidatingBehaviorAttribute.cs" />
+    <Compile Include="Behaviors\Validating\ValidatingBindingElement.cs" />
+    <Compile Include="Behaviors\Validating\ValidatingBindingElementExtension.cs" />
+    <Compile Include="Behaviors\Validating\ValidatingParameterInspector.cs" />
+    <Compile Include="UriComparer.cs" />
+    <Compile Include="UriExtensions.cs" />
+    <Compile Include="WcfTypesExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">
+      <Link>Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common Items\vm.snk">
+      <Link>vm.snk</Link>
+    </None>
+    <None Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\vm.Aspects.csproj">
+      <Project>{b31ac12d-4197-4ed9-9768-0c9abcaf38bf}</Project>
+      <Name>vm.Aspects</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="EntityFramework">
+      <Version>6.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Logging">
+      <Version>5.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Protocols">
+      <Version>5.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect">
+      <Version>5.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens">
+      <Version>5.2.4</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt">
+      <Version>5.2.4</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
