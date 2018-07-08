@@ -26,7 +26,7 @@
             - the maximum number of dumped elements of sequence properties
             * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
-            * Built and tested with .NET 4.5.2, 4.6.2, 4.7.1, 4.7.2
+            * Built and tested with .NET 4.6.2, 4.7.1, 4.7.2
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
@@ -34,9 +34,9 @@
             on System.IServiceProvider. Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
             and rename the package to vm.Aspects.Diagnostics.ObjectTextDumper for consistency with all vm.Aspects.* packages and libraries out there.
 
-            However, this is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
-            Common Service Locator compatible DI container. As a result, now if clients need to implement their own member comparer, they can do so by registering it
-            in a System.IServiceProvider compatible DI container but during their initialization phase, they would have to assign a reference to their concrete
+            This is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
+            Common Service Locator compatible DI container. As a result, if clients need to implement their own member comparer, they can do so by registering it
+            in a System.IServiceProvider compatible DI container and also during their initialization phase, they would have to assign a reference to their concrete
             implementation of System.IServiceProvider to the static property vm.Aspects.Diagnostics.ServiceProvider.Current.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
