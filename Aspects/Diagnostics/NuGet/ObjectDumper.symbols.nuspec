@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>AspectObjectDumper</id>
-        <version>1.10.2</version>
+        <id>vm.Aspects.Diagnostics.ObjectTextDumper</id>
+        <version>2.0.0</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
-            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form. Helpful for debugging and logging purposes.
+            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form.
+            Helpful for debugging and logging purposes.
         </summary>
         <description>
             Features:
@@ -29,26 +30,26 @@
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
-            Rebuilt for .net 4.7.2 and C# 7.2.
+            Note that this package derives from the package AspectObjectDumper v.1.10.2 where I replaced the dependency on the Common Service Locator with dependency
+            on System.IServiceProvider. Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
+            and rename the package to vm.Aspects.Diagnostics.ObjectTextDumper for consistency with all vm.Aspects.* packages and libraries out there.
+
+            However, this is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
+            Common Service Locator compatible DI container. As a result, now if clients need to implement their own member comparer, they can do so by registering it
+            in a System.IServiceProvider compatible DI container but during their initialization phase, they would have to assign a reference to their concrete
+            implementation of System.IServiceProvider to the static property vm.Aspects.Diagnostics.ServiceProvider.Current.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
-            <dependency id="CommonServiceLocator"
-                        version="2.0.3" /> 
+            <dependency id="Microsoft.Extensions.DependencyInjection.Abstract"
+                        version="2.1.1" />
         </dependencies>
-        <tags>dump object .net diagnostics debug log aspects</tags>
+        <tags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</tags>
     </metadata>
     <files>
-        <file src="..\bin\pack4.5.2\vm.Aspects.Diagnostics.ObjectDumper.dll"
-              target="lib\net452"/>
-        <file src="..\bin\pack4.5.2\vm.Aspects.Diagnostics.ObjectDumper.pdb"
-              target="lib\net452"/>
-        <file src="..\bin\pack4.5.2\vm.Aspects.Diagnostics.ObjectDumper.xml"
-              target="lib\net452"/>
-
         <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectDumper.dll"
               target="lib\net462"/>
         <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectDumper.pdb"

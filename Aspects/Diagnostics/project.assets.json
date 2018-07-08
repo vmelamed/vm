@@ -1,219 +1,168 @@
 {
     "version": 3,
     "targets": {
-        ".NETFramework,Version=v4.5.2": {
-            "CommonServiceLocator/2.0.3": {
-                "type": "package",
-                "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                },
-                "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                }
-            }
-        },
-        ".NETFramework,Version=v4.5.2/win": {
-            "CommonServiceLocator/2.0.3": {
-                "type": "package",
-                "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                },
-                "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                }
-            }
-        },
-        ".NETFramework,Version=v4.5.2/win-x64": {
-            "CommonServiceLocator/2.0.3": {
-                "type": "package",
-                "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                },
-                "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                }
-            }
-        },
-        ".NETFramework,Version=v4.5.2/win-x86": {
-            "CommonServiceLocator/2.0.3": {
-                "type": "package",
-                "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                },
-                "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
-                }
-            }
-        },
-
         ".NETFramework,Version=v4.6.2": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x64": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.6.2/win-x86": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net45/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
 
         ".NETFramework,Version=v4.7.1": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win-x64": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.1/win-x86": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
 
         ".NETFramework,Version=v4.7.2": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.2/win": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.2/win-x64": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         },
         ".NETFramework,Version=v4.7.2/win-x86": {
-            "CommonServiceLocator/2.0.3": {
+            "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
                 "type": "package",
                 "compile": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 },
                 "runtime": {
-                    "lib/net47/CommonServiceLocator.dll": {}
+                    "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
                 }
             }
         }
     },
     "libraries": {
-        "CommonServiceLocator/2.0.3": {
-            "sha512": "AWao0d/oTooOpf4IXPFP+Ol7VrT/r9pAg0/cMYk2se3QaibYUHdlk93blt5pe7ByGeJoBd7ZNE/gZsAI54UCpA==",
+        "Microsoft.Extensions.DependencyInjection.Abstractions/2.1.1": {
+            "sha512": "PW1596sF97gpIc1JuUuYvTmeLfeqC5whbWPsWgJhN0fdwz683him3b/HB0dqhFesVssOjnnA0fEz4+S0gUeBqA==",
             "type": "package",
-            "path": "CommonServiceLocator/2.0.3",
+            "path": "microsoft.extensions.dependencyinjection.abstractions/2.1.1",
             "files": [
-                "commonservicelocator.2.0.3.nupkg.sha512",
-                "commonservicelocator.nuspec",
-                "lib/net40/CommonServiceLocator.dll",
-                "lib/net45/CommonServiceLocator.dll",
-                "lib/net47/CommonServiceLocator.dll",
-                "lib/netcoreapp1.0/CommonServiceLocator.dll",
-                "lib/netstandard1.0/CommonServiceLocator.dll",
-                "lib/netstandard2.0/CommonServiceLocator.dll"
+                ".signature.p7s",
+                "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+                "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+                "microsoft.extensions.dependencyinjection.abstractions.2.1.1.nupkg.sha512",
+                "microsoft.extensions.dependencyinjection.abstractions.nuspec"
             ]
         }
     },
     "projectFileDependencyGroups": {
-        ".NETFramework,Version=v4.5.2": [
-            "CommonServiceLocator >= 2.0.3"
-        ],
         ".NETFramework,Version=v4.6.2": [
-            "CommonServiceLocator >= 2.0.3"
+            "Microsoft.Extensions.DependencyInjection.Abstractions >= 2.1.1"
         ],
         ".NETFramework,Version=v4.7.1": [
-            "CommonServiceLocator >= 2.0.3"
+            "Microsoft.Extensions.DependencyInjection.Abstractions >= 2.1.1"
         ],
         ".NETFramework,Version=v4.7.2": [
-            "CommonServiceLocator >= 2.0.3"
+            "Microsoft.Extensions.DependencyInjection.Abstractions >= 2.1.1"
         ]
     },
     "packageFolders": {
-        "C:\\Users\\Valo\\.nuget\\packages\\": {}
+        "C:\\Users\\valo\\.nuget\\packages\\": {}
     },
     "project": {
         "version": "1.0.0",
@@ -221,30 +170,24 @@
             "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
             "projectName": "vm.Aspects.Diagnostics.ObjectDumper",
             "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
-            "packagesPath": "C:\\Users\\Valo\\.nuget\\packages\\",
+            "packagesPath": "C:\\Users\\valo\\.nuget\\packages\\",
             "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\obj\\",
             "projectStyle": "PackageReference",
             "skipContentFileWrite": true,
             "configFilePaths": [
-                "C:\\Users\\Valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+                "C:\\Users\\valo\\AppData\\Roaming\\NuGet\\NuGet.Config",
                 "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
             ],
             "originalTargetFrameworks": [
-                "net452",
                 "net462",
                 "net471",
                 "net472"
             ],
             "sources": {
-                "C:\\NuGet": {},
                 "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-                "https://nuget.org/api/v2/": {},
-                "https://www.myget.org/F/applicationinsights-sdk-labs/api/v3/index.json": {}
+                "https://api.nuget.org/v3/index.json": {}
             },
             "frameworks": {
-                "net452": {
-                    "projectReferences": {}
-                },
                 "net462": {
                     "projectReferences": {}
                 },
@@ -257,35 +200,27 @@
             }
         },
         "frameworks": {
-            "net452": {
-                "dependencies": {
-                    "CommonServiceLocator": {
-                        "target": "Package",
-                        "version": "[2.0.3, )"
-                    }
-                }
-            },
             "net462": {
                 "dependencies": {
-                    "CommonServiceLocator": {
+                    "Microsoft.Extensions.DependencyInjection.Abstractions": {
                         "target": "Package",
-                        "version": "[2.0.3, )"
+                        "version": "[2.1.1, )"
                     }
                 }
             },
             "net471": {
                 "dependencies": {
-                    "CommonServiceLocator": {
+                    "Microsoft.Extensions.DependencyInjection.Abstractions": {
                         "target": "Package",
-                        "version": "[2.0.3, )"
+                        "version": "[2.1.1, )"
                     }
                 }
             },
             "net472": {
                 "dependencies": {
-                    "CommonServiceLocator": {
+                    "Microsoft.Extensions.DependencyInjection.Abstractions": {
                         "target": "Package",
-                        "version": "[2.0.3, )"
+                        "version": "[2.1.1, )"
                     }
                 }
             }

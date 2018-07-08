@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics

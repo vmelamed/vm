@@ -1,190 +1,187 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0"
-         DefaultTargets="Build"
-         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
-            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{372A2FEF-C004-498C-B57F-CF0ACA66C37B}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
-        <AssemblyName>vm.Aspects.Diagnostics.ObjectDumper</AssemblyName>
-        <FileAlignment>512</FileAlignment>
-        <TargetFrameworkProfile />
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <Prefer32Bit>false</Prefer32Bit>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE;DOTNET471</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
-        <Prefer32Bit>false</Prefer32Bit>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-        <SignAssembly>true</SignAssembly>
-    </PropertyGroup>
-    <PropertyGroup>
-        <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\DebugUnitTest\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471;TEST</DefineConstants>
-        <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
-        <DebugType>full</DebugType>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
-        <Prefer32Bit>false</Prefer32Bit>
-        <NoWarn>3001, 3002, 3003</NoWarn>
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="System" />
-        <Reference Include="System.ComponentModel.DataAnnotations" />
-        <Reference Include="System.Data.DataSetExtensions" />
-        <Reference Include="Microsoft.CSharp" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
-            <Link>Properties\AssemblyInfo.global.cs</Link>
-        </Compile>
-        <Compile Include="ClassDumpData.cs" />
-        <Compile Include="ClassMetadataRegistrar.cs" />
-        <Compile Include="ClassMetadataResolver.cs" />
-        <Compile Include="Constants.cs" />
-        <Compile Include="DefaultServiceLocator.cs" />
-        <Compile Include="DumpAttribute.cs" />
-        <Compile Include="DumpFormat.cs" />
-        <Compile Include="ExternalMetadata\ClaimMetadata.cs" />
-        <Compile Include="ExternalMetadata\ClaimsIdentityMetadata.cs" />
-        <Compile Include="ExternalMetadata\TaskGenericDumpMetadata.cs" />
-        <Compile Include="Implementation\CSharpDumpExpression.cs" />
-        <Compile Include="Implementation\CSharpDumpExpression.Visitor.cs">
-            <DependentUpon>CSharpDumpExpression.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Implementation\DumpScript.Loops.cs">
-            <DependentUpon>DumpScript.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Implementation\DumpScript.Public.cs">
-            <DependentUpon>DumpScript.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Implementation\DumpScript.PublicWriteOverloads.cs">
-            <DependentUpon>DumpScript.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Implementation\DumpedObject.cs" />
-        <Compile Include="Implementation\DumpedProperty.cs" />
-        <Compile Include="Implementation\DumpScript.WriteOverloads.cs">
-            <DependentUpon>DumpScript.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Implementation\DumpScriptCache.cs" />
-        <Compile Include="Implementation\DumpTextWriter.cs" />
-        <Compile Include="Implementation\MemberDumpOrder.cs" />
-        <Compile Include="Implementation\PropertyDumpResolver.cs" />
-        <Compile Include="Implementation\DumpScript.cs" />
-        <Compile Include="Implementation\DumpState.cs" />
-        <Compile Include="DumpUtilities.cs" />
-        <Compile Include="Extensions.cs" />
-        <Compile Include="ExternalMetadata\ArgumentExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ArgumentValidationExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\BinaryExpressionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ConfigurationErrorsExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ConstantExpressionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\CultureInfoDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ExceptionDumpNoStackMetadata.cs" />
-        <Compile Include="ExternalMetadata\ExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ExpressionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\LambdaExpressionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\MetadataItemDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ParameterExpressionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\SecurityExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\SqlErrorDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\SqlExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\TaskDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\TypeDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\UpdateExceptionDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ValidationResultDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\ValidationResultsDumpMetadata.cs" />
-        <Compile Include="ExternalMetadata\WebExceptionDumpMetadata.cs" />
-        <Compile Include="GlobalSuppressions.cs" />
-        <Compile Include="IMemberInfoComparer.cs" />
-        <Compile Include="ObjectTextDumper.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Properties\Resources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
-        <Compile Include="ServiceResolver.cs" />
-        <Compile Include="WriterExtensions.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">
-            <Link>Dictionary.xml</Link>
-        </CodeAnalysisDictionary>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\..\Common Items\vm.snk">
-            <Link>vm.snk</Link>
-        </None>
-        <None Include="NuGet\ObjectDumper.symbols.nuspec">
-            <SubType>Designer</SubType>
-        </None>
-        <None Include="NuGet\ObjectDumper.nuspec">
-            <SubType>Designer</SubType>
-        </None>
-        <None Include="project.assets.json" />
-        <None Include="NuGet\PublishObjectDumper.cmd" />
-        <None Include="ObjectDumper.md" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="CommonServiceLocator">
-            <Version>2.0.3</Version>
-        </PackageReference>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{372A2FEF-C004-498C-B57F-CF0ACA66C37B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectDumper</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;DOTNET471</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugUnitTest\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471;TEST</DefineConstants>
+    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>3001, 3002, 3003</NoWarn>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
+      <Link>Properties\AssemblyInfo.global.cs</Link>
+    </Compile>
+    <Compile Include="ClassDumpData.cs" />
+    <Compile Include="ClassMetadataRegistrar.cs" />
+    <Compile Include="ClassMetadataResolver.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DumpAttribute.cs" />
+    <Compile Include="DumpFormat.cs" />
+    <Compile Include="ExternalMetadata\ClaimMetadata.cs" />
+    <Compile Include="ExternalMetadata\ClaimsIdentityMetadata.cs" />
+    <Compile Include="ExternalMetadata\TaskGenericDumpMetadata.cs" />
+    <Compile Include="Implementation\CSharpDumpExpression.cs" />
+    <Compile Include="Implementation\CSharpDumpExpression.Visitor.cs">
+      <DependentUpon>CSharpDumpExpression.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpScript.Loops.cs">
+      <DependentUpon>DumpScript.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpScript.Public.cs">
+      <DependentUpon>DumpScript.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpScript.PublicWriteOverloads.cs">
+      <DependentUpon>DumpScript.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpedObject.cs" />
+    <Compile Include="Implementation\DumpedProperty.cs" />
+    <Compile Include="Implementation\DumpScript.WriteOverloads.cs">
+      <DependentUpon>DumpScript.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Implementation\DumpScriptCache.cs" />
+    <Compile Include="Implementation\DumpTextWriter.cs" />
+    <Compile Include="Implementation\InternalServiceProvider.cs" />
+    <Compile Include="Implementation\MemberDumpOrder.cs" />
+    <Compile Include="Implementation\PropertyDumpResolver.cs" />
+    <Compile Include="Implementation\DumpScript.cs" />
+    <Compile Include="Implementation\DumpState.cs" />
+    <Compile Include="DumpUtilities.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="ExternalMetadata\ArgumentExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ArgumentValidationExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\BinaryExpressionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ConfigurationErrorsExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ConstantExpressionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\CultureInfoDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ExceptionDumpNoStackMetadata.cs" />
+    <Compile Include="ExternalMetadata\ExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ExpressionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\LambdaExpressionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\MetadataItemDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ParameterExpressionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\SecurityExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\SqlErrorDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\SqlExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\TaskDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\TypeDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\UpdateExceptionDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ValidationResultDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\ValidationResultsDumpMetadata.cs" />
+    <Compile Include="ExternalMetadata\WebExceptionDumpMetadata.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IMemberInfoComparer.cs" />
+    <Compile Include="ObjectTextDumper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceProvider.cs" />
+    <Compile Include="WriterExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">
+      <Link>Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common Items\vm.snk">
+      <Link>vm.snk</Link>
+    </None>
+    <None Include="NuGet\ObjectDumper.symbols.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NuGet\ObjectDumper.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="project.assets.json" />
+    <None Include="NuGet\PublishObjectDumper.cmd" />
+    <None Include="ObjectDumper.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <Version>2.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

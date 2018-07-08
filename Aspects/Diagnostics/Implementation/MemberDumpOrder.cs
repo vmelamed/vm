@@ -11,7 +11,6 @@ namespace vm.Aspects.Diagnostics.Implementation
         Type _metadata;
 
         #region IComparer<MemberInfo> Members
-
         public int Compare(
             MemberInfo x,
             MemberInfo y)
@@ -65,11 +64,9 @@ namespace vm.Aspects.Diagnostics.Implementation
                         ? (orderX >= 0 ? -1 : 1)
                         : (orderY >= 0 ? 1 : -1);
         }
-
         #endregion
 
         #region IPropertyInfoComparer Members
-
         public IMemberInfoComparer SetMetadata(Type metadata)
         {
             if (_metadata == metadata)
@@ -81,7 +78,6 @@ namespace vm.Aspects.Diagnostics.Implementation
             _metadata = metadata;
             return this;
         }
-
         #endregion
     }
 }

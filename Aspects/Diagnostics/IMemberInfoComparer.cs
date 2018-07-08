@@ -13,10 +13,10 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Sets the metadata which provides ordering info by means of <see cref="DumpAttribute.Order"/> and others.
         /// This method can be called before calling the <see cref="IComparer{MemberInfo}"/> methods. If called
-        /// more than once and the <paramref name="metadata"/> is different the method could throw an exception.
+        /// more than once and the <paramref name="metadata"/> is different the method should throw an exception.
         /// </summary>
         /// <param name="metadata">The metadata to be set.</param>
-        /// <returns>This IPropertyInfoComparer object, allows for method chaining.</returns>
+        /// <returns>This <see cref="IMemberInfoComparer"/> object, allowing for method chaining.</returns>
         IMemberInfoComparer SetMetadata(Type metadata);
     }
 }

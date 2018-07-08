@@ -6,6 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics.Implementation
@@ -80,12 +83,12 @@ namespace vm.Aspects.Diagnostics.Implementation
             }
 
             Enumerator = CurrentType.GetProperties(_dumper.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
-                         .Union<MemberInfo>(
+                            .Union<MemberInfo>(
                          CurrentType.GetFields(_dumper.FieldsBindingFlags | BindingFlags.DeclaredOnly))
                             .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
-                            .OrderBy(p => p, ServiceResolver
-                                                .Default
-                                                .GetInstance<IMemberInfoComparer>()
+                            .OrderBy(p => p, ServiceProvider
+                                                .Current
+                                                .GetRequiredService<IMemberInfoComparer>()
                                                 .SetMetadata(ClassDumpData.Metadata))
                             .GetEnumerator();
         }
@@ -559,8 +562,8 @@ namespace vm.Aspects.Diagnostics.Implementation
                 throw new ArgumentNullException(nameof(dumpAttribute));
 
             var sequenceType = sequence.GetType();
-            var isCustom = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
-            var dumpCustom = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
+            var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
+            var dumpCustom   = enumerateCustom  &&  dumpAttribute.Enumerate == ShouldDump.Dump;
 
             if (isCustom  &&  !dumpCustom)
                 return false;
@@ -651,7 +654,12 @@ namespace vm.Aspects.Diagnostics.Implementation
                 }
                 else
                 {
-                    var message0 = string.Format(CultureInfo.InvariantCulture, Resources.CouldNotFindCustomDumpers, dumpMethodName, type.FullName, dumpClass.FullName);
+                    var message0 = string.Format(
+                                            CultureInfo.InvariantCulture,
+                                            Resources.CouldNotFindCustomDumpers,
+                                            dumpMethodName,
+                                            type.FullName,
+                                            dumpClass.FullName);
 
                     if (IsInDumpingMode)
                         _dumper.Writer.Write(message0);

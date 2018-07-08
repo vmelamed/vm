@@ -231,8 +231,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.3</Version>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <Version>2.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <Choose>
