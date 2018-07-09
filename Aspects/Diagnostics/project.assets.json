@@ -167,9 +167,9 @@
     "project": {
         "version": "1.0.0",
         "restore": {
-            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
-            "projectName": "vm.Aspects.Diagnostics.ObjectDumper",
-            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectDumper.csproj",
+            "projectUniqueName": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectTextDumper.csproj",
+            "projectName": "vm.Aspects.Diagnostics.ObjectTextDumper",
+            "projectPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\vm.Aspects.Diagnostics.ObjectTextDumper.csproj",
             "packagesPath": "C:\\Users\\valo\\.nuget\\packages\\",
             "outputPath": "C:\\Projects\\Git\\vm\\Aspects\\Diagnostics\\obj\\",
             "projectStyle": "PackageReference",

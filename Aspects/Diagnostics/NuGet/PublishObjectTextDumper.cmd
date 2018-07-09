@@ -24,7 +24,7 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 del /q bin\pack%FrameworkVersion%\*.*
 if not exist obj md obj
 copy /y project.assets.json obj
-msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+msbuild vm.Aspects.Diagnostics.ObjectTextDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 rem ------- build for .NET 4.7.1 -------
@@ -34,7 +34,7 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 del /q bin\pack%FrameworkVersion%\*.*
 if not exist obj md obj
 copy /y project.assets.json obj
-msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+msbuild vm.Aspects.Diagnostics.ObjectTextDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 rem ------- build for .NET 4.7.2 -------
@@ -44,23 +44,23 @@ set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFram
 del /q bin\pack%FrameworkVersion%\*.*
 if not exist obj md obj
 copy /y project.assets.json obj
-msbuild vm.Aspects.Diagnostics.ObjectDumper.csproj %commonBuildOptions%
+msbuild vm.Aspects.Diagnostics.ObjectTextDumper.csproj %commonBuildOptions%
 if errorlevel 1 goto exit
 
 rem ------- Package -------
 
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration%
+NuGet Pack NuGet\ObjectTextDumper.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration%
 ) else (
-NuGet Pack NuGet\ObjectDumper.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration%
+NuGet Pack NuGet\ObjectTextDumper.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration%
 )
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\ObjectDumper.symbols.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ObjectTextDumper.symbols.nuspec -version %vmDumperVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
-NuGet Pack NuGet\ObjectDumper.symbols.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+NuGet Pack NuGet\ObjectTextDumper.symbols.nuspec -version %vmDumperVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
 )
 
-if /i .%suffix%. NEQ .. ren AspectObjectDumper.%vmDumperVersion%.symbols.nupkg AspectObjectDumper.%vmDumperVersion%-%suffix%.symbols.nupkg
+if /i .%suffix%. NEQ .. ren vm.Aspects.Diagnostics.ObjectTextDumper.%vmDumperVersion%.symbols.nupkg vm.Aspects.Diagnostics.ObjectTextDumper.%vmDumperVersion%-%suffix%.symbols.nupkg
 
 if errorlevel 1 goto exit
 
@@ -73,9 +73,9 @@ rem ------- Upload to NuGet.org -------
 @pause > nul:
 
 if /i .%suffix%. EQU .. (
-NuGet Push AspectObjectDumper.%vmDumperVersion%.nupkg -source https://www.nuget.org
+NuGet Push vm.Aspects.Diagnostics.ObjectTextDumper.%vmDumperVersion%.nupkg -source https://www.nuget.org
 ) else (
-NuGet Push AspectObjectDumper.%vmDumperVersion%-%suffix%.nupkg -source https://www.nuget.org
+NuGet Push vm.Aspects.Diagnostics.ObjectTextDumper.%vmDumperVersion%-%suffix%.nupkg -source https://www.nuget.org
 )
 
 :exit

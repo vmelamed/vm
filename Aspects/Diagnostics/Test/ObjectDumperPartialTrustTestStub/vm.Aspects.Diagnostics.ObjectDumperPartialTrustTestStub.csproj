@@ -7,8 +7,8 @@
     <ProjectGuid>{2C655AF4-8D80-44F1-B64C-F82B763ACF12}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>vm.Aspects.Diagnostics.ObjectDumper.Test.PartialTrust</RootNamespace>
-    <AssemblyName>vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub</AssemblyName>
+    <RootNamespace>vm.Aspects.Diagnostics.Tests.ObjectTextDumper.PartialTrust</RootNamespace>
+    <AssemblyName>vm.Aspects.Diagnostics.Tests.ObjectTextDumperPartialTrustStub</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -195,9 +195,9 @@
     <None Include="PartialTrust.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectDumper.csproj">
+    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
       <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
+      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

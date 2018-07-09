@@ -6,8 +6,8 @@
     <ProjectGuid>{39774AEF-F8CD-4605-A4B2-E563D289CCBC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>vm.Aspects.Diagnostics.ObjectDumper.Tests</RootNamespace>
-    <AssemblyName>vm.Aspects.Diagnostics.ObjectDumper.Tests</AssemblyName>
+    <RootNamespace>vm.Aspects.Diagnostics.Tests.ObjectDumper</RootNamespace>
+    <AssemblyName>vm.Aspects.Diagnostics.Tests.ObjectDumper</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -216,9 +216,9 @@
     <Compile Include="ObjectTextDumperTest.TestData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectDumper.csproj">
+    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
       <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectDumper</Name>
+      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
     </ProjectReference>
     <ProjectReference Include="..\ObjectDumperPartialTrustTestStub\vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub.csproj">
       <Project>{2c655af4-8d80-44f1-b64c-f82b763acf12}</Project>

@@ -8,13 +8,28 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
-    <AssemblyName>vm.Aspects.Diagnostics.ObjectDumper</AssemblyName>
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
     <LangVersion>latest</LangVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,7 +39,7 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
     <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
@@ -40,7 +55,7 @@
     <DefineConstants>TRACE;DOTNET471</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.ObjectDumper.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>3001, 3002, 3003</NoWarn>
     <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
@@ -159,14 +174,14 @@
     <None Include="..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
-    <None Include="NuGet\ObjectDumper.symbols.nuspec">
+    <None Include="NuGet\ObjectTextDumper.symbols.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="NuGet\ObjectDumper.nuspec">
+    <None Include="NuGet\ObjectTextDumper.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="project.assets.json" />
-    <None Include="NuGet\PublishObjectDumper.cmd" />
+    <None Include="NuGet\PublishObjectTextDumper.cmd" />
     <None Include="ObjectDumper.md" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +194,18 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <Version>2.1.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

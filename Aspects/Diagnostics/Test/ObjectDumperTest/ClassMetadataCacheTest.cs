@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using vm.Aspects.Diagnostics.ExternalMetadata;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
 {
     [TestClass]
     public class ClassMetadataCacheTest
     {
-        static PrivateType ClassMetadataCacheAccessor = new PrivateType(typeof(ClassMetadataResolver));
+        static PrivateType _classMetadataCacheAccessor = new PrivateType(typeof(ClassMetadataResolver));
 
-        static Dictionary<Type, ClassDumpData> TypesDumpData => (Dictionary<Type, ClassDumpData>)ClassMetadataCacheAccessor.GetStaticProperty("TypesDumpData", null);
-        static void Reset() => ClassMetadataCacheAccessor.InvokeStatic("ResetClassDumpData", null);
+        static Dictionary<Type, ClassDumpData> TypesDumpData => (Dictionary<Type, ClassDumpData>)_classMetadataCacheAccessor.GetStaticProperty("TypesDumpData", null);
+        static void Reset() => _classMetadataCacheAccessor.InvokeStatic("ResetClassDumpData", null);
 
         [TestMethod]
         public void TestSetClassDumpData_NullArg2n3()

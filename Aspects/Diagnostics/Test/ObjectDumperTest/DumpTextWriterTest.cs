@@ -1,8 +1,9 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.Implementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
 {
     /// <summary>
     /// Summary description for DumpTextWriterTest

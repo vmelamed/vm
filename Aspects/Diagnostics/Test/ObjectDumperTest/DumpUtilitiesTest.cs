@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using System.Text;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
 {
     [TestClass]
     public class DumpUtilitiesTest

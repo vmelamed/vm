@@ -6,7 +6,7 @@
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
-            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.
+            Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in a easy to read text form.
             Helpful for debugging and logging purposes.
         </summary>
         <description>
@@ -27,7 +27,7 @@
             * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
             * Built and tested with .NET 4.6.2, 4.7.1, 4.7.2
-            For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
+            For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectTextDumper.md.
         </description>
         <releaseNotes>
             Note that this package derives from the package AspectObjectDumper v.1.10.2 where I replaced the dependency on the Common Service Locator with dependency
@@ -45,26 +45,33 @@
         <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
             <dependency id="Microsoft.Extensions.DependencyInjection.Abstract"
-                        version="2.1.1" /> 
+                        version="2.1.1" />
         </dependencies>
         <tags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</tags>
     </metadata>
     <files>
-        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectTextDumper.dll"
               target="lib\net462"/>
-        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectDumper.pdb"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectTextDumper.pdb"
               target="lib\net462"/>
-        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectDumper.xml"
+        <file src="..\bin\pack4.6.2\vm.Aspects.Diagnostics.ObjectTextDumper.xml"
               target="lib\net462"/>
 
-        <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectTextDumper.dll"
               target="lib\net471"/>
-        <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectDumper.xml"
+        <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectTextDumper.pdb"
+              target="lib\net471"/>
+        <file src="..\bin\pack4.7.1\vm.Aspects.Diagnostics.ObjectTextDumper.xml"
               target="lib\net471"/>
 
-        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectDumper.dll"
+        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectTextDumper.dll"
               target="lib\net472"/>
-        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectDumper.xml"
+        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectTextDumper.pdb"
               target="lib\net472"/>
+        <file src="..\bin\pack4.7.2\vm.Aspects.Diagnostics.ObjectTextDumper.xml"
+              target="lib\net472"/>
+
+        <file src="..\**\*.cs"
+              target="src" />
     </files>
 </package>

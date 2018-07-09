@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
 {
     public partial class ObjectTextDumperTest
     {
@@ -27,7 +27,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         }
 
         #region basic values and corresponding strings
-        object[] basicValues =
+        object[] _basicValues =
         {
             null,
             new int?(),
@@ -52,7 +52,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             new DateTimeOffset(new DateTime(2013, 1, 13)),
         };
 
-        string[] basicValuesStrings =
+        string[] _basicValuesStrings =
         {
             "<null>",
             "<null>",
@@ -431,16 +431,16 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             {
                 Property1 = "Property1";
                 Property2 = "Property2";
-                d = TestMethod;
-                ex = p => p > 0;
+                D = TestMethod;
+                Ex = p => p > 0;
             }
 
             public string Property1 { get; set; }
             public string Property2 { get; set; }
-            public Func<int, bool> d { get; set; }
+            public Func<int, bool> D { get; set; }
 
             [Dump(ValueFormat = "ToString()")]
-            public Expression<Func<int, bool>> ex { get; set; }
+            public Expression<Func<int, bool>> Ex { get; set; }
         }
 
         class Object7

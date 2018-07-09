@@ -1,4 +1,4 @@
-# AspectObjectDumper
+# vm.Aspects.Diagnostics.ObjectTextDumper
 The AspectObjectDumper is a project that implements an easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form. Helpful for debugging and logging purposes.
 The source code of the project can be found at [GitHub](https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics). Also you can install the package in your solution from [NuGet](https://www.nuget.org/packages/AspectObjectDumper).
 ## Usage
@@ -358,15 +358,15 @@ Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.Str
 }
 ```
 ```
-Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
 {
-  [1] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
+  [1] = Object4_1 (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
     Property1                = one
     Property2                = Property2
-  [2] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
+  [2] = Object4_1 (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
     Property1                = two
     Property2                = Property2
-  [3] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
+  [3] = Object4_1 (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
     Property1                = three
     Property2                = Property2
 }
@@ -469,8 +469,8 @@ The class `Object90` has a `Flags` `enum` (see unit test `TestDumpObject9_1`):
 ```
 The class `Object91` has a property of type `Object9`, which has a property `Flags` of type `TestFlags`. Here is a sample dump of `Object91`:
 ```
-Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
-  Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
+Object91 (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
+  Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393):
     Flags                    = TestFlags (Two | Four)
     Prop                     = TestEnum.One
   Prop91                   = 0
@@ -510,7 +510,7 @@ Note that the dumper can use `DumpAttribute`-s from both the main class and the 
 ```
 produces the following output:
 ```
-GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], vm.Aspects.Diagnostics.ObjectTextDumper.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   Property2                = ******
 ```
 ### Formatting the dump of objects for which you have no access to their source code
@@ -528,7 +528,7 @@ Here is how the registrar registers metadata class for the `Task<>` class:
 ```csharp
     ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
 ```
-### Performance of the AspectObjectDumper and the dump cache (as of v1.7.0)
+### Performance of the vm.Aspects.Diagnostics.ObjectTextDumper and the dump cache (as of v1.7.0)
 You can imagine that the implementation of the object dumper is one huge exercise on .NET reflection. However this would make it not particularly good performer - on average an object is dumped in a few dozens of milliseconds. While working on the [expression serialization](https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization) I realized that all that reflection code can be used to generate expression trees that represent the dumping code for each class. Then all I need to do is compile these expression trees into delegates and cache them. So, the next time when I need to dump an object of the same type, instead of traversing the object graph with all its properties and nested objects using reflection again, all I need is really to pull the cached delegates and execute them with parameter the current object. The result was significant improvement. If on average dumping of an average object for first time takes something in the order of 40-60 milliseconds, the second time (executing a delegate from the cache) takes say 300 microseconds or less - a few hundreds times better. 
 
 If for some reason (memory concerns or bugs in the dumper) you want to suppress the expression cache, you can do so by setting the static property `UseDumpScriptCache`:

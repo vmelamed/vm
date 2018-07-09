@@ -57,12 +57,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AspectObjectDumper">
-      <Version>1.10.2</Version>
-    </PackageReference>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.3</Version>
-    </PackageReference>
+    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
+      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
