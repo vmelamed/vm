@@ -27,47 +27,50 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         //
         // You can use the following additional attributes as you write your tests:
         //
+
         // Use ClassInitialize to run code before running the first test in the class
-        [ClassInitialize]
-        public static void ClassInitialize(
-            TestContext testContext)
-        {
-            ObjectTextDumper.UseDumpScriptCache = true;
-        }
+        //[ClassInitialize]
+        //public static void ClassInitialize(
+        //    TestContext testContext)
+        //{
+        //}
 
         // Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup]
         //public static void ClassCleanup()
         //{
         //}
-        //
+
         // Use TestInitialize to run code before running each test 
-        //[TestInitialize()]
-        //public void TestInitialize()
-        //{
-        //}
-        //
+        [TestInitialize()]
+        public void TestInitialize()
+            => ObjectTextDumper.DefaultDumpSettings = DumpSettings.Default;
+
         // Use TestCleanup to run code after each test has run
         // [TestCleanup()]
         // public void MyTestCleanup() { }
-        //
         #endregion
 
-        PrivateObject GetDumperInstanceAccessor(int indentLevel = 0, int indentLength = 2) => new PrivateObject(
-                                                                                                        typeof(ObjectTextDumper),
-                                                                                                        new StringWriter(CultureInfo.InvariantCulture),
-                                                                                                        indentLevel,
-                                                                                                        indentLength,
-                                                                                                        DumpTextWriter.DefaultMaxLength,
-                                                                                                        BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
+        PrivateObject GetDumperInstanceAccessor(
+            int indentSize = 2)
+            => GetDumperInstanceAccessor(new StringWriter(CultureInfo.InvariantCulture), indentSize);
 
-        PrivateObject GetDumperInstanceAccessor(StringWriter w, int indentLevel = 0, int indentLength = 2) => new PrivateObject(
-                                                                                                                        typeof(ObjectTextDumper),
-                                                                                                                        w,
-                                                                                                                        indentLevel,
-                                                                                                                        indentLength,
-                                                                                                                        DumpTextWriter.DefaultMaxLength,
-                                                                                                                        BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly, BindingFlags.Default);
+        PrivateObject GetDumperInstanceAccessor(
+            StringWriter w,
+            int indentSize = 2)
+        {
+            if (indentSize != DumpSettings.DefaultIndentSize)
+            {
+                var settings = DumpSettings.Default;
+
+                ObjectTextDumper.DefaultDumpSettings = settings;
+            }
+
+            return new PrivateObject(
+                            typeof(ObjectTextDumper),
+                            w,
+                            null);
+        }
 
         PrivateType GetDumperClassAccessor() => new PrivateType(typeof(ObjectTextDumper));
 
@@ -98,13 +101,10 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         void TestDumpedBasicValueText(
             string expected,
             object value,
-            DumpAttribute dumpAttribute = null,
-            int indentValue = 0)
+            DumpAttribute dumpAttribute = null)
         {
             using (var w = new StringWriter(CultureInfo.InvariantCulture))
             {
-                var target = GetDumperInstanceAccessor(w, indentValue);
-
                 Assert.IsTrue(w.DumpedBasicValue(value, dumpAttribute));
 
                 var actual = w.GetStringBuilder().ToString();
@@ -123,9 +123,9 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         {
             using (var w = new StringWriter(CultureInfo.InvariantCulture))
             {
-                var target = GetDumperInstanceAccessor(w, indentValue);
+                var target = GetDumperInstanceAccessor(w);
 
-                Assert.AreEqual(target.Target, target.Invoke("Dump", value, metadata, dumpAttribute));
+                Assert.AreEqual(target.Target, target.Invoke("Dump", value, metadata, dumpAttribute, indentValue));
 
                 var actual = w.GetStringBuilder().ToString();
 
@@ -147,7 +147,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         {
             Debug.WriteLine(nameof(TestDumpedBasicValueTextIndent));
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i], null, 2);
+                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i], null);
         }
 
         [TestMethod]
@@ -286,14 +286,14 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
 
                 // --------------------------
 
-                if (ObjectTextDumper.UseDumpScriptCache)
+                if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
                 {
                     var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
                     AssertResult(expected, actual2, _secondDump);
                 }
             }
-            if (ObjectTextDumper.UseDumpScriptCache)
+            if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
                 using (var w = new StringWriter(CultureInfo.InvariantCulture))
                 {
                     var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
@@ -413,16 +413,25 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
   UShortProperty           = 1
   UriProperty              = http://localhost/",
                 new Object1(),
-                w => new ObjectTextDumper(
-                                    w, 0, 2, DumpTextWriter.DefaultMaxLength,
-                                    BindingFlags.DeclaredOnly|
-                                        BindingFlags.Instance|
-                                        BindingFlags.NonPublic|
-                                        BindingFlags.Public,
-                                    BindingFlags.DeclaredOnly|
-                                        BindingFlags.Instance|
-                                        BindingFlags.NonPublic|
-                                        BindingFlags.Public));
+                w =>
+                {
+                    var settings = ObjectTextDumper.DefaultDumpSettings;
+
+                    settings.PropertiesBindingFlags = BindingFlags.DeclaredOnly|
+                                                      BindingFlags.Instance|
+                                                      BindingFlags.NonPublic|
+                                                      BindingFlags.Public;
+                    settings.FieldsBindingFlags     = BindingFlags.DeclaredOnly|
+                                                      BindingFlags.Instance|
+                                                      BindingFlags.NonPublic|
+                                                      BindingFlags.Public;
+                    settings.IndentSize             = 2;
+                    settings.MaxDumpLength          = DumpTextWriter.DefaultMaxLength;
+
+                    ObjectTextDumper.DefaultDumpSettings = settings;
+
+                    return new ObjectTextDumper(w);
+                });
         }
 
         [TestMethod]
@@ -443,7 +452,18 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
   Gui...
 The dump exceeded the maximum length of 500 characters. Either increase the value of the argument maxDumpLength of the constructor of the ObjectTextDumper class, or suppress the dump of some types and properties using DumpAttribute-s and metadata.",
                 new Object1(),
-                w => new ObjectTextDumper(w, 0, 2, 500));
+                //w => new ObjectTextDumper(w, 0, 2, 500));
+                w =>
+                {
+                    var settings = ObjectTextDumper.DefaultDumpSettings;
+
+                    settings.IndentSize             = 2;
+                    settings.MaxDumpLength          = 500;
+
+                    ObjectTextDumper.DefaultDumpSettings = settings;
+
+                    return new ObjectTextDumper(w);
+                });
         }
 
         [TestMethod]

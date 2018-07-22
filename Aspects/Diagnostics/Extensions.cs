@@ -63,8 +63,8 @@ namespace vm.Aspects
 
             try
             {
-                using (var dumper = new ObjectTextDumper(writer, indentLevel))
-                    dumper.Dump(value, dumpMetadata, dumpAttribute);
+                using (var dumper = new ObjectTextDumper(writer))
+                    dumper.Dump(value, dumpMetadata, dumpAttribute, indentLevel);
             }
             catch (Exception x)
             {

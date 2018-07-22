@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Threading;
+
 using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
 
@@ -32,14 +33,39 @@ namespace vm.Aspects.Diagnostics
     /// </summary>
     public sealed partial class ObjectTextDumper : IDisposable
     {
+        static ReaderWriterLockSlim _syncDefaultDumpSettings = new ReaderWriterLockSlim();
+        static DumpSettings _defaultDumpSettings             = DumpSettings.Default;
+
         /// <summary>
-        /// The default initial indent level
+        /// Gets or sets the object dumper settings.
         /// </summary>
-        public const int DefaultIndentLevel  = 0;
-        /// <summary>
-        /// The default initial indent size
-        /// </summary>
-        public const int DefaultIndentSize = 2;
+        public static DumpSettings DefaultDumpSettings
+        {
+            get
+            {
+                try
+                {
+                    _syncDefaultDumpSettings.EnterReadLock();
+                    return _defaultDumpSettings;
+                }
+                finally
+                {
+                    _syncDefaultDumpSettings.ExitReadLock();
+                }
+            }
+            set
+            {
+                try
+                {
+                    _syncDefaultDumpSettings.EnterWriteLock();
+                    _defaultDumpSettings = value;
+                }
+                finally
+                {
+                    _syncDefaultDumpSettings.ExitWriteLock();
+                }
+            }
+        }
 
         #region Fields
         /// <summary>
@@ -63,44 +89,47 @@ namespace vm.Aspects.Diagnostics
         internal int _maxDepth = int.MinValue;
         #endregion
 
-        /// <summary>
-        /// The initial default properties binding flags.
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public const BindingFlags InitialDefaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
-        /// <summary>
-        /// The initial default fields binding flags
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public const BindingFlags InitialDefaultFieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance;
-
-        /// <summary>
-        /// The default binding flags determining which properties to be dumped
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public static BindingFlags DefaultPropertiesBindingFlags { get; set; } = InitialDefaultPropertiesBindingFlags;
-
-        /// <summary>
-        /// The default binding flags determining which fields to be dumped
-        /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public static BindingFlags DefaultFieldsBindingFlags { get; set; } = InitialDefaultFieldsBindingFlags;
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to use the dump script cache.
-        /// </summary>
-        public static bool UseDumpScriptCache { get; set; } = true;
-
         #region Internal properties for access by the DumpState
-        /// <summary>
-        /// The binding flags determining which properties to be dumped
-        /// </summary>
-        internal BindingFlags PropertiesBindingFlags { get; }
+        ReaderWriterLockSlim _syncSettings = new ReaderWriterLockSlim();
+        DumpSettings _settings             = DumpSettings.Default;
 
         /// <summary>
-        /// The binding flags determining which fields to be dumped
+        /// Gets the settings for this instance.
         /// </summary>
-        internal BindingFlags FieldsBindingFlags { get; }
+        public DumpSettings InstanceSettings
+        {
+            get
+            {
+                try
+                {
+                    _syncSettings.EnterReadLock();
+                    return _settings;
+                }
+                finally
+                {
+                    _syncSettings.ExitReadLock();
+                }
+            }
+            set
+            {
+                try
+                {
+                    _syncSettings.EnterWriteLock();
+                    _settings = value;
+                }
+                finally
+                {
+                    _syncSettings.ExitWriteLock();
+                }
+            }
+        }
+
+        internal DumpSettings Settings { get; set; }
+
+        /// <summary>
+        /// Gets the member information comparer, used to order the dumped members in the desired sort order.
+        /// </summary>
+        internal IMemberInfoComparer MemberInfoComparer { get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the currently dumped instance is sub-expression of a previously dumped expression.
@@ -124,69 +153,60 @@ namespace vm.Aspects.Diagnostics
         /// level.
         /// </summary>
         /// <param name="writer">The text writer where to dump the object to.</param>
-        /// <param name="indentLevel">The initial indent level.</param>
-        /// <param name="indentSize">The length of the indent.</param>
-        /// <param name="maxDumpLength">Maximum length of the dump text.</param>
-        /// <param name="propertiesBindingFlags">The binding flags of the properties.</param>
-        /// <param name="fieldsBindingFlags">The binding flags of the fields.</param>
+        /// <param name="memberInfoComparer">
+        /// The member comparer used to order the dumped members in the desired sort order.
+        /// If <see langword="null"/> the created here dumper instance will use the default member sorting order.
+        /// </param>
+        /// <exception cref="ArgumentNullException">writer</exception>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="writer" /> is <c>null</c>.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public ObjectTextDumper(
             TextWriter writer,
-            int indentLevel = DefaultIndentLevel,
-            int indentSize = DefaultIndentSize,
-            int maxDumpLength = DumpTextWriter.DefaultMaxLength,
-            BindingFlags propertiesBindingFlags = BindingFlags.Default,
-            BindingFlags fieldsBindingFlags = BindingFlags.Default)
+            IMemberInfoComparer memberInfoComparer = null)
         {
             if (writer == null)
                 throw new ArgumentNullException(nameof(writer));
 
+            Settings = DefaultDumpSettings;
+
             if (writer.GetType() == typeof(StringWriter))
             {
                 // wrap the writer in DumpTextWriter
-                Writer = new DumpTextWriter((StringWriter)writer, maxDumpLength);
+                Writer        = new DumpTextWriter((StringWriter)writer, Settings.MaxDumpLength);
                 _isDumpWriter = true;
             }
             else
                 Writer = writer;
 
-            _indentLevel           = indentLevel >= DefaultIndentLevel ? indentLevel : DefaultIndentLevel;
-            _indentSize            = indentSize  >= DefaultIndentSize ? indentSize : DefaultIndentSize;
-            PropertiesBindingFlags = propertiesBindingFlags==BindingFlags.Default ? DefaultPropertiesBindingFlags : propertiesBindingFlags;
-            FieldsBindingFlags     = fieldsBindingFlags==BindingFlags.Default ? DefaultFieldsBindingFlags : fieldsBindingFlags;
+            _indentSize        = Settings.IndentSize;
+            MemberInfoComparer = memberInfoComparer ?? new MemberInfoComparer();
         }
         #endregion
 
         #region Public method/s
         /// <summary>
-        /// Dumps the specified object in a text form to this object's <see cref="TextWriter"/> instance.
+        /// Dumps the specified object in a text form to this object's <see cref="TextWriter" /> instance.
         /// </summary>
-        /// <param name="value">
-        /// The object to be dumped.
-        /// </param>
-        /// <param name="dumpMetadata">
-        /// Optional metadata class to use to extract the dump parameters, options and settings. If not specified, the dump metadata will be
-        /// extracted from the <see cref="MetadataTypeAttribute"/> attribute applied to <paramref name="value"/>'s class if specified otherwise from 
-        /// the attributes applied within the class itself.
-        /// </param>
-        /// <param name="dumpAttribute">
-        /// An explicit dump attribute to be applied at a class level. If not specified the <see cref="MetadataTypeAttribute"/> attribute applied to 
-        /// <paramref name="value"/>'s class or <see cref="DumpAttribute.Default"/> will be assumed.
-        /// </param>
-        /// <returns>
-        /// The <paramref name="value"/> parameter.
-        /// </returns>
+        /// <param name="value">The object to be dumped.</param>
+        /// <param name="dumpMetadata">Optional metadata class to use to extract the dump parameters, options and settings. If not specified, the dump metadata will be
+        /// extracted from the <see cref="MetadataTypeAttribute" /> attribute applied to <paramref name="value" />'s class if specified otherwise from
+        /// the attributes applied within the class itself.</param>
+        /// <param name="dumpAttribute">An explicit dump attribute to be applied at a class level. If not specified the <see cref="MetadataTypeAttribute" /> attribute applied to
+        /// <paramref name="value" />'s class or <see cref="DumpAttribute.Default" /> will be assumed.</param>
+        /// <param name="initialIndentLevel">The initial indent level.</param>
+        /// <returns>The <paramref name="value" /> parameter.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public ObjectTextDumper Dump(
             object value,
             Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute dumpAttribute = null,
+            int initialIndentLevel = DumpSettings.DefaultInitialIndentLevel)
         {
-            var originalIndentLevel = _indentLevel;
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission     = false;
+
+            _indentLevel = initialIndentLevel >= DumpSettings.DefaultInitialIndentLevel ? initialIndentLevel : DumpSettings.DefaultInitialIndentLevel;
 
             try
             {
@@ -197,6 +217,7 @@ namespace vm.Aspects.Diagnostics
                 // assert the permission and dump
                 reflectionPermission.Assert();
                 _maxDepth = int.MinValue;
+                Settings  = InstanceSettings;
 
                 DumpObject(value, dumpMetadata, dumpAttribute);
             }
@@ -211,7 +232,6 @@ namespace vm.Aspects.Diagnostics
 
                 Writer.WriteLine(message);
                 Debug.WriteLine(message);
-                _indentLevel = originalIndentLevel;
             }
             finally
             {
@@ -262,7 +282,7 @@ namespace vm.Aspects.Diagnostics
             }
             else
                 classDumpData = new ClassDumpData(dumpMetadata, dumpAttribute);
-
+            
             // if we're too deep - stop here.
             if (_maxDepth == int.MinValue)
                 _maxDepth = classDumpData.DumpAttribute.MaxDepth;
@@ -279,7 +299,7 @@ namespace vm.Aspects.Diagnostics
 
             // slow dump vs. run script?
             bool isTopLevelObject = parentState == null;
-            var buildScript       = UseDumpScriptCache  &&  !obj.IsDynamicObject();
+            var buildScript       = Settings.UseDumpScriptCache  &&  !obj.IsDynamicObject();
             Script script         = null;
 
             using (var state = new DumpState(this, obj, classDumpData, buildScript))
@@ -535,6 +555,8 @@ namespace vm.Aspects.Diagnostics
             if (disposing && _isDumpWriter)
                 // if the writer wraps foreign StringWriter, it is smart enough not to dispose it
                 Writer.Dispose();
+
+            _syncSettings.Dispose();
         }
         #endregion
     }

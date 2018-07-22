@@ -6,7 +6,7 @@ namespace vm.Aspects.Diagnostics.Implementation
     /// <summary>
     /// Compares two PropertyInfo objects by the property Order of the dump attribute and then by Name.
     /// </summary>
-    class MemberDumpOrder : IMemberInfoComparer
+    class MemberInfoComparer : IMemberInfoComparer
     {
         Type _metadata;
 
@@ -69,12 +69,6 @@ namespace vm.Aspects.Diagnostics.Implementation
         #region IPropertyInfoComparer Members
         public IMemberInfoComparer SetMetadata(Type metadata)
         {
-            if (_metadata == metadata)
-                return this;
-
-            if (_metadata != null)
-                throw new InvalidOperationException("The metadata has been set already.");
-
             _metadata = metadata;
             return this;
         }

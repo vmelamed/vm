@@ -19,8 +19,8 @@ namespace vm.Aspects.Diagnostics.Implementation
 
                 ObjectType             = objectType ?? throw new ArgumentNullException(nameof(objectType));
                 ClassDumpData          = classDumpData;
-                PropertiesBindingFlags = objectTextDumper.PropertiesBindingFlags;
-                FieldsBindingFlags     = objectTextDumper.FieldsBindingFlags;
+                PropertiesBindingFlags = objectTextDumper.Settings.PropertiesBindingFlags;
+                FieldsBindingFlags     = objectTextDumper.Settings.FieldsBindingFlags;
             }
 
             public Type ObjectType { get; }

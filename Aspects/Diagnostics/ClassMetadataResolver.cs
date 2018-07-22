@@ -123,11 +123,7 @@ namespace vm.Aspects.Diagnostics
                 attribute = type.GetGenericTypeDefinition().GetCustomAttribute<MetadataTypeAttribute>();
 
             // if there is no buddy, we assume that the class provides the metadata itself
-            Type metadata = attribute != null
-                                ? attribute.MetadataClassType
-                                : type;
-
-            return new ClassDumpData(metadata);
+            return new ClassDumpData(attribute?.MetadataClassType ?? type);
         }
 
         static ClassDumpData? TryGetClassDumpData(Type type)

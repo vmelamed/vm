@@ -7,8 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics.Implementation
@@ -82,14 +80,11 @@ namespace vm.Aspects.Diagnostics.Implementation
                 }
             }
 
-            Enumerator = CurrentType.GetProperties(_dumper.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
+            Enumerator = CurrentType.GetProperties(_dumper.Settings.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
                             .Union<MemberInfo>(
-                         CurrentType.GetFields(_dumper.FieldsBindingFlags | BindingFlags.DeclaredOnly))
+                         CurrentType.GetFields(_dumper.Settings.FieldsBindingFlags | BindingFlags.DeclaredOnly))
                             .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
-                            .OrderBy(p => p, ServiceProvider
-                                                .Current
-                                                .GetRequiredService<IMemberInfoComparer>()
-                                                .SetMetadata(ClassDumpData.Metadata))
+                            .OrderBy(p => p, dumper.MemberInfoComparer.SetMetadata(classDumpData.Metadata))
                             .GetEnumerator();
         }
 
@@ -426,10 +421,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (pi != null  &&  pi.IsVirtual())
             {
                 // for virtual properties dump the instance value at the the least derived class level that declares the property for first time.
-                if (CurrentType.BaseType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags) != null)
+                if (CurrentType.BaseType.GetProperty(CurrentProperty.Name, _dumper.Settings.PropertiesBindingFlags) != null)
                     return;
 
-                pi = InstanceType.GetProperty(CurrentProperty.Name, _dumper.PropertiesBindingFlags);
+                pi = InstanceType.GetProperty(CurrentProperty.Name, _dumper.Settings.PropertiesBindingFlags);
             }
 
             var fi = CurrentProperty as FieldInfo;

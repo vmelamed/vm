@@ -125,8 +125,7 @@
     </Compile>
     <Compile Include="Implementation\DumpScriptCache.cs" />
     <Compile Include="Implementation\DumpTextWriter.cs" />
-    <Compile Include="Implementation\InternalServiceProvider.cs" />
-    <Compile Include="Implementation\MemberDumpOrder.cs" />
+    <Compile Include="Implementation\MemberInfoComparer.cs" />
     <Compile Include="Implementation\PropertyDumpResolver.cs" />
     <Compile Include="Implementation\DumpScript.cs" />
     <Compile Include="Implementation\DumpState.cs" />
@@ -156,13 +155,13 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IMemberInfoComparer.cs" />
     <Compile Include="ObjectTextDumper.cs" />
+    <Compile Include="DumpSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ServiceProvider.cs" />
     <Compile Include="WriterExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -189,11 +188,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-      <Version>2.1.1</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.2">
