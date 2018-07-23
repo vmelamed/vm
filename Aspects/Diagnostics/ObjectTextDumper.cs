@@ -425,7 +425,7 @@ namespace vm.Aspects.Diagnostics
             while (state.MoveNext())
             {
                 // if we reached a negative order property,
-                if (state.CurrentPropertyDumpAttribute.Order < 0)
+                if (state.CurrentMemberDumpAttribute.Order < 0)
                 {
                     // put the state in the stack of states with remaining properties to be dumped
                     // and suspend the dumping at this inheritance level
@@ -466,7 +466,7 @@ namespace vm.Aspects.Diagnostics
 
                 do
                 {
-                    isTailProperty = state.CurrentPropertyDumpAttribute.Order == int.MinValue;
+                    isTailProperty = state.CurrentMemberDumpAttribute.Order == int.MinValue;
 
                     if (isTailProperty)
                     {

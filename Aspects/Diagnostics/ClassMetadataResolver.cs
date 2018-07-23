@@ -131,7 +131,6 @@ namespace vm.Aspects.Diagnostics
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-
             try
             {
                 TypesDumpDataSync.EnterReadLock();

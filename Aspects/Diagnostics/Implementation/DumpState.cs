@@ -85,6 +85,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                          CurrentType.GetFields(_dumper.Settings.FieldsBindingFlags | BindingFlags.DeclaredOnly))
                             .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
                             .OrderBy(p => p, dumper.MemberInfoComparer.SetMetadata(classDumpData.Metadata))
+                            .ToList()
                             .GetEnumerator();
         }
 
@@ -140,12 +141,12 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// <summary>
         /// Gets the current property being dumped.
         /// </summary>
-        public MemberInfo CurrentProperty => Current;
+        public MemberInfo CurrentMember => Current;
 
         /// <summary>
         /// Gets the property dump attribute applied to the current property being dumped.
         /// </summary>
-        public DumpAttribute CurrentPropertyDumpAttribute => _currentDumpAttribute;
+        public DumpAttribute CurrentMemberDumpAttribute => _currentDumpAttribute;
 
         /// <summary>
         /// Calculates whether null property values of the current instance should be dumped.
@@ -409,10 +410,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         public void DumpProperty()
         {
             // should we dump it at all?
-            if (!CurrentProperty.CanRead()  ||  CurrentPropertyDumpAttribute.Skip == ShouldDump.Skip)
+            if (!CurrentMember.CanRead()  ||  CurrentMemberDumpAttribute.Skip == ShouldDump.Skip)
                 return;
 
-            var pi = CurrentProperty as PropertyInfo;
+            var pi = CurrentMember as PropertyInfo;
 
             // can't dump indexers
             if (pi != null  &&  pi.GetIndexParameters().Length > 0)
@@ -421,13 +422,13 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (pi != null  &&  pi.IsVirtual())
             {
                 // for virtual properties dump the instance value at the the least derived class level that declares the property for first time.
-                if (CurrentType.BaseType.GetProperty(CurrentProperty.Name, _dumper.Settings.PropertiesBindingFlags) != null)
+                if (CurrentType.BaseType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertiesBindingFlags) != null)
                     return;
 
-                pi = InstanceType.GetProperty(CurrentProperty.Name, _dumper.Settings.PropertiesBindingFlags);
+                pi = InstanceType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertiesBindingFlags);
             }
 
-            var fi = CurrentProperty as FieldInfo;
+            var fi = CurrentMember as FieldInfo;
             Type type = null;
             object value = null;
 
@@ -450,8 +451,8 @@ namespace vm.Aspects.Diagnostics.Implementation
                 value = $"<{x.Message}>";
             }
 
-            var dontDumpNulls = CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
-                                CurrentPropertyDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip;
+            var dontDumpNulls = CurrentMemberDumpAttribute.DumpNullValues==ShouldDump.Skip  ||
+                                CurrentMemberDumpAttribute.DumpNullValues==ShouldDump.Default && DumpNullValues==ShouldDump.Skip;
 
             if (IsInDumpingMode)
             {
@@ -462,18 +463,18 @@ namespace vm.Aspects.Diagnostics.Implementation
                 // write the property header
                 _dumper.Writer.WriteLine();
                 _dumper.Writer.Write(
-                    CurrentPropertyDumpAttribute.LabelFormat,
-                    CurrentProperty.Name);
+                    CurrentMemberDumpAttribute.LabelFormat,
+                    CurrentMember.Name);
 
-                if (!(DumpedPropertyCustom(value, type)                                        ||    // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
-                      _dumper.Writer.DumpedBasicValue(value, CurrentPropertyDumpAttribute)     ||
-                      _dumper.Writer.DumpedBasicNullable(value, CurrentPropertyDumpAttribute)  ||
-                      _dumper.Writer.Dumped(value as Delegate)                                 ||
-                      _dumper.Writer.Dumped(value as MemberInfo)                               ||
-                      DumpedCollection(value, CurrentProperty, CurrentPropertyDumpAttribute)))
+                if (!(DumpedPropertyCustom(value, type)                                      ||    // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
+                      _dumper.Writer.DumpedBasicValue(value, CurrentMemberDumpAttribute)     ||
+                      _dumper.Writer.DumpedBasicNullable(value, CurrentMemberDumpAttribute)  ||
+                      _dumper.Writer.Dumped(value as Delegate)                               ||
+                      _dumper.Writer.Dumped(value as MemberInfo)                             ||
+                      DumpedCollection(value, CurrentMember, CurrentMemberDumpAttribute)))
                 {
                     // dump a property representing an associated class or struct object
-                    var currentPropertyDumpAttribute = !CurrentPropertyDumpAttribute.IsDefaultAttribute() ? CurrentPropertyDumpAttribute : null;
+                    var currentPropertyDumpAttribute = !CurrentMemberDumpAttribute.IsDefaultAttribute() ? CurrentMemberDumpAttribute : null;
 
                     _dumper.DumpObject(value, null, currentPropertyDumpAttribute, this);
                 }
@@ -481,12 +482,12 @@ namespace vm.Aspects.Diagnostics.Implementation
             else
             {
                 // write the property header
-                DumpScript.BeginDumpProperty(CurrentProperty, CurrentPropertyDumpAttribute);
+                DumpScript.BeginDumpProperty(CurrentMember, CurrentMemberDumpAttribute);
 
                 if (!DumpedPropertyCustom(value, type))                                             // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
-                    DumpScript.AddDumpPropertyOrCollectionValue(CurrentProperty, CurrentPropertyDumpAttribute);
+                    DumpScript.AddDumpPropertyOrCollectionValue(CurrentMember, CurrentMemberDumpAttribute);
 
-                DumpScript.EndDumpProperty(CurrentProperty, dontDumpNulls);
+                DumpScript.EndDumpProperty(CurrentMember, dontDumpNulls);
             }
         }
 
@@ -597,19 +598,19 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return false;
 
             // did they specify DumpAttribute.ValueFormat="ToString"?
-            if (CurrentPropertyDumpAttribute.ValueFormat == Resources.ValueFormatToString)
+            if (CurrentMemberDumpAttribute.ValueFormat == Resources.ValueFormatToString)
             {
                 if (IsInDumpingMode)
                     _dumper.Writer.Write(value.ToString());
                 else
-                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, null);
+                    DumpScript.AddCustomDumpPropertyOrField(CurrentMember, null);
 
                 return true;
             }
 
             // did they specify DumpAttribute.DumpMethod?
-            var dumpMethodName = CurrentPropertyDumpAttribute.DumpMethod;
-            var dumpClass = CurrentPropertyDumpAttribute.DumpClass;
+            var dumpMethodName = CurrentMemberDumpAttribute.DumpMethod;
+            var dumpClass = CurrentMemberDumpAttribute.DumpClass;
 
             if (dumpClass == null  &&  dumpMethodName.IsNullOrWhiteSpace())
                 return false;
@@ -624,8 +625,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (dumpClass != null)
             {
                 foreach (var mi in dumpClass.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                            .Where(mi => mi.Name == dumpMethodName  &&
-                                                         mi.ReturnType == typeof(string)  &&
+                                            .Where(mi => mi.Name                    == dumpMethodName  &&
+                                                         mi.ReturnType              == typeof(string)  &&
                                                          mi.GetParameters().Count() == 1))
                 {
                     if (mi.GetParameters()[0].ParameterType == type)
@@ -645,7 +646,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                     if (IsInDumpingMode)
                         _dumper.Writer.Write((string)dumpMethod.Invoke(null, new object[] { value }));
                     else
-                        DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
+                        DumpScript.AddCustomDumpPropertyOrField(CurrentMember, dumpMethod);
                 }
                 else
                 {
@@ -667,18 +668,18 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             // try the property's class or base class, or metadata class
             foreach (var mi in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-                                   .Where(mi => mi.Name == dumpMethodName  &&
-                                                mi.ReturnType == typeof(string))
+                                   .Where(mi => mi.Name                    == dumpMethodName  &&
+                                                mi.ReturnType              == typeof(string))
                                .Union(
                                type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                   .Where(mi => mi.Name == dumpMethodName  &&
-                                                mi.ReturnType == typeof(string)  &&
+                                   .Where(mi => mi.Name                    == dumpMethodName  &&
+                                                mi.ReturnType              == typeof(string)  &&
                                                 mi.GetParameters().Count() == 1))
                                .Union(
                                ClassDumpData.Metadata
                                    .GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                                   .Where(mi => mi.Name == dumpMethodName  &&
-                                                mi.ReturnType == typeof(string)  &&
+                                   .Where(mi => mi.Name                    == dumpMethodName  &&
+                                                mi.ReturnType              == typeof(string)  &&
                                                 mi.GetParameters().Count() == 1)))
             {
                 // found an instance method
@@ -714,12 +715,15 @@ namespace vm.Aspects.Diagnostics.Implementation
                     _dumper.Writer.Write(text);
                 }
                 else
-                    DumpScript.AddCustomDumpPropertyOrField(CurrentProperty, dumpMethod);
+                    DumpScript.AddCustomDumpPropertyOrField(CurrentMember, dumpMethod);
 
                 return true;
             }
 
-            var message = string.Format(CultureInfo.InvariantCulture, Resources.CouldNotFindCustomDumpers, dumpMethodName, type.FullName, type.FullName);
+            var message = string.Format(
+                                    CultureInfo.InvariantCulture,
+                                    Resources.CouldNotFindCustomDumpers,
+                                    dumpMethodName, type.FullName, type.FullName);
 
             if (IsInDumpingMode)
                 _dumper.Writer.Write(message);
