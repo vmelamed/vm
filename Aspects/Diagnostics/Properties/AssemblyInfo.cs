@@ -2,9 +2,9 @@
 
 [assembly: AssemblyTitle("vm.Aspects.Diagnostics.ObjectTextDumper")]
 [assembly: AssemblyDescription("Dumps the properties' and fields' values of any .NET object in a text form.")]
-[assembly: AssemblyVersion("2.0.0")]
-[assembly: AssemblyFileVersion("2.0.0")]
-[assembly: AssemblyInformationalVersion("2.0.0")]
+[assembly: AssemblyVersion("2.0.1")]
+[assembly: AssemblyFileVersion("2.0.1")]
+[assembly: AssemblyInformationalVersion("2.0.1")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Diagnostics.Tests.ObjectDumper, " +

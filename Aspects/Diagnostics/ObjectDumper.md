@@ -3,9 +3,9 @@ This component can dump the value of an arbitrary .NET object to an easy to read
 
 The `vm.Aspects.Diagnostics.ObjectTextDumper` (further referred to as "the dumper") object is very easy to integrate and easy to use. If desired, the dump output is highly customizable. This component can be very helpful in debugging, tracing, logging, etc. output scenarios targeting developers and system engineers.
 
-The source code of the project can be found [at GitHub](https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics). Also, you can download and install the [NuGet package `vm.Aspects.Diagnostics.ObjectTextDumper`](https://www.nuget.org/packages/vm.Aspects.Diagnostics.ObjectTextDumper/2.0.0-beta01) directly into your solution.
+The source code of the project can be found [at GitHub](https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics). Also, you can download and install the [NuGet package `vm.Aspects.Diagnostics.ObjectTextDumper`](https://www.nuget.org/packages/vm.Aspects.Diagnostics.ObjectTextDumper/) directly into your solution.
 
-Please note that this document describes the `vm.Aspects.Diagnostics.ObjectTextDumper` version 2.0.0-beta01 or higher. This version replaces the [previous NuGet package AspectObjectDumper](https://www.nuget.org/packages/AspectObjectDumper/). The latter will be still available but will not be supported anymore. The big differences between the 2.x and 1.x versions are:
+Please note that this document describes the `vm.Aspects.Diagnostics.ObjectTextDumper` version 2.0.0 or higher. This version replaces the [previous NuGet package AspectObjectDumper](https://www.nuget.org/packages/AspectObjectDumper/). The latter will be still available but will not be supported anymore. The big differences between the 2.x and 1.x versions are:
 1. The names of the project and the package have been changed for consistency's sake with other [vm.Aspects projects](https://github.com/vmelamed/vm/tree/master/Aspects)
 1. The package is no longer dependent on an internal or external implementations of the Common Service Locator
 1. Some of the dump settings that were passed in the constructor of the dumper and the Dump method itself are now encapsulated in the struct `DumpSettings`.
