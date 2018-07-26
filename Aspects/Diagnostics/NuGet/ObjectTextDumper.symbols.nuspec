@@ -42,8 +42,6 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
-            <dependency id="Microsoft.Extensions.DependencyInjection.Abstract"
-                        version="2.1.1" />
         </dependencies>
         <tags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</tags>
     </metadata>
