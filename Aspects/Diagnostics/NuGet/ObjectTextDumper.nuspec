@@ -18,16 +18,16 @@
             * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
             * Handles circular references
             * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
-            - the order in which the properties are dumped
-            - formatting of the property names and/or values
-            - suppressing the dump of some uninteresting properties
-            - masking the values of sensitive properties (e.g. PII)
-            - the depth of the recursion into complex members
-            - the maximum number of dumped elements of sequence properties
+                - the order in which the properties are dumped
+                - formatting of the property names and/or values
+                - suppressing the dump of some uninteresting properties
+                - masking the values of sensitive properties (e.g. PII)
+                - the depth of the recursion into complex members
+                - the maximum number of dumped elements of sequence properties
             * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
             * Built and tested with .NET 4.6.2, 4.7.1, 4.7.2
-            For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectTextDumper.md.
+            For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
             Note that this package derives from the package AspectObjectDumper v.1.10.2 where I removed the dependency on the Common Service Locator.
