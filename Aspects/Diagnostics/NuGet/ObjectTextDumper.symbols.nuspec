@@ -30,14 +30,12 @@
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectTextDumper.md.
         </description>
         <releaseNotes>
-            Note that this package derives from the package AspectObjectDumper v.1.10.2 where I replaced the dependency on the Common Service Locator with dependency
-            on System.IServiceProvider. Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
+            Note that this package derives from the package AspectObjectDumper v.1.10.2 where I removed the dependency on the Common Service Locator.
+            Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
             and rename the package to vm.Aspects.Diagnostics.ObjectTextDumper for consistency with all vm.Aspects.* packages and libraries out there.
 
             This is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
-            Common Service Locator compatible DI container. As a result, if clients need to implement their own member comparer, they can do so by registering it
-            in a System.IServiceProvider compatible DI container and also during their initialization phase, they would have to assign a reference to their concrete
-            implementation of System.IServiceProvider to the static property vm.Aspects.Diagnostics.ServiceProvider.Current.
+            Common Service Locator compatible DI container. As a result, if clients need to implement their own member comparer, they can pass a reference to it in the constructor of ObjectTextDumper object.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>

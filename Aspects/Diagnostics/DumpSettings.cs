@@ -27,16 +27,16 @@ namespace vm.Aspects.Diagnostics
         public const int DefaultMaxDumpLength = DumpTextWriter.DefaultMaxLength;
 
         /// <summary>
-        /// The initial default properties' binding flags.
+        /// The default property binding flags.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public const BindingFlags InitialDefaultPropertiesBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+        public const BindingFlags DefaultPropertyBindingFlags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
 
         /// <summary>
-        /// The initial default fields' binding flags
+        /// The default field binding flags
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public const BindingFlags InitialDefaultFieldsBindingFlags = BindingFlags.Public|BindingFlags.Instance;
+        public const BindingFlags DefaultFieldBindingFlags = BindingFlags.Public|BindingFlags.Instance;
 
         int _indentSize;
 
@@ -47,8 +47,8 @@ namespace vm.Aspects.Diagnostics
                                                         true,
                                                         DefaultIndentSize,
                                                         DumpTextWriter.DefaultMaxLength,
-                                                        InitialDefaultPropertiesBindingFlags,
-                                                        InitialDefaultFieldsBindingFlags);
+                                                        DefaultPropertyBindingFlags,
+                                                        DefaultFieldBindingFlags);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DumpSettings" /> struct.
@@ -56,21 +56,21 @@ namespace vm.Aspects.Diagnostics
         /// <param name="useDumpScriptCache">if set to <c>true</c> [use dump script cache].</param>
         /// <param name="indentSize">Size of the indent.</param>
         /// <param name="maxDumpLength">Maximum length of the dump.</param>
-        /// <param name="propertiesBindingFlags">The properties binding flags.</param>
-        /// <param name="fieldsBindingFlags">The fields binding flags.</param>
+        /// <param name="propertyBindingFlags">The properties binding flags.</param>
+        /// <param name="fieldBindingFlags">The fields binding flags.</param>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public DumpSettings(
             bool useDumpScriptCache = true,
             int indentSize = DefaultIndentSize,
             int maxDumpLength = DumpTextWriter.DefaultMaxLength,
-            BindingFlags propertiesBindingFlags = InitialDefaultPropertiesBindingFlags,
-            BindingFlags fieldsBindingFlags = InitialDefaultFieldsBindingFlags)
+            BindingFlags propertyBindingFlags = DefaultPropertyBindingFlags,
+            BindingFlags fieldBindingFlags = DefaultFieldBindingFlags)
         {
-            UseDumpScriptCache     = useDumpScriptCache;
-            _indentSize            = indentSize  >= DefaultIndentSize ? indentSize : DefaultIndentSize;
-            MaxDumpLength          = maxDumpLength;
-            PropertiesBindingFlags = propertiesBindingFlags;
-            FieldsBindingFlags     = fieldsBindingFlags;
+            UseDumpScriptCache   = useDumpScriptCache;
+            _indentSize          = indentSize  >= DefaultIndentSize ? indentSize : DefaultIndentSize;
+            MaxDumpLength        = maxDumpLength;
+            PropertyBindingFlags = propertyBindingFlags;
+            FieldBindingFlags    = fieldBindingFlags;
         }
 
         /// <summary>
@@ -96,13 +96,13 @@ namespace vm.Aspects.Diagnostics
         /// Gets or sets the properties binding flags controlling which properties should be dumped, e.g. private vs public, static vs. instance, etc.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public BindingFlags PropertiesBindingFlags { get; set; }
+        public BindingFlags PropertyBindingFlags { get; set; }
 
         /// <summary>
         /// Gets or sets the fields binding flags controlling which fields should be dumped, e.g. private vs public, static vs. instance, etc.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public BindingFlags FieldsBindingFlags { get; set; }
+        public BindingFlags FieldBindingFlags { get; set; }
 
         #region Identity rules implementation.
         #region IEquatable<DumpSettings> Members
@@ -125,8 +125,8 @@ namespace vm.Aspects.Diagnostics
             => UseDumpScriptCache     == other.UseDumpScriptCache     &&
                IndentSize             == other.IndentSize             &&
                MaxDumpLength          == other.MaxDumpLength          &&
-               PropertiesBindingFlags == other.PropertiesBindingFlags &&
-               FieldsBindingFlags     == other.FieldsBindingFlags;
+               PropertyBindingFlags == other.PropertyBindingFlags &&
+               FieldBindingFlags     == other.FieldBindingFlags;
         #endregion
 
         /// <summary>
@@ -162,8 +162,8 @@ namespace vm.Aspects.Diagnostics
             hashCode = Constants.HashMultiplier * hashCode + UseDumpScriptCache.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + IndentSize.GetHashCode();
             hashCode = Constants.HashMultiplier * hashCode + MaxDumpLength.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + PropertiesBindingFlags.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + FieldsBindingFlags.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + PropertyBindingFlags.GetHashCode();
+            hashCode = Constants.HashMultiplier * hashCode + FieldBindingFlags.GetHashCode();
 
             return hashCode;
         }

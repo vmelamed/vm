@@ -94,6 +94,11 @@ namespace vm.Aspects.Diagnostics
         DumpSettings _settings             = DumpSettings.Default;
 
         /// <summary>
+        /// The dump writer.
+        /// </summary>
+        internal TextWriter Writer { get; }
+
+        /// <summary>
         /// Gets the settings for this instance.
         /// </summary>
         public DumpSettings InstanceSettings
@@ -137,11 +142,6 @@ namespace vm.Aspects.Diagnostics
         internal bool IsSubExpression { get; set; }
 
         /// <summary>
-        /// The dump writer.
-        /// </summary>
-        internal TextWriter Writer { get; }
-
-        /// <summary>
         /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
         /// </summary>
         internal HashSet<DumpedObject> DumpedObjects { get; } = new HashSet<DumpedObject>();
@@ -165,22 +165,18 @@ namespace vm.Aspects.Diagnostics
             TextWriter writer,
             IMemberInfoComparer memberInfoComparer = null)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
+            Writer             = writer ?? throw new ArgumentNullException(nameof(writer));
+            MemberInfoComparer = memberInfoComparer ?? new MemberInfoComparer();
+            Settings           = DefaultDumpSettings;
+            _indentSize        = Settings.IndentSize;
 
-            Settings = DefaultDumpSettings;
-
-            if (writer.GetType() == typeof(StringWriter))
+            if (Writer is StringWriter)
             {
-                // wrap the writer in DumpTextWriter
-                Writer        = new DumpTextWriter((StringWriter)writer, Settings.MaxDumpLength);
+                // wrap the writer in DumpTextWriter - handles better the indentations and
+                // limits the dump output to DumpTextWriter.DefaultMaxLength
+                Writer        = new DumpTextWriter((StringWriter)Writer, Settings.MaxDumpLength);
                 _isDumpWriter = true;
             }
-            else
-                Writer = writer;
-
-            _indentSize        = Settings.IndentSize;
-            MemberInfoComparer = memberInfoComparer ?? new MemberInfoComparer();
         }
         #endregion
 
@@ -282,7 +278,7 @@ namespace vm.Aspects.Diagnostics
             }
             else
                 classDumpData = new ClassDumpData(dumpMetadata, dumpAttribute);
-            
+
             // if we're too deep - stop here.
             if (_maxDepth == int.MinValue)
                 _maxDepth = classDumpData.DumpAttribute.MaxDepth;

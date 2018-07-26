@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics.Implementation
@@ -40,9 +41,9 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpTextWriter(
             StringWriter writer,
             int maxLength = DefaultMaxLength)
-            : base(writer.FormatProvider)
+            : base(writer?.FormatProvider  ??  throw new ArgumentNullException(nameof(writer)))
         {
-            _writer    = writer ?? throw new ArgumentNullException(nameof(writer));
+            _writer    = writer;
             _maxLength = maxLength;
         }
 
@@ -52,13 +53,15 @@ namespace vm.Aspects.Diagnostics.Implementation
             int maxLength = 0)
             : base(CultureInfo.InvariantCulture)
         {
-            if (existing == null)
-                throw new ArgumentNullException(nameof(existing));
-
-            _writer      = new StringWriter(existing, CultureInfo.InvariantCulture) { NewLine = EndOfLine };
             _isOwnWriter = true;
             _maxLength   = maxLength <= 0 ? DefaultMaxLength : maxLength;
+            _writer      = new StringWriter(
+                                    existing ?? throw new ArgumentNullException(nameof(existing)),
+                                    CultureInfo.InvariantCulture)
+            { NewLine = EndOfLine };
         }
+
+        public TextWriter UnderlyingWriter => _writer;
 
         public override Encoding Encoding => _writer.Encoding;
 

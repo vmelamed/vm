@@ -80,9 +80,9 @@ namespace vm.Aspects.Diagnostics.Implementation
                 }
             }
 
-            Enumerator = CurrentType.GetProperties(_dumper.Settings.PropertiesBindingFlags | BindingFlags.DeclaredOnly)
+            Enumerator = CurrentType.GetProperties(_dumper.Settings.PropertyBindingFlags | BindingFlags.DeclaredOnly)
                             .Union<MemberInfo>(
-                         CurrentType.GetFields(_dumper.Settings.FieldsBindingFlags | BindingFlags.DeclaredOnly))
+                         CurrentType.GetFields(_dumper.Settings.FieldBindingFlags | BindingFlags.DeclaredOnly))
                             .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
                             .OrderBy(p => p, dumper.MemberInfoComparer.SetMetadata(classDumpData.Metadata))
                             .ToList()
@@ -422,10 +422,10 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (pi != null  &&  pi.IsVirtual())
             {
                 // for virtual properties dump the instance value at the the least derived class level that declares the property for first time.
-                if (CurrentType.BaseType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertiesBindingFlags) != null)
+                if (CurrentType.BaseType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertyBindingFlags) != null)
                     return;
 
-                pi = InstanceType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertiesBindingFlags);
+                pi = InstanceType.GetProperty(CurrentMember.Name, _dumper.Settings.PropertyBindingFlags);
             }
 
             var fi = CurrentMember as FieldInfo;

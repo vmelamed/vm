@@ -417,11 +417,11 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
                 {
                     var settings = ObjectTextDumper.DefaultDumpSettings;
 
-                    settings.PropertiesBindingFlags = BindingFlags.DeclaredOnly|
+                    settings.PropertyBindingFlags = BindingFlags.DeclaredOnly|
                                                       BindingFlags.Instance|
                                                       BindingFlags.NonPublic|
                                                       BindingFlags.Public;
-                    settings.FieldsBindingFlags     = BindingFlags.DeclaredOnly|
+                    settings.FieldBindingFlags     = BindingFlags.DeclaredOnly|
                                                       BindingFlags.Instance|
                                                       BindingFlags.NonPublic|
                                                       BindingFlags.Public;

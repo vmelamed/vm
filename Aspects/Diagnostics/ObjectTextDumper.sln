@@ -11,7 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub", "Test\ObjectDumperPartialTrustTestStub\vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub.csproj", "{2C655AF4-8D80-44F1-B64C-F82B763ACF12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper.Sample", "Sample\ObjectDumperSample\vm.Aspects.Diagnostics.ObjectDumper.Sample.csproj", "{FDF6E9BF-CB09-4E23-9E96-12B203316674}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ObjectDumper.Samples", "ObjectDumper.Samples", "{40C3F688-8C31-44AB-B36B-486F40C47295}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample1", "ObjectDumper.Samples\Sample1\vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample1.csproj", "{FA9E59F1-34A3-4904-AFA8-47B45012DA09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample2", "ObjectDumper.Samples\Sample2\vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample2.csproj", "{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample3", "ObjectDumper.Samples\Sample3\vm.Aspects.Diagnostics.ObjectDumper.Samples.Sample3.csproj", "{FDF6E9BF-CB09-4E23-9E96-12B203316674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +44,18 @@ Global
 		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C655AF4-8D80-44F1-B64C-F82B763ACF12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FDF6E9BF-CB09-4E23-9E96-12B203316674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FDF6E9BF-CB09-4E23-9E96-12B203316674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDF6E9BF-CB09-4E23-9E96-12B203316674}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
@@ -51,7 +69,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{39774AEF-F8CD-4605-A4B2-E563D289CCBC} = {6E42EF8A-6950-4FAA-8083-5987503B973A}
 		{2C655AF4-8D80-44F1-B64C-F82B763ACF12} = {6E42EF8A-6950-4FAA-8083-5987503B973A}
-		{FDF6E9BF-CB09-4E23-9E96-12B203316674} = {6E42EF8A-6950-4FAA-8083-5987503B973A}
+		{FA9E59F1-34A3-4904-AFA8-47B45012DA09} = {40C3F688-8C31-44AB-B36B-486F40C47295}
+		{0FA4F797-C0C3-4DD8-8544-1F38E4B10842} = {40C3F688-8C31-44AB-B36B-486F40C47295}
+		{FDF6E9BF-CB09-4E23-9E96-12B203316674} = {40C3F688-8C31-44AB-B36B-486F40C47295}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C357109-04E4-48A6-A3BF-80DFD553DAEB}
