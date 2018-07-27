@@ -53,9 +53,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
+    <ProjectReference Include="..\..\src\vm.Aspects.Diagnostics.Net472.csproj">
       <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
+      <Name>vm.Aspects.Diagnostics.Net472</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

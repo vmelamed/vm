@@ -29,6 +29,8 @@
             * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
             * Built and tested with .NET 4.6.2, 4.7.1, 4.7.2
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectTextDumper.md.</Description>
+    <RootNamespace>vm.Aspects.Diagnostics.ObjectTextDumper</RootNamespace>
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Common Items\AssemblyInfo.global.cs" Link="AssemblyInfo.global.cs" />
+    <Compile Include="..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,8 +47,11 @@
 
   <ItemGroup>
     <None Include="..\..\..\Common Items\vm.snk" Link="vm.snk" />
-    <None Include="..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
     <None Include="..\..\..\Common Items\vmAllRules.ruleset" Link="vmAllRules.ruleset" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

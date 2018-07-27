@@ -8,13 +8,14 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
-    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
+    <AssemblyName>vm.Aspects.Diagnostics</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkVersions>net452;net462;net471;net472</TargetFrameworkVersions>
     <LangVersion>latest</LangVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -39,8 +39,8 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET471</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\vm.Aspects.Diagnostics.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>3001, 3002, 3003</NoWarn>
@@ -55,7 +55,7 @@
     <DefineConstants>TRACE;DOTNET471</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\vm.Aspects.Diagnostics.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>3001, 3002, 3003</NoWarn>
     <CodeAnalysisRuleSet>..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
@@ -67,7 +67,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -91,7 +91,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Common Items\AssemblyInfo.global.cs">
+    <Compile Include="..\..\..\Common Items\AssemblyInfo.global.cs">
       <Link>Properties\AssemblyInfo.global.cs</Link>
     </Compile>
     <Compile Include="ClassDumpData.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="ExternalMetadata\WebExceptionDumpMetadata.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IMemberInfoComparer.cs" />
+    <Compile Include="MetadataTypeAttribute.cs" />
     <Compile Include="ObjectTextDumper.cs" />
     <Compile Include="DumpSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -163,12 +164,7 @@
     <Compile Include="WriterExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="..\..\Common Items\Dictionary.xml">
-      <Link>Dictionary.xml</Link>
-    </CodeAnalysisDictionary>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Common Items\vm.snk">
+    <None Include="..\..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
     <None Include="NuGet\ObjectTextDumper.symbols.nuspec">
@@ -179,7 +175,6 @@
     </None>
     <None Include="project.assets.json" />
     <None Include="NuGet\PublishObjectTextDumper.cmd" />
-    <None Include="ObjectDumper.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -198,6 +193,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\..\Common Items\Dictionary.xml">
+      <Link>Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
