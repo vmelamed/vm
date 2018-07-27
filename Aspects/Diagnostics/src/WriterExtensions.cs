@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+
 using vm.Aspects.Diagnostics.Properties;
 
 namespace vm.Aspects.Diagnostics
@@ -318,15 +319,15 @@ namespace vm.Aspects.Diagnostics
                 [typeof(TypeInfo)]          = (w, mi) => w.Dumped((Type)mi),
 
                 [typeof(EventInfo)]         = (w, mi) => w.Dumped((EventInfo)mi),
-                [typeof(ComAwareEventInfo)] = (w, mi) => w.Dumped((EventInfo)mi),
-
                 [typeof(FieldInfo)]         = (w, mi) => w.Dumped((FieldInfo)mi),
-                [typeof(FieldBuilder)]      = (w, mi) => w.Dumped((FieldInfo)mi),
-
                 [typeof(PropertyInfo)]      = (w, mi) => w.Dumped((PropertyInfo)mi),
-                [typeof(PropertyBuilder)]   = (w, mi) => w.Dumped((PropertyInfo)mi),
-
                 [typeof(MethodInfo)]        = (w, mi) => w.Dumped((MethodInfo)mi),
+
+#if !NETSTANDARD
+                [typeof(ComAwareEventInfo)] = (w, mi) => w.Dumped((EventInfo)mi),
+                [typeof(FieldBuilder)]      = (w, mi) => w.Dumped((FieldInfo)mi),
+                [typeof(PropertyBuilder)]   = (w, mi) => w.Dumped((PropertyInfo)mi),
+#endif
             });
 
         static bool Dumped(

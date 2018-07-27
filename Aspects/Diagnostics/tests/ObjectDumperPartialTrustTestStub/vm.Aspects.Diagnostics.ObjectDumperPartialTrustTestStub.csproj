@@ -195,12 +195,6 @@
     <None Include="PartialTrust.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
-      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\..\..\Common Items\Dictionary.xml">
       <Link>Dictionary.xml</Link>
     </CodeAnalysisDictionary>
@@ -209,6 +203,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <Version>2.1.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
+      <Project>{6f066fd1-490f-4258-b4d9-105fa094b719}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

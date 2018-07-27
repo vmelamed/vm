@@ -392,9 +392,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public bool DumpedMemberInfo()
         {
-            var mi = Instance as MemberInfo;
-
-            if (mi == null)
+            if (!(Instance is MemberInfo mi))
                 return false;
 
             if (IsInDumpingMode)

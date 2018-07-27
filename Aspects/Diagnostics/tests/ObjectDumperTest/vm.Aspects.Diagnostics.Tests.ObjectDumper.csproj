@@ -216,16 +216,6 @@
     <Compile Include="ObjectTextDumperTest.TestData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\vm.Aspects.Diagnostics.Net472.csproj">
-      <Project>{372a2fef-c004-498c-b57f-cf0aca66c37b}</Project>
-      <Name>vm.Aspects.Diagnostics.Net472</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ObjectDumperPartialTrustTestStub\vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub.csproj">
-      <Project>{2c655af4-8d80-44f1-b64c-f82b763acf12}</Project>
-      <Name>vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\..\..\Common Items\vm.Test.snk">
       <Link>vm.Test.snk</Link>
     </None>
@@ -234,6 +224,16 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <Version>2.1.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\vm.Aspects.Diagnostics.ObjectTextDumper.csproj">
+      <Project>{6f066fd1-490f-4258-b4d9-105fa094b719}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectTextDumper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectDumperPartialTrustTestStub\vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub.csproj">
+      <Project>{2c655af4-8d80-44f1-b64c-f82b763acf12}</Project>
+      <Name>vm.Aspects.Diagnostics.ObjectDumperPartialTrustTestStub</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

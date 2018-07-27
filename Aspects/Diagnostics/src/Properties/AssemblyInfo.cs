@@ -1,11 +1,4 @@
-﻿using System.Reflection;
-
-[assembly: AssemblyTitle("vm.Aspects.Diagnostics.ObjectTextDumper")]
-[assembly: AssemblyDescription("Dumps the properties' and fields' values of any .NET object in a text form.")]
-[assembly: AssemblyVersion("2.0.1")]
-[assembly: AssemblyFileVersion("2.0.1")]
-[assembly: AssemblyInformationalVersion("2.0.1")]
-
+﻿
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Diagnostics.Tests.ObjectDumper, " +
     "PublicKey=00240000048000009400000006020000002400005253413100040000010001004b151837822bdb"+

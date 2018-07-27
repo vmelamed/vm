@@ -5,7 +5,7 @@ namespace vm.Aspects.Diagnostics
     /// <summary>
     /// Encapsulates a pair of a class or struct metadata and the corresponding DumpAttribute.
     /// </summary>
-    struct ClassDumpData : IEquatable<ClassDumpData>
+    internal struct ClassDumpData : IEquatable<ClassDumpData>
     {
         public ClassDumpData(
             Type metadata,

@@ -7,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
-using System.Security.Permissions;
 using System.Threading;
+#if !NETSTANDARD
+using System.Security.Permissions;
+#endif
 
 using vm.Aspects.Diagnostics.Implementation;
 using vm.Aspects.Diagnostics.Properties;
@@ -199,21 +201,24 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             int initialIndentLevel = DumpSettings.DefaultInitialIndentLevel)
         {
+#if !NETSTANDARD
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission     = false;
-
-            _indentLevel = initialIndentLevel >= DumpSettings.DefaultInitialIndentLevel ? initialIndentLevel : DumpSettings.DefaultInitialIndentLevel;
+#endif
 
             try
             {
+#if !NETSTANDARD
                 // assert the permission and dump
                 reflectionPermission.Demand();
                 revertPermission = true;
-
-                // assert the permission and dump
                 reflectionPermission.Assert();
-                _maxDepth = int.MinValue;
-                Settings  = InstanceSettings;
+#endif
+
+                // dump
+                _indentLevel = initialIndentLevel >= DumpSettings.DefaultInitialIndentLevel ? initialIndentLevel : DumpSettings.DefaultInitialIndentLevel;
+                _maxDepth    = int.MinValue;
+                Settings     = InstanceSettings;
 
                 DumpObject(value, dumpMetadata, dumpAttribute);
             }
@@ -231,9 +236,11 @@ namespace vm.Aspects.Diagnostics
             }
             finally
             {
+#if !NETSTANDARD
                 // revert the permission assert
                 if (revertPermission)
                     CodeAccessPermission.RevertAssert();
+#endif
 
                 // clear the dumped objects register
                 DumpedObjects.Clear();

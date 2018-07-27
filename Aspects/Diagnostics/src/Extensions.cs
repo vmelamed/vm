@@ -228,9 +228,7 @@ namespace vm.Aspects
             if (mi is FieldInfo)
                 return true;
 
-            var pi = mi as PropertyInfo;
-
-            if (pi == null)
+            if (!(mi is PropertyInfo pi))
                 return false;
 
             return pi.CanRead;

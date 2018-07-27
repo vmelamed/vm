@@ -30,14 +30,14 @@
             For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </description>
         <releaseNotes>
-            Note that this package derives from the package AspectObjectDumper v.1.10.2 where I removed the dependency on the Common Service Locator.
-            Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
-            and rename the package to vm.Aspects.Diagnostics.ObjectTextDumper for consistency with all vm.Aspects.* packages and libraries out there.
+Note that this package derives from the package AspectObjectDumper v.1.10.2 where I removed the dependency on the Common Service Locator.
+Technically this is a breaking change. However instead of just bumping the major version, I decided to also go a step further
+and rename the package to vm.Aspects.Diagnostics.ObjectTextDumper for consistency with all vm.Aspects.* packages and libraries out there.
 
-            This is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
-            Common Service Locator compatible DI container. As a result, if clients need to implement their own member comparer, they can pass a reference to it in the constructor of ObjectTextDumper object.
+This is a breaking change only for clients who have their own implementation of vm.Aspects.Diagnostics.IMemberInfoComparer registered in a
+Common Service Locator compatible DI container. As a result, if clients need to implement their own member comparer, they can pass a reference to it in the constructor of ObjectTextDumper object.
             
-            Small changes in the documentation.
+Small changes in the documentation.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</projectUrl>

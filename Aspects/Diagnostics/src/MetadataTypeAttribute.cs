@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP2_1
+﻿#if NETSTANDARD
 namespace System.ComponentModel.DataAnnotations
 {
     /// <summary>
