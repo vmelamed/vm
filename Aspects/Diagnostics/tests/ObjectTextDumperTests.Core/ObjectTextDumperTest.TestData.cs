@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -696,7 +697,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
                 Method5Info = Type.GetMethod("Method5");
                 EventInfo   = Type.GetEvent("Event");
                 MemberInfo  = Type.GetMember("member")[0];
-                MemberInfos = Type.GetMembers();
+                MemberInfos = Type.GetMembers().OrderBy(mi => mi.Name).ToArray();
             }
         }
 

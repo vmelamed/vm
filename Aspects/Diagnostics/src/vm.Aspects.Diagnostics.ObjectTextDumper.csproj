@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <!-- Build properties: -->
-        <TargetFrameworks>netstandard2.0;net472;net462;net452</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <VersionPrefix>2.0.2</VersionPrefix>
         <VersionSuffix>beta-01</VersionSuffix>
         <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
@@ -55,6 +55,10 @@
             Changes in the documentation.
         </PackageReleaseNotes>
         <PackageTags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+      <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0;TEST</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">

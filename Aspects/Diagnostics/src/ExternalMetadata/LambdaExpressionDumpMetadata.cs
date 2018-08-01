@@ -16,7 +16,20 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(3)]
         public object Body { get; set; }
 
-        [Dump(int.MinValue)]
+        [Dump(int.MinValue+1)]
         public object TailCall { get; set; }
+
+
+        [Dump(false)]
+        public object NameCore { get; set; }
+
+        [Dump(false)]
+        public object ParameterCount { get; set; }
+
+        [Dump(false)]
+        public object PublicType { get; set; }
+
+        [Dump(false)]
+        public object TailCallCore { get; set; }
     }
 }

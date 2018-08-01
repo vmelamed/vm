@@ -13,10 +13,13 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
         [Dump(1)]
         public object Type { get; set; }
 
-        [Dump(2, DumpNullValues = ShouldDump.Skip)]
+        [Dump(false)]
+        public object TypeCore { get; set; }
+
+        [Dump(3, DumpNullValues = ShouldDump.Skip)]
         public object Name { get; set; }
 
-        [Dump(int.MinValue)]
+        [Dump(int.MinValue+1)]
         public object CanReduce { get; set; }
 
         [Dump(false)]

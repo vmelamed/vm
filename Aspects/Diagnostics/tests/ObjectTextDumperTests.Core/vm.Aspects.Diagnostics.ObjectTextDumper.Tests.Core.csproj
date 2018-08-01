@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <SignAssembly>true</SignAssembly>
+
+    <AssemblyOriginatorKeyFile>C:\Projects\Git\vm\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
+
+    <RootNamespace>vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core</RootNamespace>
+
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core</AssemblyName>
+
+    <ApplicationIcon />
+
+    <OutputType>Library</OutputType>
+
+    <StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP2_1;TEST</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.2.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\vm.Aspects.Diagnostics.ObjectTextDumper.csproj" />
+  </ItemGroup>
+
+</Project>

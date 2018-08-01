@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace vm.Aspects.Diagnostics
@@ -29,15 +30,34 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         static Dictionary<Type, ClassDumpData> TypesDumpData => _typesDumpData;
 
+        public static Dictionary<Type, ClassDumpData> GetSnapshotTypesDumpData()
+        {
+            try
+            {
+                _typesDumpDataSync.EnterReadLock();
+                return _typesDumpData.ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
+            finally
+            {
+                _typesDumpDataSync.ExitReadLock();
+            }
+        }
+
         /// <summary>
         /// Resets the class dump.
         /// </summary>
         [Conditional("TEST")]
         public static void ResetClassDumpData()
         {
-            _typesDumpDataSync.EnterWriteLock();
-            _typesDumpData.Clear();
-            _typesDumpDataSync.ExitWriteLock();
+            try
+            {
+                _typesDumpDataSync.EnterWriteLock();
+                _typesDumpData.Clear();
+            }
+            finally
+            {
+                _typesDumpDataSync.ExitWriteLock();
+            }
         }
 
         /// <summary>
@@ -168,9 +188,9 @@ namespace vm.Aspects.Diagnostics
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            TypesDumpDataSync.EnterWriteLock();
             try
             {
+                TypesDumpDataSync.EnterWriteLock();
                 if (!replace && TypesDumpData.TryGetValue(type, out var dumpData))
                 {
                     if (dumpData == classDumpData)
