@@ -46,8 +46,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Resets the class dump.
         /// </summary>
-        [Conditional("TEST")]
-        public static void ResetClassDumpData()
+        internal static void ResetClassDumpData()
         {
             try
             {

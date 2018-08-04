@@ -11,12 +11,16 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
     [TestClass]
     public class ClassMetadataCacheTest
     {
-        static void Reset() => ClassMetadataResolver.ResetClassDumpData();
+        static void Reset()
+        {
+            ClassMetadataResolver.ResetClassDumpData();
+            Assert.AreEqual(0, ClassMetadataResolver.GetSnapshotTypesDumpData().Count());
+        }
 
         [TestMethod]
         public void TestSetClassDumpData_NullArg2n3()
         {
-            ClassMetadataResolver.ResetClassDumpData();
+            Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count();
 
@@ -31,7 +35,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         [TestMethod]
         public void TestSetClassDumpData_NullArg2()
         {
-            ClassMetadataResolver.ResetClassDumpData();
+            Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count();
 
@@ -46,7 +50,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         [TestMethod]
         public void TestSetClassDumpData_NullArg3()
         {
-            ClassMetadataResolver.ResetClassDumpData();
+            Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count();
 
@@ -61,7 +65,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
         [TestMethod]
         public void TestSetClassDumpData()
         {
-            ClassMetadataResolver.ResetClassDumpData();
+            Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count();
 

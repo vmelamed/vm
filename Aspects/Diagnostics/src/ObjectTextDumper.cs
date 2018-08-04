@@ -227,6 +227,11 @@ namespace vm.Aspects.Diagnostics
                 Writer.WriteLine();
                 Writer.Write(Resources.CallerDoesNotHavePermissionFormat, value?.ToString() ?? DumpUtilities.Null);
             }
+            catch (TypeAccessException)
+            {
+                Writer.WriteLine();
+                Writer.Write(Resources.CallerDoesNotHavePermissionFormat, value?.ToString() ?? DumpUtilities.Null);
+            }
             catch (Exception x)
             {
                 var message = $"\n\nATTENTION:\nThe TextDumper threw an exception:\n{x.ToString()}";
