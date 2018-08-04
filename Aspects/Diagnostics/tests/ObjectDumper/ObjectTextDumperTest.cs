@@ -11,6 +11,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using vm.Aspects.Diagnostics.Implementation;
 
+#if NETFRAMEWORK
+using System.Security;
+using System.Security.Policy;
+
+using vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust;
+#endif
+
 #pragma warning disable 67, 649
 
 namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
@@ -19,21 +26,25 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
     public partial class ObjectTextDumperTest
     {
 #if NETCOREAPP  ||  NETSTANDARD
-        public const string CoreDotNetAssembly        = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-        public const string LinqAssembly              = "System.Linq.Expressions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-        public const string LinqExpression            = "System.Linq.Expressions.Expression1";
-        public const string CSharpLambda              = "Expression1<Func<";
-        public const string ReadOnlyCollection        = "ReadOnlyCollection";
-        public const string RoCollectionNamespace     = "System.Collections.ObjectModel";
-        public const string RuntimeExtensionsAssembly = "System.Runtime.Extensions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+        public const string CoreDotNetAssembly           = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+        public const string CoreDotNetAssembly1          = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+        public const string CSharpLambda                 = "Expression1<Func<";
+        public const string LinqAssembly                 = "System.Linq.Expressions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+        public const string LinqExpression               = "System.Linq.Expressions.Expression1";
+        public const string ObjectTextDumperTestAssembly = "vm.Aspects.Diagnostics.Tests.ObjectDumper.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393";
+        public const string ReadOnlyCollection           = "ReadOnlyCollection";
+        public const string RoCollectionNamespace        = "System.Collections.ObjectModel";
+        public const string RuntimeExtensionsAssembly    = "System.Runtime.Extensions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 #elif NETFRAMEWORK
-        public const string CoreDotNetAssembly        = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-        public const string LinqAssembly              = "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-        public const string LinqExpression            = "System.Linq.Expressions.Expression";
-        public const string CSharpLambda              = "Expression<Func<";
-        public const string ReadOnlyCollection        = TrueReadOnlyCollection;
-        public const string RoCollectionNamespace     = "System.Runtime.CompilerServices";
-        public const string RuntimeExtensionsAssembly = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+        public const string CoreDotNetAssembly           = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+        public const string CoreDotNetAssembly1          = "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+        public const string CSharpLambda                 = "Expression<Func<";
+        public const string LinqAssembly                 = "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+        public const string LinqExpression               = "System.Linq.Expressions.Expression";
+        public const string ObjectTextDumperTestAssembly = "vm.Aspects.Diagnostics.Tests.ObjectDumper, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393";
+        public const string ReadOnlyCollection           = "TrueReadOnlyCollection";
+        public const string RoCollectionNamespace        = "System.Runtime.CompilerServices";
+        public const string RuntimeExtensionsAssembly    = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #endif
 
         public TestContext TestContext { get; set; }
@@ -290,7 +301,9 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
             var assertion = actual.StartsWith(expected);
 
             if (!assertion)
-                TestContext.WriteLine($"Expected:<{expected}>\nActual:<{actual}>\n");
+                TestContext.WriteLine($@"Expected:<{expected}>
+Actual:<{actual}>
+");
 
             Assert.IsTrue(assertion, $"{dumpId} assertion failed.");
         }
@@ -393,7 +406,7 @@ namespace vm.Aspects.Diagnostics.Tests.ObjectDumper
             ActAndAssert(
                 nameof(TestDumpObject1_1),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   BoolField                = True
   ByteField                = 1
   CharField                = A
@@ -445,7 +458,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
             ActAndAssert(
                 nameof(TestDumpObject1WithFields_1),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   BoolField                = True
   ByteField                = 1
   CharField                = A
@@ -513,10 +526,10 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
         [TestMethod]
         public void TestDumpObject1_1_Limited()
         {
-            ActAndAssert(
+            ActAndAssertStartsWith(
                 nameof(TestDumpObject1_1_Limited),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   BoolField                = True
   ByteField                = 1
   CharField                = A
@@ -524,8 +537,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
   DateTimeOffsetField      = 2013-01-13T00:00:00.0000000-05:00
   DecimalField             = 1
   DoubleField              = 1
-  FloatField              ...
-The dump exceeded the maximum length of 500 characters. Either increase the value of the argument maxDumpLength of the constructor of the ObjectTextDumper class, or suppress the dump of some types and properties using DumpAttribute-s and metadata.",
+  FloatField               = 1",
                 new Object1(),
                 //w => new ObjectTextDumper(w, 0, 2, 500));
                 w =>
@@ -547,7 +559,7 @@ The dump exceeded the maximum length of 500 characters. Either increase the valu
             ActAndAssert(
                 nameof(TestDumpObject1_2),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   ObjectProperty           : <null>
   NullIntProperty          = <null>
   NullLongProperty         = 1
@@ -598,7 +610,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
             ActAndAssert(
                 nameof(TestDumpObject1WithFieldsMetadata_2),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   ObjectProperty           : <null>
   NullIntProperty          = <null>
   NullLongProperty         = 1
@@ -649,7 +661,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
             ActAndAssert(
                 nameof(TestDumpObject1_3),
                 @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
   NullLongProperty         = 1
   BoolProperty             = True
   CharProperty             = A
@@ -697,7 +709,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1,
             ActAndAssert(
                 nameof(TestDumpObject2_1),
                 @"
-Object2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object2, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object2, "+ObjectTextDumperTestAssembly+@"): 
   NullLongProperty         = 1
   BoolProperty             = True
   CharProperty             = A
@@ -725,7 +737,7 @@ Object2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object2,
             ActAndAssert(
                 nameof(TestDumpObject3_1),
                 @"
-Object3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object3, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object3, "+ObjectTextDumperTestAssembly+@"): 
   NullLongProperty         = 1
   BoolProperty             = True
   CharProperty             = A
@@ -752,12 +764,12 @@ Object3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object3,
             ActAndAssert(
                 nameof(TestDumpObject5_1),
                 @"
-Object5_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object5_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object5_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object5_1, "+ObjectTextDumperTestAssembly+@"): 
   PropertyA                = PropertyA
   PropertyB                = PropertyB
-  Associate                = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Associate                = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = Property1
-  Associate2               = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Associate2               = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = Property1
     Property2                = Property2",
                 new Object5_1());
@@ -795,7 +807,7 @@ Object5_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
   Type                     = (TypeInfo): System.Func`2[[System.Int32, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"
   Name                     = <null>
   ReturnType               = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-  Parameters               = "+ReadOnlyCollection+@"<ParameterExpression>[1]: ("+RoCollectionNamespace+"."+ReadOnlyCollection+@"`1[[System.Linq.Expressions.ParameterExpression, "+LinqAssembly+@"]], "+CoreDotNetAssembly+@")
+  Parameters               = "+ReadOnlyCollection+@"<ParameterExpression>[1]: ("+RoCollectionNamespace+"."+ReadOnlyCollection+@"`1[[System.Linq.Expressions.ParameterExpression, "+LinqAssembly+@"]], "+CoreDotNetAssembly1+@")
     PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+LinqAssembly+@"): 
       NodeType                 = ExpressionType.Parameter
       Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
@@ -854,7 +866,7 @@ Object5_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
             ActAndAssert(
                 nameof(TestDumpObject6_1),
                 @"
-Object6 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object6, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object6 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object6, "+ObjectTextDumperTestAssembly+@"): 
   D                        = static ObjectTextDumperTest.TestMethod
   Ex                       = p => (p > 0)
   Property1                = Property1
@@ -868,7 +880,7 @@ Object6 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object6,
             ActAndAssert(
                 nameof(TestDumpObject7_1),
                 @"
-Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7, "+ObjectTextDumperTestAssembly+@"): 
   Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
     0
     1
@@ -887,7 +899,7 @@ Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7,
             ActAndAssert(
                 nameof(TestDumpObject7_2),
                 @"
-Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7, "+ObjectTextDumperTestAssembly+@"): 
   Array                    = int[18]: (System.Int32[], "+CoreDotNetAssembly+@")
     0
     1
@@ -914,7 +926,7 @@ Object7 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7,
             ActAndAssert(
                 nameof(TestDumpObject8_1),
                 @"
-Object8 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object8, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object8 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object8, "+ObjectTextDumperTestAssembly+@"): 
   Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
     0
     1
@@ -940,7 +952,7 @@ Object8 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object8,
             ActAndAssert(
                 nameof(TestDumpObject7_1_1),
                 @"
-Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
   List                     = List<int>[6]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
     0
     1
@@ -959,7 +971,7 @@ Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
             ActAndAssert(
                 nameof(TestDumpObject7_1_2),
                 @"
-Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
   List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
     0
     1
@@ -986,7 +998,7 @@ Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
             ActAndAssert(
                 nameof(TestDumpObject7_1_3),
                 @"
-Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
   List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
     0
     1
@@ -1021,7 +1033,7 @@ Object7_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
             ActAndAssert(
                 nameof(TestDumpObject8_1_1),
                 @"
-Object8_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object8_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object8_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object8_1, "+ObjectTextDumperTestAssembly+@"): 
   List                     = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
     0
     1
@@ -1039,8 +1051,8 @@ Object8_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object
             ActAndAssert(
                 nameof(TestDumpObject9_1),
                 @"
-Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Object90                 = Object90 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
+  Object90                 = Object90 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object90, "+ObjectTextDumperTestAssembly+@"): 
     Flags                    = TestFlags (Two | Four)
     Prop                     = TestEnum.One
   Prop91                   = 0
@@ -1061,8 +1073,8 @@ Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object9
             ActAndAssert(
                 nameof(TestDumpObject9_1),
                 @"
-Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Object90                 = Object90 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object90, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
+  Object90                 = Object90 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object90, "+ObjectTextDumperTestAssembly+@"): 
     Flags                    = TestFlags (Two | Four)
     Prop                     = TestEnum.One
   Prop91                   = 0
@@ -1079,7 +1091,7 @@ Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object9
             ActAndAssert(
                 nameof(TestDumpObject9_1),
                 @"
-Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
   Object90                 = <null>
   Prop91                   = 0
   Prop92                   = 1
@@ -1099,12 +1111,12 @@ Object91 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object9
             ActAndAssert(
                 nameof(TestDumpObjectWithDelegates),
                 @"
-ObjectWithDelegates (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithDelegates, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+ObjectWithDelegates (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithDelegates, "+ObjectTextDumperTestAssembly+@"): 
   DelegateProp0            = <null>
   DelegateProp1            = static Object10.Static
   DelegateProp2            = Object10.Instance
   DelegateProp3            = static ObjectTextDumperTest.TestMethod
-  Object10Prop             = Object10 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object10, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  Object10Prop             = Object10 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object10, "+ObjectTextDumperTestAssembly+@"): 
     Offset                   = 23",
                 new ObjectWithDelegates());
         }
@@ -1115,10 +1127,10 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperT
             ActAndAssert(
                 nameof(TestDumpObjectWithMyEnumerable),
                 @"
-ObjectWithMyEnumerable (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMyEnumerable, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  MyEnumerable             = MyEnumerable (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+MyEnumerable, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+ObjectWithMyEnumerable (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMyEnumerable, "+ObjectTextDumperTestAssembly+@"): 
+  MyEnumerable             = MyEnumerable (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+MyEnumerable, "+ObjectTextDumperTestAssembly+@"): 
     Property                 = foo
-    MyEnumerable[]: (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+MyEnumerable, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393)
+    MyEnumerable[]: (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+MyEnumerable, "+ObjectTextDumperTestAssembly+@")
       0
       1
       3
@@ -1132,12 +1144,12 @@ ObjectWithMyEnumerable (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDump
             ActAndAssert(
                 nameof(TestDumpObjectWithMemberInfos),
                 @"
-ObjectWithMemberInfos (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMemberInfos, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+ObjectWithMemberInfos (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMemberInfos, "+ObjectTextDumperTestAssembly+@"): 
   EventInfo                = (Event): EventHandler ObjectWithMembers.Event
   IndexerIntInfo           = (Property): String ObjectWithMembers.this[Int32] { get; }
   IndexerStringInfo        = (Property): String ObjectWithMembers.this[String, Int32] { get;set; }
   MemberInfo               = (Field): Int32 ObjectWithMembers.member
-  MemberInfos              = MemberInfo[22]: (System.Reflection.MemberInfo[], System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e)
+  MemberInfos              = MemberInfo[22]: (System.Reflection.MemberInfo[], "+CoreDotNetAssembly+@")
     (Constructor): .ctor
     (Method): Void ObjectWithMembers.add_Event(EventHandler value)
     (Method): Boolean Object.Equals(Object obj)
@@ -1155,7 +1167,7 @@ ObjectWithMemberInfos (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumpe
   Method4Info              = (Method): T ObjectWithMembers.Method4<T>(Int32 a, Int32 b)
   Method5Info              = (Method): T ObjectWithMembers.Method5<T, U>(Int32 a, Int32 b)
   PropertyInfo             = (Property): Int32 ObjectWithMembers.Property { get;set; }
-  Type                     = (NestedType): vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMembers, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393",
+  Type                     = (NestedType): vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+ObjectWithMembers, "+ObjectTextDumperTestAssembly+@"",
                 new ObjectWithMemberInfos());
         }
 
@@ -1172,10 +1184,10 @@ ObjectWithMemberInfos (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumpe
             ActAndAssert(
                 nameof(TestDumpNestedObject),
                 @"
-NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-    Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-      Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
+  Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
+    Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
+      Next                     = NestedItem (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
         Next                     = ...object dump reached the maximum depth level. Use the DumpAttribute.MaxDepth to increase the depth level if needed.
         Property                 = 3
       Property                 = 2
@@ -1243,15 +1255,15 @@ Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.Str
             ActAndAssert(
                 nameof(TestDictionaryBaseTypeAndObject),
                 @"
-Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, "+CoreDotNetAssembly+@"],[vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], "+CoreDotNetAssembly+@")
+Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, "+CoreDotNetAssembly+@"],[vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
 {
-  [1] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  [1] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = one
     Property2                = Property2
-  [2] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  [2] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = two
     Property2                = Property2
-  [3] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+  [3] = Object4_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = three
     Property2                = Property2
 }",
@@ -1269,7 +1281,7 @@ Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.
             ActAndAssert(
                 nameof(TestVirtualProperties),
                 @"
-Derived (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Derived, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Derived (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Derived, "+ObjectTextDumperTestAssembly+@"): 
   IntProperty              = 0
   StringProperty           = StringProperty
   IntProperty              = 5",
@@ -1288,7 +1300,7 @@ Derived (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Derived,
             ActAndAssert(
                 nameof(TestDumpOfDynamic),
                 @"
-<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, "+CoreDotNetAssembly+@"],[System.String, "+CoreDotNetAssembly+@"],[System.Double, "+CoreDotNetAssembly+@"]], vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, "+CoreDotNetAssembly+@"],[System.String, "+CoreDotNetAssembly+@"],[System.Double, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"): 
   DoubleProperty           = 3.14159265358979
   IntProperty              = 10
   StringProperty           = hello",
@@ -1320,7 +1332,7 @@ ExpandoObject[]: (System.Dynamic.ExpandoObject, "+LinqAssembly+@")
                 test);
         }
 
-#if !NETCOREAPP2_1
+#if NETFRAMEWORK
         T GetSandboxedObject<T>(SecurityZone zone)
         {
             // get the permission set:
@@ -1370,7 +1382,7 @@ vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust.Object1 (Note: The caller
             Debug.WriteLine(nameof(TestCallFromSandbox1));
             var actual = GetSandboxedObject<Object1Dump>(SecurityZone.MyComputer).DumpObject1();
             var expected = @"
-Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust.Object1, vm.Aspects.Diagnostics.Tests.ObjectTextDumperPartialTrustStub, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a64e726b1908ae7b): 
+Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust.Object1, vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a64e726b1908ae7b): 
   BoolProperty             = True
   ByteProperty             = 1
   CharProperty             = A
@@ -1404,7 +1416,7 @@ Object1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust.Object1, vm.Aspe
             ActAndAssert(
                 nameof(TestDumpClassDumpMethod),
                 @"
-Object12 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object12, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object12 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object12, "+ObjectTextDumperTestAssembly+@"): 
   Object11Property_1       = Dumped by Objec11Dumper.Dump1: string value
   Object11Property_11      = Dumped by Objec11Dumper.Dump1: string value
   Object11Property_2       = Dumped by Objec11Dumper.Dump: string value
@@ -1425,7 +1437,7 @@ Object12 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestOptInDump),
                 @"
-Object13 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object13, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object13 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object13, "+ObjectTextDumperTestAssembly+@"): 
   Prop2                    = <null>
   Prop3                    = <null>",
                 new Object13());
@@ -1439,7 +1451,7 @@ Object13 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestArrayIndentationCreep),
                 @"
-DavidATest (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+DavidATest, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+DavidATest (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+DavidATest, "+ObjectTextDumperTestAssembly+@"): 
   A                        = 10
   Array                    = int[3]: (System.Int32[], "+CoreDotNetAssembly+@")
     1
@@ -1455,7 +1467,7 @@ DavidATest (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+David
             ActAndAssert(
                 nameof(TestObjectWithNullCollection),
                 @"
-Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
   Collection               = <null>
   Property11               = 0
   Property12               = <null>",
@@ -1463,7 +1475,7 @@ Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestObjectWithNullCollection),
                 @"
-Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
   Collection               = <null>
   Property11               = 0
   Property12               = <null>",
@@ -1476,12 +1488,12 @@ Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestObjectWithNotNullCollection),
                 @"
-Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
-  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[[vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], "+CoreDotNetAssembly+@")
-    Object14_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
+  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[[vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
+    Object14_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"): 
       Property1                = 0
       Property2                = zero
-    Object14_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+    Object14_1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"): 
       Property1                = 1
       Property2                = one
   Property11               = 1
@@ -1507,7 +1519,7 @@ Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestObjectWithNotNullCollection),
                 @"
-Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
   Collection               = <null>
   Property11               = 0
   Property12               = <null>",
@@ -1520,7 +1532,7 @@ Object14 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Object1
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseClass, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseClass, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 0
   VirtualProperty1         = 1
   VirtualProperty2         = 2",
@@ -1528,7 +1540,7 @@ BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseCl
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant1, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 0
   VirtualProperty1         = 1
   VirtualProperty2         = 2",
@@ -1536,7 +1548,7 @@ Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant2, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 0
   VirtualProperty1         = 21
   VirtualProperty2         = 2",
@@ -1544,7 +1556,7 @@ Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant3, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant3, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 0
   VirtualProperty1         = 21
   VirtualProperty2         = 32",
@@ -1554,7 +1566,7 @@ Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseClass, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseClass, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 0
   VirtualProperty1         = 1
   VirtualProperty2         = 2",
@@ -1567,7 +1579,7 @@ BaseClass (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+BaseCl
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant1, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant1, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 10
   VirtualProperty1         = 11
   VirtualProperty2         = 12",
@@ -1580,7 +1592,7 @@ Descendant1 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant2, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant2, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 20
   VirtualProperty1         = 21
   VirtualProperty2         = 22",
@@ -1593,7 +1605,7 @@ Descendant2 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestVirtualPropertiesVariations),
                 @"
-Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant3, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Descendant3, "+ObjectTextDumperTestAssembly+@"): 
   Property                 = 30
   VirtualProperty1         = 31
   VirtualProperty2         = 32",
@@ -1611,7 +1623,7 @@ Descendant3 (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+Desc
             ActAndAssert(
                 nameof(TestWrappedByteArray),
                 @"
-WrappedByteArray (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+WrappedByteArray, vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+WrappedByteArray (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+WrappedByteArray, "+ObjectTextDumperTestAssembly+@"): 
   Bytes                    = byte[8]: 00-00-00-00-00-00-00-00",
                 new WrappedByteArray { Bytes = new byte[8] });
         }
@@ -1622,7 +1634,7 @@ WrappedByteArray (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest
             ActAndAssert(
                 nameof(TestGenericWithBuddy),
                 @"
-GenericWithBuddy<int> (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, "+CoreDotNetAssembly+@"]], vm.Aspects.Diagnostics.ObjectTextDumper.Tests.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
+GenericWithBuddy<int> (vm.Aspects.Diagnostics.Tests.ObjectDumper.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"): 
   Property2                = ******",
                 new GenericWithBuddy<int> { Property1 = 7, Property2 = 3 });
         }

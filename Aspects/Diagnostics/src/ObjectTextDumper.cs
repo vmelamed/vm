@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Threading;
-#if !NETSTANDARD
+#if NETFRAMEWORK
 using System.Security.Permissions;
 #endif
 
@@ -201,14 +201,14 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute dumpAttribute = null,
             int initialIndentLevel = DumpSettings.DefaultInitialIndentLevel)
         {
-#if !NETSTANDARD
+#if NETFRAMEWORK
             var reflectionPermission = new ReflectionPermission(PermissionState.Unrestricted);
             var revertPermission     = false;
 #endif
 
             try
             {
-#if !NETSTANDARD
+#if NETFRAMEWORK
                 // assert the permission and dump
                 reflectionPermission.Demand();
                 revertPermission = true;
@@ -236,7 +236,7 @@ namespace vm.Aspects.Diagnostics
             }
             finally
             {
-#if !NETSTANDARD
+#if NETFRAMEWORK
                 // revert the permission assert
                 if (revertPermission)
                     CodeAccessPermission.RevertAssert();

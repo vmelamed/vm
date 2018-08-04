@@ -7,8 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 using vm.Aspects.Diagnostics.Properties;
@@ -323,7 +321,7 @@ namespace vm.Aspects.Diagnostics
                 [typeof(PropertyInfo)]      = (w, mi) => w.Dumped((PropertyInfo)mi),
                 [typeof(MethodInfo)]        = (w, mi) => w.Dumped((MethodInfo)mi),
 
-#if !NETSTANDARD
+#if NETFRAMEWORK
                 [typeof(ComAwareEventInfo)] = (w, mi) => w.Dumped((EventInfo)mi),
                 [typeof(FieldBuilder)]      = (w, mi) => w.Dumped((FieldInfo)mi),
                 [typeof(PropertyBuilder)]   = (w, mi) => w.Dumped((PropertyInfo)mi),
