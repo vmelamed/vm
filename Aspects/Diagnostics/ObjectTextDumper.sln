@@ -33,6 +33,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust", "tests\ObjectDumper.PartialTrustStub\vm.Aspects.Diagnostics.Tests.ObjectDumper.PartialTrust.csproj", "{2C655AF4-8D80-44F1-B64C-F82B763ACF12}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{10D3FBCD-F91D-42CB-BF89-39BA3BB57FAB}"
+	ProjectSection(SolutionItems) = preProject
+		build\Publish.cmd = build\Publish.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
