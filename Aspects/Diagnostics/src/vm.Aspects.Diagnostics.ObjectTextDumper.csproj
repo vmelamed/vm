@@ -4,7 +4,7 @@
         <!-- Build properties: -->
         <TargetFramework>netstandard2.0</TargetFramework>
         <VersionPrefix>2.0.2</VersionPrefix>
-        <VersionSuffix>beta-01</VersionSuffix>
+        <VersionSuffix></VersionSuffix>
         <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
         <AssemblyDescription>Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.</AssemblyDescription>
         <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
@@ -29,22 +29,22 @@
 Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.
 Helpful for debugging and logging purposes.
 Features:
-&#160;&#160;* The dump output is separated from the targeted dump media by the familiar TextWriter interface
-&#160;&#160;* The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
-&#160;&#160;* For complex type objects (classes and structs) the dumper outputs the names and the values of the properties
-&#160;&#160;* The dump is recursive: the complex members of the dumped object are dumped indented
-&#160;&#160;* Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
-&#160;&#160;* Handles circular references
-&#160;&#160;* The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
-&#160;&#160;&#160;&#160;- the order in which the properties are dumped
-&#160;&#160;&#160;&#160;- formatting of the property names and/or values
-&#160;&#160;&#160;&#160;- suppressing the dump of some uninteresting properties
-&#160;&#160;&#160;&#160;- masking the values of sensitive properties (e.g. PII)
-&#160;&#160;&#160;&#160;- the depth of the recursion into complex members
-&#160;&#160;&#160;&#160;- the maximum number of dumped elements of sequence properties
-&#160;&#160;* The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
-&#160;&#160;* Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
-&#160;&#160;* Built and tested with .NET 4.5.2, 4.6.2, 4.7.2, .NET Standard 2.0
+  * The dump output is separated from the targeted dump media by the familiar TextWriter interface
+  * The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
+  * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties
+  * The dump is recursive: the complex members of the dumped object are dumped indented
+  * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
+  * Handles circular references
+  * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
+    - the order in which the properties are dumped
+    - formatting of the property names and/or values
+    - suppressing the dump of some uninteresting properties
+    - masking the values of sensitive properties (e.g. PII)
+    - the depth of the recursion into complex members
+    - the maximum number of dumped elements of sequence properties
+  * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
+  * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
+  * Built and tested with .NET 4.5.2, 4.6.2, 4.7.2, .NET Standard 2.0
 For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectDumper.md.
         </Description>
         <PackageReleaseNotes>
