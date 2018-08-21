@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -10,11 +11,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class ReleasedCertificateHasherTest : GenericHasherTest<KeyedHasher>
     {
-        const string keyFileName = "releasedCertificateHash.key";
+        const string _keyFileName = "releasedCertificateHash.key";
 
-        public override IHasherAsync GetHasher() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate();
+        public override IHasherTasks GetHasher() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null).ReleaseCertificate();
 
-        public override IHasherAsync GetHasher(int saltLength) => GetHasher();
+        public override IHasherTasks GetHasher(int saltLength) => GetHasher();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -26,7 +27,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public static void ClassCleanup()
         {
             const string expected = "The quick fox jumps over the lazy dog.";
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, expected) as IKeyManagement;
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), expected) as IKeyManagement;
 
             if (keyManagement.KeyLocation.EndsWith(expected, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
@@ -38,8 +39,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
-            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null).ReleaseCertificate())
+            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             {
                 var hash = stripped.Hash(expected);
 
@@ -52,11 +53,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var original = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             {
                 var hash = original.Hash(expected);
 
-                var stripped = ((KeyedHasher)original).ReleaseCertificate();
+                var stripped = original.ReleaseCertificate();
 
                 Assert.IsTrue(stripped.TryVerifyHash(expected, hash));
             }
@@ -67,8 +68,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
-            using (var stripped2 = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null).ReleaseCertificate())
+            using (var stripped2 = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null).ReleaseCertificate())
             {
                 var hash = stripped.Hash(expected);
 
@@ -81,7 +82,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName).ReleaseCertificate())
+            using (var stripped = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null).ReleaseCertificate())
             {
                 var hash = stripped.Hash(expected);
 

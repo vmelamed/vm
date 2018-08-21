@@ -2,12 +2,7 @@
 using System.Security.Cryptography;
 using System.Threading;
 
-using CommonServiceLocator;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Unity;
-using Unity.ServiceLocation;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
@@ -23,110 +18,55 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         ///</summary>
         public TestContext TestContext { get; set; }
 
-        #region Additional test attributes
-        static UnityServiceLocator _unityServiceLocator;
-
-        public static void InitializeSymmetricNameTest(string name)
-        {
-            ServiceLocatorWrapper.Reset();
-            _unityServiceLocator = new UnityServiceLocator(
-                        new UnityContainer()
-                            .RegisterInstance<string>(Algorithms.Symmetric.ResolveName, name));
-            ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
-        }
-
-        public static void InitializeSymmetricAlgorithmTest()
-        {
-            ServiceLocatorWrapper.Reset();
-            _unityServiceLocator = new UnityServiceLocator(
-                        new UnityContainer()
-                            .RegisterType<SymmetricAlgorithm, Rijndael>());
-            ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
-        }
-
-        public static void CleanupTest()
-        {
-            ServiceLocator.SetLocatorProvider(null);
-            if (_unityServiceLocator != null)
-                _unityServiceLocator.Dispose();
-            ServiceLocatorWrapper.Reset();
-        }
-        #endregion
-
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void UninitializedTest()
         {
-            try
-            {
-                var target = new SymmetricAlgorithmFactory();
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                target.Create();
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            target.Initialize("foo");
+            Assert.IsNull(target.Create());
         }
 
         [TestMethod]
         public void InitializedWithGoodNameTest()
         {
-            try
-            {
-                InitializeSymmetricNameTest("DES");
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize("TripleDES");
+            var symmetric1 = target.Create();
 
-                target.Initialize("TripleDES");
-                var symmetric1 = target.Create();
+            Assert.IsNotNull(symmetric1);
+            Assert.AreEqual("TripleDES", target.SymmetricAlgorithmName);
 
-                Assert.IsNotNull(symmetric1);
-                Assert.AreEqual("TripleDES", target.SymmetricAlgorithmName);
+            var symmetric2 = target.Create();
 
-                var symmetric2 = target.Create();
-
-                Assert.IsNotNull(symmetric2);
-                Assert.AreNotEqual(symmetric1, symmetric2);
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric2);
+            Assert.AreNotEqual(symmetric1, symmetric2);
         }
 
         [TestMethod]
         public void InitializedWithAlgorithmFromDITest()
         {
-            try
-            {
-                InitializeSymmetricAlgorithmTest();
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize();
+            var symmetric1 = target.Create();
 
-                target.Initialize();
-                var symmetric1 = target.Create();
+            Assert.IsNotNull(symmetric1);
 
-                Assert.IsNotNull(symmetric1);
+            var symmetric2 = target.Create();
 
-                var symmetric2 = target.Create();
-
-                Assert.IsNotNull(symmetric2);
-                Assert.IsFalse(object.ReferenceEquals(symmetric1, symmetric2));
-                Assert.IsInstanceOfType(symmetric1, typeof(Aes));
-                Assert.IsInstanceOfType(symmetric2, typeof(Aes));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric2);
+            Assert.IsFalse(object.ReferenceEquals(symmetric1, symmetric2));
+            Assert.IsInstanceOfType(symmetric1, typeof(Aes));
+            Assert.IsInstanceOfType(symmetric2, typeof(Aes));
         }
 
         [TestMethod]
         [TestCategory("SlowTest")]
         public void FinalizerTest()
         {
-            var target = new WeakReference<SymmetricAlgorithmFactory>(new SymmetricAlgorithmFactory());
+            var target = new WeakReference<ISymmetricAlgorithmFactory>(DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>());
 
             Thread.Sleep(1000);
             GC.Collect();
@@ -136,203 +76,86 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ActivationException))]
-        public void InitializedWithBadNameTest()
-        {
-            try
-            {
-                InitializeSymmetricNameTest("DES");
-
-                var target = new SymmetricAlgorithmFactory();
-
-                target.Initialize("foo");
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-
-        [TestMethod]
         public void InitializedTest1()
         {
-            try
-            {
-                ServiceLocatorWrapper.Reset();
-                _unityServiceLocator = new UnityServiceLocator(
-                            new UnityContainer()
-                                .RegisterInstance<string>(Algorithms.Symmetric.ResolveName, "DES")
-                                .RegisterType<SymmetricAlgorithm, TripleDESCryptoServiceProvider>());
-                ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize("Rijndael");
 
-                target.Initialize("Rijndael");
+            var symmetric = target.Create();
 
-                var symmetric = target.Create();
-
-                Assert.IsNotNull(symmetric);
-                Assert.IsInstanceOfType(symmetric, typeof(Rijndael));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric);
+            Assert.IsInstanceOfType(symmetric, typeof(Rijndael));
         }
 
         [TestMethod]
         public void InitializedTest2()
         {
-            try
-            {
-                ServiceLocatorWrapper.Reset();
-                _unityServiceLocator = new UnityServiceLocator(
-                            new UnityContainer()
-                                .RegisterInstance<string>(Algorithms.Symmetric.ResolveName, "DES")
-                                .RegisterType<SymmetricAlgorithm, TripleDESCryptoServiceProvider>());
-                ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize("TripleDES");
 
-                //target.Initialize("Rijndael");
-                target.Initialize();
+            var symmetric = target.Create();
 
-                var symmetric = target.Create();
-
-                Assert.IsNotNull(symmetric);
-                Assert.IsInstanceOfType(symmetric, typeof(TripleDES));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric);
+            Assert.IsInstanceOfType(symmetric, typeof(TripleDES));
         }
 
         [TestMethod]
         public void InitializedTest3()
         {
-            try
-            {
-                ServiceLocatorWrapper.Reset();
-                _unityServiceLocator = new UnityServiceLocator(
-                            new UnityContainer()
-                                .RegisterInstance<string>(Algorithms.Symmetric.ResolveName, "DES")
-                    /*.RegisterType<Symmetric, TripleDESCryptoServiceProvider>()*/);
-                ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize("DES");
 
-                //target.Initialize("Rijndael");
-                target.Initialize();
+            var symmetric = target.Create();
 
-                var symmetric = target.Create();
-
-                Assert.IsNotNull(symmetric);
-                Assert.IsInstanceOfType(symmetric, typeof(DES));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric);
+            Assert.IsInstanceOfType(symmetric, typeof(DES));
         }
 
         [TestMethod]
         public void InitializedTest4()
         {
-            try
-            {
-                ServiceLocatorWrapper.Reset();
-                _unityServiceLocator = new UnityServiceLocator(
-                            new UnityContainer()
-                    /*.RegisterInstance<string>(Algorithms.Symmetric.ResolveName, "DES")*/
-                    /*.RegisterType<Symmetric, TripleDESCryptoServiceProvider>()*/);
-                ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            //target.Initialize("Rijndael");
+            target.Initialize();
 
-                //target.Initialize("Rijndael");
-                target.Initialize();
+            var symmetric = target.Create();
 
-                var symmetric = target.Create();
-
-                Assert.IsNotNull(symmetric);
-                Assert.IsInstanceOfType(symmetric, typeof(Aes));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric);
+            Assert.IsInstanceOfType(symmetric, typeof(Aes));
         }
 
         [TestMethod]
         public void InitializedTest5()
         {
-            try
-            {
-                ServiceLocatorWrapper.Reset();
-                _unityServiceLocator = new UnityServiceLocator(
-                            new UnityContainer()
-                    /*.RegisterInstance<string>(Algorithms.Symmetric.ResolveName, "DES")*/
-                    /*.RegisterType<Symmetric, TripleDESCryptoServiceProvider>()*/);
-                ServiceLocator.SetLocatorProvider(() => _unityServiceLocator);
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize("RC2");
 
-                target.Initialize("RC2");
+            var symmetric = target.Create();
 
-                var symmetric = target.Create();
-
-                Assert.IsNotNull(symmetric);
-                Assert.IsInstanceOfType(symmetric, typeof(RC2));
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric);
+            Assert.IsInstanceOfType(symmetric, typeof(RC2));
         }
 
         [TestMethod]
         public void InitializedWithEmptyNameFromDITest()
         {
-            try
-            {
-                InitializeSymmetricNameTest("");
+            var target = DefaultServices.Resolver.GetInstance<ISymmetricAlgorithmFactory>();
 
-                var target = new SymmetricAlgorithmFactory();
+            target.Initialize();
+            var symmetric1 = target.Create();
 
-                target.Initialize();
-                var symmetric1 = target.Create();
+            Assert.IsNotNull(symmetric1);
+            Assert.AreEqual("AESManaged", target.SymmetricAlgorithmName);
 
-                Assert.IsNotNull(symmetric1);
-                Assert.AreEqual("AESManaged", target.SymmetricAlgorithmName);
+            var symmetric2 = target.Create();
 
-                var symmetric2 = target.Create();
-
-                Assert.IsNotNull(symmetric2);
-                Assert.AreNotEqual(symmetric1, symmetric2);
-            }
-            finally
-            {
-                CleanupTest();
-            }
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ActivationException))]
-        public void InitializedWithBadNameFromDISymmetricTest()
-        {
-            try
-            {
-                InitializeSymmetricNameTest("foo");
-
-                var target = new SymmetricAlgorithmFactory();
-
-                target.Initialize();
-            }
-            finally
-            {
-                CleanupTest();
-            }
+            Assert.IsNotNull(symmetric2);
+            Assert.AreNotEqual(symmetric1, symmetric2);
         }
     }
 }

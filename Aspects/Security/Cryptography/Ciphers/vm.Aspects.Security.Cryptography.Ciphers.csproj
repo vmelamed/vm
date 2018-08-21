@@ -1,211 +1,204 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0"
-         DefaultTargets="Build"
-         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"
-            Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
-        <Prefer32Bit>false</Prefer32Bit>
-        <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Debug\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE;DOTNET462</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <DocumentationFile>bin\Release\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
-        <Prefer32Bit>false</Prefer32Bit>
-        <RunCodeAnalysis>false</RunCodeAnalysis>
-        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-        <SignAssembly>true</SignAssembly>
-    </PropertyGroup>
-    <PropertyGroup>
-        <AssemblyOriginatorKeyFile>..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\DebugUnitTest\</OutputPath>
-        <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462</DefineConstants>
-        <DocumentationFile>bin\DebugUnitTest\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
-        <DebugType>full</DebugType>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <RunCodeAnalysis>true</RunCodeAnalysis>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <Prefer32Bit>false</Prefer32Bit>
-        <FileAlignment>512</FileAlignment>
-        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-        <TargetFrameworkProfile />
-        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-        <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
-        <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="System" />
-        <Reference Include="System.configuration" />
-        <Reference Include="System.Deployment" />
-        <Reference Include="System.Security" />
-        <Reference Include="Microsoft.CSharp" />
-        <Reference Include="System.Xml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\..\..\..\Common Items\AssemblyInfo.global.cs">
-            <Link>Properties\AssemblyInfo.global.cs</Link>
-        </Compile>
-        <Compile Include="Algorithms\Asymmetric.cs" />
-        <Compile Include="Algorithms\Hash.cs" />
-        <Compile Include="Algorithms\KeyedHash.cs" />
-        <Compile Include="Algorithms\KeyExchange.cs" />
-        <Compile Include="Algorithms\Signature.cs" />
-        <Compile Include="Algorithms\Symmetric.cs" />
-        <Compile Include="ByteArrayExtensions.cs" />
-        <Compile Include="DpapiCipher.cs" />
-        <Compile Include="DecryptedAttribute.cs" />
-        <Compile Include="EncryptedKeyCipher.cs" />
-        <Compile Include="EncryptedNewKeyCipher.cs" />
-        <Compile Include="EncryptedNewKeyHashedCipher.cs" />
-        <Compile Include="EncryptedNewKeySignedCipher.cs" />
-        <Compile Include="Extensions.cs" />
-        <Compile Include="FromByteArray.cs" />
-        <Compile Include="GlobalSuppressions.cs" />
-        <Compile Include="HashAlgorithmFactory.cs" />
-        <Compile Include="ILightCipher.cs" />
-        <Compile Include="ILightHasher.cs" />
-        <Compile Include="KeyedHasher .cs" />
-        <Compile Include="Hasher.cs" />
-        <Compile Include="ICipher.cs" />
-        <Compile Include="ICipherAsync.cs" />
-        <Compile Include="ICipherExtensions.Bool-Ushort.cs" />
-        <Compile Include="ICipherExtensions.Etc.cs" />
-        <Compile Include="ICipherExtensions.Int-Double.cs" />
-        <Compile Include="IHashAlgorithmFactory.cs" />
-        <Compile Include="IHasher.cs" />
-        <Compile Include="IHasherAsync.cs" />
-        <Compile Include="IHasherExtensions.Etc.cs" />
-        <Compile Include="IHasherExtensions.Bool-Ushort.cs" />
-        <Compile Include="IHasherExtensions.Int-Double.cs" />
-        <Compile Include="IKeyLocationStrategy.cs" />
-        <Compile Include="IKeyManagement.cs" />
-        <Compile Include="IKeyStorage.cs" />
-        <Compile Include="IKeyStorageAsync.cs" />
-        <Compile Include="ISymmetricAlgorithmFactory.cs" />
-        <Compile Include="KeyedHashAlgorithmFactory.cs" />
-        <Compile Include="KeyFile.cs" />
-        <Compile Include="KeyLocationStrategy.cs" />
-        <Compile Include="NullCipher.cs" />
-        <Compile Include="NullHasher.cs" />
-        <Compile Include="NullStream.cs" />
-        <Compile Include="PasswordDerivationConstants.cs" />
-        <Compile Include="PasswordHasher.cs" />
-        <Compile Include="PasswordProtectedKeyCipher.cs" />
-        <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Properties\Resources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
-        <Compile Include="ProtectedKeyCipher.cs" />
-        <Compile Include="RsaSigner.cs" />
-        <Compile Include="ServiceLocatorWrapper.cs" />
-        <Compile Include="ServiceResolver.cs" />
-        <Compile Include="SymmetricAlgorithmFactory.cs" />
-        <Compile Include="SymmetricKeyCipherBase.cs" />
-        <Compile Include="ToByteArray.cs" />
-        <Compile Include="X509Certificate2Extensions.cs" />
-        <Compile Include="Xml\EncryptedKeyXmlCipher.cs" />
-        <Compile Include="Xml\EncryptedNewKeySignedXmlCipher.cs" />
-        <Compile Include="Xml\EncryptedNewKeyXmlCipher.cs" />
-        <Compile Include="Xml\IXmlCipher.cs" />
-        <Compile Include="Xml\IXmlSigner.cs" />
-        <Compile Include="Xml\ProtectedKeyXmlCipher.cs" />
-        <Compile Include="Xml\RsaXmlSigner.cs" />
-        <Compile Include="Xml\SignedXmlWithId.cs" />
-        <Compile Include="Xml\XmlConstants.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <CodeAnalysisDictionary Include="..\..\..\..\Common Items\Dictionary.xml">
-            <Link>Dictionary.xml</Link>
-        </CodeAnalysisDictionary>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\..\..\..\Common Items\vm.snk">
-            <Link>vm.snk</Link>
-        </None>
-        <None Include="Documents\Ciphers.cd" />
-        <None Include="Documents\Ciphers.docx" />
-        <None Include="Documents\EncryptedNewKey.EncryptMethodTemplate.sequencediagram" />
-        <None Include="Documents\ICipher.cd" />
-        <None Include="Documents\IHasher.cd" />
-        <None Include="Documents\IXmlCipher.cd" />
-        <None Include="Documents\IXmlSigner.cd" />
-        <None Include="Documents\ProtectedKey.EncryptMethodTemplate.sequencediagram" />
-        <None Include="NuGet\Ciphers.symbols.nuspec" />
-        <None Include="NuGet\Ciphers.nuspec" />
-        <None Include="NuGet\PublishCiphers.cmd" />
-        <None Include="project.assets.json" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Documents\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout">
-            <DependentUpon>EncryptedNewKey.EncryptMethodTemplate.sequencediagram</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Documents\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout">
-            <DependentUpon>ProtectedKey.EncryptMethodTemplate.sequencediagram</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="CommonServiceLocator">
-            <Version>2.0.3</Version>
-        </PackageReference>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;DOTNET462</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugUnitTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugUnitTest\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;DOTNET462</DefineConstants>
+    <DocumentationFile>bin\DebugUnitTest\vm.Aspects.Security.Cryptography.Ciphers.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FileAlignment>512</FileAlignment>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersions>net462;net471;net472</TargetFrameworkVersions>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Security" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Common Items\AssemblyInfo.global.cs">
+      <Link>Properties\AssemblyInfo.global.cs</Link>
+    </Compile>
+    <Compile Include="Algorithms\Asymmetric.cs" />
+    <Compile Include="Algorithms\Hash.cs" />
+    <Compile Include="Algorithms\KeyedHash.cs" />
+    <Compile Include="Algorithms\KeyExchange.cs" />
+    <Compile Include="Algorithms\Signature.cs" />
+    <Compile Include="Algorithms\Symmetric.cs" />
+    <Compile Include="ByteArrayExtensions.cs" />
+    <Compile Include="DpapiCipher.cs" />
+    <Compile Include="DecryptedAttribute.cs" />
+    <Compile Include="EncryptedKeyCipher.cs" />
+    <Compile Include="EncryptedNewKeyCipher.cs" />
+    <Compile Include="EncryptedNewKeyHashedCipher.cs" />
+    <Compile Include="EncryptedNewKeySignedCipher.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="FromByteArray.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="DefaultServices\HashAlgorithmFactory.cs" />
+    <Compile Include="IKeyManagementTasks.cs" />
+    <Compile Include="ILightCipher.cs" />
+    <Compile Include="ILightHasher.cs" />
+    <Compile Include="IRandom.cs" />
+    <Compile Include="KeyedHasher .cs" />
+    <Compile Include="Hasher.cs" />
+    <Compile Include="ICipher.cs" />
+    <Compile Include="ICipherTasks.cs" />
+    <Compile Include="ICipherExtensions.Bool-Ushort.cs" />
+    <Compile Include="ICipherExtensions.Etc.cs" />
+    <Compile Include="ICipherExtensions.Int-Double.cs" />
+    <Compile Include="IHashAlgorithmFactory.cs" />
+    <Compile Include="IHasher.cs" />
+    <Compile Include="IHasherTasks.cs" />
+    <Compile Include="IHasherExtensions.Etc.cs" />
+    <Compile Include="IHasherExtensions.Bool-Ushort.cs" />
+    <Compile Include="IHasherExtensions.Int-Double.cs" />
+    <Compile Include="IKeyLocationStrategy.cs" />
+    <Compile Include="IKeyManagement.cs" />
+    <Compile Include="IKeyStorage.cs" />
+    <Compile Include="IKeyStorageTasks.cs" />
+    <Compile Include="ISymmetricAlgorithmFactory.cs" />
+    <Compile Include="DefaultServices\KeyedHashAlgorithmFactory.cs" />
+    <Compile Include="DefaultServices\KeyFileStorage.cs" />
+    <Compile Include="DefaultServices\KeyFileLocationStrategy.cs" />
+    <Compile Include="NullCipher.cs" />
+    <Compile Include="NullHasher.cs" />
+    <Compile Include="NullStream.cs" />
+    <Compile Include="PasswordDerivationConstants.cs" />
+    <Compile Include="PasswordHasher.cs" />
+    <Compile Include="PasswordProtectedKeyCipher.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ProtectedKeyCipher.cs" />
+    <Compile Include="DefaultServices\RandomGenerator.cs" />
+    <Compile Include="RsaSigner.cs" />
+    <Compile Include="DefaultServices\Resolver.cs" />
+    <Compile Include="DefaultServices\SymmetricAlgorithmFactory.cs" />
+    <Compile Include="SymmetricKeyCipherBase.cs" />
+    <Compile Include="ToByteArray.cs" />
+    <Compile Include="X509Certificate2Extensions.cs" />
+    <Compile Include="Xml\EncryptedKeyXmlCipher.cs" />
+    <Compile Include="Xml\EncryptedNewKeySignedXmlCipher.cs" />
+    <Compile Include="Xml\EncryptedNewKeyXmlCipher.cs" />
+    <Compile Include="Xml\IXmlCipher.cs" />
+    <Compile Include="Xml\IXmlSigner.cs" />
+    <Compile Include="Xml\ProtectedKeyXmlCipher.cs" />
+    <Compile Include="Xml\RsaXmlSigner.cs" />
+    <Compile Include="Xml\SignedXmlWithId.cs" />
+    <Compile Include="Xml\XmlConstants.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\..\..\Common Items\Dictionary.xml">
+      <Link>Dictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Common Items\vm.snk">
+      <Link>vm.snk</Link>
+    </None>
+    <None Include="Documents\Ciphers.cd" />
+    <None Include="Documents\Ciphers.docx" />
+    <None Include="Documents\EncryptedNewKey.EncryptMethodTemplate.sequencediagram" />
+    <None Include="Documents\ICipher.cd" />
+    <None Include="Documents\IHasher.cd" />
+    <None Include="Documents\IXmlCipher.cd" />
+    <None Include="Documents\IXmlSigner.cd" />
+    <None Include="Documents\ProtectedKey.EncryptMethodTemplate.sequencediagram" />
+    <None Include="NuGet\Ciphers.symbols.nuspec" />
+    <None Include="NuGet\Ciphers.nuspec" />
+    <None Include="NuGet\PublishCiphers.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Documents\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout">
+      <DependentUpon>EncryptedNewKey.EncryptMethodTemplate.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Documents\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout">
+      <DependentUpon>ProtectedKey.EncryptMethodTemplate.sequencediagram</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

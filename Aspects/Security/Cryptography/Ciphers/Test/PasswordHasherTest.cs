@@ -6,11 +6,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class PasswordHasherTest : GenericHasherTest<PasswordHasher>
     {
-        public override IHasherAsync GetHasher() => new PasswordHasher(
+        public override IHasherTasks GetHasher() => new PasswordHasher(
                                                             PasswordDerivationConstants.MinNumberOfIterations,
                                                             PasswordDerivationConstants.DefaultHashLength,
                                                             PasswordDerivationConstants.DefaultSaltLength);
-        public override IHasherAsync GetHasher(
+        public override IHasherTasks GetHasher(
             int saultLength) => new PasswordHasher(
                                         PasswordDerivationConstants.MinNumberOfIterations,
                                         PasswordDerivationConstants.DefaultHashLength,

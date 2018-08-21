@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
-namespace vm.Aspects.Security.Cryptography.Ciphers
+namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
 {
     /// <summary>
-    /// The class <c>KeyFile</c> implements the interface <see cref="IKeyStorage"/> by storing and retrieving the keys from a file where the key location name is the path and filename.
+    /// DefaultKeyFileStorage implements the interface <see cref="IKeyStorage"/> by storing and retrieving the keys to and from a file,
+    /// where the store specific key location name is the path and filename of the file containing the key.
     /// </summary>
-    public sealed class KeyFile : IKeyStorageAsync
+    public sealed class KeyFileStorage : IKeyStorageTasks
     {
         #region IKeyStorage Members
 
         /// <summary>
         /// Tests whether the keys file exists.
         /// </summary>
-        /// <param name="keyLocation">The key file name.</param>
+        /// <param name="keyLocation">Here, the key path and filename of the key file.</param>
         /// <returns><see langword="true" /> if the file exists, otherwise <see langword="false" />.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public bool KeyLocationExists(
             string keyLocation)
         {
@@ -33,7 +35,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Tests whether the key's storage location name exists.
         /// </summary>
-        /// <param name="keyLocation">The key location.</param>
+        /// <param name="keyLocation">Here, the key path and filename of the key file.</param>
         /// <returns><see langword="true"/> if the location exists, otherwise <see langword="false"/>.</returns>
         public async Task<bool> KeyLocationExistsAsync(
             string keyLocation)
@@ -45,13 +47,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
-        /// Puts the key in the specified file. If the file doesn't exist it creates it, stores the key and sets the appropriate security on the file.
+        /// Puts the key in the specified file.
+        /// If the file doesn't exist, it creates it, stores the key in it, and sets the appropriate security on the file.
         /// </summary>
         /// <param name="key">The key.</param>
-        /// <param name="keyLocation">The key location.</param>
+        /// <param name="keyLocation">The key location, here the key path and filename of the key file.</param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if the <paramref name="key"/> is <see langword="null"/> or if the <paramref name="keyLocation"/> is <see langword="null"/>,
-        /// empty or consists of whitespace characters only.
+        /// Thrown if the <paramref name="key"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="key"/> is empty array, or
+        /// <paramref name="keyLocation"/> is <see langword="null"/>, empty, or consist of whitespace characters only.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="keyLocation"/> refers to a non-file device, such as &quot;con:&quot;, &quot;com1:&quot;, &quot;lpt1:&quot;, etc. in an NTFS environment.
@@ -62,7 +68,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="IOException">
         /// I/O error occurred.
         /// </exception>
-        /// <exception cref="T:System.Security.SecurityException">
+        /// <exception cref="SecurityException">
         /// The caller does not have the required permission.
         /// </exception>
         /// <exception cref="DirectoryNotFoundException">
@@ -84,7 +90,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
-                throw new ArgumentException("The length of the array cannot be 0.", nameof(key));
+                throw new ArgumentException("The length of the key cannot be 0.", nameof(key));
             if (keyLocation.IsNullOrWhiteSpace())
                 throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(keyLocation));
 
@@ -100,7 +106,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Gets the key from the specified file. The file must exist.
         /// </summary>
-        /// <param name="keyLocation">The key location.</param>
+        /// <param name="keyLocation">The key location, i.e. path and filename of the key file.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the <paramref name="keyLocation"/> is <see langword="null"/>, empty or consists of whitespace characters only.
         /// </exception>
@@ -116,7 +122,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="IOException">
         /// I/O error occurred.
         /// </exception>
-        /// <exception cref="System.Security.SecurityException">
+        /// <exception cref="SecurityException">
         /// The caller does not have the required permission.
         /// </exception>
         /// <exception cref="DirectoryNotFoundException">
@@ -148,7 +154,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the file doesn't exist it creates it, stores the key and sets the appropriate security on the file.
         /// </summary>
         /// <param name="key">The key.</param>
-        /// <param name="keyLocation">The key location.</param>
+        /// <param name="keyLocation">The key location, i.e. the path and filename of the key file.</param>
         /// <returns>A <see cref="Task"/> object representing the process of putting the key in the file.</returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the <paramref name="key"/> is <see langword="null"/> or if the <paramref name="keyLocation"/> is <see langword="null"/>,
@@ -249,7 +255,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
-        /// Deletes the storage (the file) with the specified location name.
+        /// Deletes the storage (the file) with the specified location name (path and filename).
         /// </summary>
         /// <param name="keyLocation">
         /// The key location name to be deleted.

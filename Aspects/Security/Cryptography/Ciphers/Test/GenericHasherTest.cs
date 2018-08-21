@@ -1,18 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
-    public abstract class GenericHasherTest<THasher> where THasher : IHasherAsync
+    public abstract class GenericHasherTest<THasher> where THasher : IHasherTasks
     {
-        public virtual IHasherAsync GetHasher()
+        public virtual IHasherTasks GetHasher()
         {
             throw new NotImplementedException();
         }
 
-        public virtual IHasherAsync GetHasher(int saltLength)
+        public virtual IHasherTasks GetHasher(int saltLength)
         {
             throw new NotImplementedException();
         }

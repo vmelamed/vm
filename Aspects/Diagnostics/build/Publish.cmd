@@ -1,6 +1,6 @@
 cd %~dp0..\src
 
-if /i .%1. EQU .. (
+if .%1. EQU .. (
     set PackagePath=bin\Release\
     set Configuration=--configuration Release
     set VersionSuffix=
@@ -25,6 +25,8 @@ rem ------- Upload to NuGet.org -------
 @pause > nul:
 
 dotnet nuget push %PackagePath% --source https://www.nuget.org
+if errorlevel 1 goto exit
+if .%VersionSuffix%. EQU ..  AND .%VersionPrefix%. NEQ .. git tag %VersionPrefix%
 
 :exit
 cd ..\build

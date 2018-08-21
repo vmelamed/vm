@@ -25,7 +25,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///     <item>The bytes of the hash.</item>
     /// </list>
     /// </remarks>
-    public class PasswordHasher : IHasherAsync
+    public class PasswordHasher : IHasherTasks
     {
         #region fields
         readonly int _hashLength;

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProjProps2EnvVars": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}

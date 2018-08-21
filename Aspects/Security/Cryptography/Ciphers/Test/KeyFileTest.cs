@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -44,7 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void KeyLocationExistsTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             Assert.IsTrue(target.KeyLocationExists("Readme.txt"));
             Assert.IsFalse(target.KeyLocationExists("DontReadme.txt"));
@@ -54,7 +55,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void KeyLocationExistsEmptyTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             Assert.IsFalse(target.KeyLocationExists(""));
         }
@@ -63,7 +64,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void KeyLocationExistsBlankTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             Assert.IsFalse(target.KeyLocationExists(" \t"));
         }
@@ -75,7 +76,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             File.Delete("foo.key");
 
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             target.PutKey(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "foo.key");
 
@@ -88,7 +89,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void PutKeyEmptyLocationTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             target.PutKey(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "");
         }
@@ -97,7 +98,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void PutKeyBlankLocationTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorage>();
 
             target.PutKey(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, " \t");
         }
@@ -110,7 +111,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             File.Delete("foo.key");
 
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "foo.key").Wait();
 
@@ -125,7 +126,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.PutKeyAsync(null, "foo.key").Wait();
                 Assert.IsFalse(File.Exists("foo.key"));
@@ -138,7 +139,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, null).Wait();
             });
@@ -150,7 +151,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "").Wait();
             });
@@ -162,7 +163,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, " \t").Wait();
             });
@@ -175,7 +176,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             File.Delete("foo.key");
 
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.PutKey(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "foo.key");
 
@@ -193,7 +194,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void GetKeyEmptyLocationTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.GetKey("");
         }
@@ -202,7 +203,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void GetKeyBlankLocationTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.GetKey(" \t");
         }
@@ -217,7 +218,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             {
                 File.Delete("foo.key");
 
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.PutKeyAsync(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "foo.key").Wait();
 
@@ -238,7 +239,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.GetKeyAsync(null).Wait();
             });
@@ -250,7 +251,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.GetKeyAsync("").Wait();
             });
@@ -262,7 +263,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             TestUtilities.AsyncTestWrapper(TestContext, () =>
             {
-                var target = new KeyFile();
+                var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
                 target.GetKeyAsync(" \t").Wait();
             });
@@ -275,7 +276,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             File.Delete("foo.key");
 
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.PutKey(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, "foo.key");
 
@@ -289,7 +290,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void DeleteKeyLocationNonExistentTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             Assert.IsFalse(File.Exists("foo.key"));
 
@@ -302,7 +303,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteKeyLocationNullTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.DeleteKeyLocation(null);
         }
@@ -311,7 +312,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteKeyLocationEmptyTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.DeleteKeyLocation("");
         }
@@ -320,7 +321,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteKeyLocationBlankTest()
         {
-            var target = new KeyFile();
+            var target = DefaultServices.Resolver.GetInstance<IKeyStorageTasks>();
 
             target.DeleteKeyLocation(" \t");
         }

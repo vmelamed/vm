@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -11,10 +12,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [DeploymentItem("..\\..\\Readme.txt")]
     public class EncryptedNewKeyHashedCipherTest : GenericCipherTest<EncryptedNewKeyHashedCipher>
     {
-        public override ICipherAsync GetCipher(bool base64 = false)
+        public override ICipherTasks GetCipher(bool base64 = false)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var cipher = new EncryptedNewKeyHashedCipher(CertificateFactory.GetDecryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
+            var cipher = new EncryptedNewKeyHashedCipher(CertificateFactory.GetDecryptingCertificate(), Algorithms.Hash.MD5, Algorithms.Symmetric.Aes);
 #pragma warning restore CS0618 // Type or member is obsolete
 
             // ignore the parameter base64
@@ -22,7 +23,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false) => new EncryptedNewKeyHashedCipher(CertificateFactory.GetEncryptingCertificate(), Algorithms.Symmetric.Aes, Algorithms.Hash.MD5);
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false) => new EncryptedNewKeyHashedCipher(CertificateFactory.GetEncryptingCertificate(), Algorithms.Hash.MD5, Algorithms.Symmetric.Aes);
 #pragma warning restore CS0618 // Type or member is obsolete
 
         #region Test disabled IKeyManagement
@@ -67,7 +68,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
@@ -79,11 +80,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
-                target.ImportSymmetricKey(new byte[17]);
+                target.ImportSymmetricKeyAsync(new byte[17]).Wait();
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
         }

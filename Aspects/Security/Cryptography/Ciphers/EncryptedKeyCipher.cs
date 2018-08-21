@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using CommonServiceLocator;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -65,36 +65,37 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
+        /// </param>
+        /// <param name="symmetricKeyLocation">
+        /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
+        /// The parameter will be passed to the <paramref name="symmetricKeyLocationStrategy" /> to determine the final store location name path
+        /// (e.g. relative or absolute path).
+        /// </param>
+        /// <param name="symmetricKeyLocationStrategy">
+        /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileLocationStrategy" />.
+        /// </param>
+        /// <param name="keyStorage">
+        /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileStorage" />.
         /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
-        /// <param name="symmetricKeyLocation">
-        /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
-        /// Can be <see langword="null"/>, empty or whitespace characters only.
-        /// The parameter will be passed to the <paramref name="symmetricKeyLocationStrategy"/> to determine the final store location name path (e.g. relative or absolute path).
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the default <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
         /// </param>
-        /// <param name="symmetricKeyLocationStrategy">
-        /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyLocationStrategy"/>.
-        /// </param>
-        /// <param name="keyStorage">
-        /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="certificate" /> is <see langword="null" /> and could not be resolved from the Common Service Locator.
-        /// </exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when the <paramref name="certificate" /> is <see langword="null" />.</exception>
         public EncryptedKeyCipher(
-            X509Certificate2 certificate = null,
-            string symmetricAlgorithmName = null,
+            X509Certificate2 certificate,
             string symmetricKeyLocation = null,
             IKeyLocationStrategy symmetricKeyLocationStrategy = null,
-            IKeyStorageAsync keyStorage = null)
-            : this(symmetricAlgorithmName, certificate)
+            IKeyStorageTasks keyStorage = null,
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : this(certificate, symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             ResolveKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
         }
@@ -102,30 +103,41 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes a new instance of the <see cref="EncryptedKeyCipher" /> class for initialization by the constructors of the inheriting classes.
         /// </summary>
+        /// <param name="certificate">
+        /// The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
+        /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// Also a string instance with name "DefaultSymmetricEncryption" can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
-        /// <param name="certificate">
-        /// The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the default <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
         /// </param>
         protected EncryptedKeyCipher(
-            string symmetricAlgorithmName,
-            X509Certificate2 certificate)
-            : base(symmetricAlgorithmName)
+            X509Certificate2 certificate,
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             InitializeAsymmetricKeys(certificate);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EncryptedKeyCipher"/> class.
+        /// Initializes a new instance of the <see cref="EncryptedKeyCipher" /> class.
         /// </summary>
-        /// <param name="symmetricKeyAlgorithm">The symmetric key algorithm.</param>
+        /// <param name="symmetricAlgorithmName">
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the default <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
+        /// </param>
         protected EncryptedKeyCipher(
-            string symmetricKeyAlgorithm)
-            : base(symmetricKeyAlgorithm)
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
         }
         #endregion
@@ -141,14 +153,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             X509Certificate2 certificate)
         {
             if (certificate == null)
-                try
-                {
-                    certificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.Symmetric.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument \"certificate\" was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(certificate));
 
             PublicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
 
@@ -289,7 +294,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
         /// </exception>
         /// See also <seealso cref="CloneLightCipher"/>.
-        public virtual ICipherAsync ReleaseCertificate()
+        public virtual ICipherTasks ReleaseCertificate()
         {
 
             if (ShouldEncryptIV)
@@ -314,7 +319,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Creates a new, lightweight <see cref="EncryptedKeyCipher"/> instance and copies certain characteristics of this instance to it.
         /// A duplicate can be created only if the underlying symmetric algorithm instance is already initialized and the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV"/> is <see langword="false"/>.
-        /// The duplicate can be used only for encryption and decryption of data (the <see cref="ICipher"/> and <see cref="ICipherAsync"/> behavior). The <see cref="IKeyManagement"/> behavior is disabled and
+        /// The duplicate can be used only for encryption and decryption of data (the <see cref="ICipher"/> and <see cref="ICipherTasks"/> behavior). The <see cref="IKeyManagement"/> behavior is disabled and
         /// calling any of its members would throw <see cref="InvalidOperationException"/>.
         /// </summary>
         /// <returns>The duplicate.</returns>
@@ -322,7 +327,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
         /// </exception>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller must dispose it.")]
-        public virtual ICipherAsync CloneLightCipher()
+        public virtual ICipherTasks CloneLightCipher()
         {
 
             if (ShouldEncryptIV)

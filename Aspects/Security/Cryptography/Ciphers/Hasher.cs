@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -20,13 +21,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///     </list>
     /// </para>
     /// </remarks>
-    public class Hasher : IHasherAsync
+    public class Hasher : IHasherTasks
     {
         #region Constants
         /// <summary>
         /// The minimum salt length if not 0 - 8.
         /// </summary>
         public const int MinSaltLength = 8;
+
         /// <summary>
         /// The default salt length - 8.
         /// </summary>
@@ -38,6 +40,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The underlying hash algorithm.
         /// </summary>
         readonly HashAlgorithm _hashAlgorithm;
+
         /// <summary>
         /// The salt length.
         /// </summary>
@@ -48,26 +51,35 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes a new instance of the <see cref="Hasher" /> class.
         /// </summary>
+        /// <param name="saltLength">
+        /// The length of the salt. The default length is <see cref="DefaultSaltLength" /> bytes.
+        /// Can be 0 or greater than or equal to <see cref="DefaultSaltLength" />.
+        /// </param>
         /// <param name="hashAlgorithmName">
         /// The hash algorithm name. You can use any of the constants from <see cref="Algorithms.Hash" /> or
         /// <see langword="null" />, empty or whitespace characters only - it will default to <see cref="Algorithms.Hash.Default" />.
-        /// Also a string instance with name &quot;DefaultHash&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
-        /// <param name="saltLength">
-        /// The length of the salt. The default length is <see cref="DefaultSaltLength"/> bytes. Can be 0 or equal or greater than <see cref="DefaultSaltLength"/>.
+        /// <param name="hashAlgorithmFactory">
+        /// The hash algorithm factory.
         /// </param>
+        /// <exception cref="ArgumentException">
+        /// The salt length should be either 0 or not less than 8 bytes. - saltLength
+        /// </exception>
         public Hasher(
-            string hashAlgorithmName = null,
-            int saltLength = DefaultSaltLength)
+            int saltLength = DefaultSaltLength,
+            string hashAlgorithmName = Algorithms.Hash.Default,
+            IHashAlgorithmFactory hashAlgorithmFactory = null)
         {
             if (saltLength != 0  &&  saltLength < DefaultSaltLength)
                 throw new ArgumentException("The salt length should be either 0 or not less than 8 bytes.", nameof(saltLength));
 
-            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>();
-
-            hashAlgorithmFactory.Initialize(hashAlgorithmName);
-            _hashAlgorithm = hashAlgorithmFactory.Create();
-            _saltLength = saltLength;
+            _saltLength    = saltLength;
+            _hashAlgorithm = DefaultServices
+                                .Resolver
+                                .GetInstanceOrDefault(hashAlgorithmFactory)
+                                .Initialize(hashAlgorithmName)
+                                .Create()
+                                ;
         }
         #endregion
 

@@ -8,7 +8,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class EncryptedKeyXmlCipherTest : GenericXmlCipherTest<EncryptedKeyXmlCipher>
     {
-        const string keyFileName = "encryptedXml.key";
+        const string _keyFileName = "encryptedXml.key";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -21,14 +21,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         {
 
             if (GetCipherImpl() is IKeyManagement keyManagement &&
-                keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+                keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static IXmlCipher GetCipherImpl() => new EncryptedKeyXmlCipher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName);
+        static IXmlCipher GetCipherImpl() => new EncryptedKeyXmlCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName);
 
-        static IXmlCipher GetPublicCertCipher() => new EncryptedKeyXmlCipher(CertificateFactory.GetEncryptingCertificate(), null, keyFileName);
+        static IXmlCipher GetPublicCertCipher() => new EncryptedKeyXmlCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName);
 
         public override IXmlCipher GetCipher() => GetCipherImpl();
 
@@ -36,7 +36,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void NullCertTest()
         {
-            new EncryptedKeyXmlCipher(null, null, keyFileName);
+            new EncryptedKeyXmlCipher(null, null, _keyFileName);
         }
 
 

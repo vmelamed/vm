@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Ciphers</id>
-        <version>1.13.1</version>
+        <id>vm.Aspects.Security.Cryptography.Ciphers</id>
+        <version>2.0.0</version>
         <authors>vm</authors>
         <owners>vm</owners>
         <summary>
@@ -14,7 +14,7 @@
             * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
             * It is very easy to integrate with a Dependency Injection container like Unity, i.e. the behaviors are abstracted with a handful of simple interfaces.
             * It is very easy to use and configure the objects. No configuration parameters default to sensible defaults.
-            * The package does not have dependencies except the .NET framework BCL and the Common Service Locator 1.3.
+            * The package does not have dependencies except the .NET framework BCL.
             * Built and tested with .NET v4.6.2, 4.7.1 and 4.7.2.
         </description>
         <releaseNotes>
@@ -25,8 +25,6 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © vm 2013-2018</copyright>
         <dependencies>
-            <dependency id="CommonServiceLocator"
-                        version="2.0.3" />
         </dependencies>
         <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
     </metadata>

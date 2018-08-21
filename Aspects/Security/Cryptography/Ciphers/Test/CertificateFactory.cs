@@ -5,45 +5,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     static class CertificateFactory
     {
-        public static X509Certificate2 GetDecryptingCertificate()
-        {
-            return GetCert(StoreName.My, "vm.EncryptionCipherUnitTest");
-        }
+        public static X509Certificate2 GetDecryptingCertificate() => GetCert(StoreName.My, "vm.EncryptionCipherUnitTest");
 
-        public static X509Certificate2 GetEncryptingCertificate()
-        {
-            return GetCert(StoreName.TrustedPublisher, "vm.EncryptionCipherUnitTest");
-        }
+        public static X509Certificate2 GetEncryptingCertificate() => GetCert(StoreName.TrustedPublisher, "vm.EncryptionCipherUnitTest");
 
-        public static X509Certificate2 GetSigningCertificate()
-        {
-            return GetCert(StoreName.My, "vm.SignatureCipherUnitTest");
-        }
+        public static X509Certificate2 GetSigningCertificate() => GetCert(StoreName.My, "vm.SignatureCipherUnitTest");
 
-        public static X509Certificate2 GetSignVerifyCertificate()
-        {
-            return GetCert(StoreName.TrustedPublisher, "vm.SignatureCipherUnitTest");
-        }
+        public static X509Certificate2 GetSignVerifyCertificate() => GetCert(StoreName.TrustedPublisher, "vm.SignatureCipherUnitTest");
 
-        public static X509Certificate2 GetDecryptingSha256Certificate()
-        {
-            return GetCert(StoreName.My, "vm.Sha256EncryptionCipherUnitTest");
-        }
+        public static X509Certificate2 GetDecryptingSha256Certificate() => GetCert(StoreName.My, "vm.Sha256EncryptionCipherUnitTest");
 
-        public static X509Certificate2 GetEncryptingSha256Certificate()
-        {
-            return GetCert(StoreName.TrustedPublisher, "vm.Sha256EncryptionCipherUnitTest");
-        }
+        public static X509Certificate2 GetEncryptingSha256Certificate() => GetCert(StoreName.TrustedPublisher, "vm.Sha256EncryptionCipherUnitTest");
 
-        public static X509Certificate2 GetSigningSha256Certificate()
-        {
-            return GetCert(StoreName.My, "vm.Sha256SignatureCipherUnitTest");
-        }
+        public static X509Certificate2 GetSigningSha256Certificate() => GetCert(StoreName.My, "vm.Sha256SignatureCipherUnitTest");
 
-        public static X509Certificate2 GetSignVerifySha256Certificate()
-        {
-            return GetCert(StoreName.TrustedPublisher, "vm.Sha256SignatureCipherUnitTest");
-        }
+        public static X509Certificate2 GetSignVerifySha256Certificate() => GetCert(StoreName.TrustedPublisher, "vm.Sha256SignatureCipherUnitTest");
 
         public static X509Certificate2 GetNotSupportedHashCertificate()
         {

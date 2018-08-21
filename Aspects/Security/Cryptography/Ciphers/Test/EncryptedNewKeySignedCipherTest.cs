@@ -10,15 +10,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [DeploymentItem("..\\..\\Readme.txt")]
     public class EncryptedNewKeySignedCipherTest : GenericCipherTest<EncryptedNewKeySignedCipher>
     {
-        static ICipherAsync GetCipherImpl() => new EncryptedNewKeySignedCipher(
+        static ICipherTasks GetCipherImpl() => new EncryptedNewKeySignedCipher(
                                                         CertificateFactory.GetDecryptingSha256Certificate(),
                                                         CertificateFactory.GetSigningCertificate()); // SHA1 also works with this cert
 
-        static ICipherAsync GetPublicCertCipherImpl() => new EncryptedNewKeySignedCipher(
+        static ICipherTasks GetPublicCertCipherImpl() => new EncryptedNewKeySignedCipher(
                                                                 CertificateFactory.GetEncryptingCertificate(),
                                                                 CertificateFactory.GetSigningCertificate()); // default SHA1, SHA256 doesn't work here
 
-        public override ICipherAsync GetCipher(bool base64 = false)
+        public override ICipherTasks GetCipher(bool base64 = false)
         {
             var cipher = GetCipherImpl();
 
@@ -26,7 +26,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             return cipher;
         }
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false)
         {
             var cipher = GetPublicCertCipherImpl();
 

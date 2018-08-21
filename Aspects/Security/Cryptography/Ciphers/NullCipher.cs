@@ -7,11 +7,11 @@ using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The class <c>NullCipher</c> is a development- and test-friendly convenience class which implements trivially the <see cref="ICipherAsync"/> interface:
+    /// The class <c>NullCipher</c> is a development- and test-friendly convenience class which implements trivially the <see cref="ICipherTasks"/> interface:
     /// copies the source data blindly into the output target.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
-    public sealed class NullCipher : ICipherAsync
+    public sealed class NullCipher : ICipherTasks
     {
         #region ICipher Members
         /// <summary>

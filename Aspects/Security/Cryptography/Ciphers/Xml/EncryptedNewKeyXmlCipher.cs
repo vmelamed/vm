@@ -19,15 +19,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private encryption keys.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
         /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
         /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="certificate"/> is <see langword="null"/> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="certificate"/> is <see langword="null"/>.
         /// </exception>
         public EncryptedNewKeyXmlCipher(
             X509Certificate2 certificate = null,

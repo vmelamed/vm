@@ -10,14 +10,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     {
         const string _keyFileName = "encrypted.key";
 
-        public override ICipherAsync GetCipher(bool base64 = false)
-            => new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+        public override ICipherTasks GetCipher(bool base64 = false)
+            => new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName)
             {
                 Base64Encoded = base64,
             };
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
-            => new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName)
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false)
+            => new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), _keyFileName)
             {
                 Base64Encoded = base64,
             };
@@ -31,7 +31,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName) as IKeyManagement;
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), _keyFileName) as IKeyManagement;
 
             if (keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
@@ -42,7 +42,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void CertificateNullTest()
         {
-            var target = new EncryptedKeyCipher(null, null, _keyFileName);
+            var target = new EncryptedKeyCipher(null, _keyFileName);
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
@@ -53,7 +53,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var target = GetCipher();
             var encrypted = target.Encrypt(input);
 
-            target = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, _keyFileName);
+            target = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), _keyFileName);
 
             var output =  target.Decrypt(encrypted);
         }
@@ -126,7 +126,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
@@ -140,7 +140,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
@@ -156,7 +156,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         class InheritedEncryptedKeyCipher : EncryptedKeyCipher
         {
             public InheritedEncryptedKeyCipher()
-                : base(CertificateFactory.GetDecryptingCertificate(), null)
+                : base(CertificateFactory.GetDecryptingCertificate(), Algorithms.Symmetric.Default, null)
             {
             }
 

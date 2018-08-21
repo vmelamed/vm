@@ -6,6 +6,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+
+using vm.Aspects.Security.Cryptography.Ciphers.DefaultServices;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -66,26 +68,38 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Initializes a new instance of the <see cref="EncryptedNewKeyCipher" /> class.
         /// </summary>
         /// <param name="certificate">
-        /// The certificate containing the public and optionally the private encryption keys. Cannot be <see langword="null"/>.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
+        /// The certificate containing the public and optionally the private encryption keys. Cannot be <see langword="null" />.
         /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
         /// </param>
         /// <param name="hashAlgorithmName">
-        /// The resolve name of the hash algorithm.
+        /// The name of the hash algorithm. By default the cipher will pick the algorithm from the <paramref name="certificate"/> but the caller
+        /// may choose to use lower length signature key, e.g. the certificate may be for SHA256 but the caller may override that to SHA1.
+        /// </param>
+        /// <param name="hashAlgorithmFactory">
+        /// The hash algorithm factory.
+        /// If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.HashAlgorithmFactory" />,
+        /// which uses the <see cref="HashAlgorithm.Create(string)" /> method from the .NET library.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory.
+        /// If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="certificate" /> is <see langword="null" /> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="certificate" /> is <see langword="null" />.
         /// </exception>
         public EncryptedNewKeyHashedCipher(
             X509Certificate2 certificate = null,
-            string symmetricAlgorithmName = null,
-            string hashAlgorithmName = null)
-            : base(certificate, symmetricAlgorithmName)
+            string hashAlgorithmName = Algorithms.Hash.Default,
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            IHashAlgorithmFactory hashAlgorithmFactory = null,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(certificate, symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
-            InitializeHasher(hashAlgorithmName);
+            InitializeHasher(hashAlgorithmName, hashAlgorithmFactory);
         }
         #endregion
 
@@ -121,11 +135,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </exception>
         public override bool Base64Encoded
         {
-            get
-            {
+            get => false;
 
-                return false;
-            }
             set
             {
                 if (value)
@@ -191,11 +202,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Initializes the hasher.
         /// </summary>
         /// <param name="hashAlgorithmName">The hash algorithm.</param>
+        /// <param name="hashAlgorithmFactory">The hash algorithm factory.</param>
         protected void InitializeHasher(
-            string hashAlgorithmName)
+            string hashAlgorithmName = Algorithms.Symmetric.Default,
+            IHashAlgorithmFactory hashAlgorithmFactory = null)
         {
-            _hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>();
-            _hashAlgorithmFactory.Initialize(hashAlgorithmName);
+            _hashAlgorithmFactory = Resolver
+                                        .GetInstanceOrDefault(hashAlgorithmFactory)
+                                        .Initialize(hashAlgorithmName)
+                                        ;
         }
 
         #region Overrides of the primitives called by the GoF template-methods
@@ -415,7 +430,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 throw new ArgumentNullException(nameof(encryptedStream));
             if (!encryptedStream.CanRead)
                 throw new ArgumentException(Resources.StreamNotReadable, nameof(encryptedStream));
-            if (!ShouldEncryptHash &&  PrivateKey == null)
+            if (ShouldEncryptHash &&  PrivateKey == null)
                 throw new InvalidOperationException("The certificate does not contain a private key for decryption.");
 
             //read the encrypted length and hash

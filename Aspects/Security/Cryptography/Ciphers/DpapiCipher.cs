@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -18,27 +19,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </list>
     /// </remarks>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Nothing to dispose")]
-    public sealed class DpapiCipher : ICipherAsync
+    public sealed class DpapiCipher : ICipherTasks
     {
-        const int BlockLength = 4096;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DpapiCipher"/> class with scope <see cref="System.Security.Cryptography.DataProtectionScope.LocalMachine"/> and no entropy.
-        /// </summary>
-        public DpapiCipher()
-            : this(DataProtectionScope.LocalMachine, null)
-        {
-        }
+        const int _blockLength = 4096;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DpapiCipher"/> class with user specified scope and
         /// user defined entropy which makes the encryption stronger.
         /// </summary>
-        /// <param name="scope">The scope (we recommend <see cref="System.Security.Cryptography.DataProtectionScope.LocalMachine"/>).</param>
+        /// <param name="scope">The scope (recommended <see cref="DataProtectionScope.LocalMachine"/>).</param>
         /// <param name="entropy">The entropy makes the encryption stronger and should be kept secret. Appropriate value may be a password entered by the user.</param>
         public DpapiCipher(
-            DataProtectionScope scope,
-            byte[] entropy)
+            byte[] entropy = null,
+            DataProtectionScope scope = DataProtectionScope.LocalMachine)
         {
             Scope   = scope;
             Entropy = entropy;
@@ -103,12 +96,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!encryptedStream.CanWrite)
                 throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
 
-            var buffer = new byte[BlockLength];
+            var buffer = new byte[_blockLength];
             var read = 0;
             var first = true;
 
             // if the output needs to be Base-64 encoded, wrap the encoded stream in a crypto stream applying Base64 transformation
-            Stream outputStream = Base64Encoded
+            var outputStream = Base64Encoded
                                     ? new CryptoStream(encryptedStream, new ToBase64Transform(), CryptoStreamMode.Write)
                                     : encryptedStream;
 
@@ -129,10 +122,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                     outputStream.Write(BitConverter.GetBytes(encrypted.Length), 0, sizeof(int));
                     outputStream.Write(encrypted, 0, encrypted.Length);
                 }
-                while (read == BlockLength);
+                while (read == _blockLength);
             }
             finally
             {
+                outputStream.Flush();
                 if (Base64Encoded)
                     outputStream.Dispose();
             }
@@ -140,7 +134,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         /// <summary>
         /// Reads and decrypts the <paramref name="encryptedStream"/> stream and writes the clear text into the <paramref name="dataStream"/> stream.
-        /// This is the reverse method of <see cref="M:ICipherAsync.Encrypt(System.Stream, System.Stream)"/>.
+        /// This is the mirrored method of <see cref="Encrypt(Stream, Stream)"/>.
         /// </summary>
         /// <param name="encryptedStream">
         /// The input crypto package stream which contains the encrypted data 
@@ -149,17 +143,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="dataStream">
         /// The output stream where to put the unencrypted data.
         /// </param>
-        /// <exception cref="T:System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
         /// </exception>
-        /// <exception cref="T:System.ArgumentException">
+        /// <exception cref="ArgumentException">
         /// Thrown when either <paramref name="dataStream"/> cannot be written to or 
         /// <paramref name="encryptedStream"/> cannot be read from.
         /// </exception>
-        /// <exception cref="T:System.Security.CryptographicException">
+        /// <exception cref="CryptographicException">
         /// The decryption failed.
         /// </exception>
-        /// <exception cref="T:System.IO.IOException">
+        /// <exception cref="IOException">
         /// An I/O error occurred.
         /// </exception>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The CryptoStream will do it.")]
@@ -186,7 +180,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             var first = true;
 
             // if the output needs to be Base-64 encoded, wrap the encoded stream in a crypto stream applying Base64 transformation
-            Stream inputStream = Base64Encoded
+            var inputStream = Base64Encoded
                                     ? new CryptoStream(encryptedStream, new FromBase64Transform(), CryptoStreamMode.Read)
                                     : encryptedStream;
 
@@ -219,10 +213,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
                     dataStream.Write(decrypted, 0, decrypted.Length);
                 }
-                while (decrypted.Length == BlockLength);
+                while (decrypted.Length == _blockLength);
             }
             finally
             {
+                dataStream.Flush();
                 if (Base64Encoded)
                     inputStream.Dispose();
             }
@@ -319,7 +314,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!encryptedStream.CanWrite)
                 throw new ArgumentException(Resources.StreamNotWritable, nameof(encryptedStream));
 
-            var buffer = new byte[BlockLength];
+            var buffer = new byte[_blockLength];
             var read = 0;
             var first = true;
 
@@ -341,7 +336,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 await encryptedStream.WriteAsync(BitConverter.GetBytes(encrypted.Length), 0, sizeof(int));
                 await encryptedStream.WriteAsync(encrypted, 0, encrypted.Length);
             }
-            while (read == BlockLength);
+            while (read == _blockLength);
+
+            await encryptedStream.FlushAsync();
         }
 
         /// <summary>
@@ -422,7 +419,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
                 decrypted = await Task.Run(() => Decrypt(buffer));
                 await dataStream.WriteAsync(decrypted, 0, decrypted.Length);
             }
-            while (decrypted.Length == BlockLength);
+            while (decrypted.Length == _blockLength);
+
+            await dataStream.FlushAsync();
         }
         #endregion
 

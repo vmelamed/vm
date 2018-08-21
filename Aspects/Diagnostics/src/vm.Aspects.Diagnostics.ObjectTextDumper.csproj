@@ -56,6 +56,7 @@ For more information see the documentation at https://github.com/vmelamed/vm/blo
         </PackageReleaseNotes>
         <PackageTags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</PackageTags>
         <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper</PackageId>
+        <Version>2.0.3</Version>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
+
+using vm.Aspects.Security.Cryptography.Ciphers.DefaultServices;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -22,7 +24,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
 
-            using (var generator = new RNGCryptoServiceProvider())
+            var generator = Resolver.GetInstance<IRandom>();
+
+            using (generator as IDisposable)
                 generator.GetBytes(array);
 
             return array;

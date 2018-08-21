@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using CommonServiceLocator;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -32,12 +32,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
         /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <param name="symmetricKeyLocation">
         /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
@@ -46,21 +44,21 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </param>
         /// <param name="symmetricKeyLocationStrategy">
         /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyLocationStrategy"/>.
+        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileLocationStrategy"/>.
         /// </param>
         /// <param name="keyStorage">
         /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
+        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileStorage"/>.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="certificate" /> is <see langword="null" /> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="certificate" /> is <see langword="null" />.
         /// </exception>
         public EncryptedKeyXmlCipher(
             X509Certificate2 certificate = null,
             string symmetricAlgorithmName = null,
             string symmetricKeyLocation = null,
             IKeyLocationStrategy symmetricKeyLocationStrategy = null,
-            IKeyStorageAsync keyStorage = null)
+            IKeyStorageTasks keyStorage = null)
             : this(symmetricAlgorithmName, certificate)
         {
             ResolveKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
@@ -73,11 +71,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// Also a string instance with name "DefaultSymmetricEncryption" can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
         /// </param>
         protected EncryptedKeyXmlCipher(
             string symmetricAlgorithmName,
@@ -99,14 +95,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             X509Certificate2 certificate)
         {
             if (certificate == null)
-                try
-                {
-                    certificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.Symmetric.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument "+nameof(certificate)+" was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(certificate));
 
             PublicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
 

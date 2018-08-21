@@ -9,16 +9,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
     public static class Symmetric
     {
         /// <summary>
-        /// The user can register a certificate instance in the Common Service Locator for encrypting the symmetric key with a resolve name - &quot;EncryptingCertificate&quot;.
-        /// </summary>
-        public const string CertificateResolveName = "EncryptingCertificate";
-
-        /// <summary>
-        /// The user can register symmetric algorithm name string instance in the Common Service Locator with a resolve name - &quot;DefaultSymmetricAlgorithm&quot;.
-        /// </summary>
-        public const string ResolveName = "DefaultSymmetricAlgorithm";
-
-        /// <summary>
         /// The default and preferred symmetric algorithm implementation is AES.
         /// </summary>
         public const string Default = AesManaged;

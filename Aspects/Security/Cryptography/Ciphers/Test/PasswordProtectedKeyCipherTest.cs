@@ -1,21 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.IO;
 using System.Security;
 using System.Threading.Tasks;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
     [TestClass]
     public class PasswordProtectedKeyCipherTest : GenericCipherTest<PasswordProtectedKeyCipher>
     {
-        public override ICipherAsync GetCipher(bool base64 = false)
+        public override ICipherTasks GetCipher(bool base64 = false)
             => new PasswordProtectedKeyCipher("password")
             {
                 Base64Encoded = base64,
             };
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false)
         {
             throw new InvalidOperationException();
         }
@@ -62,7 +63,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
@@ -75,11 +76,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public void ImportSymmetricKeyAsyncTest()
         {
             var target = GetKeyManager();
+            var targetTasks = (IKeyManagementTasks)target;
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
                 target.ImportSymmetricKey(new byte[17]);
-                Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
+                Assert.IsNull(targetTasks.ExportSymmetricKeyAsync().Result);
             }
         }
         #endregion

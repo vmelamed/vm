@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -24,7 +25,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
         /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <param name="symmetricKeyLocation">
         /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
@@ -33,17 +33,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </param>
         /// <param name="symmetricKeyLocationStrategy">
         /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyLocationStrategy"/>.
+        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileLocationStrategy"/>.
         /// </param>
         /// <param name="keyStorage">
         /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
+        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileStorage"/>.
         /// </param>
         public ProtectedKeyXmlCipher(
             string symmetricAlgorithmName = null,
             string symmetricKeyLocation = null,
             IKeyLocationStrategy symmetricKeyLocationStrategy = null,
-            IKeyStorageAsync keyStorage = null)
+            IKeyStorageTasks keyStorage = null)
             : this(symmetricAlgorithmName)
         {
             ResolveKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
@@ -55,7 +55,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
         /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         protected ProtectedKeyXmlCipher(
             string symmetricAlgorithmName)
@@ -253,12 +252,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             if (Symmetric is Aes || Symmetric is Rijndael)
                 switch (Symmetric.KeySize)
                 {
-                case 128:
-                    return EncryptedXml.XmlEncAES128Url;
-                case 192:
-                    return EncryptedXml.XmlEncAES192Url;
-                case 256:
-                    return EncryptedXml.XmlEncAES256Url;
+                    case 128:
+                        return EncryptedXml.XmlEncAES128Url;
+                    case 192:
+                        return EncryptedXml.XmlEncAES192Url;
+                    case 256:
+                        return EncryptedXml.XmlEncAES256Url;
                 }
 
             throw new CryptographicException("The specified symmetric algorithm is not supported for XML encryption.");

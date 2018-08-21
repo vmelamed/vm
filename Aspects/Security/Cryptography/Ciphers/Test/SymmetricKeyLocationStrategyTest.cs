@@ -8,7 +8,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void GetKeyLocationNonEmptyParamTest()
         {
-            var target = new KeyLocationStrategy();
+            var target = DefaultServices.Resolver.GetInstance<IKeyLocationStrategy>();
 
             Assert.AreEqual("foo", target.GetKeyLocation("foo"));
         }
@@ -16,7 +16,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void GetKeyLocationNullParamTest()
         {
-            var target = new KeyLocationStrategy();
+            var target = DefaultServices.Resolver.GetInstance<IKeyLocationStrategy>();
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(target.GetKeyLocation(null)));
         }
@@ -24,7 +24,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void GetKeyLocationEmptyParamTest()
         {
-            var target = new KeyLocationStrategy();
+            var target = DefaultServices.Resolver.GetInstance<IKeyLocationStrategy>();
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(target.GetKeyLocation("")));
         }
@@ -32,7 +32,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void GetKeyLocationBlankParamTest()
         {
-            var target = new KeyLocationStrategy();
+            var target = DefaultServices.Resolver.GetInstance<IKeyLocationStrategy>();
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(target.GetKeyLocation(" ")));
         }

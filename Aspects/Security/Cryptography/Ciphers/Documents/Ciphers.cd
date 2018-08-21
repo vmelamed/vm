@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DpapiCipher" Collapsed="true">
-    <Position X="7.5" Y="1.5" Width="1.25" />
+    <Position X="5" Y="1.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AQCAAAAAACAAACAQAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQCAAAAAASAAACAQAAAAAAIAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>DpapiCipher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -14,8 +14,16 @@
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
+    <InheritanceLine Type="vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase" ManuallyRouted="true">
+      <Path>
+        <Point X="10.375" Y="2.062" />
+        <Point X="10.375" Y="2.358" />
+        <Point X="7.25" Y="2.358" />
+        <Point X="7.25" Y="2.75" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>QQAIAEAAACAAAAgQCEAAAABjAAAAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>QQAIAEAAAQBAAAwQCEAAAABjAAAAAAAAAAAAgAAAOAA=</HashCode>
       <FileName>ProtectedKeyCipher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -23,9 +31,10 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher" Collapsed="true">
     <Position X="6" Y="3.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>QEAAAAAAASAAAAAAAAAAAARCAAAAAAAAAAAAgAAACAA=</HashCode>
+      <HashCode>QECAAgAAASAAAAAAAAAAAARCAAAAAAAAAAAAACAACAA=</HashCode>
       <FileName>EncryptedKeyCipher.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Hasher" Collapsed="true">
     <Position X="6" Y="9" Width="1.5" />
@@ -34,18 +43,15 @@
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>ACEAAAAAADIEgAAAAAAAABAAAAAwAAASABIAgAgAAAA=</HashCode>
+      <HashCode>ACEAAgAAACIEgAQAAAAAABAAAAA4AAASABIAAAggAAA=</HashCode>
       <FileName>Hasher.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_hashAlgorithmFactory" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.PasswordHasher" Collapsed="true">
     <Position X="7.75" Y="9" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACIEgAAAAAAAABAAAAIgAAASAAIAAAAAAQA=</HashCode>
+      <HashCode>AAAAAgAAACIEgAAAAAAAABAAAAIgAAASAAIAAAAgAQA=</HashCode>
       <FileName>PasswordHasher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -56,7 +62,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAgAAAAQAAAAAAAAAAAAAQAAAAAAAACAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAgAABAQAAAAAAAAAAAAAQAAgAEAEACAAAAAAAAAIA=</HashCode>
       <FileName>KeyFile.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -64,7 +70,7 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.NullStream" Collapsed="true">
     <Position X="14.25" Y="1.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAQAAgGAAAAABgAAAAAAAAAAAAAAEIACA=</HashCode>
+      <HashCode>AAAgAAAAQAAAQAAgGAAAAABgAAAAIAAAAAAAAAEIACA=</HashCode>
       <FileName>NullStream.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -79,19 +85,27 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.ByteArrayExtensions" Collapsed="true">
     <Position X="16.5" Y="0.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAYAAAAAAQAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAQAAABAAAAAAAAAAAYAABAAAQAAAAA=</HashCode>
       <FileName>ByteArrayExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeyHashedCipher" Collapsed="true">
     <Position X="6" Y="5.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AQBIQAIAADIEAAgQCEAAgAABAIAAEABAgBAAgAAQAAA=</HashCode>
+      <HashCode>AQBIQAIBATIEAAwQCEAAgAABAIAAEABAgBAAAAAQEAA=</HashCode>
       <FileName>EncryptedNewKeyHashedCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher" Collapsed="true">
     <Position X="11.5" Y="2.75" Width="2.75" />
+    <InheritanceLine Type="vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase" ManuallyRouted="true">
+      <Path>
+        <Point X="10.375" Y="2.062" />
+        <Point X="10.375" Y="2.35" />
+        <Point X="12.875" Y="2.35" />
+        <Point X="12.875" Y="2.75" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>wQCAAAAACAAAAAAYAAAAAABgAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>Xml\ProtectedKeyXmlCipher.cs</FileName>
@@ -101,21 +115,21 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher" Collapsed="true">
     <Position X="11.5" Y="3.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>QEAAAAAAAQAAAAAAAAAAAARAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <HashCode>QEAAAAAAAQAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeyXmlCipher" Collapsed="true">
     <Position X="11.5" Y="4.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AQQAAAgACAAAAAAQAAAAAABAAAAAASAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQQAAAgACAAAAAgQAAAEAABAAAAAASAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedNewKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeySignedXmlCipher" Collapsed="true">
     <Position X="11.5" Y="6.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAACAAAAAQAAAAAAAAAAIAAAAAAAAAgAAAAAA=</HashCode>
+      <HashCode>AQAAAAAAACAAAAAQAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedNewKeySignedXmlCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -135,7 +149,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AgAAAAAQASAEQFACAAAAEBQAAAwCAABAABgAgCAAUAg=</HashCode>
+      <HashCode>AgAAAAAQACAEQFgCAAEIEBQAAAgAAABBAhgiACAAEAA=</HashCode>
       <FileName>Xml\RsaXmlSigner.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -151,7 +165,7 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.SymmetricAlgorithmFactory" Collapsed="true">
     <Position X="3.5" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAACAAACAEAQAAAAAAABAAAAAAAEAAQAAAAAQEAAA=</HashCode>
+      <HashCode>AAAAACAAAAAAAQAAAAAAAAAAAAAAAEAAAAAAAAAEAAA=</HashCode>
       <FileName>SymmetricAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -159,35 +173,35 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.HashAlgorithmFactory" Collapsed="true">
     <Position X="0.75" Y="10" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAEASAAAAAAABAAAAAIAEAAABgAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAASAAAAAAAAAAAAAAAEAAABgAAAAAAAA=</HashCode>
       <FileName>HashAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.ICipherExtensions" Collapsed="true">
-    <Position X="8.75" Y="0.5" Width="1.5" />
+    <Position X="6" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAABEAAAgAAAAAAgAAAAE=</HashCode>
-      <FileName>ICipherExtensions.cs</FileName>
+      <HashCode>IRAAMIjAARImIAgQCCoSCQEAABcAAJiAAQABAgIAAIE=</HashCode>
+      <FileName>ICipherExtensions.Bool-Ushort.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.NullCipher" Collapsed="true">
-    <Position X="6" Y="1.5" Width="1.25" />
+    <Position X="3.5" Y="1.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAACAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQAAAAAAASAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>NullCipher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase" Collapsed="true">
-    <Position X="0.75" Y="1.5" Width="2.25" />
+    <Position X="9.25" Y="1.5" Width="2.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>QAQAAAgAACAEAAAAAAAAAJBAACAAACAAgAAAgCAgAAA=</HashCode>
+      <HashCode>QAQAAAgAACAEAAgAAAAEAJBAIAQAACAAgCAAACAAIAA=</HashCode>
       <FileName>SymmetricKeyCipherBase.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -195,35 +209,35 @@
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher" Collapsed="true">
     <Position X="8.75" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>QAQIAAgAACAAAAAAAEAIAAFAAAAgACAAAAgAgCAAAQA=</HashCode>
+      <HashCode>QQQIAAgAACAAAAwAAEAMAAFAAAQgACAAAAgAACAAAQA=</HashCode>
       <FileName>PasswordProtectedKeyCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeyCipher" Collapsed="true">
     <Position X="6" Y="4.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAQIAAgAAAAAAAAAAEAAAABAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQSIAggAAAAAAAwAAEAEAABAAAQAACAAAAAAAAAAAAA=</HashCode>
       <FileName>EncryptedNewKeyCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeySignedCipher" Collapsed="true">
     <Position X="6" Y="6.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAEAAgAACAAgAAAAAAAEAAAAAgAgCAAAAA=</HashCode>
+      <HashCode>AAAAAAABACAEAAgAACAAgAAAAAAAEAAAAAgAACAAAAA=</HashCode>
       <FileName>EncryptedNewKeySignedCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.IHasherExtensions" Collapsed="true">
     <Position X="7.5" Y="8" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAgAAAGAAAAQAAAAAACAAAAAAAAAAEAAAAAAAAA=</HashCode>
-      <FileName>IHasherExtensions.cs</FileName>
+      <HashCode>AAAAIAgAAAMAAAAQAAAAAACAAAAAAAAAIEIAAAAAAAA=</HashCode>
+      <FileName>IHasherExtensions.Bool-Ushort.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.RsaSigner" Collapsed="true">
     <Position X="6" Y="10" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACIAAAAAAAAAAAAAAAAAAAAAAAoAgCAAAAA=</HashCode>
+      <HashCode>AAAAAgAAACIAAAAAAAAAAAAAAAAAAAAAAAoAACAgAAA=</HashCode>
       <FileName>RsaSigner.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -277,7 +291,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.ICipher" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
+    <Position X="3.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ICipher.cs</FileName>

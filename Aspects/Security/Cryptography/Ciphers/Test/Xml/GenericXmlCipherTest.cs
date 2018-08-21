@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Xml;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
@@ -16,6 +17,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         public virtual IKeyManagement GetKeyManager()
         {
             var keyMgr = GetCipher() as IKeyManagement;
+
+            Assert.IsNotNull(keyMgr);
+            return keyMgr;
+        }
+
+        public virtual IKeyManagementTasks GetKeyManagerTasks()
+        {
+            var keyMgr = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(keyMgr);
             return keyMgr;

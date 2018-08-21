@@ -9,16 +9,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
     public static class Signature
     {
         /// <summary>
-        /// The user can register a certificate instance in the Common Service Locator for encrypting the hash (signature) with a resolve name - &quot;SigningCertificate&quot;.
-        /// </summary>
-        public const string SigningHashFactoryResolveName = "DefaultSigningHashFactory";
-
-        /// <summary>
-        /// The user can register hash algorithm name string instance in the Common Service Locator with a resolve name - &quot;DefaultHash&quot;.
-        /// </summary>
-        public const string ResolveName = "DefaultSignature";
-
-        /// <summary>
         /// The default and preferred signature algorithm implementation is RSA.
         /// </summary>
         public const string Default = Rsa;

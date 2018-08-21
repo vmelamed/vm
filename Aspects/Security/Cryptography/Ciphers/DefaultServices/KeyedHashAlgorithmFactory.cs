@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
-using CommonServiceLocator;
 
-namespace vm.Aspects.Security.Cryptography.Ciphers
+namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
 {
     /// <summary>
     /// Class <c>KeyedHashAlgorithmFactory</c> encapsulates the strategy for determining and realizing the keyed hash algorithm.
@@ -10,20 +9,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     public sealed class KeyedHashAlgorithmFactory : IHashAlgorithmFactory
     {
         /// <summary>
-        /// The resolved keyed hash algorithm name
-        /// </summary>
-        string _hashAlgorithmName;
-        /// <summary>
         /// The generated keyed hash factory
         /// </summary>
-        Func<KeyedHashAlgorithm> _hashFactory;
+        readonly Func<KeyedHashAlgorithm> _hashFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyedHashAlgorithmFactory"/> class.
+        /// </summary>
+        public KeyedHashAlgorithmFactory()
+            => _hashFactory = () => KeyedHashAlgorithm.Create(HashAlgorithmName);
 
         #region IHashAlgorithmFactory members
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyedHashAlgorithmFactory"/> class with optional keyed hash algorithm name.
         /// </summary>
         /// <param name="hashAlgorithmName">Name of the keyed hash algorithm.</param>
-        /// <exception cref="ActivationException">
+        /// <exception cref="Exception">
         /// If the supplied keyed hash algorithm name is not valid.
         /// </exception>
         /// <remarks>
@@ -34,62 +35,26 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         ///         it is used in creating the <see cref="KeyedHashAlgorithm"/> object; otherwise
         ///     </item>
         ///     <item>
-        ///         Try to resolve the <see cref="KeyedHashAlgorithm"/> object directly from CSL; otherwise 
-        ///     </item>
-        ///     <item>
-        ///         Try to resolve the name of the keyed hash algorithm from the CSL with resolve name <see cref="Algorithms.KeyedHash.ResolveName"/>; otherwise
-        ///     </item>
-        ///     <item>
-        ///         Assume the default keyed hash algorithm - <see cref="Algorithms.KeyedHash.Default"/> - SHA256.
+        ///         Assumes the default keyed hash algorithm - <see cref="Algorithms.KeyedHash.Default"/> - HMACSHA256.
         ///     </item>
         /// </list>
         /// </remarks>
-        public void Initialize(
+        public IHashAlgorithmFactory Initialize(
             string hashAlgorithmName = null)
         {
             // 1. If the user passed keyed hash algorithm name that is not null, empty or whitespace characters only, 
             //    it will be used in creating the <see cref="KeyedHashAlgorithm"/> object.
             if (!hashAlgorithmName.IsNullOrWhiteSpace())
-                _hashAlgorithmName = hashAlgorithmName;
-            else
-            {
-                try
-                {
-                    // 2. try to resolve the keyed hash algorithm object directly from the CSL
-                    _hashFactory = () => ServiceLocatorWrapper.Default.GetInstance<KeyedHashAlgorithm>();
-                    using (var hashAlgorithm = _hashFactory())
-                        // if we are here, we've got our factory.
-                        return;
-                }
-                catch (ActivationException)
-                {
-                    // the keyed hash algorithm is not registered in the CSL
-                    _hashFactory = null;
-                }
-
-                try
-                {
-                    // 3. Try to resolve the name of the keyed hash algorithm from the CSL with resolve name "DefaultHash" 
-                    _hashAlgorithmName = ServiceLocatorWrapper.Default.GetInstance<string>(Algorithms.KeyedHash.ResolveName);
-                }
-                catch (ActivationException)
-                {
-                }
-
-                if (_hashAlgorithmName.IsNullOrWhiteSpace())
-                    // 4. if the keyed hash algorithm name has not been resolved so far, assume the default algorithm:
-                    _hashAlgorithmName = Algorithms.Hash.Default;
-            }
-
-            // set the factory
-            _hashFactory = () => KeyedHashAlgorithm.Create(_hashAlgorithmName);
+                HashAlgorithmName = hashAlgorithmName;
 
             // try it
             using (var hashAlgorithm = _hashFactory())
                 if (hashAlgorithm == null)
                     // if unsuccessful - throw an exception.
-                    throw new ActivationException(
-                                $"The name \"{_hashAlgorithmName}\" was not recognized as a valid keyed hash algorithm.");
+                    throw new ArgumentException(
+                                $"\"{HashAlgorithmName}\" was not recognized as a valid keyed hash algorithm.", nameof(hashAlgorithmName));
+
+            return this;
         }
 
         /// <summary>
@@ -111,7 +76,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Gets the name of the keyed hash algorithm.
         /// </summary>
         /// <value>The name of the keyed hash algorithm.</value>
-        public string HashAlgorithmName => _hashAlgorithmName;
+        public string HashAlgorithmName { get; private set; } = Algorithms.KeyedHash.Default;
         #endregion
     }
 }

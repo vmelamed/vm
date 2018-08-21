@@ -3,8 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
-using CommonServiceLocator;
-
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
     /// <summary>
@@ -20,16 +18,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </summary>
         /// <param name="exchangeCertificate">
         /// The certificate containing the public and optionally the private keys for encrypting the symmetric key. Cannot be <see langword="null"/>.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
         /// </param>
         /// <param name="signCertificate">
         /// The certificate containing the public and optionally the private keys for encrypting the hash - signing. Cannot be <see langword="null"/>.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;SigningCertificate&quot;.
         /// </param>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
         /// <see langword="null" />, empty or whitespace characters only - which will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <param name="hashAlgorithmName">
         /// The name of the hash algorithm. By default the cipher will pick the algorithm from the <paramref name="signCertificate"/> but the caller
@@ -37,8 +32,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// cannot specify higher length then the one on the certificate.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when either the <paramref name="exchangeCertificate" /> or the <paramref name="signCertificate"/> is <see langword="null" /> 
-        /// and could not be resolved from the Common Service Locator.
+        /// Thrown when either the <paramref name="exchangeCertificate" /> or the <paramref name="signCertificate"/> is <see langword="null" />.
         /// </exception>
         /// <remarks>
         /// Note that for XML signing the cipher supports only SHA1 and SHA256.
@@ -52,14 +46,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             : base(exchangeCertificate, symmetricAlgorithmName)
         {
             if (signCertificate == null)
-                try
-                {
-                    signCertificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.Hash.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(signCertificate));
 
             _signer = new RsaXmlSigner(signCertificate, hashAlgorithmName)
             {

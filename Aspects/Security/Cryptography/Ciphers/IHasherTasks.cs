@@ -7,7 +7,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// Interface <c>IHasherAsync</c> extends <see cref="IHasher"/> with 
     /// asynchronous versions of its <see cref="Stream"/> related methods.
     /// </summary>
-    public interface IHasherAsync : IHasher
+    public interface IHasherTasks : IHasher
     {
         /// <summary>
         /// Computes the hash of the <paramref name="dataStream" /> asynchronously.

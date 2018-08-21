@@ -2,19 +2,28 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 {
-    public abstract class GenericCipherTest<TCipher> where TCipher : ICipherAsync
+    public abstract class GenericCipherTest<TCipher> where TCipher : ICipherTasks
     {
-        public abstract ICipherAsync GetCipher(bool base64 = false);
+        public abstract ICipherTasks GetCipher(bool base64 = false);
 
-        public virtual ICipherAsync GetPublicCertCipher(bool base64 = false) => null;
+        public virtual ICipherTasks GetPublicCertCipher(bool base64 = false) => null;
 
         public virtual IKeyManagement GetKeyManager()
         {
             var keyMgr = GetCipher() as IKeyManagement;
+
+            Assert.IsNotNull(keyMgr);
+            return keyMgr;
+        }
+
+        public virtual IKeyManagementTasks GetKeyManagerTasks()
+        {
+            var keyMgr = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(keyMgr);
             return keyMgr;
@@ -235,7 +244,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
                     {
                         var output =  target1.Decrypt(encrypted);
 
-                        Assert.Fail();
+                        Assert.Fail("Should throw exception");
                     }
                 }
             }

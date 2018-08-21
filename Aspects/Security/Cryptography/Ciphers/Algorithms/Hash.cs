@@ -9,16 +9,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
     public static class Hash
     {
         /// <summary>
-        /// The user can register a certificate instance in the Common Service Locator for encrypting the hash (signature) with a resolve name - &quot;SigningCertificate&quot;.
-        /// </summary>
-        public const string CertificateResolveName = "SigningCertificate";
-
-        /// <summary>
-        /// The user can register hash algorithm name string instance in the Common Service Locator with a resolve name - &quot;DefaultHash&quot;.
-        /// </summary>
-        public const string ResolveName = "DefaultHash";
-
-        /// <summary>
         /// The default and preferred hash algorithm implementation is SHA256.
         /// </summary>
         public const string Default = Sha256;

@@ -262,10 +262,10 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
         }
 
         static IKeyStorage GetKeyStorage()
-            => new KeyFile();
+            => new DefaultKeyFileStorage();
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        static ICipherAsync GetCipher()
+        static ICipherTasks GetCipher()
             => new EncryptedKeyCipher(_cert, null, _keyFile, null);
 
         static int Import()

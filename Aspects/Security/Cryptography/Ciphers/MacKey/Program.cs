@@ -262,7 +262,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities
         }
 
         static IKeyStorage GetKeyStorage()
-            => new KeyFile();
+            => new DefaultKeyFileStorage();
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         static IHasher GetHasher()

@@ -3,9 +3,9 @@
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The interface <c>IKeyStorageAsync</c> extends <c>IKeyStorage</c> with asynchronous versions of the methods 
+    /// The interface <c>IKeyStorageTasks</c> extends <c>IKeyStorage</c> with asynchronous versions of the methods 
     /// </summary>
-    public interface IKeyStorageAsync : IKeyStorage
+    public interface IKeyStorageTasks : IKeyStorage
     {
         /// <summary>
         /// Tests whether the key's storage location name exists.

@@ -17,7 +17,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying symmetric algorithm instance is not initialized yet or if the encryption/decryption functionality requires asymmetric encryption as well,
         /// e.g. encryption of the IV.
         /// </exception>
-        ICipherAsync ReleaseCertificate();
+        ICipherTasks ReleaseCertificate();
 
         /// <summary>
         /// Creates a new, lightweight clone off of the current cipher and copies certain characteristics, e.g. the symmetric key of this instance to it.
@@ -27,6 +27,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying symmetric algorithm instance is not initialized yet or if the encryption/decryption functionality requires asymmetric encryption as well,
         /// e.g. encryption of the IV.
         /// </exception>
-        ICipherAsync CloneLightCipher();
+        ICipherTasks CloneLightCipher();
     }
 }

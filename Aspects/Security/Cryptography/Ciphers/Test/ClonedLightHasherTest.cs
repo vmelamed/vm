@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -10,7 +11,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class ClonedLightHasherTest : GenericHasherTest<KeyedHasher>
     {
-        const string keyFileName = "duplicateHash.key";
+        const string _keyFileName = "duplicateHash.key";
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -18,15 +19,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         ///</summary>
         //public TestContext TestContext { get; set; }
 
-        public override IHasherAsync GetHasher()
+        public override IHasherTasks GetHasher()
         {
-            using (var cipher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var cipher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             {
-                return cipher.CloneLightHasher() as IHasherAsync;
+                return cipher.CloneLightHasher() as IHasherTasks;
             }
         }
 
-        public override IHasherAsync GetHasher(int saltLength) => GetHasher();
+        public override IHasherTasks GetHasher(int saltLength) => GetHasher();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -38,7 +39,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public static void ClassCleanup()
         {
             const string expected = "The quick fox jumps over the lazy dog.";
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, expected) as IKeyManagement;
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), expected) as IKeyManagement;
 
             if (keyManagement.KeyLocation.EndsWith(expected, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
@@ -50,7 +51,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             {
                 var hash = hasher.Hash(expected);
 
@@ -64,7 +65,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             using (var clone = hasher.CloneLightHasher())
             {
                 var hash = clone.Hash(expected);
@@ -78,7 +79,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             using (var clone = hasher.CloneLightHasher())
             using (var clone2 = hasher.CloneLightHasher())
             {
@@ -93,7 +94,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, keyFileName))
+            using (var hasher = new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), _keyFileName, hashAlgorithmName: null))
             using (var clone = hasher.CloneLightHasher())
             {
                 var hash = clone.Hash(expected);

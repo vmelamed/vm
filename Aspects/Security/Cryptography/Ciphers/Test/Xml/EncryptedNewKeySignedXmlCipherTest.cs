@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Tests;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
@@ -109,7 +111,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
@@ -121,11 +123,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
-                target.ImportSymmetricKey(new byte[17]);
+                target.ImportSymmetricKeyAsync(new byte[17]).Wait();
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
         }

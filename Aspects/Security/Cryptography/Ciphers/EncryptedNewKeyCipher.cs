@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -54,23 +56,26 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private encryption keys. Cannot be <see langword="null"/>.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingCertificate&quot;.
         /// </param>
         /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or even
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="certificate"/> is <see langword="null"/> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="certificate"/> is <see langword="null"/>.
         /// </exception>
         public EncryptedNewKeyCipher(
             X509Certificate2 certificate = null,
-            string symmetricAlgorithmName = null)
-            : base(symmetricAlgorithmName, certificate)
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(certificate, symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             // we do not need symmetric key storage - the key is stored in the crypto-package.
-            //InitializeKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
+            // InitializeKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
         }
         #endregion
 
@@ -309,7 +314,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Always.</exception>
-        public override ICipherAsync CloneLightCipher()
+        public override ICipherTasks CloneLightCipher()
         {
             throw new NotSupportedException("The method Duplicate() is not supported on this cipher.");
         }
@@ -319,7 +324,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Always.</exception>
-        public override ICipherAsync ReleaseCertificate()
+        public override ICipherTasks ReleaseCertificate()
         {
             throw new NotSupportedException("The method ResetAsymmetricKeys() is not supported on this cipher.");
         }

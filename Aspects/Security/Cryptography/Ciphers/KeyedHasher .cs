@@ -1,11 +1,12 @@
-﻿using CommonServiceLocator;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+
+using vm.Aspects.Security.Cryptography.Ciphers.DefaultServices;
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -21,17 +22,19 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///     </list>
     /// </para>
     /// </remarks>
-    public class KeyedHasher : IHasherAsync, IKeyManagement, ILightHasher
+    public class KeyedHasher : IHasherTasks, IKeyManagement, ILightHasher
     {
         #region Fields
         /// <summary>
         /// The public key used for encrypting the hash key.
         /// </summary>
         RSACryptoServiceProvider _publicKey;
+
         /// <summary>
         /// The private key used for decrypting the hash key.
         /// </summary>
         RSACryptoServiceProvider _privateKey;
+
         /// <summary>
         /// The underlying hash algorithm.
         /// </summary>
@@ -42,7 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// The object which is responsible for storing and retrieving the encrypted hash key 
         /// to and from the store with the determined store location name (e.g file I/O).
         /// </summary>
-        protected IKeyStorageAsync KeyStorage { get; set; }
+        protected IKeyStorageTasks KeyStorage { get; set; }
 
         bool IsHashKeyInitialized { get; set; }
 
@@ -52,39 +55,34 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         /// <param name="certificate">
         /// The certificate containing the public and optionally the private key for encryption and decryption of the hash key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;EncryptingHashKeyCertificate&quot;.
-        /// </param>
-        /// <param name="hashAlgorithmName">
-        /// The keyed hash algorithm name. You can use any of the constants from <see cref="Algorithms.KeyedHash" /> or
-        /// <see langword="null" />, empty or whitespace characters only - it will default to <see cref="Algorithms.KeyedHash.Default" />.
-        /// Also a string instance with name "DefaultKeyedHash" can be defined in a Common Service Locator compatible dependency injection container.
         /// </param>
         /// <param name="keyLocation">
         /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
-        /// Can be <see langword="null"/>, empty or whitespace characters only.
-        /// The parameter will be passed to the <paramref name="keyLocationStrategy"/> to determine the final store location name path (e.g. relative or absolute path).
+        /// Can be <see langword="null" />, empty or whitespace characters only.
+        /// The parameter will be passed to the <paramref name="keyLocationStrategy" /> to determine the final store location name path (e.g. relative or absolute path).
         /// </param>
         /// <param name="keyLocationStrategy">
         /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyLocationStrategy"/>.
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="KeyFileLocationStrategy" />.
         /// </param>
         /// <param name="keyStorage">
         /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="KeyFileStorage" />.
         /// </param>
+        /// <param name="hashAlgorithmName">
+        /// The keyed hash algorithm name. You can use any of the constants from <see cref="Algorithms.KeyedHash" /> or
+        /// <see langword="null" />, empty or whitespace characters only - it will default to <see cref="Algorithms.KeyedHash.Default" />.</param>
+        /// <param name="hashAlgorithmFactory">The hash algorithm factory.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KeyedHasher(
             X509Certificate2 certificate,
-            string hashAlgorithmName = null,
             string keyLocation = null,
             IKeyLocationStrategy keyLocationStrategy = null,
-            IKeyStorageAsync keyStorage = null)
+            IKeyStorageTasks keyStorage = null,
+            string hashAlgorithmName = Algorithms.KeyedHash.Default,
+            IHashAlgorithmFactory hashAlgorithmFactory = null)
+            : this(hashAlgorithmName, hashAlgorithmFactory)
         {
-            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>(Algorithms.KeyedHash.ResolveName);
-
-            hashAlgorithmFactory.Initialize(hashAlgorithmName);
-            _hashAlgorithm = (KeyedHashAlgorithm)hashAlgorithmFactory.Create();
-
             ResolveKeyStorage(keyLocation, keyLocationStrategy, keyStorage);
             InitializeAsymmetricKeys(certificate);
         }
@@ -93,12 +91,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Initializes a new instance of the <see cref="KeyedHasher"/> class.
         /// </summary>
         protected KeyedHasher(
-            string hashAlgorithmName = null)
+            string hashAlgorithmName = null,
+            IHashAlgorithmFactory hashAlgorithmFactory = null)
         {
-            var hashAlgorithmFactory = ServiceLocatorWrapper.Default.GetInstance<IHashAlgorithmFactory>(Algorithms.KeyedHash.ResolveName);
-
-            hashAlgorithmFactory.Initialize(hashAlgorithmName);
-            _hashAlgorithm = (KeyedHashAlgorithm)hashAlgorithmFactory.Create();
+            _hashAlgorithm = (KeyedHashAlgorithm)Resolver
+                                                    .GetInstanceOrDefault(hashAlgorithmFactory, Resolver.Keyed)
+                                                    .Initialize(hashAlgorithmName)
+                                                    .Create()
+                                                    ;
         }
         #endregion
 
@@ -346,47 +346,17 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         protected void ResolveKeyStorage(
             string keyLocation,
             IKeyLocationStrategy keyLocationStrategy,
-            IKeyStorageAsync keyStorage)
+            IKeyStorageTasks keyStorage)
         {
-
-
-            try
-            {
-                if (keyLocationStrategy == null)
-                    keyLocationStrategy = ServiceLocatorWrapper.Default.GetInstance<IKeyLocationStrategy>();
-            }
-            catch (ActivationException)
-            {
-                keyLocationStrategy = new KeyLocationStrategy();
-            }
-
-            KeyLocation = keyLocationStrategy.GetKeyLocation(keyLocation);
-
-            try
-            {
-                if (keyStorage == null)
-                    keyStorage = ServiceLocatorWrapper.Default.GetInstance<IKeyStorageAsync>();
-            }
-            catch (ActivationException)
-            {
-                keyStorage = new KeyFile();
-            }
-
-            KeyStorage = keyStorage;
+            KeyLocation         = Resolver.GetInstanceOrDefault(keyLocationStrategy).GetKeyLocation(keyLocation);
+            KeyStorage          = Resolver.GetInstanceOrDefault(keyStorage);
         }
 
         void InitializeAsymmetricKeys(
             X509Certificate2 certificate)
         {
             if (certificate == null)
-                try
-                {
-                    certificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.KeyedHash.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument " + nameof(certificate) + " was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(certificate));
 
             _publicKey = (RSACryptoServiceProvider)certificate.PublicKey.Key;
 
@@ -565,7 +535,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="InvalidOperationException">
         /// If the underlying hash instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption as well, e.g. signing.
         /// </exception>
-        public virtual IHasherAsync ReleaseCertificate()
+        public virtual IHasherTasks ReleaseCertificate()
         {
 
             if (_publicKey == null)
@@ -592,7 +562,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// If the underlying hashing algorithm instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption, e.g. signing.
         /// </exception>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller owns it.")]
-        public virtual IHasherAsync CloneLightHasher()
+        public virtual IHasherTasks CloneLightHasher()
         {
 
             InitializeHashKey();

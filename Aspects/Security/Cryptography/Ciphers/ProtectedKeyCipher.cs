@@ -9,15 +9,16 @@ using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The <c>ProtectedKeyCipher</c> is a symmetric cipher. The symmetric key is encrypted using DPAPI and so stored in a file.
+    /// ProtectedKeyCipher is a symmetric cipher. The symmetric key is encrypted using DPAPI and so stored in a file.
     /// This class also defines a set of crypto-operations (virtual protected methods) 
-    /// for the descending classes which implement the various steps of the (GoF template) methods that compose and decompose the crypto-packages.
+    /// for the descending classes which implement the various steps of the methods (GoF template pattern) 
+    /// that compose and decompose the crypto-packages.
     /// </summary>
     /// <remarks>
     /// <para>
     /// The cipher can be used to protect data at rest, e.g. data stored in a database, file, etc.
     /// </para><para>
-    /// By default the cipher uses the <see cref="T:System.Security.Cryptography.AesCryptoServiceProvider"/> with default parameters. 
+    /// By default the cipher uses the <see cref="AesCryptoServiceProvider"/> with default parameters. 
     /// </para><para>
     /// The encrypted symmetric key is stored in a file. The class determines the path and name of the file from an <see cref="IKeyLocationStrategy"/> object.
     /// If the key file does not exist a new key is generated, encrypted and saved in a storage (<see cref="IKeyStorage"/>) in the location determined by the 
@@ -26,22 +27,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// DPAPI uses different keys for different machines and users. Therefore to enable your application to exchange and persist encrypted data with 
     /// other machines and applications (data in motion), you would need to export the clear text of the key and then import it to the target machines.
     /// The command line utility <c>ProtectedKey</c> can be used for this purpose.  More elaborate management can be implemented by using the 
-    /// <see cref="IKeyManagement"/>'s methods <see cref="M:ProtectedKeyCipher.ExportSymmetricKey"/> and 
-    /// <see cref="M:ProtectedKeyCipher.ImportSymmetricKey"/>. Please, follow the best security practices while handling the clear text of the key.
+    /// <see cref="IKeyManagement"/>'s methods <see cref="IKeyManagement.ExportSymmetricKey"/> and 
+    /// <see cref="IKeyManagement.ImportSymmetricKey"/>. Please, follow the best security practices while handling the clear text of the key.
     /// </para><para>
     /// The symmetric key is generated and encrypted into a file once and read and decrypted from a file once per the life time of the cipher object.
-    /// If the symmetric key is compromised, all documents encrypted with it will be compromised. If higher level of security is required, consider using the
-    /// <see cref="EncryptedKeyCipher"/> which generates the symmetric key and encrypts it with asymmetric key, e.g. from a certificate, 
-    /// instead of using DPAPI. If all participating machines share the same certificate, the file can be shared as is - without exporting and importing of the key in clear text.
-    /// A third option is to use <see cref="EncryptedNewKeyCipher"/> which generates a new key for each document. 
-    /// The latter encrypts the symmetric key with an asymmetric key, e.g. from a certificate, and stores it in the crypto package together with the 
-    /// initialization vector and the crypto text. No need for key management whatsoever, however the performance is lowered.
+    /// If the symmetric key is compromised, all documents encrypted with it will be compromised too.
+    /// If higher level of security is required, consider using the <see cref="EncryptedKeyCipher"/> which generates the symmetric key and 
+    /// encrypts it with asymmetric key, e.g. from a certificate, instead of using DPAPI. In this case, if all participating machines share the same certificate,
+    /// the file can be shared as is - without exporting and importing of the key in clear text. A third option is to use <see cref="EncryptedNewKeyCipher"/> 
+    /// which generates a new key for each document. The latter encrypts the symmetric key with an asymmetric key, e.g. from a certificate, 
+    /// and stores it in the crypto package together with the initialization vector and the crypto text. No need for key management whatsoever, however the performance is lowered.
     /// </para><para>
     /// <b>Note that the DPAPI encryption of the key is done in the scope of the local machine. This means that anyone logged-on locally to the machine with read-access to the file could 
     /// obtain the clear text of the symmetric key. Best practice is to protect the key file from access by other users. Therefore the key file is created with allowed access 
     /// (full control) only to the current user, the SYSTEM account and the Administrators group.</b>
     /// While it is possible to change the protection scope to the current user, usually this is highly impractical: the key management must be done under the same security
-    /// context as the application's. Especially for web applications, services, etc. which usually run under accounts with very limited rights 
+    /// context as the application's. Especially for web applications, services, etc. which usually run under accounts with very limited rights - 
     /// this is almost impossible scenario which might pose other security risks.
     /// </para><para>
     /// Crypto package contents:
@@ -55,53 +56,60 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </para>
     /// </remarks>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "It is implemented correctly.")]
-    public class ProtectedKeyCipher : SymmetricKeyCipherBase, ICipherAsync
+    public class ProtectedKeyCipher : SymmetricKeyCipherBase, ICipherTasks
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProtectedKeyCipher"/> class.
+        /// Initializes a new instance of the <see cref="ProtectedKeyCipher" /> class.
         /// </summary>
-        /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
-        /// </param>
         /// <param name="symmetricKeyLocation">
-        /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path).
-        /// Can be <see langword="null"/>, empty or whitespace characters only.
-        /// The parameter will be passed to the <paramref name="symmetricKeyLocationStrategy"/> to determine the final store location name path (e.g. relative or absolute path).
+        /// Seeding name of store location name of the encrypted symmetric key (e.g. relative or absolute path). Can be <see langword="null" />, 
+        /// empty or whitespace characters only. The parameter will be passed to the <paramref name="symmetricKeyLocationStrategy" /> to determine the final 
+        /// store location name path (e.g. relative or absolute path).
         /// </param>
         /// <param name="symmetricKeyLocationStrategy">
         /// Object which implements the strategy for determining the store location name (e.g. path and filename) of the encrypted symmetric key.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyLocationStrategy"/>.
-        /// Alternatively an implementation type can be registered in a common service locator compatible DI container.
-        /// </param>
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileLocationStrategy" />.
+        /// Alternatively an implementation type can be registered in a common service locator compatible DI container.</param>
         /// <param name="keyStorage">
         /// Object which implements the storing and retrieving of the the encrypted symmetric key to and from the store with the determined location name.
-        /// If <see langword="null"/> it defaults to a new instance of the class <see cref="KeyFile"/>.
+        /// If <see langword="null" /> it defaults to a new instance of the class <see cref="DefaultServices.KeyFileStorage" />.
         /// Alternatively an implementation type can be registered in a common service locator compatible DI container.
         /// </param>
+        /// <param name="symmetricAlgorithmName">
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or even
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
+        /// </param>
         public ProtectedKeyCipher(
-            string symmetricAlgorithmName = null,
             string symmetricKeyLocation = null,
             IKeyLocationStrategy symmetricKeyLocationStrategy = null,
-            IKeyStorageAsync keyStorage = null)
-            : this(symmetricAlgorithmName)
+            IKeyStorageTasks keyStorage = null,
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             ResolveKeyStorage(symmetricKeyLocation, symmetricKeyLocationStrategy, keyStorage);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProtectedKeyCipher"/> class for initialization by the constructors of the inheriting classes.
+        /// Initializes a new instance of the <see cref="ProtectedKeyCipher" /> class for initialization by the constructors of the inheriting classes.
         /// </summary>
         /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// Also a string instance with name &quot;DefaultSymmetricEncryption&quot; can be defined in a Common Service Locator compatible dependency injection container.
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the default <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
         /// </param>
         protected ProtectedKeyCipher(
-            string symmetricAlgorithmName)
-            : base(symmetricAlgorithmName)
+            string symmetricAlgorithmName,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
         }
         #endregion

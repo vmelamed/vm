@@ -8,13 +8,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class KeyedHasherTest : GenericHasherTest<Hasher>
     {
-        const string keyFileName = "encryptedHashKey.key";
+        const string _keyFileName = "encryptedHashKey.key";
 
-        static IHasherAsync GetHasherImpl() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), null, "encryptedHashKey.key");
+        static IHasherTasks GetHasherImpl() => new KeyedHasher(CertificateFactory.GetDecryptingCertificate(), "encryptedHashKey.key");
 
-        public override IHasherAsync GetHasher() => GetHasherImpl();
+        public override IHasherTasks GetHasher() => GetHasherImpl();
 
-        public override IHasherAsync GetHasher(int saltLength) => GetHasherImpl();
+        public override IHasherTasks GetHasher(int saltLength) => GetHasherImpl();
 
 
         [ClassInitialize]
@@ -29,7 +29,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var keyManagement = GetHasherImpl() as IKeyManagement;
 
             if (keyManagement.KeyLocation != null &&
-                keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+                keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }

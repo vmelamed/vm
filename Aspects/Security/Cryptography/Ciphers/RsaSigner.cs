@@ -1,10 +1,10 @@
-﻿using CommonServiceLocator;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -38,31 +38,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes a new instance of the <see cref="EncryptedNewKeyCipher" /> class.
         /// </summary>
-        /// <param name="hashAlgorithmName">
-        /// The name of the symmetric algorithm implementation. Use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - it will default to <see cref="Algorithms.Symmetric.Default"/>.
-        /// </param>
         /// <param name="signCertificate">
         /// The certificate containing the public and optionally the private key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;SigningCertificate&quot;.
+        /// </param>
+        /// <param name="hashAlgorithmName">
+        /// The hash algorithm name. You can use any of the constants from <see cref="Algorithms.Hash" /> or
+        /// <see langword="null" />, empty or whitespace characters only - it will default to <see cref="Algorithms.Hash.Default" />.
+        /// </param>
+        /// <param name="hashAlgorithmFactory">
+        /// The hash algorithm factory.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="signCertificate"/> is <see langword="null"/> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="signCertificate"/> is <see langword="null"/>.
         /// </exception>
         public RsaSigner(
             X509Certificate2 signCertificate = null,
-            string hashAlgorithmName = null)
-            : base(hashAlgorithmName ?? signCertificate.HashAlgorithm(), 0)
+            string hashAlgorithmName = Algorithms.Hash.Default,
+            IHashAlgorithmFactory hashAlgorithmFactory = null)
+            : base(0, hashAlgorithmName ?? signCertificate.HashAlgorithm(), hashAlgorithmFactory)
         {
             if (signCertificate == null)
-                try
-                {
-                    signCertificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.Hash.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument " + nameof(signCertificate) + " was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(signCertificate));
 
             _asymmetric = signCertificate.HasPrivateKey
                                 ? (RSACryptoServiceProvider)signCertificate.PrivateKey

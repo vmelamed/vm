@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonServiceLocator;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
@@ -12,70 +11,45 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// Internally manages tasks associated with the symmetric key. Also
     /// implements <see cref="IKeyManagement"/> and the <see cref="IDisposable"/> pattern.
     /// </summary>
-    public abstract class SymmetricKeyCipherBase : IKeyManagement, IDisposable
+    public abstract class SymmetricKeyCipherBase : IKeyManagement, IKeyManagementTasks, IDisposable
     {
-        #region Fields
-        /// <summary>
-        /// The underlying .NET symmetric cipher.
-        /// </summary>
-        SymmetricAlgorithm _symmetric;
-        #endregion
-
         #region Constructor
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricKeyCipherBase"/> class with symmetric algorithm provider
-        /// derived from the <paramref name="symmetricAlgorithmName"/>.
+        /// Initializes a new instance of the <see cref="SymmetricKeyCipherBase" /> class by instantiating a symmetric algorithm provider
+        /// derived from the <paramref name="symmetricAlgorithmName" />.
         /// </summary>
         /// <param name="symmetricAlgorithmName">
-        /// Name of the symmetric algorithm. If the value is <see langword="null"/>, empty or consist of all whitespace characters,
-        /// the class will try to:
-        ///     <list type="number">
-        ///         <item>
-        ///             resolve the <see cref="Symmetric"/> from the common service locator, 
-        ///             which gives the caller opportunity to plug-in their algorithm of choice, customized with their own parameters like key-length, mode, etc.;
-        ///             and if not resolved will try to
-        ///         </item>
-        ///         <item>
-        ///             resolve the name of the symmetric algorithm from the common service locator with a resolve name &quot;DefaultSymmetricEncryption&quot;;
-        ///             and if not resolved 
-        ///         </item>
-        ///         <item>
-        ///             will default to AES with key length of 256 bits.
-        ///         </item>
-        ///     </list>
+        /// If <see langword="null" /> the algorithm will default to <see cref="Algorithms.Symmetric.Default"/> (AESManaged).
+        /// Hint: use the constants in the <see cref="Algorithms.Symmetric" /> static class.
+        /// </param>
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory.
+        /// If <see langword="null"/> the constructor will create an instance of the default <see cref="DefaultServices.SymmetricAlgorithmFactory"/>,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)"/> method from the .NET library.
         /// </param>
         protected SymmetricKeyCipherBase(
-            string symmetricAlgorithmName)
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
         {
-            CreateSymmetricKey(symmetricAlgorithmName);
+            Symmetric = DefaultServices
+                            .Resolver
+                            .GetInstanceOrDefault(symmetricAlgorithmFactory)
+                            .Initialize(symmetricAlgorithmName)
+                            .Create();
         }
         #endregion
-
-        /// <summary>
-        /// Creates the symmetric key.
-        /// </summary>
-        /// <param name="symmetricAlgorithmName">Name of the symmetric algorithm.</param>
-        protected void CreateSymmetricKey(
-            string symmetricAlgorithmName)
-        {
-            var factory = ServiceLocatorWrapper.Default.GetInstance<ISymmetricAlgorithmFactory>();
-
-            factory.Initialize(symmetricAlgorithmName);
-            _symmetric = factory.Create();
-        }
 
         #region Properties
         /// <summary>
-        /// The object which is responsible for storing and retrieving the encrypted symmetric key 
-        /// to and from the store with the determined store location name (e.g file I/O).
+        /// The underlying .NET symmetric cipher.
         /// </summary>
-        protected IKeyStorageAsync KeyStorage { get; set; }
+        protected SymmetricAlgorithm Symmetric { get; private set; }
 
         /// <summary>
-        /// Gets the underlying .NET symmetric cipher.
+        /// The object which is responsible for storing and retrieving the encrypted symmetric key 
+        /// to and from the store with the resolved store specific location name (e.g file name for file storages.)
         /// </summary>
-        protected SymmetricAlgorithm Symmetric
-            => _symmetric;
+        protected IKeyStorageTasks KeyStorage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance's symmetric key is initialized.
@@ -91,37 +65,23 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <summary>
         /// Initializes the key storage by executing the key location strategy.
         /// </summary>
-        /// <param name="symmetricKeyLocation">The name of the symmetric key location.</param>
-        /// <param name="symmetricKeyLocationStrategy">The symmetric key location strategy.</param>
-        /// <param name="keyStorage">The key storage.</param>
+        /// <param name="symmetricKeyLocation">
+        /// The name of the symmetric key location which must be relevant to the chosen <see cref="IKeyLocationStrategy"/>.
+        /// </param>
+        /// <param name="symmetricKeyLocationStrategy">
+        /// Translates the <paramref name="symmetricKeyLocation"/> to the chosen concrete key store relevant specific key location.
+        /// </param>
+        /// <param name="keyStorage">
+        /// The key storage.
+        /// </param>
         protected void ResolveKeyStorage(
             string symmetricKeyLocation,
             IKeyLocationStrategy symmetricKeyLocationStrategy,
-            IKeyStorageAsync keyStorage)
+            IKeyStorageTasks keyStorage)
         {
-            try
-            {
-                if (symmetricKeyLocationStrategy == null)
-                    symmetricKeyLocationStrategy = ServiceLocatorWrapper.Default.GetInstance<IKeyLocationStrategy>();
-            }
-            catch (ActivationException)
-            {
-                symmetricKeyLocationStrategy = new KeyLocationStrategy();
-            }
-
-            KeyLocation = symmetricKeyLocationStrategy.GetKeyLocation(symmetricKeyLocation);
-
-            try
-            {
-                if (keyStorage == null)
-                    keyStorage = ServiceLocatorWrapper.Default.GetInstance<IKeyStorageAsync>();
-            }
-            catch (ActivationException)
-            {
-                keyStorage = new KeyFile();
-            }
-
-            KeyStorage = keyStorage;
+            KeyLocation = DefaultServices.Resolver.GetInstanceOrDefault(symmetricKeyLocationStrategy)
+                                .GetKeyLocation(symmetricKeyLocation);
+            KeyStorage  = DefaultServices.Resolver.GetInstanceOrDefault(keyStorage);
         }
 
         #region IKeyManagement Members
@@ -131,16 +91,20 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public virtual string KeyLocation { get; protected set; }
 
         /// <summary>
-        /// Imports the symmetric key as a clear text.
+        /// Imports the symmetric key as a clear text into the current ciphers and stores the new key into the key storage.
         /// </summary>
         /// <param name="key">The key.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
         public virtual void ImportSymmetricKey(
             byte[] key)
         {
-            Symmetric.Key = key;
-            KeyStorage?.PutKey(EncryptSymmetricKey(), KeyLocation);
+            if (key == null  ||  key.Length == 0)
+                throw new ArgumentException("The imported key cannot be null or empty array.", nameof(key));
+
+            Symmetric.Key             = key;
             IsSymmetricKeyInitialized = true;
+
+            KeyStorage?.PutKey(EncryptSymmetricKey(), KeyLocation);
         }
 
         /// <summary>
@@ -164,7 +128,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         public virtual async Task ImportSymmetricKeyAsync(
             byte[] key)
         {
-            Symmetric.Key = key;
+            if (key == null  ||  key.Length == 0)
+                throw new ArgumentException("The imported key cannot be null or empty array.", nameof(key));
+
+            Symmetric.Key             = key;
+            IsSymmetricKeyInitialized = true;
+
             await KeyStorage?.PutKeyAsync(EncryptSymmetricKey(), KeyLocation);
         }
 
@@ -317,18 +286,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (!IsSymmetricKeyInitialized)
                 return;
 
-            cipher._symmetric = SymmetricAlgorithm.Create(Symmetric.GetType().FullName);
-
-            cipher.Symmetric.Mode            = Symmetric.Mode;
-            cipher.Symmetric.Padding         = Symmetric.Padding;
-            cipher.Symmetric.BlockSize       = Symmetric.BlockSize;
-            cipher.Symmetric.FeedbackSize    = Symmetric.FeedbackSize;
-            cipher.Symmetric.KeySize         = Symmetric.KeySize;
-            cipher.Symmetric.Key             = (byte[])Symmetric.Key.Clone();
-            cipher.Symmetric.IV              = (byte[])Symmetric.IV.Clone();
-
+            cipher.Symmetric                 = SymmetricAlgorithm.Create(Symmetric.GetType().FullName);
+            CopyToSymetricAlgorithm(cipher.Symmetric);
             cipher.IsSymmetricKeyInitialized = true;
             cipher.ShouldEncryptIV           = ShouldEncryptIV;
+        }
+
+        void CopyToSymetricAlgorithm(
+            SymmetricAlgorithm symmetric)
+        {
+            symmetric.Mode            = Symmetric.Mode;
+            symmetric.Padding         = Symmetric.Padding;
+            symmetric.BlockSize       = Symmetric.BlockSize;
+            symmetric.FeedbackSize    = Symmetric.FeedbackSize;
+            symmetric.KeySize         = Symmetric.KeySize;
+            symmetric.Key             = (byte[])Symmetric.Key.Clone();
+            symmetric.IV              = (byte[])Symmetric.IV.Clone();
         }
     }
 }

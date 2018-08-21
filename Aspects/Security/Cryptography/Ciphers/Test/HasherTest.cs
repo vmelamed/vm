@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -9,8 +10,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class HasherTest : GenericHasherTest<Hasher>
     {
-        public override IHasherAsync GetHasher() => new Hasher(null, Hasher.DefaultSaltLength);
-        public override IHasherAsync GetHasher(int saltLength) => new Hasher(null, saltLength);
+        public override IHasherTasks GetHasher() => new Hasher(Hasher.DefaultSaltLength);
+        public override IHasherTasks GetHasher(int saltLength) => new Hasher(saltLength);
 
         #region IsDisposed tests
         [TestMethod]

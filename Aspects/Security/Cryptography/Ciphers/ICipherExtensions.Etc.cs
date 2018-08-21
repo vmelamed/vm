@@ -7,7 +7,7 @@ using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// Class ICipherExtensions contains extension methods for <see cref="ICipherAsync"/> objects.
+    /// Class ICipherExtensions contains extension methods for <see cref="ICipherTasks"/> objects.
     /// </summary>
     public static partial class ICipherExtensions
     {

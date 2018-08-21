@@ -12,7 +12,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         protected override EncryptedKeyCipher GetCipher(bool base64 = false)
         {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName)
             {
                 Base64Encoded = base64,
             };
@@ -26,7 +26,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName))
             {
                 cipher.ExportSymmetricKey();
 
@@ -45,7 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         {
             const string expected = "The quick fox jumps over the lazy dog.";
 
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName))
             {
                 cipher.ExportSymmetricKey();
 

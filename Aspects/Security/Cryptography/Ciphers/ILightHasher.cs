@@ -16,7 +16,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="InvalidOperationException">
         /// If the underlying hash instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption as well, e.g. signing.
         /// </exception>
-        IHasherAsync ReleaseCertificate();
+        IHasherTasks ReleaseCertificate();
 
         /// <summary>
         /// Creates a new, lightweight clone off of the current hasher and copies certain characteristics, e.g. the hashing key of this instance to it.
@@ -25,6 +25,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <exception cref="InvalidOperationException">
         /// If the underlying hashing algorithm instance is not initialized yet or if the hashing/hash verification functionality requires asymmetric encryption, e.g. signing.
         /// </exception>
-        IHasherAsync CloneLightHasher();
+        IHasherTasks CloneLightHasher();
     }
 }

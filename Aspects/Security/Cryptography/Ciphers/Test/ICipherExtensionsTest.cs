@@ -45,14 +45,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         //
         #endregion
 
-        ICipherAsync GetCipher() => new DpapiCipher();
+        ICipherTasks GetCipher() => new DpapiCipher();
 
         #region Encrypt strings
 #pragma warning disable 618
         [TestMethod]
         public void RoundTripEncryptTextTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = "test text";
 
             var cryptoResult = target.EncryptText(testText);
@@ -71,7 +71,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptText64Test()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = "test text";
 
             var cryptoResult = target.EncryptText64(testText);
@@ -89,7 +89,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = "test text";
 
             var cryptoResult = target.Encrypt(testText);
@@ -107,7 +107,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptEmptyStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = string.Empty;
 
             var cryptoResult = target.Encrypt(testText);
@@ -125,7 +125,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptNullStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             string testText = null;
 
             var cryptoResult = target.Encrypt(testText);
@@ -142,7 +142,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptTypedStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = "test text";
 
             var cryptoResult = target.Encrypt(testText, typeof(string));
@@ -160,7 +160,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptTypedEmptyStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = string.Empty;
 
             var cryptoResult = target.Encrypt(testText, typeof(string));
@@ -178,7 +178,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptNullTypedStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             string testText = null;
 
             var cryptoResult = target.Encrypt(testText, typeof(string));
@@ -195,7 +195,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptGenericStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = "test text";
 
             var cryptoResult = target.Encrypt<string>(testText);
@@ -213,7 +213,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptGenericEmptyStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             var testText = string.Empty;
 
             var cryptoResult = target.Encrypt<string>(testText);
@@ -231,7 +231,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripEncryptNullGenericStringTest()
         {
-            ICipherAsync target = GetCipher();
+            ICipherTasks target = GetCipher();
             string testText = null;
 
             var cryptoResult = target.Encrypt<string>(testText);

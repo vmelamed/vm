@@ -1,5 +1,5 @@
 if "%VSINSTALLDIR%" NEQ "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\" call "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
-set vmCiphersVersion=1.13.1
+set vmCiphersVersion=2.0.0
 
 cd %~dp0..
 del *.nupkg

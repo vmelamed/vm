@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -6,15 +7,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class EncryptedNewKeySha256SignedCipherTest : GenericCipherTest<EncryptedNewKeySignedCipher>
     {
-        static ICipherAsync GetCipherImpl() => new EncryptedNewKeySignedCipher(
+        static ICipherTasks GetCipherImpl() => new EncryptedNewKeySignedCipher(
                                                         CertificateFactory.GetDecryptingSha256Certificate(),
                                                         CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
 
-        static ICipherAsync GetCipherPublicCertImpl() => new EncryptedNewKeySignedCipher(
+        static ICipherTasks GetCipherPublicCertImpl() => new EncryptedNewKeySignedCipher(
                                                                 CertificateFactory.GetEncryptingSha256Certificate(),
                                                                 CertificateFactory.GetSigningSha256Certificate()); // SHA1 also works with this cert
 
-        public override ICipherAsync GetCipher(bool base64 = false)
+        public override ICipherTasks GetCipher(bool base64 = false)
         {
             var cipher = GetCipherImpl();
 
@@ -22,7 +23,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             return cipher;
         }
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false)
         {
             var cipher = GetCipherPublicCertImpl();
 
@@ -73,7 +74,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
@@ -85,11 +86,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(NotImplementedException))]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetKeyManager();
+            var target = GetKeyManagerTasks();
             using (target as IDisposable)
             {
                 Assert.IsNotNull(target);
-                target.ImportSymmetricKey(new byte[17]);
+                target.ImportSymmetricKeyAsync(new byte[17]).Wait();
                 Assert.IsNull(target.ExportSymmetricKeyAsync().Result);
             }
         }

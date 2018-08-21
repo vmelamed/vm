@@ -8,16 +8,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Algorithms
     public static class KeyedHash
     {
         /// <summary>
-        /// The user can register a certificate instance in the Common Service Locator for encrypting the symmetric key with a resolve name - &quot;EncryptingHashKeyCertificate&quot;.
-        /// </summary>
-        public const string CertificateResolveName = "EncryptingHashKeyCertificate";
-
-        /// <summary>
-        /// The user can register hash algorithm name string instance in the Common Service Locator with a resolve name - &quot;DefaultHash&quot;.
-        /// </summary>
-        public const string ResolveName = "DefaultKeyedHash";
-
-        /// <summary>
         /// The default and preferred hash algorithm implementation - &quot;HMACSHA256&quot;.
         /// </summary>
         public const string Default = HmacSha256;

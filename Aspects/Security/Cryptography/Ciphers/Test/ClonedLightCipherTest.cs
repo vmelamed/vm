@@ -22,7 +22,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
         protected virtual EncryptedKeyCipher GetCipher(bool base64 = false)
         {
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName))
             {
                 cipher.Base64Encoded = base64;
                 return cipher.CloneLightCipher() as EncryptedKeyCipher;
@@ -39,7 +39,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public static void ClassCleanup()
         {
             const string expected = "The quick fox jumps over the lazy dog.";
-            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), null, expected) as IKeyManagement;
+            var keyManagement = new EncryptedKeyCipher(CertificateFactory.GetEncryptingCertificate(), expected) as IKeyManagement;
 
             if (keyManagement.KeyLocation.EndsWith(expected, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
@@ -50,7 +50,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public virtual void DuplicateCanDecryptFromOriginal()
         {
             const string expected = "The quick fox jumps over the lazy dog.";
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, expected))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), expected))
             {
                 cipher.ExportSymmetricKey();
 
@@ -68,7 +68,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         public virtual void OriginalCanDecryptFromDuplicate()
         {
             const string expected = "The quick fox jumps over the lazy dog.";
-            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, expected))
+            using (var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), expected))
             {
                 cipher.ExportSymmetricKey();
 
@@ -86,7 +86,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void GetDuplicateWithShouldEncryptIVTest()
         {
-            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), null, _keyFileName)
+            var cipher = new EncryptedKeyCipher(CertificateFactory.GetDecryptingCertificate(), _keyFileName)
             {
                 ShouldEncryptIV = true,
             };
@@ -139,24 +139,22 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
-            var keyTask = target.ExportSymmetricKeyAsync();
-            var key = keyTask.Result;
+            var key = target.ExportSymmetricKeyAsync().Result;
         }
 
         [TestMethod]
         [ExpectedException(typeof(AggregateException))]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
-            var keyTask = target.ExportSymmetricKeyAsync();
-            var keyOld = keyTask.Result;
+            var keyOld = target.ExportSymmetricKeyAsync().Result;
 
             var key = new byte[keyOld.Length].FillRandom();
 

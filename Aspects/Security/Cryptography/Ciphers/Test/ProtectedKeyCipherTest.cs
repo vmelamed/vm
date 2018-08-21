@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -11,7 +12,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [DeploymentItem("..\\..\\Readme.txt")]
     public class ProtectedKeyCipherDIAlgorithmTest : GenericCipherTest<ProtectedKeyCipher>
     {
-        const string keyFileName = "protected.key";
+        const string _keyFileName = "protected.key";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -25,14 +26,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             var keyManagement = GetCipherImpl() as IKeyManagement;
 
             if (keyManagement.KeyLocation != null &&
-                keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+                keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static ICipherAsync GetCipherImpl() => new ProtectedKeyCipher(null, keyFileName);
+        static ICipherTasks GetCipherImpl() => new ProtectedKeyCipher(_keyFileName);
 
-        public override ICipherAsync GetCipher(bool base64 = false)
+        public override ICipherTasks GetCipher(bool base64 = false)
         {
             var cipher = GetCipherImpl();
 
@@ -40,7 +41,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             return cipher;
         }
 
-        public override ICipherAsync GetPublicCertCipher(bool base64 = false)
+        public override ICipherTasks GetPublicCertCipher(bool base64 = false)
         {
             throw new InvalidOperationException();
         }
@@ -123,8 +124,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
 
             Assert.IsNotNull(target);
 
-            using (target as IDisposable)
-                Assert.IsFalse(target.IsDisposed);
+            Assert.IsFalse(target.IsDisposed);
+            (target as IDisposable)?.Dispose();
             Assert.IsTrue(target.IsDisposed);
 
             // should do nothing:
@@ -183,7 +184,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ExportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
@@ -197,7 +198,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ImportSymmetricKeyAsyncTest()
         {
-            var target = GetCipher() as IKeyManagement;
+            var target = GetCipher() as IKeyManagementTasks;
 
             Assert.IsNotNull(target);
 
@@ -212,7 +213,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         class InheritedProtectedKeyCipher : ProtectedKeyCipher
         {
             public InheritedProtectedKeyCipher()
-                : base(null, keyFileName)
+                : base(_keyFileName, (IKeyLocationStrategy)null)
             {
             }
 

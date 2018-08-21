@@ -5,6 +5,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -42,29 +43,34 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="PasswordProtectedKeyCipher"/> class.
+        /// Initializes a new instance of the <see cref="PasswordProtectedKeyCipher" /> class.
         /// </summary>
-        /// <param name="password">The password to derive the symmetric key off of.</param>
+        /// <param name="password">
+        /// The password to derive the symmetric key off of.
+        /// </param>
         /// <param name="numberOfIterations">
         /// The number of iterations, the default value is <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
-        /// The greater the iterations the more secure is the generated symmetric key but is also slower. 
+        /// The greater the iterations the more secure is the generated symmetric key but is also slower.
         /// Should not be less than <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
         /// </param>
         /// <param name="saltLength">
-        /// The length of the salt, the default value is <see cref="PasswordDerivationConstants.DefaultSaltLength" /> bytes. 
+        /// The length of the salt, the default value is <see cref="PasswordDerivationConstants.DefaultSaltLength" /> bytes.
         /// Must be at least <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.
         /// </param>
         /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
         /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if the <paramref name="password"/> is <see langword="null"/>, empty or consist of whitespace characters only.
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
+        /// </param>
+        /// <exception cref="System.ArgumentException">
+        /// Thrown if the <paramref name="password" /> is <see langword="null" />, empty or consist of whitespace characters only.
         /// </exception>
         /// <exception cref="System.ArgumentException">
-        /// Thrown if 
-        /// <list type="bullet">
-        /// <item>the <paramref name="numberOfIterations" /> is less than <see cref="PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or</item>
+        /// Thrown if <list type="bullet">
+        /// <item>the <paramref name="numberOfIterations" /> is less than <see cref="PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or </item>
         /// <item>the <paramref name="saltLength" /> is less than <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
         /// </list>
         /// </exception>
@@ -73,8 +79,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             string password,
             int numberOfIterations = PasswordDerivationConstants.DefaultNumberOfIterations,
             int saltLength = PasswordDerivationConstants.DefaultSaltLength,
-            string symmetricAlgorithmName = null)
-            : base(symmetricAlgorithmName)
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             if (password.IsNullOrWhiteSpace())
                 throw new ArgumentException(Resources.NullOrEmptyArgument, nameof(password));
@@ -92,29 +99,34 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PasswordProtectedKeyCipher"/> class.
+        /// Initializes a new instance of the <see cref="PasswordProtectedKeyCipher" /> class.
         /// </summary>
-        /// <param name="password">The password to derive the symmetric key off of.</param>
+        /// <param name="password">
+        /// The password to derive the symmetric key off of.
+        /// </param>
         /// <param name="numberOfIterations">
         /// The number of iterations, the default value is <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
-        /// The greater the iterations the more secure is the generated symmetric key but is also slower. 
+        /// The greater the iterations the more secure is the generated symmetric key but is also slower.
         /// Should not be less than <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
         /// </param>
         /// <param name="saltLength">
-        /// The length of the salt, the default value is <see cref="PasswordDerivationConstants.DefaultSaltLength" /> bytes. 
+        /// The length of the salt, the default value is <see cref="PasswordDerivationConstants.DefaultSaltLength" /> bytes.
         /// Must be at least <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.
         /// </param>
         /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
-        /// <see langword="null"/>, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default"/>.
+        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
+        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
         /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if the <paramref name="password"/> is <see langword="null"/>, empty or consist of whitespace characters only.
+        /// <param name="symmetricAlgorithmFactory">
+        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
+        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
+        /// </param>
+        /// <exception cref="System.ArgumentException">
+        /// Thrown if the <paramref name="password" /> is <see langword="null" />, empty or consist of whitespace characters only.
         /// </exception>
         /// <exception cref="System.ArgumentException">
-        /// Thrown if 
-        /// <list type="bullet">
-        /// <item>the <paramref name="numberOfIterations" /> is less than <see cref="PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or</item>
+        /// Thrown if <list type="bullet">
+        /// <item>the <paramref name="numberOfIterations" /> is less than <see cref="PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or </item>
         /// <item>the <paramref name="saltLength" /> is less than <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
         /// </list>
         /// </exception>
@@ -123,8 +135,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             SecureString password,
             int numberOfIterations = PasswordDerivationConstants.DefaultNumberOfIterations,
             int saltLength = PasswordDerivationConstants.DefaultSaltLength,
-            string symmetricAlgorithmName = null)
-            : base(symmetricAlgorithmName)
+            string symmetricAlgorithmName = Algorithms.Symmetric.Default,
+            ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
+            : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
             if (password == null)
                 throw new ArgumentNullException(nameof(password));
@@ -145,11 +158,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// </summary>
         public override bool ShouldEncryptIV
         {
-            get
-            {
-
-                return false;
-            }
+            get => false;
             set { }
         }
         #endregion

@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Deployment.Internal.CodeSigning;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
@@ -86,24 +86,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// </param>
         /// <param name="signCertificate">
         /// The certificate containing the public and optionally the private key.
-        /// If the parameter is <see langword="null"/> the method will try to resolve its value from the Common Service Locator with resolve name &quot;SigningCertificate&quot;.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown when the <paramref name="signCertificate"/> is <see langword="null"/> and could not be resolved from the Common Service Locator.
+        /// Thrown when the <paramref name="signCertificate"/> is <see langword="null"/>.
         /// </exception>
         public RsaXmlSigner(
             X509Certificate2 signCertificate = null,
             string hashAlgorithmName = null)
         {
             if (signCertificate == null)
-                try
-                {
-                    signCertificate = ServiceLocatorWrapper.Default.GetInstance<X509Certificate2>(Algorithms.Hash.CertificateResolveName);
-                }
-                catch (ActivationException x)
-                {
-                    throw new ArgumentNullException("The argument \"signCertificate\" was null and could not be resolved from the Common Service Locator.", x);
-                }
+                throw new ArgumentNullException(nameof(signCertificate));
 
             if (hashAlgorithmName == null)
                 hashAlgorithmName = signCertificate.HashAlgorithm();
@@ -114,24 +106,24 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             switch (hashAlgorithmName)
             {
-            case Algorithms.Hash.Sha256:
-                _canonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
-                _signatureMethod        = XmlConstants.XmlDsigRSAPKCS1SHA256Url;
-                _digestMethod           = XmlConstants.Sha256DigestMethod;
-                providerType            = _sha256ProviderType;
-                break;
+                case Algorithms.Hash.Sha256:
+                    _canonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
+                    _signatureMethod        = XmlConstants.XmlDsigRSAPKCS1SHA256Url;
+                    _digestMethod           = XmlConstants.Sha256DigestMethod;
+                    providerType            = _sha256ProviderType;
+                    break;
 
 #pragma warning disable 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
-            case Algorithms.Hash.Sha1:
+                case Algorithms.Hash.Sha1:
 #pragma warning restore 0612, 0618 // Type or member is obsolete
-                _canonicalizationMethod = SignedXml.XmlDsigCanonicalizationUrl;
-                _signatureMethod        = SignedXml.XmlDsigRSASHA1Url;
-                _digestMethod           = XmlConstants.Sha1DigestMethod;
-                providerType            = _sha1ProviderType;
-                break;
+                    _canonicalizationMethod = SignedXml.XmlDsigCanonicalizationUrl;
+                    _signatureMethod        = SignedXml.XmlDsigRSASHA1Url;
+                    _digestMethod           = XmlConstants.Sha1DigestMethod;
+                    providerType            = _sha1ProviderType;
+                    break;
 
-            default:
-                throw new NotSupportedException("The signer does not support the hashing algorithm specified in the certificate.");
+                default:
+                    throw new NotSupportedException("The signer does not support the hashing algorithm specified in the certificate.");
             }
 
             using (var key = signCertificate.HasPrivateKey
@@ -248,16 +240,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             switch (SignatureLocation)
             {
-            case SignatureLocation.Enveloped:
-                returnedDoc     = document;
-                signatureParent = returnedDoc.DocumentElement;
-                break;
+                case SignatureLocation.Enveloped:
+                    returnedDoc     = document;
+                    signatureParent = returnedDoc.DocumentElement;
+                    break;
 
-            case SignatureLocation.Enveloping:
-            case SignatureLocation.Detached:
-                returnedDoc     = new XmlDocument();
-                signatureParent = returnedDoc;
-                break;
+                case SignatureLocation.Enveloping:
+                case SignatureLocation.Detached:
+                    returnedDoc     = new XmlDocument();
+                    signatureParent = returnedDoc;
+                    break;
             }
 
             signatureParent.AppendChild(
@@ -424,14 +416,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
                     switch (HashAlgorithmName)
                     {
-                    case Algorithms.Hash.Sha256:
-                        reference.AddTransform(new XmlDsigExcC14NTransform());
-                        break;
+                        case Algorithms.Hash.Sha256:
+                            reference.AddTransform(new XmlDsigExcC14NTransform());
+                            break;
 
 #pragma warning disable 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
-                    case Algorithms.Hash.Sha1:
-                        reference.AddTransform(new XmlDsigC14NTransform());
-                        break;
+                        case Algorithms.Hash.Sha1:
+                            reference.AddTransform(new XmlDsigC14NTransform());
+                            break;
 #pragma warning restore 0612, 0618 // Type or member is obsolete - used for bacwards compatibility
                     }
 

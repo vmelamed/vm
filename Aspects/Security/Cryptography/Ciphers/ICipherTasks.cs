@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The interface <c>ICipherAsync</c> extends the <see cref="ICipherAsync"/> interface with asynchronous versions of
+    /// The interface <c>ICipherAsync</c> extends the <see cref="ICipherTasks"/> interface with asynchronous versions of
     /// its <see cref="Stream"/> related methods.
     /// </summary>
-    public interface ICipherAsync : ICipher
+    public interface ICipherTasks : ICipher
     {
         /// <summary>
         /// Asynchronously reads the clear text from the <paramref name="dataStream"/>, encrypts it and writes the result into the 

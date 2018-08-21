@@ -2,16 +2,17 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
-    /// The class NullHasher is a development and test-friendly convenience class which implements trivially the <see cref="IHasherAsync"/> interface:
+    /// The class NullHasher is a development and test-friendly convenience class which implements trivially the <see cref="IHasherTasks"/> interface:
     /// generates an empty array for hash and always verifies the hash to be correct.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "N/A")]
-    public class NullHasher : IHasherAsync
+    public class NullHasher : IHasher, IHasherTasks
     {
         #region IHasher Members
         /// <summary>

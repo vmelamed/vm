@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -6,9 +7,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
     [TestClass]
     public class NullHasherTest : GenericHasherTest<NullHasher>
     {
-        public override IHasherAsync GetHasher() => new NullHasher();
+        public override IHasherTasks GetHasher() => new NullHasher();
 
-        public override IHasherAsync GetHasher(int saltLength) => new NullHasher();
+        public override IHasherTasks GetHasher(int saltLength) => new NullHasher();
 
         #region IsDisposed tests
         [TestMethod]
