@@ -84,7 +84,6 @@ For more information see the documentation at https://github.com/vmelamed/vm/blo
 
     <ItemGroup>
       <None Include="..\..\..\Common Items\vm.snk" Link="vm.snk" />
-      <None Include="..\ObjectDumper.md" Link="ObjectDumper.md" />
     </ItemGroup>
 
     <ItemGroup>
