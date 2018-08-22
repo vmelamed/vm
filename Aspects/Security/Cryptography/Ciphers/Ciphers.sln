@@ -3,11 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers", "vm.Aspects.Security.Cryptography.Ciphers.csproj", "{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5332A49F-EE3D-43D2-AF27-3B81C9EB8528}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5332A49F-EE3D-43D2-AF27-3B81C9EB8528}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{76705A9C-632C-4439-BB95-F4793DE60D6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers.Tests", "Test\vm.Aspects.Security.Cryptography.Ciphers.Tests.csproj", "{B55FEE15-775E-462D-B20F-B55BB552EA85}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers", "src\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21BC22D8-F464-47B2-9596-1B4F6C5A74F8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Ciphers.cd = docs\Ciphers.cd
+		docs\Ciphers.docx = docs\Ciphers.docx
+		docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram = docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram
+		docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout = docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout
+		docs\ICipher.cd = docs\ICipher.cd
+		docs\IHasher.cd = docs\IHasher.cd
+		docs\IXmlCipher.cd = docs\IXmlCipher.cd
+		docs\IXmlSigner.cd = docs\IXmlSigner.cd
+		docs\ProtectedKey.EncryptMethodTemplate.sequencediagram = docs\ProtectedKey.EncryptMethodTemplate.sequencediagram
+		docs\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout = docs\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers.Tests", "tests\vm.Aspects.Security.Cryptography.Ciphers.Tests.csproj", "{B55FEE15-775E-462D-B20F-B55BB552EA85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileCrypt", "utils\CryptFile\FileCrypt.csproj", "{32B9F323-F629-4CA4-9003-0E30A4C441A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFile", "utils\KeyFile\KeyFile.csproj", "{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,12 +50,27 @@ Global
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD} = {E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}
 		{B55FEE15-775E-462D-B20F-B55BB552EA85} = {5332A49F-EE3D-43D2-AF27-3B81C9EB8528}
+		{32B9F323-F629-4CA4-9003-0E30A4C441A0} = {76705A9C-632C-4439-BB95-F4793DE60D6E}
+		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C} = {76705A9C-632C-4439-BB95-F4793DE60D6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {381D1D0F-E2FB-435B-99CE-D5A9D0B9D1D8}
