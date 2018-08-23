@@ -120,101 +120,64 @@
   <data name="CertNotFound" xml:space="preserve">
     <value>Could not find the specified certificate.</value>
   </data>
+  <data name="DestinationClearTxt" xml:space="preserve">
+    <value>destination.clear.txt</value>
+  </data>
+  <data name="DestinationEncryptedBin" xml:space="preserve">
+    <value>destination.encrypted.bin</value>
+  </data>
+  <data name="DestinationEncryptedTxt" xml:space="preserve">
+    <value>destination.encrypted.txt</value>
+  </data>
   <data name="DestinationFileAlreadyExists" xml:space="preserve">
     <value>Destination file already exists</value>
+  </data>
+  <data name="HelpTextDecryptWithSubject" xml:space="preserve">
+    <value>Decrypt and Base64 decode the source file into the destination file using the certificate specified by the subject. If the destination file already exists - overwrite it.</value>
+  </data>
+  <data name="HelpTextDecryptWithThumbprint" xml:space="preserve">
+    <value>Decrypt the source file into the destination file using the certificate specified by the thumbprint.</value>
+  </data>
+  <data name="HelpTextEncryptWithSubject" xml:space="preserve">
+    <value>Encrypt and Base64 encode the source file into the destination file using the certificate specified by the subject. If the destination file already exists - overwrite it.</value>
+  </data>
+  <data name="HelpTextEncryptWithThumbprint" xml:space="preserve">
+    <value>Encrypt the source file into the destination file using the certificate specified by the thumbprint.</value>
   </data>
   <data name="InvalidThumbprint" xml:space="preserve">
     <value>Invalid thumbprint.</value>
   </data>
   <data name="MissingCertificate" xml:space="preserve">
-    <value>Please, specify a certificate thumbprint or subject.</value>
-  </data>
-  <data name="MissingRoundtrip" xml:space="preserve">
-    <value>Please, specify the round-trip filename.</value>
-  </data>
-  <data name="MissingSource" xml:space="preserve">
-    <value>Please, specify source filename.</value>
-  </data>
-  <data name="MissingSubject" xml:space="preserve">
-    <value>The option /s must be followed by the subject of the certificate.</value>
-  </data>
-  <data name="MissingTarget" xml:space="preserve">
-    <value>Please, specify target filename.</value>
-  </data>
-  <data name="MissingThumbprint" xml:space="preserve">
-    <value>The option /t must be followed by the thumbprint of the certificate.</value>
+    <value>Either the certificate's thumbprint or its subject must be specified.</value>
   </data>
   <data name="OverwriteDestinationFile" xml:space="preserve">
-    <value>The destination file already exists. Do you want to override it? [Y/N]: </value>
+    <value>The destination file already exists. Do you want to overwrite it? [Y/N]: </value>
   </data>
   <data name="PressAnyKey" xml:space="preserve">
     <value>Press any key to finish...</value>
+  </data>
+  <data name="SampleSubject" xml:space="preserve">
+    <value>File Encryption</value>
+  </data>
+  <data name="SampleThumbprint" xml:space="preserve">
+    <value>31 89 82 59 8e 4a c1 43 df c9 58 96 a8 f7 2b f0 8c 5d f9 f4</value>
+  </data>
+  <data name="SampleThumbprintDashes" xml:space="preserve">
+    <value>318982598e4ac143dfc95896a8f72bf08c5df9f4</value>
+  </data>
+  <data name="SourceClearText" xml:space="preserve">
+    <value>source.clear.txt</value>
+  </data>
+  <data name="SourceEncryptedBin" xml:space="preserve">
+    <value>source.encrypted.bin</value>
+  </data>
+  <data name="SourceEncryptedTxt" xml:space="preserve">
+    <value>source.encrypted.txt</value>
   </data>
   <data name="SourceFileNotFound" xml:space="preserve">
     <value>The specified source file was not found.</value>
   </data>
   <data name="SpecifiedThumbprintAndSubject" xml:space="preserve">
     <value>"The command line options -thumbprint and -subject are mutually exclusive. Use only one of them."</value>
-  </data>
-  <data name="Usage" xml:space="preserve">
-    <value>FileCrypt encrypts and decrypts files using a certificate from the user's 
-certificate store.
-
-Options:
-
-/s  The next argument must be the subject of the certificate to be used.
-/t  The next argument must be the thumbprint of the certificate to be used.
-/e  Perform encryption. This is the default action and can be omitted.
-/d  Perform decryption.
-/6 Encode or decode the result with Base64
-
-Note that the options can be specified with dashes too, e.g. instead of /d
-you can use -d instead.
-
-Parameters:
-
-&lt;certificate subject&gt; - specifies the subject of the certificate from the 
-    user's certificate store to be used for encryption. Must be preceded by
-    the option /s.
-
-&lt;certificate thumbprint&gt; - specifies the thumbprint of the certificate from the
-    user's certificate store to be used for encryption. Must be preceded by
-    the option /t. The thumbprint must be in the form "XX XX XX...XX" or 
-    XX-XX-...-XX or XXXXXX...XX, where X is a hexadecimal digit.
-
-&lt;source file&gt; - specifies the name of the source file that must be transformed
-    (encrypted or decrypted).
-
-&lt;destination file&gt; - specifies the name of the destination file that will 
-    receive the transformed file. If the file already exists, it will be 
-    truncated first.
-
-&lt;round-trip file&gt; - specifies a destination file in the case of a round trip
-    testing: encrypt the source file into the destination file and then
-    decrypt the destination file into the round-trip file. The source and the
-    round-trip files must be equal. In this case both /e and /d options can be
-    omitted.
-
-Examples:
-
-FileCrypt /s MyCert document.txt document.encr
-    Uses the certificate from the user's certificate store with the subject 
-    "MyCert" to encrypt the file document.txt into document.encr.
-
-FileCrypt -s MyCert document.txt document.encr -e
-    The same as above.
-
-FileCrypt /t "80 37 53 1f d5 a3 42 a6 42 f0 89 ec 5c a6 30 ce 54 5f 8e 22" document.txt document.encr
-    Uses the certificate from the user's certificate store with the specified 
-    thumbprint to encrypt the file document.txt into document.encr.
-
-FileCrypt -s MyCert -d document.encr document.txt
-    Uses the certificate from the user's certificate store with the subject 
-    "MyCert" to decrypt the file document.encr into document.txt.
-
-FileCrypt -s MyCert document.txt document.encr document.sencr 
-    Uses the certificate from the user's certificate store with the subject 
-    "MyCert" to do an "encryption round trip": will encrypt the document.txt
-    into document.encr and will decrypt the latter into document.decr.</value>
   </data>
 </root>

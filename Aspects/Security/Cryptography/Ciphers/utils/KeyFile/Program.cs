@@ -20,6 +20,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
 
             try
             {
+                ClassMetadataRegistrar.RegisterMetadata();
+
                 using (var parser = new Parser(s =>
                 {
                     s.CaseInsensitiveEnumValues = true;
@@ -36,10 +38,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
             }
             catch (Exception x)
             {
-#if DEBUG
-                ClassMetadataRegistrar.RegisterMetadata();
                 Debug.WriteLine(x.DumpString());
-#endif
                 Console.WriteLine(x.Message);
 
                 result = 1;

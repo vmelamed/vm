@@ -71,11 +71,74 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to destination.clear.txt.
+        /// </summary>
+        internal static string DestinationClearTxt {
+            get {
+                return ResourceManager.GetString("DestinationClearTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to destination.encrypted.bin.
+        /// </summary>
+        internal static string DestinationEncryptedBin {
+            get {
+                return ResourceManager.GetString("DestinationEncryptedBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to destination.encrypted.txt.
+        /// </summary>
+        internal static string DestinationEncryptedTxt {
+            get {
+                return ResourceManager.GetString("DestinationEncryptedTxt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Destination file already exists.
         /// </summary>
         internal static string DestinationFileAlreadyExists {
             get {
                 return ResourceManager.GetString("DestinationFileAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrypt and Base64 decode the source file into the destination file using the certificate specified by the subject. If the destination file already exists - overwrite it..
+        /// </summary>
+        internal static string HelpTextDecryptWithSubject {
+            get {
+                return ResourceManager.GetString("HelpTextDecryptWithSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrypt the source file into the destination file using the certificate specified by the thumbprint..
+        /// </summary>
+        internal static string HelpTextDecryptWithThumbprint {
+            get {
+                return ResourceManager.GetString("HelpTextDecryptWithThumbprint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encrypt and Base64 encode the source file into the destination file using the certificate specified by the subject. If the destination file already exists - overwrite it..
+        /// </summary>
+        internal static string HelpTextEncryptWithSubject {
+            get {
+                return ResourceManager.GetString("HelpTextEncryptWithSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encrypt the source file into the destination file using the certificate specified by the thumbprint..
+        /// </summary>
+        internal static string HelpTextEncryptWithThumbprint {
+            get {
+                return ResourceManager.GetString("HelpTextEncryptWithThumbprint", resourceCulture);
             }
         }
         
@@ -89,7 +152,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please, specify a certificate thumbprint or subject..
+        ///   Looks up a localized string similar to Either the certificate&apos;s thumbprint or its subject must be specified..
         /// </summary>
         internal static string MissingCertificate {
             get {
@@ -98,52 +161,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please, specify the round-trip filename..
-        /// </summary>
-        internal static string MissingRoundtrip {
-            get {
-                return ResourceManager.GetString("MissingRoundtrip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please, specify source filename..
-        /// </summary>
-        internal static string MissingSource {
-            get {
-                return ResourceManager.GetString("MissingSource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The option /s must be followed by the subject of the certificate..
-        /// </summary>
-        internal static string MissingSubject {
-            get {
-                return ResourceManager.GetString("MissingSubject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please, specify target filename..
-        /// </summary>
-        internal static string MissingTarget {
-            get {
-                return ResourceManager.GetString("MissingTarget", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The option /t must be followed by the thumbprint of the certificate..
-        /// </summary>
-        internal static string MissingThumbprint {
-            get {
-                return ResourceManager.GetString("MissingThumbprint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The destination file already exists. Do you want to override it? [Y/N]: .
+        ///   Looks up a localized string similar to The destination file already exists. Do you want to overwrite it? [Y/N]: .
         /// </summary>
         internal static string OverwriteDestinationFile {
             get {
@@ -157,6 +175,60 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         internal static string PressAnyKey {
             get {
                 return ResourceManager.GetString("PressAnyKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Encryption.
+        /// </summary>
+        internal static string SampleSubject {
+            get {
+                return ResourceManager.GetString("SampleSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 31 89 82 59 8e 4a c1 43 df c9 58 96 a8 f7 2b f0 8c 5d f9 f4.
+        /// </summary>
+        internal static string SampleThumbprint {
+            get {
+                return ResourceManager.GetString("SampleThumbprint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 318982598e4ac143dfc95896a8f72bf08c5df9f4.
+        /// </summary>
+        internal static string SampleThumbprintDashes {
+            get {
+                return ResourceManager.GetString("SampleThumbprintDashes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to source.clear.txt.
+        /// </summary>
+        internal static string SourceClearText {
+            get {
+                return ResourceManager.GetString("SourceClearText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to source.encrypted.bin.
+        /// </summary>
+        internal static string SourceEncryptedBin {
+            get {
+                return ResourceManager.GetString("SourceEncryptedBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to source.encrypted.txt.
+        /// </summary>
+        internal static string SourceEncryptedTxt {
+            get {
+                return ResourceManager.GetString("SourceEncryptedTxt", resourceCulture);
             }
         }
         
@@ -175,29 +247,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         internal static string SpecifiedThumbprintAndSubject {
             get {
                 return ResourceManager.GetString("SpecifiedThumbprintAndSubject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FileCrypt encrypts and decrypts files using a certificate from the user&apos;s 
-        ///certificate store.
-        ///
-        ///Options:
-        ///
-        ////s  The next argument must be the subject of the certificate to be used.
-        ////t  The next argument must be the thumbprint of the certificate to be used.
-        ////e  Perform encryption. This is the default action and can be omitted.
-        ////d  Perform decryption.
-        ////6 Encode or decode the result with Base64
-        ///
-        ///Note that the options can be specified with dashes too, e.g. instead of /d
-        ///you can use -d instead.
-        ///
-        ///Param [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Usage {
-            get {
-                return ResourceManager.GetString("Usage", resourceCulture);
             }
         }
     }

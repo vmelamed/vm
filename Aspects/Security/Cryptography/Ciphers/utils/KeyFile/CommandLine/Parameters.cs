@@ -123,5 +123,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
 
             return hexValue;
         }
+
+        public override string ToString() => this.DumpString();
     }
 }
