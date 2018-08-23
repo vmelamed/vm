@@ -117,17 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlternativeKeyAndThumbprintFormat" xml:space="preserve">
-    <value>
-Using alternative format for the encryption key and the certificate thumbprint</value>
-  </data>
-  <data name="AlternativeKeyFormat" xml:space="preserve">
-    <value>
-Using alternative format for the encryption key</value>
-  </data>
   <data name="AlternativeThumbprintFormat" xml:space="preserve">
-    <value>
-Using alternative format for the certificate thumbprint</value>
+    <value>Using alternative format for the certificate thumbprint</value>
+  </data>
+  <data name="AlternativeThumbprintFormatQuiet" xml:space="preserve">
+    <value>Using alternative format for the certificate thumbprint and overwriting the key file if it exists</value>
   </data>
   <data name="CannotFindCert" xml:space="preserve">
     <value>Could not find a valid certificate with the specified thumbprint in the personal certificate store of the current user.</value>
@@ -135,44 +129,32 @@ Using alternative format for the certificate thumbprint</value>
   <data name="FileAlreadyExists" xml:space="preserve">
     <value>The file already exists.</value>
   </data>
-  <data name="FileExist" xml:space="preserve">
-    <value>The file {0} already exists. Do you want to override it? [Y/N]: </value>
-  </data>
   <data name="HelpTextCreateCertificate" xml:space="preserve">
-    <value>
-Generate and certificate-encrypt a symmetric, encryption key and save it in the specified key file</value>
+    <value>Generate and certificate-encrypt a symmetric, encryption key and save it in the specified key file</value>
   </data>
   <data name="HelpTextCreateDpapi" xml:space="preserve">
-    <value>
-Generate and DPAPI-encrypt (the default) a symmetric, encryption key and save it in the specified key file</value>
+    <value>Generate and DPAPI-encrypt (the default) a symmetric, encryption key and save it in the specified key file</value>
   </data>
   <data name="HelpTextCreateMac" xml:space="preserve">
-    <value>
-Generate and certificate-encrypt a symmetric, hash-encryption key (HMAC) and save it in the specified key file</value>
+    <value>Generate and certificate-encrypt a symmetric, hash-encryption key (HMAC) and save it in the specified key file</value>
   </data>
   <data name="HelpTextExportCertificate" xml:space="preserve">
-    <value>
-Decrypt and display the certificate-encrypted, symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
+    <value>Decrypt and display the certificate-encrypted, symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
   </data>
   <data name="HelpTextExportDpapi" xml:space="preserve">
-    <value>
-Decrypt and display the DPAPI-encrypted (the default), symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
+    <value>Decrypt and display the DPAPI-encrypted (the default), symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
   </data>
   <data name="HelpTextExportMac" xml:space="preserve">
-    <value>
-Decrypt and display the certificate-encrypted, symmetric, hash-encryption key (HMAC) from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
+    <value>Decrypt and display the certificate-encrypted, symmetric, hash-encryption key (HMAC) from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes</value>
   </data>
   <data name="HelpTextImportCertificate" xml:space="preserve">
-    <value>
-Certificate-encrypt and import the symmetric, encryption key from the command line to the specified key file</value>
+    <value>Certificate-encrypt and import the symmetric, encryption key from the command line to the specified key file</value>
   </data>
   <data name="HelpTextImportDpapi" xml:space="preserve">
-    <value>
-DPAPI-encrypt (the default) and import the symmetric, encryption key from the command line to the specified key file</value>
+    <value>DPAPI-encrypt (the default) and import the symmetric, encryption key from the command line to the specified key file</value>
   </data>
   <data name="HelpTextImportMac" xml:space="preserve">
-    <value>
-Certificate-encrypt and import the symmetric, hash-encryption key (HMAC) from the command line to the specified key file</value>
+    <value>Certificate-encrypt and import the symmetric, hash-encryption key (HMAC) from the command line to the specified key file</value>
   </data>
   <data name="HelpTextKeyFileName" xml:space="preserve">
     <value>MyApplication.exe.key</value>
@@ -191,6 +173,9 @@ Certificate-encrypt and import the symmetric, hash-encryption key (HMAC) from th
   </data>
   <data name="KeyExampleSpaces" xml:space="preserve">
     <value>08 FF F9 D3 2D BD BF B5 06 20 15 2B 5F D0 3A E5 B1 12 F4 0A B1 3E 3B EF 9E 7A 17 9C FD 0A 1D F6</value>
+  </data>
+  <data name="OverwriteKeyFile" xml:space="preserve">
+    <value>The key file already exists. Do you want to overwrite it? [Y/N]: </value>
   </data>
   <data name="PressAnyKey" xml:space="preserve">
     <value>Press any key to exit...</value>

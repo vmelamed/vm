@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -18,55 +17,16 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
         protected const string RexCanonize  = @"[^\da-fA-F]+";
 
         string _thumbprint;
-        string _fileName;
-
-        /// <summary>
-        /// Gets a value indicating whether the key file should exist.
-        /// </summary>
-        /// <value>
-        /// <list type="number">
-        ///     <item><see langword="true"/>The key file must exist - for the &quot;export&quot; verb</item>
-        ///     <item><see langword="false"/>The key file doesn't need to exist - for &quot;create&quot; and &quot;import&quot; verbs.</item>
-        ///     <item><see langword="null"/>It doesn't matter - used only when displaying usage (&quot;help&quot; verb).</item>
-        /// </list>
-        /// </value>
-        protected abstract bool? KeyFileMustExist { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the file that contains the encrypted symmetric key.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// </exception>
-        [Option('f', "filename", Required = true,
+        [Value(0, Required = true,
             HelpText = "The name of the file that contains the encrypted symmetric key.")]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public string FileName
-        {
-            get => _fileName;
-            set
-            {
-                if (value.IsNullOrWhiteSpace())
-                    throw new ArgumentException(Resources.SpecifyFileName);
-
-                if (KeyFileMustExist.HasValue)
-                {
-                    var fileInfo = new FileInfo(value);
-
-                    if (KeyFileMustExist==false  &&  fileInfo.Exists)
-                    {
-                        Console.Write(Resources.FileExist, value);
-
-                        var y = Console.ReadKey(false).KeyChar;
-
-                        Console.WriteLine();
-                        if (char.ToUpperInvariant(y) != 'Y')
-                            throw new ArgumentException(Resources.FileAlreadyExists);
-                    }
-                }
-
-                _fileName = value;
-            }
-        }
+        public string FileName { get; set; }
 
         /// <summary>
         /// Gets or sets the key encryption method. The default is DPAPI.
@@ -107,6 +67,11 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                 _thumbprint = value;
             }
         }
+
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [Option('w', "wait", Required = false, Hidden = true,
+            HelpText = "Specify to prompt for any key and wait for it at the end of the program. For debug purposes only.")]
+        public bool WaitAtTheEnd { get; set; }
 
         /// <summary>
         /// Gets the certificate with thumbprint <see cref="Thumbprint"/> from the current user's certificate store.

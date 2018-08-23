@@ -120,6 +120,9 @@
   <data name="CertNotFound" xml:space="preserve">
     <value>Could not find the specified certificate.</value>
   </data>
+  <data name="DestinationFileAlreadyExists" xml:space="preserve">
+    <value>Destination file already exists</value>
+  </data>
   <data name="InvalidThumbprint" xml:space="preserve">
     <value>Invalid thumbprint.</value>
   </data>
@@ -141,11 +144,17 @@
   <data name="MissingThumbprint" xml:space="preserve">
     <value>The option /t must be followed by the thumbprint of the certificate.</value>
   </data>
+  <data name="OverwriteDestinationFile" xml:space="preserve">
+    <value>The destination file already exists. Do you want to override it? [Y/N]: </value>
+  </data>
   <data name="PressAnyKey" xml:space="preserve">
     <value>Press any key to finish...</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
+  <data name="SourceFileNotFound" xml:space="preserve">
+    <value>The specified source file was not found.</value>
+  </data>
+  <data name="SpecifiedThumbprintAndSubject" xml:space="preserve">
+    <value>"The command line options -thumbprint and -subject are mutually exclusive. Use only one of them."</value>
   </data>
   <data name="Usage" xml:space="preserve">
     <value>FileCrypt encrypts and decrypts files using a certificate from the user's 

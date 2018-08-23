@@ -16,8 +16,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     class ImportParameters : Parameters
     {
-        protected override bool? KeyFileMustExist { get; set; } = false;
-
         string _key;
 
         [Option('k', "key", Required = true,
@@ -45,7 +43,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                     Resources.HelpTextImportDpapi,
                     new ImportParameters
                     {
-                        KeyFileMustExist = null,
                         FileName         = Resources.HelpTextKeyFileName,
                         Key              = Resources.KeyExampleNoSeparators,
                     }),
@@ -53,7 +50,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                     Resources.HelpTextImportCertificate,
                     new ImportParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Key                 = Resources.KeyExampleDashes,
                         Thumbprint          = Resources.ThumbprintExampleDashes,
@@ -63,7 +59,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                     Resources.AlternativeThumbprintFormat,
                     new ImportParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Key                 = Resources.KeyExampleDashes,
                         Thumbprint          = Resources.ThumbprintExampleSpaces,
@@ -73,7 +68,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                     Resources.HelpTextImportMac,
                     new ImportParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Key                 = Resources.KeyExampleSpaces,
                         Thumbprint          = Resources.ThumbprintExampleNoSeparators,

@@ -71,6 +71,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Destination file already exists.
+        /// </summary>
+        internal static string DestinationFileAlreadyExists {
+            get {
+                return ResourceManager.GetString("DestinationFileAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid thumbprint..
         /// </summary>
         internal static string InvalidThumbprint {
@@ -134,6 +143,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The destination file already exists. Do you want to override it? [Y/N]: .
+        /// </summary>
+        internal static string OverwriteDestinationFile {
+            get {
+                return ResourceManager.GetString("OverwriteDestinationFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Press any key to finish....
         /// </summary>
         internal static string PressAnyKey {
@@ -143,11 +161,20 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.FileCrypt.Propertie
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The specified source file was not found..
         /// </summary>
-        internal static string String1 {
+        internal static string SourceFileNotFound {
             get {
-                return ResourceManager.GetString("String1", resourceCulture);
+                return ResourceManager.GetString("SourceFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;The command line options -thumbprint and -subject are mutually exclusive. Use only one of them.&quot;.
+        /// </summary>
+        internal static string SpecifiedThumbprintAndSubject {
+            get {
+                return ResourceManager.GetString("SpecifiedThumbprintAndSubject", resourceCulture);
             }
         }
         

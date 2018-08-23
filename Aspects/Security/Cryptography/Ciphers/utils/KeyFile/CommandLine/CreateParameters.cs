@@ -16,7 +16,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                    "(from the vm.Aspects.Security.Cryptography.Ciphers namespace)")]
     class CreateParameters : Parameters
     {
-        protected override bool? KeyFileMustExist { get; set; } = false;
+        [Option('o', "overwrite", Required = false, Default = false,
+            HelpText = "If specified, the utility will assume that if the key file exists the user wants to overwrite it.")]
+        public bool Overwrite { get; set; }
 
         [Usage]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -28,32 +30,29 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.CommandLine
                     Resources.HelpTextCreateDpapi,
                     new CreateParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                     }),
                 new Example(
                     Resources.HelpTextCreateCertificate,
                     new CreateParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Thumbprint          = Resources.ThumbprintExampleSpaces,
                         KeyEncryptionMethod = KeyEncryptionMethod.Certificate,
                     }),
                 new Example(
-                    Resources.AlternativeThumbprintFormat,
+                    Resources.AlternativeThumbprintFormatQuiet,
                     new CreateParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Thumbprint          = Resources.ThumbprintExampleNoSeparators,
                         KeyEncryptionMethod = KeyEncryptionMethod.Certificate,
+                        Overwrite           = true,
                     }),
                 new Example(
                     Resources.HelpTextCreateMac,
                     new CreateParameters
                     {
-                        KeyFileMustExist    = null,
                         FileName            = Resources.HelpTextKeyFileName,
                         Thumbprint          = Resources.ThumbprintExampleDashes,
                         KeyEncryptionMethod = KeyEncryptionMethod.MAC,

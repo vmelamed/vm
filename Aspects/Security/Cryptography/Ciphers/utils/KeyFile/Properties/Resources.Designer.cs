@@ -61,32 +61,20 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Using alternative format for the encryption key and the certificate thumbprint.
-        /// </summary>
-        internal static string AlternativeKeyAndThumbprintFormat {
-            get {
-                return ResourceManager.GetString("AlternativeKeyAndThumbprintFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Using alternative format for the encryption key.
-        /// </summary>
-        internal static string AlternativeKeyFormat {
-            get {
-                return ResourceManager.GetString("AlternativeKeyFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Using alternative format for the certificate thumbprint.
+        ///   Looks up a localized string similar to Using alternative format for the certificate thumbprint.
         /// </summary>
         internal static string AlternativeThumbprintFormat {
             get {
                 return ResourceManager.GetString("AlternativeThumbprintFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using alternative format for the certificate thumbprint and overwriting the key file if it exists.
+        /// </summary>
+        internal static string AlternativeThumbprintFormatQuiet {
+            get {
+                return ResourceManager.GetString("AlternativeThumbprintFormatQuiet", resourceCulture);
             }
         }
         
@@ -109,17 +97,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file {0} already exists. Do you want to override it? [Y/N]: .
-        /// </summary>
-        internal static string FileExist {
-            get {
-                return ResourceManager.GetString("FileExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Generate and certificate-encrypt a symmetric, encryption key and save it in the specified key file.
+        ///   Looks up a localized string similar to Generate and certificate-encrypt a symmetric, encryption key and save it in the specified key file.
         /// </summary>
         internal static string HelpTextCreateCertificate {
             get {
@@ -128,8 +106,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Generate and DPAPI-encrypt (the default) a symmetric, encryption key and save it in the specified key file.
+        ///   Looks up a localized string similar to Generate and DPAPI-encrypt (the default) a symmetric, encryption key and save it in the specified key file.
         /// </summary>
         internal static string HelpTextCreateDpapi {
             get {
@@ -138,8 +115,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Generate and certificate-encrypt a symmetric, hash-encryption key (HMAC) and save it in the specified key file.
+        ///   Looks up a localized string similar to Generate and certificate-encrypt a symmetric, hash-encryption key (HMAC) and save it in the specified key file.
         /// </summary>
         internal static string HelpTextCreateMac {
             get {
@@ -148,8 +124,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Decrypt and display the certificate-encrypted, symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
+        ///   Looks up a localized string similar to Decrypt and display the certificate-encrypted, symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
         /// </summary>
         internal static string HelpTextExportCertificate {
             get {
@@ -158,8 +133,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Decrypt and display the DPAPI-encrypted (the default), symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
+        ///   Looks up a localized string similar to Decrypt and display the DPAPI-encrypted (the default), symmetric, encryption key from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
         /// </summary>
         internal static string HelpTextExportDpapi {
             get {
@@ -168,8 +142,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Decrypt and display the certificate-encrypted, symmetric, hash-encryption key (HMAC) from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
+        ///   Looks up a localized string similar to Decrypt and display the certificate-encrypted, symmetric, hash-encryption key (HMAC) from the specified key file as a clear-text, hexadecimal, dash-separated sequence of bytes.
         /// </summary>
         internal static string HelpTextExportMac {
             get {
@@ -178,8 +151,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Certificate-encrypt and import the symmetric, encryption key from the command line to the specified key file.
+        ///   Looks up a localized string similar to Certificate-encrypt and import the symmetric, encryption key from the command line to the specified key file.
         /// </summary>
         internal static string HelpTextImportCertificate {
             get {
@@ -188,8 +160,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///DPAPI-encrypt (the default) and import the symmetric, encryption key from the command line to the specified key file.
+        ///   Looks up a localized string similar to DPAPI-encrypt (the default) and import the symmetric, encryption key from the command line to the specified key file.
         /// </summary>
         internal static string HelpTextImportDpapi {
             get {
@@ -198,8 +169,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Certificate-encrypt and import the symmetric, hash-encryption key (HMAC) from the command line to the specified key file.
+        ///   Looks up a localized string similar to Certificate-encrypt and import the symmetric, hash-encryption key (HMAC) from the command line to the specified key file.
         /// </summary>
         internal static string HelpTextImportMac {
             get {
@@ -258,6 +228,15 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile.Properties 
         internal static string KeyExampleSpaces {
             get {
                 return ResourceManager.GetString("KeyExampleSpaces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The key file already exists. Do you want to overwrite it? [Y/N]: .
+        /// </summary>
+        internal static string OverwriteKeyFile {
+            get {
+                return ResourceManager.GetString("OverwriteKeyFile", resourceCulture);
             }
         }
         

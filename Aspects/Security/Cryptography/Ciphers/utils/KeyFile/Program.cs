@@ -12,25 +12,27 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
 {
     class Program
     {
+        static Parameters _parameters;
+
         static int Main(string[] args)
         {
             int result = 0;
 
             try
             {
-                var parser = new Parser(s =>
+                using (var parser = new Parser(s =>
                 {
                     s.CaseInsensitiveEnumValues = true;
                     s.CaseSensitive             = false;
-                });
-
-                result = parser
-                            .ParseArguments<CreateParameters, ImportParameters, ExportParameters>(args)
-                            .MapResult(
-                                (CreateParameters p) => Create(p),
-                                (ImportParameters p) => Import(p),
-                                (ExportParameters p) => Export(p),
-                                errors => 1);
+                    s.HelpWriter                = Console.Error;
+                }))
+                    result = parser
+                                .ParseArguments<CreateParameters, ImportParameters, ExportParameters>(args)
+                                .MapResult(
+                                    (CreateParameters p) => Create(p),
+                                    (ImportParameters p) => Import(p),
+                                    (ExportParameters p) => Export(p),
+                                    errors => 1);
             }
             catch (Exception x)
             {
@@ -44,9 +46,13 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
             }
 
 #if DEBUG
-            Console.Write(Resources.PressAnyKey);
-            Console.ReadKey(true);
+            if (_parameters?.WaitAtTheEnd == true)
+            {
+                Console.Write(Resources.PressAnyKey);
+                Console.ReadKey(true);
+            }
 #endif
+
             return result;
         }
 
@@ -78,6 +84,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
         static int Import(
             ImportParameters p)
         {
+            _parameters = p;
             if (GetKeyManager(p) is IKeyManagement keyManagement)
                 keyManagement.ImportSymmetricKey(p.BinaryKey);
             return 0;
@@ -86,6 +93,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
         static int Export(
             ExportParameters p)
         {
+            _parameters = p;
             if (GetKeyManager(p) is IKeyManagement keyManagement)
             {
                 Console.WriteLine(
@@ -98,10 +106,28 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Utilities.KeyFile
         static int Create(
             CreateParameters p)
         {
+            _parameters = p;
             var keyStorage = GetKeyStorage();
 
             if (keyStorage.KeyLocationExists(p.FileName))
+            {
+                if (!p.Overwrite)
+                {
+                    Console.Write(Resources.OverwriteKeyFile);
+
+                    var answer = 
+#if DEBUG
+                                 char.ToUpper((char)Console.Read());
+#else
+                                 char.ToUpper(Console.ReadKey().KeyChar);
+#endif
+
+                    if (answer != 'Y')
+                        throw new ArgumentException(Resources.FileAlreadyExists);
+                }
+
                 keyStorage.DeleteKeyLocation(p.FileName);
+            }
 
             var keyManager = GetKeyManager(p);
 

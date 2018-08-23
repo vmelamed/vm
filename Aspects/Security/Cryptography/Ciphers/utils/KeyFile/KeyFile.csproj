@@ -126,6 +126,7 @@
     </None>
     <None Include="App.config" />
     <None Include="project.assets.json" />
+    <None Include="Test\KeyFileTests.cmd" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -164,6 +165,10 @@
     <PackageReference Include="vm.Aspects.Diagnostics.ObjectTextDumper">
       <Version>2.0.2</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Test\No.txt" />
+    <Content Include="Test\Yes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
