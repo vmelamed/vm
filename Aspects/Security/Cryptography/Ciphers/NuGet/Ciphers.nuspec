@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>vm.Aspects.Security.Cryptography.Ciphers</id>
+        <id>Ciphers</id>
         <version>2.0.0</version>
         <authors>vm</authors>
         <owners>vm</owners>
@@ -18,7 +18,13 @@
             * Built and tested with .NET v4.6.2, 4.7.1 and 4.7.2.
         </description>
         <releaseNotes>
-            Rebuilt to target also .NET 4.7.2
+            Refactored the library to drop the dependency on Common Service Locator - no assumption of DI container anymore.
+            Refactored a number of c-tors to take additional dependencies, which were previously resolved from the CSL.
+            Combined all key management utilities in one - KeyFile.
+            Added the utility FileCrypt that can encrypt and decrypt files (for more information run FileCrypt help/FileCrypt help encrypt/FileCrypt help decrypt)
+            Refactored the utilities to use CommandLineParser.
+            Note: this is the last version that will be dependant on .NET Framework.
+            The future released packages will be renamed to vm.Aspects.Security.Cryptography.Cyphers and will be dependent on .NET Standard 2.1.
         </releaseNotes>
         <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</projectUrl>
@@ -29,55 +35,44 @@
         <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
     </metadata>
     <files>
-        <file src="..\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\src\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net462"/>
-        <file src="..\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\src\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net462"/>
-        <file src="..\ProtectedKey\bin\pack4.6.2\CommonServiceLocator.dll"
-              target="lib\net462"/>
-        <file src="..\EncryptedKey\bin\pack4.6.2\EncryptedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.6.2\KeyFile.exe"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack4.6.2\ProtectedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net462"/>
-        <file src="..\MacKey\bin\pack4.6.2\MacKey.exe"
+        <file src="..\tools\FileCrypt\bin\pack4.6.2\FileCrypt.exe"
               target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="tools\net462"/>
-        <file src="..\ProtectedKey\bin\pack4.6.2\CommonServiceLocator.dll"
+        <file src="..\tools\FileCrypt\bin\pack4.6.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net462"/>
 
-        <file src="..\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\src\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net471"/>
-        <file src="..\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\src\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net471"/>
-        <file src="..\ProtectedKey\bin\pack4.7.1\CommonServiceLocator.dll"
-              target="lib\net471"/>
-        <file src="..\EncryptedKey\bin\pack4.7.1\EncryptedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.7.1\KeyFile.exe"
               target="tools\net471"/>
-        <file src="..\ProtectedKey\bin\pack4.7.1\ProtectedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net471"/>
-        <file src="..\MacKey\bin\pack4.7.1\MacKey.exe"
+        <file src="..\tools\FileCrypt\bin\pack4.7.1\FileCrypt.exe"
               target="tools\net471"/>
-        <file src="..\ProtectedKey\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
-              target="tools\net471"/>
-        <file src="..\ProtectedKey\bin\pack4.7.1\CommonServiceLocator.dll"
+        <file src="..\tools\FileCrypt\bin\pack4.7.1\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net471"/>
 
-        <file src="..\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\src\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="lib\net472"/>
-        <file src="..\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
+        <file src="..\src\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.xml"
               target="lib\net472"/>
-        <file src="..\ProtectedKey\bin\pack4.7.2\CommonServiceLocator.dll"
-              target="lib\net472"/>
-        <file src="..\EncryptedKey\bin\pack4.7.2\EncryptedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.7.2\KeyFile.exe"
               target="tools\net472"/>
-        <file src="..\ProtectedKey\bin\pack4.7.2\ProtectedKey.exe"
+        <file src="..\tools\KeyFile\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net472"/>
-        <file src="..\MacKey\bin\pack4.7.2\MacKey.exe"
+        <file src="..\tools\FileCrypt\bin\pack4.7.2\FileCrypt.exe"
               target="tools\net472"/>
-        <file src="..\ProtectedKey\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
+        <file src="..\tools\FileCrypt\bin\pack4.7.2\vm.Aspects.Security.Cryptography.Ciphers.dll"
               target="tools\net472"/>
-        <file src="..\ProtectedKey\bin\pack4.7.2\CommonServiceLocator.dll"
-              target="tools\net472"/>
+
     </files>
 </package>

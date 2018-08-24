@@ -179,6 +179,9 @@
     <None Include="..\..\..\..\..\Common Items\vm.snk">
       <Link>vm.snk</Link>
     </None>
+    <None Include="project.assets.json.net462" />
+    <None Include="project.assets.json.net471" />
+    <None Include="project.assets.json.net472" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

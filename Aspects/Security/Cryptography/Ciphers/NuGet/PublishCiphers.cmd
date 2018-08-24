@@ -4,11 +4,11 @@ set vmCiphersVersion=2.0.0
 cd %~dp0..
 del *.nupkg
 if /i .%1. EQU .. (
-	set Configuration=Release
-	set suffix=
+    set Configuration=Release
+    set suffix=
 ) else (
-	set Configuration=Debug
-	set suffix=%1
+    set Configuration=Debug
+    set suffix=%1
 )
 
 set configuration
@@ -20,101 +20,31 @@ rem ------- .NET 4.6.2 -------
 set FrameworkVersion=4.6.2
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
-del /q bin\pack\*.*
-if not exist obj md obj
-copy /y project.assets.json obj
-msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q EncryptedKey\bin\pack\*.*
-if not exist EncryptedKey\obj md EncryptedKey\obj
-copy /y EncryptedKey\project.assets.json EncryptedKey\obj
-msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q ProtectedKey\bin\pack\*.*
-if not exist ProtectedKey\obj md ProtectedKey\obj
-copy /y ProtectedKey\project.assets.json ProtectedKey\obj
-msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q MacKey\bin\pack\*.*
-if not exist MacKey\obj md MacKey\obj
-copy /y MacKey\project.assets.json MacKey\obj
-msbuild MacKey\MacKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
+call:buildFor net462
 
 rem ------- .NET 4.7.1 -------
 set FrameworkVersion=4.7.1
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
-del /q bin\pack\*.*
-if not exist obj md obj
-copy /y project.assets.json obj
-msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q EncryptedKey\bin\pack\*.*
-if not exist EncryptedKey\obj md EncryptedKey\obj
-copy /y EncryptedKey\project.assets.json EncryptedKey\obj
-msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q ProtectedKey\bin\pack\*.*
-if not exist ProtectedKey\obj md ProtectedKey\obj
-copy /y ProtectedKey\project.assets.json ProtectedKey\obj
-msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q MacKey\bin\pack\*.*
-if not exist MacKey\obj md MacKey\obj
-copy /y MacKey\project.assets.json MacKey\obj
-msbuild MacKey\MacKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
+call:buildFor net471
 
 rem ------- .NET 4.7.2 -------
 set FrameworkVersion=4.7.2
 set commonBuildOptions=/t:Rebuild /p:Configuration=%Configuration% /p:TargetFrameworkVersion=v%FrameworkVersion% /p:OutDir=bin\pack%FrameworkVersion% /m
 
-del /q bin\pack\*.*
-if not exist obj md obj
-copy /y project.assets.json obj
-msbuild vm.Aspects.Security.Cryptography.Ciphers.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q EncryptedKey\bin\pack\*.*
-if not exist EncryptedKey\obj md EncryptedKey\obj
-copy /y EncryptedKey\project.assets.json EncryptedKey\obj
-msbuild EncryptedKey\EncryptedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q ProtectedKey\bin\pack\*.*
-if not exist ProtectedKey\obj md ProtectedKey\obj
-copy /y ProtectedKey\project.assets.json ProtectedKey\obj
-msbuild ProtectedKey\ProtectedKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
-
-del /q MacKey\bin\pack\*.*
-if not exist MacKey\obj md MacKey\obj
-copy /y MacKey\project.assets.json MacKey\obj
-msbuild MacKey\MacKey.csproj %commonBuildOptions%
-if errorlevel 1 goto exit
+call:buildFor net472
 
 rem ------- Package -------
 if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -Prop Configuration=%Configuration%
+    NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -Prop Configuration=%Configuration%
+    NuGet Pack NuGet\Ciphers.symbols.nuspec -version %vmCiphersVersion% -Prop Configuration=%Configuration% -symbols
 ) else (
-NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -suffix %suffix% -Prop Configuration=%Configuration%
-)
-if /i .%suffix%. EQU .. (
-NuGet Pack NuGet\Ciphers.symbols.nuspec -version %vmCiphersVersion% -Prop Configuration=%Configuration% -symbols
-) else (
-NuGet Pack NuGet\Ciphers.symbols.nuspec -version %vmCiphersVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+    NuGet Pack NuGet\Ciphers.nuspec -version %vmCiphersVersion% -suffix %suffix% -Prop Configuration=%Configuration%
+    NuGet Pack NuGet\Ciphers.symbols.nuspec -version %vmCiphersVersion% -suffix %suffix% -Prop Configuration=%Configuration% -symbols
+    ren Ciphers.%vmCiphersVersion%.symbols.nupkg Ciphers.%vmCiphersVersion%-%suffix%.symbols.nupkg
 )
 
-if /i .%suffix%. NEQ .. ren Ciphers.%vmCiphersVersion%.symbols.nupkg Ciphers.%vmCiphersVersion%-%suffix%.symbols.nupkg
-
-if errorlevel 1 goto exit
+if errorlevel 1 goto:eof
 
 if not exist c:\NuGet md c:\NuGet
 copy /y *.nupkg c:\NuGet
@@ -130,7 +60,19 @@ NuGet Push Ciphers.%vmCiphersVersion%.nupkg -source https://www.nuget.org
 NuGet Push Ciphers.%vmCiphersVersion%-%suffix%.nupkg -source https://www.nuget.org
 )
 
-:exit
-cd nuget
-pause
- 
+cd nuget & pause & goto:eof
+
+
+:buildFor
+call:buildProject src vm.Aspects.Security.Cryptography.Ciphers.csproj %1
+call:buildProject tools\KeyFile KeyFile.csproj %1
+call:buildProject tools\FileCrypt FileCrypt.csproj %1
+goto:eof
+
+:buildProject
+del /q %1\bin\pack\*.*
+if not exist %1\obj md %1\obj
+copy /y %1\project.assets.json.%3 %1\obj\project.assets.json
+msbuild %1\%2 %commonBuildOptions%
+if errorlevel 1 goto:eof
+goto:eof
