@@ -38,6 +38,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFile", "tools\KeyFile\Ke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileCrypt", "tools\FileCrypt\FileCrypt.csproj", "{32B9F323-F629-4CA4-9003-0E30A4C441A0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{401E6834-05E7-4B50-8F90-C9145FEF94C8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Common Items\AssemblyInfo.global.cs = ..\..\..\..\Common Items\AssemblyInfo.global.cs
+		..\..\..\..\Common Items\Dictionary.xml = ..\..\..\..\Common Items\Dictionary.xml
+		..\..\..\..\Common Items\vm.snk = ..\..\..\..\Common Items\vm.snk
+		..\..\..\..\Common Items\vm.Test.snk = ..\..\..\..\Common Items\vm.Test.snk
+		..\..\..\..\Common Items\vmAllRules.ruleset = ..\..\..\..\Common Items\vmAllRules.ruleset
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
