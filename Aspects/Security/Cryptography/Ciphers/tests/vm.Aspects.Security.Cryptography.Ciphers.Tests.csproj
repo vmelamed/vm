@@ -91,6 +91,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CertificateFactory.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ReleasedCertificateHasherTest.cs" />
     <Compile Include="ClonedLightHasherTest.cs" />
     <Compile Include="DpapiCipherTest1.cs" />
@@ -159,6 +164,12 @@
       <Project>{1d9384d5-cc9e-4c8d-acbb-31fb25056600}</Project>
       <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
