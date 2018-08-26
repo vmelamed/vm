@@ -150,12 +150,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\vm.Aspects.Security.Cryptography.Ciphers.csproj">
-      <Project>{65e08f3e-21ac-4bb0-a7a3-6eacbadae9dd}</Project>
-      <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\..\..\..\..\Common Items\Dictionary.xml">
       <Link>Dictionary.xml</Link>
     </CodeAnalysisDictionary>
@@ -171,6 +165,12 @@
   <ItemGroup>
     <Content Include="Test\No.txt" />
     <Content Include="Test\Yes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\vm.Aspects.Security.Cryptography.Ciphers.csproj">
+      <Project>{1d9384d5-cc9e-4c8d-acbb-31fb25056600}</Project>
+      <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

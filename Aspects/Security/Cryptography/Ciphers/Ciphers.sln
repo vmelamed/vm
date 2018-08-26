@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{76705A9C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers", "src\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21BC22D8-F464-47B2-9596-1B4F6C5A74F8}"
 	ProjectSection(SolutionItems) = preProject
 		docs\Ciphers.cd = docs\Ciphers.cd
@@ -47,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		..\..\..\..\Common Items\vmAllRules.ruleset = ..\..\..\..\Common Items\vmAllRules.ruleset
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Security.Cryptography.Ciphers", "src\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,12 +54,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B55FEE15-775E-462D-B20F-B55BB552EA85}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
@@ -78,15 +72,21 @@ Global
 		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
 		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32B9F323-F629-4CA4-9003-0E30A4C441A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.DebugUnitTest|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.DebugUnitTest|Any CPU.Build.0 = Debug|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{65E08F3E-21AC-4BB0-A7A3-6EACBADAE9DD} = {E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}
 		{B55FEE15-775E-462D-B20F-B55BB552EA85} = {5332A49F-EE3D-43D2-AF27-3B81C9EB8528}
 		{186551F3-447A-4D1B-9DF7-3E6B49E0C10C} = {76705A9C-632C-4439-BB95-F4793DE60D6E}
 		{32B9F323-F629-4CA4-9003-0E30A4C441A0} = {76705A9C-632C-4439-BB95-F4793DE60D6E}
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {381D1D0F-E2FB-435B-99CE-D5A9D0B9D1D8}

@@ -54,7 +54,7 @@ For more information see the documentation at https://github.com/vmelamed/vm/blo
             Renamed the package to comply with a more natural naming scheme for the entire set of vm.Aspects packages.
             Changes in the documentation.
         </PackageReleaseNotes>
-        <PackageTags>dump object .net diagnostics debug log aspects AspectObjectDumper ObjectTextDumper</PackageTags>
+        <PackageTags>aspects dump object .net diagnostics debug log AspectObjectDumper ObjectTextDumper</PackageTags>
         <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper</PackageId>
         <Version>2.0.3</Version>
     </PropertyGroup>

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
+using System.Reflection;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
 {
@@ -44,8 +44,9 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
             if (!location.IsNullOrWhiteSpace())
                 return location;
 
-            var fileName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
+            var fileName = Assembly.GetEntryAssembly().GetName().Name;
 
+#if NETFRAMEWORK
             if (fileName.IsNullOrWhiteSpace())
             {
                 fileName = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
@@ -54,6 +55,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
                 if (index > -1)
                     fileName = fileName.Substring(0, index.Value);
             }
+
+#endif
 
             if (fileName.IsNullOrWhiteSpace())
                 fileName = "key";

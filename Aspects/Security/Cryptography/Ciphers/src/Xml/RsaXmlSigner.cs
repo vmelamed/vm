@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Internal.CodeSigning;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -29,43 +28,28 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         const string _xmlSignatureLocalName = "Signature";
         const string _xmlSignedIdFormat = "signed-{0}";
 
-        readonly string _hashAlgorithmName;
         readonly string _canonicalizationMethod;
         readonly string _signatureMethod;
         readonly string _digestMethod;
-        readonly AsymmetricAlgorithm _asymmetric;
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "N/A")]
         static RsaXmlSigner()
         {
-            CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), XmlConstants.XmlDsigRSAPKCS1SHA256Url);
+#if NETFRAMEWORK
+            CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription), XmlConstants.XmlDsigRSAPKCS1SHA256Url); 
+#endif
         }
 
         #region Properties
         /// <summary>
         /// Gets or sets the name of the hash algorithm.
         /// </summary>
-        public string HashAlgorithmName
-        {
-            get
-            {
-
-
-                return _hashAlgorithmName;
-            }
-        }
+        public string HashAlgorithmName { get; }
 
         /// <summary>
         /// Gets or sets the implementation of the asymmetric algorithm.
         /// </summary>
-        protected AsymmetricAlgorithm Asymmetric
-        {
-            get
-            {
-
-                return _asymmetric;
-            }
-        }
+        protected AsymmetricAlgorithm Asymmetric { get; }
 
         /// <summary>
         /// Gets or sets a set of possible unique identifier attribute names. Default - { &quot;xml:id&quot;, &quot;Id&quot;, &quot;id&quot;, &quot;ID&quot; }.
@@ -100,7 +84,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             if (hashAlgorithmName == null)
                 hashAlgorithmName = signCertificate.HashAlgorithm();
 
-            _hashAlgorithmName = hashAlgorithmName;
+            HashAlgorithmName = hashAlgorithmName;
 
             int providerType;
 
@@ -130,8 +114,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                                 ? (RSACryptoServiceProvider)signCertificate.PrivateKey
                                 : (RSACryptoServiceProvider)signCertificate.PublicKey.Key)
             {
-                _asymmetric = new RSACryptoServiceProvider(new CspParameters(providerType));
-                _asymmetric.FromXmlString(key.ToXmlString(signCertificate.HasPrivateKey));
+                Asymmetric = new RSACryptoServiceProvider(new CspParameters(providerType));
+                Asymmetric.FromXmlString(key.ToXmlString(signCertificate.HasPrivateKey));
             }
         }
         #endregion
@@ -509,7 +493,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                 return;
 
             if (disposing)
-                _asymmetric.Dispose();
+                Asymmetric.Dispose();
         }
         #endregion
     }

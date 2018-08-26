@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
@@ -329,6 +328,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
         static void SetKeyFileSecurity(
             string keyLocation)
         {
+#if NETFRAMEWORK
             var acl = File.GetAccessControl(keyLocation);
 
             // remove inheritance
@@ -355,7 +355,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
                             AccessControlType.Allow));
 
             // set it
-            File.SetAccessControl(keyLocation, acl);
+            File.SetAccessControl(keyLocation, acl); 
+#endif
         }
     }
 }

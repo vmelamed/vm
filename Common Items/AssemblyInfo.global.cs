@@ -11,6 +11,7 @@ using System.Security;
 [assembly: AssemblyCopyright("Copyright © vm 2013-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: NeutralResourcesLanguage("en-US")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 [assembly: SecurityRules(SecurityRuleSet.Level2, SkipVerificationInFullTrust = false)]
@@ -22,4 +23,3 @@ using System.Security;
 
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
-[assembly: NeutralResourcesLanguage("en-US")]
