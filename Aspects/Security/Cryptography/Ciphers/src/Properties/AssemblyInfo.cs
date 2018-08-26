@@ -1,14 +1,4 @@
-﻿using System.Reflection;
-
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-
-[assembly: AssemblyVersion("2.1.0")]
-[assembly: AssemblyFileVersion("2.1.0")]
-[assembly: AssemblyInformationalVersion("2.1.0")]
-
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(
     "vm.Aspects.Security.Cryptography.Ciphers.Tests, " +
     "PublicKey=00240000048000009400000006020000002400005253413100040000010001004b151837822bdb" +
               "b18296865918eb87882f2528630f673f17668fff4c6e51b8563b1985ec7ec5e6877611068c595a" +

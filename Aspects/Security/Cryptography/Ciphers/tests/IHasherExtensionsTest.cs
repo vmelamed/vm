@@ -226,7 +226,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void RoundTripHashStreamNull2Test()
         {
-            IHasherTasks target = GetHasher();
+            var target = GetHasher();
             var data = new MemoryStream(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 
             var hash = target.Hash(data);
@@ -241,7 +241,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void RoundTripNullStreamHashTest()
         {
-            IHasherTasks target = GetHasher();
+            var target = GetHasher();
             Stream data = null;
 
             var hash = target.Hash(data);
@@ -255,7 +255,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [ExpectedException(typeof(CryptographicException))]
         public void RoundTripInvalidHashStreamTest()
         {
-            IHasherTasks target = GetHasher();
+            var target = GetHasher();
             var data = new MemoryStream(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 
             var hash = target.Hash(data);

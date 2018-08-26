@@ -28,8 +28,7 @@
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <Description>
-            The Ciphers package helps in addressing a common requirement for achieving confidentiality, integrity and
+        <Description>The Ciphers package helps in addressing a common requirement for achieving confidentiality, integrity and
             source authentication of data-at-rest, -in-motion, and -in-use, e.g. PII (Personally Identifiable Information) fields.
             Features:
             * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
@@ -53,10 +52,12 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
+        <OutputPath></OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
+        <OutputPath></OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -66,26 +67,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs"
-                 Link="Properties\AssemblyInfo.global.cs" />
+        <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\..\..\..\Common Items\Dictionary.xml"
-              Link="Dictionary.xml" />
-        <None Include="..\..\..\..\..\Common Items\vm.snk"
-              Link="vm.snk" />
+        <None Include="..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+        <None Include="..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Configuration.ConfigurationManager"
-                          Version="4.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="System.Security">
-            <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Security.dll</HintPath>
-        </Reference>
+      <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+      <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
+      <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     </ItemGroup>
 
     <ItemGroup>
