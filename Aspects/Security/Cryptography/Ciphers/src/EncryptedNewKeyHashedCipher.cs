@@ -140,7 +140,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             set
             {
                 if (value)
-                    throw new InvalidOperationException("This cipher does not support Base64 transformation as it requires the encrypted stream to be seek-able. "+
+                    throw new InvalidOperationException("This cipher does not support Base64 transformation because this requires the encrypted stream to be seek-able. "+
                                                         "You can perform Base64 encoding on the output/input outside of the cipher.");
             }
         }
