@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,14 +30,25 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     ///     </list>
     /// </para>
     /// </summary>
-    public class PasswordProtectedKeyCipher : ProtectedKeyCipher
+    public class PasswordProtectedKeyCipher : EncryptedKeyCipher
     {
         #region Fields
-        readonly int _numberOfIterations;
-        readonly int _saltLength;
-        SecureString _password;
+        int _numberOfIterations;
+        int _saltLength;
+        string _password;
         byte[] _salt;
         bool _isSymmetricKeyInitializedInternal;
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Flag indicating whether to encrypt the initialization vector. Always returns <see langword="false"/>
+        /// </summary>
+        public override bool ShouldEncryptIV
+        {
+            get => false;
+            set { }
+        }
         #endregion
 
         #region Constructors
@@ -92,74 +102,14 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 
             _numberOfIterations = numberOfIterations;
             _saltLength         = saltLength;
-            _password           = new SecureString();
-
-            foreach (var c in password)
-                _password.AppendChar(c);
+            _password           = (string)password.Clone();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PasswordProtectedKeyCipher" /> class.
-        /// </summary>
-        /// <param name="password">
-        /// The password to derive the symmetric key off of.
-        /// </param>
-        /// <param name="numberOfIterations">
-        /// The number of iterations, the default value is <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
-        /// The greater the iterations the more secure is the generated symmetric key but is also slower.
-        /// Should not be less than <see cref="PasswordDerivationConstants.DefaultNumberOfIterations" />.
-        /// </param>
-        /// <param name="saltLength">
-        /// The length of the salt, the default value is <see cref="PasswordDerivationConstants.DefaultSaltLength" /> bytes.
-        /// Must be at least <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.
-        /// </param>
-        /// <param name="symmetricAlgorithmName">
-        /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric" /> or
-        /// <see langword="null" />, empty or whitespace characters only - these will default to <see cref="Algorithms.Symmetric.Default" />.
-        /// </param>
-        /// <param name="symmetricAlgorithmFactory">
-        /// The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="DefaultServices.SymmetricAlgorithmFactory" />,
-        /// which uses the <see cref="SymmetricAlgorithm.Create(string)" /> method from the .NET library.
-        /// </param>
-        /// <exception cref="System.ArgumentException">
-        /// Thrown if the <paramref name="password" /> is <see langword="null" />, empty or consist of whitespace characters only.
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// Thrown if <list type="bullet">
-        /// <item>the <paramref name="numberOfIterations" /> is less than <see cref="PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or </item>
-        /// <item>the <paramref name="saltLength" /> is less than <see cref="PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
-        /// </list>
-        /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-        public PasswordProtectedKeyCipher(
-            SecureString password,
-            int numberOfIterations = PasswordDerivationConstants.DefaultNumberOfIterations,
-            int saltLength = PasswordDerivationConstants.DefaultSaltLength,
+        private PasswordProtectedKeyCipher(
             string symmetricAlgorithmName = Algorithms.Symmetric.Default,
             ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
             : base(symmetricAlgorithmName, symmetricAlgorithmFactory)
         {
-            if (password == null)
-                throw new ArgumentNullException(nameof(password));
-            if (numberOfIterations < PasswordDerivationConstants.MinNumberOfIterations)
-                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinNumberOfIterations} bytes long.", nameof(numberOfIterations));
-            if (saltLength < PasswordDerivationConstants.MinSaltLength)
-                throw new ArgumentException($"The argument cannot be at less than {PasswordDerivationConstants.MinSaltLength} bytes long.", nameof(saltLength));
-
-            _password           = password.Copy();
-            _numberOfIterations = numberOfIterations;
-            _saltLength         = saltLength;
-        }
-        #endregion
-
-        #region Properties
-        /// <summary>
-        /// Flag indicating whether to encrypt the initialization vector. Always returns <see langword="false"/>
-        /// </summary>
-        public override bool ShouldEncryptIV
-        {
-            get => false;
-            set { }
         }
         #endregion
 
@@ -254,14 +204,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
             if (generateSalt)
                 _salt = new byte[_saltLength].FillRandom();
 
-            using (_password)
             using (var derivedBytes = new Rfc2898DeriveBytes(
-                                            Encoding.UTF8.GetBytes(_password.ToString()),
+                                            Encoding.UTF8.GetBytes(_password),
                                             _salt,
                                             _numberOfIterations))
                 Symmetric.Key = derivedBytes.GetBytes(Symmetric.KeySize / 8);
 
-            _password = null;
             _isSymmetricKeyInitializedInternal = true;
         }
 
@@ -443,18 +391,59 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         #endregion
 
         /// <summary>
-        /// Performs the actual job of disposing the object. Here it disposes the password if it is not disposed yet.
+        /// Copies certain characteristics of this instance to the <paramref name="cipher" /> parameter.
+        /// The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
         /// </summary>
-        /// <param name="disposing">Passes the information whether this method is called by <see cref="IDisposable.Dispose()" /> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~SymmetricCipher()" />.</param>
-        /// <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="IDisposable.Dispose()" />, it will try to release all managed resources
-        /// (usually aggregated objects which implement <see cref="IDisposable" /> as well) and then it will release all unmanaged resources if any.
-        /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.</remarks>
-        protected override void Dispose(bool disposing)
+        /// <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        protected override void CopyTo(SymmetricKeyCipherBase cipher)
         {
-            if (disposing && _password != null)
-                _password.Dispose();
-            base.Dispose(disposing);
+            base.CopyTo(cipher);
+            if (!(cipher is PasswordProtectedKeyCipher pwdCipher))
+                return;
+
+            _password           = (string)pwdCipher._password.Clone();
+            _numberOfIterations = pwdCipher._numberOfIterations;
+            _saltLength         = pwdCipher._saltLength;
         }
+
+        #region ILightCipher
+        /// <summary>
+        /// Releases the asymmetric keys. By doing so the instance looses its <see cref="IKeyManagement" /> behavior but the memory footprint becomes much lighter.
+        /// The asymmetric keys can be dropped only if the underlying symmetric algorithm instance is already initialized and
+        /// the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </exception>
+        /// See also <seealso cref="CloneLightCipher"/>.
+        public override ICipherTasks ReleaseCertificate()
+        {
+            InitializeSymmetricKey();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Creates a new, lightweight <see cref="EncryptedKeyCipher"/> instance and copies certain characteristics of this instance to it.
+        /// A duplicate can be created only if the underlying symmetric algorithm instance is already initialized and the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV"/> is <see langword="false"/>.
+        /// The duplicate can be used only for encryption and decryption of data (the <see cref="ICipher"/> and <see cref="ICipherTasks"/> behavior). The <see cref="IKeyManagement"/> behavior is disabled and
+        /// calling any of its members would throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <returns>The duplicate.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+        /// </exception>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The caller must dispose it.")]
+        public override ICipherTasks CloneLightCipher()
+        {
+            InitializeSymmetricKey();
+
+            var cipher = new PasswordProtectedKeyCipher(Symmetric.GetType().FullName, null);
+
+            CopyTo(cipher);
+
+            return cipher;
+        }
+        #endregion
     }
 }

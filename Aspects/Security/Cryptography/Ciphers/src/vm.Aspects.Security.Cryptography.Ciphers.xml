@@ -383,14 +383,9 @@
                 </list>
             </summary>
         </member>
-        <member name="F:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileLocationStrategy.DefaultKeyLocationSuffix">
+        <member name="F:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileLocationStrategy.DefaultKeyLocation">
             <summary>
             The default key location suffix - .key
-            </summary>
-        </member>
-        <member name="F:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileLocationStrategy.AppSettingsKeyContainerNameEntry">
-            <summary>
-            The application setting entry that might contain the name of the key container.
             </summary>
         </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileLocationStrategy.GetKeyLocation(System.String)">
@@ -985,6 +980,11 @@
             </summary>
             <value>The private key.</value>
         </member>
+        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.ShouldEncryptIV">
+            <summary>
+            Flag indicating whether to encrypt the initialization vector. Here the setter checks if the certificate has a private key.
+            </summary>
+        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2,System.String,vm.Aspects.Security.Cryptography.Ciphers.IKeyLocationStrategy,vm.Aspects.Security.Cryptography.Ciphers.IKeyStorageTasks,System.String,vm.Aspects.Security.Cryptography.Ciphers.ISymmetricAlgorithmFactory)">
             <summary>
             Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeyCipher" /> class.
@@ -1044,6 +1044,154 @@
             which uses the <see cref="M:System.Security.Cryptography.SymmetricAlgorithm.Create(System.String)" /> method from the .NET library.
             </param>
         </member>
+        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Base64Encoded">
+            <summary>
+            Gets or sets a value indicating whether the encrypted texts are or should be Base64 encoded.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Encrypt(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Reads the clear text from the <paramref name="dataStream"/> encrypts it and writes the result into the <paramref name="encryptedStream"/> 
+            stream. This is the reverse method of <see cref="M:Decrypt(System.Stream, System.Stream)"/>.
+            </summary>
+            <param name="dataStream">
+            The unencrypted input stream.
+            </param>
+            <param name="encryptedStream">
+            The output stream where to write the crypto package which will contain the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be read or 
+            <paramref name="encryptedStream"/> cannot be written to.
+            </exception>
+            <exception cref="T:System.Security.CryptographicException">
+            The encryption failed.
+            </exception>
+            <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Decrypt(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Reads and decrypts the <paramref name="encryptedStream"/> stream and writes the clear text into the <paramref name="dataStream"/> stream.
+            This is the reverse method of <see cref="M:Encrypt(System.Stream, System.Stream)"/>.
+            </summary>
+            <param name="encryptedStream">
+            The input crypto package stream which contains the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
+            </param>
+            <param name="dataStream">
+            The output stream where to put the unencrypted data.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be written to or 
+            <paramref name="encryptedStream"/> cannot be read from.
+            </exception>
+            <exception cref="T:System.Security.CryptographicException">
+            The decryption failed.
+            </exception>
+            <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Encrypt(System.Byte[])">
+            <summary>
+            Encrypts the specified <paramref name="data"/>. This is the reverse method of <see cref="M:Decrypt(byte[])"/>.
+            </summary>
+            <param name="data">
+            The data to be encrypted.
+            </param>
+            <returns>
+            The bytes of the crypto package which contains the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
+            Or returns <see langword="null"/> if <paramref name="data"/> is <see langword="null"/>.
+            </returns>
+            <exception cref="T:System.Security.CryptographicException">
+            The encryption failed.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Decrypt(System.Byte[])">
+            <summary>
+            Decrypts the specified <paramref name="encryptedData"/>.
+            This is the reverse method of <see cref="M:Encrypt(byte[])"/>.
+            </summary>
+            <param name="encryptedData">
+            The bytes of the crypto package which contains the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
+            If <paramref name="encryptedData"/> is <see langword="null"/> the method returns <see langword="null"/>.
+            </param>
+            <returns>
+            The decrypted <paramref name="encryptedData"/> or <see langword="null"/> if <paramref name="encryptedData"/> is <see langword="null"/>.
+            </returns>
+            <exception cref="T:System.Security.CryptographicException">
+            The encryption failed.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.EncryptAsync(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Asynchronously reads the clear text from the <paramref name="dataStream"/>, encrypts it and writes the result into the 
+            <paramref name="encryptedStream"/> stream. This is the reverse method of <see cref="M:DecryptAsync(System.Stream, System.Stream)"/>.
+            </summary>
+            <param name="dataStream">
+            The unencrypted input stream.
+            </param>
+            <param name="encryptedStream">
+            The output stream where to write the crypto package which will contain the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
+            </param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task"/> object which represents the process of asynchronous encryption.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be read or 
+            <paramref name="encryptedStream"/> cannot be written to.
+            </exception>
+            <exception cref="T:System.Security.CryptographicException">
+            The encryption failed.
+            </exception>
+            <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DecryptAsync(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Asynchronously reads and decrypts the <paramref name="encryptedStream"/> stream and writes the clear text into the 
+            <paramref name="dataStream"/> stream. This is the reverse method of <see cref="M:EncryptAsync(System.Stream, System.Stream)"/>.
+            </summary>
+            <param name="encryptedStream">
+            The input crypto package stream which contains the encrypted data 
+            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
+            </param>
+            <param name="dataStream">
+            The output stream where to put the unencrypted data.
+            </param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task"/> object which represents the process of asynchronous decryption.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be written to or 
+            <paramref name="encryptedStream"/> cannot be read from.
+            </exception>
+            <exception cref="T:System.Security.CryptographicException">
+            The decryption failed.
+            </exception>
+            <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.InitializeAsymmetricKeys(System.Security.Cryptography.X509Certificates.X509Certificate2)">
             <summary>
             Initializes the asymmetric key.
@@ -1052,11 +1200,6 @@
             <exception cref="T:System.ArgumentNullException">
             Thrown if <paramref name="certificate"/> is <see langword="null"/>
             </exception>.
-        </member>
-        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.ShouldEncryptIV">
-            <summary>
-            Flag indicating whether to encrypt the initialization vector. Here the setter checks if the certificate has a private key.
-            </summary>
         </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.EncryptSymmetricKey">
             <summary>
@@ -1076,12 +1219,77 @@
             </remarks>
             <param name="encryptedKey">The encrypted key.</param>
         </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.BeforeWriteEncrypted(System.IO.Stream)">
+            <summary>
+            Allows the inheritors to write some unencrypted information to the <paramref name="encryptedStream"/>
+            before the encrypted text, e.g. here the cipher writes the initialization vector.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written to.</exception>
+        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.EncryptIV">
             <summary>
             Encrypts the symmetric cipher's initialization vector.
             </summary>
             <returns>The encrypted initialization vector.</returns>
             <remarks>The method is called by the GoF template-methods.</remarks>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.CreateEncryptingStream(System.IO.Stream)">
+            <summary>
+            Creates the encrypting stream and gives an opportunity to the inheritors to modify the creation of the crypto-stream, 
+            e.g. wrap or chain the crypto-stream created here with another crypto-stream that computes a hash of the unencrypted document.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <returns>The created CryptoStream.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written.</exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DoEncrypt(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Performs the actual encryption of the <paramref name="dataStream"/> and writing into the <paramref name="cryptoStream"/>.
+            Also gives opportunity to the inheritors to modify the actual encryption process.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="dataStream">The data stream.</param>
+            <param name="cryptoStream">The crypto stream.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be read or the <paramref name="cryptoStream"/> cannot be written.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.AfterWriteEncrypted(System.IO.Stream,System.Security.Cryptography.CryptoStream)">
+            <summary>
+            Gives an opportunity to the inheritors to write more unencrypted information to the <paramref name="encryptedStream"/>, e.g.
+            add the signature or the hash to the <paramref name="encryptedStream"/>.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <param name="cryptoStream">The crypto stream.</param>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.BeforeReadDecrypted(System.IO.Stream)">
+            <summary>
+            Allows the inheritors to read some unencrypted information from the <paramref name="encryptedStream"/>, 
+            e.g. here the cipher reads and sets the initialization vector in the symmetric cipher.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
         </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DecryptIV(System.Byte[])">
             <summary>
@@ -1092,6 +1300,107 @@
             <remarks>The method is called by the GoF template-methods.</remarks>
             <exception cref="T:System.InvalidOperationException"></exception>
             See also <seealso cref="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.CloneLightCipher"/>.
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.CreateDecryptingStream(System.IO.Stream)">
+            <summary>
+            Creates the decrypting stream and gives an opportunity to the inheritors to modify the creation of the crypto-stream, 
+            e.g. wrap or chain the crypto-stream created here with another crypto-stream that computes a hash of the unencrypted text.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <returns>The created CryptoStream.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DoDecrypt(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Performs the actual decryption of the crypto-text from the package and writes it into the <paramref name="dataStream"/>.
+            Also gives opportunity to the inheritors to modify the actual decryption process.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="cryptoStream">The crypto stream.</param>
+            <param name="dataStream">The data stream.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be written or the <paramref name="cryptoStream"/> cannot be read.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.AfterReadDecrypted(System.IO.Stream,System.Security.Cryptography.CryptoStream)">
+            <summary>
+            Gives an opportunity to the inheritors to read more unencrypted information from the <paramref name="encryptedStream"/> or perform other activities, e.g.
+            verify the signature or the hash of the <paramref name="encryptedStream"/>.
+            </summary>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <param name="cryptoStream">The crypto stream.</param>
+            <remarks>The method is called by the GoF template-methods.</remarks>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.BeforeWriteEncryptedAsync(System.IO.Stream)">
+            <summary>
+            Allows the inheritors to write asynchronously some unencrypted information to the <paramref name="encryptedStream"/>
+            before the encrypted text, e.g. here the cipher writes the initialization vector.
+            </summary>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task"/> object representing the process.
+            </returns>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written to.</exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DoEncryptAsync(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Performs asynchronously the actual encryption of the <paramref name="dataStream"/> and writing into the <paramref name="cryptoStream"/>.
+            Also gives opportunity to the inheritors to modify the actual encryption process.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="dataStream">The data stream.</param>
+            <param name="cryptoStream">The crypto stream.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be read or the <paramref name="cryptoStream"/> cannot be written.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.BeforeReadDecryptedAsync(System.IO.Stream)">
+            <summary>
+            Allows the inheritors to read asynchronously some unencrypted information from the <paramref name="encryptedStream"/>, 
+            e.g. here the cipher reads and sets the initialization vector in the symmetric cipher.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> object.</returns>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="encryptedStream">The encrypted stream.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.DoDecryptAsync(System.IO.Stream,System.IO.Stream)">
+            <summary>
+            Performs asynchronously the actual decryption of the crypto-text from the package and writes it into the <paramref name="dataStream"/>.
+            Also gives opportunity to the inheritors to modify the actual decryption process.
+            </summary>
+            <remarks>
+            The method is called by the GoF template-methods.
+            </remarks>
+            <param name="cryptoStream">The crypto stream.</param>
+            <param name="dataStream">The data stream.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when either <paramref name="dataStream"/> cannot be written or the <paramref name="cryptoStream"/> cannot be read.
+            </exception>
         </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher.Dispose(System.Boolean)">
             <summary>
@@ -4845,6 +5154,11 @@
             </para>
             </summary>
         </member>
+        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.ShouldEncryptIV">
+            <summary>
+            Flag indicating whether to encrypt the initialization vector. Always returns <see langword="false"/>
+            </summary>
+        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.#ctor(System.String,System.Int32,System.Int32,System.String,vm.Aspects.Security.Cryptography.Ciphers.ISymmetricAlgorithmFactory)">
             <summary>
             Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher" /> class.
@@ -4878,45 +5192,6 @@
             <item>the <paramref name="saltLength" /> is less than <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
             </list>
             </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.#ctor(System.Security.SecureString,System.Int32,System.Int32,System.String,vm.Aspects.Security.Cryptography.Ciphers.ISymmetricAlgorithmFactory)">
-            <summary>
-            Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher" /> class.
-            </summary>
-            <param name="password">
-            The password to derive the symmetric key off of.
-            </param>
-            <param name="numberOfIterations">
-            The number of iterations, the default value is <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.DefaultNumberOfIterations" />.
-            The greater the iterations the more secure is the generated symmetric key but is also slower.
-            Should not be less than <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.DefaultNumberOfIterations" />.
-            </param>
-            <param name="saltLength">
-            The length of the salt, the default value is <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.DefaultSaltLength" /> bytes.
-            Must be at least <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.MinSaltLength" /> bytes.
-            </param>
-            <param name="symmetricAlgorithmName">
-            The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.Algorithms.Symmetric" /> or
-            <see langword="null" />, empty or whitespace characters only - these will default to <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.Algorithms.Symmetric.Default" />.
-            </param>
-            <param name="symmetricAlgorithmFactory">
-            The symmetric algorithm factory. If <see langword="null" /> the constructor will create an instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.SymmetricAlgorithmFactory" />,
-            which uses the <see cref="M:System.Security.Cryptography.SymmetricAlgorithm.Create(System.String)" /> method from the .NET library.
-            </param>
-            <exception cref="T:System.ArgumentException">
-            Thrown if the <paramref name="password" /> is <see langword="null" />, empty or consist of whitespace characters only.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown if <list type="bullet">
-            <item>the <paramref name="numberOfIterations" /> is less than <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.MinNumberOfIterations" /> bytes; or </item>
-            <item>the <paramref name="saltLength" /> is less than <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.PasswordDerivationConstants.MinSaltLength" /> bytes.</item>
-            </list>
-            </exception>
-        </member>
-        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.ShouldEncryptIV">
-            <summary>
-            Flag indicating whether to encrypt the initialization vector. Always returns <see langword="false"/>
-            </summary>
         </member>
         <member name="P:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.KeyLocation">
             <summary>
@@ -5040,15 +5315,35 @@
             </exception>
             <remarks>The method is called by the GoF template-methods.</remarks>
         </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.Dispose(System.Boolean)">
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.CopyTo(vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase)">
             <summary>
-            Performs the actual job of disposing the object. Here it disposes the password if it is not disposed yet.
+            Copies certain characteristics of this instance to the <paramref name="cipher" /> parameter.
+            The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
             </summary>
-            <param name="disposing">Passes the information whether this method is called by <see cref="M:System.IDisposable.Dispose" /> (explicitly or
-            implicitly at the end of a <c>using</c> statement), or by the <see cref="M:~SymmetricCipher()" />.</param>
-            <remarks>If the method is called with <paramref name="disposing" /><c>==true</c>, i.e. from <see cref="M:System.IDisposable.Dispose" />, it will try to release all managed resources
-            (usually aggregated objects which implement <see cref="T:System.IDisposable" /> as well) and then it will release all unmanaged resources if any.
-            If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.</remarks>
+            <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.ReleaseCertificate">
+            <summary>
+            Releases the asymmetric keys. By doing so the instance looses its <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.IKeyManagement" /> behavior but the memory footprint becomes much lighter.
+            The asymmetric keys can be dropped only if the underlying symmetric algorithm instance is already initialized and
+            the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </exception>
+            See also <seealso cref="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.CloneLightCipher"/>.
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher.CloneLightCipher">
+            <summary>
+            Creates a new, lightweight <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher"/> instance and copies certain characteristics of this instance to it.
+            A duplicate can be created only if the underlying symmetric algorithm instance is already initialized and the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV"/> is <see langword="false"/>.
+            The duplicate can be used only for encryption and decryption of data (the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ICipher"/> and <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ICipherTasks"/> behavior). The <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.IKeyManagement"/> behavior is disabled and
+            calling any of its members would throw <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+            <returns>The duplicate.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </exception>
         </member>
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.Properties.Resources">
             <summary>
@@ -5180,6 +5475,11 @@
             </para>
             </remarks>
         </member>
+        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.ShouldEncryptIV">
+            <summary>
+            Flag indicating whether to encrypt the initialization vector.
+            </summary>
+        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.#ctor(System.String,vm.Aspects.Security.Cryptography.Ciphers.IKeyLocationStrategy,vm.Aspects.Security.Cryptography.Ciphers.IKeyStorageTasks,System.String,vm.Aspects.Security.Cryptography.Ciphers.ISymmetricAlgorithmFactory)">
             <summary>
             Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher" /> class.
@@ -5220,154 +5520,6 @@
             which uses the <see cref="M:System.Security.Cryptography.SymmetricAlgorithm.Create(System.String)" /> method from the .NET library.
             </param>
         </member>
-        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.Base64Encoded">
-            <summary>
-            Gets or sets a value indicating whether the encrypted texts are or should be Base64 encoded.
-            </summary>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.Encrypt(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Reads the clear text from the <paramref name="dataStream"/> encrypts it and writes the result into the <paramref name="encryptedStream"/> 
-            stream. This is the reverse method of <see cref="M:Decrypt(System.Stream, System.Stream)"/>.
-            </summary>
-            <param name="dataStream">
-            The unencrypted input stream.
-            </param>
-            <param name="encryptedStream">
-            The output stream where to write the crypto package which will contain the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector.
-            </param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be read or 
-            <paramref name="encryptedStream"/> cannot be written to.
-            </exception>
-            <exception cref="T:System.Security.CryptographicException">
-            The encryption failed.
-            </exception>
-            <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.Decrypt(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Reads and decrypts the <paramref name="encryptedStream"/> stream and writes the clear text into the <paramref name="dataStream"/> stream.
-            This is the reverse method of <see cref="M:Encrypt(System.Stream, System.Stream)"/>.
-            </summary>
-            <param name="encryptedStream">
-            The input crypto package stream which contains the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
-            </param>
-            <param name="dataStream">
-            The output stream where to put the unencrypted data.
-            </param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be written to or 
-            <paramref name="encryptedStream"/> cannot be read from.
-            </exception>
-            <exception cref="T:System.Security.CryptographicException">
-            The decryption failed.
-            </exception>
-            <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.Encrypt(System.Byte[])">
-            <summary>
-            Encrypts the specified <paramref name="data"/>. This is the reverse method of <see cref="M:Decrypt(byte[])"/>.
-            </summary>
-            <param name="data">
-            The data to be encrypted.
-            </param>
-            <returns>
-            The bytes of the crypto package which contains the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
-            Or returns <see langword="null"/> if <paramref name="data"/> is <see langword="null"/>.
-            </returns>
-            <exception cref="T:System.Security.CryptographicException">
-            The encryption failed.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.Decrypt(System.Byte[])">
-            <summary>
-            Decrypts the specified <paramref name="encryptedData"/>.
-            This is the reverse method of <see cref="M:Encrypt(byte[])"/>.
-            </summary>
-            <param name="encryptedData">
-            The bytes of the crypto package which contains the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
-            If <paramref name="encryptedData"/> is <see langword="null"/> the method returns <see langword="null"/>.
-            </param>
-            <returns>
-            The decrypted <paramref name="encryptedData"/> or <see langword="null"/> if <paramref name="encryptedData"/> is <see langword="null"/>.
-            </returns>
-            <exception cref="T:System.Security.CryptographicException">
-            The encryption failed.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.EncryptAsync(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Asynchronously reads the clear text from the <paramref name="dataStream"/>, encrypts it and writes the result into the 
-            <paramref name="encryptedStream"/> stream. This is the reverse method of <see cref="M:DecryptAsync(System.Stream, System.Stream)"/>.
-            </summary>
-            <param name="dataStream">
-            The unencrypted input stream.
-            </param>
-            <param name="encryptedStream">
-            The output stream where to write the crypto package which will contain the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> object which represents the process of asynchronous encryption.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="dataStream"/> or <paramref name="encryptedStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be read or 
-            <paramref name="encryptedStream"/> cannot be written to.
-            </exception>
-            <exception cref="T:System.Security.CryptographicException">
-            The encryption failed.
-            </exception>
-            <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DecryptAsync(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Asynchronously reads and decrypts the <paramref name="encryptedStream"/> stream and writes the clear text into the 
-            <paramref name="dataStream"/> stream. This is the reverse method of <see cref="M:EncryptAsync(System.Stream, System.Stream)"/>.
-            </summary>
-            <param name="encryptedStream">
-            The input crypto package stream which contains the encrypted data 
-            as well as some other crypto artifacts, e.g. initialization vector, hash, etc.
-            </param>
-            <param name="dataStream">
-            The output stream where to put the unencrypted data.
-            </param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> object which represents the process of asynchronous decryption.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="encryptedStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be written to or 
-            <paramref name="encryptedStream"/> cannot be read from.
-            </exception>
-            <exception cref="T:System.Security.CryptographicException">
-            The decryption failed.
-            </exception>
-            <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.EncryptSymmetricKey">
             <summary>
             Encrypts the symmetric key.
@@ -5386,18 +5538,6 @@
             </remarks>
             <param name="encryptedKey">The encrypted key.</param>
         </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.BeforeWriteEncrypted(System.IO.Stream)">
-            <summary>
-            Allows the inheritors to write some unencrypted information to the <paramref name="encryptedStream"/>
-            before the encrypted text, e.g. here the cipher writes the initialization vector.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written to.</exception>
-        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.EncryptIV">
             <summary>
             Encrypts the symmetric cipher's initialization vector.
@@ -5407,59 +5547,6 @@
             </remarks>
             <returns>System.Byte[].</returns>
         </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.CreateEncryptingStream(System.IO.Stream)">
-            <summary>
-            Creates the encrypting stream and gives an opportunity to the inheritors to modify the creation of the crypto-stream, 
-            e.g. wrap or chain the crypto-stream created here with another crypto-stream that computes a hash of the unencrypted document.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <returns>The created CryptoStream.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written.</exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DoEncrypt(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Performs the actual encryption of the <paramref name="dataStream"/> and writing into the <paramref name="cryptoStream"/>.
-            Also gives opportunity to the inheritors to modify the actual encryption process.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="dataStream">The data stream.</param>
-            <param name="cryptoStream">The crypto stream.</param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be read or the <paramref name="cryptoStream"/> cannot be written.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.AfterWriteEncrypted(System.IO.Stream,System.Security.Cryptography.CryptoStream)">
-            <summary>
-            Gives an opportunity to the inheritors to write more unencrypted information to the <paramref name="encryptedStream"/>, e.g.
-            add the signature or the hash to the <paramref name="encryptedStream"/>.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <param name="cryptoStream">The crypto stream.</param>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.BeforeReadDecrypted(System.IO.Stream)">
-            <summary>
-            Allows the inheritors to read some unencrypted information from the <paramref name="encryptedStream"/>, 
-            e.g. here the cipher reads and sets the initialization vector in the symmetric cipher.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
-        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DecryptIV(System.Byte[])">
             <summary>
             Decrypts the symmetric cipher's initialization vector.
@@ -5467,113 +5554,35 @@
             <param name="encryptedIV">The encrypted initialization vector.</param>
             <remarks>The method is called by the GoF template-methods.</remarks>
         </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.CreateDecryptingStream(System.IO.Stream)">
-            <summary>
-            Creates the decrypting stream and gives an opportunity to the inheritors to modify the creation of the crypto-stream, 
-            e.g. wrap or chain the crypto-stream created here with another crypto-stream that computes a hash of the unencrypted text.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <returns>The created CryptoStream.</returns>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DoDecrypt(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Performs the actual decryption of the crypto-text from the package and writes it into the <paramref name="dataStream"/>.
-            Also gives opportunity to the inheritors to modify the actual decryption process.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="cryptoStream">The crypto stream.</param>
-            <param name="dataStream">The data stream.</param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be written or the <paramref name="cryptoStream"/> cannot be read.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.AfterReadDecrypted(System.IO.Stream,System.Security.Cryptography.CryptoStream)">
-            <summary>
-            Gives an opportunity to the inheritors to read more unencrypted information from the <paramref name="encryptedStream"/> or perform other activities, e.g.
-            verify the signature or the hash of the <paramref name="encryptedStream"/>.
-            </summary>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <param name="cryptoStream">The crypto stream.</param>
-            <remarks>The method is called by the GoF template-methods.</remarks>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.BeforeWriteEncryptedAsync(System.IO.Stream)">
-            <summary>
-            Allows the inheritors to write asynchronously some unencrypted information to the <paramref name="encryptedStream"/>
-            before the encrypted text, e.g. here the cipher writes the initialization vector.
-            </summary>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <returns>
-            A <see cref="T:System.Threading.Tasks.Task"/> object representing the process.
-            </returns>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be written to.</exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DoEncryptAsync(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Performs asynchronously the actual encryption of the <paramref name="dataStream"/> and writing into the <paramref name="cryptoStream"/>.
-            Also gives opportunity to the inheritors to modify the actual encryption process.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="dataStream">The data stream.</param>
-            <param name="cryptoStream">The crypto stream.</param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be read or the <paramref name="cryptoStream"/> cannot be written.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.BeforeReadDecryptedAsync(System.IO.Stream)">
-            <summary>
-            Allows the inheritors to read asynchronously some unencrypted information from the <paramref name="encryptedStream"/>, 
-            e.g. here the cipher reads and sets the initialization vector in the symmetric cipher.
-            </summary>
-            <returns>A <see cref="T:System.Threading.Tasks.Task"/> object.</returns>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="encryptedStream">The encrypted stream.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="encryptedStream"/> is <see langword="null"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when <paramref name="encryptedStream"/> cannot be read.</exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.DoDecryptAsync(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Performs asynchronously the actual decryption of the crypto-text from the package and writes it into the <paramref name="dataStream"/>.
-            Also gives opportunity to the inheritors to modify the actual decryption process.
-            </summary>
-            <remarks>
-            The method is called by the GoF template-methods.
-            </remarks>
-            <param name="cryptoStream">The crypto stream.</param>
-            <param name="dataStream">The data stream.</param>
-            <exception cref="T:System.ArgumentNullException">
-            Thrown when either <paramref name="cryptoStream"/> or <paramref name="dataStream"/> are <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            Thrown when either <paramref name="dataStream"/> cannot be written or the <paramref name="cryptoStream"/> cannot be read.
-            </exception>
-        </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.CopyTo(vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase)">
             <summary>
             Copies certain characteristics of this instance to the <paramref name="cipher"/> parameter.
             The goal is to produce a cipher with the same encryption/decryption behavior but saving the key encryption and decryption ceremony and overhead if possible.
             </summary>
             <param name="cipher">The cipher that gets the identical symmetric algorithm object.</param>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.ReleaseCertificate">
+            <summary>
+            Releases the asymmetric keys. By doing so the instance looses its <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.IKeyManagement" /> behavior but the memory footprint becomes much lighter.
+            The asymmetric keys can be dropped only if the underlying symmetric algorithm instance is already initialized and
+            the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </exception>
+            See also <seealso cref="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.CloneLightCipher"/>.
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher.CloneLightCipher">
+            <summary>
+            Creates a new, lightweight <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher"/> instance and copies certain characteristics of this instance to it.
+            A duplicate can be created only if the underlying symmetric algorithm instance is already initialized and the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV"/> is <see langword="false"/>.
+            The duplicate can be used only for encryption and decryption of data (the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ICipher"/> and <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ICipherTasks"/> behavior). The <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.IKeyManagement"/> behavior is disabled and
+            calling any of its members would throw <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+            <returns>The duplicate.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            If the underlying symmetric algorithm instance is not initialized yet or the property <see cref="P:vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase.ShouldEncryptIV" /> is <see langword="false" />.
+            </exception>
         </member>
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.RsaSigner">
             <summary>

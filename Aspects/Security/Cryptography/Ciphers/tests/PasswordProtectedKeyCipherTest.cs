@@ -114,16 +114,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         }
         #endregion
 
-        SecureString CreateSecureString(string password)
-        {
-            var secure = new SecureString();
-
-            foreach (var c in password)
-                secure.AppendChar(c);
-
-            return secure;
-        }
-
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ConstructorStringPasswordEmptyTest()
@@ -141,7 +131,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
         [TestMethod]
         public void ConstructorSecureStringTest()
         {
-            var target = new PasswordProtectedKeyCipher(CreateSecureString("password"));
+            var target = new PasswordProtectedKeyCipher("password");
         }
 
         class InheritedPasswordProtectedKeyCipher : PasswordProtectedKeyCipher

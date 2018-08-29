@@ -9,20 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{76705A9C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{21BC22D8-F464-47B2-9596-1B4F6C5A74F8}"
-	ProjectSection(SolutionItems) = preProject
-		docs\Ciphers.cd = docs\Ciphers.cd
-		docs\Ciphers.docx = docs\Ciphers.docx
-		docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram = docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram
-		docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout = docs\EncryptedNewKey.EncryptMethodTemplate.sequencediagram.layout
-		docs\ICipher.cd = docs\ICipher.cd
-		docs\IHasher.cd = docs\IHasher.cd
-		docs\IXmlCipher.cd = docs\IXmlCipher.cd
-		docs\IXmlSigner.cd = docs\IXmlSigner.cd
-		docs\ProtectedKey.EncryptMethodTemplate.sequencediagram = docs\ProtectedKey.EncryptMethodTemplate.sequencediagram
-		docs\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout = docs\ProtectedKey.EncryptMethodTemplate.sequencediagram.layout
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers.Tests", "tests\vm.Aspects.Security.Cryptography.Ciphers.Tests.csproj", "{B55FEE15-775E-462D-B20F-B55BB552EA85}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{06E69EA1-3CE3-495D-B357-C967879E73F6}"

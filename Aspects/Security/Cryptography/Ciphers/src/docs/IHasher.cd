@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Hasher" Collapsed="true">
+    <Position X="4.75" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ACEAAgAAACIEgAQAAAAAABAAAAA4AAASABIAAAggAAA=</HashCode>
+      <FileName>Hasher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.PasswordHasher" Collapsed="true">
+    <Position X="2.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAACIEgAAAAAAAABAAAAIgAAASAAIAAAAgAQA=</HashCode>
+      <FileName>PasswordHasher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Security.Cryptography.AsymmetricAlgorithm" Collapsed="true">
+    <Position X="8.5" Y="3.5" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Orientation="Right" Position="0.185" Collapsed="true" />
+  </Class>
+  <Class Name="System.Security.Cryptography.HashAlgorithm" Collapsed="true">
+    <Position X="8.5" Y="2.5" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Orientation="Right" Position="0.164" Collapsed="true" />
+  </Class>
+  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.RsaSigner" Collapsed="true">
+    <Position X="4.75" Y="3.5" Width="1.5" />
+    <AssociationLine Name="Asymmetric" Type="System.Security.Cryptography.AsymmetricAlgorithm">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.829" Y="0.102" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAACIAAAAAAAAAAAAAAAAAAAAAAAoAACAgAAA=</HashCode>
+      <FileName>RsaSigner.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Asymmetric" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.IHasherExtensions" Collapsed="true">
+    <Position X="0.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAAAMAAAAQAAAAAACAAAAAAAAAIEIAAAAAAAA=</HashCode>
+      <FileName>IHasherExtensions.Bool-Ushort.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.HashAlgorithmFactory" Collapsed="true">
+    <Position X="8.5" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAABAAAAAAAAA=</HashCode>
+      <FileName>DefaultServices\HashAlgorithmFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IHashAlgorithmFactory" Collapsed="true">
+    <Position X="8.25" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAABAAAAAAAAA=</HashCode>
+      <FileName>IHashAlgorithmFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IHasher" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAgAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>IHasher.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
