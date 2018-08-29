@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
-using System.Xml;
 
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
@@ -14,10 +11,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     /// The symmetric key is protected with DPAPI into a file.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Nothing to dispose here.")]
-    public class ProtectedKeyXmlCipher : SymmetricKeyCipherBase, IXmlCipher
+    public class ProtectedKeyXmlCipher : EncryptedKeyXmlCipher
     {
-        readonly string _encryptionUri;
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="ProtectedKeyCipher"/> class.
@@ -60,7 +55,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
             string symmetricAlgorithmName)
             : base(symmetricAlgorithmName)
         {
-            _encryptionUri = SymmetricXmlNamespace();
         }
         #endregion
 
@@ -71,7 +65,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         /// The method is called by the GoF template-methods.
         /// </remarks>
         /// <returns>System.Byte[].</returns>
-        protected override byte[] EncryptSymmetricKey() => ProtectedData.Protect(Symmetric.Key, null, DataProtectionScope.LocalMachine);
+        protected override byte[] EncryptSymmetricKey()
+            => ProtectedData.Protect(Symmetric.Key, null, DataProtectionScope.LocalMachine);
 
         /// <summary>
         /// Decrypts the symmetric key.
@@ -91,177 +86,5 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             Symmetric.Key = ProtectedData.Unprotect(encryptedKey, null, DataProtectionScope.LocalMachine);
         }
-
-        #region IXmlCipher Members and implementation
-        /// <summary>
-        /// Gets or sets a value indicating whether to encrypt the content of the elements only or the entire elements, incl. the elements' names and attributes.
-        /// </summary>
-        public bool ContentOnly { get; set; }
-
-        /// <summary>
-        /// Encrypts in-place the elements of an XML document, which are specified with an XPath expression.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <param name="xmlPath">
-        /// The XML path expression which selects the elements that must be encrypted.
-        /// If the parameter is <see langword="null" />, empty or all whitespace characters, the root element of the document will be encrypted.
-        /// </param>
-        /// <param name="namespaceManager">
-        /// The namespace manager for the used XPath namespace prefixes. Can be <see langword="null"/> if no name-spaces are used.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="document"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="T:System.Xml.XmlPathException">
-        /// The specified XML path is invalid.
-        /// </exception>
-        /// <exception cref="CryptographicException">
-        /// The specified symmetric algorithm is not supported. Only the TripleDES, DES, AES-128, AES-192 and AES-256 algorithms are supported.
-        /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-        public virtual void Encrypt(
-            XmlDocument document,
-            string xmlPath = null,
-            XmlNamespaceManager namespaceManager = null)
-        {
-            if (document == null)
-                throw new ArgumentNullException(nameof(document));
-
-            InitializeSymmetricKey();
-
-            var encryptedXml = new EncryptedXml(document);
-
-            if (xmlPath.IsNullOrWhiteSpace())
-                EncryptElement(document.DocumentElement, encryptedXml);
-            else
-                foreach (XmlElement element in document.SelectNodes(xmlPath, namespaceManager).OfType<XmlElement>())
-                    EncryptElement(element, encryptedXml);
-        }
-
-        /// <summary>
-        /// Decrypts in-place all encrypted elements from an XML document.
-        /// </summary>
-        /// <param name="document">A document containing encrypted elements.</param>
-        /// <exception cref="ArgumentNullException">
-        /// The <paramref name="document"/> is <see langword="null"/>.
-        /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-        public virtual void Decrypt(
-            XmlDocument document)
-        {
-            if (document == null)
-                throw new ArgumentNullException(nameof(document));
-
-            InitializeSymmetricKey();
-
-            foreach (XmlElement element in document.SelectNodes(XmlConstants.XPathEncryptedElements, XmlConstants.GetEncryptNamespaceManager(document)))
-                DecryptElement(element);
-        }
-        #endregion
-
-        #region IXmlCipher implementation
-
-        /// <summary>
-        /// Encrypts the element.
-        /// </summary>
-        /// <param name="element">The element.</param>
-        /// <param name="encryptedXml">The encrypted XML.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// element
-        /// or
-        /// encryptedXml
-        /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We encrypt/decrypt XmlElement-s only.")]
-        protected virtual void EncryptElement(
-            XmlElement element,
-            EncryptedXml encryptedXml)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-            if (encryptedXml == null)
-                throw new ArgumentNullException(nameof(encryptedXml));
-
-            var encryptedElement = new EncryptedData
-            {
-                Type             = EncryptedXml.XmlEncElementUrl,
-                EncryptionMethod = new EncryptionMethod(_encryptionUri),
-            };
-            encryptedElement.CipherData.CipherValue = encryptedXml.EncryptData(element, Symmetric, ContentOnly);
-
-            var encryptedKey = CreateEncryptedKey();
-
-            if (encryptedKey != null)
-            {
-                encryptedElement.KeyInfo = new KeyInfo();
-                encryptedElement.KeyInfo.AddClause(
-                    new KeyInfoEncryptedKey(encryptedKey));
-            }
-
-            EncryptedXml.ReplaceElement(
-                            element,
-                            encryptedElement,
-                            ContentOnly);
-        }
-
-        /// <summary>
-        /// Decrypts the element.
-        /// </summary>
-        /// <param name="element">The element.</param>
-        /// <exception cref="System.ArgumentNullException">element</exception>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode", Justification = "We encrypt/decrypt XmlElement-s only.")]
-        protected virtual void DecryptElement(
-            XmlElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            var encryptedElement = new EncryptedData();
-
-            encryptedElement.LoadXml(element);
-
-            var encryptedXml = new EncryptedXml();
-
-            encryptedXml.ReplaceData(
-                            element,
-                            encryptedXml.DecryptData(encryptedElement, Symmetric));
-        }
-
-        /// <summary>
-        /// Creates the encrypted key.
-        /// </summary>
-        /// <returns>EncryptedKey.</returns>
-        protected virtual EncryptedKey CreateEncryptedKey()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Determines the symmetric XML encryption method from the symmetric algorithm.
-        /// </summary>
-        /// <returns>EncryptionMethod.</returns>
-        /// <exception cref="System.Security.Cryptography.CryptographicException">The specified symmetric algorithm is not supported for XML encryption.</exception>
-        protected string SymmetricXmlNamespace()
-        {
-
-            if (Symmetric is TripleDES)
-                return EncryptedXml.XmlEncTripleDESUrl;
-
-            if (Symmetric is DES)
-                return EncryptedXml.XmlEncDESUrl;
-
-            if (Symmetric is Aes || Symmetric is Rijndael)
-                switch (Symmetric.KeySize)
-                {
-                    case 128:
-                        return EncryptedXml.XmlEncAES128Url;
-                    case 192:
-                        return EncryptedXml.XmlEncAES192Url;
-                    case 256:
-                        return EncryptedXml.XmlEncAES256Url;
-                }
-
-            throw new CryptographicException("The specified symmetric algorithm is not supported for XML encryption.");
-        }
-        #endregion
     }
 }

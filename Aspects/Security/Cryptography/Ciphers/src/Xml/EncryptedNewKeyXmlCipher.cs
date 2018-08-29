@@ -30,7 +30,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         public EncryptedNewKeyXmlCipher(
             X509Certificate2 certificate = null,
             string symmetricAlgorithmName = null)
-            : base(symmetricAlgorithmName, certificate)
+            : base(certificate, symmetricAlgorithmName)
         {
         }
         #endregion

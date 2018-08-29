@@ -75,27 +75,19 @@
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher" Collapsed="true">
-    <Position X="16" Y="2.75" Width="2.75" />
-    <InheritanceLine Type="vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase" ManuallyRouted="true">
-      <Path>
-        <Point X="10.875" Y="2.062" />
-        <Point X="10.875" Y="2.35" />
-        <Point X="17.375" Y="2.35" />
-        <Point X="17.375" Y="2.75" />
-      </Path>
-    </InheritanceLine>
+    <Position X="16" Y="3" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>wQCAAAAACAAAAAAYAAAAAABgAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>wQAAAAAACAAAAAAYAAAAAABgAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\ProtectedKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher" Collapsed="true">
     <Position X="16" Y="4" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>QEAAAAAAAQAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>QECAAAAAAQAAAAAAAAAAAARAAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>Xml\EncryptedKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeyXmlCipher" Collapsed="true">
     <Position X="16" Y="5" Width="2.75" />

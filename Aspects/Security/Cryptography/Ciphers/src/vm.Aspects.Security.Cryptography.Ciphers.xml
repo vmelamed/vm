@@ -932,6 +932,9 @@
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher">
             <summary>
             The <c>EncryptedKeyCipher</c> is a symmetric cipher. The symmetric key is encrypted with an asymmetric algorithm and so saved in a file.
+            This class also defines a set of crypto-operations (virtual protected methods) 
+            for the descending classes which implement the various steps of the methods (GoF template pattern) 
+            that compose and decompose the crypto-packages.
             </summary>
             <remarks>
             <para>
@@ -5140,7 +5143,7 @@
             </para><para>
             Please, note that the derivation process is intentionally slow in order to thwart brute force, dictionary attacks.
             The key is initialized only once from the password and the randomly generated or read from the first document salt bytes.
-            After the initialization, for security reasons the password is disposed and the cipher object keeps using the key until it is
+            After the initialization, for security reasons the password is discarded and the cipher object keeps using the key until it is
             disposed of or garbage-collected.
             </para><para>
             Crypto package contents:
@@ -5429,9 +5432,6 @@
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher">
             <summary>
             ProtectedKeyCipher is a symmetric cipher. The symmetric key is encrypted using DPAPI and so stored in a file.
-            This class also defines a set of crypto-operations (virtual protected methods) 
-            for the descending classes which implement the various steps of the methods (GoF template pattern) 
-            that compose and decompose the crypto-packages.
             </summary>
             <remarks>
             <para>
@@ -6144,7 +6144,7 @@
             Thrown when the <paramref name="certificate" /> is <see langword="null" />.
             </exception>
         </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.#ctor(System.String,System.Security.Cryptography.X509Certificates.X509Certificate2)">
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher" /> class for initialization by the constructors of the inheriting classes.
             </summary>
@@ -6152,9 +6152,13 @@
             The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.Algorithms.Symmetric" /> or
             <see langword="null" />, empty or whitespace characters only - these will default to <see cref="F:vm.Aspects.Security.Cryptography.Ciphers.Algorithms.Symmetric.Default" />.
             </param>
-            <param name="certificate">
-            The certificate containing the public and optionally the private key for encryption and decryption of the symmetric key.
-            </param>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.SymmetricXmlNamespace">
+            <summary>
+            Determines the symmetric XML encryption method from the symmetric algorithm.
+            </summary>
+            <returns>EncryptionMethod.</returns>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">The specified symmetric algorithm is not supported for XML encryption.</exception>
         </member>
         <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.InitializeAsymmetricKeys(System.Security.Cryptography.X509Certificates.X509Certificate2)">
             <summary>
@@ -6182,6 +6186,67 @@
             The method is called by the GoF template-methods.
             </remarks>
             <param name="encryptedKey">The encrypted key.</param>
+        </member>
+        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.ContentOnly">
+            <summary>
+            Gets or sets a value indicating whether to encrypt the content of the elements only or the entire elements, incl. the elements' names and attributes.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.Encrypt(System.Xml.XmlDocument,System.String,System.Xml.XmlNamespaceManager)">
+            <summary>
+            Encrypts in-place the elements of an XML document, which are specified with an XPath expression.
+            </summary>
+            <param name="document">The document.</param>
+            <param name="xmlPath">
+            The XML path expression which selects the elements that must be encrypted.
+            If the parameter is <see langword="null" />, empty or all whitespace characters, the root element of the document will be encrypted.
+            </param>
+            <param name="namespaceManager">
+            The namespace manager for the used XPath namespace prefixes. Can be <see langword="null"/> if no name-spaces are used.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="document"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.Xml.XmlPathException">
+            The specified XML path is invalid.
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            The specified symmetric algorithm is not supported. Only the TripleDES, DES, AES-128, AES-192 and AES-256 algorithms are supported.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.Decrypt(System.Xml.XmlDocument)">
+            <summary>
+            Decrypts in-place all encrypted elements from an XML document.
+            </summary>
+            <param name="document">A document containing encrypted elements.</param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="document"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.EncryptElement(System.Xml.XmlElement,System.Security.Cryptography.Xml.EncryptedXml)">
+            <summary>
+            Encrypts the element.
+            </summary>
+            <param name="element">The element.</param>
+            <param name="encryptedXml">The encrypted XML.</param>
+            <exception cref="T:System.ArgumentNullException">
+            element
+            or
+            encryptedXml
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.DecryptElement(System.Xml.XmlElement)">
+            <summary>
+            Decrypts the element.
+            </summary>
+            <param name="element">The element.</param>
+            <exception cref="T:System.ArgumentNullException">element</exception>
+        </member>
+        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher.CreateEncryptedKey">
+            <summary>
+            Creates the encrypted key.
+            </summary>
+            <returns>EncryptedKey.</returns>
         </member>
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeySignedXmlCipher">
             <summary>
@@ -6554,74 +6619,6 @@
             The method is called by the GoF template-methods.
             </remarks>
             <param name="encryptedKey">The encrypted key.</param>
-        </member>
-        <member name="P:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.ContentOnly">
-            <summary>
-            Gets or sets a value indicating whether to encrypt the content of the elements only or the entire elements, incl. the elements' names and attributes.
-            </summary>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.Encrypt(System.Xml.XmlDocument,System.String,System.Xml.XmlNamespaceManager)">
-            <summary>
-            Encrypts in-place the elements of an XML document, which are specified with an XPath expression.
-            </summary>
-            <param name="document">The document.</param>
-            <param name="xmlPath">
-            The XML path expression which selects the elements that must be encrypted.
-            If the parameter is <see langword="null" />, empty or all whitespace characters, the root element of the document will be encrypted.
-            </param>
-            <param name="namespaceManager">
-            The namespace manager for the used XPath namespace prefixes. Can be <see langword="null"/> if no name-spaces are used.
-            </param>
-            <exception cref="T:System.ArgumentNullException">
-            The <paramref name="document"/> is <see langword="null"/>.
-            </exception>
-            <exception cref="T:System.Xml.XmlPathException">
-            The specified XML path is invalid.
-            </exception>
-            <exception cref="T:System.Security.Cryptography.CryptographicException">
-            The specified symmetric algorithm is not supported. Only the TripleDES, DES, AES-128, AES-192 and AES-256 algorithms are supported.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.Decrypt(System.Xml.XmlDocument)">
-            <summary>
-            Decrypts in-place all encrypted elements from an XML document.
-            </summary>
-            <param name="document">A document containing encrypted elements.</param>
-            <exception cref="T:System.ArgumentNullException">
-            The <paramref name="document"/> is <see langword="null"/>.
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.EncryptElement(System.Xml.XmlElement,System.Security.Cryptography.Xml.EncryptedXml)">
-            <summary>
-            Encrypts the element.
-            </summary>
-            <param name="element">The element.</param>
-            <param name="encryptedXml">The encrypted XML.</param>
-            <exception cref="T:System.ArgumentNullException">
-            element
-            or
-            encryptedXml
-            </exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.DecryptElement(System.Xml.XmlElement)">
-            <summary>
-            Decrypts the element.
-            </summary>
-            <param name="element">The element.</param>
-            <exception cref="T:System.ArgumentNullException">element</exception>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.CreateEncryptedKey">
-            <summary>
-            Creates the encrypted key.
-            </summary>
-            <returns>EncryptedKey.</returns>
-        </member>
-        <member name="M:vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher.SymmetricXmlNamespace">
-            <summary>
-            Determines the symmetric XML encryption method from the symmetric algorithm.
-            </summary>
-            <returns>EncryptionMethod.</returns>
-            <exception cref="T:System.Security.Cryptography.CryptographicException">The specified symmetric algorithm is not supported for XML encryption.</exception>
         </member>
         <member name="T:vm.Aspects.Security.Cryptography.Ciphers.Xml.RsaXmlSigner">
             <summary>

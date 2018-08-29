@@ -17,7 +17,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </para><para>
     /// Please, note that the derivation process is intentionally slow in order to thwart brute force, dictionary attacks.
     /// The key is initialized only once from the password and the randomly generated or read from the first document salt bytes.
-    /// After the initialization, for security reasons the password is disposed and the cipher object keeps using the key until it is
+    /// After the initialization, for security reasons the password is discarded and the cipher object keeps using the key until it is
     /// disposed of or garbage-collected.
     /// </para><para>
     /// Crypto package contents:

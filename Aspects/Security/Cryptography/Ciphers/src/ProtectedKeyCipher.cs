@@ -8,9 +8,6 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
 {
     /// <summary>
     /// ProtectedKeyCipher is a symmetric cipher. The symmetric key is encrypted using DPAPI and so stored in a file.
-    /// This class also defines a set of crypto-operations (virtual protected methods) 
-    /// for the descending classes which implement the various steps of the methods (GoF template pattern) 
-    /// that compose and decompose the crypto-packages.
     /// </summary>
     /// <remarks>
     /// <para>
