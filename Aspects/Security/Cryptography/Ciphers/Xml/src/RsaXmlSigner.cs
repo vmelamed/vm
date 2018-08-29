@@ -9,7 +9,7 @@ using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml;
 
-using vm.Aspects.Security.Cryptography.Ciphers.Properties;
+using vm.Aspects.Security.Cryptography.Ciphers.Xml.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -381,7 +381,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
                         }
 
                         // if it doesn't have unique id, generate a new one and add it to the element, so that we can refer to it from the reference object
-                        if (xmlId.IsNullOrWhiteSpace())
+                        if (string.IsNullOrWhiteSpace(xmlId))
                         {
                             xmlId = GetNewId(ref id, xmlIds);
 

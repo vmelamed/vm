@@ -167,6 +167,10 @@
     <Content Include="Test\Yes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Protected\src\vm.Aspects.Security.Cryptography.Ciphers.Protected.csproj">
+      <Project>{90b49e0b-3af7-497e-9ef8-17804f2d94f0}</Project>
+      <Name>vm.Aspects.Security.Cryptography.Ciphers.Protected</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\vm.Aspects.Security.Cryptography.Ciphers.csproj">
       <Project>{1d9384d5-cc9e-4c8d-acbb-31fb25056600}</Project>
       <Name>vm.Aspects.Security.Cryptography.Ciphers</Name>

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-using vm.Aspects.Security.Cryptography.Ciphers.Properties;
+using vm.Aspects.Security.Cryptography.Ciphers.Xml.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {

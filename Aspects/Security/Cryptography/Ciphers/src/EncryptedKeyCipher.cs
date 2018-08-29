@@ -34,8 +34,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// If the key file does not exist a new key is generated, encrypted and saved in a file in the location determined by the <see cref="IKeyLocationStrategy"/> object.
     /// </para><para>
     /// Note that this cipher uses one symmetric key for all packages.
-    /// It performs faster than the <see cref="ProtectedKeyCipher"/>.
-    /// Which cipher to use is a matter of compromise. <see cref="ProtectedKeyCipher"/> 
+    /// It performs faster than the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher"/>.
+    /// Which cipher to use is a matter of compromise. <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher"/> 
     /// encrypts and stores or retrieves and decrypts a single symmetric key once per the life time of the cipher.
     /// However the file containing the encrypted symmetric key needs to be managed separately and if compromised all encrypted documents will be compromised too.
     /// </para><para>

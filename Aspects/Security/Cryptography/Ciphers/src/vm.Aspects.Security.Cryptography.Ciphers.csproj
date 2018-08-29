@@ -76,11 +76,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
-      <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Update="Properties\Resources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>

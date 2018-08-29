@@ -28,8 +28,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
     /// </para><para>
     /// The encrypted symmetric key is stored inside the crypto-package.
     /// </para><para>
-    /// Note that this cipher generates a new symmetric key for each package and performs slower than the <see cref="ProtectedKeyCipher"/>.
-    /// Which cipher to use is a matter of compromise. <see cref="ProtectedKeyCipher"/> 
+    /// Note that this cipher generates a new symmetric key for each package and performs slower than the <see cref="EncryptedKeyCipher"/>.
+    /// Which cipher to use is a matter of compromise. <see cref="EncryptedKeyCipher"/> 
     /// encrypts and stores or retrieves and decrypts a single symmetric key once per the life time of the cipher and uses it for each protected document.
     /// However the file containing the encrypted symmetric key needs to be managed separately and if compromised - all encrypted documents will be compromised too.
     /// </para><para>

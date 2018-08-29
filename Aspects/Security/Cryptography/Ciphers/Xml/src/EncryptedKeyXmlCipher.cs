@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 
-using vm.Aspects.Security.Cryptography.Ciphers.Properties;
+using vm.Aspects.Security.Cryptography.Ciphers.Xml.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -204,7 +204,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 
             var encryptedXml = new EncryptedXml(document);
 
-            if (xmlPath.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(xmlPath))
                 EncryptElement(document.DocumentElement, encryptedXml);
             else
                 foreach (XmlElement element in document.SelectNodes(xmlPath, namespaceManager).OfType<XmlElement>())
