@@ -6,13 +6,13 @@
         <VersionPrefix>2.1.0</VersionPrefix>
         <VersionSuffix></VersionSuffix>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
-        <AssemblyDescription>A set of cipher classes producing cipher-packages and encrypted and/or signed XML documents and elements.</AssemblyDescription>
         <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
+        <AssemblyDescription>A set of cipher classes producing cipher-packages.</AssemblyDescription>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <LangVersion>7.1</LangVersion>
 
         <Authors>Val Melamed</Authors>
@@ -28,13 +28,15 @@
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <Description>The Ciphers package helps in addressing a common requirement for achieving confidentiality, integrity and
-            source authentication of data-at-rest, -in-motion, and -in-use, e.g. PII (Personally Identifiable Information) fields.
+        <PackageTags>aspects cipher cypher encryption decryption hash signature</PackageTags>
+        <Description>
+            The Ciphers package helps in addressing a common application requirements for achieving confidentiality, integrity and
+            source authentication of data-at-rest, data-in-motion, and data-in-use, e.g. for PII (Personally Identifiable Information) fields.
             Features:
             * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
             * It is very easy to integrate with a Dependency Injection container like Unity, i.e. the behaviors are abstracted with a handful of simple interfaces.
             * It is very easy to use and configure the objects. No configuration parameters default to sensible defaults.
-            * The package does not have dependencies except the .NET framework BCL.
+            * The package does not have dependencies except on the .NET Standard interfaces.
             * Built and tested with .NET Standard 2.0.
         </Description>
         <PackageReleaseNotes>
@@ -46,18 +48,17 @@
             Note: this package inherits from Ciphers but the name is changed consistency's sake.
             vm.Aspects.Security.Cryptography.Cyphers is dependent on .NET Standard 2.0.
         </PackageReleaseNotes>
-        <PackageTags>aspects cipher cypher encryption decryption hash signature xml</PackageTags>
 
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
-        <OutputPath></OutputPath>
+        <OutputPath>bin\Debug</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
-        <OutputPath></OutputPath>
+        <OutputPath>bin\Release</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>

@@ -10,7 +10,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
     [TestClass]
     public class ProtectedKeyXmlCipherTest : GenericXmlCipherTest<ProtectedKeyXmlCipher>
     {
-        const string keyFileName = "protectedXml.key";
+        const string _keyFileName = "protectedXml.key";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -24,12 +24,12 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml.Tests
             var keyManagement = GetCipherImpl() as IKeyManagement;
 
             if (keyManagement.KeyLocation != null &&
-                keyManagement.KeyLocation.EndsWith(keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
+                keyManagement.KeyLocation.EndsWith(_keyFileName, StringComparison.InvariantCultureIgnoreCase) &&
                 File.Exists(keyManagement.KeyLocation))
                 File.Delete(keyManagement.KeyLocation);
         }
 
-        static IXmlCipher GetCipherImpl() => new ProtectedKeyXmlCipher(null, keyFileName);
+        static IXmlCipher GetCipherImpl() => new ProtectedKeyXmlCipher(null, _keyFileName);
 
         public override IXmlCipher GetCipher() => GetCipherImpl();
         class InheritedXmlCipherTest : ProtectedKeyXmlCipher

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-using vm.Aspects.Security.Cryptography.Ciphers.Xml.Properties;
+using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
 {
@@ -15,7 +15,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProtectedKeyCipher"/> class.
+        /// Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.ProtectedKeyCipher"/> class.
         /// </summary>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
@@ -45,7 +45,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Xml
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProtectedKeyCipher"/> class for initialization by the constructors of the inheriting classes.
+        /// Initializes a new instance of the <see cref="T:vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.ProtectedKeyCipher"/> class for initialization by the constructors of the inheriting classes.
         /// </summary>
         /// <param name="symmetricAlgorithmName">
         /// The name of the symmetric algorithm implementation. You can use any of the constants from <see cref="Algorithms.Symmetric"/> or
