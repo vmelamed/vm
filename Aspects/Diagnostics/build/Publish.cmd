@@ -12,6 +12,7 @@ if .%1. EQU .. (
 
 rem ------- Build and Package -------
 dotnet clean %Configuration%
+dotnet build %Configuration%
 dotnet pack --include-symbols --include-source %Configuration% %VersionSuffix%
 if errorlevel 1 goto exit
 

@@ -11,7 +11,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>C:\Projects\Git\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
         <CodeAnalysisRuleSet>..\..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <LangVersion>7.1</LangVersion>
 
@@ -40,12 +40,16 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <OutputPath>bin\Debug</OutputPath>
+      <OutputPath></OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <OutputPath>bin\Release</OutputPath>
+      <OutputPath></OutputPath>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />

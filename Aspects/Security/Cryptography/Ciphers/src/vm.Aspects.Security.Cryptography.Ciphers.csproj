@@ -11,7 +11,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>C:\Projects\Git\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
         <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <LangVersion>7.1</LangVersion>
 
@@ -53,12 +53,12 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
-        <OutputPath>bin\Debug</OutputPath>
+        <OutputPath></OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
-        <OutputPath>bin\Release</OutputPath>
+        <OutputPath></OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
