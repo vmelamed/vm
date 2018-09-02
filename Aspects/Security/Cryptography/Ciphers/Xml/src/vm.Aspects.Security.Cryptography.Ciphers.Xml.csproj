@@ -58,12 +58,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
         <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\vm.Aspects.Security.Cryptography.Ciphers.csproj" />
+        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>

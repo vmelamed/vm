@@ -21,7 +21,7 @@
         <Copyright>Copyright © vm 2013-2018</Copyright>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-        <PackageId>vm.Aspects.Security.Cryptography.Ciphers.Protected</PackageId>
+        <PackageId>vm.Aspects.Security.Cryptography.Ciphers.ProtectedData</PackageId>
         <Version>2.1.0</Version>
         <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers/Protected</PackageProjectUrl>
@@ -56,11 +56,8 @@
 
     <ItemGroup>
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\vm.Aspects.Security.Cryptography.Ciphers.csproj" />
-        <ProjectReference Include="..\..\Xml\src\vm.Aspects.Security.Cryptography.Ciphers.Xml.csproj" />
+        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.0" />
+        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers.Xml" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
