@@ -69,7 +69,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Thrown when the <paramref name="certificate"/> is <see langword="null"/>.
         /// </exception>
         public EncryptedNewKeyCipher(
-            X509Certificate2 certificate = null,
+            X509Certificate2 certificate,
             string symmetricAlgorithmName = Algorithms.Symmetric.Default,
             ISymmetricAlgorithmFactory symmetricAlgorithmFactory = null)
             : base(certificate, symmetricAlgorithmName, symmetricAlgorithmFactory)

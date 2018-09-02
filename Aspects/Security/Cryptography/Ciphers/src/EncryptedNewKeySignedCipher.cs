@@ -93,8 +93,8 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Note that for XML signing the cipher supports only SHA1 and SHA256.
         /// </remarks>
         public EncryptedNewKeySignedCipher(
-            X509Certificate2 exchangeCertificate = null,
-            X509Certificate2 signCertificate = null,
+            X509Certificate2 exchangeCertificate,
+            X509Certificate2 signCertificate,
             string hashAlgorithmName = Algorithms.Hash.Default,
             string symmetricAlgorithmName = Algorithms.Symmetric.Default,
             IHashAlgorithmFactory hashAlgorithmFactory = null,

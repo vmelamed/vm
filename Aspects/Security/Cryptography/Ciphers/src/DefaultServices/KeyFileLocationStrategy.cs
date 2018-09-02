@@ -13,7 +13,7 @@
         /// <summary>
         /// The default key location suffix - .key
         /// </summary>
-        public const string DefaultKeyLocation = ".key";
+        public const string DefaultKeyLocation = "Key.key";
 
         #region IKeyLocationStrategy Members
 

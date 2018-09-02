@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+
 using vm.Aspects.Security.Cryptography.Ciphers.Properties;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers
@@ -525,7 +526,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// <param name="cipher">The cipher.</param>
         /// <param name="encrypted">The encrypted.</param>
         /// <returns>T.</returns>
-        public static Nullable<T> DecryptNullable<T>(
+        public static T? DecryptNullable<T>(
             this ICipher cipher,
             byte[] encrypted) where T : struct
         {
@@ -550,58 +551,59 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Dictionary of types and the corresponding methods that can decrypt those types.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-        public readonly static IReadOnlyDictionary<Type, Func<ICipher, byte[], object>> DecryptTypedData = new ReadOnlyDictionary<Type, Func<ICipher, byte[], object>>( new Dictionary<Type, Func<ICipher, byte[], object>>
-        {
-            #region DecryptTypedData
-            [typeof(bool)]       = (c,d) => c.DecryptBoolean(d),
-            [typeof(bool[])]     = (c,d) => c.DecryptBooleanArray(d),
-            [typeof(char)]       = (c,d) => c.DecryptChar(d),
-            [typeof(char[])]     = (c,d) => c.DecryptCharArray(d),
-            [typeof(sbyte)]      = (c,d) => c.DecryptSByte(d),
-            [typeof(sbyte[])]    = (c,d) => c.DecryptSByteArray(d),
-            [typeof(byte)]       = (c,d) => c.DecryptByte(d),
-            [typeof(byte[])]     = (c,d) => c.Decrypt(d),
-            [typeof(short)]      = (c,d) => c.DecryptInt16(d),
-            [typeof(short[])]    = (c,d) => c.DecryptInt16Array(d),
-            [typeof(ushort)]     = (c,d) => c.DecryptUInt16(d),
-            [typeof(ushort[])]   = (c,d) => c.DecryptUInt16Array(d),
-            [typeof(int)]        = (c,d) => c.DecryptInt32(d),
-            [typeof(int[])]      = (c,d) => c.DecryptInt32Array(d),
-            [typeof(uint)]       = (c,d) => c.DecryptUInt32(d),
-            [typeof(uint[])]     = (c,d) => c.DecryptUInt32Array(d),
-            [typeof(long)]       = (c,d) => c.DecryptInt64(d),
-            [typeof(long[])]     = (c,d) => c.DecryptInt64Array(d),
-            [typeof(ulong)]      = (c,d) => c.DecryptUInt64(d),
-            [typeof(ulong[])]    = (c,d) => c.DecryptUInt64Array(d),
-            [typeof(float)]      = (c,d) => c.DecryptSingle(d),
-            [typeof(float[])]    = (c,d) => c.DecryptSingleArray(d),
-            [typeof(double)]     = (c,d) => c.DecryptDouble(d),
-            [typeof(double[])]   = (c,d) => c.DecryptDoubleArray(d),
-            [typeof(decimal)]    = (c,d) => c.DecryptDecimal(d),
-            [typeof(decimal[])]  = (c,d) => c.DecryptDecimalArray(d),
-            [typeof(DateTime)]   = (c,d) => c.DecryptDateTime(d),
-            [typeof(DateTime[])] = (c,d) => c.DecryptDateTimeArray(d),
-            [typeof(Guid)]       = (c,d) => c.DecryptGuid(d),
-            [typeof(Guid[])]     = (c,d) => c.DecryptGuidArray(d),
-            [typeof(string)]     = (c,d) => c.DecryptString(d),
+        public readonly static IReadOnlyDictionary<Type, Func<ICipher, byte[], object>> DecryptTypedData
+            = new ReadOnlyDictionary<Type, Func<ICipher, byte[], object>>( new Dictionary<Type, Func<ICipher, byte[], object>>
+            {
+                #region DecryptTypedData
+                [typeof(bool)]       = (c,d) => c.DecryptBoolean(d),
+                [typeof(bool[])]     = (c,d) => c.DecryptBooleanArray(d),
+                [typeof(char)]       = (c,d) => c.DecryptChar(d),
+                [typeof(char[])]     = (c,d) => c.DecryptCharArray(d),
+                [typeof(sbyte)]      = (c,d) => c.DecryptSByte(d),
+                [typeof(sbyte[])]    = (c,d) => c.DecryptSByteArray(d),
+                [typeof(byte)]       = (c,d) => c.DecryptByte(d),
+                [typeof(byte[])]     = (c,d) => c.Decrypt(d),
+                [typeof(short)]      = (c,d) => c.DecryptInt16(d),
+                [typeof(short[])]    = (c,d) => c.DecryptInt16Array(d),
+                [typeof(ushort)]     = (c,d) => c.DecryptUInt16(d),
+                [typeof(ushort[])]   = (c,d) => c.DecryptUInt16Array(d),
+                [typeof(int)]        = (c,d) => c.DecryptInt32(d),
+                [typeof(int[])]      = (c,d) => c.DecryptInt32Array(d),
+                [typeof(uint)]       = (c,d) => c.DecryptUInt32(d),
+                [typeof(uint[])]     = (c,d) => c.DecryptUInt32Array(d),
+                [typeof(long)]       = (c,d) => c.DecryptInt64(d),
+                [typeof(long[])]     = (c,d) => c.DecryptInt64Array(d),
+                [typeof(ulong)]      = (c,d) => c.DecryptUInt64(d),
+                [typeof(ulong[])]    = (c,d) => c.DecryptUInt64Array(d),
+                [typeof(float)]      = (c,d) => c.DecryptSingle(d),
+                [typeof(float[])]    = (c,d) => c.DecryptSingleArray(d),
+                [typeof(double)]     = (c,d) => c.DecryptDouble(d),
+                [typeof(double[])]   = (c,d) => c.DecryptDoubleArray(d),
+                [typeof(decimal)]    = (c,d) => c.DecryptDecimal(d),
+                [typeof(decimal[])]  = (c,d) => c.DecryptDecimalArray(d),
+                [typeof(DateTime)]   = (c,d) => c.DecryptDateTime(d),
+                [typeof(DateTime[])] = (c,d) => c.DecryptDateTimeArray(d),
+                [typeof(Guid)]       = (c,d) => c.DecryptGuid(d),
+                [typeof(Guid[])]     = (c,d) => c.DecryptGuidArray(d),
+                [typeof(string)]     = (c,d) => c.DecryptString(d),
 
-            [typeof(bool?)]      = (c,d) => c.DecryptNullable<bool>(d),
-            [typeof(char?)]      = (c,d) => c.DecryptNullable<char>(d),
-            [typeof(sbyte?)]     = (c,d) => c.DecryptNullable<sbyte>(d),
-            [typeof(byte?)]      = (c,d) => c.DecryptNullable<byte>(d),
-            [typeof(short?)]     = (c,d) => c.DecryptNullable<short>(d),
-            [typeof(ushort?)]    = (c,d) => c.DecryptNullable<ushort>(d),
-            [typeof(int?)]       = (c,d) => c.DecryptNullable<int>(d),
-            [typeof(uint?)]      = (c,d) => c.DecryptNullable<uint>(d),
-            [typeof(long?)]      = (c,d) => c.DecryptNullable<long>(d),
-            [typeof(ulong?)]     = (c,d) => c.DecryptNullable<ulong>(d),
-            [typeof(float?)]     = (c,d) => c.DecryptNullable<float>(d),
-            [typeof(double?)]    = (c,d) => c.DecryptNullable<double>(d),
-            [typeof(decimal?)]   = (c,d) => c.DecryptNullable<decimal>(d),
-            [typeof(DateTime?)]  = (c,d) => c.DecryptNullable<DateTime>(d),
-            [typeof(Guid?)]      = (c,d) => c.DecryptNullable<Guid>(d), 
-#endregion
-        });
+                [typeof(bool?)]      = (c,d) => c.DecryptNullable<bool>(d),
+                [typeof(char?)]      = (c,d) => c.DecryptNullable<char>(d),
+                [typeof(sbyte?)]     = (c,d) => c.DecryptNullable<sbyte>(d),
+                [typeof(byte?)]      = (c,d) => c.DecryptNullable<byte>(d),
+                [typeof(short?)]     = (c,d) => c.DecryptNullable<short>(d),
+                [typeof(ushort?)]    = (c,d) => c.DecryptNullable<ushort>(d),
+                [typeof(int?)]       = (c,d) => c.DecryptNullable<int>(d),
+                [typeof(uint?)]      = (c,d) => c.DecryptNullable<uint>(d),
+                [typeof(long?)]      = (c,d) => c.DecryptNullable<long>(d),
+                [typeof(ulong?)]     = (c,d) => c.DecryptNullable<ulong>(d),
+                [typeof(float?)]     = (c,d) => c.DecryptNullable<float>(d),
+                [typeof(double?)]    = (c,d) => c.DecryptNullable<double>(d),
+                [typeof(decimal?)]   = (c,d) => c.DecryptNullable<decimal>(d),
+                [typeof(DateTime?)]  = (c,d) => c.DecryptNullable<DateTime>(d),
+                [typeof(Guid?)]      = (c,d) => c.DecryptNullable<Guid>(d),
+                #endregion
+            });
 
         /// <summary>
         /// Decrypts the <paramref name="encrypted" /> data with the <paramref name="cipher" />.

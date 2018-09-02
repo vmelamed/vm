@@ -29,9 +29,11 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags>aspects cipher cypher encryption decryption hash dpapi</PackageTags>
         <Description>
-            Extends vm.Aspects.Security.Cryptography.Ciphers with classes dependant on the System.Security.Cryptography.Xml.
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
+            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependant on the System.Security.Cryptography.Xml.
             The library can be expected to work on Windows OS only until Microsoft defines and implements the System.Security.Cryptography.Xml in .NET Standard.
-            * The package does not have dependencies except the vm.Aspects.Security.Cryptography.Ciphers, .NET Standard and System.Security.Cryptography.Xml.
+            * The package depends on .NET Standard, System.Security.Cryptography.Xml, vm.Aspects.Security.Cryptography.Ciphers.
         </Description>
         <PackageReleaseNotes>
             * Built and tested with vm.Aspects.Security.Cryptography.Ciphers 2.1.0, .NET Standard 2.0 and System.Security.Cryptography.Xml 4.5.

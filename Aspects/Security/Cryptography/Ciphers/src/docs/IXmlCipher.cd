@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedKeyXmlCipher" Collapsed="true">
-    <Position X="6" Y="4.5" Width="2.75" />
+    <Position X="6" Y="4.5" Width="4.75" />
     <TypeIdentifier>
       <HashCode>QEAAAAAAAQAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeyXmlCipher" Collapsed="true">
-    <Position X="6" Y="5.5" Width="2.75" />
+    <Position X="6" Y="5.5" Width="5.5" />
     <TypeIdentifier>
       <HashCode>AQQAAAgACAAAAAgQAAAEAABAAAAAASAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedNewKeyXmlCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.EncryptedNewKeySignedXmlCipher" Collapsed="true">
-    <Position X="6" Y="6.5" Width="2.75" />
+    <Position X="6" Y="6.5" Width="5.5" />
     <TypeIdentifier>
       <HashCode>AQAAAAAAACAAAAAQAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\EncryptedNewKeySignedXmlCipher.cs</FileName>
@@ -25,7 +25,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.ProtectedKeyXmlCipher" Collapsed="true">
-    <Position X="6" Y="3.5" Width="2.75" />
+    <Position X="6" Y="3.5" Width="4.75" />
     <TypeIdentifier>
       <HashCode>wQCAAAAACAAAAAAYAAAAAABgAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>Xml\ProtectedKeyXmlCipher.cs</FileName>
@@ -33,7 +33,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.RsaXmlSigner" Collapsed="true">
-    <Position X="10.25" Y="6.5" Width="1.5" />
+    <Position X="6" Y="7.5" Width="4.25" />
     <TypeIdentifier>
       <HashCode>AgAAAAAQACAEQFgCAAEIEBQAAAgAAABBAhgiAAAAEAA=</HashCode>
       <FileName>Xml\RsaXmlSigner.cs</FileName>
@@ -104,7 +104,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.Xml.IXmlCipher" Collapsed="true">
-    <Position X="0.5" Y="3.25" Width="1.5" />
+    <Position X="0.75" Y="3.5" Width="4" />
     <TypeIdentifier>
       <HashCode>gQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Xml\IXmlCipher.cs</FileName>

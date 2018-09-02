@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
@@ -53,29 +54,18 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.Tests
             string subject,
             bool ignoreTimeValid = false)
         {
-            var store = new X509Store(storeName, StoreLocation.CurrentUser);
-
-            store.Open(OpenFlags.ReadOnly);
-            try
+            using (var store = new X509Store(storeName, StoreLocation.CurrentUser))
             {
+                store.Open(OpenFlags.ReadOnly);
+
                 var certs = store.Certificates
                                  .Find(X509FindType.FindBySubjectName, subject, false);
 
                 if (!ignoreTimeValid)
                     certs = certs.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
 
-                var cert = certs.Count > 0 ? certs[0] : null;
-
-                if (cert == null)
-                    throw new InvalidOperationException("Could not find the certificate. Did you run the certificate creation scripts?");
-
-                //Contract.Assume(cert!=null);
-
-                return cert;
-            }
-            finally
-            {
-                store.Close();
+                return certs.OfType<X509Certificate2>().FirstOrDefault()
+                            ?? throw new InvalidOperationException("Could not find the certificate. Did you run the certificate creation scripts?");
             }
         }
     }

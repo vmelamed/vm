@@ -44,6 +44,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EF2ED22B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Security.Cryptography.Ciphers.ProtectedData", "ProtectedData\src\vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.csproj", "{E738AA19-91CB-498A-B09F-04796D6D1F4B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{6D6BF48D-96D4-4CBA-899D-29A83110989E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Ciphers.md = docs\Ciphers.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

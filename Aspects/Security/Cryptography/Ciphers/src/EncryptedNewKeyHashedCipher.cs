@@ -92,7 +92,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers
         /// Thrown when the <paramref name="certificate" /> is <see langword="null" />.
         /// </exception>
         public EncryptedNewKeyHashedCipher(
-            X509Certificate2 certificate = null,
+            X509Certificate2 certificate,
             string hashAlgorithmName = Algorithms.Hash.Default,
             string symmetricAlgorithmName = Algorithms.Symmetric.Default,
             IHashAlgorithmFactory hashAlgorithmFactory = null,

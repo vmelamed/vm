@@ -1,52 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DpapiCipher" Collapsed="true">
-    <Position X="4" Y="3.25" Width="1.25" />
-    <TypeIdentifier>
-      <HashCode>AQCAAAAAASAAACAQAAAAAAIAAAAAAAAAAAAAAAAAEAA=</HashCode>
-      <FileName>DpapiCipher.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="vm.Aspects.Security.Cryptography.Ciphers.ProtectedKeyCipher" Collapsed="true">
-    <Position X="5.5" Y="3.25" Width="2.25" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Properties" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>QQAIAEAAAQBAAAwQCEAAAABjAAAAAAAAAAAAgAAAOAA=</HashCode>
-      <FileName>ProtectedKeyCipher.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedKeyCipher" Collapsed="true">
-    <Position X="4" Y="4.5" Width="2.5" />
+    <Position X="6.5" Y="2" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>QECAAgAAASAAAAAAAAAAAARCAAAAAAAAAAAAACAACAA=</HashCode>
+      <HashCode>QUCIAkAAASBAAAwQCEAAAARjAAAAAAAAAAAAgCAAGAA=</HashCode>
       <FileName>EncryptedKeyCipher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeyHashedCipher" Collapsed="true">
-    <Position X="4" Y="7" Width="2.5" />
+    <Position X="6.5" Y="4.5" Width="2.5" />
     <AssociationLine Name="_hashAlgorithmFactory" Type="vm.Aspects.Security.Cryptography.Ciphers.IHashAlgorithmFactory" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6.5" Y="7.25" />
-        <Point X="6.875" Y="7.25" />
-        <Point X="6.875" Y="6.375" />
-        <Point X="9" Y="6.375" />
+        <Point X="9" Y="4.75" />
+        <Point X="9.375" Y="4.75" />
+        <Point X="9.375" Y="4.625" />
+        <Point X="10.75" Y="4.625" />
       </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.027" Y="0.112" />
+      </MemberNameLabel>
     </AssociationLine>
     <AssociationLine Name="Hasher" Type="System.Security.Cryptography.HashAlgorithm" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6.5" Y="7.562" />
-        <Point X="6.875" Y="7.562" />
-        <Point X="6.875" Y="8.25" />
-        <Point X="9.25" Y="8.25" />
+        <Point X="9" Y="5.062" />
+        <Point X="9.375" Y="5.062" />
+        <Point X="9.375" Y="5.25" />
+        <Point X="10.75" Y="5.25" />
       </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="1.214" Y="0.143" />
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.131" Y="0.091" Height="0.182" Width="0.798" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
@@ -59,34 +42,34 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="System.Security.Cryptography.AsymmetricAlgorithm" Collapsed="true">
-    <Position X="9.25" Y="8.75" Width="2" />
+    <Position X="10.75" Y="5.75" Width="2" />
     <TypeIdentifier />
     <Lollipop Orientation="Right" Position="0.1" Collapsed="true" />
   </Class>
   <Class Name="System.Security.Cryptography.HashAlgorithm" Collapsed="true">
-    <Position X="9.25" Y="8" Width="2" />
+    <Position X="10.75" Y="5" Width="2" />
     <TypeIdentifier />
     <Lollipop Orientation="Right" Position="0.164" Collapsed="true" />
   </Class>
   <Class Name="System.Security.Cryptography.SymmetricAlgorithm" Collapsed="true">
-    <Position X="9.25" Y="2.25" Width="2.25" />
+    <Position X="10.5" Y="0.75" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier />
-    <Lollipop Orientation="Right" Position="0.1" Collapsed="true" />
+    <Lollipop Position="0.24" Collapsed="true" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.SymmetricKeyCipherBase" Collapsed="true">
-    <Position X="5.5" Y="2" Width="2.25" />
+    <Position X="6.5" Y="0.75" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <AssociationLine Name="Symmetric" Type="System.Security.Cryptography.SymmetricAlgorithm" FixedFromPoint="true">
       <Path>
-        <Point X="7.75" Y="2.438" />
-        <Point X="9.25" Y="2.438" />
+        <Point X="9" Y="1.062" />
+        <Point X="10.5" Y="1.062" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.078" Y="-0.325" />
@@ -102,21 +85,21 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.PasswordProtectedKeyCipher" Collapsed="true">
-    <Position X="6.75" Y="4.5" Width="2.25" />
+    <Position X="10.5" Y="2" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>QQQIAAgAACAAAAwAAEAMAAFAAAQgACAAAAgAACAAAQA=</HashCode>
+      <HashCode>QQSIAggAAAAAAAwAAEAMAAFAAAQgACAAAAgAACAAIQA=</HashCode>
       <FileName>PasswordProtectedKeyCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.ICipherExtensions" Collapsed="true">
-    <Position X="0.75" Y="5" Width="1.5" />
+    <Position X="0.5" Y="7.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IRAAMIjAARImIAgQCCoSCQEAABcAAJiAAQABAgIAAIE=</HashCode>
       <FileName>ICipherExtensions.Bool-Ushort.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.NullCipher" Collapsed="true">
-    <Position X="2.25" Y="3.25" Width="1.25" />
+    <Position X="2.5" Y="7.25" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AQAAAAAAASAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>NullCipher.cs</FileName>
@@ -124,21 +107,17 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeyCipher" Collapsed="true">
-    <Position X="4" Y="5.5" Width="2.5" />
+    <Position X="6.5" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AQSIAggAAAAAAAwAAEAEAABAAAQAACAAAAAAAAAAAAA=</HashCode>
       <FileName>EncryptedNewKeyCipher.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.EncryptedNewKeySignedCipher" Collapsed="true">
-    <Position X="4" Y="8.75" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
+    <Position X="6.5" Y="5.75" Width="2.5" />
     <AssociationLine Name="Asymmetric" Type="System.Security.Cryptography.AsymmetricAlgorithm">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.964" Y="0.123" />
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="0.058" Y="0.092" Height="0.182" Width="1.079" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
@@ -150,19 +129,19 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileLocationStrategy" Collapsed="true">
-    <Position X="0.75" Y="1.5" Width="1.5" />
+    <Position X="3" Y="2.75" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAgAAAAAAAAAAAA=</HashCode>
       <FileName>DefaultServices\KeyFileLocationStrategy.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.KeyFileStorage" Collapsed="true">
-    <Position X="3" Y="1.5" Width="1.5" />
+    <Position X="3" Y="3.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAgAABAQAAAAAAAAAAAAAQAAgAEAEACAAAAAAAAAIA=</HashCode>
       <FileName>DefaultServices\KeyFileStorage.cs</FileName>
@@ -170,51 +149,51 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.SymmetricAlgorithmFactory" Collapsed="true">
-    <Position X="9.25" Y="1.5" Width="2.25" />
+    <Position X="3" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAACAAAAAAAQAAAAAAAAAAAAAAAEAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAACAAAAAAAQAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DefaultServices\SymmetricAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.HashAlgorithmFactory" Collapsed="true">
-    <Position X="9.5" Y="7" Width="2" />
+    <Position X="13" Y="4.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAASAAAAAAAAAAAAAAAEAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAABAAAAAAAAA=</HashCode>
       <FileName>DefaultServices\HashAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IKeyStorage" Collapsed="true">
-    <Position X="2.75" Y="0.5" Width="1.75" />
+    <Position X="0.5" Y="3.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAgAAAAAAAAAAAAAAAAAAQAAAAAAAACAAAAAAAAAIA=</HashCode>
       <FileName>IKeyStorage.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IKeyLocationStrategy" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.75" />
+    <Position X="0.5" Y="2.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IKeyLocationStrategy.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.ISymmetricAlgorithmFactory" Collapsed="true">
-    <Position X="9" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAQAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>ISymmetricAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IHashAlgorithmFactory" Collapsed="true">
-    <Position X="9" Y="6" Width="2" />
+    <Position X="10.75" Y="4.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAABAAAAAAAAA=</HashCode>
       <FileName>IHashAlgorithmFactory.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.IKeyManagement" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="2.25" />
+    <Position X="0.5" Y="1.75" Width="2.25" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
@@ -225,17 +204,24 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.ICipher" Collapsed="true">
-    <Position X="0.5" Y="3" Width="1.5" />
+    <Position X="0.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ICipher.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.ICipherTasks" Collapsed="true">
-    <Position X="0.5" Y="4" Width="1.5" />
+    <Position X="0.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>ICipherTasks.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="vm.Aspects.Security.Cryptography.Ciphers.ILightCipher" Collapsed="true">
+    <Position X="2.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ILightCipher.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

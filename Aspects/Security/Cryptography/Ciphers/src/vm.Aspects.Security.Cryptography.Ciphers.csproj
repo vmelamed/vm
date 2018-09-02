@@ -32,6 +32,8 @@
         <Description>
             The Ciphers package helps in addressing a common application requirements for achieving confidentiality, integrity and
             source authentication of data-at-rest, data-in-motion, and data-in-use, e.g. for PII (Personally Identifiable Information) fields.
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
+            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
             Features:
             * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
             * It is very easy to integrate with a Dependency Injection container like Unity, i.e. the behaviors are abstracted with a handful of simple interfaces.

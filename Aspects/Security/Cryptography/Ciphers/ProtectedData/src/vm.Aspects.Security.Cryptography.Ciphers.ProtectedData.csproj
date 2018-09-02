@@ -29,7 +29,10 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags>aspects cipher cypher encryption decryption hash dpapi</PackageTags>
         <Description>
-            Extends vm.Aspects.Security.Cryptography.Ciphers with classes dependant on System.Security.Cryptography.ProtectedData which depends on the Windows Data Protection API (DPAPI).
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
+            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependant on System.Security.Cryptography.ProtectedData
+            which depends on the Windows Data Protection API (DPAPI).
             The package can be expected to work on Windows OS only.
             * The package does not have dependencies except on the .NET Standard and System.Security.Cryptography.ProtectedData.
             * Built and tested with .NET Standard 2.0 and System.Security.Cryptography.ProtectedData 4.5.
