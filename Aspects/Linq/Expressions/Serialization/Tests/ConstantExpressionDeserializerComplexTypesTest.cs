@@ -9,9 +9,9 @@ using vm.Aspects.Linq.Expressions.Serialization;
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
-    [DeploymentItem("..\\..\\DataContract.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
     public class ConstantExpressionDeserializerComplexTypesTest
     {

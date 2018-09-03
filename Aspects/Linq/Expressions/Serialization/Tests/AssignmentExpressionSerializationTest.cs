@@ -1,11 +1,13 @@
 ﻿using System.Linq.Expressions;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
     public class AssignmentExpressionSerializationTest
     {

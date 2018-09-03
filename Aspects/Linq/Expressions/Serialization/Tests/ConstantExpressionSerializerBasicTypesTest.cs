@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq.Expressions;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\docs\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
-    [DeploymentItem("..\\..\\DataContract.xsd")]
     public class ConstantExpressionSerializerBasicTypesTest
     {
         public TestContext TestContext
@@ -79,7 +80,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public void TestBasicConstantInt()
         {
             TestConstant(
-                (int)5,
+                5,
                 "TestFiles\\Int.xml");
         }
 
@@ -139,7 +140,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public void TestBasicConstantDouble()
         {
             TestConstant(
-                (double)5.512345098711111123E-123,
+                5.512345098711111123E-123,
                 "TestFiles\\Double.xml");
         }
 
@@ -147,7 +148,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public void TestBasicConstantDecimal()
         {
             TestConstant(
-                (decimal)5.5M,
+                5.5M,
                 "TestFiles\\Decimal.xml");
         }
 

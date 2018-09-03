@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xsd:schema xmlns="urn:schemas-vm-com:Aspects.Linq.Expression"
-            targetNamespace="urn:schemas-vm-com:Aspects.Linq.Expression"
+<xsd:schema xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization"
+            targetNamespace="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization"
             elementFormDefault="qualified"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns:xxp="urn:schemas-vm-com:Aspects.Linq.Expression">
+            xmlns:xxp="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
 
     <xsd:annotation>
         <xsd:documentation xml:lang="en-us">

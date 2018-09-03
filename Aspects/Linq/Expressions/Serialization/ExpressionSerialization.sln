@@ -3,29 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Linq.Expressions.Serialization", "vm.Aspects.Linq.Expressions.Serialization.csproj", "{628D6504-40E3-412A-827F-39F8644BA906}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Items", "Common Items", "{3F144F17-AC65-44AA-8F26-50A12AF2FADF}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Common Items\AssemblyInfo.global.cs = ..\..\..\..\Common Items\AssemblyInfo.global.cs
+		..\..\..\..\Common Items\Dictionary.xml = ..\..\..\..\Common Items\Dictionary.xml
+		..\..\..\..\Common Items\vm.snk = ..\..\..\..\Common Items\vm.snk
+		..\..\..\..\Common Items\vm.Test.snk = ..\..\..\..\Common Items\vm.Test.snk
+		..\..\..\..\Common Items\vmAllRules.ruleset = ..\..\..\..\Common Items\vmAllRules.ruleset
+	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6F61BCD-A9ED-4982-8C82-37CD94AD1CD3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2E8180A-9B38-4FD8-AF6F-85005B7B86A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Linq.Expressions.Serialization.Tests", "Tests\vm.Aspects.Linq.Expressions.Serialization.Tests.csproj", "{CB93A289-59C4-4934-824B-9AF5F9C4B886}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Linq.Expressions.Serialization", "src\vm.Aspects.Linq.Expressions.Serialization.csproj", "{2E923EA0-91DB-475C-9347-19ADA7CDE21D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{FC5881FB-9DEF-48A0-BD3B-E889A191CFB2}"
+	ProjectSection(SolutionItems) = preProject
+		docs\DataContract.xsd = docs\DataContract.xsd
+		docs\Expression Tree Specification.pdf = docs\Expression Tree Specification.pdf
+		docs\Expression.xsd = docs\Expression.xsd
+		docs\Microsoft.Serialization.xsd = docs\Microsoft.Serialization.xsd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6FC0850A-B252-4AAD-9DE6-DD18AD39F3FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Linq.Expressions.Serialization.Tests", "tests\vm.Aspects.Linq.Expressions.Serialization.Tests.csproj", "{CB93A289-59C4-4934-824B-9AF5F9C4B886}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		DebugUnitTest|Any CPU = DebugUnitTest|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{628D6504-40E3-412A-827F-39F8644BA906}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
-		{628D6504-40E3-412A-827F-39F8644BA906}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
-		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{628D6504-40E3-412A-827F-39F8644BA906}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E923EA0-91DB-475C-9347-19ADA7CDE21D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E923EA0-91DB-475C-9347-19ADA7CDE21D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E923EA0-91DB-475C-9347-19ADA7CDE21D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E923EA0-91DB-475C-9347-19ADA7CDE21D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.DebugUnitTest|Any CPU.ActiveCfg = DebugUnitTest|Any CPU
-		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.DebugUnitTest|Any CPU.Build.0 = DebugUnitTest|Any CPU
 		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB93A289-59C4-4934-824B-9AF5F9C4B886}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
@@ -33,7 +47,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CB93A289-59C4-4934-824B-9AF5F9C4B886} = {F6F61BCD-A9ED-4982-8C82-37CD94AD1CD3}
+		{2E923EA0-91DB-475C-9347-19ADA7CDE21D} = {B2E8180A-9B38-4FD8-AF6F-85005B7B86A0}
+		{CB93A289-59C4-4934-824B-9AF5F9C4B886} = {6FC0850A-B252-4AAD-9DE6-DD18AD39F3FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5114A76D-A09A-4378-BB22-C9EABB45B6CD}

@@ -3,7 +3,7 @@
 ClassDataContract1 (vm.Aspects.Linq.Expressions.Serialization.Tests.ClassDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   IntProperty              = 7
   StringProperty           = vm -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
     <constant>
         <custom type="vm.Aspects.Linq.Expressions.Serialization.Tests.ClassDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393">
             <ClassDataContract1 xmlns:i="http://www.w3.org/2001/XMLSchema-instance"

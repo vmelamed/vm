@@ -30,10 +30,10 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         public static readonly XNamespace Dcs = XNamespace.Get("http://schemas.datacontract.org/2004/07/System");
 
         /// <summary>
-        /// The XML namespace object representing the namespace of the Aspects' expression serialization - urn:schemas-vm-com:Aspects.Linq.Expression
+        /// The XML namespace object representing the namespace of the Aspects' expression serialization - urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification="XNamespace is immutable.")]
-        public static readonly XNamespace Xxp = XNamespace.Get("urn:schemas-vm-com:Aspects.Linq.Expression");
+        public static readonly XNamespace Xxp = XNamespace.Get("urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization");
 
         public static class Elements
         {

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security;
 using System.Xml.Linq;
+
 using vm.Aspects.Linq.Expressions.Serialization.Implementation;
 
 namespace vm.Aspects.Linq.Expressions.Serialization
 {
     /// <summary>
     /// The instances of this class serialize LINQ expression trees of type <see cref="Expression"/> to XML document or element and vice versa: 
-    /// de-serialize XML documents or elements conforming to schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot; to <see cref="Expression"/> objects.
+    /// de-serialize XML documents or elements conforming to schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot; to <see cref="Expression"/> objects.
     /// </summary>
     [SuppressMessage("Microsoft.Security", "CA2136:TransparencyAnnotationsShouldNotConflictFxCopRule")]
     [SecuritySafeCritical]
@@ -74,7 +75,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
-            
+
             return new XDocument(
                             new XDeclaration(XmlVersion, XmlEncoding, XmlStandalone),
                             AddComment
@@ -94,7 +95,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
-            
+
             var visitor = new ExpressionSerializingVisitor();
 
             visitor.Visit(expression);
@@ -110,7 +111,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// De-serializes the <paramref name="document"/> to an expression tree instance.
         /// </summary>
         /// <param name="document">
-        /// The document to be deserialized. The document must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot;
+        /// The document to be deserialized. The document must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot;
         /// </param>
         /// <returns>The created expression tree.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="document"/> is <see langword="null"/>.</exception>
@@ -127,7 +128,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// De-serializes the <paramref name="element"/> to an expression tree instance.
         /// </summary>
         /// <param name="element">
-        /// The element to be deserialized. The element must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot;
+        /// The element to be deserialized. The element must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot;
         /// </param>
         /// <returns>The created expression tree.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="element"/> is <see langword="null"/>.</exception>
