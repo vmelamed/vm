@@ -3,16 +3,15 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
 
-        <VersionPrefix>2.1.2</VersionPrefix>
-        <AssemblyVersion>2.1.1.0</AssemblyVersion>
+        <VersionPrefix>2.1.4</VersionPrefix>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers.Xml</AssemblyName>
         <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers.Xml</RootNamespace>
         <AssemblyDescription>Extends vm.Aspects.Security.Cryptography.Ciphers with classes dependent on the System.Security.Cryptography.Xml.</AssemblyDescription>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>C:\Projects\Git\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>..\..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
         <CodeAnalysisRuleSet>..\..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <NeutralLanguage>en-US</NeutralLanguage>
         <LangVersion>7.1</LangVersion>
 
         <Authors>Val Melamed</Authors>
@@ -28,14 +27,20 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags>aspects cipher cypher encryption decryption hash dpapi</PackageTags>
         <Description>
-            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
-            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
-            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependent on the System.Security.Cryptography.Xml.
-            The library can be expected to work on Windows OS only until Microsoft defines and implements the System.Security.Cryptography.Xml in .NET Standard.
-            * The package depends on .NET Standard, System.Security.Cryptography.Xml, vm.Aspects.Security.Cryptography.Ciphers.
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS. They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            
+            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependent on the System.Security.Cryptography.Xml. The library can be expected to work on Windows OS only until Microsoft defines and implements the System.Security.Cryptography.Xml in .NET Standard.
+            
+            The package depends on:
+                - .NET Standard
+                - System.Security.Cryptography.Xml
+                - vm.Aspects.Security.Cryptography.Ciphers
         </Description>
         <PackageReleaseNotes>
-            * Built and tested with vm.Aspects.Security.Cryptography.Ciphers, .NET Standard 2.0 and System.Security.Cryptography.Xml 4.5.
+            Note: this package inherits from the Ciphers package but the name has changed for consistency's sake with the other vm.Aspects packages.
+            Refactored the library to drop the dependency on Common Service Locator - no assumption of DI container anymore.
+            Refactored a number of c-tors to take additional dependencies, which were previously resolved from the CSL.
+            Built and tested with .NET Standard 2.0.
         </PackageReleaseNotes>
     </PropertyGroup>
 
@@ -58,7 +63,7 @@
 
     <ItemGroup>
         <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
-        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.1" />
+        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup>

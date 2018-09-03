@@ -3,16 +3,15 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
 
-        <VersionPrefix>2.1.2</VersionPrefix>
-        <AssemblyVersion>2.1.2</AssemblyVersion>
+        <VersionPrefix>2.1.4</VersionPrefix>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
         <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
         <AssemblyDescription>A set of cipher classes producing cipher-packages.</AssemblyDescription>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>C:\Projects\Git\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <NeutralLanguage>en-US</NeutralLanguage>
         <LangVersion>7.1</LangVersion>
 
         <Authors>Val Melamed</Authors>
@@ -28,25 +27,26 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags>aspects cipher cypher encryption decryption hash signature</PackageTags>
         <Description>
-            The Ciphers package helps in addressing a common application requirement for achieving confidentiality, integrity and
-            source authentication of data-at-rest, data-in-motion, and data-in-use, e.g. for PII (Personally Identifiable Information) fields.
-            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
-            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS. They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            
+            The Ciphers package helps in addressing a common application requirement for achieving confidentiality, integrity and source authentication of data-at-rest, data-in-motion, and data-in-use, e.g. for PII (Personally Identifiable Information) fields.
+            
             Features:
             * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
             * It is very easy to integrate with a Dependency Injection container like Unity, i.e. the behaviors are abstracted with a handful of simple interfaces.
-            * It is very easy to use and configure the objects. No configuration parameters default to sensible defaults.
-            * The package does not have dependencies except on the .NET Standard interfaces.
-            * Built and tested with .NET Standard 2.0.
+            * It is very easy to use and configure the objects. Omitting configuration parameters defaults to sensible defaults.
+            * The package depends on:
+                - .NET Standard
         </Description>
         <PackageReleaseNotes>
+            Note: this package inherits from the Ciphers package but the name has changed for consistency's sake with the other vm.Aspects packages.
             Refactored the library to drop the dependency on Common Service Locator - no assumption of DI container anymore.
             Refactored a number of c-tors to take additional dependencies, which were previously resolved from the CSL.
             Combined all key management utilities in one - KeyFile.
             Added the utility FileCrypt that can encrypt and decrypt files (for more information run FileCrypt help/FileCrypt help encrypt/FileCrypt help decrypt)
+            The utilities KeyFile and FileCrypt are supported in source code form only: they are not packaged.
             Refactored the utilities to use CommandLineParser.
-            Note: this package inherits from Ciphers but the name is changed consistency's sake.
-            vm.Aspects.Security.Cryptography.Cyphers is dependent on .NET Standard 2.0.
+            Built and tested with .NET Standard 2.0.
         </PackageReleaseNotes>
 
     </PropertyGroup>
@@ -60,12 +60,6 @@
         <DocumentationFile>C:\Projects\Git\vm\Aspects\Security\Cryptography\Ciphers\src\vm.Aspects.Security.Cryptography.Ciphers.xml</DocumentationFile>
         <OutputPath></OutputPath>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Remove="project.assets.json.net462" />
-        <None Remove="project.assets.json.net471" />
-        <None Remove="project.assets.json.net472" />
-    </ItemGroup>
 
     <ItemGroup>
         <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
