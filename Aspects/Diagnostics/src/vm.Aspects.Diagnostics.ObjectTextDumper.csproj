@@ -1,19 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <!-- Build properties: -->
         <TargetFramework>netstandard2.0</TargetFramework>
         
         <VersionPrefix>2.0.3</VersionPrefix>
-        <AssemblyVersion>2.0.3.0</AssemblyVersion>
         <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
         <AssemblyDescription>Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.</AssemblyDescription>
         <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <CodeAnalysisRuleSet>..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
-        <NeutralLanguage>en-US</NeutralLanguage>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <CodeAnalysisRuleSet>..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <NeutralLanguage>en-US</NeutralLanguage>
 
         <Authors>Val Melamed</Authors>
         <Company>vm</Company>
@@ -21,7 +19,6 @@
         <Copyright>Copyright © vm 2013-2018</Copyright>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
-        <!-- NuGet package properties: -->
         <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper</PackageId>
         <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</PackageProjectUrl>
