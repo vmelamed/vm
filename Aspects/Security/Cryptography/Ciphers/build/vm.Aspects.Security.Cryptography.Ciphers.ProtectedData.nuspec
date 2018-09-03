@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>vm.Aspects.Security.Cryptography.Ciphers.ProtectedData</id>
+        <version>2.1.1-beta.1</version>
+        <authors>vm</authors>
+        <owners>vm</owners>
+        <summary>
+            vm.Aspects.Security.Cryptography.Ciphers.ProtectedData extends the  package vm.Aspects.Security.Cryptography.Ciphers with encrypting with DPAPI plain data and XML documents.
+        </summary>
+        <description>
+            THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
+            They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
+            Features:
+            * The package uses industry strong cryptographic algorithms for encryption, hashing and signing included in the .NET framework.
+            * It is very easy to integrate with a Dependency Injection containers like Unity oe StructureMap, i.e. the behaviors are abstracted with a handful of simple interfaces.
+            * It is very easy to use and configure the objects. Omitted configuration parameters default to sensible defaults.
+            * The package does not have dependencies except on the .NET Standard interfaces.
+            * Built and tested with .NET Standard 2.0.
+            * Documentation: https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers/docs/Ciphers.md.
+        </description>
+        <releaseNotes>
+            Note: this package inherits the code from the Ciphers package but since this is a major non-backwards compatible release,
+            changed the name of the package for consistency's sake with the other vm.Aspects packages.
+
+            Now vm.Aspects.Security.Cryptography.Cyphers.ProtectedData is dependent on .NET Standard 2.0 and vm.Aspects.Security.Cryptography.Ciphers.
+
+            Refactored the library to drop the dependency on the Common Service Locator (CSL) - no assumption of DI container anymore.
+
+            Refactored a number of c-tors to take additional dependencies, which were previously resolved from the CSL.
+
+            To minimize the dependency of the package on non-.NET Standard packages (extension packages) split the package Ciphers in three:
+            vm.Aspects.Security.Cryptography.Ciphers, vm.Aspects.Security.Cryptography.Ciphers.Xml and the current vm.Aspects.Security.Cryptography.Ciphers.ProtectedData
+        </releaseNotes>
+        <licenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers/ProtectedData</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright © vm 2013-2018</copyright>
+        <dependencies>
+            <dependency id="vm.Aspects.Security.Cryptography.Ciphers"
+                        version="[2.1.1-beta.1)"/>
+            <dependency id="vm.Aspects.Security.Cryptography.Ciphers.Xml"
+                        version="[2.1.1-beta.1)"/>
+            <dependency id="System.Security.Cryptography.ProtectedData"
+                        version="[4.5.0)"/>
+        </dependencies>
+        <tags>encryption decryption hash signature xml cipher cypher aspects</tags>
+    </metadata>
+    <files>
+        <file src="..\src\bin\netstandard2.0\vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.dll"
+              target="lib\netstandard2.0"/>
+        <file src="..\src\bin\netstandard2.0\vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.xml"
+              target="lib\netstandard2.0"/>
+    </files>
+</package>
