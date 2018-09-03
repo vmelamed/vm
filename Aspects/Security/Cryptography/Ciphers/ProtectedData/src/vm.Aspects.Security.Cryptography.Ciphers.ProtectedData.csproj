@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
 
-        <VersionPrefix>2.1.0</VersionPrefix>
-        <VersionSuffix></VersionSuffix>
+        <VersionPrefix>2.1.2</VersionPrefix>
+        <AssemblyVersion>2.1.1.0</AssemblyVersion>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers.ProtectedData</AssemblyName>
         <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
         <AssemblyDescription>Extends vm.Aspects.Security.Cryptography.Ciphers with classes which depend on System.Security.Cryptography.ProtectedData.</AssemblyDescription>
@@ -19,10 +19,9 @@
         <Company>vm</Company>
         <Product>vm.Aspects</Product>
         <Copyright>Copyright © vm 2013-2018</Copyright>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
         <PackageId>vm.Aspects.Security.Cryptography.Ciphers.ProtectedData</PackageId>
-        <Version>2.1.0</Version>
         <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers/Protected</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
@@ -31,7 +30,7 @@
         <Description>
             THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
             They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
-            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependant on System.Security.Cryptography.ProtectedData
+            This package extends vm.Aspects.Security.Cryptography.Ciphers with classes dependent on System.Security.Cryptography.ProtectedData
             which depends on the Windows Data Protection API (DPAPI).
             The package can be expected to work on Windows OS only.
             * The package does not have dependencies except on the .NET Standard and System.Security.Cryptography.ProtectedData.
@@ -51,12 +50,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <AdditionalFiles Include="..\..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
       <None Include="..\..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.5.0" />
-        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.0" />
+        <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers" Version="2.1.1" />
         <PackageReference Include="vm.Aspects.Security.Cryptography.Ciphers.Xml" Version="2.1.0" />
     </ItemGroup>
 

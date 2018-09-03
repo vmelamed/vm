@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
 
-        <VersionPrefix>2.1.0</VersionPrefix>
-        <VersionSuffix></VersionSuffix>
+        <VersionPrefix>2.1.2</VersionPrefix>
+        <AssemblyVersion>2.1.2</AssemblyVersion>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
         <RootNamespace>vm.Aspects.Security.Cryptography.Ciphers</RootNamespace>
         <AssemblyDescription>A set of cipher classes producing cipher-packages.</AssemblyDescription>
@@ -21,16 +21,14 @@
         <Copyright>Copyright © vm 2013-2018</Copyright>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
-        <!-- NuGet package properties: -->
         <PackageId>vm.Aspects.Security.Cryptography.Ciphers</PackageId>
-        <Version>2.1.0</Version>
         <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Security/Cryptography/Ciphers</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageTags>aspects cipher cypher encryption decryption hash signature</PackageTags>
         <Description>
-            The Ciphers package helps in addressing a common application requirements for achieving confidentiality, integrity and
+            The Ciphers package helps in addressing a common application requirement for achieving confidentiality, integrity and
             source authentication of data-at-rest, data-in-motion, and data-in-use, e.g. for PII (Personally Identifiable Information) fields.
             THE CLASSES FROM THE CIPHERS PACKAGES DO NOT IMPLEMENT ANY CRYPTOGRAPHIC ALGORITHMS.
             They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers.
@@ -74,7 +72,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+        <AdditionalFiles Include="..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
         <None Include="..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
     </ItemGroup>
 

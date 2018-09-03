@@ -18,7 +18,7 @@ namespace vm.Aspects.Security.Cryptography.Ciphers.DefaultServices
         /// <summary>
         /// Fills an array of bytes with a cryptographically strong sequence of random values.
         /// </summary>
-        /// <param name="data">The array to fills with a cryptographically strong sequence of random bytes.</param>
+        /// <param name="data">The array to fill with a cryptographically strong sequence of random bytes.</param>
         public void GetBytes(byte[] data)
             => _random.GetBytes(data);
         #endregion

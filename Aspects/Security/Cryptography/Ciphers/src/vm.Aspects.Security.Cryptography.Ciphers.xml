@@ -616,7 +616,7 @@
             <summary>
             Fills an array of bytes with a cryptographically strong sequence of random values.
             </summary>
-            <param name="data">The array to fills with a cryptographically strong sequence of random bytes.</param>
+            <param name="data">The array to fill with a cryptographically strong sequence of random bytes.</param>
         </member>
         <member name="F:vm.Aspects.Security.Cryptography.Ciphers.DefaultServices.RandomGenerator._disposed">
             <summary>

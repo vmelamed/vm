@@ -19,7 +19,7 @@ cipher.Decrypt(encryptedStream, dataStream);
 ## Documentation, Samples, and Tests
 
 This document is intended to be more of a general description of the packages and their components. For detailed information, please refer to the source code all programming elements are well XML comment-documented.
-Good usage samples of the ciphers are the unit tests. Most of the unit test methods are implemented in base generic test classes which the actual test classes inherit from. Usually the concrete test classes are also good examples for instantiation of the cipher classes, and the methods in the generics – for using the interfaces and the extensions.
+Good usage samples of the ciphers are the unit tests. Most of the unit test methods are implemented in base generic test classes which the actual test classes inherit from. Usually, the concrete test classes are also good examples for instantiation of the cipher classes, and the methods in the generics – for using the interfaces and the extensions.
 
 Before running the unit tests make sure to execute the batch file **`CreateCertificates.cmd`** which creates a few self-signed certificates in the current user's, private, certificate store and are used by the unit tests.
 
@@ -46,6 +46,7 @@ This package uses the Windows-specific Data Protection API (DPAPI) for encryptin
 * `System.Security.Cryptography.Xml`
 * `System.Security.Cryptography.ProtectedData`
 * `vm.Aspects.Security.Cryptography.Ciphers`
+* `vm.Aspects.Security.Cryptography.Ciphers.Xml`
 
 The package `System.Security.Cryptography.ProtectedData` is the extension that provides access to the DPAPI and should probably always stay as an extension package.
 
@@ -53,7 +54,7 @@ The package `System.Security.Cryptography.ProtectedData` is the extension that p
 
 # Supporting Interfaces and Classes
 
-In order for the ciphers to do their job in providing a complete end-to-end cryptographic services they must accept or implement some strategies for implementing cross-cutting tasks like:
+In order for the ciphers to do their job in providing complete, end-to-end, cryptographic services they must accept or implement some strategies for implementing cross-cutting tasks like:
 * Choose symmetric encryption algorithm or hash algorithm.
 * Generate, export and import encryption keys.
 * Store and retrieve the encryption keys to external media.
@@ -63,7 +64,7 @@ In order for the ciphers to do their job in providing a complete end-to-end cryp
 
 **The classes from the Ciphers packages do not implement any cryptographic algorithms.** They leverage the cryptographic algorithms implemented by the .NET cryptographic service providers from the namespace `System.Security.Cryptography`.
 
-All concrete algorithms are identified by `string`-s. Almost all constructors of cipher classes have a parameter - the name of the algorithm(s) to be used, and have some sensible default argument for it. The caller can use any string they want, but for the ease of use the root package has defined a number of string constants which contain the names of the most popular algorithms. The constants can be found in the namespace `vm.Aspects.Security.Cryptography.Algorithms`. These algorithm name constants are grouped in several static classes by functional type, e.g. `Asymmetric`, `Signature`, `Hash`, etc. Each one of them has a constant member `Default` which is equal to the most frequently (IMO) used algorithm. For example the constant `vm.Aspects.Security.Cryptography.Algorithms.Symmetric.Default` is equal to the constant `vm.Aspects.Security.Cryptography.Algorithms.Symmetric.Aes`, which in turn is assigned the constant `"AESCryptoServiceProvider"`.
+All concrete algorithms are identified by `string`-s. Almost all constructors of cipher classes have a parameter - the name of the algorithm(s) to be used and have some sensible default argument for it. The caller can use any string they want, but for the ease of use, the root package has defined a number of string constants which contain the names of the most popular algorithms. The constants can be found in the namespace `vm.Aspects.Security.Cryptography.Algorithms`. These algorithm name constants are grouped in several static classes by functional type, e.g. `Asymmetric`, `Signature`, `Hash`, etc. Each one of them has a constant member `Default` which is equal to the most frequently (IMO) used algorithm. For example the constant `vm.Aspects.Security.Cryptography.Algorithms.Symmetric.Default` is equal to the constant `vm.Aspects.Security.Cryptography.Algorithms.Symmetric.Aes`, which in turn is assigned the constant `"AESCryptoServiceProvider"`.
 
 ### `ISymmetricAlgorithmFactory`
 
@@ -125,9 +126,9 @@ Based on the previous three interfaces the Ciphers solution in GitHub includes [
 ## Main Interfaces and Implementation Classes
 
 There are two main groups of interfaces which define the behavior most of the classes in the package – one that performs cryptographic tasks on plain data (streams and byte arrays), and the other encrypts and signs XML documents and elements. 
-The former is mostly in the package (and namespace) `vm.Aspects.Security.Cryptography.Ciphers` and contains the the definitions and implementations of the interfaces `ICipher` and `IHasher` (which includes also keyed and encrypted hashes - signatures) and their asynchronous descendants `ICipherTasks` and `IHasherTasks`.
+The former is mostly in the package (and namespace) `vm.Aspects.Security.Cryptography.Ciphers` and contains the definitions and implementations of the interfaces `ICipher` and `IHasher` (which includes also keyed and encrypted hashes - signatures) and their asynchronous descendants `ICipherTasks` and `IHasherTasks`.
 
-The latter group is in `vm.Aspects.Security.Cryptography.Ciphers.Xml` and contains interfaces and implementations of `IXmlCipher` and `IXmlSigner`. The methods in `ICipher` and `IXmlCipher` are used to protect data for confidentiality, i.e. encrypts and decrypts data. `IHasher` and `IXmlSigner` protect data for integrity and possibly authentication, i.e. produces and verifies cryptographically strong hash or signature (encrypted hash) of the data.
+The latter group is in `vm.Aspects.Security.Cryptography.Ciphers.Xml` and contains interfaces and implementations of `IXmlCipher` and `IXmlSigner`. The methods in `ICipher` and `IXmlCipher` are used to protect data for confidentiality, i.e. encrypts and decrypts data. `IHasher` and `IXmlSigner` protect data for integrity and possibly authentication i.e. produces and verifies cryptographically strong hash or signature (encrypted hash) of the data.
 
 The interface `ICypher` and its descendant `ICypherTasks` have 2 pairs of methods and one property: 
 * `Encrypt` and `Decrypt` operating on `System.Stream` derived data containers;
@@ -166,15 +167,15 @@ public void EncryptXmlDocument()
 }
 ```
 
-The class `ICipherExtensions` adds a number of convenient extensions for encryption and decryption of various .NET basic types like `String`, the integer types, `Decimal`, `Double`, `DateTime`, `Guid`, etc. It also includes methods for encrypting and hashing of arrays and nullables of the basic types like `int[]`, `long[]`, double?, decimal?, etc. Similarly IHasherExtensions adds a number of extension methods which compute and verify crypto-hashes on the same basic types.
+The class `ICipherExtensions` adds a number of convenient extensions for encryption and decryption of various .NET basic types like `String`, the integer types, `Decimal`, `Double`, `DateTime`, `Guid`, etc. It also includes methods for encrypting and hashing of arrays and nullable-s of the basic types like `int[]`, `long[]`, double?, decimal?, etc. Similarly, `IHasherExtensions` adds a number of extension methods which compute and verify crypto-hashes on the same basic types.
 
-# Ciphers, Hashers and Signers
+# Ciphers, Hashers, and Signers
 
 ## ICipher
 
-The root package `vm.Aspects.Security.Cryptography.Ciphers` contains several ciphers implementing `ICipher`. Each of the **`ICipher.Encrypt`** methods in these implementations produce a **_crypto-package_**. A crypto-package contains the encrypted text (the crypto-text,) as well as zero or more non-secret, encryption artifacts like: the length and the contents of the initialization vector; the length and the bytes of the encrypted symmetric key; the length and the data of the hash or the signature, etc.
+The root package `vm.Aspects.Security.Cryptography.Ciphers` contains several ciphers implementing `ICipher`. Each of the **`ICipher.Encrypt`** methods in these implementations produce a **_crypto-package_**. A crypto-package contains the encrypted text (the crypto-text,) as well as zero or more non-secret, encryption artifacts like the length and the contents of the initialization vector; the length and the bytes of the encrypted symmetric key; the length and the data of the hash or the signature, etc.
 
-The property **`ICipher.Base64Encoded`** allows to encode the final package with `Base64` transformation.
+The property **`ICipher.Base64Encoded`** allows encoding of the final package with `Base64` transformation.
 
 The **`ICipher.Decrypt`** methods expect the input data to contain a crypto-package produced by the same type of cipher. E.g. the method `EncryptedKeyCipher.Encrypt` produces a crypto-package that should be decrypted by the method `EncryptedKeyCipher.Decrypt` or `EncryptedKeyCipher.DecryptAsync`. The format of each crypto-package is documented in the respective class's XML comment-document.
 
@@ -193,7 +194,7 @@ As the name suggests this cipher is actually in the `vm.Aspects.Security.Cryptog
 
 ### `EncryptedKeyCipher`
 
-This class, and the classes derived from it, use some implementation of a symmetric encryption algorithm (by default AES) to protect the confidentiality of the data. The symmetric key is encrypted and stored to a named storage location (e.g. a key file). The symmetric encryption key is protected by encrypting and decrypting it with asymmetric keys stored in a certificate specified in the constructor of the cipher. This significantly simplifies the secure management of the key. In order to obtain the symmetric key from the key file, an attacker has to have access to the certificate containing the private key. Therefore, provided proper certificate management, the key file is well protected and can be freely distributed: copied, e-mailed, etc. However,  the initialization of `EncryptedKeyCipher` is a bit slower than the following `ProtectedKeyCipher` (see below) because of the overhead for asymmetric encryption and certificate retrieval.
+This class and the classes derived from it use some implementation of a symmetric encryption algorithm (by default AES) to protect the confidentiality of the data. The symmetric key is encrypted and stored in a named storage location (e.g. a key file). The symmetric encryption key is protected by encrypting and decrypting it with asymmetric keys stored in a certificate specified in the constructor of the cipher. This significantly simplifies the secure management of the key. In order to obtain the symmetric key from the key file, an attacker has to have access to the certificate containing the private key. Therefore, provided proper certificate management, the key file is well protected and can be freely distributed: copied, e-mailed, etc. However,  the initialization of `EncryptedKeyCipher` is a bit slower than the following `ProtectedKeyCipher` (see below) because of the overhead for asymmetric encryption and certificate retrieval.
 
 `EncryptedKeyCipher` is the base class of all remaining non-XML ciphers. It defines the overall process of encryption, decryption and building the crypto-package in several virtual methods. You might recognize the GoF design pattern of "method template" which invokes a set of virtual methods whose implementation depends on the concrete class.
 
@@ -242,14 +243,14 @@ This cipher is in the `vm.Aspects.Security.Cryptography.ProtectedData` package.
  because it depends on DPAPI.
 
 ### `PasswordProtectedKeyCipher`
-This cipher derives the symmetric key from a passed-in password. The derivation is intentionally slow process and this cipher should not be used for frequent encryption and decryption with different passwords. Since the key is derived from the password each time, the cipher does not need to manage the symmetric key and it disables the inherited methods of the `IKeyManagement` by doing nothing and returning `null-s. The password is passed to the cipher in the constructor as string. It also takes two additional parameters needed for the password key derivation: number of iterations and salt length. The minimum number of iterations is 4096. Any number below this will result in throwing an exception. The default value is 16384. The more iterations are specified the safer and the slower the key-derivation process is. The minimum salt length is 8 bytes, the default length is 24, and the recommended length is as long as the length of the generated key is, e.g. if the key is 256 bits long the salt should be 32 bytes long.
+This cipher derives the symmetric key from a passed-in password. The derivation is an intentionally slow process and this cipher should not be used for frequent encryption and decryption with different passwords. Since the key is derived from the password each time, the cipher does not need to manage the symmetric key and it disables the inherited methods of the `IKeyManagement` by doing nothing and returning `null`-s. The password is passed to the cipher in the constructor as a `string`. It also takes two additional parameters needed for the password key derivation: number of iterations and salt length. The minimum number of iterations is 4096. Any number below this will result in throwing an exception. The default value is 16384. The more iterations are specified the safer and the slower the key-derivation process is. The minimum salt length is 8 bytes, the default length is 24, and the recommended length is as long as the length of the generated key is, e.g. if the key is 256 bits long the salt should be 32 bytes long.
 
 ### `EncryptedNewKeyCipher`
-Common problem of the ciphers `EncryptedKeyCipher` and `ProtectedKeyCipher` is that, if the key file is lost or somehow the key is compromised, all protected documents will be inaccessible or will lose their confidentiality. The problem is addressed by the `EncryptedNewKeyCipher` naturally for the price of a certain performance degradation.
+A common problem of the ciphers `EncryptedKeyCipher` and `ProtectedKeyCipher` is that, if the key file is lost or somehow the key is compromised, all protected documents will be inaccessible or will lose their confidentiality. The problem is addressed by the `EncryptedNewKeyCipher` naturally for the price of a certain performance degradation.
 
-This cipher generates a new symmetric encryption key for each document, encrypts the key with a public key from a certificate and stores it in the crypto-package itself. There is no key file, and no key management. If a key is compromised only the document from the same crypto-package is compromised. The drawback is that the entire encryption process is slower.
+This cipher generates a new symmetric encryption key for each document, encrypts the key with a public key from a certificate and stores it in the crypto-package itself. There is no key file and no key management. If a key is compromised only the document from the same crypto-package is compromised. The drawback is that the entire encryption process is slower.
 
-In the sample above if you simply replace `EncryptedKeyCipher` with `EncryptedNewKeyCipher` you will get a valid working example of instantiating the latter. Since this cipher stores the key in the document the inherited methods of the interface `IKeyManagement` do nothing and return null-s.
+In the sample above if you simply replace `EncryptedKeyCipher` with `EncryptedNewKeyCipher` you will get a valid working example of instantiating the latter. Since this cipher stores the key in the document, the inherited methods of the interface `IKeyManagement` do nothing and return `null`-s.
 
 ### `EncryptedNewKeyHashedCipher`
 This cipher adds in the crypto-package the cryptographic hash of the encrypted document. This ensures that the included document has not been modified, guaranteeing the integrity of the document. The hash algorithm is specified in the constructor along with the length of the hash "salt" eliminating the possibility of hash dictionary attacks.
@@ -266,7 +267,7 @@ The problem with this cipher is that it does not authenticate the source of the 
 Note that the property `Base64Encoded` is not supported here and setting it to true will throw an `InvalidOperationException`.
 
 ### EncryptedNewKeySignedCipher
-This cipher replaces the hash from the above class with cryptographic signature which ensures not only the integrity of the document but also the identity of the source. The cipher requires a second (signing) certificate as a parameter in its constructor.
+This cipher replaces the hash from the above class with a cryptographic signature which ensures not only the integrity of the document but also the identity of the source. The cipher requires a second (signing) certificate as a parameter in its constructor.
 
 Below is a sample instantiation where the signature is created from SHA256 hash (the default is SHA1) and the symmetric encryption algorithm is Rijndael (the default is AES):
 
@@ -298,7 +299,7 @@ ICipher GetCipher()
 ```
 
 Note:
-* for signing, the cypher supports only the RSA algorithm.
+* for signing, the cipher supports only the RSA algorithm.
 * the property `Base64Encoded` is not supported here and setting it to true will throw `InvalidOperationException`.
 
 ## `IHasher`
@@ -307,7 +308,7 @@ The Ciphers package contains four hashers: `Hasher`, `KeyedHasher`,  `PasswordHa
 
 ### `Hasher`
 
-The `Hasher` computes and verifies digest of the input text. By default, it uses the SHA256 algorithm but this can be changed to any of the constants from `vm.Aspects.Security.Cryptography.Algorithms.Hash`.
+The `Hasher` computes and verifies the digest of the input text. By default, it uses the SHA256 algorithm but this can be changed to any of the constants from `vm.Aspects.Security.Cryptography.Algorithms.Hash`.
 
 Here is how to instantiate the hasher which will produce MD5 hasher with 16 bytes salt:
 
@@ -317,9 +318,9 @@ public override IHasher GetHasher()
 ```
 
 ### `KeyedHasher`
-The keyed hasher computes a digest of the input text and encrypts it with a symmetric key encrypting algorithm, i.e. computes and verifies _Hashed Message Authentication Code - **HMAC**_. By default, it uses HMACSHA256 algorithm: SHA256 hashing and AES encryption but this can be changed to any of the constants from `vm.Aspects.Security.Cryptography.Algorithms.KeyedHash`.
+The keyed hasher computes a digest of the input text and encrypts it with a symmetric key encrypting algorithm, i.e. computes and verifies _Hashed Message Authentication Code - **HMAC**_. By default, it uses the HMACSHA256 algorithm: SHA256 hashing and AES encryption but this can be changed to any of the constants from `vm.Aspects.Security.Cryptography.Algorithms.KeyedHash`.
  
-The secret symmetric key is encrypted with asymmetric algorithm (certificate). Retrieving of the key is similar to `EncryptedKeyCipher`: pass the certificate, the logical name, the `IKeyLocationStrategy` and the `IKeyStorage` implementations to retrieve the encrypted key, and using the certificate the hasher will decrypt it. You can use the tool KeyFile to export/import/create HMAC keys.
+The secret symmetric key is encrypted with the asymmetric algorithm (certificate). Retrieving of the key is similar to `EncryptedKeyCipher`: pass the certificate, the logical name, the `IKeyLocationStrategy` and the `IKeyStorage` implementations to retrieve the encrypted key, and using the certificate the hasher will decrypt it. You can use the tool KeyFile to export/import/create HMAC keys.
 
 Here is how to instantiate the hasher which will produce HMACSHA384 hasher:
 
@@ -331,7 +332,7 @@ public override IHasher GetHasher()
 ### `RsaSigner`
 The signer is a hasher which encrypts the produced hash with the private key of the document's source and the verifier decrypts the signature with the public key of the source, thus verifying the identity of the source. Then the verifying code computes the hash and compares it to the decrypted signature which guarantees the integrity of the document.
 
-Currently the only supported asymmetric algorithm for creating signatures is RSA. When creating the signer the caller has the option to select the hash algorithm, which by default is SHA1.
+Currently, the only supported asymmetric algorithm for creating signatures is RSA. When creating the signer the caller has the option to select the hash algorithm, which by default is SHA1.
 
 This sample creates a signer which uses SHA256 for underlying hashing:
 
@@ -354,10 +355,10 @@ IHasher GetHasher()
 ```
 
 ### `PasswordHasher`
-This hasher can be used to hash a password, e.g. for storing it in identity store in accordance with RFC 2898 (PBKF2 based on HMAC/SHA1). In other words this algorithm is used for generating encryption artifacts from a password (a.k.a. password encryption). It is also one of the few officially acceptable methods for hashing of passwords. This is an iterative method, where the generated hash is dependent on the number of iterations, which makes the method also slow but appropriate for user-interactive, password verification. The more iterations are specified the slower is the process, however the safer is the hash.
+This hasher can be used to hash a password, e.g. for storing it in identity store in accordance with RFC 2898 (PBKF2 based on HMAC/SHA1). In other words, this algorithm is used for generating encryption artifacts from a password (a.k.a. password encryption). It is also one of the few officially acceptable methods for hashing of passwords. This is an iterative method, where the generated hash is dependent on the number of iterations, which makes the method also slow but appropriate for user-interactive, password verification. The more iterations are specified the slower is the process, however, the safer is the hash.
 
 The constructor initializes the underlying object with 3 parameters:
-1.	Number of iterations (min. 1024, default 16384).
+1.	A number of iterations (min. 1024, default 16384).
 2.	Hash length (min. 24 bytes, default 64 bytes).
 3.	Salt length (min. 8 bytes, default 64). It is recommended that the length of the salt is equal to the length of the produced hash.
 
@@ -368,7 +369,7 @@ If any of the above parameters is below its minimum value the constructor will t
 
 This is not a real cipher but is an interface that can be implemented by a cipher. Some of the ciphers (e.g. `EncryptedNewKey`) use certificates to retrieve the clear text of the symmetric key. Once retrieved, the loaded and the respective public/private keys are not used anymore. If the cipher is used more than once, it would make sense to release the certificate and the related asymmetric algorithms and keys for resource utilization and security reasons. The methods of ILightCipher allow for that - "lighten the cipher" and also can clone the current cipher to a "lightweight cipher". The interface is implemented by the `EncryptedKeyCipher` descendants.
 
-The goal and definition of `ILightHasher` is similar but works with HMAC hashers like `KeyedHasher`.
+The goal and definition of `ILightHasher` are similar but works with HMAC hashers like `KeyedHasher`.
 
 # XML Ciphers and Signers
 
@@ -462,7 +463,7 @@ The class implements `IXmlCipher` and `IKeyManagement`. It is very similar to th
 
 ### `EncryptedKeyXmlCipher`
 
-The class is similar to `EncryptedKeyCipher` where the session key is protected by encrypting it with asymmetric key from a certificate.
+The class is similar to `EncryptedKeyCipher` where the session key is protected by encrypting it with an asymmetric key from a certificate.
 
 ### `EncryptedNewKeyXmlCipher`
 
@@ -479,7 +480,7 @@ The XML signing standard specifies three types of signatures which are defined i
 * Enveloped – the signature is an element enveloped in the XML document and
 * Enveloping – the signature is an element which envelops the signed element.
 
-The interface has a property `SignatureLocation` which specifies the type of the signature. Since the only supported XML algorithms by the standards is SHA/RSA, there is only one signer class - `RsaXmlSigner` (see below).
+The interface has a property `SignatureLocation` which specifies the type of the signature. Since the only supported XML algorithms by the standards are SHA/RSA, there is only one signer class - `RsaXmlSigner` (see below).
 
 The `bool` property `IncludeKeyInfo` specifies whether the signature should include the optional information about the signing key. Some consider including this information prone to man-in-the-middle attacks.
 

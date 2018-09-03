@@ -10,6 +10,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1E57F4C-36F1-475B-B7D8-C7F06A8FFDBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vm.Aspects.Security.Cryptography.Ciphers.Tests", "tests\vm.Aspects.Security.Cryptography.Ciphers.Tests.csproj", "{B55FEE15-775E-462D-B20F-B55BB552EA85}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6D97E06-F531-4F7A-BACE-0C97F8F38E36} = {D6D97E06-F531-4F7A-BACE-0C97F8F38E36}
+		{E738AA19-91CB-498A-B09F-04796D6D1F4B} = {E738AA19-91CB-498A-B09F-04796D6D1F4B}
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {1D9384D5-CC9E-4C8D-ACBB-31FB25056600}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{06E69EA1-3CE3-495D-B357-C967879E73F6}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,8 +24,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{06E69EA1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyFile", "tools\KeyFile\KeyFile.csproj", "{186551F3-447A-4D1B-9DF7-3E6B49E0C10C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E738AA19-91CB-498A-B09F-04796D6D1F4B} = {E738AA19-91CB-498A-B09F-04796D6D1F4B}
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {1D9384D5-CC9E-4C8D-ACBB-31FB25056600}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileCrypt", "tools\FileCrypt\FileCrypt.csproj", "{32B9F323-F629-4CA4-9003-0E30A4C441A0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {1D9384D5-CC9E-4C8D-ACBB-31FB25056600}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{401E6834-05E7-4B50-8F90-C9145FEF94C8}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,15 +46,21 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Security.Cryptography.Ciphers", "src\vm.Aspects.Security.Cryptography.Ciphers.csproj", "{1D9384D5-CC9E-4C8D-ACBB-31FB25056600}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Security.Cryptography.Ciphers.Xml", "Xml\src\vm.Aspects.Security.Cryptography.Ciphers.Xml.csproj", "{D6D97E06-F531-4F7A-BACE-0C97F8F38E36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {1D9384D5-CC9E-4C8D-ACBB-31FB25056600}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EF2ED22B-F365-458F-89E4-EF2FF1FF484D}"
 	ProjectSection(SolutionItems) = preProject
+		build\buildProject.cmd = build\buildProject.cmd
 		build\PublishCiphers.cmd = build\PublishCiphers.cmd
-		build\PublishCiphersProtected.cmd = build\PublishCiphersProtected.cmd
-		build\PublishCiphersXml.cmd = build\PublishCiphersXml.cmd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Security.Cryptography.Ciphers.ProtectedData", "ProtectedData\src\vm.Aspects.Security.Cryptography.Ciphers.ProtectedData.csproj", "{E738AA19-91CB-498A-B09F-04796D6D1F4B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6D97E06-F531-4F7A-BACE-0C97F8F38E36} = {D6D97E06-F531-4F7A-BACE-0C97F8F38E36}
+		{1D9384D5-CC9E-4C8D-ACBB-31FB25056600} = {1D9384D5-CC9E-4C8D-ACBB-31FB25056600}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{6D6BF48D-96D4-4CBA-899D-29A83110989E}"
 	ProjectSection(SolutionItems) = preProject
