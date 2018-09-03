@@ -10,7 +10,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-        <CodeAnalysisRuleSet>..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <NeutralLanguage>en-US</NeutralLanguage>
         <LangVersion>7.1</LangVersion>
 
