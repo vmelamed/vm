@@ -13,9 +13,9 @@ using vm.Aspects.Diagnostics;
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\docs\\Expression.xsd")]
-    [DeploymentItem("..\\..\\..\\docs\\Microsoft.Serialization.xsd")]
-    [DeploymentItem("..\\..\\..\\docs\\DataContract.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
     public static class TestHelpers
     {

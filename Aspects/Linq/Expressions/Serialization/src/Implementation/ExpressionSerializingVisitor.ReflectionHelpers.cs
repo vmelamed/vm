@@ -92,20 +92,14 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         IEnumerable<XElement> PopParameters(IEnumerable<ParameterExpression> parameters)
-        {
-            if (parameters == null)
-                throw new ArgumentNullException(nameof(parameters));
-
-            return PopExpressions(parameters.Count());
-        }
+            => parameters!=null
+                    ? PopExpressions(parameters.Count())
+                    : throw new ArgumentNullException(nameof(parameters));
 
         IEnumerable<XElement> PopArguments(IEnumerable<Expression> arguments)
-        {
-            if (arguments == null)
-                throw new ArgumentNullException(nameof(arguments));
-
-            return PopExpressions(arguments.Count());
-        }
+            => arguments!=null
+                    ? PopExpressions(arguments.Count())
+                    : throw new ArgumentNullException(nameof(arguments));
 
         XElement AddParameters(IEnumerable<ParameterExpression> parameters, XElement node)
         {
@@ -193,12 +187,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="node">The binary node.</param>
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(BinaryExpression node)
-        {
-            if (node == null)
-                throw new ArgumentNullException(nameof(node));
-
-            return VisitMethodInfo(node.Method);
-        }
+            => node!=null
+                    ? VisitMethodInfo(node.Method)
+                    : throw new ArgumentNullException(nameof(node));
 
         /// <summary>
         /// If the unary expression has overloading method, creates an XML &quot;method&quot; element.
@@ -206,12 +197,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="node">The node.</param>
         /// <returns>The created method or <see langword="null"/> if there is no overloading method.</returns>
         static XElement VisitMethodInfo(UnaryExpression node)
-        {
-            if (node == null)
-                throw new ArgumentNullException(nameof(node));
-
-            return VisitMethodInfo(node.Method);
-        }
+            => node!=null
+                    ? VisitMethodInfo(node.Method)
+                    : throw new ArgumentNullException(nameof(node));
 
         /// <summary>
         /// Creates an XML element out of <paramref name="memberInfo"/>.
@@ -222,23 +210,23 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         {
             switch (memberInfo)
             {
-            case PropertyInfo p:
-                return VisitPropertyInfo(p);
+                case PropertyInfo p:
+                    return VisitPropertyInfo(p);
 
-            case ConstructorInfo c:
-                return VisitConstructorInfo(c);
+                case ConstructorInfo c:
+                    return VisitConstructorInfo(c);
 
-            case MethodInfo m:
-                return VisitMemberInfo(m);
+                case MethodInfo m:
+                    return VisitMemberInfo(m);
 
-            case FieldInfo f:
-                return VisitFieldInfo(f);
+                case FieldInfo f:
+                    return VisitFieldInfo(f);
 
-            case EventInfo e:
-                return VisitEventInfo(e);
+                case EventInfo e:
+                    return VisitEventInfo(e);
 
-            default:
-                return null;
+                default:
+                    return null;
             }
         }
 
@@ -329,15 +317,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="eventInfo">The property info.</param>
         /// <returns>An XML element or <see langword="null"/> if <paramref name="eventInfo"/> is <see langword="null"/>.</returns>
         static XElement VisitEventInfo(EventInfo eventInfo)
-        {
-            if (eventInfo == null)
-                return null;
-
-            return new XElement(
+            => eventInfo != null
+                ? new XElement(
                     XNames.Elements.Property,
                     new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(eventInfo.DeclaringType)),
-                    new XAttribute(XNames.Attributes.Name, eventInfo.Name));
-        }
+                    new XAttribute(XNames.Attributes.Name, eventInfo.Name))
+                : null;
 
         /// <summary>
         /// Creates an XML element out of <paramref name="propertyInfo"/>.
@@ -345,16 +330,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="propertyInfo">The property info.</param>
         /// <returns>An XML element or <see langword="null"/> if <paramref name="propertyInfo"/> is <see langword="null"/>.</returns>
         static XElement VisitPropertyInfo(PropertyInfo propertyInfo)
-        {
-            if (propertyInfo == null)
-                return null;
-
-            return new XElement(
-                    XNames.Elements.Property,
-                    new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(propertyInfo.DeclaringType)),
-                    new XAttribute(XNames.Attributes.Name, propertyInfo.Name),
-                    VisitParameters(propertyInfo.GetIndexParameters()));
-        }
+            => propertyInfo!=null
+                    ? new XElement(
+                            XNames.Elements.Property,
+                            new XAttribute(XNames.Attributes.Type, TypeNameResolver.GetTypeName(propertyInfo.DeclaringType)),
+                            new XAttribute(XNames.Attributes.Name, propertyInfo.Name),
+                            VisitParameters(propertyInfo.GetIndexParameters()))
+                    : null;
 
         /// <summary>
         /// Creates an XML element out of <paramref name="fieldInfo"/>.

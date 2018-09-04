@@ -90,8 +90,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             { XNames.Elements.Index,                (v, e) => v.VisitIndex(e)               },
             { XNames.Elements.New,                  (v, e) => v.VisitNew(e)                 },
             { XNames.Elements.Throw,                (v, e) => v.VisitThrow(e)               },
-            { XNames.Elements.Default,              (v, e) => ExpressionDeserializingVisitor.VisitDefault(e) },
-            { XNames.Elements.Extension,            (v, e) => ExpressionDeserializingVisitor.VisitDefault(e) },
+            { XNames.Elements.Default,              (v, e) => VisitDefault(e)               },
+            { XNames.Elements.Extension,            (v, e) => VisitDefault(e)               },
             { XNames.Elements.MemberAccess,         (v, e) => v.VisitMember(e)              },
             { XNames.Elements.Call,                 (v, e) => v.VisitMethodCall(e)          },
             { XNames.Elements.Exception,            (v, e) => v.VisitParameter(e)           },
@@ -117,24 +117,18 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         /// <param name="element">The element to be visited.</param>
         /// <returns>The created expression.</returns>
         public Expression Visit(XElement element)
-        {
-            if (element == null)
-                return null;
-
-            return _deserializers[element.Name](this, element);
-        }
+            => element!=null
+                    ? _deserializers[element.Name](this, element)
+                    : null;
 
         static ExpressionType GetExpressionType(
             XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return (ExpressionType)Enum.Parse(
+            => element!=null
+                    ? (ExpressionType)Enum.Parse(
                                         typeof(ExpressionType),
                                         element.Name.LocalName,
-                                        true);
-        }
+                                        true)
+                    : throw new ArgumentNullException(nameof(element));
 
         static ConstantExpression VisitConstant(XElement element)
         {
@@ -152,7 +146,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             return Expression.Constant(value, type);
         }
 
-        static Expression VisitDefault(XElement element) => Expression.Default(DataSerialization.GetType(element));
+        static Expression VisitDefault(XElement element)
+            => Expression.Default(DataSerialization.GetType(element));
 
         ParameterExpression VisitParameter(XElement element)
         {
@@ -181,14 +176,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         IEnumerable<ParameterExpression> VisitParameters(XElement element)
-        {
-            if (element == null)
-                return new ParameterExpression[0];
-
-            return element.Elements(XNames.Elements.Parameter)
-                                    .Select(p => VisitParameter(p))
-                                    .ToList();
-        }
+            => element!=null
+                    ? element
+                        .Elements(XNames.Elements.Parameter)
+                        .Select(p => VisitParameter(p))
+                        .ToList()
+                        .AsEnumerable()
+                    : new ParameterExpression[0];
 
         IEnumerable<Expression> VisitArguments(XElement element)
         {
@@ -204,30 +198,20 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         IEnumerable<Expression> VisitExpressions(XElement element)
-        {
-            if (element == null)
-                return new Expression[0];
-
-            return VisitExpressions(element.Elements());
-        }
+            => element!=null ? VisitExpressions(element.Elements()) : new Expression[0];
 
         IEnumerable<Expression> VisitExpressions(IEnumerable<XElement> elements)
-        {
-            if (elements == null)
-                return new Expression[0];
-
-            return elements.Select(e => Visit(e));
-        }
+            => elements!=null ? elements.Select(e => Visit(e)) : new Expression[0];
 
         LambdaExpression VisitLambda(XElement element)
         {
             if (element == null)
                 throw new ArgumentNullException(nameof(element));
 
-            var parameters = VisitParameters(element.Element(XNames.Elements.Parameters));
+            var parameters        = VisitParameters(element.Element(XNames.Elements.Parameters));
             var tailCallAttribute = element.Attribute(XNames.Attributes.TailCall);
-            var delegateType = DataSerialization.GetType(element.Attribute(XNames.Attributes.DelegateType));
-            var name = GetName(element);
+            var delegateType      = DataSerialization.GetType(element.Attribute(XNames.Attributes.DelegateType));
+            var name              = GetName(element);
 
             return delegateType != null
                 ? Expression.Lambda(
@@ -252,16 +236,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         UnaryExpression VisitUnary(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.MakeUnary(
-                        GetExpressionType(element),
-                        Visit(element.Elements().First()),
-                        ConvertTo(element),
-                        GetMethodInfo(element));
-        }
+            => element!=null
+                    ? Expression.MakeUnary(
+                                    GetExpressionType(element),
+                                    Visit(element.Elements().First()),
+                                    ConvertTo(element),
+                                    GetMethodInfo(element))
+                    : throw new ArgumentNullException(nameof(element));
 
         BinaryExpression VisitBinary(XElement element)
         {
@@ -279,14 +260,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         TypeBinaryExpression VisitTypeBinary(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.TypeIs(
+            => element!=null
+                    ? Expression.TypeIs(
                         Visit(element.Elements().First()),
-                        DataSerialization.GetType(element));
-        }
+                        DataSerialization.GetType(element))
+                    : throw new ArgumentNullException(nameof(element));
 
         BlockExpression VisitBlock(XElement element)
         {
@@ -311,16 +289,13 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         ConditionalExpression VisitConditional(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.Condition(
+            => element!=null
+                    ? Expression.Condition(
                          Visit(element.Elements().ElementAt(0)),
                          Visit(element.Elements().ElementAt(1)),
                          Visit(element.Elements().ElementAt(2)),
-                         DataSerialization.GetType(element) ?? typeof(void));
-        }
+                         DataSerialization.GetType(element) ?? typeof(void))
+                    : throw new ArgumentNullException(nameof(element));
 
         MemberExpression VisitMember(XElement element)
         {
@@ -340,14 +315,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         IndexExpression VisitIndex(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.ArrayAccess(
-                                Visit(element.Elements().First()),
-                                VisitExpressions(element.Element(XNames.Elements.Indexes)));
-        }
+            => element!=null
+                    ? Expression.ArrayAccess(
+                                    Visit(element.Elements().First()),
+                                    VisitExpressions(element.Element(XNames.Elements.Indexes)))
+                    : throw new ArgumentNullException(nameof(element));
 
         Expression VisitMethodCall(XElement element)
         {
@@ -367,13 +339,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         UnaryExpression VisitThrow(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.Throw(
-                        Visit(element.Elements().First()));
-        }
+            => element!=null
+                    ? Expression.Throw(Visit(element.Elements().First()))
+                    : throw new ArgumentNullException(nameof(element));
 
         NewExpression VisitNew(XElement element)
         {
@@ -447,37 +415,26 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         LabelTarget VisitBreakLabel(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return VisitLabelTarget(
-                        element.Element(XNames.Elements.LabelTarget));
-        }
+            => element!=null
+                    ? VisitLabelTarget(element.Element(XNames.Elements.LabelTarget))
+                    : throw new ArgumentNullException(nameof(element));
 
         LabelTarget VisitContinueLabel(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return VisitLabelTarget(
-                        element.Element(XNames.Elements.LabelTarget));
-        }
+            => element!=null
+                    ? VisitLabelTarget(element.Element(XNames.Elements.LabelTarget))
+                    : throw new ArgumentNullException(nameof(element));
 
         GotoExpression VisitGoto(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return Expression.MakeGoto(
+            => element!=null
+                    ? Expression.MakeGoto(
                                 (GotoExpressionKind)Enum.Parse(
                                                 typeof(GotoExpressionKind),
                                                 element.Attribute(XNames.Attributes.Kind).Value,
                                                 true),
                                 VisitLabelTarget(element.Elements().ElementAt(0)),
                                 Visit(element.Elements().Skip(1).FirstOrDefault()),
-                                DataSerialization.GetType(element));
-        }
+                                DataSerialization.GetType(element))
+                    : throw new ArgumentNullException(nameof(element));
 
         LoopExpression VisitLoop(XElement element)
         {
@@ -525,29 +482,23 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         SwitchCase VisitSwitchCase(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.SwitchCase(
+            => e!=null
+                    ? Expression.SwitchCase(
                         Visit(e.Elements().Last()),
                         e.Elements(XNames.Elements.Value)
                               .Select(v => Visit(v.Elements()
-                                                  .FirstOrDefault())));
-        }
+                                                  .FirstOrDefault())))
+                    : throw new ArgumentNullException(nameof(e));
 
         Expression VisitTry(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.MakeTry(
+            => e!=null
+                    ? Expression.MakeTry(
                         DataSerialization.GetType(e),
                         Visit(e.Elements().First()),
                         Visit(e.Elements(XNames.Elements.Finally).FirstOrDefault()),
                         Visit(e.Elements(XNames.Elements.Fault).FirstOrDefault()),
-                        e.Elements(XNames.Elements.Catch).Select(c => VisitCatchBlock(c)));
-        }
+                        e.Elements(XNames.Elements.Catch).Select(c => VisitCatchBlock(c)))
+                    : throw new ArgumentNullException(nameof(e));
 
         CatchBlock VisitCatchBlock(XElement e)
         {
@@ -585,26 +536,18 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         Expression VisitExpressionContainer(XElement e)
-        {
-            if (e == null)
-                return null;
-
-            return Visit(e.Elements().SingleOrDefault());
-        }
+            => e!=null ? Visit(e.Elements().SingleOrDefault()) : null;
 
         Expression VisitListInit(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.ListInit(
+            => e!=null
+                    ? Expression.ListInit(
                         VisitNew(e.Elements().First()),
                         e.Elements()
                                 .Skip(1)
                                 .Take(1)
                                 .Elements()
-                                .Select(el => VisitElementInit(el)));
-        }
+                                .Select(el => VisitElementInit(el)))
+                    : throw new ArgumentNullException(nameof(e));
 
         ElementInit VisitElementInit(XElement e)
         {
@@ -620,60 +563,41 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
         }
 
         Expression VisitNewArrayInit(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.NewArrayInit(
+            => e!=null
+                    ? Expression.NewArrayInit(
                         DataSerialization.GetType(e),
-                        VisitExpressions(e.Element(XNames.Elements.ArrayElements).Elements()));
-        }
+                        VisitExpressions(e.Element(XNames.Elements.ArrayElements).Elements()))
+                    : throw new ArgumentNullException(nameof(e));
 
         Expression VisitNewArrayBounds(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.NewArrayBounds(
+            => e!=null
+                    ? Expression.NewArrayBounds(
                         DataSerialization.GetType(e),
-                        VisitExpressions(e.Element(XNames.Elements.Bounds).Elements()));
-        }
+                        VisitExpressions(e.Element(XNames.Elements.Bounds).Elements()))
+                    : throw new ArgumentNullException(nameof(e));
 
         Expression VisitMemberInit(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.MemberInit(
+            => e!=null
+                    ? Expression.MemberInit(
                         Visit(e.Elements().First()) as NewExpression,
-                        VisitMemberBindings(e.Element(XNames.Elements.Bindings)));
-        }
+                        VisitMemberBindings(e.Element(XNames.Elements.Bindings)))
+                    : throw new ArgumentNullException(nameof(e));
 
-        IEnumerable<MemberBinding> VisitMemberBindings(XElement xElement)
-        {
-            if (xElement == null)
-                throw new ArgumentNullException(nameof(xElement));
+        IEnumerable<MemberBinding> VisitMemberBindings(XElement e)
+            => e!=null
+                    ? VisitMemberBindings(
+                        e.Elements())
+                    : throw new ArgumentNullException(nameof(e));
 
-            return VisitMemberBindings(
-                        xElement.Elements());
-        }
-
-        IEnumerable<MemberBinding> VisitMemberBindings(IEnumerable<XElement> xElements)
-        {
-            if (xElements == null)
-                throw new ArgumentNullException(nameof(xElements));
-
-            return xElements.Select(
-                        e => VisitMemberBinding(e));
-        }
+        IEnumerable<MemberBinding> VisitMemberBindings(IEnumerable<XElement> e)
+            => e!=null
+                    ? e.Select(x => VisitMemberBinding(x))
+                    : throw new ArgumentNullException(nameof(e));
 
         MemberBinding VisitMemberBinding(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return _typeToMemberBinding[e.Name](this, e);
-        }
+            => e!=null
+                    ? _typeToMemberBinding[e.Name](this, e)
+                    : throw new ArgumentNullException(nameof(e));
 
         readonly IDictionary<XName, Func<ExpressionDeserializingVisitor, XElement, MemberBinding>> _typeToMemberBinding =
             new Dictionary<XName, Func<ExpressionDeserializingVisitor, XElement, MemberBinding>>
@@ -694,14 +618,11 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             };
 
         Expression VisitRuntimeVariables(XElement e)
-        {
-            if (e == null)
-                throw new ArgumentNullException(nameof(e));
-
-            return Expression.RuntimeVariables(
+            => e!=null
+                    ? Expression.RuntimeVariables(
                         VisitParameters(
                             e.Element(
-                                XNames.Elements.Variables)));
-        }
+                                XNames.Elements.Variables)))
+                    : throw new ArgumentNullException(nameof(e));
     }
 }

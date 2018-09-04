@@ -232,7 +232,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="vm.Aspects.Diagnostics.ObjectTextDumper">
-      <Version>2.0.2</Version>
+      <Version>2.0.3-beta.2</Version>
+    </PackageReference>
+    <PackageReference Include="vm.Aspects.Linq.Expressions.Serialization">
+      <Version>2.0.1-beta.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -378,12 +381,6 @@
     <Content Include="TestFiles\Unary\UnaryPlus.xml" />
     <Content Include="TestFiles\Uri.xml" />
     <Content Include="TestFiles\UShort.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\vm.Aspects.Linq.Expressions.Serialization.csproj">
-      <Project>{2e923ea0-91db-475c-9347-19ada7cde21d}</Project>
-      <Name>vm.Aspects.Linq.Expressions.Serialization</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

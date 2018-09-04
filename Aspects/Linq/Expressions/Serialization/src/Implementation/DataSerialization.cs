@@ -148,8 +148,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return true;
 
             // yes if this is a type marked with [DataContract], [MessageContract] or [CollectionDataContract]
-            if (Attribute.IsDefined(type, typeof(DataContractAttribute)) ||
-                Attribute.IsDefined(type, typeof(MessageContractAttribute))         ||
+            if (Attribute.IsDefined(type, typeof(DataContractAttribute))     ||
+                Attribute.IsDefined(type, typeof(MessageContractAttribute))  ||
                 Attribute.IsDefined(type, typeof(CollectionDataContractAttribute)))
                 return true;
 

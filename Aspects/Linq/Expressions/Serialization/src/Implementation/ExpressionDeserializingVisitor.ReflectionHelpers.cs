@@ -10,44 +10,38 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 {
     partial class ExpressionDeserializingVisitor
     {
-        static string GetName(XElement element)
+        static string GetName(XElement e)
+            => e!=null
+                    ? e.Attribute(XNames.Attributes.Name)?.Value
+                    : throw new ArgumentNullException(nameof(e));
+
+        static Type ConvertTo(XElement e)
+            => e!=null
+                    ? DataSerialization.GetType(e.Attribute(XNames.Attributes.Type))
+                    : throw new ArgumentNullException(nameof(e));
+
+        static IEnumerable<MemberInfo> GetMembers(Type type, XElement e)
         {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
-            return element.Attribute(XNames.Attributes.Name)?.Value;
-        }
-
-        static Type ConvertTo(XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            return DataSerialization.GetType(element.Attribute(XNames.Attributes.Type));
-        }
-
-        static IEnumerable<MemberInfo> GetMembers(Type type, XElement element)
-        {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-
-            var members = element.Elements(XNames.Elements.Members).FirstOrDefault();
+            var members = e.Elements(XNames.Elements.Members).FirstOrDefault();
 
             if (members == null)
                 return new MemberInfo[0];
 
             return members
                     .Elements()
-                    .Select(e => GetMemberInfo(type, e))
+                    .Select(x => GetMemberInfo(type, x))
                     .ToList();
         }
 
-        static ConstructorInfo GetConstructorInfo(XElement element)
+        static ConstructorInfo GetConstructorInfo(XElement e)
         {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
-            var constructor = element.Elements(XNames.Elements.Constructor).FirstOrDefault();
+            var constructor = e.Elements(XNames.Elements.Constructor).FirstOrDefault();
 
             if (constructor == null)
                 return null;
@@ -57,12 +51,12 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                         constructor);
         }
 
-        static MethodInfo GetMethodInfo(XElement element)
+        static MethodInfo GetMethodInfo(XElement e)
         {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
-            var method = element.Elements(XNames.Elements.Method).FirstOrDefault();
+            var method = e.Elements(XNames.Elements.Method).FirstOrDefault();
 
             if (method == null)
                 return null;
@@ -72,32 +66,32 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                         method);
         }
 
-        static MemberInfo GetMemberInfo(XElement element)
+        static MemberInfo GetMemberInfo(XElement e)
         {
-            if (element == null)
+            if (e == null)
                 return null;
 
-            var type = DataSerialization.GetType(element);
+            var type = DataSerialization.GetType(e);
 
-            if (!_memberInfoDeserializers.TryGetValue(element.Name, out var getMemberInfo))
+            if (!_memberInfoDeserializers.TryGetValue(e.Name, out var getMemberInfo))
                 throw new SerializationException("Expected a member info type of element.");
 
-            return getMemberInfo(type, element);
+            return getMemberInfo(type, e);
         }
 
-        static MemberInfo GetMemberInfo(Type type, XElement element)
+        static MemberInfo GetMemberInfo(Type type, XElement e)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            if (element == null)
+            if (e == null)
                 return null;
 
 
-            if (!_memberInfoDeserializers.TryGetValue(element.Name, out var getMemberInfo))
+            if (!_memberInfoDeserializers.TryGetValue(e.Name, out var getMemberInfo))
                 throw new SerializationException("Expected a member info type of element.");
 
-            return getMemberInfo(type, element);
+            return getMemberInfo(type, e);
         }
 
         static IDictionary<XName, Func<Type, XElement, MemberInfo>> _memberInfoDeserializers = new Dictionary<XName, Func<Type, XElement, MemberInfo>>
@@ -109,72 +103,72 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
             { XNames.Elements.Constructor, GetConstructorInfo },
         };
 
-        static PropertyInfo GetPropertyInfo(Type type, XElement element)
+        static PropertyInfo GetPropertyInfo(Type type, XElement e)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
             return type.GetProperty(
-                            GetName(element),
-                            GetBindingFlags(element));
+                            GetName(e),
+                            GetBindingFlags(e));
         }
 
-        static MethodInfo GetMethodInfo(Type type, XElement element)
+        static MethodInfo GetMethodInfo(Type type, XElement e)
         {
-            if (element != null && type == null)
+            if (e != null && type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            return element == null
+            return e == null
                         ? null
                         : type.GetMethod(
-                                    GetName(element),
-                                    element.Element(XNames.Elements.Parameters)
+                                    GetName(e),
+                                    e.Element(XNames.Elements.Parameters)
                                            .Elements(XNames.Elements.Parameter)
                                            .Select(p => DataSerialization.GetType(p))
                                            .ToArray());
         }
 
-        static FieldInfo GetFieldInfo(Type type, XElement element)
+        static FieldInfo GetFieldInfo(Type type, XElement e)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
             return type.GetField(
-                            GetName(element),
-                            GetBindingFlags(element));
+                            GetName(e),
+                            GetBindingFlags(e));
         }
 
-        static EventInfo GetEventInfo(Type type, XElement element)
+        static EventInfo GetEventInfo(Type type, XElement e)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
             return type.GetEvent(
-                            GetName(element),
-                            GetBindingFlags(element));
+                            GetName(e),
+                            GetBindingFlags(e));
         }
 
-        static ConstructorInfo GetConstructorInfo(Type type, XElement element)
+        static ConstructorInfo GetConstructorInfo(Type type, XElement e)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            if (element == null)
+            if (e == null)
                 return null;
 
             return type.GetConstructor(
-                            element.Element(XNames.Elements.Parameters)
+                            e.Element(XNames.Elements.Parameters)
                                    .Elements()
                                    .Select(p => DataSerialization.GetType(p))
                                    .ToArray());
         }
 
-        static BindingFlags GetBindingFlags(XElement element)
+        static BindingFlags GetBindingFlags(XElement e)
         {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
 
-            var visibility = element.Attribute(XNames.Attributes.Visibility);
+            var visibility = e.Attribute(XNames.Attributes.Visibility);
 
             BindingFlags flags = visibility == null
                                     ? BindingFlags.Public
@@ -182,7 +176,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                                             ? BindingFlags.Public
                                             : BindingFlags.NonPublic;
 
-            var stat = element.Attribute(XNames.Attributes.Static);
+            var stat = e.Attribute(XNames.Attributes.Static);
 
             flags |= stat == null
                         ? BindingFlags.Instance

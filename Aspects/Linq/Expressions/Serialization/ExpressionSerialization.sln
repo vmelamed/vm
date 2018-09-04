@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common Items", "Common Items", "{3F144F17-AC65-44AA-8F26-50A12AF2FADF}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\..\Common Items\AssemblyInfo.global.cs = ..\..\..\..\Common Items\AssemblyInfo.global.cs
+		..\..\..\..\Common Items\buildProject.cmd = ..\..\..\..\Common Items\buildProject.cmd
 		..\..\..\..\Common Items\Dictionary.xml = ..\..\..\..\Common Items\Dictionary.xml
 		..\..\..\..\Common Items\vm.snk = ..\..\..\..\Common Items\vm.snk
 		..\..\..\..\Common Items\vm.Test.snk = ..\..\..\..\Common Items\vm.Test.snk
@@ -18,10 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Linq.Expressions
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{FC5881FB-9DEF-48A0-BD3B-E889A191CFB2}"
 	ProjectSection(SolutionItems) = preProject
-		docs\DataContract.xsd = docs\DataContract.xsd
 		docs\Expression Tree Specification.pdf = docs\Expression Tree Specification.pdf
-		docs\Expression.xsd = docs\Expression.xsd
-		docs\Microsoft.Serialization.xsd = docs\Microsoft.Serialization.xsd
+		docs\vm.Aspects.Linq.Expressions.Serialization.md = docs\vm.Aspects.Linq.Expressions.Serialization.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6FC0850A-B252-4AAD-9DE6-DD18AD39F3FE}"

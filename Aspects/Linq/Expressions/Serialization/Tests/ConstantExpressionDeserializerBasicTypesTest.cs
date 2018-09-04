@@ -7,8 +7,8 @@ using System.Linq.Expressions;
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\docs\\Expression.xsd")]
-    [DeploymentItem("..\\..\\..\\docs\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Microsoft.Serialization.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
     public class ConstantExpressionDeserializerBasicTypesTest
     {

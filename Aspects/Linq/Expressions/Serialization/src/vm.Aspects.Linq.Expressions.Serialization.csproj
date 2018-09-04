@@ -4,14 +4,14 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>7.3</LangVersion>
 
-        <VersionPrefix>2.0.0</VersionPrefix>
+        <VersionPrefix>2.0.1</VersionPrefix>
         <AssemblyName>vm.Aspects.Linq.Expressions.Serialization</AssemblyName>
         <RootNamespace>vm.Aspects.Linq.Expressions.Serialization</RootNamespace>
         <AssemblyDescription>Serializes Linq expression trees to and from XML documents.</AssemblyDescription>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
-              <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <NeutralLanguage>en-US</NeutralLanguage>
 
         <Authors>Val Melamed</Authors>
@@ -43,9 +43,9 @@
     - The XML documents are validated against a schema: urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization
 * Targets .NET Standard and System.ServiceModel.Primitives 4.5.3
         </Description>
-        <PackageReleaseNotes>Note: this package inherits from the Ciphers package but the name has changed for consistency's sake with the other vm.Aspects packages.
+        <PackageReleaseNotes>
+Note: this package inherits from the AspectExpressionSerialization  package but the name has changed for consistency's sake with the other vm.Aspects packages.
 Refactored the library to drop the dependency on Common Service Locator - no assumption of DI container anymore.
-Refactored a number of c-tors to take additional dependencies, which were previously resolved from the CSL.
 Built and tested with .NET Standard 2.0.
         </PackageReleaseNotes>
     </PropertyGroup>
@@ -55,25 +55,38 @@ Built and tested with .NET Standard 2.0.
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs"
-                 Link="Properties\AssemblyInfo.global.cs" />
+      <None Remove="schemas\DataContract.xsd" />
+      <None Remove="schemas\Expression.xsd" />
+      <None Remove="schemas\Microsoft.Serialization.xsd" />
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="..\..\..\..\..\Common Items\Dictionary.xml"
-                         Link="Dictionary.xml" />
+        <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\..\..\..\Common Items\vm.snk"
-              Link="vm.snk" />
-        <None Include="..\..\..\..\..\Common Items\vmAllRules.ruleset"
-              Link="vmAllRules.ruleset" />
+        <AdditionalFiles Include="..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.ServiceModel.Primitives"
-                          Version="4.5.3" />
+      <Content Include="schemas\DataContract.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="schemas\Expression.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="schemas\Microsoft.Serialization.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
+        <None Include="..\..\..\..\..\Common Items\vmAllRules.ruleset" Link="vmAllRules.ruleset" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
     </ItemGroup>
 
 </Project>
