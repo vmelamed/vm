@@ -5,16 +5,18 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using vm.Aspects.Diagnostics;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
-    [DeploymentItem("..\\..\\DataContract.xsd")]
     public static class TestHelpers
     {
         static XmlSchemaSet _schemas;
@@ -24,7 +26,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         {
             _schemas = new XmlSchemaSet();
             _schemas.Add(
-                "urn:schemas-vm-com:Aspects.Linq.Expression",
+                "urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization",
                 XmlReader.Create(
                     new FileStream(@"Expression.xsd", FileMode.Open, FileAccess.Read, FileShare.Read),
                     new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }));

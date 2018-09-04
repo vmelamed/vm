@@ -229,19 +229,13 @@
       <Link>vm.Test.snk</Link>
     </None>
     <None Include="app.config" />
-    <None Include="DataContract.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Microsoft.Serialization.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AspectObjectDumper">
-      <Version>1.10.2</Version>
+    <PackageReference Include="vm.Aspects.Diagnostics.ObjectTextDumper">
+      <Version>2.0.3-beta.2</Version>
     </PackageReference>
-    <PackageReference Include="CommonServiceLocator">
-      <Version>2.0.3</Version>
+    <PackageReference Include="vm.Aspects.Linq.Expressions.Serialization">
+      <Version>2.0.1-beta.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -387,12 +381,6 @@
     <Content Include="TestFiles\Unary\UnaryPlus.xml" />
     <Content Include="TestFiles\Uri.xml" />
     <Content Include="TestFiles\UShort.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\vm.Aspects.Linq.Expressions.Serialization.csproj">
-      <Project>{628d6504-40e3-412a-827f-39f8644ba906}</Project>
-      <Name>vm.Aspects.Linq.Expressions.Serialization</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

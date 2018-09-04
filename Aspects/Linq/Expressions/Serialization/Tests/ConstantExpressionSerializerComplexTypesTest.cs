@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
-    [DeploymentItem("..\\..\\DataContract.xsd")]
     public class ConstantExpressionSerializerComplexTypesTest
     {
         public TestContext TestContext
@@ -294,7 +295,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
                     ByteProperty = (byte)1,
                     SByteProperty = (sbyte)1,
                     ShortProperty = (short)1,
-                    IntProperty = (int)1,
+                    IntProperty = 1,
                     LongProperty = (long)1,
                     UShortProperty = (ushort)1,
                     UIntProperty = (uint)1,

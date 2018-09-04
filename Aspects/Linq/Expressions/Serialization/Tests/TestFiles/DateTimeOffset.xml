@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!-- 1/13/2013 3:43:33 PM +00:00 -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
     <constant>
         <custom type="System.DateTimeOffset, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
             <DateTimeOffset xmlns:i="http://www.w3.org/2001/XMLSchema-instance"

@@ -4,12 +4,9 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
 {
     class Parameter : IEquatable<Parameter>
     {
-        public string Name
-        { get; set; }
-        public Type Type
-        { get; set; }
-        public bool IsByRef
-        { get; set; }
+        public string Name { get; set; }
+        public Type Type { get; set; }
+        public bool IsByRef { get; set; }
 
         #region Identity rules implementation.
 

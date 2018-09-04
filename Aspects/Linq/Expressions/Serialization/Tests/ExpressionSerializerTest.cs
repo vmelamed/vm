@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace vm.Aspects.Linq.Expressions.Serialization.Tests
 {
     [TestClass]
-    [DeploymentItem("..\\..\\..\\Documents\\Expression.xsd")]
-    [DeploymentItem("..\\..\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Expression.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\Microsoft.Serialization.xsd")]
+    [DeploymentItem("..\\..\\..\\src\\schemas\\DataContract.xsd")]
     [DeploymentItem("..\\..\\TestFiles", "TestFiles")]
-    [DeploymentItem("..\\..\\DataContract.xsd")]
     public class ExpressionSerializerTest
     {
         public TestContext TestContext

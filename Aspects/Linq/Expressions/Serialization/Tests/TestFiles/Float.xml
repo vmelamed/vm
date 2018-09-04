@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!-- 5.512345E-34 -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
     <constant>
         <float>5.5123453E-34</float>
     </constant>

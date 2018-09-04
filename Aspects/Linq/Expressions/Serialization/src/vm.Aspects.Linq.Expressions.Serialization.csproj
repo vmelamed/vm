@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>7.3</LangVersion>
+
+        <VersionPrefix>2.0.1</VersionPrefix>
+        <AssemblyName>vm.Aspects.Linq.Expressions.Serialization</AssemblyName>
+        <RootNamespace>vm.Aspects.Linq.Expressions.Serialization</RootNamespace>
+        <AssemblyDescription>Serializes Linq expression trees to and from XML documents.</AssemblyDescription>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <NeutralLanguage>en-US</NeutralLanguage>
+
+        <Authors>Val Melamed</Authors>
+        <Company>vm</Company>
+        <Product>vm.Aspects</Product>
+        <Copyright>Copyright © vm 2013-2018</Copyright>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+        <PackageId>vm.Aspects.Linq.Expressions.Serialization</PackageId>
+        <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Linq/Expressions/Serialization</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>aspects linq expression tree xml serialization</PackageTags>
+        <Description>Features:
+* Very simple interface. Essentially the interface consists of two methods (with a couple of convenient overloads) on the class XmlExpressionSerializer from the namespace vm.Aspects.ExpressionSerialization:
+    - public static XElement ToXmlElement(Expression expression);
+    - public static Expression ToExpression(XElement document);
+    + The overloads allow for serializing to and from whole XDocument objects.
+* The serializer supports serialization of constant expressions of the following data types:
+    - all primitive types;
+    - enum types;
+    - nullable types;
+    - the most of the BCL basic types like: string, DateTime, TimeSpan, Uri, Guid, DBNull;
+    - any serializable type;
+    - any types marked with DataContractAttribute;
+    - anonymous types;
+    - arrays and generic sequences of the above;
+    - The XML documents are validated against a schema: urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization
+* Targets .NET Standard and System.ServiceModel.Primitives 4.5.3
+        </Description>
+        <PackageReleaseNotes>
+Note: this package inherits from the AspectExpressionSerialization  package but the name has changed for consistency's sake with the other vm.Aspects packages.
+Refactored the library to drop the dependency on Common Service Locator - no assumption of DI container anymore.
+Built and tested with .NET Standard 2.0.
+        </PackageReleaseNotes>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>C:\Projects\Git\vm\Aspects\Linq\Expressions\Serialization\src\vm.Aspects.Linq.Expressions.Serialization.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="schemas\DataContract.xsd" />
+      <None Remove="schemas\Expression.xsd" />
+      <None Remove="schemas\Microsoft.Serialization.xsd" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\..\..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="schemas\DataContract.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="schemas\Expression.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="schemas\Microsoft.Serialization.xsd">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
+        <None Include="..\..\..\..\..\Common Items\vmAllRules.ruleset" Link="vmAllRules.ruleset" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
+    </ItemGroup>
+
+</Project>

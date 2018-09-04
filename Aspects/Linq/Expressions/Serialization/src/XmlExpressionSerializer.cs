@@ -4,65 +4,45 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security;
 using System.Xml.Linq;
+
 using vm.Aspects.Linq.Expressions.Serialization.Implementation;
 
 namespace vm.Aspects.Linq.Expressions.Serialization
 {
     /// <summary>
     /// The instances of this class serialize LINQ expression trees of type <see cref="Expression"/> to XML document or element and vice versa: 
-    /// de-serialize XML documents or elements conforming to schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot; to <see cref="Expression"/> objects.
+    /// de-serialize XML documents or elements conforming to schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot; to <see cref="Expression"/> objects.
     /// </summary>
     [SuppressMessage("Microsoft.Security", "CA2136:TransparencyAnnotationsShouldNotConflictFxCopRule")]
     [SecuritySafeCritical]
     public class XmlExpressionSerializer
     {
-        string _xmlVersion    = "1.0";
-        string _xmlEncoding   = "utf-8";
-        string _xmlStandalone = "yes";
-        bool _addComment      = 
-#if DEBUG
-                                true;
-#else
-                                false;
-#endif
-
         /// <summary>
         /// Gets or sets the XML document's version. Default - &quot;1.0&quot;
         /// </summary>
-        public string XmlVersion
-        {
-            get { return _xmlVersion; }
-            set { _xmlVersion = value; }
-        }
+        public string XmlVersion { get; set; } = "1.0";
 
         /// <summary>
         /// Gets or sets the XML document encoding. Default - &quot;UTF-8&quot;
         /// </summary>
-        public string XmlEncoding
-        {
-            get { return _xmlEncoding; }
-            set { _xmlEncoding = value; }
-        }
+        public string XmlEncoding { get; set; } = "utf-8";
 
         /// <summary>
         /// Gets or sets the XML standalone attribute. Default - &quot;yes&quot;
         /// </summary>
-        public string XmlStandalone
-        {
-            get { return _xmlStandalone; }
-            set { _xmlStandalone = value; }
-        }
+        public string XmlStandalone { get; set; } = "yes";
 
         /// <summary>
         /// Gets or sets a value indicating whether to add expression comment to the XML element. Default - <see langword="true"/> in debug mode, 
         /// <see langword="false"/> in release mode.
         /// </summary>
         /// <value><see langword="true"/> to add comment; otherwise, <see langword="false"/>.</value>
-        public bool AddComment
-        {
-            get { return _addComment; }
-            set { _addComment = value; }
-        }
+        public bool AddComment { get; set; } =
+#if DEBUG
+                                                true;
+#else
+                                                false;
+#endif
 
         /// <summary>
         /// Serializes the <paramref name="expression" /> to an XML document.
@@ -71,17 +51,14 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// <returns>The XML document representing the <paramref name="expression" />.</returns>
         /// <exception cref="System.ArgumentNullException">If <paramref name="expression"/> is <see langword="null"/></exception>
         public XDocument ToXmlDocument(Expression expression)
-        {
-            if (expression == null)
-                throw new ArgumentNullException(nameof(expression));
-            
-            return new XDocument(
+            => expression!=null
+                    ? new XDocument(
                             new XDeclaration(XmlVersion, XmlEncoding, XmlStandalone),
                             AddComment
                                 ? new XComment($" {expression.ToString()} ")
                                 : null,
-                            ToXmlElement(expression));
-        }
+                            ToXmlElement(expression))
+                    : throw new ArgumentNullException(nameof(expression));
 
         /// <summary>
         /// Serializes the <paramref name="expression"/> to an XML element.
@@ -94,7 +71,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
-            
+
             var visitor = new ExpressionSerializingVisitor();
 
             visitor.Visit(expression);
@@ -110,30 +87,26 @@ namespace vm.Aspects.Linq.Expressions.Serialization
         /// De-serializes the <paramref name="document"/> to an expression tree instance.
         /// </summary>
         /// <param name="document">
-        /// The document to be deserialized. The document must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot;
+        /// The document to be deserialized. The document must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot;
         /// </param>
         /// <returns>The created expression tree.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="document"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.Xml.XmlException">If the <paramref name="document"/> is not a well-formed or valid document.</exception>
         public static Expression ToExpression(XDocument document)
-        {
-            if (document == null)
-                throw new ArgumentNullException(nameof(document));
-
-            return ToExpression(document.Root);
-        }
+            => document!=null
+                    ? ToExpression(document.Root)
+                    : throw new ArgumentNullException(nameof(document));
 
         /// <summary>
         /// De-serializes the <paramref name="element"/> to an expression tree instance.
         /// </summary>
         /// <param name="element">
-        /// The element to be deserialized. The element must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expression&quot;
+        /// The element to be deserialized. The element must conform to the schema &quot;urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization&quot;
         /// </param>
         /// <returns>The created expression tree.</returns>
         /// <exception cref="System.ArgumentNullException">If the <paramref name="element"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.Xml.XmlException">If the <paramref name="element"/> is not a well-formed or valid document.</exception>
-        public static Expression ToExpression(
-            XElement element)
+        public static Expression ToExpression(XElement element)
         {
             if (element == null)
                 throw new ArgumentNullException(nameof(element));

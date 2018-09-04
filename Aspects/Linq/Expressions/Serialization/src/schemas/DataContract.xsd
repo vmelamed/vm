@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:q1="http://schemas.datacontract.org/2004/07/System" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/System" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+  <xs:complexType name="InvalidOperationException">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:SystemException"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="InvalidOperationException" nillable="true" type="q1:InvalidOperationException"/>
+  <xs:complexType name="SystemException">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:Exception"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SystemException" nillable="true" type="q1:SystemException"/>
+  <xs:complexType name="Exception">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##local" processContents="skip"/>
+    </xs:sequence>
+    <xs:attribute ref="ser:FactoryType"/>
+  </xs:complexType>
+  <xs:element name="Exception" nillable="true" type="q1:Exception"/>
+  <xs:complexType name="Version">
+    <xs:sequence>
+      <xs:element name="_Build" type="xs:int"/>
+      <xs:element name="_Major" type="xs:int"/>
+      <xs:element name="_Minor" type="xs:int"/>
+      <xs:element name="_Revision" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Version" nillable="true" type="q1:Version"/>
+  <xs:complexType name="ArgumentOutOfRangeException">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:ArgumentException"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ArgumentOutOfRangeException" nillable="true" type="q1:ArgumentOutOfRangeException"/>
+  <xs:complexType name="ArgumentException">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:SystemException"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ArgumentException" nillable="true" type="q1:ArgumentException"/>
+  <xs:complexType name="ArgumentNullException">
+    <xs:complexContent mixed="false">
+      <xs:extension base="q1:ArgumentException"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ArgumentNullException" nillable="true" type="q1:ArgumentNullException"/>
+</xs:schema>

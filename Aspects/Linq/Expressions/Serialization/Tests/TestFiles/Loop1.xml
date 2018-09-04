@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!-- {var value;var result; ... } -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
     <block type="int">
         <variables>
             <parameter type="int"

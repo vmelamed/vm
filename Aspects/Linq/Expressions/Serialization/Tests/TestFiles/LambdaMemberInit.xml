@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!-- () => new TestMembersInitialized() {TheOuterIntProperty = 42, Time = new DateTime(1776, 7, 4), InnerProperty = new Inner() {IntProperty = 23, StringProperty = "inner string"}, MyProperty = new List`1() {Void Add(System.String)("aaa"), Void Add(System.String)("bbb"), Void Add(System.String)("ccc")}} -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
     <lambda>
         <parameters />
         <body>

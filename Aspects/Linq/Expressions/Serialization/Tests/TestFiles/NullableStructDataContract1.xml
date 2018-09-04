@@ -3,7 +3,7 @@
 StructDataContract1 (vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393): 
   IntProperty              = 7
   StringProperty           = vm -->
-<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expression">
+<expression xmlns="urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization">
   <constant>
     <nullable isNull="false">
       <custom type="System.Nullable`1[[vm.Aspects.Linq.Expressions.Serialization.Tests.StructDataContract1, vm.Aspects.Linq.Expressions.Serialization.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

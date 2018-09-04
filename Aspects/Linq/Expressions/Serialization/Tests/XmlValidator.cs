@@ -29,7 +29,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
                     new FileStream("DataContract.xsd", FileMode.Open, FileAccess.Read, FileShare.Read),
                     new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }));
             _schemas.Add(
-                "urn:schemas-vm-com:Aspects.Linq.Expression",
+                "urn:schemas-vm-com:Aspects.Linq.Expressions.Serialization",
                 XmlReader.Create(
                     new FileStream("Expression.xsd", FileMode.Open, FileAccess.Read, FileShare.Read),
                     new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse }));

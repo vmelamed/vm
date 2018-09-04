@@ -1,12 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly: AssemblyTitle("vm.Aspects.Linq.Expressions.Serialization")]
-[assembly: AssemblyDescription("Serializes and deserializes LINQ expression trees to and from XML documents.")]
-
-[assembly: AssemblyVersion("1.1.1")]
-[assembly: AssemblyFileVersion("1.1.1")]
-[assembly: AssemblyInformationalVersion("1.1.1")]
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo(
     "vm.Aspects.Linq.Expressions.Serialization.Test, " +

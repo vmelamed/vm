@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>7.3</LangVersion>
 
         <VersionPrefix>2.1.4</VersionPrefix>
         <AssemblyName>vm.Aspects.Security.Cryptography.Ciphers</AssemblyName>
@@ -12,7 +13,6 @@
         <AssemblyOriginatorKeyFile>..\..\..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
         <CodeAnalysisRuleSet>..\..\..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
         <NeutralLanguage>en-US</NeutralLanguage>
-        <LangVersion>7.1</LangVersion>
 
         <Authors>Val Melamed</Authors>
         <Company>vm</Company>

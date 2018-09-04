@@ -148,8 +148,8 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return true;
 
             // yes if this is a type marked with [DataContract], [MessageContract] or [CollectionDataContract]
-            if (Attribute.IsDefined(type, typeof(DataContractAttribute)) ||
-                Attribute.IsDefined(type, typeof(MessageContractAttribute))         ||
+            if (Attribute.IsDefined(type, typeof(DataContractAttribute))     ||
+                Attribute.IsDefined(type, typeof(MessageContractAttribute))  ||
                 Attribute.IsDefined(type, typeof(CollectionDataContractAttribute)))
                 return true;
 
@@ -375,13 +375,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 nullableElement.Add(valueElement);
 
                 // create a data contract serializer (should work with [Serializable] types too)
-                var dcSerializer = new DataContractSerializer(
-                                        type,
-                                        Type.EmptyTypes,
-                                        int.MaxValue,
-                                        false,
-                                        false,
-                                        null);
+                var dcSerializer = new DataContractSerializer(type, Type.EmptyTypes);
 
                 using (var writer = valueElement.CreateWriter())
                     dcSerializer.WriteObject(writer, nullable);
@@ -523,13 +517,7 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Implementation
                 return;
 
             // create a data contract serializer (works with [Serializable] types too)
-            var dcSerializer = new DataContractSerializer(
-                                    obj.GetType(),
-                                    Type.EmptyTypes,
-                                    int.MaxValue,
-                                    false,
-                                    false,
-                                    null);
+            var dcSerializer = new DataContractSerializer(obj.GetType(), Type.EmptyTypes);
 
             using (var writer = custom.CreateWriter())
                 dcSerializer.WriteObject(writer, obj);

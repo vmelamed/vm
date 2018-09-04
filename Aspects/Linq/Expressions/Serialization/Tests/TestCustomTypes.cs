@@ -89,29 +89,29 @@ namespace vm.Aspects.Linq.Expressions.Serialization.Tests
         public string StringField;
 
         public static Object1 GetObject1() => new Object1
-                                                {
-                                                    ObjectProperty = null,
-                                                    NullIntProperty = null,
-                                                    NullLongProperty = 1L,
-                                                    BoolProperty = true,
-                                                    CharProperty = 'A',
-                                                    ByteProperty = (byte)1,
-                                                    SByteProperty = (sbyte)1,
-                                                    ShortProperty = (short)1,
-                                                    IntProperty = (int)1,
-                                                    LongProperty = (long)1,
-                                                    UShortProperty = (ushort)1,
-                                                    UIntProperty = (uint)1,
-                                                    ULongProperty = (ulong)1,
-                                                    DoubleProperty = 1.0,
-                                                    FloatProperty = (float)1.0,
-                                                    DecimalProperty = 1M,
-                                                    GuidProperty = Guid.Empty,
-                                                    UriProperty = new Uri("http://localhost"),
-                                                    DateTimeProperty = new DateTime(2013, 1, 13),
-                                                    TimeSpanProperty = new TimeSpan(123L),
-                                                    DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
-                                                };
+        {
+            ObjectProperty         = null,
+            NullIntProperty        = null,
+            NullLongProperty       = 1L,
+            BoolProperty           = true,
+            CharProperty           = 'A',
+            ByteProperty           = 1,
+            SByteProperty          = 1,
+            ShortProperty          = 1,
+            IntProperty            = 1,
+            LongProperty           = 1,
+            UShortProperty         = 1,
+            UIntProperty           = 1,
+            ULongProperty          = 1,
+            DoubleProperty         = 1.0,
+            FloatProperty          = (float)1.0,
+            DecimalProperty        = 1M,
+            GuidProperty           = Guid.Empty,
+            UriProperty            = new Uri("http://localhost"),
+            DateTimeProperty       = new DateTime(2013, 1, 13),
+            TimeSpanProperty       = new TimeSpan(123L),
+            DateTimeOffsetProperty = new DateTimeOffset(new DateTime(2013, 1, 13)),
+        };
     }
 
     [DataContract]
