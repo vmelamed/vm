@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
+    <Nullable>disable</Nullable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <Product>vm.Aspects</Product>
+    <Company>vm</Company>
+    <Copyright>Copyright © vm 2013-2020</Copyright>
+    <Version>3.0.0</Version>
+    <PackageId></PackageId>
+    <Authors>Val Melamed</Authors>
+    <Description>Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.
+Helpful for debugging and logging purposes.
+Features:
+  * The dump output is separated from the targeted dump media by the familiar TextWriter interface
+  * The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
+  * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties
+  * The dump is recursive: the complex members of the dumped object are dumped indented
+  * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
+  * Handles circular references
+  * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
+    - the order in which the properties are dumped
+    - formatting of the property names and/or values
+    - suppressing the dump of some uninteresting properties
+    - masking the values of sensitive properties (e.g. PII)
+    - the depth of the recursion into complex members
+    - the maximum number of dumped elements of sequence properties
+  * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
+  * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
+  * Built and tested with .NET 5.0
+For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/ObjectTextDumper/README.md.</Description>
+    <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics/ObjectTextDumper</PackageProjectUrl>
+    <PackageReleaseNotes>Inherits the project ObjectDumper 2.0.3.
+Restructured and rebuilt for .NET 5.0</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <AnalysisLevel>5.0</AnalysisLevel>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</RepositoryUrl>
+    <PackageTags>aspects dump object .net diagnostics debug log ObjectDumper ObjectTextDumper</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Aspects\Diagnostics\ObjectTextDumper\src\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
+    <None Include="..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

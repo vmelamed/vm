@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "vm.Aspects.Diagnostics.ObjectTextDumper.net5": {
+      "commandName": "Project"
+    }
+  }
+}

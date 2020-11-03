@@ -1,0 +1,1691 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>vm.Aspects.Diagnostics.ObjectTextDumper</name>
+    </assembly>
+    <members>
+        <member name="T:vm.Aspects.Diagnostics.ClassDumpData">
+            <summary>
+            Encapsulates a pair of a class or struct metadata and the corresponding DumpAttribute.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ClassDumpData.Metadata">
+            <summary>
+            Gets or sets the metadata associated with a given class or struct (which may be the class or struct itself).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ClassDumpData.DumpAttribute">
+            <summary>
+            Gets or sets the dump attribute applied on a given class or struct.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.DumpNullValues(vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpNullValues"/> property.
+            </summary>
+            <param name="instanceAttribute">The instance associated attribute.</param>
+            <returns>
+            The property value that should be in effect.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.DefaultProperty(vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DefaultProperty"/> property.
+            </summary>
+            <param name="instanceAttribute">The attribute associated with the instance.</param>
+            <returns>
+            The property value that should be in effect.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.RecurseDump(vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump"/> property.
+            </summary>
+            <param name="instanceAttribute">The instance associated attribute.</param>
+            <returns>
+            The property value that should be in effect. Never returns <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Default"/>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.Equals(vm.Aspects.Diagnostics.ClassDumpData)">
+            <summary>
+            Indicates whether the current object is equal to another object of the same type.
+            </summary>
+            <param name="other">A copy of another object of type <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> to compare with this object.</param>
+            <returns>
+            <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.Equals(System.Object)">
+            <summary>
+            Determines whether this <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> instance is equal to the specified <see cref="T:System.Object"/> reference.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> reference to compare with this <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> object.</param>
+            <returns>
+            <c>false</c> if <paramref name="obj"/> is equal to <c>null</c>, otherwise
+            <c>true</c> if <paramref name="obj"/> refers to <c>this</c> object, otherwise
+            <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> and
+            the fields values of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.GetHashCode">
+            <summary>
+            Serves as a hash function for the objects of <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> and its derived types.
+            </summary>
+            <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> instance.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.op_Equality(vm.Aspects.Diagnostics.ClassDumpData,vm.Aspects.Diagnostics.ClassDumpData)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+            otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.op_Inequality(vm.Aspects.Diagnostics.ClassDumpData,vm.Aspects.Diagnostics.ClassDumpData)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+            otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.ClassMetadataRegistrar">
+            <summary>
+            Class ClassMetadataRegistrar - helper for registering external dump metadata and type related <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/>-s in a fluent API style.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataRegistrar.RegisterMetadata">
+            <summary>
+            Registers the metadata defined in <see cref="N:vm.Aspects.Diagnostics.ExternalMetadata"/>.
+            Allows for chaining further registering more dump metadata.
+            </summary>
+            <returns>ClassMetadataRegistrar.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataRegistrar.Register(System.Type,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
+            <summary>
+            Registers the dump metadata and <see cref="T:vm.Aspects.Diagnostics.DumpAttribute" /> instance related to the specified type.
+            </summary>
+            <param name="type">The type for which the metadata is being registered.</param>
+            <param name="metadataType">The dump metadata type.</param>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <param name="replace">
+            If set to <see langword="false" /> and there is already dump metadata associated with the <paramref name="type"/>
+            the method will throw exception of type <see cref="T:System.InvalidOperationException"/>;
+            otherwise it will silently override the existing metadata with <paramref name="metadataType"/> and <paramref name="dumpAttribute"/>.
+            </param>
+            <returns>The current instance of ClassMetadataRegistrar.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="type" /> is <see langword="null" />.</exception>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataRegistrar.Register``2(vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
+            <summary>
+            Registers the dump metadata and <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> instance related to the specified type.
+            </summary>
+            <typeparam name="T">The type for which the metadata is being registered.</typeparam>
+            <typeparam name="TMetadata">The dump metadata type.</typeparam>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <param name="replace">
+            If set to <see langword="false" /> and there is already dump metadata associated with the <typeparamref name="T"/>
+            the method will throw exception of type <see cref="T:System.InvalidOperationException"/>;
+            otherwise it will silently override the existing metadata with <typeparamref name="TMetadata"/> and the <paramref name="dumpAttribute"/>.
+            </param>
+            <returns>The current instance of ClassMetadataRegistrar.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataRegistrar.Register``1(vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
+            <summary>
+            Registers the specified dump attribute.
+            </summary>
+            <typeparam name="T">The type for which the dump attribute is being registered.</typeparam>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <param name="replace">
+            If set to <see langword="false" /> and there is already dump metadata associated with the <typeparamref name="T"/>
+            the method will throw exception of type <see cref="T:System.InvalidOperationException"/>;
+            otherwise it will silently override the existing metadata with itself - <typeparamref name="T"/> and the <paramref name="dumpAttribute"/>.
+            </param>
+            <returns>The current instance of ClassMetadataRegistrar.</returns>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
+            </exception>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.ClassMetadataResolver">
+            <summary>
+            Primary responsibility of the class is to retrieve the metadata (the buddy class) and DumpAttribute instance associated with a class to be
+            dumped. For speed the class encapsulates a cache of type (usually class or struct) and the associated <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> which
+            contains the buddy and DumpAttribute instance. Allows to define externally metadata and a DumpAttribute on a class/struct level - useful for
+            FCL and 3rd party classes for which we do not have access to their source code.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ClassMetadataResolver.TypesDumpDataSync">
+            <summary>
+            Synchronizes the cache of dump metadata (buddy classes).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ClassMetadataResolver.TypesDumpData">
+            <summary>
+            Gets or sets the cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.ResetClassDumpData">
+            <summary>
+            Resets the class dump.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.SetClassDumpData(System.Type,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
+            <summary>
+            Adds buddy type and dump attribute for classes which we do not have access to, e.g. Exception.
+            </summary>
+            <param name="type">The type for which to set buddy type and dump attribute.</param>
+            <param name="metadata">The metadata type (buddy class).</param>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <param name="replace">
+            If set to <see langword="false" /> and there is already dump metadata associated with the <paramref name="type"/>
+            the method will throw exception of type <see cref="T:System.InvalidOperationException"/>;
+            otherwise it will silently override the existing metadata with <paramref name="metadata"/> and <paramref name="dumpAttribute"/>.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+            Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
+            </exception>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.GetClassDumpData(System.Type)">
+            <summary>
+            Gets the dump attribute either from the type itself or if the class is applied <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> from the specified class.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> reference or <c>null</c>.</returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.ShouldDump">
+            <summary>
+            Enum ShouldDump specifies the possible options for whether to dump or not specific element.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ShouldDump.Default">
+            <summary>
+            Follow the default setting for the element.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ShouldDump.Dump">
+            <summary>
+            Dump the element.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ShouldDump.Skip">
+            <summary>
+            Do not dump the element.
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.DumpAttribute">
+            <summary>
+            The attribute properties control certain aspects of the objects' dump (including primitive ones) and their properties (if any),
+            including the items of sequences.
+            </summary>
+            <remarks>
+            Note that some properties of this attribute are applicable to classes, struct-s and properties (e.g. <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpNullValues"/> or
+            <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump"/>), and others to properties only. An instance of a class or struct may be associated with two <c>DumpAttributes</c>: one
+            coming from the type or the meta data type of the instance (attribute applied on the class or the meta data class definition) and one from the
+            instance itself - e.g. from a property containing the instance or explicitly passed to the <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dump(System.Object,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Int32)"/>. In these
+            cases not <c>null</c> class applicable properties from the instance attribute take precedence over the class attribute properties.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.Default">
+            <summary>
+            The default dump attribute applied to instances and properties with no <c>DumpAttribute</c> specified.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpAttribute.DefaultMaxDepth">
+            <summary>
+            The default maximum depth of aggregated objects dumping: 10. The depth is counted from the outermost instance.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpAttribute.DefaultMaxElements">
+            <summary>
+            The default maximum number of arrays' and collections' elements to be dumped: 10.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpAttribute.DefaultOrder">
+            <summary>
+            The default dump order for properties: <c>int.MaxValue</c>, i.e. dump properties with unspecified order in alphabetical order before the
+            properties with negative order.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.DumpAttribute" /> class with default values.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.DumpAttribute" /> class with explicit dump order.
+            </summary>
+            <param name="order">
+            The dump order.
+            </param>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.#ctor(System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.DumpAttribute" /> class and specifies whether to dump the class or property or not.
+            </summary>
+            <param name="display">
+            If set to <c>true</c> dumps the class or property; otherwise does not dump it.
+            </param>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.DumpNullValues">
+            <summary>
+            Gets or sets a value indicating whether to dump or skip properties with <c>null</c> value.
+            </summary>
+            <remarks>
+            Applies to classes, struct-s and properties.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump">
+            <summary>
+            Gets or sets a value indicating whether the element should be recursively dumped.
+            Default value is <c>RecurseDump.Dump</c> - recurse into.
+            <para>
+            When applied to a class with value of <c>RecurseDump.Skip</c> it will suppress dumping
+            the class's properties with exception of the property specified by the property
+            <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DefaultProperty"/> of this attribute.
+            </para><para>
+            When applied to a property of non-sequence type with a value of <c>RecurseDump.Skip</c>
+            it will suppress dumping of the associated instance.
+            </para><para>
+            When applied to a property of sequence type the attribute will suppress dumping the sequence's items.
+            </para>
+            </summary>
+            <remarks>
+            Applicable to classes, struct-s and properties of class, struct or sequence types.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.DefaultProperty">
+            <summary>
+            Gets or sets the name of the only property (the representative property) which should be dumped
+            if <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump"/> is set to <c>RecurseDump.Skip</c>.
+            </summary>
+            <remarks>
+            Applicable to classes and struct-s only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.MaxDepth">
+            <summary>
+            This property is applicable only to the outermost class or struct and gets or sets the maximum depth of nested instances to be dumped.
+            The default maximum depth is 10.
+            </summary>
+            <remarks>
+            Applicable to classes and struct-s at the top level of dumping recursion only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.Enumerate">
+            <summary>
+            Gets or sets a flag whether to enumerate the elements in the object, if it implements IEnumerable.
+            The default for arrays and sequences of the FCL is <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Dump"/> and for custom classes - <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Skip"/>.
+            <seealso cref="F:vm.Aspects.Diagnostics.DumpAttribute.DefaultMaxElements"/>.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.Order">
+            <summary>
+            Specifies the dump order of a property. The properties are dumped in the following order: first are dumped properties with non-negative
+            <c>Order</c> in ascending order (0, 1, 2, etc.), then are dumped properties with unspecified <c>Order</c> (because their default order is
+            int.MaxValue); then are dumped the base class properties and in the end are dumped the properties with negative order in descending order (-1,
+            -2, etc.). Properties with equal <c>Order</c>-s are dumped in alphabetical order.
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.Skip">
+            <summary>
+            Gets or sets a value indicating whether the property to which this attribute is applied to should be skipped in the dump.
+            The default for public elements is <c>ShouldDump.Dump</c> and for protected or private <c>ShouldDump.Skip</c>.
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.Mask">
+            <summary>
+            Gets or sets a flag whether the actual value should be masked. Use it for properties whose values should not be logged, e.g. passwords
+            and PII fields (SSN, DL#, etc.)
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.MaskValue">
+            <summary>
+            Gets or sets the string value which should be output in the dump instead of the actual value. Use it for properties whose values should
+            not be logged, e.g. passwords and PII fields (SSN, DL#, etc.) The default is &quot;******&quot;.
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.MaxLength">
+            <summary>
+            If the property is of string type, gets or sets the maximum number of characters to be dumped from the value.
+            Non-positive numbers (including 0 - the default) will dump the entire string no matter how long the string might be.
+            <para>
+            For arrays the default value of 0 means to dump no-more than the first <seealso cref="F:vm.Aspects.Diagnostics.DumpAttribute.DefaultMaxElements"/> (ten) elements.
+            A negative value (e.g. -1) will dump all elements and positive value will dump no more than the first <c>MaxLength</c> elements.
+            </para>
+            </summary>
+            <remarks>
+            Applicable to properties of string or sequence types only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.LabelFormat">
+            <summary>
+            Gets or sets the format of the label of the properties. The default is: &quot;{0,-24} = &quot;
+            where the placeholder 0 will be replaced by the name of the property.
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.ValueFormat">
+            <summary>
+            Applies mostly to properties of basic types (primitives, enum, string, Guid, DateTime, DateTimeOffset, TimeSpan, Uri.)
+            Gets or sets the format string that should be applied to the value for dumping. The default is &quot;{0}&quot;.
+            For complex types the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> recognizes special value for this property - &quot;ToString()&quot; in this case the returned value
+            of the property's method <see cref="M:System.Object.ToString"/> is inserted in the underlying text writer.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass">
+            <summary>
+            Gets or sets a dump class which has a method that implements custom formatting of the property's value.
+            The <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> searches for a method specified by the attribute property <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod"/>
+            in the class specified by this property and invokes it in order to output the text
+            representation of the property to which it is applied. If <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod"/> is not specified
+            the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> assumes that the name of the dump method is &quot;Dump&quot;.
+            </summary>
+            <seealso cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod"/>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod">
+            <summary>
+            Gets or sets the name of the dump method in the class specified by <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/>. The dump method implements custom formatting of the property's value.
+            The method must be static, public, have a return type of <see cref="T:System.String"/> and must take a single parameter of type or a base type of the property.
+            If the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/> is not specified then the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> will look for a parameterless instance method by the same name in the
+            property's class or a static method with parameter the type or a base type of the property in the property's class, base class or the metadata class.
+            </summary>
+            <remarks>
+            Applicable to properties only.
+            </remarks>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.IsDefaultAttribute">
+            <summary>
+            When overridden in a derived class, indicates whether the value of this instance is the default value for the derived class.
+            </summary>
+            <returns><see langword="true"/> if this instance is the default attribute for the class; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.Clone">
+            <summary>
+            Clones this instance.
+            </summary>
+            <returns>DumpAttribute.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.Equals(vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Indicates whether the current object is equal to a reference to another object of the same type.
+            </summary>
+            <param name="other">A reference to another object of type <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> to compare with this object.</param>
+            <returns>
+            <c>false</c> if <paramref name="other"/> is equal to <c>null</c>, otherwise
+            <c>true</c> if <paramref name="other"/> refers to <c>this</c> object, otherwise
+            <c>true</c> if all the properties of the current object and the <paramref name="other"/> are equal by value.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.Equals(System.Object)">
+            <summary>
+            Determines whether this <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> instance is equal to the specified <see cref="T:System.Object"/> reference.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> reference to compare with this <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> object.</param>
+            <returns>
+            <c>false</c> if <paramref name="obj"/> is equal to <c>null</c>, otherwise
+            <c>true</c> if <paramref name="obj"/> refers to <c>this</c> object, otherwise
+            <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> and
+            properties of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.GetHashCode">
+            <summary>
+            Serves as a hash function for the objects of <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> and its derived types.
+            </summary>
+            <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> instance.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.op_Equality(vm.Aspects.Diagnostics.DumpAttribute,vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
+            otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpAttribute.op_Inequality(vm.Aspects.Diagnostics.DumpAttribute,vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
+            otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.DumpFormat">
+            <summary>
+            Class DumpFormat exposes most of the format strings used by the dumper so that they can be changed programmatically.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpFormat.Reset">
+            <summary>
+            Resets the properties to their default values.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.CyclicalReference">
+            <summary>
+            Gets or sets the format of the string which designates a cyclical reference - an object that has already been duped.
+            Parameters: 0 - type name, 1 - type namespace and 2 - assembly qualified name of the type.
+            Default: &quot;{0} (see above)&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.Delegate">
+            <summary>
+            Gets or sets the dump format for delegate objects.
+            Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type, 3 - the name of the method and 4 - access modifier (e.g. 'static ').
+            Default: &quot;{4}{0}.{3}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.Enum">
+            <summary>
+            Gets or sets the dump format for enum values.
+            Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type and 3 - the value.
+            Default: &quot;{0}.{3}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.EnumFlag">
+            <summary>
+            Gets or sets the dump format for enum flag values.
+            Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type and 3 - the value.
+            Default: &quot;{3}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.EnumFlagPrefix">
+            <summary>
+            Gets or sets the dump format to prefix the list of enum flags (<see cref="P:vm.Aspects.Diagnostics.DumpFormat.Enum"/>) separated by <see cref="P:vm.Aspects.Diagnostics.DumpFormat.EnumFlagSeparator"/>.
+            </summary>
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type,
+            Default: &quot;{0}: (&quot;
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.EnumFlagSeparator">
+            <summary>
+            Gets or sets the dump format to prefix the list of enum flags (<see cref="P:vm.Aspects.Diagnostics.DumpFormat.Enum"/>) separated by &quot; | &quot;.
+            </summary>
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type,
+            Default: &quot; | &quot;
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.EnumFlagSuffix">
+            <summary>
+            Gets or sets the dump format to prefix the list of enum flags
+            </summary>
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type,
+            Default: &quot;)&quot;
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.GenericParam">
+            <summary>
+            Gets or sets the dump format for generic parameters.
+            Parameters: 0 - declaring type name, 1 - declaring type namespace, 2 - assembly qualified name of the declaring type
+            Default: &quot;{0}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.IndexerIndexType">
+            <summary>
+            Gets or sets the dump format for the type of the indexers' indexes.
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type
+            Default: &quot;{0}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.MemberInfoMemberType">
+            <summary>
+            Gets or sets the dump format for objects of type <seealso cref="T:System.Reflection.MemberInfo"/>.
+            Parameters: 0 - value
+            Default: &quot;{0}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.MethodInfo">
+            <summary>
+            Gets or sets the dump format <see cref="P:vm.Aspects.Diagnostics.DumpFormat.MethodInfo"/>.
+            Parameters: 0 - return type name, 1 - return type namespace, 2 - assembly qualified name of the return type,
+            3 - declaring type name, 4 - declaring type namespace, 5 - assembly qualified name of the declaring type, 6 - method name.
+            Default: &quot;{0} {3}.{6}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.MethodParameter">
+            <summary>
+            Gets or sets the dump format for method parameters.
+            Parameters: 0 - parameter type name, 1 - parameter type namespace, 2 - assembly qualified name of the parameter type, 3 - parameter name.
+            Default: &quot;{0} {3}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.DefaultPropertyLabel">
+            <summary>
+            Gets or sets the dump format for a property dump label.
+            Parameters: 0 - property name.
+            Default: &quot;{0,-24} = &quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceDumpTruncated">
+            <summary>
+            Gets or sets the dump format for the string designating that a sequence dump has been truncated.
+            Parameters: 0 - the maximum number of dumped sequence elements.
+            Default: &quot;... dumped the first {0} elements.&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceTypeName">
+            <summary>
+            Gets or sets the dump format for the type of a sequence.
+            Parameters: 0 - sequence type name, 1 - number of elements in the sequence.
+            Default: &quot;{0}[{1}]: &quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceType">
+            <summary>
+            Gets or sets the dump format for the type of a sequence. Note that by the time this format is used, the sequence type name,
+            its generic parameters and dimension are already printed using <see cref="P:vm.Aspects.Diagnostics.DumpFormat.SequenceTypeName"/>.
+            Parameters: 0 - sequence type name, 1 - sequence type namespace, 2 - assembly qualified name of the sequence type,
+            Default: &quot;({2})&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.Type">
+            <summary>
+            Gets or sets the dump format for a type.
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type,
+            Default: &quot;{0} ({2}): &quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.TypeInfo">
+            <summary>
+            Gets or sets the dump format for dumped values of type <see cref="P:vm.Aspects.Diagnostics.DumpFormat.Type"/>.
+            Parameters: 0 - type name, 1 - type namespace, 2 - assembly qualified name of the type,
+            Default: &quot;{2}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.Value">
+            <summary>
+            Gets or sets the dump format for a value.
+            Parameters: 0 - the value to be dumped.
+            Default: &quot;{0}&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.CSharpDumpLabel">
+            <summary>
+            Gets or sets the C# expression dump label.
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.DumpSettings">
+            <summary>
+            Contains some setting values used to initialize instances of <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/>
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpSettings.DefaultInitialIndentLevel">
+            <summary>
+            The default initial indent level.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpSettings.DefaultIndentSize">
+            <summary>
+            The default initial indent size
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpSettings.DefaultMaxDumpLength">
+            <summary>
+            The default maximum dump length.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpSettings.DefaultPropertyBindingFlags">
+            <summary>
+            The default property binding flags.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpSettings.DefaultFieldBindingFlags">
+            <summary>
+            The default field binding flags
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.Default">
+            <summary>
+            Gets a default set of settings
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.#ctor(System.Boolean,System.Int32,System.Int32,System.Reflection.BindingFlags,System.Reflection.BindingFlags)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.DumpSettings" /> struct.
+            </summary>
+            <param name="useDumpScriptCache">if set to <c>true</c> [use dump script cache].</param>
+            <param name="indentSize">Size of the indent.</param>
+            <param name="maxDumpLength">Maximum length of the dump.</param>
+            <param name="propertyBindingFlags">The properties binding flags.</param>
+            <param name="fieldBindingFlags">The fields binding flags.</param>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.UseDumpScriptCache">
+            <summary>
+            Gets or sets a value indicating whether to use the dump script cache.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.IndentSize">
+            <summary>
+            Gets or sets the size of the indent.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.MaxDumpLength">
+            <summary>
+            Gets or sets the maximum length of the dump.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.PropertyBindingFlags">
+            <summary>
+            Gets or sets the properties binding flags controlling which properties should be dumped, e.g. private vs public, static vs. instance, etc.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpSettings.FieldBindingFlags">
+            <summary>
+            Gets or sets the fields binding flags controlling which fields should be dumped, e.g. private vs public, static vs. instance, etc.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.Equals(vm.Aspects.Diagnostics.DumpSettings)">
+            <summary>
+            Indicates whether the current object is equal to another object of the same type.
+            </summary>
+            <param name="other">Another object of type <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> to compare with the current object.</param>
+            <returns>
+            <list type="number">
+                <item><see langword="true"/> if the current object and the <paramref name="other"/> are considered to be equal,
+                                             e.g. their business identities are equal; otherwise, <see langword="false"/>.</item>
+            </list>
+            </returns>
+            <remarks>
+            The <see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(vm.Aspects.Diagnostics.DumpSettings)"/> and <see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(System.Object)"/> methods and
+            the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity,
+            i.e. they test for business same-ness by comparing the types and the business keys.
+            </remarks>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.Equals(System.Object)">
+            <summary>
+            Determines whether this <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> instance is equal to the specified <see cref="T:System.Object"/> reference.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> reference to compare with this <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> object.</param>
+            <returns>
+            <list type="number">
+                <item><see langword="false"/> if <paramref name="obj"/> cannot be cast to <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/>, otherwise</item>
+                <item><see langword="false"/> if <paramref name="obj"/> is equal to <see langword="null"/>, otherwise</item>
+                <item><see langword="true"/> if <paramref name="obj"/> refers to <c>this</c> object, otherwise</item>
+                <item><see langword="false"/> if <paramref name="obj"/> is not the same type as <c>this</c> object, otherwise</item>
+                <item><see langword="true"/> if the current object and the <paramref name="obj"/> are considered to be equal,
+                                             e.g. their business identities are equal; otherwise, <see langword="false"/>.</item>
+            </list>
+            </returns>
+            <remarks>
+            The <see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(vm.Aspects.Diagnostics.DumpSettings)"/> and <see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(System.Object)"/> methods and
+            the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity,
+            i.e. they test for business same-ness by comparing the types and the business keys.
+            </remarks>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.GetHashCode">
+            <summary>
+            Serves as a hash function for the objects of <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> and its derived types.
+            </summary>
+            <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> instance.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.op_Equality(vm.Aspects.Diagnostics.DumpSettings,vm.Aspects.Diagnostics.DumpSettings)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <see langword="true"/> if the objects are considered to be equal (<see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(vm.Aspects.Diagnostics.DumpSettings)"/>);
+            otherwise <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpSettings.op_Inequality(vm.Aspects.Diagnostics.DumpSettings,vm.Aspects.Diagnostics.DumpSettings)">
+            <summary>
+            Compares two <see cref="T:vm.Aspects.Diagnostics.DumpSettings"/> objects.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <see langword="true"/> if the objects are not considered to be equal (<see cref="M:vm.Aspects.Diagnostics.DumpSettings.Equals(vm.Aspects.Diagnostics.DumpSettings)"/>);
+            otherwise <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.DumpUtilities">
+            <summary>
+            DumpUtilities
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpUtilities.Null">
+            <summary>
+            The string representing a null value - &quot;&lt;null&gt;&quot;.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.DumpUtilities.Unknown">
+            <summary>
+            The string representing an unknown value.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpUtilities.Indent(System.IO.TextWriter,System.Int32,System.Int32)">
+            <summary>
+            Appends <paramref name="indentLevel"/> times <paramref name="indentSize"/> number of spaces to the current new line sequence of the <paramref name="writer" />.
+            </summary>
+            <param name="writer">The writer.</param>
+            <param name="indentLevel">The indent level.</param>
+            <param name="indentSize">Size of the indent.</param>
+            <returns>The <paramref name="writer" /> object.</returns>
+            <exception cref="T:System.ArgumentNullException">If the <paramref name="writer" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.DumpUtilities.Unindent(System.IO.TextWriter,System.Int32,System.Int32)">
+            <summary>
+            Removes <paramref name="indentLevel"/> times <paramref name="indentSize"/> number of spaces from the end of the current new line sequence of the <paramref name="writer" />.
+            </summary>
+            <param name="writer">The writer.</param>
+            <param name="indentLevel">The indent level.</param>
+            <param name="indentSize">Size of the indent.</param>
+            <returns>The <paramref name="writer" /> object.</returns>
+            <exception cref="T:System.ArgumentNullException">If the <paramref name="writer" /> is <c>null</c>.</exception>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.IMemberInfoComparer">
+            <summary>
+            Interface IMemberInfoComparer implements property or field dump order comparison strategy,
+            e.g. by <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.Order"/> and then alphabetically.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.IMemberInfoComparer.SetMetadata(System.Type)">
+            <summary>
+            Sets the metadata which provides ordering info by means of <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.Order"/> and others.
+            This method can be called before calling the <see cref="T:System.Collections.Generic.IComparer`1"/> methods. If called
+            more than once and the <paramref name="metadata"/> is different the method should throw an exception.
+            </summary>
+            <param name="metadata">The metadata to be set.</param>
+            <returns>This <see cref="T:vm.Aspects.Diagnostics.IMemberInfoComparer"/> object, allowing for method chaining.</returns>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression._disposed">
+            <summary>
+            The flag will be set just before the object is disposed.
+            </summary>
+            <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
+            <remarks>
+            Do not test or manipulate this flag outside of the property <see cref="P:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.IsDisposed"/> or the method <see cref="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose"/>.
+            The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="T:System.Threading.Interlocked"/>.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.IsDisposed">
+            <summary>
+            Returns <see langword="true"/> if the object has already been disposed, otherwise <see langword="false"/>.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <remarks>Invokes the protected virtual <see cref="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose(System.Boolean)"/>.</remarks>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose(System.Boolean)">
+            <summary>
+            Performs the actual job of disposing the object.
+            </summary>
+            <param name="disposing">
+            Passes the information whether this method is called by <see cref="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose"/> (explicitly or
+            implicitly at the end of a <c>using</c> statement), or by the finalizer.
+            </param>
+            <remarks>
+            If the method is called with <paramref name="disposing"/>==<see langword="true"/>, i.e. from <see cref="M:vm.Aspects.Diagnostics.Implementation.CSharpDumpExpression.Dispose"/>,
+            it will try to release all managed resources (usually aggregated objects which implement <see cref="T:System.IDisposable"/> as well)
+            and then it will release all unmanaged resources if any. If the parameter is <see langword="false"/> then
+            the method will only try to release the unmanaged resources.
+            </remarks>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.DumpedObject">
+            <summary>
+            Stores pair of type and object which has already been dumped in the current call.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object" /> to compare with this instance.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.op_Equality(vm.Aspects.Diagnostics.Implementation.DumpedObject,vm.Aspects.Diagnostics.Implementation.DumpedObject)">
+            <summary>
+            Overloads the equals operator <c>==</c> to compare two values of this struct by invoking the <see cref="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)"/> method.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the left operand is equal by value to the right operand; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.op_Inequality(vm.Aspects.Diagnostics.Implementation.DumpedObject,vm.Aspects.Diagnostics.Implementation.DumpedObject)">
+            <summary>
+            Overloads the not equals operator <c>!=</c> to compare two values of this struct by invoking the <see cref="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)"/> method.
+            </summary>
+            <param name="left">The left operand.</param>
+            <param name="right">The right operand.</param>
+            <returns>
+            <c>true</c> if the left operand is not equal by value to the right operand; otherwise <c>false</c>.
+            </returns>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.DumpScript._script">
+            <summary>
+            The script's body expressions.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.DumpScript._scripts">
+            <summary>
+            Stack of temporarily saved script fragments
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.DumpScript._isClosed">
+            <summary>
+            The script is closed for adding more expressions to it.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpScript.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.Implementation.DumpScript" /> class.
+            </summary>
+            <param name="instanceType">Type of the instance.</param>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.IsInDumpingMode">
+            <summary>
+            Gets a value indicating whether the state is in a slow dumping mode (no dump script generated - all is dumped via reflection).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.IsInScriptingMode">
+            <summary>
+            Gets a value indicating whether the state is in a building dump script mode.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.Instance">
+            <summary>
+            Gets or sets the currently dumped instance.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.CurrentType">
+            <summary>
+            Gets or sets the current type (can be one of the base types) of the instance being dumped.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.InstanceType">
+            <summary>
+            Gets or sets the (most derived) type of the instance being dumped.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.InstanceDumpAttribute">
+            <summary>
+            Gets or sets the dump attribute applied to the instance .
+            </summary>
+            <value>
+            The instance dump attribute.
+            </value>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.ClassDumpData">
+            <summary>
+            Gets or sets the class dump data pair - the metadata type and the class dump attribute.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.CurrentMember">
+            <summary>
+            Gets the current member being dumped.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.CurrentDumpAttribute">
+            <summary>
+            Gets the property dump attribute applied to the current property being dumped.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.DumpNullValues">
+            <summary>
+            Calculates whether null property values of the current instance should be dumped.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.RecurseDump">
+            <summary>
+            Calculates whether to dump recursively the current instance.
+            </summary>
+            <value>This property never returns <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Default"/>.</value>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.DefaultProperty">
+            <summary>
+            Gets the representative property of the current type that should not be dumped recursively.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.Current">
+            <summary>
+            Gets the element in the collection at the current position of the enumerator.
+            </summary>
+            <returns>The element in the collection at the current position of the enumerator.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpState.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.System#Collections#IEnumerator#Current">
+            <summary>
+            Gets the element in the collection at the current position of the enumerator.
+            </summary>
+            <returns>The element in the collection at the current position of the enumerator.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpState.MoveNext">
+            <summary>
+            Advances the enumerator to the next element of the collection.
+            </summary>
+            <returns>
+            true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpState.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before the first element in the collection.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpState.IsAtDumpTreeLeaf">
+            <summary>
+            The dumping traverses depth-first a dump tree consisting of the object's properties its base classes' properties and the properties'
+            properties etc. This method determines if the recursion reached a leaf in the dump tree and that it should stop drilling down and return to
+            dump other branches of the dump tree. Recursion stops when:
+            <list type="bullet">
+            <item>
+            The current examined type is <see cref="T:System.Object"/>. The method dumps the object contained in <see cref="P:vm.Aspects.Diagnostics.Implementation.DumpState.Instance"/>-s type name.
+            </item>
+            <item>
+            The current examined base class has <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> with property <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump"/> set to <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Skip"/>.
+            If the attribute also defines the property <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DefaultProperty"/> it will dump that property only as a representing
+            property of the entire class.
+            </item>
+            <item>
+            The examined object is a delegate. The method will dump the delegate type.
+            </item>
+            <item>
+            The method determines that the current object has already been dumped (discovers circular reference). The method will dump a short
+            reference text.
+            </item>
+            </list>
+            The current base class has class dump attribute with  examined is System.Object
+            </summary>
+            <returns><c>true</c> if the recursion should stop; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.MemberInfoComparer">
+            <summary>
+            Compares two PropertyInfo objects by the property Order of the dump attribute and then by Name.
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.PropertyDumpResolver">
+            <summary>
+            Primary responsibility of the class is to retrieve the DumpAttribute instance associated with a property to be dumped from the property's
+            class or associated metadata type (buddy). For improved performance the class encapsulates a cache of PropertyInfo describing the property
+            and the associated <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/>.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.PropertyDumpResolver.SyncPropertiesDumpData">
+            <summary>
+            Gets the synchronization object of the cache/dictionary of property info-dump attributes.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.PropertyDumpResolver.PropertiesDumpData">
+            <summary>
+            Gets the cache/dictionary of property info-dump attributes.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.PropertyDumpResolver.GetPropertyDumpAttribute(System.Reflection.MemberInfo,System.Type)">
+            <summary>
+            Gets the dump attribute applied to a property.
+            </summary>
+            <param name="mi">The property info.</param>
+            <param name="metadata">Type of the metadata.</param>
+            <returns></returns>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Script">
+            <summary>
+            Delegate Script is the type of the generated dump script that can be cached and reused.
+            </summary>
+            <param name="instance">The instance being dumped.</param>
+            <param name="classDumpData">The data containing the metadata type and the dump attribute.</param>
+            <param name="dumper">The dumper which has the current writer.</param>
+            <param name="dumpState">The current state of the dump.</param>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.ObjectTextDumper">
+            <summary>
+            Class ObjectTextDumper. This class cannot be inherited. The main class which dumps the requested object.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.DefaultDumpSettings">
+            <summary>
+            Gets or sets the object dumper settings.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._indentLevel">
+            <summary>
+            The current indent.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._indentSize">
+            <summary>
+            The number of spaces in a single indent.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._isDumpWriter">
+            <summary>
+            Flag that the current writer is actually our DumpTextWriter.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._maxDepth">
+            <summary>
+            The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.Writer">
+            <summary>
+            The dump writer.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.InstanceSettings">
+            <summary>
+            Gets the settings for this instance.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.MemberInfoComparer">
+            <summary>
+            Gets the member information comparer, used to order the dumped members in the desired sort order.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.IsSubExpression">
+            <summary>
+            Gets or sets a value indicating whether the currently dumped instance is sub-expression of a previously dumped expression.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.DumpedObjects">
+            <summary>
+            Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.#ctor(System.IO.TextWriter,vm.Aspects.Diagnostics.IMemberInfoComparer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper" /> class with a text writer where to dump the object and initial indent
+            level.
+            </summary>
+            <param name="writer">The text writer where to dump the object to.</param>
+            <param name="memberInfoComparer">
+            The member comparer used to order the dumped members in the desired sort order.
+            If <see langword="null"/> the created here dumper instance will use the default member sorting order.
+            </param>
+            <exception cref="T:System.ArgumentNullException">writer</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="writer" /> is <c>null</c>.</exception>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dump(System.Object,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Int32)">
+            <summary>
+            Dumps the specified object in a text form to this object's <see cref="T:System.IO.TextWriter" /> instance.
+            </summary>
+            <param name="value">The object to be dumped.</param>
+            <param name="dumpMetadata">Optional metadata class to use to extract the dump parameters, options and settings. If not specified, the dump metadata will be
+            extracted from the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> attribute applied to <paramref name="value" />'s class if specified otherwise from
+            the attributes applied within the class itself.</param>
+            <param name="dumpAttribute">An explicit dump attribute to be applied at a class level. If not specified the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> attribute applied to
+            <paramref name="value" />'s class or <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.Default" /> will be assumed.</param>
+            <param name="initialIndentLevel">The initial indent level.</param>
+            <returns>The <paramref name="value" /> parameter.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Indent">
+            <summary>
+            Increases the indentation of the writer by <see cref="F:vm.Aspects.Diagnostics.ObjectTextDumper._indentSize"/>.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Unindent">
+            <summary>
+            Decreases the indentation of the writer by <see cref="F:vm.Aspects.Diagnostics.ObjectTextDumper._indentSize"/>.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.DumpedTopProperties(vm.Aspects.Diagnostics.Implementation.DumpState,System.Collections.Generic.Stack{vm.Aspects.Diagnostics.Implementation.DumpState})">
+            <summary>
+            Dumps the properties with non-negative dump order.
+            </summary>
+            <param name="state">The current dump state.</param>
+            <param name="statesWithRemainingProperties">The stack containing the states which have remaining properties.</param>
+            <returns><c>true</c> if this is a dump tree leaf object, the current dump item is one of:
+            <list type="bullet">
+            <item><c>typeof(System.Object)</c></item><item><see cref="T:System.Reflection.MemberInfo" /></item>
+            <item>a delegate</item>
+            <item>should not be dumped marked with <c>DumpAttribute(false)</c></item>
+            </list>
+            ; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.DumpRemainingProperties(System.Collections.Generic.Stack{vm.Aspects.Diagnostics.Implementation.DumpState},System.Collections.Generic.Queue{vm.Aspects.Diagnostics.Implementation.DumpState})">
+            <summary>
+            Dumps the properties with negative dump order.
+            </summary>
+            <param name="statesWithRemainingProperties">The stack containing the states which have remaining properties.</param>
+            <param name="statesWithTailProperties">The queue containing the states which have tail properties.</param>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.DumpTailProperties(System.Collections.Generic.IEnumerable{vm.Aspects.Diagnostics.Implementation.DumpState})">
+            <summary>
+            Dumps the properties with order int.MinValue
+            </summary>
+            <param name="statesWithTailProperties">The bottom properties collection (usually a queue).</param>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._disposed">
+            <summary>
+            The flag is being set when the object gets disposed.
+            </summary>
+            <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
+            <remarks>
+            Do not test or manipulate this flag outside of the property <see cref="P:vm.Aspects.Diagnostics.ObjectTextDumper.IsDisposed"/> or the method <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/>.
+            The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="T:System.Threading.Interlocked"/>.
+            </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.IsDisposed">
+            <summary>
+            Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <remarks>Invokes the protected virtual <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose(System.Boolean)"/>.</remarks>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose(System.Boolean)">
+            <summary>
+            Performs the actual job of disposing the object.
+            </summary>
+            <param name="disposing">
+            Passes the information whether this method is called by <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/> (explicitly or
+            implicitly at the end of a <c>using</c> statement), or by the finalizer of <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/>.
+            </param>
+            <remarks>
+            If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/>, it will try to release all managed resources
+            (usually aggregated objects which implement <see cref="T:System.IDisposable"/> as well) and then it will release all unmanaged resources if any.
+            If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
+            </remarks>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CallerDoesNotHavePermissionFormat">
+            <summary>
+              Looks up a localized string similar to {0} (Note: The caller does not have the permission to use reflection. Therefore System.Object.ToString() on the object has been dumped instead.).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.ClassMethodDesignator">
+            <summary>
+              Looks up a localized string similar to static .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CollectionCountFormat">
+            <summary>
+              Looks up a localized string similar to {0}[{3}].
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.Colon">
+            <summary>
+              Looks up a localized string similar to : .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CouldNotFindCustomDumpers">
+            <summary>
+              Looks up a localized string similar to *** Could not find a public, static, method {0}, with return type of System.String, with a single parameter of type {1} in the class {2}..
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CSharpDumpLabelFormat">
+            <summary>
+              Looks up a localized string similar to C#-like expression text:.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CyclicalReferenceDesignator">
+            <summary>
+              Looks up a localized string similar to {0} (see above).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DelegateDumpFormat">
+            <summary>
+              Looks up a localized string similar to {4}{0}.{3}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DictionaryBegin">
+            <summary>
+              Looks up a localized string similar to {.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DictionaryEnd">
+            <summary>
+              Looks up a localized string similar to }.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DictionaryKeyBegin">
+            <summary>
+              Looks up a localized string similar to [.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DictionaryKeyEnd">
+            <summary>
+              Looks up a localized string similar to ] = .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DumpReachedMaxDepth">
+            <summary>
+              Looks up a localized string similar to ...object dump reached the maximum depth level. Use the DumpAttribute.MaxDepth to increase the depth level if needed..
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.Ellipsis">
+            <summary>
+              Looks up a localized string similar to ....
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.EnumDumpFormat">
+            <summary>
+              Looks up a localized string similar to {0}.{3}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.EnumFlagDumpFormat">
+            <summary>
+              Looks up a localized string similar to {3}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.EnumFlagsDumpBeginFormat">
+            <summary>
+              Looks up a localized string similar to {0} (.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.EnumFlagsDumpEndFormat">
+            <summary>
+              Looks up a localized string similar to ).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.EnumFlagsSeparator">
+            <summary>
+              Looks up a localized string similar to  | .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.GenericParamFormat">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.GenericParamListBegin">
+            <summary>
+              Looks up a localized string similar to &lt;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.GenericParamListEnd">
+            <summary>
+              Looks up a localized string similar to &gt;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.GenericParamSeparator">
+            <summary>
+              Looks up a localized string similar to , .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.IndexerEnd">
+            <summary>
+              Looks up a localized string similar to ].
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.IndexerIndexDumpFormat">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.IndexerStart">
+            <summary>
+              Looks up a localized string similar to this[.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.InstanceMethodDesignator">
+            <summary>
+              Looks up a localized string similar to .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MaskInLogs">
+            <summary>
+              Looks up a localized string similar to ******.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MaxLengthExceeded">
+             <summary>
+               Looks up a localized string similar to ...
+            The dump exceeded the maximum length of {0} characters. Either increase the value of the argument maxDumpLength of the constructor of the ObjectTextDumper class, or suppress the dump of some types and properties using DumpAttribute-s and metadata..
+             </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MemberInfoMemberTypeDumpFormat">
+            <summary>
+              Looks up a localized string similar to ({0}): .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MethodInfoDumpFormat">
+            <summary>
+              Looks up a localized string similar to {0} {3}.{6}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MethodParameterFormat">
+            <summary>
+              Looks up a localized string similar to {0} {3}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MethodParameterListBegin">
+            <summary>
+              Looks up a localized string similar to (.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.MethodParameterListEnd">
+            <summary>
+              Looks up a localized string similar to ).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.ParametersSeparator">
+            <summary>
+              Looks up a localized string similar to , .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.PropertyBegin">
+            <summary>
+              Looks up a localized string similar to  { .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.PropertyEnd">
+            <summary>
+              Looks up a localized string similar to  }.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.PropertyGetter">
+            <summary>
+              Looks up a localized string similar to get;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.PropertyLabelFormat">
+            <summary>
+              Looks up a localized string similar to {0,-24} = .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.PropertySetter">
+            <summary>
+              Looks up a localized string similar to set;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.RegexSystemNamespace">
+            <summary>
+              Looks up a localized string similar to System(\..+)?.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.SequenceDumpTruncatedFormat">
+            <summary>
+              Looks up a localized string similar to ... dumped the first {0}/{1} elements..
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.SequenceParamListBegin">
+            <summary>
+              Looks up a localized string similar to &lt;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.SequenceParamListEnd">
+            <summary>
+              Looks up a localized string similar to &gt;[{0}]: .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.SequenceTypeFormat">
+            <summary>
+              Looks up a localized string similar to ({2}).
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.SequenceTypeNameFormat">
+            <summary>
+              Looks up a localized string similar to {0}[{1}]: .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.StringNull">
+            <summary>
+              Looks up a localized string similar to &lt;null&gt;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.StringSingleIndent">
+            <summary>
+              Looks up a localized string similar to   .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.StringUnknown">
+            <summary>
+              Looks up a localized string similar to &lt;unknown&gt;.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.TypeDumpFormat">
+            <summary>
+              Looks up a localized string similar to {0} ({2}): .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.TypeInfoFormat">
+            <summary>
+              Looks up a localized string similar to {2}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.ValueFormat">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.ValueFormatToString">
+            <summary>
+              Looks up a localized string similar to ToString().
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.WriterExtensions._systemNameSpace">
+            <summary>
+            Matches the name space of the types within System
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.WriterExtensions.DumpedBasicValue(System.IO.TextWriter,System.Object,vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Dumps the value of basic types (all primitive types plus <see cref="T:System.String" />, <see cref="T:System.DateTime" />, <see cref="T:System.DateTimeOffset" />,
+            <see cref="T:System.TimeSpan" />, <see cref="T:System.Decimal" /> enum-s, <see cref="T:System.Guid" />, Uri).
+            </summary>
+            <param name="writer">The writer.</param>
+            <param name="value">The value.</param>
+            <param name="dumpAttribute">The dump attribute associated with the value (e.g. property attribute).</param>
+            <returns><c>true</c> if the value was dumped; otherwise <c>false</c> (e.g. the value is struct)</returns>
+        </member>
+        <member name="T:vm.Aspects.Constants">
+            <summary>
+            Defines some constants used throughout the Aspects library
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Constants.HashInitializer">
+            <summary>
+            Used for computing hash codes (the prime 23).
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Constants.HashMultiplier">
+            <summary>
+            Used for computing hash codes (the prime 17).
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Extensions">
+            <summary>
+            Class Extensions. Adds extension methods for easy dumping of objects, as well as a few useful reflection methods not available in .NET 4.0.
+            </summary>
+        </member>
+        <member name="F:vm.Aspects.Extensions._hexadecimalSuffix">
+            <summary>
+            Matches a type name with hexadecimal suffix.
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Extensions.DumpText(System.Object,System.IO.TextWriter,System.Int32,System.Type,vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Dumps the specified <paramref name="value"/> to a text writer.
+            </summary>
+            <param name="value">The object to dump.</param>
+            <param name="writer">The text writer to dump to.</param>
+            <param name="indentLevel">The initial indent level.</param>
+            <param name="dumpMetadata">
+            Optional metadata class to use to extract the dump attributes from. If not specified, the dump metadata will be sought in
+            a <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> attribute applied to the <paramref name="value"/>'s class. And if that is not found - from the
+            attributes applied within the class itself.
+            </param>
+            <param name="dumpAttribute">
+            An explicit dump attribute to be applied at a class level. If not specified the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> attribute applied to
+            <paramref name="value"/>'s class and if that is not specified - <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.Default"/> will be assumed.
+            </param>
+            <returns>
+            The object.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.DumpCSharpText(System.Linq.Expressions.Expression)">
+            <summary>
+            Dumps a LINQ expression as a C# text.
+            </summary>
+            <param name="expression">The expression.</param>
+            <returns>The C# text.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.DumpString(System.Object,System.Int32,System.Type,vm.Aspects.Diagnostics.DumpAttribute)">
+            <summary>
+            Dumps the <paramref name="value" /> to a string.
+            </summary>
+            <param name="value">The object to dump.</param>
+            <param name="indentLevel">The initial indent level.</param>
+            <param name="dumpMetadata">
+            Optional metadata class to use to extract the dump attributes from. If not specified, the dump metadata will be sought in
+            a <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> attribute applied to the <paramref name="value"/>'s class. And if that is not found - from the
+            attributes applied within the class itself.
+            </param>
+            <param name="dumpAttribute">
+            An explicit dump attribute to be applied at a class level. If not specified the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> attribute applied to
+            <paramref name="value"/>'s class and if that is not specified - <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.Default"/> will be assumed.
+            </param>
+            <returns>The text dump of the object.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsBasicType(System.Type)">
+            <summary>
+            Determines whether the specified type is basic: primitive, enum, decimal, string, Guid, Uri, DateTime, TimeSpan, DateTimeOffset, IntPtr,
+            UIntPtr.
+            </summary>
+            <param name="type">The type to be tested.</param>
+            <returns>
+              <c>true</c> if the specified type is one of the basic types; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsDynamicObject(System.Object)">
+            <summary>
+            Determines whether the specified object is dynamic.
+            </summary>
+            <param name="obj">The object to be tested.</param>
+            <returns>
+              <c>true</c> if the specified object is dynamic; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.GetCustomAttribute``1(System.Reflection.ICustomAttributeProvider,System.Boolean)">
+            <summary>
+            Retrieves a custom attribute of a specified type that is applied to a specified member.
+            </summary>
+            <typeparam name="T">The type of attribute to search for.</typeparam>
+            <param name="attributeProvider">The member to inspect.</param>
+            <param name="inherit"><see langword="true" /> to inspect the ancestors of element; otherwise, <see langword="false" /> (the default).</param>
+            <returns>A custom attribute that matches <typeparamref name="T"/>, or <see langword="null" /> if no such attribute is found.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="attributeProvider"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown if more than one attribute of the specified type <typeparamref name="T"/> is found.</exception>
+        </member>
+        <member name="M:vm.Aspects.Extensions.GetCustomAttributes``1(System.Reflection.ICustomAttributeProvider,System.Boolean)">
+            <summary>
+            Retrieves all custom attributes of a specified type that are applied to a specified member.
+            </summary>
+            <typeparam name="T">The type of attribute to search for.</typeparam>
+            <param name="attributeProvider">The member to inspect.</param>
+            <param name="inherit"><see langword="true" /> to inspect the ancestors of element; otherwise, <see langword="false" /> (the default).</param>
+            <returns>A sequence of custom attributes that match <typeparamref name="T"/> (possibly empty).</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="attributeProvider"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsVirtual(System.Reflection.PropertyInfo)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Reflection.PropertyInfo"/> object represents a virtual property.
+            </summary>
+            <param name="pi">The <see cref="T:System.Reflection.PropertyInfo"/> object.</param>
+            <returns><c>true</c> if the specified <see cref="T:System.Reflection.PropertyInfo"/> object represents a virtual property; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="pi"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:vm.Aspects.Extensions.CanRead(System.Reflection.MemberInfo)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Reflection.PropertyInfo"/> object represents a property that can be read.
+            </summary>
+            <param name="mi">The <see cref="T:System.Reflection.PropertyInfo"/> object.</param>
+            <returns><c>true</c> if the specified <see cref="T:System.Reflection.PropertyInfo"/> object represents a virtual property that can be read; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="mi"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsNullOrWhiteSpace(System.String)">
+            <summary>
+            Determines whether the specified string is null, or empty or consist of whitespace characters only.
+            Equivalent to <c>!string.IsNullOrWhiteSpace(s)</c>.
+            </summary>
+            <param name="value">The string to test.</param>
+            <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsNullOrEmpty(System.String)">
+            <summary>
+            Determines whether the specified string is null, or empty.
+            Equivalent to <c>string.IsNullOrEmpty(s)</c>.
+            </summary>
+            <param name="value">The string to test.</param>
+            <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.GetTypeName(System.Type,System.Boolean)">
+            <summary>
+            Gets the name of a type. In case the type is a EF dynamic proxy it will return only the first portion of the name, e.g.
+            from the name "SomeTypeName_CFFF21E2EAC773F63711A0F93BE77F1CBC891DE8F0E5FFC46E7C4BB2E4BCC8D3" it will return only "SomeTypeName"
+            </summary>
+            <param name="type">The object which type name needs to be retrieved.</param>
+            <param name="shortenEfTypes">if set to <c>true</c> the method will shorten EF dynamically generated types.</param>
+            <returns>The type name.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.DictionaryTypeArguments(System.Type)">
+            <summary>
+            Gets the types of the key and the value of a generic dictionary or if <paramref name="sequenceType"/> is not generic dictionary returns <see langword="null"/>.
+            </summary>
+            <param name="sequenceType">Type of the sequence.</param>
+            <returns>Type[] - the types of the key (index 0) and the value (index 1) or <see langword="null"/> if <paramref name="sequenceType"/> is not generic dictionary.</returns>
+        </member>
+    </members>
+</doc>

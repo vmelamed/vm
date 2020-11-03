@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        
+        <VersionPrefix>2.0.3</VersionPrefix>
+        <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
+        <AssemblyDescription>Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.</AssemblyDescription>
+        <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\..\Common Items\vm.snk</AssemblyOriginatorKeyFile>
+        <CodeAnalysisRuleSet>..\..\..\Common Items\vmAllRules.ruleset</CodeAnalysisRuleSet>
+        <NeutralLanguage>en-US</NeutralLanguage>
+
+        <Authors>Val Melamed</Authors>
+        <Company>vm</Company>
+        <Product>vm.Aspects</Product>
+        <Copyright>Copyright © vm 2013-2018</Copyright>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+        <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper</PackageId>
+        <PackageLicenseUrl>https://github.com/vmelamed/vm/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <Description>
+Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.
+Helpful for debugging and logging purposes.
+Features:
+  * The dump output is separated from the targeted dump media by the familiar TextWriter interface
+  * The programmer can dump the value of any type of object: primitive and enum types (including those marked with FlagsAttribute), custom classes, struct-s, collections, etc.
+  * For complex type objects (classes and structs) the dumper outputs the names and the values of the properties
+  * The dump is recursive: the complex members of the dumped object are dumped indented
+  * Dumps the elements of sequences (arrays, lists, dictionaries, etc.)
+  * Handles circular references
+  * The developers can easily customize various aspects of the dump by using an attribute (DumpAttribute) on the classes and their members, such as:
+    - the order in which the properties are dumped
+    - formatting of the property names and/or values
+    - suppressing the dump of some uninteresting properties
+    - masking the values of sensitive properties (e.g. PII)
+    - the depth of the recursion into complex members
+    - the maximum number of dumped elements of sequence properties
+  * The dumper picks the customization attributes also from buddy classes declared with MetadataTypeAttribute
+  * Even if the class doesn't have any attributes, the programmer can still pass a metadata class as a separate parameter to the dumping method. This allows for control over the dump of BCL and third party classes
+  * Built and tested with .NET 4.5.2, 4.6.2, 4.7.2, .NET Standard 2.0
+For more information see the documentation at https://github.com/vmelamed/vm/blob/master/Aspects/Diagnostics/docs/ObjectDumper.md.
+        </Description>
+        <PackageReleaseNotes>
+            Note that this package derives from the package AspectObjectDumper v.1.10.2.
+            Removed the dependency on the Common Service Locator.
+            Built for .NET Standard 2.0
+            Renamed the package to comply with a more natural naming scheme for the entire set of vm.Aspects packages.
+            Changes in the documentation.
+        </PackageReleaseNotes>
+        <PackageTags>aspects dump object .net diagnostics debug log AspectObjectDumper ObjectTextDumper</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+        <DefineConstants>TRACE;DEBUG</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+      <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\..\..\Common Items\AssemblyInfo.global.cs" Link="Properties\AssemblyInfo.global.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\..\..\Common Items\vm.snk" Link="vm.snk" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Properties\Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

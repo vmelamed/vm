@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <SignAssembly>true</SignAssembly>
+
+    <AssemblyOriginatorKeyFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
+
+    <DelaySign>false</DelaySign>
+
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper.net5.Tests</AssemblyName>
+
+    <RootNamespace>vm.Aspects.Diagnostics.ObjectTextDumper.net5.Tests</RootNamespace>
+
+    <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper.tests</PackageId>
+
+    <Version>3.0.0</Version>
+
+    <Authors>Val Melamed</Authors>
+
+    <Company>vm</Company>
+
+    <Product>vm.Aspects</Product>
+
+    <Description></Description>
+
+    <Copyright>Copyright © vm 2013-2018</Copyright>
+
+    <RepositoryType>git</RepositoryType>
+
+    <PackageTags></PackageTags>
+
+    <PackageReleaseNotes></PackageReleaseNotes>
+
+    <RepositoryUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</RepositoryUrl>
+
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <AnalysisLevel>5.0</AnalysisLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
+    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\vm.Aspects.Diagnostics.ObjectTextDumper.net5.csproj" />
+  </ItemGroup>
+
+</Project>
