@@ -5,6 +5,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     [Dump(RecurseDump = ShouldDump.Skip, DefaultProperty = "Name")]
     public abstract class TypeDumpMetadata
     {
-        public object Name { get; set; }
+        public object? Name { get; set; }
     }
 }

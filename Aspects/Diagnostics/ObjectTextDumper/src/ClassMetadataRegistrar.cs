@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Security;
@@ -80,13 +79,10 @@ namespace vm.Aspects.Diagnostics
         /// </exception>
         public ClassMetadataRegistrar Register(
             Type type,
-            Type metadataType,
-            DumpAttribute dumpAttribute = null,
+            Type? metadataType = null,
+            DumpAttribute? dumpAttribute = null,
             bool replace = false)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
             ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute, replace);
             return this;
         }
@@ -107,9 +103,8 @@ namespace vm.Aspects.Diagnostics
         /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
         /// </exception>
         public ClassMetadataRegistrar Register<T, TMetadata>(
-            DumpAttribute dumpAttribute = null,
-            bool replace = false)
-            => Register(typeof(T), typeof(TMetadata), dumpAttribute, replace);
+            DumpAttribute? dumpAttribute = null,
+            bool replace = false) => Register(typeof(T), typeof(TMetadata), dumpAttribute, replace);
 
         /// <summary>
         /// Registers the specified dump attribute.
@@ -126,8 +121,7 @@ namespace vm.Aspects.Diagnostics
         /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <typeparamref name="T"/>.
         /// </exception>
         public ClassMetadataRegistrar Register<T>(
-            DumpAttribute dumpAttribute,
-            bool replace = false)
-            => Register(typeof(T), null, dumpAttribute, replace);
+            DumpAttribute? dumpAttribute,
+            bool replace = false) => Register(typeof(T), null, dumpAttribute, replace);
     }
 }

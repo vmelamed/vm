@@ -9,23 +9,23 @@ namespace vm.Aspects.Diagnostics
     {
         public ClassDumpData(
             Type metadata,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute? dumpAttribute = null)
         {
-            Metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
+            Metadata      = metadata;
             DumpAttribute = dumpAttribute ??
-                                metadata.GetCustomAttribute<DumpAttribute>()
-                                    ?? DumpAttribute.Default;
+                                metadata.GetCustomAttribute<DumpAttribute>() ??
+                                    DumpAttribute.Default;
         }
 
         /// <summary>
         /// Gets or sets the metadata associated with a given class or struct (which may be the class or struct itself).
         /// </summary>
-        public Type Metadata { get; set; }
+        public Type Metadata { get; }
 
         /// <summary>
         /// Gets or sets the dump attribute applied on a given class or struct.
         /// </summary>
-        public DumpAttribute DumpAttribute { get; set; }
+        public DumpAttribute DumpAttribute { get; }
 
         /// <summary>
         /// Implements the instance over type priority rule for the <see cref="DumpAttribute.DumpNullValues"/> property.
@@ -34,14 +34,13 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect.
         /// </returns>
-        public ShouldDump DumpNullValues(DumpAttribute instanceAttribute)
-        {
-            return instanceAttribute != null && instanceAttribute.DumpNullValues != ShouldDump.Default
+        public ShouldDump DumpNullValues(DumpAttribute? instanceAttribute = null) =>
+            instanceAttribute?.DumpNullValues is ShouldDump.Skip or ShouldDump.Dump
                 ? instanceAttribute.DumpNullValues
-                : DumpAttribute.DumpNullValues == ShouldDump.Default
+                : DumpAttribute.DumpNullValues is ShouldDump.Default
                     ? ShouldDump.Dump
                     : DumpAttribute.DumpNullValues;
-        }
+
         /// <summary>
         /// Implements the instance over type priority rule for the <see cref="DumpAttribute.DefaultProperty"/> property.
         /// </summary>
@@ -49,8 +48,8 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect.
         /// </returns>
-        public string DefaultProperty(DumpAttribute instanceAttribute) =>
-            instanceAttribute?.DefaultProperty.IsNullOrWhiteSpace() == false
+        public string DefaultProperty(DumpAttribute? instanceAttribute = null) =>
+            instanceAttribute?.DefaultProperty.IsNullOrWhiteSpace() is false
                 ? instanceAttribute.DefaultProperty
                 : DumpAttribute.DefaultProperty;
 
@@ -61,12 +60,12 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// The property value that should be in effect. Never returns <see cref="ShouldDump.Default"/>.
         /// </returns>
-        public ShouldDump RecurseDump(DumpAttribute instanceAttribute = null) => instanceAttribute != null  &&
-                                                                                 instanceAttribute.RecurseDump != ShouldDump.Default
-                                                                                      ? instanceAttribute.RecurseDump
-                                                                                      : DumpAttribute.RecurseDump != ShouldDump.Default
-                                                                                          ? DumpAttribute.RecurseDump
-                                                                                          : ShouldDump.Dump;
+        public ShouldDump RecurseDump(DumpAttribute? instanceAttribute = null) =>
+            instanceAttribute?.RecurseDump is ShouldDump.Skip or ShouldDump.Dump
+                ? instanceAttribute.RecurseDump
+                : DumpAttribute.RecurseDump is ShouldDump.Default
+                    ? ShouldDump.Dump
+                    : DumpAttribute.RecurseDump;
 
         #region Identity rules
         #region IEquatable<ClassDumpData> Members
@@ -77,9 +76,7 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ClassDumpData other)
-            => Metadata      == other.Metadata  &&
-               DumpAttribute == other.DumpAttribute;
+        public bool Equals(ClassDumpData other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
         #endregion
 
         /// <summary>
@@ -92,25 +89,13 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="ClassDumpData"/> and
         /// the fields values of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
-            => obj is ClassDumpData clsDumpData && Equals(clsDumpData);
+        public override bool Equals(object? obj) => obj is ClassDumpData clsDumpData && Equals(clsDumpData);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="ClassDumpData"/> and its derived types.
         /// </summary>
         /// <returns>A hash code for the current <see cref="ClassDumpData"/> instance.</returns>
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Constants.HashInitializer;
-
-                hashCode = hashCode*Constants.HashMultiplier + Metadata.GetHashCode();
-                hashCode = hashCode*Constants.HashMultiplier + DumpAttribute.GetHashCode();
-
-                return hashCode;
-            }
-        }
+        public override int GetHashCode() => HashCode.Combine(Metadata, DumpAttribute);
 
         /// <summary>
         /// Compares two <see cref="ClassDumpData"/> objects.
@@ -121,8 +106,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator ==(ClassDumpData left, ClassDumpData right)
-            => left.Equals(right);
+        public static bool operator ==(ClassDumpData left, ClassDumpData right) => left.Equals(right);
 
         /// <summary>
         /// Compares two <see cref="ClassDumpData"/> objects.
@@ -133,8 +117,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(ClassDumpData left, ClassDumpData right)
-            => !(left==right);
+        public static bool operator !=(ClassDumpData left, ClassDumpData right) => !(left==right);
         #endregion
     }
 }

@@ -5,6 +5,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class TaskGenericDumpMetadata
     {
         [Dump(false)]
-        public object Result { get; set; }
+        public object? Result { get; set; }
     }
 }

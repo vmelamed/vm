@@ -6,9 +6,9 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class ValidationResultsDumpMetadata
     {
         [Dump(0)]
-        public object IsValid { get; set; }
+        public object? IsValid { get; set; }
 
         [Dump(1)]
-        public object Count { get; set; }
+        public object? Count { get; set; }
     }
 }

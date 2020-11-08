@@ -206,22 +206,22 @@ dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 # RCS1018: Add accessibility modifiers (or vice versa).
-dotnet_diagnostic.RCS1018.severity = none
+dotnet_diagnostic.RCS1018.severity = silent
 
 # RCS1192: Unnecessary usage of verbatim string literal.
-dotnet_diagnostic.RCS1192.severity = none
+dotnet_diagnostic.RCS1192.severity = silent
 
 # RCS1001: Add braces (when expression spans over multiple lines).
-dotnet_diagnostic.RCS1001.severity = none
+dotnet_diagnostic.RCS1001.severity = silent
 
 # RCS1123: Add parentheses when necessary.
-dotnet_diagnostic.RCS1123.severity = none
+dotnet_diagnostic.RCS1123.severity = silent
 
 # RCS1003: Add braces to if-else (when expression spans over multiple lines).
-dotnet_diagnostic.RCS1003.severity = none
+dotnet_diagnostic.RCS1003.severity = silent
 
 # IDE0058: Expression value is never used
-dotnet_diagnostic.IDE0058.severity = none
+dotnet_diagnostic.IDE0058.severity = silent
 
 # RCS1079: Throwing of new NotImplementedException.
 dotnet_diagnostic.RCS1079.severity = silent

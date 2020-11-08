@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Threading;
@@ -42,27 +41,14 @@ namespace vm.Aspects.Diagnostics
         {
             get
             {
-                try
-                {
-                    _syncDefaultDumpSettings.EnterReadLock();
-                    return _defaultDumpSettings;
-                }
-                finally
-                {
-                    _syncDefaultDumpSettings.ExitReadLock();
-                }
+                using var _ = new ReaderSlimSync(_syncDefaultDumpSettings);
+                return _defaultDumpSettings;
             }
+
             set
             {
-                try
-                {
-                    _syncDefaultDumpSettings.EnterWriteLock();
-                    _defaultDumpSettings = value;
-                }
-                finally
-                {
-                    _syncDefaultDumpSettings.ExitWriteLock();
-                }
+                using var _ = new WriterSlimSync(_syncDefaultDumpSettings);
+                _defaultDumpSettings = value;
             }
         }
 
@@ -76,16 +62,6 @@ namespace vm.Aspects.Diagnostics
         /// The number of spaces in a single indent.
         /// </summary>
         internal readonly int _indentSize;
-
-        /// <summary>
-        /// Flag that the current writer is actually our DumpTextWriter.
-        /// </summary>
-        readonly bool _isDumpWriter;
-
-        /// <summary>
-        /// The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
-        /// </summary>
-        internal int _maxDepth = int.MinValue;
         #endregion
 
         #region Internal properties for access by the DumpState
@@ -93,42 +69,29 @@ namespace vm.Aspects.Diagnostics
         DumpSettings _settings                      = DumpSettings.Default;
 
         /// <summary>
-        /// The dump writer.
-        /// </summary>
-        internal TextWriter Writer { get; }
-
-        /// <summary>
-        /// Gets the settings for this instance.
+        /// Gets the settings for the current instance.
         /// </summary>
         public DumpSettings InstanceSettings
         {
             get
             {
-                try
-                {
-                    _syncSettings.EnterReadLock();
-                    return _settings;
-                }
-                finally
-                {
-                    _syncSettings.ExitReadLock();
-                }
+                using var _ = new ReaderSlimSync(_syncSettings);
+                return _settings;
             }
+
             set
             {
-                try
-                {
-                    _syncSettings.EnterWriteLock();
-                    _settings = value;
-                }
-                finally
-                {
-                    _syncSettings.ExitWriteLock();
-                }
+                using var _ = new WriterSlimSync(_syncSettings);
+                _settings = value;
             }
         }
 
-        internal DumpSettings Settings { get; set; }
+        internal DumpSettings Settings { get; set; } = DefaultDumpSettings;
+
+        /// <summary>
+        /// The dump writer.
+        /// </summary>
+        internal TextWriter Writer { get; }
 
         /// <summary>
         /// Gets the member information comparer, used to order the dumped members in the desired sort order.
@@ -160,20 +123,13 @@ namespace vm.Aspects.Diagnostics
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="writer" /> is <c>null</c>.</exception>
         public ObjectTextDumper(
             TextWriter writer,
-            IMemberInfoComparer memberInfoComparer = null)
+            IMemberInfoComparer? memberInfoComparer = null)
         {
-            Writer             = writer ?? throw new ArgumentNullException(nameof(writer));
+            // wrap the writer in DumpTextWriter - handles better the indentations and
+            // limits the dump output to DumpTextWriter.DefaultMaxLength
+            Writer             = writer is StringWriter wr ? new DumpTextWriter(wr, Settings.MaxDumpLength) : writer;
             MemberInfoComparer = memberInfoComparer ?? new MemberInfoComparer();
-            Settings           = DefaultDumpSettings;
             _indentSize        = Settings.IndentSize;
-
-            if (Writer is StringWriter wr)
-            {
-                // wrap the writer in DumpTextWriter - handles better the indentations and
-                // limits the dump output to DumpTextWriter.DefaultMaxLength
-                Writer        = new DumpTextWriter(wr, Settings.MaxDumpLength);
-                _isDumpWriter = true;
-            }
         }
         #endregion
 
@@ -191,17 +147,19 @@ namespace vm.Aspects.Diagnostics
         /// <returns>The <paramref name="value" /> parameter.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public ObjectTextDumper Dump(
-            object value,
-            Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null,
+            object? value,
+            Type? dumpMetadata = null,
+            DumpAttribute? dumpAttribute = null,
             int initialIndentLevel = DumpSettings.DefaultInitialIndentLevel)
         {
             try
             {
                 // dump
                 _indentLevel = initialIndentLevel >= DumpSettings.DefaultInitialIndentLevel ? initialIndentLevel : DumpSettings.DefaultInitialIndentLevel;
-                _maxDepth    = int.MinValue;
+                MaxDepth     = int.MinValue;
                 Settings     = InstanceSettings;
+
+                Debug.Assert(DumpedObjects.Count is 0);
 
                 DumpObject(value, dumpMetadata, dumpAttribute);
             }
@@ -230,14 +188,20 @@ The TextDumper threw an exception:
             {
                 // clear the dumped objects register
                 DumpedObjects.Clear();
-                // prepare our writer for a new dump
-                if (_isDumpWriter)
-                    ((DumpTextWriter)Writer).Reset();
+
+                // prepare our dump text writer for a new dump
+                (Writer as DumpTextWriter)?.Reset();
             }
 
             return this;
         }
         #endregion
+
+        internal int MaxDepth { get; private set; } = int.MinValue;
+
+        internal int IncrementMaxDepth() => MaxDepth++;
+
+        internal int DecrementMaxDepth() => MaxDepth--;
 
         /// <summary>
         /// Increases the indentation of the writer by <see cref="_indentSize"/>.
@@ -251,47 +215,43 @@ The TextDumper threw an exception:
 
         #region Internal methods
         internal void DumpObject(
-            object obj,
-            Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null,
-            DumpState parentState = null)
+            object? obj,
+            Type? dumpMetadata = null,
+            DumpAttribute? dumpAttribute = null,
+            DumpState? parentState = null)
         {
-            if (Writer.DumpedBasicValue(obj, dumpAttribute)  ||  Writer.DumpedBasicNullable(obj, dumpAttribute))    // incl. null
+            if (Writer.DumpedBasicValue(obj, dumpAttribute)  ||
+                Writer.DumpedBasicNullable(obj, dumpAttribute))
                 return;
 
-            // resolve the class metadata and the dump attribute
-            ClassDumpData classDumpData;
-            var objectType = obj.GetType();
+            // DumpedBasic... dumps null objects too, so we now know that objct is not null
+            Debug.Assert(obj is not null);
 
-            if (dumpMetadata==null)
-            {
-                classDumpData = ClassMetadataResolver.GetClassDumpData(objectType);
-                if (dumpAttribute != null)
-                    classDumpData.DumpAttribute = dumpAttribute;
-            }
-            else
-                classDumpData = new ClassDumpData(dumpMetadata, dumpAttribute);
+            // resolve the class metadata and the dump attribute
+            var objectType = obj.GetType()!;
+            var classDumpData = dumpMetadata==null
+                                ? ClassMetadataResolver.GetClassDumpData(objectType, dumpAttribute)
+                                : new ClassDumpData(dumpMetadata, dumpAttribute);
 
             // if we're too deep - stop here.
-            if (_maxDepth == int.MinValue)
-                _maxDepth = classDumpData.DumpAttribute.MaxDepth;
+            if (MaxDepth == int.MinValue)
+                MaxDepth = classDumpData.DumpAttribute.MaxDepth;
 
-            if (_maxDepth < 0)
+            if (MaxDepth < 0)
             {
                 Writer.Write(Resources.DumpReachedMaxDepth);
                 return;
             }
 
-            // save here the IsSubExpression flag as it will change if obj is Expression and IsSubExpression==false.
-            // but in the end of this method restore the value from this local variable. See below.
+            // save the IsSubExpression flag in the local variable,
+            // as it will change if obj is Expression and IsSubExpression==false.
+            // in the end of this method we restore the value from this local variable. See below.
             var isSubExpressionStore = IsSubExpression;
 
-            // slow dump vs. run script?
-            var isTopLevelObject = parentState == null;
-            var buildScript      = Settings.UseDumpScriptCache  &&  !obj.IsDynamicObject();
-            Script script        = null;
-
+            // slow dump or compile and run a script?
+            var buildScript = Settings.UseDumpScriptCache  &&  !obj.IsDynamicObject();
             using var state = new DumpState(this, obj, classDumpData, buildScript);
+            Script? script  = null; // this is the compiled dumping script
 
             if (buildScript)
             {
@@ -300,11 +260,11 @@ The TextDumper threw an exception:
                 {
                     if (script != null)
                     {
-                        if (isTopLevelObject)
+                        if (parentState is null)
                             Writer.Indent(_indentLevel, _indentSize)
-                                    .WriteLine();
+                                  .WriteLine();
 
-                        script(obj, classDumpData, this, state);
+                        script((object)obj, classDumpData, this, state);
                     }
 
                     return;
@@ -314,9 +274,9 @@ The TextDumper threw an exception:
             }
             else
             {
-                if (isTopLevelObject)
+                if (parentState is null)
                     Writer.Indent(_indentLevel, _indentSize)
-                        .WriteLine();
+                          .WriteLine();
             }
 
             if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
@@ -325,7 +285,7 @@ The TextDumper threw an exception:
                 // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                 DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                if (!state.DumpedCollection(classDumpData.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below *  )
+                if (!state.DumpedCollection(classDumpData.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below*)
                 {
                     var statesWithRemainingProperties = new Stack<DumpState>();
                     var statesWithTailProperties = new Queue<DumpState>();
@@ -349,24 +309,23 @@ The TextDumper threw an exception:
                 }
             }
 
-            if (buildScript  &&  state.DumpScript != null)
-                script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
-
-            if (!buildScript)
+            if (buildScript)
             {
-                if (isTopLevelObject)
-                    Writer.Unindent(_indentLevel, _indentSize);
+                if (state.DumpScript is not null)
+                    script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+                if (script is not null)
+                {
+                    if (parentState is null)
+                        Writer.Indent(_indentLevel, _indentSize)
+                              .WriteLine();
+
+                    script((object)obj, classDumpData, this, state);
+                }
             }
             else
             {
-                if (script != null)
-                {
-                    if (isTopLevelObject)
-                        Writer.Indent(_indentLevel, _indentSize)
-                                .WriteLine();
-
-                    script(obj, classDumpData, this, state);
-                }
+                if (parentState is null)
+                    Writer.Unindent(_indentLevel, _indentSize);
             }
 
             // restore here the IsSubExpression flag as it have changed if obj is Expression and IsSubExpression==false.
@@ -389,16 +348,12 @@ The TextDumper threw an exception:
             DumpState state,
             Stack<DumpState> statesWithRemainingProperties)
         {
-            if (state == null)
-                throw new ArgumentNullException(nameof(state));
-            if (statesWithRemainingProperties == null)
-                throw new ArgumentNullException(nameof(statesWithRemainingProperties));
-
             if (state.DumpedDelegate()    ||
                 state.DumpedMemberInfo()  ||
                 state.DumpedRootClass())
             {
-                // we reached the root of the hierarchy, indent and while unwinding the stack dump the properties from each descending class
+                // we reached the root of the hierarchy,
+                // indent and while unwinding the stack dump the properties from each descending class
                 state.Indent();
                 state.Dispose();
                 return true;
@@ -413,13 +368,14 @@ The TextDumper threw an exception:
             while (state.MoveNext())
             {
                 // if we reached a negative order property,
-                if (state.CurrentDumpAttribute.Order < 0)
+                if (state.CurrentDumpAttribute!.Order < 0)
                 {
                     // put the state in the stack of states with remaining properties to be dumped
                     // and suspend the dumping at this inheritance level
                     statesWithRemainingProperties.Push(state);
                     return false;
                 }
+
                 // otherwise dump the property
                 state.DumpProperty();
             }
@@ -440,11 +396,6 @@ The TextDumper threw an exception:
             Stack<DumpState> statesWithRemainingProperties,
             Queue<DumpState> statesWithTailProperties)
         {
-            if (statesWithRemainingProperties == null)
-                throw new ArgumentNullException(nameof(statesWithRemainingProperties));
-            if (statesWithTailProperties == null)
-                throw new ArgumentNullException(nameof(statesWithTailProperties));
-
             bool isTailProperty;
 
             while (statesWithRemainingProperties.Count > 0)
@@ -454,7 +405,7 @@ The TextDumper threw an exception:
 
                 do
                 {
-                    isTailProperty = state.CurrentDumpAttribute.Order == int.MinValue;
+                    isTailProperty = state.CurrentDumpAttribute!.Order == int.MinValue;
 
                     if (isTailProperty)
                     {
@@ -482,9 +433,6 @@ The TextDumper threw an exception:
         static void DumpTailProperties(
             IEnumerable<DumpState> statesWithTailProperties)
         {
-            if (statesWithTailProperties == null)
-                throw new ArgumentNullException(nameof(statesWithTailProperties));
-
             foreach (var state in statesWithTailProperties)
                 using (state)
                     do
@@ -498,52 +446,23 @@ The TextDumper threw an exception:
         /// The flag is being set when the object gets disposed.
         /// </summary>
         /// <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
-        /// <remarks>
-        /// Do not test or manipulate this flag outside of the property <see cref="IsDisposed"/> or the method <see cref="Dispose()"/>.
-        /// The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="Interlocked"/>.
-        /// </remarks>
         int _disposed;
-
-        /// <summary>
-        /// Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-        /// </summary>
-        public bool IsDisposed => Interlocked.CompareExchange(ref _disposed, 1, 1) == 1;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <remarks>Invokes the protected virtual <see cref="Dispose(bool)"/>.</remarks>
         public void Dispose()
         {
             // these will be called only if the instance is not disposed and is not in a process of disposing.
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Performs the actual job of disposing the object.
-        /// </summary>
-        /// <param name="disposing">
-        /// Passes the information whether this method is called by <see cref="Dispose()"/> (explicitly or
-        /// implicitly at the end of a <c>using</c> statement), or by the finalizer of <see cref="ObjectTextDumper"/>.
-        /// </param>
-        /// <remarks>
-        /// If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="Dispose()"/>, it will try to release all managed resources
-        /// (usually aggregated objects which implement <see cref="IDisposable"/> as well) and then it will release all unmanaged resources if any.
-        /// If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
-        /// </remarks>
-        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Writer>k__BackingField", Justification = "We don't necessarily")]
-        void Dispose(bool disposing)
-        {
             // if it is disposed or in a process of disposing - return.
             if (Interlocked.Exchange(ref _disposed, 1) != 0)
                 return;
 
-            if (disposing && _isDumpWriter)
-                // if the writer wraps foreign StringWriter, it is smart enough not to dispose it
-                Writer.Dispose();
+            // if the writer wraps foreign StringWriter, it is smart enough not to dispose it
+            (Writer as DumpTextWriter)?.Dispose();
 
             _syncSettings.Dispose();
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

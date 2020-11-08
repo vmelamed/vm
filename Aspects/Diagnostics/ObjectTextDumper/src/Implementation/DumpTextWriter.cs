@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -67,12 +66,14 @@ namespace vm.Aspects.Diagnostics.Implementation
         public override string NewLine
         {
             get { return _writer.NewLine; }
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
             set
             {
                 Debug.Assert(value == EndOfLine, "The DumpTextWriter works well only with the sequence \\r\\n as end of line marker.");
 
                 _writer.NewLine = value;
             }
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
         }
 
         public int MaxLength
@@ -101,9 +102,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             _writer.Close();
         }
 
-        public override void Write(string value)
+        public override void Write(string? value)
         {
-            if (value.IsNullOrEmpty())
+            if (value is null or "")
                 return;
 
             WriteCharBuffer(value.ToCharArray(), 0, value.Length);
@@ -135,7 +136,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (buffer.Length - index < count)
                 throw new ArgumentException("The parameters index or count have invalid values.");
 
-            for (int i = index; i < index+count; i++)
+            for (var i = index; i < index+count; i++)
                 WriteChar(buffer[i]);
         }
 

@@ -5,6 +5,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class ConstantExpressionDumpMetadata
     {
         [Dump(0)]
-        public object Value { get; set; }
+        public object? Value { get; set; }
     }
 }

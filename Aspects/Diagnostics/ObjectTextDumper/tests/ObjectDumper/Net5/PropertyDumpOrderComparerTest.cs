@@ -8,37 +8,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
     [TestClass]
     public class PropertyDumpOrderComparerTest
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void PropertyOrderComparer_Nulls()
-        {
-            var c = new MemberInfoComparer().SetMetadata(null);
-
-            c.Compare(null, null);
-        }
-
         class Test1
         {
             public int Property1 { get; set; }
             public int Property2 { get; set; }
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void PropertyOrderComparer_Null1()
-        {
-            var c = new MemberInfoComparer();
-
-            c.Compare(null, typeof(Test1).GetProperty("Property1"));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void PropertyOrderComparer_Null2()
-        {
-            var c = new MemberInfoComparer();
-
-            c.Compare(typeof(Test1).GetProperty("Property2"), null);
         }
 
         [TestMethod]

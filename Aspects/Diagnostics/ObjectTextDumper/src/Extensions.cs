@@ -23,10 +23,13 @@ namespace vm.Aspects
     /// </summary>
     public static class Extensions
     {
+        const int _efHexadecimalSuffixLength = 64;
+        const int _efSuffixLength = _efHexadecimalSuffixLength + 1;
+
         /// <summary>
         /// Matches a type name with hexadecimal suffix.
         /// </summary>
-        static readonly Regex _hexadecimalSuffix = new Regex(@"_[0-9A-F]{64}", RegexOptions.Compiled);
+        static readonly Regex _hexadecimalSuffix = new Regex(@$"_[0-9A-F]{{{_efHexadecimalSuffixLength}}}", RegexOptions.Compiled);
 
         /// <summary>
         /// Dumps the specified <paramref name="value"/> to a text writer.
@@ -47,16 +50,13 @@ namespace vm.Aspects
         /// The object.
         /// </returns>
         [SecuritySafeCritical]
-        public static object DumpText(
-            this object value,
+        public static object? DumpText(
+            this object? value,
             TextWriter writer,
             int indentLevel = 0,
-            Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null)
+            Type? dumpMetadata = null,
+            DumpAttribute? dumpAttribute = null)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             using var dumper = new ObjectTextDumper(writer);
             try
             {
@@ -82,9 +82,6 @@ The TextDumper threw an exception:
         public static string DumpCSharpText(
             this Expression expression)
         {
-            if (expression == null)
-                return DumpUtilities.Null;
-
             using var visitor = new CSharpDumpExpression();
 
             visitor.Visit(expression);
@@ -107,10 +104,10 @@ The TextDumper threw an exception:
         /// </param>
         /// <returns>The text dump of the object.</returns>
         public static string DumpString(
-            this object value,
+            this object? value,
             int indentLevel = 0,
-            Type dumpMetadata = null,
-            DumpAttribute dumpAttribute = null)
+            Type? dumpMetadata = null,
+            DumpAttribute? dumpAttribute = null)
         {
             using var writer = new StringWriter(CultureInfo.InvariantCulture);
 
@@ -127,9 +124,7 @@ The TextDumper threw an exception:
         ///   <c>true</c> if the specified type is one of the basic types; otherwise, <c>false</c>.
         /// </returns>
         internal static bool IsBasicType(this Type type) =>
-            type is null
-                ? throw new ArgumentNullException(nameof(type))
-                : WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
+            WriterExtensions.DumpBasicValues.ContainsKey(type) || type.IsEnum;
 
         /// <summary>
         /// Determines whether the specified object is dynamic.
@@ -139,8 +134,8 @@ The TextDumper threw an exception:
         ///   <c>true</c> if the specified object is dynamic; otherwise, <c>false</c>.
         /// </returns>
         internal static bool IsDynamicObject(this object obj) =>
-            // TODO: we need a better test here (http://stackoverflow.com/questions/43769230/how-to-find-out-if-an-object-is-a-dynamic-object)
-            obj is not null  and IDynamicMetaObjectProvider;
+            obj is IDynamicMetaObjectProvider;
+        // TODO: we need a better test here (http://stackoverflow.com/questions/43769230/how-to-find-out-if-an-object-is-a-dynamic-object)
 
         /// <summary>
         /// Retrieves a custom attribute of a specified type that is applied to a specified member.
@@ -151,16 +146,12 @@ The TextDumper threw an exception:
         /// <returns>A custom attribute that matches <typeparamref name="T"/>, or <see langword="null" /> if no such attribute is found.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="attributeProvider"/> is <see langword="null"/>.</exception>
         /// <exception cref="System.InvalidOperationException">Thrown if more than one attribute of the specified type <typeparamref name="T"/> is found.</exception>
-        internal static T GetCustomAttribute<T>(
+        internal static T? GetCustomAttribute<T>(
             this ICustomAttributeProvider attributeProvider,
-            bool inherit = false) where T : class
-        {
-            return attributeProvider is null
-                ? throw new ArgumentNullException(nameof(attributeProvider))
-                : attributeProvider.IsDefined(typeof(T), inherit)
-                    ? (T)attributeProvider.GetCustomAttributes(typeof(T), inherit).Single()
-                    : null;
-        }
+            bool inherit = false) where T : class =>
+            attributeProvider.IsDefined(typeof(T), inherit)
+                ? attributeProvider.GetCustomAttributes(typeof(T), inherit).Single() as T
+                : null;
 
         /// <summary>
         /// Retrieves all custom attributes of a specified type that are applied to a specified member.
@@ -185,10 +176,11 @@ The TextDumper threw an exception:
         /// <param name="pi">The <see cref="PropertyInfo"/> object.</param>
         /// <returns><c>true</c> if the specified <see cref="PropertyInfo"/> object represents a virtual property; otherwise, <c>false</c>.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="pi"/> is <see langword="null"/>.</exception>
-        internal static bool IsVirtual(this PropertyInfo pi) =>
-            pi is not null
-                ? pi.GetMethod.IsVirtual  &&  !pi.GetMethod.IsFinal
-                : throw new ArgumentNullException(nameof(pi));
+        internal static bool IsVirtual(this PropertyInfo pi)
+        {
+            var mi = pi.GetMethod ?? pi.SetMethod;
+            return mi?.IsVirtual is true  && mi?.IsFinal is false;
+        }
 
         /// <summary>
         /// Determines whether the specified <see cref="PropertyInfo"/> object represents a property that can be read.
@@ -199,10 +191,9 @@ The TextDumper threw an exception:
         internal static bool CanRead(this MemberInfo mi) =>
             mi switch
             {
-                null            => throw new ArgumentNullException(nameof(mi)),
-                FieldInfo       => true,
+                FieldInfo => true,
                 PropertyInfo pi => pi.CanRead,
-                _               => false,
+                _ => false,
             };
 
         /// <summary>
@@ -211,15 +202,34 @@ The TextDumper threw an exception:
         /// </summary>
         /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
-        public static bool IsNullOrWhiteSpace(this string value) => value?.All(c => char.IsWhiteSpace(c)) ?? true;
+        public static bool IsWhiteSpace(this string value) =>
+            value.All(c => char.IsWhiteSpace(c));
 
         /// <summary>
         /// Determines whether the specified string is null, or empty.
         /// Equivalent to <c>string.IsNullOrEmpty(s)</c>.
         /// </summary>
         /// <param name="value">The string to test.</param>
+        /// <returns><see langword="true" /> if the specified string is not <see langword="null"/> or empty; otherwise, <see langword="false" />.</returns>
+        public static bool IsEmpty(this string value) =>
+            value.Length is 0;
+
+        /// <summary>
+        /// Determines whether the specified string is null, or empty or consist of whitespace characters only.
+        /// Equivalent to <c>!string.IsNullOrWhiteSpace(s)</c>.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
         /// <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
-        public static bool IsNullOrEmpty(this string value) => string.IsNullOrEmpty(value);
+        public static bool IsNullOrWhiteSpace(this string? value) =>
+            value?.All(c => char.IsWhiteSpace(c)) ?? true;
+
+        /// <summary>
+        /// Determines whether the specified string is null, or empty.
+        /// Equivalent to <c>string.IsNullOrEmpty(s)</c>.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns><see langword="true" /> if the specified string is not <see langword="null"/> or empty; otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty(this string? value) => string.IsNullOrEmpty(value);
 
         static readonly IReadOnlyDictionary<Type, string> _cSharpTypeName = new ReadOnlyDictionary<Type, string>(
             new Dictionary<Type, string>
@@ -252,18 +262,20 @@ The TextDumper threw an exception:
             this Type type,
             bool shortenEfTypes = true)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
             if (_cSharpTypeName.TryGetValue(type, out var typeName))
                 return typeName;
 
             typeName = type.Name;
 
-            if (shortenEfTypes       &&
-                typeName.Length > 65 &&
-                _hexadecimalSuffix.IsMatch(typeName[^65..]))
-                typeName = type.BaseType.Name[0..(typeName.Length-65)];
+            var baseTypeName = type.BaseType?.Name;
+
+            if (baseTypeName is null)
+                return typeName;
+
+            if (shortenEfTypes                    &&
+                typeName.Length > _efSuffixLength &&
+                _hexadecimalSuffix.IsMatch(typeName[^_efSuffixLength..]))
+                typeName = baseTypeName[0..(typeName.Length-_efSuffixLength)];
 
             if (type.IsGenericType)
             {
@@ -276,7 +288,7 @@ The TextDumper threw an exception:
             }
 
             return type.IsArray
-                ? GetTypeName(type.GetElementType(), shortenEfTypes)
+                ? GetTypeName(type.GetElementType()!, shortenEfTypes)
                 : typeName;
         }
 
@@ -285,42 +297,31 @@ The TextDumper threw an exception:
         /// </summary>
         /// <param name="sequenceType">Type of the sequence.</param>
         /// <returns>Type[] - the types of the key (index 0) and the value (index 1) or <see langword="null"/> if <paramref name="sequenceType"/> is not generic dictionary.</returns>
-        public static Type[] DictionaryTypeArguments(
-            this Type sequenceType)
+        public static (Type keyType, Type valueType) DictionaryTypeArguments(this Type sequenceType)
         {
-            if (sequenceType == null)
-                throw new ArgumentNullException(nameof(sequenceType));
-
             var dictionaryType = Array.Find(sequenceType.GetInterfaces(),
                                             t => t.IsGenericType  &&
                                                  t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
             if (dictionaryType == null)
-                return null;
+                return (typeof(void), typeof(void));
 
             var typeArguments = dictionaryType.GetGenericArguments();
 
             Debug.Assert(typeArguments.Length == 2);
 
             return typeArguments[0].IsBasicType()
-                    ? typeArguments
-                    : null;
+                    ? (typeArguments[0], typeArguments[1])
+                    : (typeof(void), typeof(void));
         }
 
         internal static int GetMaxToDump(
             this DumpAttribute dumpAttribute,
-            int length = int.MaxValue)
-        {
-            if (dumpAttribute == null)
-                throw new ArgumentNullException(nameof(dumpAttribute));
-
-            var max = dumpAttribute.MaxLength;
-
-            return max < 0
-                    ? length
-                    : max == 0
-                        ? Math.Min(DumpAttribute.DefaultMaxElements, length)    // limit sequences of primitive types (can be very big)
-                        : Math.Min(max, length);
-        }
+            int length = int.MaxValue) =>
+            dumpAttribute.MaxLength < 0
+                ? length
+                : dumpAttribute.MaxLength == 0
+                    ? Math.Min(DumpAttribute.DefaultMaxElements, length)    // force limit on sequences of primitive types (can be very big)
+                    : Math.Min(dumpAttribute.MaxLength, length);
     }
 }

@@ -33,7 +33,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             };
         }
 
-        public string DumpText => !IsDisposed ? _textWriter.GetStringBuilder().ToString() : null;
+        public string DumpText => !IsDisposed ? _textWriter.GetStringBuilder().ToString() : "";
 
         struct ExpressionMetadata
         {
@@ -48,11 +48,6 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression node,
             Expression parentNode)
         {
-            if (node == null)
-                throw new ArgumentNullException(nameof(node));
-            if (parentNode == null)
-                throw new ArgumentNullException(nameof(parentNode));
-
             _metadata.TryGetValue(parentNode.NodeType, out var parentMeta);
 
             return Visit(node, parentMeta);

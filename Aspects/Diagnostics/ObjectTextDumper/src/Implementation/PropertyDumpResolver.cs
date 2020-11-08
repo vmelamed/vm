@@ -21,7 +21,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// <summary>
         /// Gets the cache/dictionary of property info-dump attributes.
         /// </summary>
-        static Dictionary<Tuple<MemberInfo, Type>, DumpAttribute> PropertiesDumpData { get; } = new Dictionary<Tuple<MemberInfo, Type>, DumpAttribute>();
+        static Dictionary<(MemberInfo mi, Type? metadata), DumpAttribute> PropertiesDumpData { get; } = new Dictionary<(MemberInfo mi, Type? metadata), DumpAttribute>();
 
         /// <summary>
         /// Gets the dump attribute applied to a property.
@@ -31,40 +31,29 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// <returns></returns>
         public static DumpAttribute GetPropertyDumpAttribute(
             MemberInfo mi,
-            Type metadata = null)
+            Type? metadata = null)
         {
-            if (mi == null)
-                throw new ArgumentNullException(nameof(mi));
             if (mi is not PropertyInfo and not FieldInfo)
                 throw new ArgumentException("The parameter can be only "+nameof(PropertyInfo)+" or "+nameof(FieldInfo)+" type.", nameof(mi));
 
-            var lookup = Tuple.Create(mi, metadata);
-            DumpAttribute dumpAttribute;
-
             // if we have the dump attribute in the cache - return it
-            try
-            {
-                SyncPropertiesDumpData.EnterReadLock();
-                if (PropertiesDumpData.TryGetValue(lookup, out dumpAttribute))
-                    return dumpAttribute;
-            }
-            finally
-            {
-                SyncPropertiesDumpData.ExitReadLock();
-            }
+            using (new ReaderSlimSync(SyncPropertiesDumpData))
+                if (PropertiesDumpData.TryGetValue((mi, metadata), out var da) && da is not null)
+                    return da;
 
             var pi = mi as PropertyInfo;
+            DumpAttribute? dumpAttribute = null;
 
             // is there an attribute on the corresponding property in the metadata
             if (metadata != null  &&  pi?.GetIndexParameters().Length == 0)
             {
-                MemberInfo miMeta = null;
+                MemberInfo? miMeta = null;
 
                 foreach (var f in metadata.GetFields()
                                           .Union<MemberInfo>(
                                   metadata.GetProperties())
                                           .Where(f => f.Name == mi.Name))
-                    if (miMeta?.DeclaringType.IsAssignableFrom(f.DeclaringType) != false)
+                    if (miMeta?.DeclaringType?.IsAssignableFrom(f.DeclaringType) is not false)
                         miMeta = f;         // ^if hidden property(?) - take the property from the most derived class:
 
                 //// if not found in the properties - search in the fields
@@ -87,38 +76,11 @@ namespace vm.Aspects.Diagnostics.Implementation
                 dumpAttribute = mi.GetCustomAttribute<DumpAttribute>() ?? DumpAttribute.Default;
 
             // put the property info and the attribute in the cache
-            try
-            {
-                SyncPropertiesDumpData.EnterWriteLock();
-                PropertiesDumpData[lookup] = dumpAttribute;
-            }
-            finally
-            {
-                SyncPropertiesDumpData.ExitWriteLock();
-            }
+            using (new WriterSlimSync(SyncPropertiesDumpData))
+                PropertiesDumpData[(mi, metadata)] = dumpAttribute;
 
             // return the dump attribute
             return dumpAttribute;
-        }
-
-        public static bool PropertyHasNonDefaultDumpAttribute(
-            MemberInfo memberInfo)
-        {
-            if (memberInfo == null)
-                throw new ArgumentNullException(nameof(memberInfo));
-
-            try
-            {
-                SyncPropertiesDumpData.EnterReadLock();
-                return PropertiesDumpData.Any(
-                            kv => kv.Key.Item1.Name == memberInfo.Name  &&
-                                  kv.Key.Item1.DeclaringType.IsAssignableFrom(memberInfo.DeclaringType)   &&
-                                  !kv.Value.IsDefaultAttribute());
-            }
-            finally
-            {
-                SyncPropertiesDumpData.ExitReadLock();
-            }
         }
     }
 }

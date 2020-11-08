@@ -115,12 +115,12 @@ namespace vm.Aspects.Diagnostics
         /// the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity,
         /// i.e. they test for business same-ness by comparing the types and the business keys.
         /// </remarks>
-        public bool Equals(DumpSettings other)
-            => UseDumpScriptCache     == other.UseDumpScriptCache     &&
-               IndentSize             == other.IndentSize             &&
-               MaxDumpLength          == other.MaxDumpLength          &&
-               PropertyBindingFlags == other.PropertyBindingFlags &&
-               FieldBindingFlags     == other.FieldBindingFlags;
+        public bool Equals(DumpSettings other) =>
+            UseDumpScriptCache   == other.UseDumpScriptCache   &&
+            IndentSize           == other.IndentSize           &&
+            MaxDumpLength        == other.MaxDumpLength        &&
+            PropertyBindingFlags == other.PropertyBindingFlags &&
+            FieldBindingFlags    == other.FieldBindingFlags;
         #endregion
 
         /// <summary>
@@ -142,25 +142,13 @@ namespace vm.Aspects.Diagnostics
         /// the overloaded <c>operator==</c> and <c>operator!=</c> test for business identity,
         /// i.e. they test for business same-ness by comparing the types and the business keys.
         /// </remarks>
-        public override bool Equals(object obj)
-            => obj is DumpSettings ds && Equals(ds);
+        public override bool Equals(object? obj) => obj is DumpSettings ds && Equals(ds);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="DumpSettings"/> and its derived types.
         /// </summary>
         /// <returns>A hash code for the current <see cref="DumpSettings"/> instance.</returns>
-        public override int GetHashCode()
-        {
-            var hashCode = Constants.HashInitializer;
-
-            hashCode = Constants.HashMultiplier * hashCode + UseDumpScriptCache.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + IndentSize.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + MaxDumpLength.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + PropertyBindingFlags.GetHashCode();
-            hashCode = Constants.HashMultiplier * hashCode + FieldBindingFlags.GetHashCode();
-
-            return hashCode;
-        }
+        public override int GetHashCode() => HashCode.Combine(UseDumpScriptCache, IndentSize, MaxDumpLength, PropertyBindingFlags, FieldBindingFlags);
 
         /// <summary>
         /// Compares two <see cref="DumpSettings"/> objects.

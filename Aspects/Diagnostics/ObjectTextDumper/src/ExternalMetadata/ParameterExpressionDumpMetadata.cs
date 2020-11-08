@@ -6,9 +6,9 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class ParameterExpressionDumpMetadata
     {
         [Dump(0)]
-        public object Name { get; set; }
+        public object? Name { get; set; }
 
         [Dump(1)]
-        public object IsByRef { get; set; }
+        public object? IsByRef { get; set; }
     }
 }

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Threading;
 
-namespace vm.Aspects.Threading
+namespace vm.Aspects.Diagnostics.Implementation
 {
     /// <summary>
     /// Class ReaderWriterLockSlimExtensions. Utility class for better management of the lifetime of the scope of <see cref="ReaderWriterLockSlim"/>
     /// </summary>
-    public static class ReaderWriterLockSlimExtensions
+    internal static class ReaderWriterLockSlimExtensions
     {
         /// <summary>
         /// Gets the upgradable reader slim sync. Merely a shortcut to <c>new UpgradeableReaderSlimLock(readerWriterLock)</c>.
@@ -41,15 +39,8 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
-        public static UpgradeableReaderSlimSync UpgradableReaderLock(
-            this ReaderWriterLockSlim readerWriterLock)
-        {
-            if (readerWriterLock == null)
-                throw new ArgumentNullException(nameof(readerWriterLock));
-
-            return new UpgradeableReaderSlimSync(readerWriterLock);
-        }
+        public static UpgradeableReaderSlimSync UpgradableReaderLock(this ReaderWriterLockSlim readerWriterLock) =>
+            new UpgradeableReaderSlimSync(readerWriterLock);
 
         /// <summary>
         /// Gets the reader slim sync. Mere of a shortcut to <c>new ReaderSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
@@ -73,15 +64,8 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
-        public static ReaderSlimSync ReaderLock(
-            this ReaderWriterLockSlim readerWriterLock)
-        {
-            if (readerWriterLock == null)
-                throw new ArgumentNullException(nameof(readerWriterLock));
-
-            return new ReaderSlimSync(readerWriterLock);
-        }
+        public static ReaderSlimSync ReaderLock(this ReaderWriterLockSlim readerWriterLock) =>
+            new ReaderSlimSync(readerWriterLock);
 
         /// <summary>
         /// Gets the reader slim sync. Mere of a shortcut to <c>new WriterSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
@@ -105,14 +89,7 @@ namespace vm.Aspects.Threading
         /// ]]>
         /// </code>
         /// </example>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "The returned object is supposed to be used in a using statement.")]
-        public static WriterSlimSync WriterLock(
-            this ReaderWriterLockSlim readerWriterLock)
-        {
-            if (readerWriterLock == null)
-                throw new ArgumentNullException(nameof(readerWriterLock));
-
-            return new WriterSlimSync(readerWriterLock);
-        }
+        public static WriterSlimSync WriterLock(this ReaderWriterLockSlim readerWriterLock) =>
+            new WriterSlimSync(readerWriterLock);
     }
 }

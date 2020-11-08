@@ -5,7 +5,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>vm.Aspects.Diagnostics</RootNamespace>
     <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper</AssemblyName>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Common Items\vm.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>

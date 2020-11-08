@@ -11,41 +11,27 @@ namespace vm.Aspects.Diagnostics.Implementation
             object instance,
             string property)
         {
-            if (property.IsNullOrWhiteSpace())
-                throw new ArgumentException("The argument cannot be null, empty string or consist of whitespace characters only.", nameof(property));
+            if (property is "")
+                throw new ArgumentException("The argument cannot consist of whitespace characters only.", nameof(property));
 
-            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
+            Instance = instance;
             Property = property;
         }
 
         #region Identity rules implementation.
         #region IEquatable<DumpedProperty> Members
-        public bool Equals(DumpedProperty other)
-            => Instance.Equals(other.Instance) &&
-               Property.Equals(other.Property, StringComparison.OrdinalIgnoreCase);
+        public bool Equals(DumpedProperty other) =>
+            Instance.Equals(other.Instance)  &&
+            Property.Equals(other.Property, StringComparison.Ordinal);
         #endregion
 
-        public override bool Equals(object obj)
-            => obj is DumpedProperty dp  &&  Equals(dp);
+        public override bool Equals(object? obj) => obj is DumpedProperty dp  &&  Equals(dp);
 
-        public override int GetHashCode()
-        {
-            var hash = Constants.HashInitializer;
+        public override int GetHashCode() => HashCode.Combine(Instance, Property);
 
-            unchecked
-            {
-                hash = hash * Constants.HashMultiplier + Instance.GetHashCode();
-                hash = hash * Constants.HashMultiplier + Property.GetHashCode();
-            }
+        public static bool operator ==(DumpedProperty left, DumpedProperty right) => left.Equals(right);
 
-            return hash;
-        }
-
-        public static bool operator ==(DumpedProperty left, DumpedProperty right)
-            => left.Equals(right);
-
-        public static bool operator !=(DumpedProperty left, DumpedProperty right)
-            => !(left==right);
+        public static bool operator !=(DumpedProperty left, DumpedProperty right) => !(left==right);
         #endregion
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -12,7 +11,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitParameter(
             ParameterExpression node)
         {
-            _writer.Write(node.Name);
+            _writer.Write(node.Name ?? "_");
             return node;
         }
 
@@ -66,7 +65,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitNewArray(
             NewArrayExpression node)
         {
-            _writer.Write("new {0}", node.Type.GetElementType().GetTypeName(ShortenNamesOfGeneratedClasses));
+            _writer.Write("new {0}", node.Type.GetElementType()!.GetTypeName(ShortenNamesOfGeneratedClasses));
 
             var first = true;
 
@@ -242,10 +241,12 @@ namespace vm.Aspects.Diagnostics.Implementation
         {
             _metadata.TryGetValue(node.NodeType, out var meta);
 
-            Visit(node.Expression, meta);
-            _writer.Write(meta.Operator);
-
-            _writer.Write(node.Member.Name);
+            if (node.Expression is not null)
+            {
+                Visit(node.Expression, meta);
+                _writer.Write(meta.Operator);
+                _writer.Write(node.Member.Name);
+            }
             return node;
         }
 
@@ -264,7 +265,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         protected override Expression VisitTypeBinary(
             TypeBinaryExpression node)
         {
-             var meta = _metadata[node.NodeType];
+            var meta = _metadata[node.NodeType];
 
             Visit(node.Expression, node);
             _writer.Write("{0}{1}", meta.Operator, GetTypeName(node.TypeOperand));
@@ -314,10 +315,13 @@ namespace vm.Aspects.Diagnostics.Implementation
             return base.VisitLabel(node);
         }
 
-        protected override LabelTarget VisitLabelTarget(
-            LabelTarget node)
+        protected override LabelTarget? VisitLabelTarget(
+            LabelTarget? node)
         {
-            if (!node.Name.IsNullOrWhiteSpace())
+            if (node is null)
+                return node;
+
+            if (node.Name.IsNullOrWhiteSpace())
                 _writer.Write("{0}:", node.Name);
             else
                 PrintedText = false;
@@ -562,10 +566,13 @@ namespace vm.Aspects.Diagnostics.Implementation
             {
                 if (node.Method.GetCustomAttribute<ExtensionAttribute>() != null)
                     Visit(node.Arguments[i++]);
-                else
+                else if (node.Method.DeclaringType is not null)
                     _writer.Write(GetTypeName(node.Method.DeclaringType));
+                else
+                    _writer.Write("global::");
             }
             else
+                if (node.Object is not null)
                 Visit(node.Object, node);
             _writer.Write(".{0}(", node.Method.Name);
 
@@ -612,10 +619,11 @@ namespace vm.Aspects.Diagnostics.Implementation
                 _writer.WriteLine("finally");
             }
 
-            if (node.Finally.NodeType == ExpressionType.Block)
-                Visit(node.Finally);
-            else
-                Visit(Expression.Block(node.Finally));
+            if (node.Finally is not null)
+                if (node.Finally.NodeType == ExpressionType.Block)
+                    Visit(node.Finally);
+                else
+                    Visit(Expression.Block(node.Finally));
 
             return node;
         }
@@ -654,7 +662,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             _writer.WriteLine('{');
             foreach (var c in node.Cases)
                 VisitSwitchCase(c);
-            VisitSwitchDefault(node.DefaultBody);
+            if (node.DefaultBody is not null)
+                VisitSwitchDefault(node.DefaultBody);
             _writer.WriteLine('}');
             NeedsSemicolon = false;
             return node;

@@ -14,9 +14,7 @@ namespace vm.Aspects.Diagnostics
 {
     static class WriterExtensions
     {
-#pragma warning disable IDE0032 // Use auto property
-#pragma warning disable RCS1085 // Use auto-implemented property.
-        static readonly IReadOnlyDictionary<Type, Func<object, ulong>> _castsToUlong = new ReadOnlyDictionary<Type, Func<object, ulong>>(
+        static IReadOnlyDictionary<Type, Func<object, ulong>> CastsToUlong { get; } = new ReadOnlyDictionary<Type, Func<object, ulong>>(
             new Dictionary<Type, Func<object, ulong>>()
             {
                 [typeof(byte)]           = v => (ulong)(byte)v,
@@ -30,59 +28,58 @@ namespace vm.Aspects.Diagnostics
                 [typeof(ulong)]          = v => (ulong)v,
             });
 
-        static readonly IReadOnlyDictionary<Type, Action<TextWriter, object, int>> _dumpBasicValues = new ReadOnlyDictionary<Type, Action<TextWriter, object, int>>(
+        public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues { get; } = new ReadOnlyDictionary<Type, Action<TextWriter, object, int>>(
             new Dictionary<Type, Action<TextWriter, object, int>>
             {
-                [typeof(DBNull)]         = (w, _, _)   => w.Write("DBNull"),
-                [typeof(bool)]           = (w, v, _)   => w.Write((bool)v),
-                [typeof(byte)]           = (w, v, _)   => w.Write((byte)v),
-                [typeof(sbyte)]          = (w, v, _)   => w.Write((sbyte)v),
-                [typeof(char)]           = (w, v, _)   => w.Write((char)v),
-                [typeof(short)]          = (w, v, _)   => w.Write((short)v),
-                [typeof(int)]            = (w, v, _)   => w.Write((int)v),
-                [typeof(long)]           = (w, v, _)   => w.Write((long)v),
-                [typeof(ushort)]         = (w, v, _)   => w.Write((ushort)v),
-                [typeof(uint)]           = (w, v, _)   => w.Write((uint)v),
-                [typeof(ulong)]          = (w, v, _)   => w.Write((ulong)v),
-                [typeof(float)]          = (w, v, _)   => w.Write((float)v),
-                [typeof(double)]         = (w, v, _)   => w.Write((double)v),
-                [typeof(decimal)]        = (w, v, _)   => w.Write((decimal)v),
-                [typeof(DateTime)]       = (w, v, _)   => w.Write($"{v:o}"),
-                [typeof(DateTimeOffset)] = (w, v, _)   => w.Write($"{v:o}"),
-                [typeof(TimeSpan)]       = (w, v, _)   => w.Write(v.ToString()),
-                [typeof(Uri)]            = (w, v, _)   => w.Write(v.ToString()),
-                [typeof(Guid)]           = (w, v, _)   => w.Write(v.ToString()),
-                [typeof(IntPtr)]         = (w, v, _)   => w.Write($"0x{v:x16}"),
-                [typeof(UIntPtr)]        = (w, v, _)   => w.Write($"0x{v:x16}"),
+                [typeof(DBNull)]         = (w, _, _) => w.Write("DBNull"),
+                [typeof(bool)]           = (w, v, _) => w.Write((bool)v),
+                [typeof(byte)]           = (w, v, _) => w.Write((byte)v),
+                [typeof(sbyte)]          = (w, v, _) => w.Write((sbyte)v),
+                [typeof(char)]           = (w, v, _) => w.Write((char)v),
+                [typeof(short)]          = (w, v, _) => w.Write((short)v),
+                [typeof(int)]            = (w, v, _) => w.Write((int)v),
+                [typeof(long)]           = (w, v, _) => w.Write((long)v),
+                [typeof(ushort)]         = (w, v, _) => w.Write((ushort)v),
+                [typeof(uint)]           = (w, v, _) => w.Write((uint)v),
+                [typeof(ulong)]          = (w, v, _) => w.Write((ulong)v),
+                [typeof(float)]          = (w, v, _) => w.Write((float)v),
+                [typeof(double)]         = (w, v, _) => w.Write((double)v),
+                [typeof(decimal)]        = (w, v, _) => w.Write((decimal)v),
+                [typeof(DateTime)]       = (w, v, _) => w.Write($"{v:o}"),
+                [typeof(DateTimeOffset)] = (w, v, _) => w.Write($"{v:o}"),
+                [typeof(TimeSpan)]       = (w, v, _) => w.Write(v.ToString()),
+                [typeof(Uri)]            = (w, v, _) => w.Write(v.ToString()),
+                [typeof(Guid)]           = (w, v, _) => w.Write(v.ToString()),
+                [typeof(IntPtr)]         = (w, v, _) => w.Write($"0x{v:x16}"),
+                [typeof(UIntPtr)]        = (w, v, _) => w.Write($"0x{v:x16}"),
                 [typeof(string)]         = (w, v, max) => w.Dumped((string)v, max),
             });
 
-        public static IReadOnlyDictionary<Type, Action<TextWriter, object, int>> DumpBasicValues => _dumpBasicValues;
-#pragma warning restore RCS1085 // Use auto-implemented property.
-#pragma warning restore IDE0032 // Use auto property
+        static IReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>> MemberInfoDumpers { get; } = new ReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>>(
+            new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
+            {
+                [typeof(Type)]              = (w, mi) => w.Dumped((Type)mi),
+                [typeof(TypeInfo)]          = (w, mi) => w.Dumped((Type)mi),
+
+                [typeof(EventInfo)]         = (w, mi) => w.Dumped((EventInfo)mi),
+                [typeof(FieldInfo)]         = (w, mi) => w.Dumped((FieldInfo)mi),
+                [typeof(PropertyInfo)]      = (w, mi) => w.Dumped((PropertyInfo)mi),
+                [typeof(MethodInfo)]        = (w, mi) => w.Dumped((MethodInfo)mi),
+            });
 
         /// <summary>
         /// Matches the name space of the types within System
         /// </summary>
-        static readonly Regex _systemNameSpace = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
+        static Regex SystemNameSpace { get; } = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
 
-        public static bool IsFromSystem(
-            this Type type) =>
-            type is not null
-                ? _systemNameSpace.IsMatch(type.Namespace)
-                : throw new ArgumentNullException(nameof(type));
+        public static bool IsFromSystem(this Type type) =>
+            SystemNameSpace.IsMatch(type.Namespace ?? string.Empty);
 
         static bool Dumped(
             this TextWriter writer,
             string @string,
             int max)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
-            if (@string == null)
-                return false;
-
             writer.Write("{0}", max >= 0  &&  max < @string.Length
                                         ? @string.Substring(0, max) + "..."
                                         : @string);
@@ -92,13 +89,8 @@ namespace vm.Aspects.Diagnostics
         static void DumpEnumValue(
             this TextWriter writer,
             object v,
-            int max)
+            int _)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-            if (v == null)
-                throw new ArgumentNullException(nameof(v));
-
             var type = v.GetType();
 
             if (type.GetCustomAttribute<FlagsAttribute>() == null)
@@ -114,12 +106,12 @@ namespace vm.Aspects.Diagnostics
 
             var names = type.GetEnumNames();
             var values = type.GetEnumValues();
-            var castToUlong = _castsToUlong[type.GetEnumUnderlyingType()];
+            var castToUlong = CastsToUlong[type.GetEnumUnderlyingType()];
             var ulongValue = castToUlong(v);
             var nameLookup = new Dictionary<ulong, string>(values.Length);
 
             for (var i = 0; i<values.Length; i++)
-                nameLookup[castToUlong(values.GetValue(i))] = names[i];
+                nameLookup[castToUlong(values.GetValue(i) ?? DumpUtilities.Unknown)] = names[i];
 
             writer.Write(
                 DumpFormat.EnumFlagPrefix,
@@ -129,7 +121,7 @@ namespace vm.Aspects.Diagnostics
 
             var first = true;
 
-            for (ulong flag = 1; flag <= castToUlong(values.GetValue(values.Length-1)); flag <<= 1)
+            for (ulong flag = 1; flag <= castToUlong(values.GetValue(values.Length-1) ?? DumpUtilities.Unknown); flag <<= 1)
                 if ((ulongValue & flag) != 0)
                 {
                     if (first)
@@ -161,12 +153,9 @@ namespace vm.Aspects.Diagnostics
         /// <returns><c>true</c> if the value was dumped; otherwise <c>false</c> (e.g. the value is struct)</returns>
         public static bool DumpedBasicValue(
             this TextWriter writer,
-            object value,
-            DumpAttribute dumpAttribute)
+            object? value,
+            DumpAttribute? dumpAttribute)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (value == null)
             {
                 writer.Write(DumpUtilities.Null);
@@ -176,7 +165,7 @@ namespace vm.Aspects.Diagnostics
             if (!value.GetType().IsBasicType())
                 return false;
 
-            // store the max dump length here
+            // initialize the max dump length here
             var dumpMaxLength = int.MaxValue;
 
             if (dumpAttribute != null)
@@ -198,7 +187,7 @@ namespace vm.Aspects.Diagnostics
                     return true;
                 }
 
-                // get the max dump length
+                // override the max dump length
                 if (dumpAttribute.MaxLength > 0)
                     dumpMaxLength = dumpAttribute.MaxLength;
             }
@@ -214,12 +203,9 @@ namespace vm.Aspects.Diagnostics
 
         public static bool DumpedBasicNullable(
             this TextWriter writer,
-            object value,
-            DumpAttribute dumpAttribute)
+            object? value,
+            DumpAttribute? dumpAttribute)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (value == null)
             {
                 writer.Write(DumpUtilities.Null);
@@ -231,12 +217,14 @@ namespace vm.Aspects.Diagnostics
             if (type.IsBasicType())
                 return writer.DumpedBasicValue(value, dumpAttribute);
 
+            // make sure it is Nullable<T>
             if (!type.IsGenericType  ||
                 type.GetGenericTypeDefinition() != typeof(Nullable<>)  ||
                 !type.GetGenericArguments()[0].IsBasicType())
                 return false;
 
-            var hasValue = (bool)type.InvokeMember(nameof(Nullable<int>.HasValue), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, Array.Empty<object>());
+            // must have property HasValue!
+            var hasValue = (bool)type.InvokeMember(nameof(Nullable<int>.HasValue), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, Array.Empty<object>())!;
 
             if (!hasValue)
             {
@@ -244,18 +232,16 @@ namespace vm.Aspects.Diagnostics
                 return true;
             }
 
-            var val = type.InvokeMember(nameof(Nullable<int>.Value), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, Array.Empty<object>());
+            // must have property Value which is not null
+            var val = type.InvokeMember(nameof(Nullable<int>.Value), BindingFlags.Instance|BindingFlags.Public|BindingFlags.GetProperty, null, value, Array.Empty<object>())!;
 
             return writer.DumpedBasicValue(val, dumpAttribute);
         }
 
         public static bool Dumped(
             this TextWriter writer,
-            Delegate @delegate)
+            Delegate? @delegate)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (@delegate == null)
                 return false;
 
@@ -274,11 +260,8 @@ namespace vm.Aspects.Diagnostics
 
         public static bool Dumped(
             this TextWriter writer,
-            MemberInfo memberInfo)
+            MemberInfo? memberInfo)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (memberInfo == null)
                 return false;
 
@@ -286,14 +269,14 @@ namespace vm.Aspects.Diagnostics
 
             do
             {
-                if (_memberInfoDumpers.TryGetValue(miType, out var dump))
+                if (MemberInfoDumpers.TryGetValue(miType!, out var dump))
                 {
                     writer.Write(
                         DumpFormat.MemberInfoMemberType,
                         memberInfo.MemberType.ToString());
                     return dump(writer, memberInfo);
                 }
-                miType = miType.BaseType;
+                miType = miType!.BaseType;
             }
             while (miType != typeof(MemberInfo));
 
@@ -304,18 +287,6 @@ namespace vm.Aspects.Diagnostics
             writer.Write(memberInfo.Name);
             return true;
         }
-
-        public static IReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>> _memberInfoDumpers = new ReadOnlyDictionary<Type, Func<TextWriter, MemberInfo, bool>>(
-            new Dictionary<Type, Func<TextWriter, MemberInfo, bool>>
-            {
-                [typeof(Type)]              = (w, mi) => w.Dumped((Type)mi),
-                [typeof(TypeInfo)]          = (w, mi) => w.Dumped((Type)mi),
-
-                [typeof(EventInfo)]         = (w, mi) => w.Dumped((EventInfo)mi),
-                [typeof(FieldInfo)]         = (w, mi) => w.Dumped((FieldInfo)mi),
-                [typeof(PropertyInfo)]      = (w, mi) => w.Dumped((PropertyInfo)mi),
-                [typeof(MethodInfo)]        = (w, mi) => w.Dumped((MethodInfo)mi),
-            });
 
         static bool Dumped(
             this TextWriter writer,
@@ -348,12 +319,12 @@ namespace vm.Aspects.Diagnostics
 
             writer.Write(
                 DumpFormat.MethodInfo,
-                eventInfo.EventHandlerType.Name,
-                eventInfo.EventHandlerType.Namespace,
-                eventInfo.EventHandlerType.AssemblyQualifiedName,
-                eventInfo.DeclaringType.Name,
-                eventInfo.DeclaringType.Namespace,
-                eventInfo.DeclaringType.AssemblyQualifiedName,
+                eventInfo.EventHandlerType?.Name ?? DumpUtilities.Unknown,
+                eventInfo.EventHandlerType?.Namespace ?? DumpUtilities.Unknown,
+                eventInfo.EventHandlerType?.AssemblyQualifiedName ?? DumpUtilities.Unknown,
+                eventInfo.DeclaringType?.Name ?? DumpUtilities.Unknown,
+                eventInfo.DeclaringType?.Namespace ?? DumpUtilities.Unknown,
+                eventInfo.DeclaringType?.AssemblyQualifiedName ?? DumpUtilities.Unknown,
                 eventInfo.Name);
 
             return true;
@@ -374,9 +345,9 @@ namespace vm.Aspects.Diagnostics
                 fieldInfo.FieldType.Name,
                 fieldInfo.FieldType.Namespace,
                 fieldInfo.FieldType.AssemblyQualifiedName,
-                fieldInfo.DeclaringType.Name,
-                fieldInfo.DeclaringType.Namespace,
-                fieldInfo.DeclaringType.AssemblyQualifiedName,
+                fieldInfo.DeclaringType?.Name ?? DumpUtilities.Unknown,
+                fieldInfo.DeclaringType?.Namespace ?? DumpUtilities.Unknown,
+                fieldInfo.DeclaringType?.AssemblyQualifiedName ?? DumpUtilities.Unknown,
                 fieldInfo.Name);
 
             return true;
@@ -399,9 +370,9 @@ namespace vm.Aspects.Diagnostics
                 propertyInfo.PropertyType.Name,
                 propertyInfo.PropertyType.Namespace,
                 propertyInfo.PropertyType.AssemblyQualifiedName,
-                propertyInfo.DeclaringType.Name,
-                propertyInfo.DeclaringType.Namespace,
-                propertyInfo.DeclaringType.AssemblyQualifiedName,
+                propertyInfo.DeclaringType?.Name ?? DumpUtilities.Unknown,
+                propertyInfo.DeclaringType?.Namespace ?? DumpUtilities.Unknown,
+                propertyInfo.DeclaringType?.AssemblyQualifiedName ?? DumpUtilities.Unknown,
                 indexes.Length == 0
                     ? propertyInfo.Name
                     : Resources.IndexerStart);
@@ -446,9 +417,9 @@ namespace vm.Aspects.Diagnostics
                 methodInfo.ReturnType.Name,
                 methodInfo.ReturnType.Namespace,
                 methodInfo.ReturnType.AssemblyQualifiedName,
-                methodInfo.DeclaringType.Name,
-                methodInfo.DeclaringType.Namespace,
-                methodInfo.DeclaringType.AssemblyQualifiedName,
+                methodInfo.DeclaringType?.Name ?? DumpUtilities.Unknown,
+                methodInfo.DeclaringType?.Namespace ?? DumpUtilities.Unknown,
+                methodInfo.DeclaringType?.AssemblyQualifiedName ?? DumpUtilities.Unknown,
                 methodInfo.Name);
 
             if (methodInfo.ContainsGenericParameters)
@@ -492,40 +463,18 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             object sequence,
             DumpAttribute dumpAttribute,
-            Action<object> dumpObject,
+            Action<object?> dumpObject,
             Action indent,
             Action unindent)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-            if (sequence == null)
-                throw new ArgumentNullException(nameof(sequence));
-            if (dumpAttribute == null)
-                throw new ArgumentNullException(nameof(dumpAttribute));
-            if (dumpObject == null)
-                throw new ArgumentNullException(nameof(dumpObject));
-            if (indent == null)
-                throw new ArgumentNullException(nameof(indent));
-            if (unindent == null)
-                throw new ArgumentNullException(nameof(unindent));
-
             var sequenceType = sequence.GetType();
-            var typeArguments = sequenceType.DictionaryTypeArguments();
+            (var keyType, var valueType) = sequenceType.DictionaryTypeArguments();
 
-            if (typeArguments == null)
+            if (keyType == typeof(void))
                 return false;
 
-            Debug.Assert(typeArguments.Length == 2);
-
-            var keyType = typeArguments[0];
-            var valueType = typeArguments[1];
-
-            var count = 0;
             var piCount = sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);
-
-            if (piCount != null)
-                count = (int)piCount.GetValue(sequence);
-
+            var count = (int)(piCount?.GetValue(sequence) ?? int.MaxValue);
             var keyValueType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
 
             writer.Write(
@@ -536,8 +485,8 @@ namespace vm.Aspects.Diagnostics
             writer.Write(
                     DumpFormat.SequenceType,
                     sequenceType.GetTypeName(),
-                    sequenceType.Namespace,
-                    sequenceType.AssemblyQualifiedName);
+                    sequenceType.Namespace ?? DumpUtilities.Unknown,
+                    sequenceType.AssemblyQualifiedName ?? DumpUtilities.Unknown);
 
             // stop the recursion if dump.Recurse is false
             if (dumpAttribute.RecurseDump==ShouldDump.Skip)
@@ -562,8 +511,8 @@ namespace vm.Aspects.Diagnostics
                     break;
                 }
 
-                var key = keyValueType.GetProperty("Key").GetValue(kv, null);
-                var value = keyValueType.GetProperty("Value").GetValue(kv, null);
+                var key = keyValueType.GetProperty("Key")!.GetValue(kv, null);
+                var value = keyValueType.GetProperty("Value")!.GetValue(kv, null);
 
                 writer.Write("[");
                 dumpObject(key);
@@ -583,46 +532,21 @@ namespace vm.Aspects.Diagnostics
             this TextWriter writer,
             IEnumerable sequence,
             DumpAttribute dumpAttribute,
-            Action<object> dumpObject,
+            Action<object?> dumpObject,
             Action indent,
             Action unindent)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-            if (sequence == null)
-                throw new ArgumentNullException(nameof(sequence));
-            if (dumpAttribute == null)
-                throw new ArgumentNullException(nameof(dumpAttribute));
-            if (dumpObject == null)
-                throw new ArgumentNullException(nameof(dumpObject));
-            if (indent == null)
-                throw new ArgumentNullException(nameof(indent));
-            if (unindent == null)
-                throw new ArgumentNullException(nameof(unindent));
-
             var sequenceType = sequence.GetType();
+            var piCount = sequenceType.IsArray
+                                ? sequenceType.GetProperty(nameof(Array.Length), BindingFlags.Instance|BindingFlags.Public)
+                                : sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);
+            var count = (int)(piCount?.GetValue(sequence) ?? int.MaxValue);
+            var max = dumpAttribute.GetMaxToDump(count);    // how many items to dump max?
             var elementsType = sequenceType.IsArray
-                                    ? new Type[] { sequenceType.GetElementType() }
+                                    ? new Type[] { sequenceType.GetElementType()! }
                                     : sequenceType.IsGenericType
                                         ? sequenceType.GetGenericArguments()
                                         : new Type[] { typeof(object) };
-            int count;
-
-            if (sequenceType.IsArray)
-            {
-                var piLength = sequenceType.GetProperty(nameof(Array.Length), BindingFlags.Instance|BindingFlags.Public);
-
-                count = (int)piLength.GetValue(sequence);
-            }
-            else
-            {
-                var piCount = sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);
-
-                count = piCount is not null ? (int)piCount.GetValue(sequence) : int.MaxValue;
-            }
-
-            // how many items to dump max?
-            var max = dumpAttribute.GetMaxToDump(count);
 
             writer.Write(
                 DumpFormat.SequenceTypeName,
@@ -646,11 +570,11 @@ namespace vm.Aspects.Diagnostics
             writer.Write(
                 DumpFormat.SequenceType,
                 sequenceType.GetTypeName(),
-                sequenceType.Namespace,
-                sequenceType.AssemblyQualifiedName);
+                sequenceType.Namespace ?? DumpUtilities.Unknown,
+                sequenceType.AssemblyQualifiedName ?? DumpUtilities.Unknown);
 
             // stop the recursion if dump.Recurse is false
-            if (dumpAttribute.RecurseDump!=ShouldDump.Skip)
+            if (dumpAttribute.RecurseDump is not ShouldDump.Skip)
             {
                 var n = 0;
 

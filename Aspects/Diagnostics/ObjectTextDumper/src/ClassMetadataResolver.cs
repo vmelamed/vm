@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using vm.Aspects.Diagnostics.Implementation;
+
 using MetadataTypeAttribute = System.ComponentModel.DataAnnotations.MetadataTypeAttribute;
 
 namespace vm.Aspects.Diagnostics
@@ -16,26 +18,16 @@ namespace vm.Aspects.Diagnostics
     static class ClassMetadataResolver
     {
         /// <summary>
-        /// Synchronizes the cache of dump metadata (buddy classes).
+        /// Synchronized cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
         /// </summary>
-        static ReaderWriterLockSlim TypesDumpDataSync { get; } = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-
-        /// <summary>
-        /// Gets or sets the cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
-        /// </summary>
-        static Dictionary<Type, ClassDumpData> TypesDumpData { get; } = new Dictionary<Type, ClassDumpData>();
+        static readonly Dictionary<Type, ClassDumpData> _typesDumpData = new Dictionary<Type, ClassDumpData>();
+        static readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         public static Dictionary<Type, ClassDumpData> GetSnapshotTypesDumpData()
         {
-            try
-            {
-                TypesDumpDataSync.EnterReadLock();
-                return TypesDumpData.ToDictionary(kv => kv.Key, kv => kv.Value);
-            }
-            finally
-            {
-                TypesDumpDataSync.ExitReadLock();
-            }
+            using var _ = new ReaderSlimSync(_lock);
+
+            return _typesDumpData.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         /// <summary>
@@ -43,15 +35,9 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         internal static void ResetClassDumpData()
         {
-            try
-            {
-                TypesDumpDataSync.EnterWriteLock();
-                TypesDumpData.Clear();
-            }
-            finally
-            {
-                TypesDumpDataSync.ExitWriteLock();
-            }
+            using var _ = new WriterSlimSync(_lock);
+
+            _typesDumpData.Clear();
         }
 
         /// <summary>
@@ -70,18 +56,15 @@ namespace vm.Aspects.Diagnostics
         /// </exception>
         public static void SetClassDumpData(
             Type type,
-            Type metadata = null,
-            DumpAttribute dumpAttribute = null,
+            Type? metadata = null,
+            DumpAttribute? dumpAttribute = null,
             bool replace = false)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
             if (metadata == null)
             {
                 var attribute = type.GetCustomAttribute<MetadataTypeAttribute>();
 
-                metadata = attribute != null
+                metadata = attribute is not null
                                 ? attribute.MetadataClassType
                                 : type;
             }
@@ -90,51 +73,43 @@ namespace vm.Aspects.Diagnostics
         }
 
         /// <summary>
-        /// Gets the dump attribute either from the type itself or if the class is applied <see cref="MetadataTypeAttribute"/> from the specified class.
+        /// Gets the dump attribute either from the type itself or if the class is applied <see cref="MetadataTypeAttribute" /> from the specified class.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns>The <see cref="DumpAttribute"/> reference or <c>null</c>.</returns>
+        /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <returns>
+        /// The <see cref="DumpAttribute" /> optional, manually provided, dump attribute.
+        /// </returns>
         public static ClassDumpData GetClassDumpData(
-            Type type)
+            Type type,
+            DumpAttribute? dumpAttribute = null)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
             // the dump data in the cache has preference:
-            // if the class is already in the cache return it
+            // if the class is already in the cache return that
             var dumpData = TryGetClassDumpData(type);
 
             if (dumpData.HasValue)
                 return dumpData.Value;
 
             // extract the dump data from the type
-            dumpData = ExtractClassDumpData(type);
+            var dmpDta = ExtractClassDumpData(type);
 
-            try
-            {
-                // add it to the cache
-                AddClassDumpData(type, dumpData.Value, false);
+            // add it to the cache
+            AddClassDumpData(type, dmpDta, false);
 
-                // and return what we found
-                return dumpData.Value;
-            }
-            catch (InvalidOperationException)
-            {
-                return TryGetClassDumpData(type).Value;
-            }
+            // and return what we found
+            return dumpAttribute != null ? new ClassDumpData(dmpDta.Metadata, dumpAttribute) : dmpDta;
         }
 
         static ClassDumpData ExtractClassDumpData(Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
             // see if the class has a buddy:
             var attribute = type.GetCustomAttribute<MetadataTypeAttribute>();
 
             // see if the class is generic and the open generic has a buddy:
-            if (attribute == null  &&  type.IsGenericType)
-                attribute = type.GetGenericTypeDefinition().GetCustomAttribute<MetadataTypeAttribute>();
+            if (attribute is null  &&  type.IsGenericType)
+                attribute = type.GetGenericTypeDefinition()
+                                .GetCustomAttribute<MetadataTypeAttribute>();
 
             // if there is no buddy, we assume that the class provides the metadata itself
             return new ClassDumpData(attribute?.MetadataClassType ?? type);
@@ -142,64 +117,36 @@ namespace vm.Aspects.Diagnostics
 
         static ClassDumpData? TryGetClassDumpData(Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            using var _ = new ReaderSlimSync(_lock);
 
-            try
-            {
-                TypesDumpDataSync.EnterReadLock();
-                if (TypesDumpData.TryGetValue(type, out var dumpData))
-                    return dumpData;
-                if (type.IsGenericType &&
-                    TypesDumpData.TryGetValue(type.GetGenericTypeDefinition(), out dumpData))
-                    return dumpData;
-            }
-            finally
-            {
-                TypesDumpDataSync.ExitReadLock();
-            }
-
-            return null;
+            return _typesDumpData.TryGetValue(type, out var dumpData)
+                ? dumpData
+                : type.IsGenericType && _typesDumpData.TryGetValue(type.GetGenericTypeDefinition(), out dumpData)
+                    ? dumpData
+                    : null;
         }
 
         static void AddClassDumpData(
             Type type,
             Type buddy,
-            DumpAttribute dumpAttribute,
-            bool replace)
-        {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-
-            AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
-        }
+            DumpAttribute? dumpAttribute,
+            bool replace) => AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
 
         static void AddClassDumpData(
             Type type,
             ClassDumpData classDumpData,
             bool replace)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            using var _ = new WriterSlimSync(_lock);
 
-            try
+            if (replace || !_typesDumpData.TryGetValue(type, out var dumpData))
             {
-                TypesDumpDataSync.EnterWriteLock();
-                if (!replace && TypesDumpData.TryGetValue(type, out var dumpData))
-                {
-                    if (dumpData == classDumpData)
-                        return;
-
-                    throw new InvalidOperationException(
-                                $"The type {type.FullName} is already associated with metadata type {TypesDumpData[type].Metadata.FullName} and a DumpAttribute instance.");
-                }
-
-                TypesDumpData[type] = classDumpData;
+                _typesDumpData[type] = classDumpData;
+                return;
             }
-            finally
-            {
-                TypesDumpDataSync.ExitWriteLock();
-            }
+
+            if (dumpData != classDumpData)
+                throw new InvalidOperationException($"The type {type.FullName} is already associated with metadata type {_typesDumpData[type].Metadata.FullName} and a DumpAttribute instance.");
         }
     }
 }

@@ -5,6 +5,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class SecurityExceptionDumpMetadata
     {
         [Dump(RecurseDump = ShouldDump.Skip, DefaultProperty = "CodeBase")]
-        public object FailedAssemblyInfo { get; set; }
+        public object? FailedAssemblyInfo { get; set; }
     }
 }

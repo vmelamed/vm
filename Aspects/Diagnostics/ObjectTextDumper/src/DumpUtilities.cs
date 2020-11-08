@@ -33,9 +33,6 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (writer is DumpTextWriter dumpWriter)
             {
                 dumpWriter.Indent = indentLevel;
@@ -66,9 +63,6 @@ namespace vm.Aspects.Diagnostics
             int indentLevel,
             int indentSize = 2)
         {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
             if (writer is DumpTextWriter dumpWriter)
             {
                 dumpWriter.Indent = indentLevel;

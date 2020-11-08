@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 using vm.Aspects.Diagnostics.Properties;
 
@@ -50,10 +49,6 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         public static DumpAttribute Default { get; } = new DumpAttribute();
         #endregion
-
-        string _maskValue;
-        string _labelFormat;
-        string _valueFormat;
 
         #region Default values for some properties
         /// <summary>
@@ -144,7 +139,7 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to classes and struct-s only.
         /// </remarks>
-        public string DefaultProperty { get; set; }
+        public string DefaultProperty { get; set; } = string.Empty;
 
         /// <summary>
         /// This property is applicable only to the outermost class or struct and gets or sets the maximum depth of nested instances to be dumped.
@@ -200,11 +195,7 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to properties only.
         /// </remarks>
-        public string MaskValue
-        {
-            get { return _maskValue ?? Resources.MaskInLogs; }
-            set { _maskValue = value; }
-        }
+        public string MaskValue { get; set; } = Resources.MaskInLogs;
 
         /// <summary>
         /// If the property is of string type, gets or sets the maximum number of characters to be dumped from the value.
@@ -226,11 +217,7 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to properties only.
         /// </remarks>
-        public string LabelFormat
-        {
-            get { return _labelFormat ?? DumpFormat.DefaultPropertyLabel; }
-            set { _labelFormat = value; }
-        }
+        public string LabelFormat { get; set; } = DumpFormat.DefaultPropertyLabel;
 
         /// <summary>
         /// Applies mostly to properties of basic types (primitives, enum, string, Guid, DateTime, DateTimeOffset, TimeSpan, Uri.)
@@ -238,10 +225,11 @@ namespace vm.Aspects.Diagnostics
         /// For complex types the <see cref="ObjectTextDumper"/> recognizes special value for this property - &quot;ToString()&quot; in this case the returned value
         /// of the property's method <see cref="object.ToString"/> is inserted in the underlying text writer.
         /// </summary>
-        public string ValueFormat
+        public string ValueFormat { get; set; } = DumpFormat.Value;
+
+        private abstract class DefaultNoDumpClass
         {
-            get { return _valueFormat ?? DumpFormat.Value; }
-            set { _valueFormat = value; }
+            public abstract string DefaultNoDumpMethod(object _);
         }
 
         /// <summary>
@@ -255,38 +243,52 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to properties only.
         /// </remarks>
-        public Type DumpClass { get; set; }
+        public Type DumpClass { get; set; } = typeof(DefaultNoDumpClass);
 
         /// <summary>
-        /// Gets or sets the name of the dump method in the class specified by <see cref="DumpClass"/>. The dump method implements custom formatting of the property's value.
+        /// Gets or sets the name of a dump method in the class specified by <see cref="DumpClass"/>. The dump method implements custom formatting of the property's value.
         /// The method must be static, public, have a return type of <see cref="string"/> and must take a single parameter of type or a base type of the property.
-        /// If the <see cref="DumpClass"/> is not specified then the <see cref="ObjectTextDumper"/> will look for a parameterless instance method by the same name in the
+        /// If the <see cref="DumpClass"/> is not specified then the <see cref="ObjectTextDumper"/> will look for a parameterless instance method by the specified name in the
         /// property's class or a static method with parameter the type or a base type of the property in the property's class, base class or the metadata class.
         /// </summary>
         /// <remarks>
         /// Applicable to properties only.
         /// </remarks>
-        public string DumpMethod { get; set; }
+        public string DumpMethod { get; set; } = nameof(DefaultNoDumpClass.DefaultNoDumpMethod);
         #endregion
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has a <see cref="DumpClass"/>.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has <see cref="DumpClass"/>; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasDumpClass => DumpClass != typeof(DefaultNoDumpClass);
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has a <see cref="DumpMethod"/>.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance has <see cref="DumpMethod"/>; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasDumpMethod => DumpMethod != nameof(DefaultNoDumpClass.DefaultNoDumpMethod);
 
         /// <summary>
         /// When overridden in a derived class, indicates whether the value of this instance is the default value for the derived class.
         /// </summary>
         /// <returns><see langword="true"/> if this instance is the default attribute for the class; otherwise, <see langword="false"/>.</returns>
-        public override bool IsDefaultAttribute()
-            => this == Default;
+        public override bool IsDefaultAttribute() => this == Default;
 
         #region ICloneable Members
-        object ICloneable.Clone()
-            => Clone();
+        object ICloneable.Clone() => Clone();
         #endregion
 
         /// <summary>
         /// Clones this instance.
         /// </summary>
         /// <returns>DumpAttribute.</returns>
-        public DumpAttribute Clone()
-            => new DumpAttribute
+        public DumpAttribute Clone() =>
+            new DumpAttribute
             {
                 Order           = Order,
                 DumpNullValues  = DumpNullValues,
@@ -314,7 +316,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="other"/> refers to <c>this</c> object, otherwise
         /// <c>true</c> if all the properties of the current object and the <paramref name="other"/> are equal by value.
         /// </returns>
-        public bool Equals(DumpAttribute other) =>
+        public bool Equals(DumpAttribute? other) =>
             ReferenceEquals(this, other)  ||  other is not null                         &&
                                               Order           == other.Order            &&
                                               DumpNullValues  == other.DumpNullValues   &&
@@ -339,34 +341,16 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="DumpAttribute"/> and
         /// properties of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
-            => Equals(obj as DumpAttribute);
+        public override bool Equals(object? obj) => Equals(obj as DumpAttribute);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="DumpAttribute"/> and its derived types.
         /// </summary>
         /// <returns>A hash code for the current <see cref="DumpAttribute"/> instance.</returns>
-        public override int GetHashCode()
-        {
-            var hashCode = Constants.HashInitializer;
-
-            unchecked
-            {
-                hashCode = Constants.HashMultiplier * hashCode + Order.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + DumpNullValues.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + Skip.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + RecurseDump.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + (DefaultProperty?.GetHashCode() ?? 0);
-                hashCode = Constants.HashMultiplier * hashCode + Mask.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + MaskValue.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + MaxLength.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + MaxDepth.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + LabelFormat.GetHashCode();
-                hashCode = Constants.HashMultiplier * hashCode + ValueFormat.GetHashCode();
-            }
-
-            return hashCode;
-        }
+        public override int GetHashCode() => HashCode.Combine(
+            HashCode.Combine(Order, DumpNullValues, Skip, RecurseDump),
+            HashCode.Combine(DefaultProperty, Mask, MaskValue, MaxLength),
+            HashCode.Combine(MaxDepth, LabelFormat, ValueFormat));
 
         /// <summary>
         /// Compares two <see cref="DumpAttribute"/> objects.
@@ -377,8 +361,8 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator ==(DumpAttribute left, DumpAttribute right)
-            => left is null
+        public static bool operator ==(DumpAttribute? left, DumpAttribute? right) =>
+            left is null
                 ? right is null
                 : left.Equals(right);
 
@@ -391,8 +375,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{DumpAttribute}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(DumpAttribute left, DumpAttribute right)
-            => !(left==right);
+        public static bool operator !=(DumpAttribute? left, DumpAttribute? right) => !(left==right);
         #endregion
     }
 }

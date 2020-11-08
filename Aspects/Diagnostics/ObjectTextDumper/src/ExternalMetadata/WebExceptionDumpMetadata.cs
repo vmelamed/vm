@@ -9,10 +9,10 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
     public abstract class WebExceptionDumpMetadata
     {
         [Dump(0)]
-        public object Status { get; set; }
+        public object? Status { get; set; }
 
         [Dump(1, DumpClass = typeof(WebExceptionDumpMetadata), DumpMethod = nameof(DumpResponse))]
-        public object Response { get; set; }
+        public object? Response { get; set; }
 
         public static string DumpResponse(
             WebResponse response)

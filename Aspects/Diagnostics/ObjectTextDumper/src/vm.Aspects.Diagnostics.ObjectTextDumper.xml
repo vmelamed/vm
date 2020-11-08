@@ -166,14 +166,9 @@
             FCL and 3rd party classes for which we do not have access to their source code.
             </summary>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.ClassMetadataResolver.TypesDumpDataSync">
+        <member name="F:vm.Aspects.Diagnostics.ClassMetadataResolver._typesDumpData">
             <summary>
-            Synchronizes the cache of dump metadata (buddy classes).
-            </summary>
-        </member>
-        <member name="P:vm.Aspects.Diagnostics.ClassMetadataResolver.TypesDumpData">
-            <summary>
-            Gets or sets the cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
+            Synchronized cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
             </summary>
         </member>
         <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.ResetClassDumpData">
@@ -197,12 +192,15 @@
             Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
             </exception>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.GetClassDumpData(System.Type)">
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.GetClassDumpData(System.Type,vm.Aspects.Diagnostics.DumpAttribute)">
             <summary>
-            Gets the dump attribute either from the type itself or if the class is applied <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute"/> from the specified class.
+            Gets the dump attribute either from the type itself or if the class is applied <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> from the specified class.
             </summary>
             <param name="type">The type.</param>
-            <returns>The <see cref="T:vm.Aspects.Diagnostics.DumpAttribute"/> reference or <c>null</c>.</returns>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <returns>
+            The <see cref="T:vm.Aspects.Diagnostics.DumpAttribute" /> optional, manually provided, dump attribute.
+            </returns>
         </member>
         <member name="T:vm.Aspects.Diagnostics.ShouldDump">
             <summary>
@@ -414,14 +412,30 @@
         </member>
         <member name="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod">
             <summary>
-            Gets or sets the name of the dump method in the class specified by <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/>. The dump method implements custom formatting of the property's value.
+            Gets or sets the name of a dump method in the class specified by <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/>. The dump method implements custom formatting of the property's value.
             The method must be static, public, have a return type of <see cref="T:System.String"/> and must take a single parameter of type or a base type of the property.
-            If the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/> is not specified then the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> will look for a parameterless instance method by the same name in the
+            If the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/> is not specified then the <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/> will look for a parameterless instance method by the specified name in the
             property's class or a static method with parameter the type or a base type of the property in the property's class, base class or the metadata class.
             </summary>
             <remarks>
             Applicable to properties only.
             </remarks>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.HasDumpClass">
+            <summary>
+            Gets a value indicating whether this instance has a <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/>.
+            </summary>
+            <value>
+              <c>true</c> if this instance has <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpClass"/>; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpAttribute.HasDumpMethod">
+            <summary>
+            Gets a value indicating whether this instance has a <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod"/>.
+            </summary>
+            <value>
+              <c>true</c> if this instance has <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpMethod"/>; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="M:vm.Aspects.Diagnostics.DumpAttribute.IsDefaultAttribute">
             <summary>
@@ -595,19 +609,19 @@
             Default: &quot;... dumped the first {0} elements.&quot;
             </summary>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceTypeName">
-            <summary>
-            Gets or sets the dump format for the type of a sequence.
-            Parameters: 0 - sequence type name, 1 - number of elements in the sequence.
-            Default: &quot;{0}[{1}]: &quot;
-            </summary>
-        </member>
         <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceType">
             <summary>
             Gets or sets the dump format for the type of a sequence. Note that by the time this format is used, the sequence type name,
             its generic parameters and dimension are already printed using <see cref="P:vm.Aspects.Diagnostics.DumpFormat.SequenceTypeName"/>.
             Parameters: 0 - sequence type name, 1 - sequence type namespace, 2 - assembly qualified name of the sequence type,
             Default: &quot;({2})&quot;
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.DumpFormat.SequenceTypeName">
+            <summary>
+            Gets or sets the dump format for the type of a sequence.
+            Parameters: 0 - sequence type name, 1 - number of elements in the sequence.
+            Default: &quot;{0}[{1}]: &quot;
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.DumpFormat.Type">
@@ -1071,6 +1085,229 @@
             <param name="metadata">Type of the metadata.</param>
             <returns></returns>
         </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync">
+             <summary>
+             With the help of this class the developer can create a synchronized multiple readers/single writer scope by utilizing the <c>using</c> statement.
+             </summary>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string>; _protected = new Dictionary<string, string>();
+            
+                 public void Get(string key)
+                 {
+                     using(new ReaderSlimSync(_lock))
+                         return _protected[key];
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+             <seealso cref="T:System.Threading.WriterSlimSync"/>, <seealso cref="T:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync"/>, <seealso cref="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync"/>.
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync.#ctor(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync"/> class with the specified <paramref name="readerWriterLock"/> and
+            waits indefinitely till it acquires the lock in reader mode.
+            </summary>
+            <param name="readerWriterLock">The reader writer lock.</param>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync._disposed">
+            <summary>
+            The flag is being set when the object gets disposed.
+            </summary>
+            <value>
+            0 - if the object is not disposed yet, any other value would mean that the object is already disposed.
+            </value>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.ReaderWriterLockSlimExtensions">
+            <summary>
+            Class ReaderWriterLockSlimExtensions. Utility class for better management of the lifetime of the scope of <see cref="T:System.Threading.ReaderWriterLockSlim"/>
+            </summary>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.ReaderWriterLockSlimExtensions.UpgradableReaderLock(System.Threading.ReaderWriterLockSlim)">
+             <summary>
+             Gets the upgradable reader slim sync. Merely a shortcut to <c>new UpgradeableReaderSlimLock(readerWriterLock)</c>.
+             </summary>
+             <param name="readerWriterLock">
+             The reader writer lock.
+             </param>
+             <returns>
+             <see cref="T:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync"/> object.</returns>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string> _protected = new Dictionary<string, string>();
+            
+                 public void Add(string key, string value)
+                 {
+                     using(_lock.UpgradableReaderLock())
+                     {
+                         string v;
+                         if (_protected.TryGetValue(key, out v))
+                             throw ArgumentException("The key already exists.", "key");
+            
+                         using(_lock.WriterLock())
+                             _protected.Add(key, value);
+                     }
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.ReaderWriterLockSlimExtensions.ReaderLock(System.Threading.ReaderWriterLockSlim)">
+             <summary>
+             Gets the reader slim sync. Mere of a shortcut to <c>new ReaderSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
+             </summary>
+             <param name="readerWriterLock">The reader writer lock.</param>
+             <returns><see cref="T:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync"/> object.</returns>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string> _protected = new Dictionary<string, string>();
+            
+                 public string Get(string key)
+                 {
+                     using(_lock.ReaderLock())
+                         return _protected.GetValue[key];
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.ReaderWriterLockSlimExtensions.WriterLock(System.Threading.ReaderWriterLockSlim)">
+             <summary>
+             Gets the reader slim sync. Mere of a shortcut to <c>new WriterSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
+             </summary>
+             <param name="readerWriterLock">The reader writer lock.</param>
+             <returns><see cref="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync"/> object.</returns>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string> _protected = new Dictionary<string, string>();
+            
+                 public string Get(string key)
+                 {
+                     using(_lock.WriterLock())
+                         return _protected.GetValue[key];
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync">
+             <summary>
+             With the help of this class the developer can create a synchronized reader upgradeable to writer scope by utilizing the <c>using</c> statement.
+             </summary>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string>; _protected = new Dictionary<string, string>();
+            
+                 public void Add(string key, string value)
+                 {
+                     using(new UpgradeableReaderSlimSync(_lock))
+                     {
+                         string v;
+                         if (_protected.TryGetValue(key, out v))
+                             throw ArgumentException("The key already exists.", "key");
+            
+                         using(new WriterSlimSync(_lock))
+                             _protected.Add(key, value);
+                     }
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+             <seealso cref="T:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync"/>, <seealso cref="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync"/>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync.#ctor(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync"/> class with the specified <paramref name="readerWriterLock"/> and
+            waits indefinitely until it acquires the lock in upgradable reader mode.
+            </summary>
+            <param name="readerWriterLock">The reader writer lock.</param>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync._disposed">
+            <summary>
+            The flag will be set when the object gets disposed.
+            </summary>
+            <value>
+            0 - if the object is not disposed yet, any other value would mean that the object is already disposed.
+            </value>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync">
+             <summary>
+             With the help of this class the developer can create a synchronized writer scope by utilizing the <c>using</c> statement.
+             </summary>
+             <example>
+             <code>
+             <![CDATA[
+             class Protected
+             {
+                 static ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+                 static Dictionary<string, string> _protected = new Dictionary<string, string>();
+            
+                 public void Add(string key, string value)
+                 {
+                     using(new WriterSlimSync(_loc))
+                         _protected[key] = value;
+                 }
+             }
+             ]]>
+             </code>
+             </example>
+             <seealso cref="T:vm.Aspects.Diagnostics.Implementation.ReaderSlimSync"/>, <seealso cref="T:vm.Aspects.Diagnostics.Implementation.UpgradeableReaderSlimSync"/>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.WriterSlimSync.#ctor(System.Threading.ReaderWriterLockSlim)">
+            <summary>
+            Initializes a new instance of the <see cref="T:vm.Aspects.Diagnostics.Implementation.WriterSlimSync"/> class with the specified <paramref name="readerWriterLock"/> and
+            waits indefinitely till it acquires the lock in writer mode.
+            </summary>
+            <param name="readerWriterLock">The reader-writer lock.</param>
+        </member>
+        <member name="F:vm.Aspects.Diagnostics.Implementation.WriterSlimSync._disposed">
+            <summary>
+            The flag is being set when the object gets disposed.
+            </summary>
+            <value>
+            0 - if the object is not disposed yet, any other value would mean that the object is already disposed.
+            </value>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.WriterSlimSync.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
         <member name="T:vm.Aspects.Diagnostics.Script">
             <summary>
             Delegate Script is the type of the generated dump script that can be cached and reused.
@@ -1100,24 +1337,14 @@
             The number of spaces in a single indent.
             </summary>
         </member>
-        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._isDumpWriter">
+        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.InstanceSettings">
             <summary>
-            Flag that the current writer is actually our DumpTextWriter.
-            </summary>
-        </member>
-        <member name="F:vm.Aspects.Diagnostics.ObjectTextDumper._maxDepth">
-            <summary>
-            The current maximum depth of recursing into the aggregated objects. When it goes down to 0 - the recursion should stop.
+            Gets the settings for the current instance.
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.Writer">
             <summary>
             The dump writer.
-            </summary>
-        </member>
-        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.InstanceSettings">
-            <summary>
-            Gets the settings for this instance.
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.MemberInfoComparer">
@@ -1203,35 +1430,11 @@
             The flag is being set when the object gets disposed.
             </summary>
             <value>0 - if the object is not disposed yet, any other value - the object is already disposed.</value>
-            <remarks>
-            Do not test or manipulate this flag outside of the property <see cref="P:vm.Aspects.Diagnostics.ObjectTextDumper.IsDisposed"/> or the method <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/>.
-            The type of this field is Int32 so that it can be easily passed to the members of the class <see cref="T:System.Threading.Interlocked"/>.
-            </remarks>
-        </member>
-        <member name="P:vm.Aspects.Diagnostics.ObjectTextDumper.IsDisposed">
-            <summary>
-            Returns <c>true</c> if the object has already been disposed, otherwise <c>false</c>.
-            </summary>
         </member>
         <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
-            <remarks>Invokes the protected virtual <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose(System.Boolean)"/>.</remarks>
-        </member>
-        <member name="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose(System.Boolean)">
-            <summary>
-            Performs the actual job of disposing the object.
-            </summary>
-            <param name="disposing">
-            Passes the information whether this method is called by <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/> (explicitly or
-            implicitly at the end of a <c>using</c> statement), or by the finalizer of <see cref="T:vm.Aspects.Diagnostics.ObjectTextDumper"/>.
-            </param>
-            <remarks>
-            If the method is called with <paramref name="disposing"/><c>==true</c>, i.e. from <see cref="M:vm.Aspects.Diagnostics.ObjectTextDumper.Dispose"/>, it will try to release all managed resources
-            (usually aggregated objects which implement <see cref="T:System.IDisposable"/> as well) and then it will release all unmanaged resources if any.
-            If the parameter is <c>false</c> then the method will only try to release the unmanaged resources.
-            </remarks>
         </member>
         <member name="T:vm.Aspects.Diagnostics.Properties.Resources">
             <summary>
@@ -1515,7 +1718,7 @@
               Looks up a localized string similar to ToString().
             </summary>
         </member>
-        <member name="F:vm.Aspects.Diagnostics.WriterExtensions._systemNameSpace">
+        <member name="P:vm.Aspects.Diagnostics.WriterExtensions.SystemNameSpace">
             <summary>
             Matches the name space of the types within System
             </summary>
@@ -1529,21 +1732,6 @@
             <param name="value">The value.</param>
             <param name="dumpAttribute">The dump attribute associated with the value (e.g. property attribute).</param>
             <returns><c>true</c> if the value was dumped; otherwise <c>false</c> (e.g. the value is struct)</returns>
-        </member>
-        <member name="T:vm.Aspects.Constants">
-            <summary>
-            Defines some constants used throughout the Aspects library
-            </summary>
-        </member>
-        <member name="F:vm.Aspects.Constants.HashInitializer">
-            <summary>
-            Used for computing hash codes (the prime 23).
-            </summary>
-        </member>
-        <member name="F:vm.Aspects.Constants.HashMultiplier">
-            <summary>
-            Used for computing hash codes (the prime 17).
-            </summary>
         </member>
         <member name="T:vm.Aspects.Extensions">
             <summary>
@@ -1655,6 +1843,22 @@
             <returns><c>true</c> if the specified <see cref="T:System.Reflection.PropertyInfo"/> object represents a virtual property that can be read; otherwise, <c>false</c>.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="mi"/> is <see langword="null"/>.</exception>
         </member>
+        <member name="M:vm.Aspects.Extensions.IsWhiteSpace(System.String)">
+            <summary>
+            Determines whether the specified string is null, or empty or consist of whitespace characters only.
+            Equivalent to <c>!string.IsNullOrWhiteSpace(s)</c>.
+            </summary>
+            <param name="value">The string to test.</param>
+            <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:vm.Aspects.Extensions.IsEmpty(System.String)">
+            <summary>
+            Determines whether the specified string is null, or empty.
+            Equivalent to <c>string.IsNullOrEmpty(s)</c>.
+            </summary>
+            <param name="value">The string to test.</param>
+            <returns><see langword="true" /> if the specified string is not <see langword="null"/> or empty; otherwise, <see langword="false" />.</returns>
+        </member>
         <member name="M:vm.Aspects.Extensions.IsNullOrWhiteSpace(System.String)">
             <summary>
             Determines whether the specified string is null, or empty or consist of whitespace characters only.
@@ -1669,7 +1873,7 @@
             Equivalent to <c>string.IsNullOrEmpty(s)</c>.
             </summary>
             <param name="value">The string to test.</param>
-            <returns><see langword="true" /> if the specified string is not blank; otherwise, <see langword="false" />.</returns>
+            <returns><see langword="true" /> if the specified string is not <see langword="null"/> or empty; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="M:vm.Aspects.Extensions.GetTypeName(System.Type,System.Boolean)">
             <summary>

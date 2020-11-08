@@ -313,12 +313,12 @@ Actual:<{actual}>
                 }
             }
             if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
-                {
-                    using var w = new StringWriter(CultureInfo.InvariantCulture);
-                    var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+            {
+                using var w = new StringWriter(CultureInfo.InvariantCulture);
+                var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResult(expected, actual3, _thirdDump);
-                }
+                AssertResult(expected, actual3, _thirdDump);
+            }
         }
 
         void ActAndAssertStartsWith(
@@ -746,6 +746,7 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
   PropertyB                = PropertyB
   Associate                = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = Property1
+    Property2                = Property2
   Associate2               = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = Property1
     Property2                = Property2",
@@ -1048,7 +1049,7 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
         public void TestDumpObject9_1null()
         {
             ActAndAssert(
-                nameof(TestDumpObject9_1),
+                nameof(TestDumpObject9_1null),
                 @"
 Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
   Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, "+ObjectTextDumperTestAssembly+@"): 
@@ -1066,7 +1067,7 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
                 new Object91());
 
             ActAndAssert(
-                nameof(TestDumpObject9_1),
+                nameof(TestDumpObject9_1null),
                 @"
 Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
   Object90                 = <null>
