@@ -44,7 +44,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             CurrentType           = type;
             ClassDumpData         = classDumpData;
             InstanceDumpAttribute = instanceDumpAttribute;
-            DumpScript                = dumpScript;
+            DumpScript            = dumpScript;
 
             if (IsTopLevelClass  &&  DefaultProperty is not "")
             {
@@ -56,6 +56,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return;
             }
 
+            // all properties and fields
             Enumerator = CurrentType.GetProperties(Dumper.Settings.PropertyBindingFlags | BindingFlags.DeclaredOnly)
                                     .Union<MemberInfo>(
                          CurrentType.GetFields(Dumper.Settings.FieldBindingFlags | BindingFlags.DeclaredOnly))
@@ -221,7 +222,6 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return false;
 
             DumpSeenAlready();
-
             return true;
         }
 

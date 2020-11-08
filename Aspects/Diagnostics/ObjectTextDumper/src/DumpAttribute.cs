@@ -119,7 +119,7 @@ namespace vm.Aspects.Diagnostics
         /// <para>
         /// When applied to a class with value of <c>RecurseDump.Skip</c> it will suppress dumping
         /// the class's properties with exception of the property specified by the property
-        /// <see cref="DefaultProperty"/> of this attribute.
+        /// <see cref="DefaultProperty"/> of the attribute.
         /// </para><para>
         /// When applied to a property of non-sequence type with a value of <c>RecurseDump.Skip</c>
         /// it will suppress dumping of the associated instance.
@@ -139,7 +139,7 @@ namespace vm.Aspects.Diagnostics
         /// <remarks>
         /// Applicable to classes and struct-s only.
         /// </remarks>
-        public string DefaultProperty { get; set; } = string.Empty;
+        public string DefaultProperty { get; set; } = "";
 
         /// <summary>
         /// This property is applicable only to the outermost class or struct and gets or sets the maximum depth of nested instances to be dumped.

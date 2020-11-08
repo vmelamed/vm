@@ -73,7 +73,7 @@ namespace vm.Aspects.Diagnostics
         static Regex SystemNameSpace { get; } = new Regex(Resources.RegexSystemNamespace, RegexOptions.Compiled);
 
         public static bool IsFromSystem(this Type type) =>
-            SystemNameSpace.IsMatch(type.Namespace ?? string.Empty);
+            SystemNameSpace.IsMatch(type.Namespace ?? "");
 
         static bool Dumped(
             this TextWriter writer,
@@ -247,9 +247,9 @@ namespace vm.Aspects.Diagnostics
 
             writer.Write(
                 DumpFormat.Delegate,
-                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.Name : string.Empty,
-                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.Namespace : string.Empty,
-                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.AssemblyQualifiedName : string.Empty,
+                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.Name : "",
+                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.Namespace : "",
+                @delegate.Method.DeclaringType!=null ? @delegate.Method.DeclaringType.AssemblyQualifiedName : "",
                 @delegate.Method.Name,
                 @delegate.Target==null
                     ? Resources.ClassMethodDesignator
@@ -555,7 +555,7 @@ namespace vm.Aspects.Diagnostics
                         : sequenceType.GetTypeName(),
                 count is >0 and <int.MaxValue
                         ? count.ToString(CultureInfo.InvariantCulture)
-                        : string.Empty);
+                        : "");
 
             if (sequence is byte[] bytes)
             {

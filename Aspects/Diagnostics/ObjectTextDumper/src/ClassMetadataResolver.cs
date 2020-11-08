@@ -89,7 +89,9 @@ namespace vm.Aspects.Diagnostics
             var dumpData = TryGetClassDumpData(type);
 
             if (dumpData.HasValue)
-                return dumpData.Value;
+                return dumpAttribute != null
+                            ? new ClassDumpData(dumpData.Value.Metadata, dumpAttribute)
+                            : dumpData.Value;
 
             // extract the dump data from the type
             var dmpDta = ExtractClassDumpData(type);

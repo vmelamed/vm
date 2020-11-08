@@ -93,6 +93,8 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         internal TextWriter Writer { get; }
 
+        internal int MaxDepth { get; private set; } = int.MinValue;
+
         /// <summary>
         /// Gets the member information comparer, used to order the dumped members in the desired sort order.
         /// </summary>
@@ -197,8 +199,6 @@ The TextDumper threw an exception:
         }
         #endregion
 
-        internal int MaxDepth { get; private set; } = int.MinValue;
-
         internal int IncrementMaxDepth() => MaxDepth++;
 
         internal int DecrementMaxDepth() => MaxDepth--;
@@ -228,10 +228,10 @@ The TextDumper threw an exception:
             Debug.Assert(obj is not null);
 
             // resolve the class metadata and the dump attribute
-            var objectType = obj.GetType()!;
+            var objectType = obj.GetType();
             var classDumpData = dumpMetadata==null
-                                ? ClassMetadataResolver.GetClassDumpData(objectType, dumpAttribute)
-                                : new ClassDumpData(dumpMetadata, dumpAttribute);
+                                    ? ClassMetadataResolver.GetClassDumpData(objectType, dumpAttribute)
+                                    : new ClassDumpData(dumpMetadata, dumpAttribute);
 
             // if we're too deep - stop here.
             if (MaxDepth == int.MinValue)
@@ -264,7 +264,7 @@ The TextDumper threw an exception:
                             Writer.Indent(_indentLevel, _indentSize)
                                   .WriteLine();
 
-                        script((object)obj, classDumpData, this, state);
+                        script(obj, classDumpData, this, state);
                     }
 
                     return;
@@ -309,24 +309,45 @@ The TextDumper threw an exception:
                 }
             }
 
-            if (buildScript)
+            if (buildScript  &&  state.DumpScript is not null)
+                script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+
+            if (!buildScript)
             {
-                if (state.DumpScript is not null)
-                    script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+                if (parentState is null)
+                    Writer.Unindent(_indentLevel, _indentSize);
+            }
+            else
+            {
                 if (script is not null)
                 {
                     if (parentState is null)
                         Writer.Indent(_indentLevel, _indentSize)
                               .WriteLine();
 
-                    script((object)obj, classDumpData, this, state);
+                    script(obj, classDumpData, this, state);
                 }
             }
-            else
-            {
-                if (parentState is null)
-                    Writer.Unindent(_indentLevel, _indentSize);
-            }
+
+
+            //if (buildScript)
+            //{
+            //    if (state.DumpScript is not null)
+            //        script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+            //    if (script is not null)
+            //    {
+            //        if (parentState is null)
+            //            Writer.Indent(_indentLevel, _indentSize)
+            //                  .WriteLine();
+
+            //        script(obj, classDumpData, this, state);
+            //    }
+            //}
+            //else
+            //{
+            //    if (parentState is null)
+            //        Writer.Unindent(_indentLevel, _indentSize);
+            //}
 
             // restore here the IsSubExpression flag as it have changed if obj is Expression and IsSubExpression==false.
             IsSubExpression = isSubExpressionStore;
