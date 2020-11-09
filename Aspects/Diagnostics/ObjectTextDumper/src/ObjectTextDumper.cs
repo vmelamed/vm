@@ -229,9 +229,7 @@ The TextDumper threw an exception:
 
             // resolve the class metadata and the dump attribute
             var objectType = obj.GetType();
-            var classDumpData = dumpMetadata==null
-                                    ? ClassMetadataResolver.GetClassDumpData(objectType, dumpAttribute)
-                                    : new ClassDumpData(dumpMetadata, dumpAttribute);
+            var classDumpData = ClassMetadataResolver.GetClassDumpData(objectType, dumpMetadata, dumpAttribute);
 
             // if we're too deep - stop here.
             if (MaxDepth == int.MinValue)
@@ -249,9 +247,9 @@ The TextDumper threw an exception:
             var isSubExpressionStore = IsSubExpression;
 
             // slow dump or compile and run a script?
+            Script? script  = null; // the compiled dumping script
             var buildScript = Settings.UseDumpScriptCache  &&  !obj.IsDynamicObject();
             using var state = new DumpState(this, obj, classDumpData, buildScript);
-            Script? script  = null; // this is the compiled dumping script
 
             if (buildScript)
             {
@@ -328,7 +326,6 @@ The TextDumper threw an exception:
                     script(obj, classDumpData, this, state);
                 }
             }
-
 
             //if (buildScript)
             //{

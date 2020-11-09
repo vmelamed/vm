@@ -1,15 +1,17 @@
 # vm.Aspects.Diagnostics.ObjectTextDumper
 This component can dump the value of an arbitrary .NET object to an easy to read text. The values of basic types like int, string, decimal, etc. are dumped as their most natural text representation, e.g. `"this is a string value"` or `3.1415926`. The dump of each class starts with the name of the class on the first line and then on separate, indented lines the names and the values of each property. Properties that represent aggregated or composed objects follow the same rule but with incremented indentation. See the samples below.
 
-The `vm.Aspects.Diagnostics.ObjectTextDumper` (further referred to as "the dumper") object is very easy to integrate and easy to use. If desired, the dump output is highly customizable. This component can be very helpful in debugging, tracing, logging, etc. output scenarios targeting developers and system engineers.
+The `vm.Aspects.Diagnostics.ObjectTextDumper` (further referred to as "the dumper") class is very easy to integrate and easy to use. If desired, the dump output is highly customizable. This component can be very helpful in debugging, tracing, logging, etc. output scenarios targeting developers and system engineers.
 
 The source code of the project can be found [at GitHub](https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics). Also, you can download and install the [NuGet package `vm.Aspects.Diagnostics.ObjectTextDumper`](https://www.nuget.org/packages/vm.Aspects.Diagnostics.ObjectTextDumper/) directly into your solution.
 
-Please note that this document describes the `vm.Aspects.Diagnostics.ObjectTextDumper` version 2.0.0 or higher. This version replaces the [previous NuGet package AspectObjectDumper](https://www.nuget.org/packages/AspectObjectDumper/). The latter will be still available but will not be supported anymore. The big differences between the 2.x and 1.x versions are:
+Please note that this document describes the `vm.Aspects.Diagnostics.ObjectTextDumper` version 3.0.0 or higher. This version replaces the previous NuGet packages  [`AspectObjectDumper` 1.x](https://www.nuget.org/packages/AspectObjectDumper/) and [`vm.Aspects.Diagnostics.ObjectTextDumper` 2.x](https://www.nuget.org/packages/vm.Aspects.Diagnostics.ObjectTextDumper/). The latter will be still available but will not be supported anymore. The big differences between the 2.x and 1.x versions are:
 1. The names of the project and the package have been changed for consistency's sake with other [vm.Aspects projects](https://github.com/vmelamed/vm/tree/master/Aspects)
 1. The package is no longer dependent on an internal or external implementations of the Common Service Locator
 1. Some of the dump settings that were passed in the constructor of the dumper and the Dump method itself are now encapsulated in the struct `DumpSettings`.
 1. As a result of the above changes the signatures of the constructor and the Dump method have changed.
+
+The version 3.0 is a port of version 2.0 to .NET 5.0 and some bug fixes.
 
 ## Basic Usage
 The dumper is implemented by the class `ObjectTextDumper` from the namespace `vm.Aspects.Diagnostics`.
@@ -185,7 +187,7 @@ The heart of the customization features of the dumper is the attribute class `Du
 
 The `DumpAttribute` attribute can be applied to `class`-es, `struct`-s, properties and fields. When applied to `class`-es or `struct`-s, only a few of the attribute properties are applicable. They affect the dump of all properties from the type, unless overridden by `DumpAttribute` applied to a specific property. However, it is much more common to apply the attribute to properties. 
 
-The attribute can be associated with your types:
+The `Dump` attributes can be associated with your types in several ways:
 1. Directly, by using the .NET language syntax for applying attributes to custom types and their properties and fields
 1. Indirectly, in a so called "buddy class" - class referred to in a `MetadataTypeAttribute` applied to your class. This is my favorite method for my custom classes. I even have a Visual Studio extension that would generate a metadata class - a "buddy class" - out of any class
 1. If you do not have access to the source code of the dumped object, the parameters of the `Dump` method allow you to associate its type with after-the-fact written buddy-class, as described above
@@ -455,7 +457,7 @@ class MyCollection : IEnumerable<Item>
 
 ### Metadata Classes (buddy classes)
 
-I personally do not like too many attributes in my code. It's been since .NET 3.5 that the concept of a buddy class was introduced. The idea is to have something like a parallel class for each heavily adorned class. The parallel class is designated with the attribute `MetadataTypeAttribute` or as some call it "buddy class". The idea is very simple: apply the attibute to the main class with a parameter the type of the metadata class. By convention the main class is marked with the keyword `partial`, although it is not absolutely mandatory. The metadata class should never be instantiated and to prevent you from doing so it is usually marked as abstract. The metadata class contains only properties with names the properties of the main class and since they are never used, they should be (again by convention) of type `object`. Now you can apply all attributes to the properties of the buddy class instead of to the main class. There are several packages that make use of buddy classes: Entity Framework, WPF, Enterprise Library and of course the AspectObjectDumper. Here is a small example of a class coupled with a buddy class (it is from the unit tests of the AspectObjectDumper):
+I personally do not like too many attributes in my code. It's been since .NET 3.5 that the concept of a buddy class was introduced. The idea is to have something like a parallel class (some call it "buddy class") for each otherwise heavily adorned class. The parallel class is designated with the attribute `MetadataTypeAttribute`. The idea is very simple: apply the attibute to the main class with a parameter the type of the metadata class. By convention the main class is marked with the keyword `partial`, although it is not absolutely mandatory. The metadata class should never be instantiated and to prevent you from doing so it is usually marked as `abstract`. The metadata class contains only properties with the same names as the properties of the main class and since they are never used, they should be (again by convention) of type `object`. Now you can apply all attributes to the properties of the buddy class instead of to the main class. There are several packages that make use of buddy classes: Entity Framework, WPF, Enterprise Library and of course the AspectObjectDumper. Here is a small example of a class coupled with a buddy class (it is from the unit tests of the ObjectTextDumper):
 ```csharp
         [MetadataType(typeof(GenericWithBuddyMetadata))]
         public class GenericWithBuddy<T>

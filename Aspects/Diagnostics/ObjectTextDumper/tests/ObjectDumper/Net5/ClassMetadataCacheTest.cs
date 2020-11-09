@@ -120,8 +120,8 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
             var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Exception));
 
-            Assert.AreSame(typeof(ExceptionDumpMetadata), dumpAttribute.Metadata);
-            Assert.AreSame(DumpAttribute.Default, dumpAttribute.DumpAttribute);
+            Assert.AreEqual(typeof(ExceptionDumpMetadata), dumpAttribute.Metadata);
+            Assert.AreEqual(DumpAttribute.Default, dumpAttribute.DumpAttribute);
         }
 
         class Test1

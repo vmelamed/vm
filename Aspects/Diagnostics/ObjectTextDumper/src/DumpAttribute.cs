@@ -290,15 +290,16 @@ namespace vm.Aspects.Diagnostics
         public DumpAttribute Clone() =>
             new DumpAttribute
             {
-                Order           = Order,
                 DumpNullValues  = DumpNullValues,
-                Skip            = Skip,
                 RecurseDump     = RecurseDump,
                 DefaultProperty = DefaultProperty,
+                MaxDepth        = MaxDepth,
+                Enumerate       = Enumerate,
+                Order           = Order,
+                Skip            = Skip,
                 Mask            = Mask,
                 MaskValue       = MaskValue,
                 MaxLength       = MaxLength,
-                MaxDepth        = MaxDepth,
                 LabelFormat     = LabelFormat,
                 ValueFormat     = ValueFormat,
             };

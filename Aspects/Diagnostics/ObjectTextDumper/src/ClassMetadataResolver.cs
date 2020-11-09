@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 
 using vm.Aspects.Diagnostics.Implementation;
-
-using MetadataTypeAttribute = System.ComponentModel.DataAnnotations.MetadataTypeAttribute;
 
 namespace vm.Aspects.Diagnostics
 {
@@ -72,38 +71,30 @@ namespace vm.Aspects.Diagnostics
             AddClassDumpData(type, metadata, dumpAttribute, replace);
         }
 
-        /// <summary>
-        /// Gets the dump attribute either from the type itself or if the class is applied <see cref="MetadataTypeAttribute" /> from the specified class.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="dumpAttribute">The dump attribute.</param>
-        /// <returns>
-        /// The <see cref="DumpAttribute" /> optional, manually provided, dump attribute.
-        /// </returns>
         public static ClassDumpData GetClassDumpData(
             Type type,
+            Type? dumpMetadata = null,
             DumpAttribute? dumpAttribute = null)
         {
-            // the dump data in the cache has preference:
-            // if the class is already in the cache return that
-            var dumpData = TryGetClassDumpData(type);
+            // figure out the metadata:
+            // see if we have it in the cache:
+            var classDumpData = TryGetClassDumpData(type);
+            // if not found - get it from the type
+            var dumpTypeMetadata = classDumpData?.Metadata ?? ExtractClassDumpMetadata(type);
 
-            if (dumpData.HasValue)
-                return dumpAttribute != null
-                            ? new ClassDumpData(dumpData.Value.Metadata, dumpAttribute)
-                            : dumpData.Value;
-
-            // extract the dump data from the type
-            var dmpDta = ExtractClassDumpData(type);
+            // figure out the dumpAttribute of the whole type
+            var dumpTypeAttribute = ExtractClassDumpAttribute(type, dumpTypeMetadata);
 
             // add it to the cache
-            AddClassDumpData(type, dmpDta, false);
+            if (classDumpData is null)
+                AddClassDumpData(type, new ClassDumpData(dumpTypeMetadata, dumpTypeAttribute), false);
 
-            // and return what we found
-            return dumpAttribute != null ? new ClassDumpData(dmpDta.Metadata, dumpAttribute) : dmpDta;
+            return new ClassDumpData(
+                dumpMetadata ?? dumpTypeMetadata,
+                CombineDumpAttributes(dumpAttribute, dumpTypeAttribute));
         }
 
-        static ClassDumpData ExtractClassDumpData(Type type)
+        static Type ExtractClassDumpMetadata(Type type)
         {
             // see if the class has a buddy:
             var attribute = type.GetCustomAttribute<MetadataTypeAttribute>();
@@ -114,7 +105,57 @@ namespace vm.Aspects.Diagnostics
                                 .GetCustomAttribute<MetadataTypeAttribute>();
 
             // if there is no buddy, we assume that the class provides the metadata itself
-            return new ClassDumpData(attribute?.MetadataClassType ?? type);
+            return attribute?.MetadataClassType ?? type;
+        }
+
+        public static DumpAttribute ExtractClassDumpAttribute(
+            Type type,
+            Type metaData)
+        {
+            // try the buddy class first:
+            var attribute = metaData.GetCustomAttribute<DumpAttribute>();
+
+            if (attribute is not null)
+                return attribute;
+
+            // try the type itself
+            attribute = type.GetCustomAttribute<DumpAttribute>();
+
+            if (attribute is not null)
+                return attribute;
+
+            // see if the class is generic and the open generic has a buddy:
+            if (type.IsGenericType)
+                attribute = type.GetGenericTypeDefinition()
+                                .GetCustomAttribute<DumpAttribute>();
+
+            return attribute ?? DumpAttribute.Default;
+        }
+
+        public static DumpAttribute CombineDumpAttributes(
+            DumpAttribute? dumpAttribute,
+            DumpAttribute dumpTypeAttribute)
+        {
+            if (dumpAttribute is null)
+                return dumpTypeAttribute.Clone();
+
+            var result = dumpAttribute.Clone();
+
+            if (result.DumpNullValues == ShouldDump.Default)
+                result.DumpNullValues = dumpTypeAttribute.DumpNullValues;
+
+            if (result.RecurseDump == ShouldDump.Default)
+                result.RecurseDump = dumpTypeAttribute.RecurseDump;
+
+            if (result.DefaultProperty is "")
+                result.DefaultProperty = dumpTypeAttribute.DefaultProperty;
+
+            result.MaxDepth = dumpTypeAttribute.MaxDepth;
+
+            if (result.Enumerate == ShouldDump.Default)
+                result.Enumerate = dumpTypeAttribute.Enumerate;
+
+            return result;
         }
 
         static ClassDumpData? TryGetClassDumpData(Type type)

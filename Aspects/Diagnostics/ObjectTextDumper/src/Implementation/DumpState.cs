@@ -19,11 +19,11 @@ namespace vm.Aspects.Diagnostics.Implementation
             object instance,
             ClassDumpData classDumpData,
             bool buildScript)
-            : this(dumper, instance, instance.GetType()!, classDumpData, classDumpData.DumpAttribute, null, true)
+            : this(dumper, instance, instance.GetType(), classDumpData, classDumpData.DumpAttribute)
         {
             // let's not create script if we don't need it or are not doing anything here.
-            if (buildScript  &&  CurrentType != typeof(object))
-                DumpScript = new DumpScript(instance.GetType()!);
+            if (buildScript  &&  SuperType != typeof(object))
+                DumpScript = new DumpScript(instance.GetType());
 
             DecrementMaxDepth();
         }
@@ -31,35 +31,38 @@ namespace vm.Aspects.Diagnostics.Implementation
         private DumpState(
             ObjectTextDumper dumper,
             object instance,
-            Type type,
+            Type superType,
             ClassDumpData classDumpData,
             DumpAttribute instanceDumpAttribute,
-            DumpScript? dumpScript,
-            bool isTopLevelClass)
+            DumpScript? dumpScript = null)
         {
-            IsTopLevelClass       = isTopLevelClass;
             Dumper                = dumper;
             Instance              = instance;
             InstanceType          = instance.GetType();
-            CurrentType           = type;
+            SuperType             = superType;
+            IsTopLevelClass       = InstanceType == SuperType;
             ClassDumpData         = classDumpData;
-            InstanceDumpAttribute = instanceDumpAttribute;
+            InstanceDumpAttribute = ClassMetadataResolver.CombineDumpAttributes(instanceDumpAttribute, ClassDumpData.DumpAttribute);
             DumpScript            = dumpScript;
 
-            if (IsTopLevelClass  &&  DefaultProperty is not "")
+            if (InstanceDumpAttribute.RecurseDump == ShouldDump.Skip)
             {
-                var pi = CurrentType.GetProperty(DefaultProperty);
+                // dump only the default property, if any
+                var pi = InstanceDumpAttribute.DefaultProperty is not ""
+                            ? SuperType.GetProperty(InstanceDumpAttribute.DefaultProperty)
+                            : null;
 
-                Enumerator = pi != null
+                Enumerator = pi is not null
                                 ? (new MemberInfo[] { pi }).AsEnumerable().GetEnumerator()
                                 : (Array.Empty<MemberInfo>()).AsEnumerable().GetEnumerator();
+
                 return;
             }
 
-            // all properties and fields
-            Enumerator = CurrentType.GetProperties(Dumper.Settings.PropertyBindingFlags | BindingFlags.DeclaredOnly)
+            // dump all properties and fields
+            Enumerator = SuperType.GetProperties(Dumper.Settings.PropertyBindingFlags | BindingFlags.DeclaredOnly)
                                     .Union<MemberInfo>(
-                         CurrentType.GetFields(Dumper.Settings.FieldBindingFlags | BindingFlags.DeclaredOnly))
+                         SuperType.GetFields(Dumper.Settings.FieldBindingFlags | BindingFlags.DeclaredOnly))
                                     .Where(mi => !mi.Name.StartsWith("<", StringComparison.Ordinal))
                                     .OrderBy(p => p, dumper.MemberInfoComparer.SetMetadata(classDumpData.Metadata))
                                     .ToList()
@@ -69,13 +72,12 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public DumpState GetBaseTypeDumpState() =>
             new DumpState(
-                Dumper,
-                Instance,
-                CurrentType.BaseType ?? throw new ArgumentException("System.Object does not have base type."),
-                ClassMetadataResolver.GetClassDumpData(CurrentType.BaseType!),
-                InstanceDumpAttribute,
-                DumpScript,
-                false);
+                    Dumper,
+                    Instance,
+                    SuperType.BaseType ?? throw new ArgumentException("System.Object does not have base type."),
+                    ClassMetadataResolver.GetClassDumpData(SuperType.BaseType, dumpAttribute: InstanceDumpAttribute),
+                    InstanceDumpAttribute,
+                    DumpScript);
 
         public ObjectTextDumper Dumper { get; }
 
@@ -101,7 +103,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// <summary>
         /// Gets or sets the current type (can be one of the base types) of the instance being dumped.
         /// </summary>
-        public Type CurrentType { get; }
+        public Type SuperType { get; }
 
         /// <summary>
         /// Gets or sets the (most derived) type of the instance being dumped.
@@ -336,7 +338,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public bool DumpedRootClass()
         {
-            if (CurrentType!=typeof(object))
+            if (SuperType!=typeof(object))
                 return false;
 
             DumpType();
@@ -346,12 +348,12 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public bool DumpedDelegate()
         {
-            if (!typeof(Delegate).IsAssignableFrom(CurrentType))
+            if (!typeof(Delegate).IsAssignableFrom(SuperType))
                 return false;
 
             // it will be dumped at the descendant level
-            if (CurrentType == typeof(MulticastDelegate) ||
-                CurrentType == typeof(Delegate))
+            if (SuperType == typeof(MulticastDelegate) ||
+                SuperType == typeof(Delegate))
                 return true;
 
             if (Instance == null)
@@ -395,7 +397,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (pi?.IsVirtual() is true)
             {
                 // for virtual properties dump the instance value at the the least derived class level that declares the property for first time.
-                if (CurrentType.BaseType?.GetProperty(CurrentMember.Name, Dumper.Settings.PropertyBindingFlags) != null)
+                if (SuperType.BaseType?.GetProperty(CurrentMember.Name, Dumper.Settings.PropertyBindingFlags) != null)
                     return;
 
                 pi = InstanceType.GetProperty(CurrentMember.Name, Dumper.Settings.PropertyBindingFlags);

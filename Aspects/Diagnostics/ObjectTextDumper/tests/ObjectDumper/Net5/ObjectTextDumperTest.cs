@@ -746,10 +746,7 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
   PropertyB                = PropertyB
   Associate                = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
     Property1                = Property1
-    Property2                = Property2
-  Associate2               = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
-    Property1                = Property1
-    Property2                = Property2",
+  Associate2               = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): ",
                 new Object5_1());
         }
 
