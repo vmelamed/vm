@@ -437,8 +437,7 @@ Actual:<{result}>
         [TestMethod]
         public void TestDumpObject1WithFieldsMetadata_2()
         {
-            var obj = new Object1();
-            obj.NullObjectProperty = new object();
+            var obj = new Object1() { NullObjectProperty = new object() };
             ActAndAssert(
                 TestDumpObject1WithFieldsMetadata_2_expected,
                 obj,
