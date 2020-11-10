@@ -108,7 +108,7 @@ namespace vm.Aspects.Diagnostics
             return attribute?.MetadataClassType ?? type;
         }
 
-        public static DumpAttribute ExtractClassDumpAttribute(
+        static DumpAttribute ExtractClassDumpAttribute(
             Type type,
             Type metaData)
         {

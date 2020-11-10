@@ -3,7 +3,7 @@ using System.Text;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     [TestClass]
     public class DumpUtilitiesTest
@@ -33,7 +33,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestIsNullOrWhiteSpaceExtensionWithNullString()
         {
-            const string target = null;
+            const string? target = null;
 
             Assert.IsTrue(target.IsNullOrWhiteSpace());
         }

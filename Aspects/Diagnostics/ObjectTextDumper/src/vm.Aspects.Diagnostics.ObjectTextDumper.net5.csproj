@@ -13,7 +13,8 @@
     <Company>vm</Company>
     <Copyright>Copyright © vm 2013-2020</Copyright>
     <Version>3.0.0</Version>
-    <PackageId></PackageId>
+    <VersionSuffix>alpha</VersionSuffix>
+    <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper</PackageId>
     <Authors>Val Melamed</Authors>
     <Description>Easy to integrate and easy to use component that dumps the value of an arbitrary .NET object in an easy to read text form.
 Helpful for debugging and logging purposes.
@@ -42,23 +43,32 @@ Restructured and rebuilt for .NET 5.0</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <AnalysisLevel>5.0</AnalysisLevel>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</RepositoryUrl>
-    <PackageTags>aspects dump object .net diagnostics debug log ObjectDumper ObjectTextDumper</PackageTags>
+    <RepositoryUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics/ObjectTextDumper</RepositoryUrl>
+    <PackageTags>aspects dump object .net core diagnostics debug log ObjectDumper ObjectTextDumper</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DocumentationFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Aspects\Diagnostics\ObjectTextDumper\src\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <ErrorReport>send</ErrorReport>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Aspects\Diagnostics\ObjectTextDumper\src\vm.Aspects.Diagnostics.ObjectTextDumper.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+    <None Include="..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
+    <None Include="..\..\..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
-    <None Include="..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
+    <CodeAnalysisDictionary Include="..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +77,10 @@ Restructured and rebuilt for .NET 5.0</PackageReleaseNotes>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="vm.Aspects.Diagnostics.ObjectTextDumper.xml" />
   </ItemGroup>
 
   <ItemGroup>

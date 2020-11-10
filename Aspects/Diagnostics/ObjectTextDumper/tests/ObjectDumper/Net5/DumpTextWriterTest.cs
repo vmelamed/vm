@@ -1,9 +1,10 @@
 ﻿using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using vm.Aspects.Diagnostics.Implementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     /// <summary>
     /// Summary description for DumpTextWriterTest
@@ -15,7 +16,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
         ///</summary>
-        public TestContext TestContext { get; set; }
+        public TestContext? TestContext { get; set; }
 
         #region Additional test attributes
         //
@@ -29,7 +30,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         // [ClassCleanup()]
         // public static void MyClassCleanup() { }
         //
-        // Use TestInitialize to run code before running each test 
+        // Use TestInitialize to run code before running each test
         // [TestInitialize()]
         // public void MyTestInitialize() { }
         //

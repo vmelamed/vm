@@ -3,7 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.Implementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     [TestClass]
     public class PropertyDumpOrderComparerTest

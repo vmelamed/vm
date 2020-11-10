@@ -21,8 +21,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             bool buildScript)
             : this(dumper, instance, instance.GetType(), classDumpData, classDumpData.DumpAttribute)
         {
-            // let's not create script if we don't need it or are not doing anything here.
-            if (buildScript  &&  SuperType != typeof(object))
+            // let's not create script if we don't need it or we are not doing anything here (super type is object).
+            if (buildScript  &&
+                (instance.GetType() == typeof(object)  ||  SuperType != typeof(object)))
                 DumpScript = new DumpScript(instance.GetType());
 
             DecrementMaxDepth();

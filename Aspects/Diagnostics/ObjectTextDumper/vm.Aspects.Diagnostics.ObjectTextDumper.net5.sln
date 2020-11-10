@@ -7,19 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Diagnostics.Obje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vm.Aspects.Diagnostics.ObjectTextDumper.net5.tests", "tests\ObjectDumper\Net5\vm.Aspects.Diagnostics.ObjectTextDumper.net5.tests.csproj", "{BE4B29DA-89B5-4454-B709-4365C92454F3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B6C75AD6-B55B-4D16-A951-F35B88102172}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\Common Items\buildProject.cmd = ..\..\Common Items\buildProject.cmd
-		..\..\Common Items\Dictionary.xml = ..\..\Common Items\Dictionary.xml
-		..\..\Common Items\vm.snk = ..\..\Common Items\vm.snk
-		..\..\Common Items\vm.Test.snk = ..\..\Common Items\vm.Test.snk
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{522B61F6-6252-4374-AAFF-EFF91FE805D0}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		..\..\Common Items\buildProject.cmd = ..\..\Common Items\buildProject.cmd
+		..\..\Common Items\Dictionary.xml = ..\..\Common Items\Dictionary.xml
+		..\..\..\LICENSE.txt = ..\..\..\LICENSE.txt
 		Publish.cmd = Publish.cmd
 		README.md = README.md
+		..\..\Common Items\vm.snk = ..\..\Common Items\vm.snk
+		..\..\Common Items\vm.Test.snk = ..\..\Common Items\vm.Test.snk
 	EndProjectSection
 EndProject
 Global

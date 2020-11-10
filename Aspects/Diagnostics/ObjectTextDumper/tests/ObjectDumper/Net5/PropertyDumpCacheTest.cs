@@ -3,7 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using vm.Aspects.Diagnostics.Implementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     [TestClass]
     public class PropertyDumpCacheTest
@@ -16,7 +16,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void GetPropertyDumpAttribute1()
         {
-            var pi = typeof(Test1).GetProperty("Property");
+            var pi = typeof(Test1).GetProperty("Property")!;
 
             var dumpAttribute = PropertyDumpResolver.GetPropertyDumpAttribute(pi);
 
@@ -32,7 +32,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void GetPropertyDumpAttribute2()
         {
-            var pi = typeof(Test2).GetProperty("Property");
+            var pi = typeof(Test2).GetProperty("Property")!;
 
             var dumpAttribute = PropertyDumpResolver.GetPropertyDumpAttribute(pi);
 
@@ -48,13 +48,13 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         class Test3Meta
         {
             [Dump(0)]
-            public object Property { get; set; }
+            public object Property { get; set; } = new object();
         }
 
         [TestMethod]
         public void GetPropertyDumpAttribute3()
         {
-            var pi = typeof(Test3).GetProperty("Property");
+            var pi = typeof(Test3).GetProperty("Property")!;
 
             var dumpAttribute = PropertyDumpResolver.GetPropertyDumpAttribute(pi, typeof(Test3Meta));
             var dumpAttribute1 = PropertyDumpResolver.GetPropertyDumpAttribute(pi, typeof(Test3Meta));

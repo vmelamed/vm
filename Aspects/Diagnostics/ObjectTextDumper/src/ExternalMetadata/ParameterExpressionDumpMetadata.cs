@@ -1,4 +1,4 @@
-﻿#pragma warning disable 1591
+﻿#pragma warning disable CS1591  // Missing XML comment for publicly visible type or member
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {

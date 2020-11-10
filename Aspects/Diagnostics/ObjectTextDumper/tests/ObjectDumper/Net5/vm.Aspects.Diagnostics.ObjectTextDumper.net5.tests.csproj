@@ -2,44 +2,26 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
     <SignAssembly>true</SignAssembly>
-
     <AssemblyOriginatorKeyFile>C:\Users\valo\Projects\Repos\vmelamed\vm\Common Items\vm.Test.snk</AssemblyOriginatorKeyFile>
-
     <DelaySign>false</DelaySign>
-
-    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumper.net5.Tests</AssemblyName>
-
-    <RootNamespace>vm.Aspects.Diagnostics.ObjectTextDumper.net5.Tests</RootNamespace>
-
+    <AssemblyName>vm.Aspects.Diagnostics.ObjectTextDumperTests</AssemblyName>
+    <RootNamespace>vm.Aspects.Diagnostics.ObjectTextDumperTests</RootNamespace>
     <PackageId>vm.Aspects.Diagnostics.ObjectTextDumper.tests</PackageId>
-
     <Version>3.0.0</Version>
-
     <Authors>Val Melamed</Authors>
-
     <Company>vm</Company>
-
     <Product>vm.Aspects</Product>
-
     <Description></Description>
-
     <Copyright>Copyright © vm 2013-2018</Copyright>
-
     <RepositoryType>git</RepositoryType>
-
     <PackageTags></PackageTags>
-
     <PackageReleaseNotes></PackageReleaseNotes>
-
     <RepositoryUrl>https://github.com/vmelamed/vm/tree/master/Aspects/Diagnostics</RepositoryUrl>
-
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-
     <AnalysisLevel>5.0</AnalysisLevel>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -47,16 +29,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
+    <CodeAnalysisDictionary Include="..\..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
-    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

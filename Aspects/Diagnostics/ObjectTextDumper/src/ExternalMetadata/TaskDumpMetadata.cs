@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading;
 
-#pragma warning disable 1591
+#pragma warning disable RCS1079 // Throwing of new NotImplementedException.
+#pragma warning disable CS1591  // Missing XML comment for publicly visible type or member
 
 namespace vm.Aspects.Diagnostics.ExternalMetadata
 {
@@ -101,7 +102,6 @@ namespace vm.Aspects.Diagnostics.ExternalMetadata
 
         [Dump(false)]
         WaitHandle IAsyncResult.AsyncWaitHandle => throw new NotImplementedException();
-
         [Dump(false)]
         bool IAsyncResult.CompletedSynchronously => false;
 

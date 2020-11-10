@@ -214,11 +214,11 @@ dotnet_diagnostic.RCS1192.severity = silent
 # RCS1001: Add braces (when expression spans over multiple lines).
 dotnet_diagnostic.RCS1001.severity = silent
 
-# RCS1003: Add braces to if-else (when expression spans over multiple lines).
-dotnet_diagnostic.RCS1003.severity = silent
-
 # RCS1123: Add parentheses when necessary.
 dotnet_diagnostic.RCS1123.severity = silent
+
+# RCS1003: Add braces to if-else (when expression spans over multiple lines).
+dotnet_diagnostic.RCS1003.severity = silent
 
 # IDE0058: Expression value is never used
 dotnet_diagnostic.IDE0058.severity = silent

@@ -11,22 +11,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using vm.Aspects.Diagnostics.Implementation;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     [TestClass]
     public partial class ObjectTextDumperTest
     {
-        public const string CoreDotNetAssembly           = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-        public const string CoreDotNetAssembly1          = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-        public const string CSharpLambda                 = "Expression1<Func<";
-        public const string LinqAssembly                 = "System.Linq.Expressions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-        public const string LinqExpression               = "System.Linq.Expressions.Expression1";
-        public const string ObjectTextDumperTestAssembly = "vm.Aspects.Diagnostics.ObjectTextDumper.net5.Tests, Version=3.0.0.0, Culture=neutral, PublicKeyToken=1fb2eb0544466393";
-        public const string ReadOnlyCollection           = "ReadOnlyCollection";
-        public const string RoCollectionNamespace        = "System.Collections.ObjectModel";
-        public const string RuntimeExtensionsAssembly    = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+        public static readonly Func<TextWriter, ObjectTextDumper> DefaultDumperFactory = w => new ObjectTextDumper(w);
 
-        public TestContext TestContext { get; set; }
+        readonly Stopwatch _sw = new Stopwatch();
+
+        public TestContext? TestContext { get; set; }
 
         #region Additional test attributes
         //
@@ -46,7 +40,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         //{
         //}
 
-        // Use TestInitialize to run code before running each test 
+        // Use TestInitialize to run code before running each test
         [TestInitialize()]
         public void TestInitialize()
             => ObjectTextDumper.DefaultDumpSettings = DumpSettings.Default;
@@ -74,21 +68,27 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             return new ObjectTextDumper(w);
         }
 
-        readonly Stopwatch _sw = new Stopwatch();
+        static string MethodName(int stackLevel = 1)
+        {
+            var stackTrace = new StackTrace();
+
+            // get calling method name
+            return stackTrace.GetFrame(stackLevel)?.GetMethod()?.Name ?? "(could not get the name from the stack frames)";
+        }
 
         [TestMethod]
         public void TestIsBasicType()
         {
-            Debug.WriteLine(nameof(TestIsBasicType));
+            Debug.WriteLine(MethodName());
 
             for (var i = 2; i<_basicValues.Length; i++)
-                Assert.IsTrue(_basicValues[i].GetType().IsBasicType());
+                Assert.IsTrue(_basicValues[i]!.GetType().IsBasicType());
         }
 
         [TestMethod]
         public void TestDumpedBasicValue()
         {
-            Debug.WriteLine(nameof(TestDumpedBasicValue));
+            Debug.WriteLine(MethodName());
 
             using var w = new StringWriter(CultureInfo.InvariantCulture);
 
@@ -100,7 +100,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         void TestDumpedBasicValueText(
             string expected,
             object value,
-            DumpAttribute dumpAttribute = null)
+            DumpAttribute? dumpAttribute = null)
         {
             using var w = new StringWriter(CultureInfo.InvariantCulture);
 
@@ -108,15 +108,15 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
             var actual = w.GetStringBuilder().ToString();
 
-            TestContext.WriteLine("{0}", actual);
+            TestContext!.WriteLine("{0}", actual);
             Assert.AreEqual(expected, actual);
         }
 
         void TestDumpObjectBasicValueText(
             string expected,
             object value,
-            Type metadata = null,
-            DumpAttribute dumpAttribute = null,
+            Type? metadata = null,
+            DumpAttribute? dumpAttribute = null,
             int indentValue = 0)
         {
             using var w = new StringWriter(CultureInfo.InvariantCulture);
@@ -126,46 +126,46 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
 
             var actual = w.GetStringBuilder().ToString();
 
-            TestContext.WriteLine("{0}", actual);
+            TestContext!.WriteLine("{0}", actual);
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
         public void TestDumpedBasicValueText()
         {
-            Debug.WriteLine(nameof(TestDumpedBasicValueText));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i]);
+                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i]!);
         }
 
         [TestMethod]
         public void TestDumpedBasicValueTextIndent()
         {
-            Debug.WriteLine(nameof(TestDumpedBasicValueTextIndent));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i], null);
+                TestDumpedBasicValueText(_basicValuesStrings[i], _basicValues[i]!, null);
         }
 
         [TestMethod]
         public void TestDumpMaskedBasicValueText()
         {
-            Debug.WriteLine(nameof(TestDumpMaskedBasicValueText));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpedBasicValueText(_basicValues[i]==null ? "<null>" : "------", _basicValues[i], new DumpAttribute { Mask = true, MaskValue = "------" });
+                TestDumpedBasicValueText(_basicValues[i]==null ? "<null>" : "------", _basicValues[i]!, new DumpAttribute { Mask = true, MaskValue = "------" });
         }
 
         [TestMethod]
         public void TestDumpMaskedBasicValueText1()
         {
-            Debug.WriteLine(nameof(TestDumpMaskedBasicValueText1));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpedBasicValueText(_basicValues[i]==null ? "<null>" : "******", _basicValues[i], new DumpAttribute { Mask = true });
+                TestDumpedBasicValueText(_basicValues[i]==null ? "<null>" : "******", _basicValues[i]!, new DumpAttribute { Mask = true });
         }
 
         [TestMethod]
         public void TestDumpedBasicValueFormat()
         {
-            Debug.WriteLine(nameof(TestDumpedBasicValueFormat));
+            Debug.WriteLine(MethodName());
             TestDumpedBasicValueText("{00000000-0000-0000-0000-000000000000}", Guid.Empty, new DumpAttribute { ValueFormat = "{0:B}" });
             TestDumpedBasicValueText("¤1.00", 1.0, new DumpAttribute { ValueFormat = "{0:C}" });
             TestDumpedBasicValueText("¤1.00", 1M, new DumpAttribute { ValueFormat = "{0:C}" });
@@ -174,46 +174,46 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestStringValueLength()
         {
-            Debug.WriteLine(nameof(TestStringValueLength));
+            Debug.WriteLine(MethodName());
             TestDumpedBasicValueText("012345678901...", "01234567890123456789", new DumpAttribute { MaxLength = 12 });
         }
 
         [TestMethod]
         public void TestDumpObjectBasicValueText()
         {
-            Debug.WriteLine(nameof(TestDumpObjectBasicValueText));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpObjectBasicValueText(_basicValuesStrings[i], _basicValues[i]);
+                TestDumpObjectBasicValueText(_basicValuesStrings[i], _basicValues[i]!);
         }
 
         [TestMethod]
         public void TestDumpObjectBasicValueTextIndent()
         {
-            Debug.WriteLine(nameof(TestDumpObjectBasicValueTextIndent));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpObjectBasicValueText(_basicValuesStrings[i], _basicValues[i], null, null, 2);
+                TestDumpObjectBasicValueText(_basicValuesStrings[i], _basicValues[i]!, null, null, 2);
         }
 
         [TestMethod]
         public void TestDumpObjectMaskedBasicValueText()
         {
-            Debug.WriteLine(nameof(TestDumpObjectMaskedBasicValueText));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpObjectBasicValueText(_basicValues[i]==null ? "<null>" : "------", _basicValues[i], null, new DumpAttribute { Mask = true, MaskValue = "------" });
+                TestDumpObjectBasicValueText(_basicValues[i]==null ? "<null>" : "------", _basicValues[i]!, null, new DumpAttribute { Mask = true, MaskValue = "------" });
         }
 
         [TestMethod]
         public void TestDumpObjectMaskedBasicValueText1()
         {
-            Debug.WriteLine(nameof(TestDumpObjectMaskedBasicValueText1));
+            Debug.WriteLine(MethodName());
             for (var i = 0; i<_basicValues.Length; i++)
-                TestDumpObjectBasicValueText(_basicValues[i]==null ? "<null>" : "******", _basicValues[i], null, new DumpAttribute { Mask = true });
+                TestDumpObjectBasicValueText(_basicValues[i]==null ? "<null>" : "******", _basicValues[i]!, null, new DumpAttribute { Mask = true });
         }
 
         [TestMethod]
         public void TestDumpObjectBasicValueFormat()
         {
-            Debug.WriteLine(nameof(TestDumpObjectBasicValueFormat));
+            Debug.WriteLine(MethodName());
             TestDumpObjectBasicValueText("{00000000-0000-0000-0000-000000000000}", Guid.Empty, null, new DumpAttribute { ValueFormat = "{0:B}" });
             TestDumpObjectBasicValueText("¤1.00", 1.0, null, new DumpAttribute { ValueFormat = "{0:C}" });
             TestDumpObjectBasicValueText("¤1.00", 1M, null, new DumpAttribute { ValueFormat = "{0:C}" });
@@ -222,17 +222,19 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [TestMethod]
         public void TestObjectStringValueLength()
         {
-            Debug.WriteLine(nameof(TestObjectStringValueLength));
+            Debug.WriteLine(MethodName());
             TestDumpObjectBasicValueText("012345678901...", "01234567890123456789", null, new DumpAttribute { MaxLength = 12 });
         }
 
         string Act(
             StringWriter w,
             object obj,
-            Type metadata,
-            DumpAttribute classDumpAttribute,
-            Func<TextWriter, ObjectTextDumper> dumperFactory)
+            Type? metadata = null,
+            DumpAttribute? classDumpAttribute = null,
+            Func<TextWriter, ObjectTextDumper>? dumperFactory = null)
         {
+            dumperFactory ??= DefaultDumperFactory;
+
             var target = dumperFactory(w);
 
             _sw.Reset();
@@ -251,180 +253,114 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         const string _secondDump = "Second dump";
         const string _thirdDump  = "Third dump";
 
-        void AssertResult(
+        void AssertResultIsEqualToExpected(
+            string result,
             string expected,
-            string actual,
             string dumpId)
         {
-            var dump = $"{dumpId} ({_sw.Elapsed}):{actual}";
+            var dump = $"{dumpId} ({_sw.Elapsed}):{result}";
 
-            TestContext.WriteLine(dump);
+            TestContext!.WriteLine(dump);
             Debug.WriteLine(dump);
 
-            Assert.AreEqual(expected, actual, $"{dumpId} assertion failed.");
+            Assert.AreEqual(expected, result, $"{dumpId} assertion failed.");
         }
 
         void AssertResultStartsWith(
-            string expected,
-            string actual,
+            string result,
+            string startsWith,
             string dumpId)
         {
-            var dump = $"{dumpId} ({_sw.Elapsed}):{actual}";
+            var dump = $"{dumpId} ({_sw.Elapsed}):{result}";
 
-            TestContext.WriteLine(dump);
+            TestContext!.WriteLine(dump);
             Debug.WriteLine(dump);
 
-            var assertion = actual.StartsWith(expected);
+            var assertion = result.StartsWith(startsWith);
 
             if (!assertion)
-                TestContext.WriteLine($@"Expected:<{expected}>
-Actual:<{actual}>
+                TestContext!.WriteLine($@"Expected:<{startsWith}>
+Actual:<{result}>
 ");
 
             Assert.IsTrue(assertion, $"{dumpId} assertion failed.");
         }
 
         void ActAndAssert(
-            string testName,
             string expected,
             object obj,
-            Type metadata,
-            DumpAttribute classDumpAttribute = null,
-            Func<TextWriter, ObjectTextDumper> dumperFactory = null)
+            Type? metadata = null,
+            DumpAttribute? classDumpAttribute = null,
+            Func<TextWriter, ObjectTextDumper>? dumperFactory = null)
         {
-            if (dumperFactory == null)
-                dumperFactory = w => new ObjectTextDumper(w);
+            dumperFactory ??= DefaultDumperFactory;
 
-            Debug.WriteLine(testName);
+            Debug.WriteLine(MethodName(2));
 
             using (var w = new StringWriter(CultureInfo.InvariantCulture))
             {
-                var actual1 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                var result1 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResult(expected, actual1, _firstDump);
+                AssertResultIsEqualToExpected(result1, expected, _firstDump);
 
                 // --------------------------
 
                 if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
                 {
-                    var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                    var result2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResult(expected, actual2, _secondDump);
+                    AssertResultIsEqualToExpected(result2, expected, _secondDump);
                 }
             }
             if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
             {
                 using var w = new StringWriter(CultureInfo.InvariantCulture);
-                var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                var result3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResult(expected, actual3, _thirdDump);
+                AssertResultIsEqualToExpected(result3, expected, _thirdDump);
             }
         }
 
         void ActAndAssertStartsWith(
-            string testName,
-            string expected,
+            string startsWith,
             object obj,
-            Type metadata,
-            DumpAttribute classDumpAttribute = null,
-            Func<TextWriter, ObjectTextDumper> dumperFactory = null)
+            Type? metadata = null,
+            DumpAttribute? classDumpAttribute = null,
+            Func<TextWriter, ObjectTextDumper>? dumperFactory = null)
         {
-            if (dumperFactory == null)
-                dumperFactory = w => new ObjectTextDumper(w);
+            dumperFactory ??= DefaultDumperFactory;
 
-            Debug.WriteLine(testName);
+            Debug.WriteLine(MethodName(2));
 
             using (var w = new StringWriter(CultureInfo.InvariantCulture))
             {
-                var actual1 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                var result1 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                AssertResultStartsWith(expected, actual1, _firstDump);
+                AssertResultStartsWith(result1, startsWith, _firstDump);
 
                 // --------------------------
 
                 if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
                 {
-                    var actual2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                    var result2 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResultStartsWith(expected, actual2, _secondDump);
+                    AssertResultStartsWith(result2, startsWith, _secondDump);
                 }
             }
             if (ObjectTextDumper.DefaultDumpSettings.UseDumpScriptCache)
                 using (var w = new StringWriter(CultureInfo.InvariantCulture))
                 {
-                    var actual3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
+                    var result3 = Act(w, obj, metadata, classDumpAttribute, dumperFactory);
 
-                    AssertResultStartsWith(expected, actual3, _thirdDump);
+                    AssertResultStartsWith(result3, startsWith, _thirdDump);
                 }
         }
 
-        void ActAndAssert(
-            string testName,
-            string expected,
-            object obj,
-            Func<TextWriter, ObjectTextDumper> dumperFactory = null)
-        {
-            ActAndAssert(testName, expected, obj, null, null, dumperFactory);
-        }
-
-        void ActAndAssertStartsWith(
-            string testName,
-            string expected,
-            object obj,
-            Func<TextWriter, ObjectTextDumper> dumperFactory = null)
-        {
-            ActAndAssertStartsWith(testName, expected, obj, null, null, dumperFactory);
-        }
-
         [TestMethod]
-        public void TestDumpObject1_1()
+        public void TestDumpObjectWithBasicProperties()
         {
             ActAndAssert(
-                nameof(TestDumpObject1_1),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField               = 1
-  GuidField                = 00000000-0000-0000-0000-000000000000
-  IntField                 = 1
-  LongField                = 1
-  NullIntField             = <null>
-  NullLongField            = 1
-  ObjectField              = <null>
-  SByteField               = 1
-  ShortField               = 1
-  TimeSpanField            = 00:00:00.0000123
-  UIntField                = 1
-  ULongField               = 1
-  UShortField              = 1
-  UriField                 = http://localhost/
-  BoolProperty             = True
-  ByteProperty             = 1
-  CharProperty             = A
-  DateTimeOffsetProperty   = 2013-01-13T00:00:00.0000000+00:00
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  DecimalProperty          = 1
-  DoubleProperty           = 1
-  FloatProperty            = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  IntProperty              = 1
-  LongProperty             = 1
-  NullIntProperty          = <null>
-  NullLongProperty         = 1
-  ObjectProperty           = <null>
-  SByteProperty            = 1
-  ShortProperty            = 1
-  TimeSpanProperty         = 00:00:00.0000123
-  UIntProperty             = 1
-  ULongProperty            = 1
-  UShortProperty           = 1
-  UriProperty              = http://localhost/",
+                TestDumpObject1_1_expected,
                 new Object1());
         }
 
@@ -432,52 +368,10 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1,
         public void TestDumpObject1WithFields_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject1WithFields_1),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField               = 1
-  GuidField                = 00000000-0000-0000-0000-000000000000
-  IntField                 = 1
-  LongField                = 1
-  NullIntField             = <null>
-  NullLongField            = 1
-  ObjectField              = <null>
-  SByteField               = 1
-  ShortField               = 1
-  TimeSpanField            = 00:00:00.0000123
-  UIntField                = 1
-  ULongField               = 1
-  UShortField              = 1
-  UriField                 = http://localhost/
-  BoolProperty             = True
-  ByteProperty             = 1
-  CharProperty             = A
-  DateTimeOffsetProperty   = 2013-01-13T00:00:00.0000000+00:00
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  DecimalProperty          = 1
-  DoubleProperty           = 1
-  FloatProperty            = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  IntProperty              = 1
-  LongProperty             = 1
-  NullIntProperty          = <null>
-  NullLongProperty         = 1
-  ObjectProperty           = <null>
-  SByteProperty            = 1
-  ShortProperty            = 1
-  TimeSpanProperty         = 00:00:00.0000123
-  UIntProperty             = 1
-  ULongProperty            = 1
-  UShortProperty           = 1
-  UriProperty              = http://localhost/",
+                TestDumpObject1WithFields_1_expected,
                 new Object1(),
+                null,
+                null,
                 w =>
                 {
                     var settings = ObjectTextDumper.DefaultDumpSettings;
@@ -503,19 +397,10 @@ Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1,
         public void TestDumpObject1_1_Limited()
         {
             ActAndAssertStartsWith(
-                nameof(TestDumpObject1_1_Limited),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+ @"): 
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField             ...
-The dump exceeded the maximum length of 500 characters. Either increase the value of the argument maxDumpLength of the constructor of the ObjectTextDumper class, or suppress the dump of some types and properties using DumpAttribute-s and metadata.",
+                TestDumpObject1_1_Limited_expected,
                 new Object1(),
+                null,
+                null,
                 //w => new ObjectTextDumper(w, 0, 2, 500));
                 w =>
                 {
@@ -531,180 +416,40 @@ The dump exceeded the maximum length of 500 characters. Either increase the valu
         }
 
         [TestMethod]
-        public void TestDumpObject1_2()
+        public void TestDumpObject1_2_WithMetadata()
         {
             ActAndAssert(
-                nameof(TestDumpObject1_2),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
-  ObjectProperty           : <null>
-  NullIntProperty          = <null>
-  NullLongProperty         = 1
-  BoolProperty             = True
-  CharProperty             = A
-  ByteProperty             = 1
-  SByteProperty            = 1
-  ShortProperty            = 1
-  IntProperty              = 1
-  LongProperty             = 1
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField               = 1
-  GuidField                = 00000000-0000-0000-0000-000000000000
-  IntField                 = 1
-  LongField                = 1
-  NullIntField             = <null>
-  NullLongField            = 1
-  ObjectField              = <null>
-  SByteField               = 1
-  ShortField               = 1
-  TimeSpanField            = 00:00:00.0000123
-  UIntField                = 1
-  ULongField               = 1
-  UShortField              = 1
-  UriField                 = http://localhost/
-  UIntProperty             = 1
-  ULongProperty            = 1
-  DoubleProperty           = 1.0
-  FloatProperty            = 1.0
-  DecimalProperty          = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  UriProperty              = http://localhost/
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  TimeSpanProperty         = 00:00:00.0000123",
+                TestDumpObject1_2_expected,
                 new Object1(),
                 typeof(Object1Metadata));
         }
 
         [TestMethod]
-        public void TestDumpObject1WithFieldsMetadata_2()
+        public void TestDumpObject1_3_WithClassDumpAttribute_SkipDumpNullValues()
         {
             ActAndAssert(
-                nameof(TestDumpObject1WithFieldsMetadata_2),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
-  ObjectProperty           : <null>
-  NullIntProperty          = <null>
-  NullLongProperty         = 1
-  BoolProperty             = True
-  CharProperty             = A
-  ByteProperty             = 1
-  SByteProperty            = 1
-  ShortProperty            = 1
-  IntProperty              = 1
-  LongProperty             = 1
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField               = 1
-  GuidField                = 00000000-0000-0000-0000-000000000000
-  IntField                 = 1
-  LongField                = 1
-  NullIntField             = <null>
-  NullLongField            = 1
-  ObjectField              = <null>
-  SByteField               = 1
-  ShortField               = 1
-  TimeSpanField            = 00:00:00.0000123
-  UIntField                = 1
-  ULongField               = 1
-  UShortField              = 1
-  UriField                 = http://localhost/
-  UIntProperty             = 1
-  ULongProperty            = 1
-  DoubleProperty           = 1.0
-  FloatProperty            = 1.0
-  DecimalProperty          = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  UriProperty              = http://localhost/
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  TimeSpanProperty         = 00:00:00.0000123",
-                new Object1(),
-                typeof(Object1FieldsMetadata));
-        }
-
-        [TestMethod]
-        public void TestDumpObject1_3()
-        {
-            ActAndAssert(
-                nameof(TestDumpObject1_3),
-                @"
-Object1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1, "+ObjectTextDumperTestAssembly+@"): 
-  NullLongProperty         = 1
-  BoolProperty             = True
-  CharProperty             = A
-  ByteProperty             = 1
-  SByteProperty            = 1
-  ShortProperty            = 1
-  IntProperty              = 1
-  LongProperty             = 1
-  BoolField                = True
-  ByteField                = 1
-  CharField                = A
-  DateTimeField            = 2013-01-13T00:00:00.0000000Z
-  DateTimeOffsetField      = 2013-01-13T00:00:00.0000000+00:00
-  DecimalField             = 1
-  DoubleField              = 1
-  FloatField               = 1
-  GuidField                = 00000000-0000-0000-0000-000000000000
-  IntField                 = 1
-  LongField                = 1
-  NullLongField            = 1
-  SByteField               = 1
-  ShortField               = 1
-  TimeSpanField            = 00:00:00.0000123
-  UIntField                = 1
-  ULongField               = 1
-  UShortField              = 1
-  UriField                 = http://localhost/
-  UIntProperty             = 1
-  ULongProperty            = 1
-  DoubleProperty           = 1.0
-  FloatProperty            = 1.0
-  DecimalProperty          = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  UriProperty              = http://localhost/
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  TimeSpanProperty         = 00:00:00.0000123",
+                TestDumpObject1_3_expected,
                 new Object1(),
                 typeof(Object1Metadata),
                 new DumpAttribute { DumpNullValues = ShouldDump.Skip });
         }
 
         [TestMethod]
+        public void TestDumpObject1WithFieldsMetadata_2()
+        {
+            var obj = new Object1();
+            obj.NullObjectProperty = new object();
+            ActAndAssert(
+                TestDumpObject1WithFieldsMetadata_2_expected,
+                obj,
+                typeof(Object1FieldsMetadata));
+        }
+
+        [TestMethod]
         public void TestDumpObject2_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject2_1),
-                @"
-Object2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object2, "+ObjectTextDumperTestAssembly+@"): 
-  NullLongProperty         = 1
-  BoolProperty             = True
-  CharProperty             = A
-  ByteProperty             = 1
-  SByteProperty            = 1
-  ShortProperty            = 1
-  IntProperty              = 1
-  LongProperty             = 1
-  UIntProperty             = 1
-  ULongProperty            = 1
-  DoubleProperty           = 1.0
-  FloatProperty            = 1.0
-  DecimalProperty          = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  UriProperty              = http://localhost/
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000
-  DateTimeProperty1        = 1/25/2013 11:23:45 AM
-  TimeSpanProperty         = 00:00:00.0000123",
+                TestDumpObject2_1_expected,
                 new Object2());
         }
 
@@ -712,26 +457,7 @@ Object2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object2,
         public void TestDumpObject3_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject3_1),
-                @"
-Object3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object3, "+ObjectTextDumperTestAssembly+@"): 
-  NullLongProperty         = 1
-  BoolProperty             = True
-  CharProperty             = A
-  ByteProperty             = 1
-  SByteProperty            = 1
-  ShortProperty            = 1
-  IntProperty              = 1
-  LongProperty             = 1
-  UIntProperty             = 1
-  ULongProperty            = 1
-  DoubleProperty           = 1.0
-  FloatProperty            = 1.0
-  DecimalProperty          = 1
-  GuidProperty             = 00000000-0000-0000-0000-000000000000
-  UriProperty              = http://localhost/
-  DateTimeProperty         = 2013-01-13T00:00:00.0000000Z
-  TimeSpanProperty         = 00:00:00.0000123",
+                TestDumpObject3_1_expected,
                 new Object3());
         }
 
@@ -739,14 +465,7 @@ Object3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object3,
         public void TestDumpObject5_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject5_1),
-                @"
-Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object5_1, "+ObjectTextDumperTestAssembly+@"): 
-  PropertyA                = PropertyA
-  PropertyB                = PropertyB
-  Associate                = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
-    Property1                = Property1
-  Associate2               = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): ",
+                TestDumpObject5_1_expected,
                 new Object5_1());
         }
 
@@ -756,7 +475,6 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         public void TestDumpDBNull()
         {
             ActAndAssert(
-                nameof(TestDumpDBNull),
                 @"DBNull",
                 DBNull.Value);
         }
@@ -773,62 +491,7 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
             ClassMetadataRegistrar.RegisterMetadata();
 
             ActAndAssertStartsWith(
-                nameof(TestDumpExpression),
-                @"
-"+CSharpLambda+@"int, int>> ("+LinqExpression+@"`1[[System.Func`2[[System.Int32, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"]], "+LinqAssembly+@"): 
-  C#-like expression text:
-    (int a) => 3 * a + 5
-  NodeType                 = ExpressionType.Lambda
-  Type                     = (TypeInfo): System.Func`2[[System.Int32, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"
-  Name                     = <null>
-  ReturnType               = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-  Parameters               = "+ReadOnlyCollection+@"<ParameterExpression>[1]: ("+RoCollectionNamespace+"."+ReadOnlyCollection+@"`1[[System.Linq.Expressions.ParameterExpression, "+LinqAssembly+@"]], "+CoreDotNetAssembly1+@")
-    PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+LinqAssembly+@"): 
-      NodeType                 = ExpressionType.Parameter
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-      Name                     = a
-      IsByRef                  = False
-      NodeType                 = ExpressionType.Parameter
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-      CanReduce                = False
-  Body                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, "+LinqAssembly+@"): 
-    NodeType                 = ExpressionType.Add
-    Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-    Left                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, "+LinqAssembly+@"): 
-      NodeType                 = ExpressionType.Multiply
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-      Left                     = ConstantExpression (System.Linq.Expressions.ConstantExpression, "+LinqAssembly+@"): 
-        NodeType                 = ExpressionType.Constant
-        Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-        Value                    = 3
-        NodeType                 = ExpressionType.Constant
-        CanReduce                = False
-      Right                    = PrimitiveParameterExpression<int> (see above)
-      IsLiftedLogical          = False
-      IsReferenceComparison    = False
-      NodeType                 = ExpressionType.Multiply
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-      Method                   = <null>
-      Conversion               = <null>
-      IsLifted                 = False
-      IsLiftedToNull           = False
-      CanReduce                = False
-    Right                    = ConstantExpression (System.Linq.Expressions.ConstantExpression, "+LinqAssembly+@"): 
-      NodeType                 = ExpressionType.Constant
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-      Value                    = 5
-      NodeType                 = ExpressionType.Constant
-      CanReduce                = False
-    IsLiftedLogical          = False
-    IsReferenceComparison    = False
-    NodeType                 = ExpressionType.Add
-    Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-    Method                   = <null>
-    Conversion               = <null>
-    IsLifted                 = False
-    IsLiftedToNull           = False
-    CanReduce                = False
-  NodeType                 = ExpressionType.Lambda",
+                TestDumpExpression_expected,
                 expression);
 
             settings.PropertyBindingFlags &= ~BindingFlags.NonPublic;
@@ -839,13 +502,7 @@ Object5_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         public void TestDumpObject6_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject6_1),
-                @"
-Object6 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object6, "+ObjectTextDumperTestAssembly+@"): 
-  D                        = static ObjectTextDumperTest.TestMethod
-  Ex                       = p => (p > 0)
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject6_1_expected,
                 new Object6());
         }
 
@@ -853,90 +510,15 @@ Object6 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object6,
         public void TestDumpObject7_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject7_1),
-                @"
-Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7, "+ObjectTextDumperTestAssembly+@"): 
-  Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    3
-    4
-    5
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject7_1_expected,
                 new Object7());
-        }
-
-        [TestMethod]
-        public void TestDumpObject7_2()
-        {
-            ActAndAssert(
-                nameof(TestDumpObject7_2),
-                @"
-Object7 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7, "+ObjectTextDumperTestAssembly+@"): 
-  Array                    = int[18]: (System.Int32[], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    3
-    4
-    5
-    0
-    1
-    2
-    3
-    ... dumped the first 10/18 elements.
-  Property1                = Property1
-  Property2                = Property2",
-                new Object7
-                {
-                    Array = new[] { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, },
-                });
-        }
-
-        [TestMethod]
-        public void TestDumpObject8_1()
-        {
-            ActAndAssert(
-                nameof(TestDumpObject8_1),
-                @"
-Object8 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8, "+ObjectTextDumperTestAssembly+@"): 
-  Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    ... dumped the first 3/6 elements.
-  Array2                   = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
-  Array3                   = byte[18]: 00-01-02-03-04-05-00-01-02-03-04-05-00-01-02-03-04-05
-  Array4                   = byte[18]: 00-01-02-03-04-05-00-01-02-03... dumped the first 10/18 elements.
-  Array5                   = byte[18]: 00-01-02... dumped the first 3/18 elements.
-  Array6                   = ArrayList[18]: (System.Collections.ArrayList, "+RuntimeExtensionsAssembly+@")
-    0
-    1
-    2
-    ... dumped the first 3/18 elements.
-  Property1                = Property1
-  Property2                = Property2",
-                new Object8());
         }
 
         [TestMethod]
         public void TestDumpObject7_1_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject7_1_1),
-                @"
-Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
-  List                     = List<int>[6]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    3
-    4
-    5
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject7_1_1_expected,
                 new Object7_1());
         }
 
@@ -944,23 +526,7 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         public void TestDumpObject7_1_2()
         {
             ActAndAssert(
-                nameof(TestDumpObject7_1_2),
-                @"
-Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
-  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    3
-    4
-    5
-    0
-    1
-    2
-    3
-    ... dumped the first 10/18 elements.
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject7_1_2_expected,
                 new Object7_1
                 {
                     List = new List<int> { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, },
@@ -971,30 +537,7 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         public void TestDumpObject7_1_3()
         {
             ActAndAssert(
-                nameof(TestDumpObject7_1_3),
-                @"
-Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object7_1, "+ObjectTextDumperTestAssembly+@"): 
-  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    3
-    4
-    5
-    0
-    1
-    2
-    3
-    4
-    5
-    0
-    1
-    2
-    3
-    4
-    5
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject7_1_3_expected,
                 new Object7_1
                 {
                     List = new List<int> { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, },
@@ -1003,20 +546,29 @@ Object7_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         }
 
         [TestMethod]
+        public void TestDumpObject7_2()
+        {
+            ActAndAssert(
+                TestDumpObject7_2_expected,
+                new Object7
+                {
+                    Array = new[] { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, },
+                });
+        }
+
+        [TestMethod]
+        public void TestDumpObject8_1()
+        {
+            ActAndAssert(
+                TestDumpObject8_1_expected,
+                new Object8());
+        }
+
+        [TestMethod]
         public void TestDumpObject8_1_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject8_1_1),
-                @"
-Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object8_1, "+ObjectTextDumperTestAssembly+@"): 
-  List                     = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
-    0
-    1
-    2
-    ... dumped the first 3/6 elements.
-  List2                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
-  Property1                = Property1
-  Property2                = Property2",
+                TestDumpObject8_1_1_expected,
                 new Object8_1());
         }
 
@@ -1024,21 +576,7 @@ Object8_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object
         public void TestDumpObject9_1()
         {
             ActAndAssert(
-                nameof(TestDumpObject9_1),
-                @"
-Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
-  Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, "+ObjectTextDumperTestAssembly+@"): 
-    Flags                    = TestFlags (Two | Four)
-    Prop                     = TestEnum.One
-  Prop91                   = 0
-  Prop92                   = 1
-  Prop911                  = 2
-  Prop912                  = 3
-  Prop913                  = 6
-  Prop914                  = 7
-  InheritedObject90        = Object90 (see above)
-  Prop93                   = 4
-  Prop94                   = 5",
+                TestDumpObject9_1_expected,
                 new Object91());
         }
 
@@ -1046,37 +584,11 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
         public void TestDumpObject9_1null()
         {
             ActAndAssert(
-                nameof(TestDumpObject9_1null),
-                @"
-Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
-  Object90                 = Object90 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object90, "+ObjectTextDumperTestAssembly+@"): 
-    Flags                    = TestFlags (Two | Four)
-    Prop                     = TestEnum.One
-  Prop91                   = 0
-  Prop92                   = 1
-  Prop911                  = 2
-  Prop912                  = 3
-  Prop913                  = 6
-  Prop914                  = 7
-  InheritedObject90        = Object90 (see above)
-  Prop93                   = 4
-  Prop94                   = 5",
+                TestDumpObject9_1_expected,
                 new Object91());
 
             ActAndAssert(
-                nameof(TestDumpObject9_1null),
-                @"
-Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object91, "+ObjectTextDumperTestAssembly+@"): 
-  Object90                 = <null>
-  Prop91                   = 0
-  Prop92                   = 1
-  Prop911                  = 2
-  Prop912                  = 3
-  Prop913                  = 6
-  Prop914                  = 7
-  InheritedObject90        = <null>
-  Prop93                   = 4
-  Prop94                   = 5",
+                TestDumpObject9_1null_expected,
                 new Object91() { Object90 = null });
         }
 
@@ -1084,15 +596,7 @@ Object91 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object9
         public void TestDumpObjectWithDelegates()
         {
             ActAndAssert(
-                nameof(TestDumpObjectWithDelegates),
-                @"
-ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithDelegates, "+ObjectTextDumperTestAssembly+@"): 
-  DelegateProp0            = <null>
-  DelegateProp1            = static Object10.Static
-  DelegateProp2            = Object10.Instance
-  DelegateProp3            = static ObjectTextDumperTest.TestMethod
-  Object10Prop             = Object10 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object10, "+ObjectTextDumperTestAssembly+@"): 
-    Offset                   = 23",
+                TestDumpObjectWithDelegates_expected,
                 new ObjectWithDelegates());
         }
 
@@ -1100,16 +604,7 @@ ObjectWithDelegates (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperT
         public void TestDumpObjectWithMyEnumerable()
         {
             ActAndAssert(
-                nameof(TestDumpObjectWithMyEnumerable),
-                @"
-ObjectWithMyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithMyEnumerable, "+ObjectTextDumperTestAssembly+@"): 
-  MyEnumerable             = MyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+MyEnumerable, "+ObjectTextDumperTestAssembly+@"): 
-    Property                 = foo
-    MyEnumerable[]: (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+MyEnumerable, "+ObjectTextDumperTestAssembly+@")
-      0
-      1
-      3
-  Stuff                    = stuff",
+                TestDumpObjectWithMyEnumerable_expected,
                 new ObjectWithMyEnumerable());
         }
 
@@ -1117,32 +612,7 @@ ObjectWithMyEnumerable (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDump
         public void TestDumpObjectWithMemberInfos()
         {
             ActAndAssert(
-                nameof(TestDumpObjectWithMemberInfos),
-                @"
-ObjectWithMemberInfos (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithMemberInfos, "+ObjectTextDumperTestAssembly+@"): 
-  EventInfo                = (Event): EventHandler ObjectWithMembers.Event
-  IndexerIntInfo           = (Property): String ObjectWithMembers.this[Int32] { get; }
-  IndexerStringInfo        = (Property): String ObjectWithMembers.this[String, Int32] { get;set; }
-  MemberInfo               = (Field): Int32 ObjectWithMembers.member
-  MemberInfos              = MemberInfo[22]: (System.Reflection.MemberInfo[], "+CoreDotNetAssembly+@")
-    (Constructor): .ctor
-    (Method): Void ObjectWithMembers.add_Event(EventHandler value)
-    (Method): Boolean Object.Equals(Object obj)
-    (Event): EventHandler ObjectWithMembers.Event
-    (Method): String ObjectWithMembers.get_Item(Int32 index)
-    (Method): String ObjectWithMembers.get_Item(String index, Int32 index1)
-    (Method): Int32 ObjectWithMembers.get_Property()
-    (Method): Int32 Object.GetHashCode()
-    (Method): Type Object.GetType()
-    (Property): String ObjectWithMembers.this[Int32] { get; }
-    ... dumped the first 10/22 elements.
-  Method1Info              = (Method): Void ObjectWithMembers.Method1()
-  Method2Info              = (Method): Int32 ObjectWithMembers.Method2(Int32 a)
-  Method3Info              = (Method): String ObjectWithMembers.Method3(Int32 a, Int32 b)
-  Method4Info              = (Method): T ObjectWithMembers.Method4<T>(Int32 a, Int32 b)
-  Method5Info              = (Method): T ObjectWithMembers.Method5<T, U>(Int32 a, Int32 b)
-  PropertyInfo             = (Property): Int32 ObjectWithMembers.Property { get;set; }
-  Type                     = (NestedType): vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+ObjectWithMembers, "+ObjectTextDumperTestAssembly+@"",
+                TestDumpObjectWithMemberInfos_expected,
                 new ObjectWithMemberInfos());
         }
 
@@ -1150,24 +620,14 @@ ObjectWithMemberInfos (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumpe
         class NestedItem
         {
             public int Property { get; set; }
-            public NestedItem Next { get; set; }
+            public NestedItem? Next { get; set; }
         }
 
         [TestMethod]
         public void TestDumpNestedObject()
         {
             ActAndAssert(
-                nameof(TestDumpNestedObject),
-                @"
-NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
-  Next                     = NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
-    Next                     = NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
-      Next                     = NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+NestedItem, "+ObjectTextDumperTestAssembly+@"): 
-        Next                     = ...object dump reached the maximum depth level. Use the DumpAttribute.MaxDepth to increase the depth level if needed.
-        Property                 = 3
-      Property                 = 2
-    Property                 = 1
-  Property                 = 0",
+                TestDumpNestedObject_expected,
                 new NestedItem
                 {
                     Property = 0,
@@ -1195,12 +655,7 @@ NestedItem (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Neste
         public void TestCollectionObject()
         {
             ActAndAssert(
-                nameof(TestCollectionObject),
-                @"
-List<string>[3]: (System.Collections.Generic.List`1[[System.String, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
-  one
-  two
-  three",
+                TestCollectionObject_expected,
                 new List<string> { "one", "two", "three" });
         }
 
@@ -1208,14 +663,7 @@ List<string>[3]: (System.Collections.Generic.List`1[[System.String, "+CoreDotNet
         public void TestDictionaryBaseTypes()
         {
             ActAndAssert(
-                nameof(TestDictionaryBaseTypes),
-                @"
-Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.String, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
-{
-  [one] = 1
-  [two] = 2
-  [three] = 3
-}",
+                TestDictionaryBaseTypes_expected,
                 new Dictionary<string, int>
                 {
                     ["one"] = 1,
@@ -1228,20 +676,7 @@ Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.Str
         public void TestDictionaryBaseTypeAndObject()
         {
             ActAndAssert(
-                nameof(TestDictionaryBaseTypeAndObject),
-                @"
-Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, "+CoreDotNetAssembly+@"],[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
-{
-  [1] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
-    Property1                = one
-    Property2                = Property2
-  [2] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
-    Property1                = two
-    Property2                = Property2
-  [3] = Object4_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object4_1, "+ObjectTextDumperTestAssembly+@"): 
-    Property1                = three
-    Property2                = Property2
-}",
+                TestDictionaryBaseTypeAndObject_expected,
                 new Dictionary<int, Object4_1>
                 {
                     [1] = new Object4_1 { Property1 = "one" },
@@ -1254,12 +689,7 @@ Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.
         public void TestVirtualProperties()
         {
             ActAndAssert(
-                nameof(TestVirtualProperties),
-                @"
-Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived, "+ObjectTextDumperTestAssembly+@"): 
-  IntProperty              = 0
-  StringProperty           = StringProperty
-  IntProperty              = 5",
+                TestVirtualProperties_expected,
                 new Derived
                 {
                     StringProperty = "StringProperty",
@@ -1273,12 +703,7 @@ Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived,
             dynamic test = new { IntProperty = 10, StringProperty = "hello", DoubleProperty = Math.PI, };
 
             ActAndAssert(
-                nameof(TestDumpOfDynamic),
-                @"
-<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, "+CoreDotNetAssembly+@"],[System.String, "+CoreDotNetAssembly+@"],[System.Double, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"): 
-  DoubleProperty           = 3.141592653589793
-  IntProperty              = 10
-  StringProperty           = hello",
+                TestDumpOfDynamic_expected,
                 test);
         }
 
@@ -1292,18 +717,7 @@ Derived (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Derived,
             test.DoubleProperty = Math.PI;
 
             ActAndAssert(
-                nameof(TestDumpOfExpando),
-                @"
-ExpandoObject[]: (System.Dynamic.ExpandoObject, "+LinqAssembly+@")
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"): 
-    Key                      = IntProperty
-    Value                    = 10
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"): 
-    Key                      = StringProperty
-    Value                    = hello
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"): 
-    Key                      = DoubleProperty
-    Value                    = 3.141592653589793",
+                TestDumpOfExpando_expected,
                 test);
         }
 
@@ -1311,18 +725,7 @@ ExpandoObject[]: (System.Dynamic.ExpandoObject, "+LinqAssembly+@")
         public void TestDumpClassDumpMethod()
         {
             ActAndAssert(
-                nameof(TestDumpClassDumpMethod),
-                @"
-Object12 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object12, "+ObjectTextDumperTestAssembly+@"): 
-  Object11Property_1       = Dumped by Objec11Dumper.Dump1: string value
-  Object11Property_11      = Dumped by Objec11Dumper.Dump1: string value
-  Object11Property_2       = Dumped by Objec11Dumper.Dump: string value
-  Object11Property_21      = Dumped by Objec11Dumper.Dump: string value
-  Object11Property_3       = Dumped by Objec11.DumpMe: string value
-  Object11Property_31      = Dumped by Objec11.DumpMe: string value
-  Object11Property_4       = Dumped by Objec11.DumpMeStatic: string value
-  Object11Property_41      = Dumped by Objec11.DumpMeStatic: string value
-  Object11Property_51      = *** Could not find a public, static, method DumpMeNoneSuch, with return type of System.String, with a single parameter of type vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1 in the class vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object11_1.",
+                TestDumpClassDumpMethod_expected,
                 new Object12());
         }
 
@@ -1332,11 +735,7 @@ Object12 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
             DumpAttribute.Default.Skip = ShouldDump.Skip;
 
             ActAndAssert(
-                nameof(TestOptInDump),
-                @"
-Object13 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object13, "+ObjectTextDumperTestAssembly+@"): 
-  Prop2                    = <null>
-  Prop3                    = <null>",
+                TestOptInDump_expected,
                 new Object13());
 
             DumpAttribute.Default.Skip = ShouldDump.Dump;
@@ -1346,15 +745,7 @@ Object13 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
         public void TestArrayIndentationCreep()
         {
             ActAndAssert(
-                nameof(TestArrayIndentationCreep),
-                @"
-DavidATest (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+DavidATest, "+ObjectTextDumperTestAssembly+@"): 
-  A                        = 10
-  Array                    = int[3]: (System.Int32[], "+CoreDotNetAssembly+@")
-    1
-    2
-    3
-  B                        = 6",
+                TestArrayIndentationCreep_expected,
                 new DavidATest());
         }
 
@@ -1362,20 +753,10 @@ DavidATest (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+David
         public void TestObjectWithNullCollection()
         {
             ActAndAssert(
-                nameof(TestObjectWithNullCollection),
-                @"
-Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
-  Collection               = <null>
-  Property11               = 0
-  Property12               = <null>",
+                TestObjectWithNullCollection_expected,
                 new Object14());
             ActAndAssert(
-                nameof(TestObjectWithNullCollection),
-                @"
-Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
-  Collection               = <null>
-  Property11               = 0
-  Property12               = <null>",
+                TestObjectWithNullCollection_expected2,
                 new Object14());
         }
 
@@ -1383,18 +764,7 @@ Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
         public void TestObjectWithNotNullCollection()
         {
             ActAndAssert(
-                nameof(TestObjectWithNotNullCollection),
-                @"
-Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
-  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[[vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
-    Object14_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"): 
-      Property1                = 0
-      Property2                = zero
-    Object14_1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14_1, "+ObjectTextDumperTestAssembly+@"): 
-      Property1                = 1
-      Property2                = one
-  Property11               = 1
-  Property12               = one.two",
+                TestObjectWithNotNullCollection_expected,
                 new Object14
                 {
                     Property11 = 1,
@@ -1414,12 +784,7 @@ Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
                     }
                 });
             ActAndAssert(
-                nameof(TestObjectWithNotNullCollection),
-                @"
-Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object14, "+ObjectTextDumperTestAssembly+@"): 
-  Collection               = <null>
-  Property11               = 0
-  Property12               = <null>",
+                TestObjectWithNotNullCollection_expected2,
                 new Object14());
         }
 
@@ -1427,45 +792,20 @@ Object14 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Object1
         public void TestVirtualPropertiesVariations()
         {
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-BaseClass (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+BaseClass, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 0
-  VirtualProperty1         = 1
-  VirtualProperty2         = 2",
+                TestVirtualPropertiesVariations_expected,
                 new BaseClass());
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant1, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 0
-  VirtualProperty1         = 1
-  VirtualProperty2         = 2",
+                TestVirtualPropertiesVariations_expected2,
                 new Descendant1());
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 0
-  VirtualProperty1         = 21
-  VirtualProperty2         = 2",
+                TestVirtualPropertiesVariations_expected3,
                 new Descendant2());
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant3, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 0
-  VirtualProperty1         = 21
-  VirtualProperty2         = 32",
+                TestVirtualPropertiesVariations_expected4,
                 new Descendant3());
 
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-BaseClass (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+BaseClass, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 0
-  VirtualProperty1         = 1
-  VirtualProperty2         = 2",
+                TestVirtualPropertiesVariations_expected5,
                 new BaseClass
                 {
                     Property         = 0,
@@ -1473,12 +813,7 @@ BaseClass (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+BaseCl
                     VirtualProperty2 = 2,
                 });
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant1, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 10
-  VirtualProperty1         = 11
-  VirtualProperty2         = 12",
+                TestVirtualPropertiesVariations_expected6,
                 new Descendant1
                 {
                     Property         = 10,
@@ -1486,12 +821,7 @@ Descendant1 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
                     VirtualProperty2 = 12,
                 });
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant2, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 20
-  VirtualProperty1         = 21
-  VirtualProperty2         = 22",
+                TestVirtualPropertiesVariations_expected7,
                 new Descendant2
                 {
                     Property         = 20,
@@ -1499,12 +829,7 @@ Descendant2 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
                     VirtualProperty2 = 22,
                 });
             ActAndAssert(
-                nameof(TestVirtualPropertiesVariations),
-                @"
-Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Descendant3, "+ObjectTextDumperTestAssembly+@"): 
-  Property                 = 30
-  VirtualProperty1         = 31
-  VirtualProperty2         = 32",
+                TestVirtualPropertiesVariations_expected8,
                 new Descendant3
                 {
                     Property         = 30,
@@ -1517,10 +842,7 @@ Descendant3 (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+Desc
         public void TestWrappedByteArray()
         {
             ActAndAssert(
-                nameof(TestWrappedByteArray),
-                @"
-WrappedByteArray (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+WrappedByteArray, "+ObjectTextDumperTestAssembly+@"): 
-  Bytes                    = byte[8]: 00-00-00-00-00-00-00-00",
+                TestWrappedByteArray_expected,
                 new WrappedByteArray { Bytes = new byte[8] });
         }
 
@@ -1528,10 +850,7 @@ WrappedByteArray (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest
         public void TestGenericWithBuddy()
         {
             ActAndAssert(
-                nameof(TestGenericWithBuddy),
-                @"
-GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectDumper.Tests.ObjectTextDumperTest+GenericWithBuddy`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"): 
-  Property2                = ******",
+                TestGenericWithBuddy_expected,
                 new GenericWithBuddy<int> { Property1 = 7, Property2 = 3 });
         }
     }

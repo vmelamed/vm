@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using vm.Aspects.Diagnostics.ExternalMetadata;
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     [TestClass]
     public class ClassMetadataCacheTest

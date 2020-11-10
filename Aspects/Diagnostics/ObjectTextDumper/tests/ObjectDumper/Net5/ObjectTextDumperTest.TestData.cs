@@ -6,10 +6,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable CA1822  // Mark members as static
 #pragma warning disable RCS1164 // Unused type parameter.
+#pragma warning disable CS8618  // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS0649, CS0067
 
-namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
+namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 {
     public partial class ObjectTextDumperTest
     {
@@ -31,61 +33,10 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             Eight = 1 << 3,
         }
 
-        #region basic values and corresponding strings
-        readonly object[] _basicValues =
-        {
-            null,
-            new int?(),
-            true,
-            'A',
-            (byte)1,
-            (sbyte)1,
-            (short)1,
-            (int)1,
-            (long)1,
-            (ushort)1,
-            (uint)1,
-            (ulong)1,
-            1.0,
-            (float)1.0,
-            1M,
-            "1M",
-            Guid.Empty,
-            new Uri("http://localhost"),
-            new DateTime(2013, 1, 13),
-            new TimeSpan(123L),
-            new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc)),
-        };
-
-        readonly string[] _basicValuesStrings =
-        {
-            "<null>",
-            "<null>",
-            "True",
-            "A",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1M",
-            "00000000-0000-0000-0000-000000000000",
-            "http://localhost/",
-            "2013-01-13T00:00:00.0000000",
-            "00:00:00.0000123",
-            "2013-01-13T00:00:00.0000000+00:00",
-        };
-        #endregion
-
         public class Object1
         {
-            public object ObjectProperty { get; set; }
+            public object ObjectProperty { get; set; } = new object();
+            public object? NullObjectProperty { get; set; }
             public int? NullIntProperty { get; set; }
             public long? NullLongProperty { get; set; } = 1L;
             public bool BoolProperty { get; set; } = true;
@@ -130,13 +81,16 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public DateTimeOffset DateTimeOffsetField = new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
         }
 
-        class Object1Metadata
+        abstract class Object1Metadata
         {
             private Object1Metadata() { }
 
             [Dump(0, LabelFormat = "{0,-24} : ")]
             public object ObjectProperty { get; set; }
             [Dump(1)]
+            public object? NullObjectProperty { get; set; }
+
+            [Dump(2)]
             public object NullIntProperty { get; set; }
             [Dump(2)]
             public object NullLongProperty { get; set; }
@@ -178,11 +132,12 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             public object DateTimeOffsetProperty { get; set; }
         }
 
-#pragma warning disable 0649
         abstract class Object1FieldsMetadata
         {
             [Dump(0, LabelFormat = "{0,-24} : ")]
             public object ObjectProperty;
+            [Dump(1)]
+            public object NullObjectProperty;
             [Dump(1)]
             public object NullIntProperty;
             [Dump(2)]
@@ -267,15 +222,14 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             [Dump(false)]
             public object DateTimeOffsetField;
         }
-#pragma warning restore 0649
 
         [Dump(DumpNullValues = ShouldDump.Skip)]
         public class Object2
         {
             [Dump(0, LabelFormat = "{0,-24} : ")]
-            public object ObjectProperty { get; set; } = null;
+            public object? ObjectProperty { get; set; }
             [Dump(1)]
-            public int? NullIntProperty { get; set; } = null;
+            public int? NullIntProperty { get; set; }
             [Dump(2)]
             public long? NullLongProperty { get; set; } = 1L;
             [Dump(3)]
@@ -321,7 +275,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
         [MetadataType(typeof(Object3Metadata))]
         public class Object3
         {
-            public object ObjectProperty { get; set; }
+            public object? ObjectProperty { get; set; }
             public int? NullIntProperty { get; set; }
             public long? NullLongProperty { get; set; } = 1L;
             public bool BoolProperty { get; set; } = true;
@@ -548,7 +502,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             }
 
             [Dump(0)]
-            public Object90 Object90 { get; set; }
+            public Object90? Object90 { get; set; }
             [Dump(1)]
             public int Prop91 { get; set; }
             [Dump(2)]
@@ -583,7 +537,7 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             [Dump(-2)]
             public int Prop914 { get; set; }
             [Dump(-3)]
-            public Object90 InheritedObject90 => Object90;
+            public Object90? InheritedObject90 => Object90;
         }
 
         public class Object10
@@ -648,8 +602,8 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
             }
             public int Method2(int a) => a;
             public string Method3(int a, int b) => (a+b).ToString();
-            public T Method4<T>(int a, int b) where T : new() => a+b != 0 ? new T() : default;
-            public T Method5<T, U>(int a, int b) where T : new() => a+b != 0 ? new T() : default;
+            public T? Method4<T>(int a, int b) where T : new() => a+b != 0 ? new T() : default;
+            public T? Method5<T, U>(int a, int b) where T : new() => a+b != 0 ? new T() : default;
             public string this[int index] => index.ToString();
             public string this[string index, int index1]
             {
@@ -657,30 +611,27 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 set { }
             }
 
-#pragma warning disable 0067, 0649
             public event EventHandler Event;
             public int member;
-#pragma warning disable 0067, 0649
         }
 
         class ObjectWithMemberInfos
         {
-            public Type Type { get; set; }
+            public Type Type { get; set; } = typeof(ObjectWithMembers);
             public PropertyInfo PropertyInfo { get; set; }
             public PropertyInfo IndexerIntInfo { get; set; }
             public PropertyInfo IndexerStringInfo { get; set; }
-            public MethodInfo Method1Info { get; set; }
-            public MethodInfo Method2Info { get; set; }
+            public MethodInfo? Method1Info { get; set; }
+            public MethodInfo? Method2Info { get; set; }
             public MethodInfo Method3Info { get; set; }
             public MethodInfo Method4Info { get; set; }
             public MethodInfo Method5Info { get; set; }
-            public EventInfo EventInfo { get; set; }
-            public MemberInfo MemberInfo { get; set; }
+            public EventInfo? EventInfo { get; set; }
+            public MemberInfo? MemberInfo { get; set; }
             public MemberInfo[] MemberInfos { get; set; }
 
             public ObjectWithMemberInfos()
             {
-                Type = typeof(ObjectWithMembers);
                 foreach (var pi in Type.GetProperties())
                 {
                     if (pi.Name == "Property")
@@ -694,9 +645,9 @@ namespace vm.Aspects.Diagnostics.ObjectDumper.Tests
                 }
                 Method1Info = Type.GetMethod("Method1");
                 Method2Info = Type.GetMethod("Method2");
-                Method3Info = Type.GetMethod("Method3");
-                Method4Info = Type.GetMethod("Method4");
-                Method5Info = Type.GetMethod("Method5");
+                Method3Info = Type.GetMethod("Method3")!;
+                Method4Info = Type.GetMethod("Method4")!;
+                Method5Info = Type.GetMethod("Method5")!;
                 EventInfo   = Type.GetEvent("Event");
                 MemberInfo  = Type.GetMember("member")[0];
                 MemberInfos = Type.GetMembers().OrderBy(mi => mi.Name).ToArray();
