@@ -8,7 +8,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         public const string ObjectTextDumperTestClass    = "vm.Aspects.Diagnostics."+nameof(ObjectTextDumperTests)+"."+nameof(ObjectTextDumperTest);
         public const string CSharpLambda                 = "Expression1<Func<";
         public const string LinqExpression               = "System.Linq.Expressions.Expression1";
-        public const string CoreDotNetAssembly           = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+        public const string DotNetAssembly               = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
         public const string LinqAssembly                 = "System.Linq.Expressions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
         public const string RuntimeExtensionsAssembly    = "System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
         public const string RoCollectionNamespace        = "System.Collections.ObjectModel";
@@ -103,7 +103,7 @@ Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+
   NullIntProperty          = <null>
   NullLongProperty         = 1
   NullObjectProperty       = <null>
-  ObjectProperty           = object (System.Object, "+CoreDotNetAssembly+@"):
+  ObjectProperty           = object (System.Object, "+DotNetAssembly+@"):
   SByteProperty            = 1
   ShortProperty            = 1
   TimeSpanProperty         = 00:00:00.0000123
@@ -149,7 +149,7 @@ Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+
   NullIntProperty          = <null>
   NullLongProperty         = 1
   NullObjectProperty       = <null>
-  ObjectProperty           = object (System.Object, "+CoreDotNetAssembly+@"):
+  ObjectProperty           = object (System.Object, "+DotNetAssembly+@"):
   SByteProperty            = 1
   ShortProperty            = 1
   TimeSpanProperty         = 00:00:00.0000123
@@ -172,7 +172,7 @@ The dump exceeded the maximum length of 500 characters. Either increase the valu
 
         const string TestDumpObject1_2_expected = @"
 Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+@"):
-  ObjectProperty           : object (System.Object, "+CoreDotNetAssembly+@"):
+  ObjectProperty           : object (System.Object, "+DotNetAssembly+@"):
   NullObjectProperty       = <null>
   NullIntProperty          = <null>
   NullLongProperty         = 1
@@ -216,7 +216,7 @@ Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject1_3_expected = @"
 Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+@"):
-  ObjectProperty           : object (System.Object, "+CoreDotNetAssembly+@"):
+  ObjectProperty           : object (System.Object, "+DotNetAssembly+@"):
   NullLongProperty         = 1
   BoolProperty             = True
   CharProperty             = A
@@ -256,9 +256,9 @@ Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject1WithFieldsMetadata_2_expected = @"
 Object1 ("+ObjectTextDumperTestClass+@"+Object1, "+ObjectTextDumperTestAssembly+@"):
-  ObjectProperty           : object (System.Object, "+CoreDotNetAssembly+@"):
+  ObjectProperty           : object (System.Object, "+DotNetAssembly+@"):
   NullIntProperty          = <null>
-  NullObjectProperty       = object (System.Object, "+CoreDotNetAssembly+@"):
+  NullObjectProperty       = object (System.Object, "+DotNetAssembly+@"):
   NullLongProperty         = 1
   BoolProperty             = True
   CharProperty             = A
@@ -343,36 +343,40 @@ Object3 ("+ObjectTextDumperTestClass+@"+Object3, "+ObjectTextDumperTestAssembly+
 Object5_1 ("+ObjectTextDumperTestClass+@"+Object5_1, "+ObjectTextDumperTestAssembly+@"):
   PropertyA                = PropertyA
   PropertyB                = PropertyB
+  PropertyC                = ValueTuple<int, string> (System.ValueTuple`2[[System.Int32, "+DotNetAssembly+@"],[System.String, "+DotNetAssembly+@"]], "+DotNetAssembly+@"):
+    Item1                    = 42
+    Item2                    = Don't panic
+    System.Runtime.CompilerServices.ITuple.Length = 2
   Associate                = Object4_1 ("+ObjectTextDumperTestClass+@"+Object4_1, "+ObjectTextDumperTestAssembly+@"):
     Property1                = Property1
   Associate2               = Object4_1 ("+ObjectTextDumperTestClass+@"+Object4_1, "+ObjectTextDumperTestAssembly+@"):";
 
         const string TestDumpExpression_expected = @"
-"+CSharpLambda+@"int, int>> ("+LinqExpression+@"`1[[System.Func`2[[System.Int32, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"]], "+LinqAssembly+@"):
+"+CSharpLambda+@"int, int>> ("+LinqExpression+@"`1[[System.Func`2[[System.Int32, "+DotNetAssembly+@"],[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@"]], "+LinqAssembly+@"):
   C#-like expression text:
     (int a) => 3 * a + 5
   NodeType                 = ExpressionType.Lambda
-  Type                     = (TypeInfo): System.Func`2[[System.Int32, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"
+  Type                     = (TypeInfo): System.Func`2[[System.Int32, "+DotNetAssembly+@"],[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@"
   Name                     = <null>
-  ReturnType               = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
-  Parameters               = "+ReadOnlyCollection+@"<ParameterExpression>[1]: ("+RoCollectionNamespace+"."+ReadOnlyCollection+@"`1[[System.Linq.Expressions.ParameterExpression, "+LinqAssembly+@"]], "+CoreDotNetAssembly+@")
-    PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+LinqAssembly+@"):
+  ReturnType               = (TypeInfo): System.Int32, "+DotNetAssembly+@"
+  Parameters               = "+ReadOnlyCollection+@"<ParameterExpression>[1]: ("+RoCollectionNamespace+"."+ReadOnlyCollection+@"`1[[System.Linq.Expressions.ParameterExpression, "+LinqAssembly+@"]], "+DotNetAssembly+@")
+    PrimitiveParameterExpression<int> (System.Linq.Expressions.PrimitiveParameterExpression`1[[System.Int32, "+DotNetAssembly+@"]], "+LinqAssembly+@"):
       NodeType                 = ExpressionType.Parameter
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+      Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
       Name                     = a
       IsByRef                  = False
       NodeType                 = ExpressionType.Parameter
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+      Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
       CanReduce                = False
   Body                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, "+LinqAssembly+@"):
     NodeType                 = ExpressionType.Add
-    Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+    Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
     Left                     = SimpleBinaryExpression (System.Linq.Expressions.SimpleBinaryExpression, "+LinqAssembly+@"):
       NodeType                 = ExpressionType.Multiply
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+      Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
       Left                     = ConstantExpression (System.Linq.Expressions.ConstantExpression, "+LinqAssembly+@"):
         NodeType                 = ExpressionType.Constant
-        Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+        Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
         Value                    = 3
         NodeType                 = ExpressionType.Constant
         CanReduce                = False
@@ -380,7 +384,7 @@ Object5_1 ("+ObjectTextDumperTestClass+@"+Object5_1, "+ObjectTextDumperTestAssem
       IsLiftedLogical          = False
       IsReferenceComparison    = False
       NodeType                 = ExpressionType.Multiply
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+      Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
       Method                   = <null>
       Conversion               = <null>
       IsLifted                 = False
@@ -388,14 +392,14 @@ Object5_1 ("+ObjectTextDumperTestClass+@"+Object5_1, "+ObjectTextDumperTestAssem
       CanReduce                = False
     Right                    = ConstantExpression (System.Linq.Expressions.ConstantExpression, "+LinqAssembly+@"):
       NodeType                 = ExpressionType.Constant
-      Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+      Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
       Value                    = 5
       NodeType                 = ExpressionType.Constant
       CanReduce                = False
     IsLiftedLogical          = False
     IsReferenceComparison    = False
     NodeType                 = ExpressionType.Add
-    Type                     = (TypeInfo): System.Int32, "+CoreDotNetAssembly+@"
+    Type                     = (TypeInfo): System.Int32, "+DotNetAssembly+@"
     Method                   = <null>
     Conversion               = <null>
     IsLifted                 = False
@@ -412,7 +416,7 @@ Object6 ("+ObjectTextDumperTestClass+@"+Object6, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject7_1_expected = @"
 Object7 ("+ObjectTextDumperTestClass+@"+Object7, "+ObjectTextDumperTestAssembly+@"):
-  Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
+  Array                    = int[6]: (System.Int32[], "+DotNetAssembly+@")
     0
     1
     2
@@ -424,7 +428,7 @@ Object7 ("+ObjectTextDumperTestClass+@"+Object7, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject7_1_1_expected = @"
 Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssembly+@"):
-  List                     = List<int>[6]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
+  List                     = List<int>[6]: (System.Collections.Generic.List`1[[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@")
     0
     1
     2
@@ -436,7 +440,7 @@ Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssem
 
         const string TestDumpObject7_1_2_expected = @"
 Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssembly+@"):
-  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
+  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@")
     0
     1
     2
@@ -453,7 +457,7 @@ Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssem
 
         const string TestDumpObject7_1_3_expected = @"
 Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssembly+@"):
-  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
+  List                     = List<int>[18]: (System.Collections.Generic.List`1[[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@")
     0
     1
     2
@@ -477,7 +481,7 @@ Object7_1 ("+ObjectTextDumperTestClass+@"+Object7_1, "+ObjectTextDumperTestAssem
 
         const string TestDumpObject7_2_expected = @"
 Object7 ("+ObjectTextDumperTestClass+@"+Object7, "+ObjectTextDumperTestAssembly+@"):
-  Array                    = int[18]: (System.Int32[], "+CoreDotNetAssembly+@")
+  Array                    = int[18]: (System.Int32[], "+DotNetAssembly+@")
     0
     1
     2
@@ -494,12 +498,12 @@ Object7 ("+ObjectTextDumperTestClass+@"+Object7, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject8_1_expected = @"
 Object8 ("+ObjectTextDumperTestClass+@"+Object8, "+ObjectTextDumperTestAssembly+@"):
-  Array                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
+  Array                    = int[6]: (System.Int32[], "+DotNetAssembly+@")
     0
     1
     2
     ... dumped the first 3/6 elements.
-  Array2                   = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
+  Array2                   = int[6]: (System.Int32[], "+DotNetAssembly+@")
   Array3                   = byte[18]: 00-01-02-03-04-05-00-01-02-03-04-05-00-01-02-03-04-05
   Array4                   = byte[18]: 00-01-02-03-04-05-00-01-02-03... dumped the first 10/18 elements.
   Array5                   = byte[18]: 00-01-02... dumped the first 3/18 elements.
@@ -513,12 +517,12 @@ Object8 ("+ObjectTextDumperTestClass+@"+Object8, "+ObjectTextDumperTestAssembly+
 
         const string TestDumpObject8_1_1_expected = @"
 Object8_1 ("+ObjectTextDumperTestClass+@"+Object8_1, "+ObjectTextDumperTestAssembly+@"):
-  List                     = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
+  List                     = int[6]: (System.Int32[], "+DotNetAssembly+@")
     0
     1
     2
     ... dumped the first 3/6 elements.
-  List2                    = int[6]: (System.Int32[], "+CoreDotNetAssembly+@")
+  List2                    = int[6]: (System.Int32[], "+DotNetAssembly+@")
   Property1                = Property1
   Property2                = Property2";
 
@@ -575,7 +579,7 @@ ObjectWithMemberInfos ("+ObjectTextDumperTestClass+@"+ObjectWithMemberInfos, "+O
   IndexerIntInfo           = (Property): String ObjectWithMembers.this[Int32] { get; }
   IndexerStringInfo        = (Property): String ObjectWithMembers.this[String, Int32] { get;set; }
   MemberInfo               = (Field): Int32 ObjectWithMembers.member
-  MemberInfos              = MemberInfo[22]: (System.Reflection.MemberInfo[], "+CoreDotNetAssembly+@")
+  MemberInfos              = MemberInfo[22]: (System.Reflection.MemberInfo[], "+DotNetAssembly+@")
     (Constructor): .ctor
     (Method): Void ObjectWithMembers.add_Event(EventHandler value)
     (Method): Boolean Object.Equals(Object obj)
@@ -607,13 +611,13 @@ NestedItem ("+ObjectTextDumperTestClass+@"+NestedItem, "+ObjectTextDumperTestAss
   Property                 = 0";
 
         const string TestCollectionObject_expected = @"
-List<string>[3]: (System.Collections.Generic.List`1[[System.String, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
+List<string>[3]: (System.Collections.Generic.List`1[[System.String, "+DotNetAssembly+@"]], "+DotNetAssembly+@")
   one
   two
   three";
 
         const string TestDictionaryBaseTypes_expected = @"
-Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.String, "+CoreDotNetAssembly+@"],[System.Int32, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@")
+Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.String, "+DotNetAssembly+@"],[System.Int32, "+DotNetAssembly+@"]], "+DotNetAssembly+@")
 {
   [one] = 1
   [two] = 2
@@ -621,7 +625,7 @@ Dictionary<string, int>[3]: (System.Collections.Generic.Dictionary`2[[System.Str
 }";
 
         const string TestDictionaryBaseTypeAndObject_expected = @"
-Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, "+CoreDotNetAssembly+@"],["+ObjectTextDumperTestClass+@"+Object4_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
+Dictionary<int, Object4_1>[3]: (System.Collections.Generic.Dictionary`2[[System.Int32, "+DotNetAssembly+@"],["+ObjectTextDumperTestClass+@"+Object4_1, "+ObjectTextDumperTestAssembly+@"]], "+DotNetAssembly+@")
 {
   [1] = Object4_1 ("+ObjectTextDumperTestClass+@"+Object4_1, "+ObjectTextDumperTestAssembly+@"):
     Property1                = one
@@ -641,22 +645,18 @@ Derived ("+ObjectTextDumperTestClass+@"+Derived, "+ObjectTextDumperTestAssembly+
   IntProperty              = 5";
 
         const string TestDumpOfDynamic_expected = @"
-<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, "+CoreDotNetAssembly+@"],[System.String, "+CoreDotNetAssembly+@"],[System.Double, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"):
+<>f__AnonymousType0<int, string, double> (<>f__AnonymousType0`3[[System.Int32, "+DotNetAssembly+@"],[System.String, "+DotNetAssembly+@"],[System.Double, "+DotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"):
   DoubleProperty           = 3.141592653589793
   IntProperty              = 10
   StringProperty           = hello";
 
         const string TestDumpOfExpando_expected = @"
-ExpandoObject[]: (System.Dynamic.ExpandoObject, "+LinqAssembly+@")
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"):
-    Key                      = IntProperty
-    Value                    = 10
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"):
-    Key                      = StringProperty
-    Value                    = hello
-  KeyValuePair<string, object> (System.Collections.Generic.KeyValuePair`2[[System.String, "+CoreDotNetAssembly+@"],[System.Object, "+CoreDotNetAssembly+@"]], "+CoreDotNetAssembly+@"):
-    Key                      = DoubleProperty
-    Value                    = 3.141592653589793";
+ExpandoObject[3]: (System.Dynamic.ExpandoObject, System.Linq.Expressions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a)
+{
+  IntProperty              = 10
+  StringProperty           = hello
+  DoubleProperty           = 3.141592653589793
+}";
 
         const string TestDumpClassDumpMethod_expected = @"
 Object12 ("+ObjectTextDumperTestClass+@"+Object12, "+ObjectTextDumperTestAssembly+@"):
@@ -678,7 +678,7 @@ Object13 ("+ObjectTextDumperTestClass+@"+Object13, "+ObjectTextDumperTestAssembl
         const string TestArrayIndentationCreep_expected = @"
 DavidATest ("+ObjectTextDumperTestClass+@"+DavidATest, "+ObjectTextDumperTestAssembly+@"):
   A                        = 10
-  Array                    = int[3]: (System.Int32[], "+CoreDotNetAssembly+@")
+  Array                    = int[3]: (System.Int32[], "+DotNetAssembly+@")
     1
     2
     3
@@ -698,7 +698,7 @@ Object14 ("+ObjectTextDumperTestClass+@"+Object14, "+ObjectTextDumperTestAssembl
 
         const string TestObjectWithNotNullCollection_expected = @"
 Object14 ("+ObjectTextDumperTestClass+@"+Object14, "+ObjectTextDumperTestAssembly+@"):
-  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[["+ObjectTextDumperTestClass+@"+Object14_1, "+ObjectTextDumperTestAssembly+@"]], "+CoreDotNetAssembly+@")
+  Collection               = List<Object14_1>[2]: (System.Collections.Generic.List`1[["+ObjectTextDumperTestClass+@"+Object14_1, "+ObjectTextDumperTestAssembly+@"]], "+DotNetAssembly+@")
     Object14_1 ("+ObjectTextDumperTestClass+@"+Object14_1, "+ObjectTextDumperTestAssembly+@"):
       Property1                = 0
       Property2                = zero
@@ -767,7 +767,7 @@ WrappedByteArray ("+ObjectTextDumperTestClass+@"+WrappedByteArray, "+ObjectTextD
   Bytes                    = byte[8]: 00-00-00-00-00-00-00-00";
 
         const string TestGenericWithBuddy_expected = @"
-GenericWithBuddy<int> ("+ObjectTextDumperTestClass+@"+GenericWithBuddy`1[[System.Int32, "+CoreDotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"):
+GenericWithBuddy<int> ("+ObjectTextDumperTestClass+@"+GenericWithBuddy`1[[System.Int32, "+DotNetAssembly+@"]], "+ObjectTextDumperTestAssembly+@"):
   Property2                = ******";
     }
 }

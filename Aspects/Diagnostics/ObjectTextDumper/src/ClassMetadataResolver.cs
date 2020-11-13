@@ -10,7 +10,7 @@ namespace vm.Aspects.Diagnostics
 {
     /// <summary>
     /// Primary responsibility of the class is to retrieve the metadata (the buddy class) and DumpAttribute instance associated with a class to be
-    /// dumped. For speed the class encapsulates a cache of type (usually class or struct) and the associated <see cref="ClassDumpData"/> which
+    /// dumped. For speed the class encapsulates a cache of type (usually class or struct) and the associated <see cref="ClassDumpMetadata"/> which
     /// contains the buddy and DumpAttribute instance. Allows to define externally metadata and a DumpAttribute on a class/struct level - useful for
     /// FCL and 3rd party classes for which we do not have access to their source code.
     /// </summary>
@@ -19,10 +19,10 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Synchronized cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
         /// </summary>
-        static readonly Dictionary<Type, ClassDumpData> _typesDumpData = new Dictionary<Type, ClassDumpData>();
+        static readonly Dictionary<Type, ClassDumpMetadata> _typesDumpData = new Dictionary<Type, ClassDumpMetadata>();
         static readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
-        public static Dictionary<Type, ClassDumpData> GetSnapshotTypesDumpData()
+        public static Dictionary<Type, ClassDumpMetadata> GetSnapshotTypesDumpData()
         {
             using var _ = new ReaderSlimSync(_lock);
 
@@ -32,7 +32,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Resets the class dump.
         /// </summary>
-        internal static void ResetClassDumpData()
+        internal static void ResetClassDumpMetadata()
         {
             using var _ = new WriterSlimSync(_lock);
 
@@ -53,7 +53,7 @@ namespace vm.Aspects.Diagnostics
         /// <exception cref="InvalidOperationException">
         /// Thrown if <paramref name="replace"/> is <see langword="false"/> and there is already metadata associated with the <paramref name="type"/>.
         /// </exception>
-        public static void SetClassDumpData(
+        public static void SetClassDumpMetadata(
             Type type,
             Type? metadata = null,
             DumpAttribute? dumpAttribute = null,
@@ -68,28 +68,28 @@ namespace vm.Aspects.Diagnostics
                                 : type;
             }
 
-            AddClassDumpData(type, metadata, dumpAttribute, replace);
+            AddClassDumpMetadata(type, metadata, dumpAttribute, replace);
         }
 
-        public static ClassDumpData GetClassDumpData(
+        public static ClassDumpMetadata GetClassDumpMetadata(
             Type type,
             Type? dumpMetadata = null,
             DumpAttribute? dumpAttribute = null)
         {
             // figure out the metadata:
             // see if we have it in the cache:
-            var classDumpData = TryGetClassDumpData(type);
+            var classDumpMetadata = TryGetClassDumpMetadata(type);
             // if not found - get it from the type
-            var dumpTypeMetadata = classDumpData?.Metadata ?? ExtractClassDumpMetadata(type);
+            var dumpTypeMetadata = classDumpMetadata?.Metadata ?? ExtractClassDumpMetadata(type);
 
             // figure out the dumpAttribute of the whole type
             var dumpTypeAttribute = ExtractClassDumpAttribute(type, dumpTypeMetadata);
 
             // add it to the cache
-            if (classDumpData is null)
-                AddClassDumpData(type, new ClassDumpData(dumpTypeMetadata, dumpTypeAttribute), false);
+            if (classDumpMetadata is null)
+                AddClassDumpMetadata(type, new ClassDumpMetadata(dumpTypeMetadata, dumpTypeAttribute), false);
 
-            return new ClassDumpData(
+            return new ClassDumpMetadata(
                 dumpMetadata ?? dumpTypeMetadata,
                 CombineDumpAttributes(dumpAttribute, dumpTypeAttribute));
         }
@@ -158,7 +158,7 @@ namespace vm.Aspects.Diagnostics
             return result;
         }
 
-        static ClassDumpData? TryGetClassDumpData(Type type)
+        static ClassDumpMetadata? TryGetClassDumpMetadata(Type type)
         {
             using var _ = new ReaderSlimSync(_lock);
 
@@ -169,26 +169,26 @@ namespace vm.Aspects.Diagnostics
                     : null;
         }
 
-        static void AddClassDumpData(
+        static void AddClassDumpMetadata(
             Type type,
             Type buddy,
             DumpAttribute? dumpAttribute,
-            bool replace) => AddClassDumpData(type, new ClassDumpData(buddy, dumpAttribute), replace);
+            bool replace) => AddClassDumpMetadata(type, new ClassDumpMetadata(buddy, dumpAttribute), replace);
 
-        static void AddClassDumpData(
+        static void AddClassDumpMetadata(
             Type type,
-            ClassDumpData classDumpData,
+            ClassDumpMetadata classDumpMetadata,
             bool replace)
         {
             using var _ = new WriterSlimSync(_lock);
 
             if (replace || !_typesDumpData.TryGetValue(type, out var dumpData))
             {
-                _typesDumpData[type] = classDumpData;
+                _typesDumpData[type] = classDumpMetadata;
                 return;
             }
 
-            if (dumpData != classDumpData)
+            if (dumpData != classDumpMetadata)
                 throw new InvalidOperationException($"The type {type.FullName} is already associated with metadata type {_typesDumpData[type].Metadata.FullName} and a DumpAttribute instance.");
         }
     }

@@ -21,7 +21,7 @@ namespace vm.Aspects.Diagnostics
         /// <returns>ClassMetadataRegistrar.</returns>
         public static ClassMetadataRegistrar RegisterMetadata()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskGenericDumpMetadata));
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(Task<>), typeof(TaskGenericDumpMetadata));
 
             return new ClassMetadataRegistrar()
                 .Register<Type, TypeDumpMetadata>()
@@ -83,7 +83,7 @@ namespace vm.Aspects.Diagnostics
             DumpAttribute? dumpAttribute = null,
             bool replace = false)
         {
-            ClassMetadataResolver.SetClassDumpData(type, metadataType, dumpAttribute, replace);
+            ClassMetadataResolver.SetClassDumpMetadata(type, metadataType, dumpAttribute, replace);
             return this;
         }
 

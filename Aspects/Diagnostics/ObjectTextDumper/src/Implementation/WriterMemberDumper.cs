@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
-    class DumpStateToWriter : IDumpState
+    class WriterMemberDumper : IMemberDumper
     {
-        public DumpStateToWriter(DumpState dumpState)
+        public WriterMemberDumper(DumpState dumpState)
         {
             DumpState = dumpState;
             // shortcuts:
@@ -15,8 +15,6 @@ namespace vm.Aspects.Diagnostics.Implementation
             Writer        = dumpState.Dumper.Writer;
             Instance      = dumpState.Instance;
             InstanceType  = dumpState.InstanceType;
-            DumpAttribute = dumpState.CurrentDumpAttribute!;
-            MemberInfo    = dumpState.CurrentMember!;
         }
 
         DumpState DumpState { get; }
@@ -25,8 +23,8 @@ namespace vm.Aspects.Diagnostics.Implementation
         TextWriter Writer { get; }
         object Instance { get; }
         Type InstanceType { get; }
-        DumpAttribute DumpAttribute { get; }
-        MemberInfo MemberInfo { get; }
+        DumpAttribute DumpAttribute => DumpState.CurrentDumpAttribute!;
+        MemberInfo MemberInfo => DumpState.CurrentMember!;
 
         public void DumpSeenAlready()
         {
@@ -100,9 +98,20 @@ namespace vm.Aspects.Diagnostics.Implementation
             }
         }
 
+        public bool DumpExpando(
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute) =>
+            Dumper.Writer.DumpedExpando(
+                            sequence,
+                            dumpAttribute,
+                            o => Dumper.DumpObject(o, null, null, DumpState),
+                            Dumper.Indent,
+                            Dumper.Unindent);
+
         public bool DumpDictionary(
             object sequence,
-            DumpAttribute dumpAttribute) =>
+            DumpAttribute dumpAttribute,
+            MemberInfo? _) =>
             Dumper.Writer.DumpedDictionary(
                 sequence,
                 dumpAttribute,
@@ -113,20 +122,16 @@ namespace vm.Aspects.Diagnostics.Implementation
         public bool DumpSequence(
             IEnumerable sequence,
             DumpAttribute dumpAttribute,
+            MemberInfo? _,
             bool newLineForCustom = false)
         {
-            var sequenceType = sequence.GetType();
-            var isCustom     = !sequenceType.IsArray  &&  !sequenceType.IsFromSystem();
-
-            if (isCustom  &&  newLineForCustom)
-                Dumper.Writer.WriteLine();
-
+            Dumper.Writer.WriteLine();
             return Dumper.Writer.DumpedCollection(
-                                        sequence,
-                                        dumpAttribute,
-                                        o => Dumper.DumpObject(o, null, null, DumpState),
-                                        Dumper.Indent,
-                                        Dumper.Unindent);
+                                    sequence,
+                                    dumpAttribute,
+                                    o => Dumper.DumpObject(o, null, null, DumpState),
+                                    Dumper.Indent,
+                                    Dumper.Unindent);
         }
 
         public void DumpToString(object value)
@@ -138,9 +143,13 @@ namespace vm.Aspects.Diagnostics.Implementation
             object value,
             MethodInfo dumpMethod)
         {
-            if (dumpMethod.Invoke(null, new object[] { value }) is string dumpString)
+            var text = (dumpMethod.IsStatic
+                                    ? dumpMethod.Invoke(null, new object[] { value })
+                                    : dumpMethod.Invoke(value, null)) as string;
+
+            if (text is not null)
             {
-                Dumper.Writer.Write(dumpString);
+                Dumper.Writer.Write(text);
                 return true;
             }
 

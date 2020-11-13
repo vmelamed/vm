@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Globalization;
-using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -13,70 +13,16 @@ namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {
-        static readonly MethodInfo _miIntToString1            = typeof(int).GetMethod(nameof(int.ToString), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(IFormatProvider) }, null)!;
-
-        static readonly MethodInfo _miReferenceEquals         = typeof(object).GetMethod(nameof(object.ReferenceEquals), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(object), typeof(object) }, null)!;
-        static readonly MethodInfo _miGetType                 = typeof(object).GetMethod(nameof(object.GetType), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miToString                = typeof(object).GetMethod(nameof(object.ToString), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miEqualsObject            = typeof(object).GetMethod(nameof(object.Equals), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(object) }, null)!;
-
-        //static readonly MethodInfo _miDispose                 = typeof(IDisposable).GetMethod(nameof(IDisposable.Dispose), BindingFlags.Public|BindingFlags.Instance)!;
-
-        static readonly PropertyInfo _piArrayLength           = typeof(Array).GetProperty(nameof(Array.Length), BindingFlags.Public|BindingFlags.Instance)!;
-
-        static readonly MethodInfo _miBitConverterToString    = typeof(BitConverter).GetMethod(nameof(BitConverter.ToString), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(byte[]), typeof(int), typeof(int) }, null)!;
-
-        //static readonly PropertyInfo _piRecurseDump           = typeof(DumpAttribute).GetProperty(nameof(DumpAttribute.RecurseDump), BindingFlags.Public|BindingFlags.Instance)!;
-
-        //static readonly MethodInfo _miDumpNullValues          = typeof(ClassDumpData).GetMethod(nameof(ClassDumpData.DumpNullValues), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(DumpAttribute) }, null)!;
-
-        static readonly PropertyInfo _piNamespace             = typeof(Type).GetProperty(nameof(Type.Namespace), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piAssemblyQualifiedName = typeof(Type).GetProperty(nameof(Type.AssemblyQualifiedName), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piIsArray               = typeof(Type).GetProperty(nameof(Type.IsArray), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piIsGenericType         = typeof(Type).GetProperty(nameof(Type.IsGenericType), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly MethodInfo _miGetElementType          = typeof(Type).GetMethod(nameof(Type.GetElementType), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miGetGenericArguments     = typeof(Type).GetMethod(nameof(Type.GetGenericArguments), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-
-        static readonly FieldInfo _fiDumperIndentLevel        = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentLevel), BindingFlags.NonPublic|BindingFlags.Instance)!;
-        static readonly FieldInfo _fiDumperIndentLength       = typeof(ObjectTextDumper).GetField(nameof(ObjectTextDumper._indentSize), BindingFlags.NonPublic|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piDumperMaxDepth        = typeof(ObjectTextDumper).GetProperty(nameof(ObjectTextDumper.MaxDepth), BindingFlags.NonPublic|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piDumperWriter          = typeof(ObjectTextDumper).GetProperty(nameof(ObjectTextDumper.Writer), BindingFlags.NonPublic|BindingFlags.Instance)!;
-        static readonly MethodInfo _miIndent                  = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Indent), BindingFlags.NonPublic|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miUnindent                = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.Unindent), BindingFlags.NonPublic|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miDumperDumpObject        = typeof(ObjectTextDumper).GetMethod(nameof(ObjectTextDumper.DumpObject), BindingFlags.NonPublic|BindingFlags.Instance, null, new Type[] { typeof(object), typeof(Type), typeof(DumpAttribute), typeof(DumpState) }, null)!;
-
-        static readonly MethodInfo _miGetTypeName             = typeof(Extensions).GetMethod(nameof(Extensions.GetTypeName), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(Type), typeof(bool) }, null)!;
-        static readonly MethodInfo _miGetMaxToDump            = typeof(Extensions).GetMethod(nameof(Extensions.GetMaxToDump), BindingFlags.NonPublic|BindingFlags.Static, null, new[] { typeof(DumpAttribute), typeof(int) }, null)!;
-
-        //static readonly MethodInfo _miIndent3                 = typeof(DumpUtilities).GetMethod(nameof(DumpUtilities.Indent), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(int), typeof(int) }, null)!;
-        static readonly MethodInfo _miUnindent3               = typeof(DumpUtilities).GetMethod(nameof(DumpUtilities.Unindent), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(int), typeof(int) }, null)!;
-
-        static readonly MethodInfo _miIsMatch                 = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.IsFromSystem), BindingFlags.Public|BindingFlags.Static, null, new[] { typeof(Type) }, null)!;
-        static readonly MethodInfo _miDumpedBasicValue        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedBasicValue), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(object), typeof(DumpAttribute) }, null)!;
-        static readonly MethodInfo _miDumpedBasicNullable     = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedBasicNullable), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(object), typeof(DumpAttribute) }, null)!;
-        static readonly MethodInfo _miDumpedDelegate          = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.Dumped), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(Delegate) }, null)!;
-        static readonly MethodInfo _miDumpedMemberInfo        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.Dumped), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(MemberInfo) }, null)!;
-        //static readonly MethodInfo _miDumpedDictionary        = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedDictionary), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(Action<object>), typeof(Action), typeof(Action) }, null)!;
-        //static readonly MethodInfo _miDumpedSequence          = typeof(WriterExtensions).GetMethod(nameof(WriterExtensions.DumpedCollection), BindingFlags.Public|BindingFlags.Static, null, new Type[] { typeof(TextWriter), typeof(IEnumerable), typeof(DumpAttribute), typeof(bool), typeof(Action<object>), typeof(Action), typeof(Action) }, null)!;
-
-        static readonly ConstantExpression _zero              = Expression.Constant(0, typeof(int));
-        static readonly ConstantExpression _intMax            = Expression.Constant(int.MaxValue, typeof(int));
-        static readonly ConstantExpression _null              = Expression.Constant(null);
-        static readonly ConstantExpression _empty             = Expression.Constant(string.Empty);
-        static readonly ConstantExpression _false             = Expression.Constant(false);
-        static readonly ConstantExpression _stringNull        = Expression.Constant(Properties.Resources.StringNull);
-        //static readonly ConstantExpression _true              = Expression.Constant(true);
-
         // parameters to the dump script:
         readonly ParameterExpression _instance;
-        readonly ParameterExpression _instanceType            = Expression.Parameter(typeof(Type),             nameof(_instanceType));
-        readonly ParameterExpression _instanceAsObject        = Expression.Parameter(typeof(object),           nameof(_instanceAsObject));
-        readonly ParameterExpression _instanceDumpAttribute   = Expression.Parameter(typeof(DumpAttribute),    nameof(_instanceDumpAttribute));
-        readonly ParameterExpression _classDumpData           = Expression.Parameter(typeof(ClassDumpData),    nameof(_classDumpData));
-        readonly ParameterExpression _dumper                  = Expression.Parameter(typeof(ObjectTextDumper), nameof(_dumper));
-        readonly ParameterExpression _dumpState               = Expression.Parameter(typeof(DumpState),        nameof(_dumpState));
-        readonly ParameterExpression _tempBool                = Expression.Parameter(typeof(bool),             nameof(_tempBool));
-        readonly ParameterExpression _tempDumpAttribute       = Expression.Parameter(typeof(DumpAttribute),    nameof(_tempDumpAttribute));
+        readonly ParameterExpression _instanceType            = Expression.Parameter(typeof(Type),              nameof(_instanceType));
+        readonly ParameterExpression _instanceAsObject        = Expression.Parameter(typeof(object),            nameof(_instanceAsObject));
+        readonly ParameterExpression _instanceDumpAttribute   = Expression.Parameter(typeof(DumpAttribute),     nameof(_instanceDumpAttribute));
+        readonly ParameterExpression _classDumpMetadata       = Expression.Parameter(typeof(ClassDumpMetadata), nameof(_classDumpMetadata));
+        readonly ParameterExpression _dumper                  = Expression.Parameter(typeof(ObjectTextDumper),  nameof(_dumper));
+        readonly ParameterExpression _dumpState               = Expression.Parameter(typeof(DumpState),         nameof(_dumpState));
+        readonly ParameterExpression _tempBool                = Expression.Parameter(typeof(bool),              nameof(_tempBool));
+        readonly ParameterExpression _tempDumpAttribute       = Expression.Parameter(typeof(DumpAttribute),     nameof(_tempDumpAttribute));
 
         // helpful expressions inside the dump script:
         readonly Expression _writer;
@@ -128,12 +74,12 @@ namespace vm.Aspects.Diagnostics.Implementation
                 ),
                 ////_instance              = (<actual instance type>)_instanceAsObject;
                 ////_instanceType          = _instance.GetType();
-                ////_instanceDumpAttribute = _classDumpData.DumpAttribute;
+                ////_instanceDumpAttribute = _classDumpMetadata.DumpAttribute;
                 ////_dumpState             = dumpState;
                 Expression.Assign(_instance, Expression.Convert(_instanceAsObject, instanceType)),
                 Expression.Assign(_instanceType, Expression.Call(_instance, _miGetType)),
-                Expression.Assign(_instanceDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute))),
-                Expression.Assign(_tempDumpAttribute, Expression.PropertyOrField(_classDumpData, nameof(ClassDumpData.DumpAttribute)))
+                Expression.Assign(_instanceDumpAttribute, Expression.PropertyOrField(_classDumpMetadata, nameof(ClassDumpMetadata.DumpAttribute))),
+                Expression.Assign(_tempDumpAttribute, Expression.PropertyOrField(_classDumpMetadata, nameof(ClassDumpMetadata.DumpAttribute)))
             );
         }
 
@@ -146,7 +92,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                 new ParameterExpression[] { _instance, _instanceType, _instanceDumpAttribute, _tempBool, _tempDumpAttribute },
                                 _script
                             ),
-                            new ParameterExpression[] { _instanceAsObject, _classDumpData, _dumper, _dumpState });
+                            new ParameterExpression[] { _instanceAsObject, _classDumpMetadata, _dumper, _dumpState });
 
             Debug.WriteLine(lambda.DumpCSharpText());
 
@@ -234,6 +180,33 @@ namespace vm.Aspects.Diagnostics.Implementation
                     sequence.Type.IsArray
                         ? Expression.Property(sequence, _piArrayLength)
                         : Expression.Property(sequence, _piCollectionCount),
+                    _miIntToString1,
+                    Expression.Constant(CultureInfo.InvariantCulture)));
+
+        ////_dumper.Writer.Write(
+        ////    DumpFormat.SequenceType,
+        ////    typeof(Expando),
+        ////    typeof(Expando).Namespace,
+        ////    typeof(Expando).AssemblyQualifiedName);
+        Expression DumpExpandoType() =>
+            Write(
+                DumpFormat.SequenceType,
+                Expression.Call(_miGetTypeName, _typeofExpando, _false),
+                Expression.Property(_typeofExpando, _piNamespace),
+                Expression.Property(_typeofExpando, _piAssemblyQualifiedName));
+
+        //// writer.Write(
+        ////    DumpFormat.SequenceTypeName,
+        ////    nameof(ExpandoObject),
+        ////    expando.Count);
+        Expression DumpExpandoTypeName(Expression expando) =>
+            Write(
+                DumpFormat.SequenceTypeName,
+                Expression.Constant(nameof(ExpandoObject)),
+                Expression.Call(
+                    Expression.Property(
+                        Expression.Convert(expando, ExpandoCollectionType),
+                        _piExpandoCount),
                     _miIntToString1,
                     Expression.Constant(CultureInfo.InvariantCulture)));
 
@@ -339,6 +312,104 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         // ===============
 
+        Expression DumpedExpando(
+            Expression expando,
+            DumpAttribute dumpAttribute)
+        {
+            BeginScriptSegment();
+
+            //// writer.Write(DumpFormat.SequenceTypeName, typeof(ExpandoObject), expando.Count);
+            //// writer.Write(DumpFormat.SequenceType, expando.GetTypeName(), expando.Namespace!, expando.AssemblyQualifiedName!)
+            AddDumpExpandoTypeName(expando);
+            AddDumpExpandoType();
+
+            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
+            {
+                //// return true;
+                _script.Add(Expression.Constant(true));
+                return Expression.Block(EndScriptSegment());
+            }
+
+            ParameterExpression key         = Expression.Parameter(typeof(string), nameof(key));          // the current key-value item
+            ParameterExpression value       = Expression.Parameter(typeof(object), nameof(value));        // the current key-value item
+            ParameterExpression left        = Expression.Parameter(typeof(int), nameof(left));            // how many items left to be dumped?
+            ParameterExpression max         = Expression.Parameter(typeof(int), nameof(max));             // max items to dump
+            ParameterExpression count       = Expression.Parameter(typeof(int), nameof(count));           // count of items
+
+            var @break = Expression.Label();
+
+            _script.Add(
+                Expression.Block(
+
+                    //// string key; object? value; var left=0; var max = dumpAttribute.GetMaxToDump(sequence.Count);
+                    new[] { key, value, left, max, count, },
+
+                    Expression.Assign(left, _zero),
+                    Expression.Assign(count, Expression.Property(
+                                                            Expression.Convert(expando, ExpandoCollectionType),
+                                                            _piExpandoCount)),
+                    Expression.Assign(max, Expression.Call(_miGetMaxToDump, Expression.Constant(dumpAttribute, typeof(DumpAttribute)), count)),
+
+                    //// WriteLine(); Write("{"); Indent();
+                    WriteLine(),
+                    Write(Resources.DictionaryBegin),
+                    Indent(),
+
+                    //// foreach (kv in expandoCollection)
+                    ForEachInDictionary<string, object?>
+                    (
+                        key,
+                        value,
+                        expando,
+                        //// {
+                        Expression.Block
+                        (
+                            //// { Writer.WriteLine();
+                            WriteLine(),
+
+                            //// if (n++ >= max) {
+                            Expression.IfThen
+                            (
+                                Expression.GreaterThanOrEqual(Expression.PostDecrementAssign(left), max),
+                                Expression.Block
+                                (
+                                    //// Writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                                    Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), Expression.Convert(count, typeof(object))),
+                                    //// break; }
+                                    Expression.Break(@break)
+                                )
+                            ),
+
+                            //// Writer.Write(kv.Key);
+                            Write(Expression.Constant(dumpAttribute.LabelFormat), key),
+
+                            //// _dumper.DumpObject(kv.Value);
+                            Expression.Call(
+                                _dumper,
+                                _miDumperDumpObject,
+                                value,
+                                _nullType,
+                                _nullDumpAttribute,
+                                _dumpState)
+                        //// }
+                        ),
+                        @break
+                    ),
+
+                    Unindent(),
+                    WriteLine(),
+                    Write(Resources.DictionaryEnd),
+
+                    //// return true; }
+                    Expression.Assign(_tempBool, Expression.Constant(true))
+                )
+            );
+
+            return Expression.Block(EndScriptSegment());
+        }
+
+        // ===============
+
         Expression DumpedDictionary(
             Expression dictionary,
             DumpAttribute dumpAttribute)
@@ -360,15 +431,10 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return Expression.Block(EndScriptSegment());
             }
 
-            ParameterExpression kv;     // the current key-value item
-            ParameterExpression n;      // how many items left to be dumped?
-            ParameterExpression max;    // max items to dump
-            ParameterExpression count;  // count of items
-
-            kv    = Expression.Parameter(typeof(DictionaryEntry), nameof(kv));
-            n     = Expression.Parameter(typeof(int), nameof(n));
-            max   = Expression.Parameter(typeof(int), nameof(max));
-            count = Expression.Parameter(typeof(int), nameof(count));
+            ParameterExpression kv    = Expression.Parameter(typeof(DictionaryEntry), nameof(kv));  // the current key-value item
+            ParameterExpression left  = Expression.Parameter(typeof(int), nameof(left));            // how many items left to be dumped?
+            ParameterExpression max   = Expression.Parameter(typeof(int), nameof(max));             // max items to dump
+            ParameterExpression count = Expression.Parameter(typeof(int), nameof(count));           // count of items
 
             var @break = Expression.Label();
 
@@ -385,12 +451,13 @@ namespace vm.Aspects.Diagnostics.Implementation
                     ),
                     Expression.Block
                     (
-                        //// var kv; var n=0; var max = dumpAttribute.GetMaxToDump(sequence.Count); n = 0; WriteLine(); Write("{"); Indent();
-                        new[] { kv, n, max, count },
-                        Expression.Assign(n, _zero),
+                        //// var kv; var n=0; var max = dumpAttribute.GetMaxToDump(sequence.Count);
+                        new[] { kv, left, max, count },
+                        Expression.Assign(left, _zero),
                         Expression.Assign(count, Expression.Property(dictionary, _piCollectionCount)),
                         Expression.Assign(max, Expression.Call(_miGetMaxToDump, Expression.Constant(dumpAttribute, typeof(DumpAttribute)), count)),
 
+                        //// n = 0; WriteLine(); Write("{"); Indent();
                         WriteLine(),
                         Write(Resources.DictionaryBegin),
                         Indent(),
@@ -408,7 +475,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                 //// if (n++ >= max) {
                                 Expression.IfThen
                                 (
-                                    Expression.GreaterThanOrEqual(Expression.PostDecrementAssign(n), max),
+                                    Expression.GreaterThanOrEqual(Expression.PostDecrementAssign(left), max),
                                     Expression.Block
                                     (
                                         //// Writer.Write(DumpFormat.SequenceDumpTruncated, max);
@@ -421,12 +488,12 @@ namespace vm.Aspects.Diagnostics.Implementation
                                 //// Writer.Write("[");
                                 Write(Resources.DictionaryKeyBegin),
                                 //// _dumper.DumpObject(kv.Key);
-                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryKey), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState),
+                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryKey), _nullType, _nullDumpAttribute, _dumpState),
                                 // Writer.Write("] = ");
                                 Write(Resources.DictionaryKeyEnd),
 
                                 //// _dumper.DumpObject(kv.Value);
-                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryValue), Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState)
+                                Expression.Call(_dumper, _miDumperDumpObject, Expression.Property(kv, _piDictionaryEntryValue), _nullType, _nullDumpAttribute, _dumpState)
                             // }
                             ),
                             @break
@@ -454,26 +521,19 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         // ==============================
 
+        /// <summary>
+        /// Dumpeds the collection.
+        /// </summary>
+        /// <param name="sequence">The sequence.</param>
+        /// <param name="dumpAttribute">The dump attribute.</param>
+        /// <param name="expressionCount">The expression count.</param>
+        /// <returns></returns>
         Expression DumpedCollection(
             Expression sequence,
             DumpAttribute dumpAttribute,
             Expression? expressionCount = null)
         {
-            ParameterExpression n;              // how many items left to be dumped?
-            ParameterExpression max;            // max items to dump
-            ParameterExpression item;           // the iteration variable
-            ParameterExpression bytes;          // collection as byte[];
-            ParameterExpression isArray;        // flag that the sequence is an array of items
-            ParameterExpression sequenceType;   // the type of the sequence
-
-            n            = Expression.Parameter(typeof(int), nameof(n));
-            max          = Expression.Parameter(typeof(int), nameof(max));
-            item         = Expression.Parameter(typeof(object), nameof(item));
-            bytes        = Expression.Parameter(typeof(byte[]), nameof(bytes));
-            isArray      = Expression.Parameter(typeof(bool), nameof(isArray));
-            sequenceType = Expression.Parameter(typeof(Type), nameof(sequenceType));
-
-            var @break = Expression.Label();
+            ParameterExpression sequenceType = Expression.Parameter(typeof(Type), nameof(sequenceType));    // the type of the sequence
 
             ////var elementsType = sequenceType.IsArray
             ////                        ? new Type[] { sequenceType.GetElementType() }
@@ -487,7 +547,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                                 Expression.Property(sequenceType, _piIsGenericType),
                                                 Expression.Call(sequenceType, _miGetGenericArguments),
                                                 Expression.NewArrayInit(typeof(Type), Expression.Constant(typeof(object)))));
-            var truncatedCount = expressionCount!=null
+            var truncatedCount = expressionCount is not null
                                     ? (Expression)Expression.Convert(expressionCount, typeof(object))
                                     : Expression.Constant(DumpUtilities.Unknown);
 
@@ -509,49 +569,56 @@ namespace vm.Aspects.Diagnostics.Implementation
                 )
             );
 
+            ParameterExpression left = Expression.Parameter(typeof(int), nameof(left));             // how many items are left to be dumped?
+            ParameterExpression max  = Expression.Parameter(typeof(int), nameof(max));              // max items to dump
+
             if (dumpAttribute.RecurseDump != ShouldDump.Skip)
+            {
+                ParameterExpression item = Expression.Parameter(typeof(object), nameof(item));          // the iteration variable
+
+                var @break = Expression.Label();
+
                 Add
                 (
                     ////indent();
+                    Indent(),
                     ////foreach (var item in sequence)
-                    ////{
-                    ////    writer.WriteLine();
-                    ////    if (n++ >= max)
-                    ////    {
-                    ////        writer.Write(DumpFormat.SequenceDumpTruncated, max);
-                    ////        break;
-                    ////    }
-                    ////    dumpObject(item);
-                    ////}
-                    ////unindent();
-                    Expression.Block
+                    ForEachInEnumerable
                     (
-                        Indent(),
-                        ForEachInEnumerable
+                        item,
+                        sequence,
+                        Expression.Block
                         (
-                            item,
-                            sequence,
-                            Expression.Block
+                            //// writer.WriteLine();
+                            WriteLine(),
+                            //// if (n++ >= max)
+                            Expression.IfThen
                             (
-                                WriteLine(),
-                                Expression.IfThen
+                                Expression.GreaterThanOrEqual(Expression.PostIncrementAssign(left), max),
+                                Expression.Block
                                 (
-                                    Expression.GreaterThanOrEqual(Expression.PostIncrementAssign(n), max),
-                                    Expression.Block
-                                    (
-                                        Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), truncatedCount),
-                                        Expression.Break(@break)
-                                    )
-                                ),
-                                Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Convert(_null, typeof(Type)), Expression.Convert(_null, typeof(DumpAttribute)), _dumpState)
+                                    //// {
+                                    ////    writer.Write(DumpFormat.SequenceDumpTruncated, max);
+                                    Write(DumpFormat.SequenceDumpTruncated, Expression.Convert(max, typeof(object)), truncatedCount),
+                                    ////    break;
+                                    Expression.Break(@break)
+                                //// }
+                                )
                             ),
-                            @break
+                            //// dumpObject(item);
+                            Expression.Call(_dumper, _miDumperDumpObject, item, Expression.Constant(null, typeof(Type)), Expression.Constant(null, typeof(DumpAttribute)), _dumpState)
                         ),
-                        Unindent()
-                    )
+                        @break
+                    ),
+                    ////unindent();
+                    Unindent()
                 );
+            }
 
             var dumpingLoop = EndScriptSegment();
+
+            ParameterExpression isArray = Expression.Parameter(typeof(bool), nameof(isArray));         // flag that the sequence is an array of items not bytes
+            ParameterExpression bytes   = Expression.Parameter(typeof(byte[]), nameof(bytes));         // collection as byte[];
 
             //// if (ReferenceEqual(collection,null)) Writer.Write("<null>"); else {
             return Expression.Block
@@ -567,26 +634,25 @@ namespace vm.Aspects.Diagnostics.Implementation
                     Expression.Block
                     (
                         //// var max = dumpAttribute.GetMaxToDump(sequence.Count); var n = 0; var bytes = collection as byte[]; var count = collection.Count();
-                        new[] { sequenceType, n, max, bytes, isArray },
+                        new[] { sequenceType, left, max, bytes, isArray },
 
                         //// sequence.GetType()
                         Expression.Assign(sequenceType, Expression.Call(sequence, _miGetType)),
-                        Expression.Assign(n, _zero),
+                        Expression.Assign(left, _zero),
                         Expression.Assign(isArray, Expression.Property(sequenceType, _piIsArray)),
                         Expression.Assign(max, Expression.Call(_miGetMaxToDump, _tempDumpAttribute, expressionCount ?? _intMax)),
                         Expression.Assign(bytes, Expression.TypeAs(sequence, typeof(byte[]))),
 
-                        //// if (!(sequenceType.IsArray || sequenceType.IsFromSystem())) WriteLine();
+                        //// if (!(sequenceType.IsArray || sequenceType.IsFromSystem()))
                         Expression.IfThen
                         (
-                            Expression.Not
-                            (
-                                Expression.OrElse
-                                (
-                                    Expression.Property(sequenceType, _piIsArray),
-                                    Expression.Call(_miIsMatch, sequenceType)
-                                )
+                            Expression.Not(Expression.OrElse
+                                           (
+                                                Expression.Property(sequenceType, _piIsArray),
+                                                Expression.Call(_miIsMatch, sequenceType)
+                                           )
                             ),
+                            //// WriteLine();
                             WriteLine()
                         ),
 
@@ -638,10 +704,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                             ),
 
                             ////else {
-                            Expression.Block
-                            (
-                                dumpingLoop
-                            )
+                            Expression.Block(dumpingLoop)
                         //// }
                         ),
                         //// return true; }
@@ -716,7 +779,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                     : DumpedDictionary(mi, dumpAttribute)
                                 : DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute()
                                                             ? (Expression)_tempDumpAttribute
-                                                            : Expression.Convert(_null, typeof(DumpAttribute)));
+                                                            : _nullDumpAttribute);
         }
 
         internal Expression DumpObject(

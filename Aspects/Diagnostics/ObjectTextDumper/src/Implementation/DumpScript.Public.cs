@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -180,6 +181,19 @@ namespace vm.Aspects.Diagnostics.Implementation
             Expression sequenceType) => Add(DumpSequenceTypeName(sequence, sequenceType));
 
         ////_dumper.Writer.Write(
+        ////    DumpFormat.SequenceType,
+        ////    typeof(Expando),
+        ////    typeof(Expando).Namespace,
+        ////    typeof(Expando).AssemblyQualifiedName);
+        public DumpScript AddDumpExpandoType() => Add(DumpExpandoType());
+
+        //// writer.Write(
+        ////    DumpFormat.SequenceTypeName,
+        ////    typeof(ExpandoObject),
+        ////    expando.Count);
+        public DumpScript AddDumpExpandoTypeName(Expression expando) => Add(DumpExpandoTypeName(expando));
+
+        ////_dumper.Writer.Write(
         ////    DumpFormat.Type,
         ////    type.GetTypeName(),
         ////    type.Namespace,
@@ -225,7 +239,14 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         // =========================
 
-        public DumpScript AddDumpedDictionary(DumpAttribute dumpAttribute) => Add(DumpedDictionary(Expression.Convert(_instance, typeof(IDictionary)), dumpAttribute));
+        public DumpScript AddDumpedExpando(DumpAttribute dumpAttribute) =>
+            Add(DumpedExpando(Expression.Convert(_instance, typeof(ExpandoObject)), dumpAttribute));
+
+        // =========================
+
+        public DumpScript AddDumpedDictionary(
+            DumpAttribute dumpAttribute) =>
+            Add(DumpedDictionary(Expression.Convert(_instance, typeof(IDictionary)), dumpAttribute));
 
         public DumpScript AddDumpedDictionary(
             MemberInfo mi,
@@ -233,7 +254,8 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         // ===================================
 
-        public DumpScript AddDumpedCollection(DumpAttribute dumpAttribute) => Add(DumpedCollection(dumpAttribute));
+        public DumpScript AddDumpedCollection(
+            DumpAttribute dumpAttribute) => Add(DumpedCollection(dumpAttribute));
 
         public DumpScript AddDumpedCollection(
             MemberInfo mi,

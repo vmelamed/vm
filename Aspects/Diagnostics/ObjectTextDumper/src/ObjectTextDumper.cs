@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.IO;
 using System.Reflection;
 using System.Security;
@@ -17,12 +18,12 @@ namespace vm.Aspects.Diagnostics
     /// Delegate Script is the type of the generated dump script that can be cached and reused.
     /// </summary>
     /// <param name="instance">The instance being dumped.</param>
-    /// <param name="classDumpData">The data containing the metadata type and the dump attribute.</param>
+    /// <param name="classDumpMetadata">The data containing the metadata type and the dump attribute.</param>
     /// <param name="dumper">The dumper which has the current writer.</param>
     /// <param name="dumpState">The current state of the dump.</param>
     internal delegate void Script(
         object instance,
-        ClassDumpData classDumpData,
+        ClassDumpMetadata classDumpMetadata,
         ObjectTextDumper dumper,
         DumpState dumpState);
 
@@ -229,11 +230,11 @@ The TextDumper threw an exception:
 
             // resolve the class metadata and the dump attribute
             var objectType = obj.GetType();
-            var classDumpData = ClassMetadataResolver.GetClassDumpData(objectType, dumpMetadata, dumpAttribute);
+            var classDumpMetadata = ClassMetadataResolver.GetClassDumpMetadata(objectType, dumpMetadata, dumpAttribute);
 
             // if we're too deep - stop here.
             if (MaxDepth == int.MinValue)
-                MaxDepth = classDumpData.DumpAttribute.MaxDepth;
+                MaxDepth = classDumpMetadata.DumpAttribute.MaxDepth;
 
             if (MaxDepth < 0)
             {
@@ -248,13 +249,13 @@ The TextDumper threw an exception:
 
             // slow dump or compile and run a script?
             Script? script  = null; // the compiled dumping script
-            var buildScript = Settings.UseDumpScriptCache  &&  !obj.IsDynamicObject();
-            using var state = new DumpState(this, obj, classDumpData, buildScript);
+            var buildScript = Settings.UseDumpScriptCache  &&  (!obj.IsDynamicObject() || obj is ExpandoObject);
+            using var state = new DumpState(this, obj, classDumpMetadata, buildScript);
 
             if (buildScript)
             {
                 // does the script exist or is it in process of building
-                if (DumpScriptCache.TryFind(this, obj, classDumpData, out script))
+                if (DumpScriptCache.TryFind(this, obj, classDumpMetadata, out script))
                 {
                     if (script != null)
                     {
@@ -262,20 +263,18 @@ The TextDumper threw an exception:
                             Writer.Indent(_indentLevel, _indentSize)
                                   .WriteLine();
 
-                        script(obj, classDumpData, this, state);
+                        script(obj, classDumpMetadata, this, state);
                     }
 
                     return;
                 }
 
-                DumpScriptCache.BuildingScriptFor(this, objectType, classDumpData);
+                DumpScriptCache.BuildingScriptFor(this, objectType, classDumpMetadata);
             }
             else
-            {
                 if (parentState is null)
                     Writer.Indent(_indentLevel, _indentSize)
                           .WriteLine();
-            }
 
             if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
             {
@@ -283,7 +282,7 @@ The TextDumper threw an exception:
                 // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
                 DumpedObjects.Add(new DumpedObject(obj, objectType));
 
-                if (!state.DumpedCollection(classDumpData.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below*)
+                if (!state.DumpedCollection(classDumpMetadata.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below*)
                 {
                     var statesWithRemainingProperties = new Stack<DumpState>();
                     var statesWithTailProperties = new Queue<DumpState>();
@@ -299,7 +298,7 @@ The TextDumper threw an exception:
                         DumpTailProperties(statesWithTailProperties);
 
                         // * if the object implements IEnumerable and the state allows it - dump the elements.
-                        state.DumpedCollection(classDumpData.DumpAttribute, true);
+                        state.DumpedCollection(classDumpMetadata.DumpAttribute, true);
                     }
 
                     // we are done dumping
@@ -308,7 +307,7 @@ The TextDumper threw an exception:
             }
 
             if (buildScript  &&  state.DumpScript is not null)
-                script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
+                script = DumpScriptCache.Add(this, objectType, classDumpMetadata, state.DumpScript);
 
             if (!buildScript)
             {
@@ -323,28 +322,9 @@ The TextDumper threw an exception:
                         Writer.Indent(_indentLevel, _indentSize)
                               .WriteLine();
 
-                    script(obj, classDumpData, this, state);
+                    script(obj, classDumpMetadata, this, state);
                 }
             }
-
-            //if (buildScript)
-            //{
-            //    if (state.DumpScript is not null)
-            //        script = DumpScriptCache.Add(this, objectType, classDumpData, state.DumpScript);
-            //    if (script is not null)
-            //    {
-            //        if (parentState is null)
-            //            Writer.Indent(_indentLevel, _indentSize)
-            //                  .WriteLine();
-
-            //        script(obj, classDumpData, this, state);
-            //    }
-            //}
-            //else
-            //{
-            //    if (parentState is null)
-            //        Writer.Unindent(_indentLevel, _indentSize);
-            //}
 
             // restore here the IsSubExpression flag as it have changed if obj is Expression and IsSubExpression==false.
             IsSubExpression = isSubExpressionStore;

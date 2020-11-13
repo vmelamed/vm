@@ -191,9 +191,9 @@ The `Dump` attributes can be associated with your types in several ways:
 1. Directly, by using the .NET language syntax for applying attributes to custom types and their properties and fields
 1. Indirectly, in a so called "buddy class" - class referred to in a `MetadataTypeAttribute` applied to your class. This is my favorite method for my custom classes. I even have a Visual Studio extension that would generate a metadata class - a "buddy class" - out of any class
 1. If you do not have access to the source code of the dumped object, the parameters of the `Dump` method allow you to associate its type with after-the-fact written buddy-class, as described above
-1. Alternatively, use the method of the static class `ClassMetadataResolver.SetClassDumpData`. The signature of the method is pretty self-explanatory:
+1. Alternatively, use the method of the static class `ClassMetadataResolver.SetClassDumpMetadata`. The signature of the method is pretty self-explanatory:
 ```csharp
-        public static void SetClassDumpData(
+        public static void SetClassDumpMetadata(
             Type type,                              // the targeted type will be associated with:
             Type metadata = null,                   //      this metadata class
             DumpAttribute dumpAttribute = null);    //      this attribute object
@@ -488,7 +488,7 @@ GenericWithBuddy<int> (vm.Aspects.Diagnostics.ObjectTextDumper.Tests.ObjectTextD
 ### Formatting the dump of objects for which you have no access to their source code
 Very often you want to dump objects for which you have no access to the source class (e.g. `System.InvalidOperationException`). AspectObjectDumper allows you to associate buddy classes for those type as well. Use the static method
 ```csharp
-    ClassMetadataCache.SetClassDumpData(Type type, Type metadataType = null, DumpAttribute dumpAttribute = null, bool replace = false)
+    ClassMetadataCache.SetClassDumpMetadata(Type type, Type metadataType = null, DumpAttribute dumpAttribute = null, bool replace = false)
 ```
 It associates the parameter `type` with the `metadataType` as it was a buddy class and also takes a class level `dumpAttribute`. The AspectObjectDumper defines a number of buddy classes and associates them to some BCL classes. Just take a look at the project folder `ExternalMetadata` and the utility `ClassMetadataRegistrar`. To use these predefined buddy classes just call:
 ```csharp
@@ -498,7 +498,7 @@ Feel free to add more mappings like this to the metadata cache. Note that the fo
 
 Here is how the registrar registers metadata class for the `Task<>` class:
 ```csharp
-    ClassMetadataResolver.SetClassDumpData(typeof(Task<>), typeof(TaskDumpMetadata));
+    ClassMetadataResolver.SetClassDumpMetadata(typeof(Task<>), typeof(TaskDumpMetadata));
 ```
 
 ### Dumped Dictionaries

@@ -11,18 +11,18 @@ namespace vm.Aspects.Diagnostics.Implementation
         {
             public ScriptLookup(
                 Type objectType,
-                ClassDumpData classDumpData,
+                ClassDumpMetadata classDumpMetadata,
                 ObjectTextDumper objectTextDumper)
             {
                 ObjectType             = objectType;
-                ClassDumpData          = classDumpData;
+                ClassDumpMetadata      = classDumpMetadata;
                 PropertiesBindingFlags = objectTextDumper.Settings.PropertyBindingFlags;
                 FieldsBindingFlags     = objectTextDumper.Settings.FieldBindingFlags;
             }
 
             public Type ObjectType { get; }
 
-            public ClassDumpData ClassDumpData { get; }
+            public ClassDumpMetadata ClassDumpMetadata { get; }
 
             public BindingFlags PropertiesBindingFlags { get; }
 
@@ -32,7 +32,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             #region IEquatable<ScriptLookup> Members
             public bool Equals(ScriptLookup other) =>
                 ObjectType             == other.ObjectType              &&
-                ClassDumpData          == other.ClassDumpData           &&
+                ClassDumpMetadata      == other.ClassDumpMetadata       &&
                 PropertiesBindingFlags == other.PropertiesBindingFlags  &&
                 FieldsBindingFlags     == other.FieldsBindingFlags;
             #endregion
@@ -44,7 +44,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left == right);
 
             public override int GetHashCode() =>
-                HashCode.Combine(ObjectType, ClassDumpData, PropertiesBindingFlags, FieldsBindingFlags);
+                HashCode.Combine(ObjectType, ClassDumpMetadata, PropertiesBindingFlags, FieldsBindingFlags);
             #endregion
         };
 
@@ -57,10 +57,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static bool TryFind(
             ObjectTextDumper objectTextDumper,
             object obj,
-            ClassDumpData classDumpData,
+            ClassDumpMetadata classDumpMetadata,
             out Script? script)
         {
-            var lookup = new ScriptLookup(obj.GetType(), classDumpData, objectTextDumper);
+            var lookup = new ScriptLookup(obj.GetType(), classDumpMetadata, objectTextDumper);
 
             using var _ = new ReaderSlimSync(_sync);
 
@@ -76,10 +76,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static Script Add(
             ObjectTextDumper objectTextDumper,
             Type objectType,
-            ClassDumpData classDumpData,
+            ClassDumpMetadata classDumpMetadata,
             DumpScript _dumpScript)
         {
-            var lookup = new ScriptLookup(objectType, classDumpData, objectTextDumper);
+            var lookup = new ScriptLookup(objectType, classDumpMetadata, objectTextDumper);
             var script = _dumpScript.Compile();
 
             using var _ = new WriterSlimSync(_sync);
@@ -101,11 +101,11 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static void BuildingScriptFor(
             ObjectTextDumper objectTextDumper,
             Type objectType,
-            ClassDumpData classDumpData)
+            ClassDumpMetadata classDumpMetadata)
         {
             using var _ = new WriterSlimSync(_sync);
 
-            _buildingNow.Add(new ScriptLookup(objectType, classDumpData, objectTextDumper));
+            _buildingNow.Add(new ScriptLookup(objectType, classDumpMetadata, objectTextDumper));
         }
     }
 }

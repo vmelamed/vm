@@ -4,22 +4,22 @@
         <name>vm.Aspects.Diagnostics.ObjectTextDumper</name>
     </assembly>
     <members>
-        <member name="T:vm.Aspects.Diagnostics.ClassDumpData">
+        <member name="T:vm.Aspects.Diagnostics.ClassDumpMetadata">
             <summary>
             Encapsulates a pair of a class or struct metadata and the corresponding DumpAttribute.
             </summary>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.ClassDumpData.Metadata">
+        <member name="P:vm.Aspects.Diagnostics.ClassDumpMetadata.Metadata">
             <summary>
             Gets or sets the metadata associated with a given class or struct (which may be the class or struct itself).
             </summary>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.ClassDumpData.DumpAttribute">
+        <member name="P:vm.Aspects.Diagnostics.ClassDumpMetadata.DumpAttribute">
             <summary>
             Gets or sets the dump attribute applied on a given class or struct.
             </summary>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.DumpNullValues(vm.Aspects.Diagnostics.DumpAttribute)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.DumpNullValues(vm.Aspects.Diagnostics.DumpAttribute)">
             <summary>
             Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DumpNullValues"/> property.
             </summary>
@@ -28,7 +28,7 @@
             The property value that should be in effect.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.DefaultProperty(vm.Aspects.Diagnostics.DumpAttribute)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.DefaultProperty(vm.Aspects.Diagnostics.DumpAttribute)">
             <summary>
             Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.DefaultProperty"/> property.
             </summary>
@@ -37,7 +37,7 @@
             The property value that should be in effect.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.RecurseDump(vm.Aspects.Diagnostics.DumpAttribute)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.RecurseDump(vm.Aspects.Diagnostics.DumpAttribute)">
             <summary>
             Implements the instance over type priority rule for the <see cref="P:vm.Aspects.Diagnostics.DumpAttribute.RecurseDump"/> property.
             </summary>
@@ -46,52 +46,52 @@
             The property value that should be in effect. Never returns <see cref="F:vm.Aspects.Diagnostics.ShouldDump.Default"/>.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.Equals(vm.Aspects.Diagnostics.ClassDumpData)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.Equals(vm.Aspects.Diagnostics.ClassDumpMetadata)">
             <summary>
             Indicates whether the current object is equal to another object of the same type.
             </summary>
-            <param name="other">A copy of another object of type <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> to compare with this object.</param>
+            <param name="other">A copy of another object of type <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> to compare with this object.</param>
             <returns>
             <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.Equals(System.Object)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.Equals(System.Object)">
             <summary>
-            Determines whether this <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> instance is equal to the specified <see cref="T:System.Object"/> reference.
+            Determines whether this <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> instance is equal to the specified <see cref="T:System.Object"/> reference.
             </summary>
-            <param name="obj">The <see cref="T:System.Object"/> reference to compare with this <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> object.</param>
+            <param name="obj">The <see cref="T:System.Object"/> reference to compare with this <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> object.</param>
             <returns>
             <c>false</c> if <paramref name="obj"/> is equal to <c>null</c>, otherwise
             <c>true</c> if <paramref name="obj"/> refers to <c>this</c> object, otherwise
-            <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> and
+            <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> and
             the fields values of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.GetHashCode">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.GetHashCode">
             <summary>
-            Serves as a hash function for the objects of <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> and its derived types.
+            Serves as a hash function for the objects of <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> and its derived types.
             </summary>
-            <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> instance.</returns>
+            <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> instance.</returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.op_Equality(vm.Aspects.Diagnostics.ClassDumpData,vm.Aspects.Diagnostics.ClassDumpData)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Equality(vm.Aspects.Diagnostics.ClassDumpMetadata,vm.Aspects.Diagnostics.ClassDumpMetadata)">
             <summary>
-            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> objects.
+            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> objects.
             </summary>
             <param name="left">The left operand.</param>
             <param name="right">The right operand.</param>
             <returns>
-            <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+            <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
             otherwise <c>false</c>.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpData.op_Inequality(vm.Aspects.Diagnostics.ClassDumpData,vm.Aspects.Diagnostics.ClassDumpData)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Inequality(vm.Aspects.Diagnostics.ClassDumpMetadata,vm.Aspects.Diagnostics.ClassDumpMetadata)">
             <summary>
-            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> objects.
+            Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> objects.
             </summary>
             <param name="left">The left operand.</param>
             <param name="right">The right operand.</param>
             <returns>
-            <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+            <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
             otherwise <c>false</c>.
             </returns>
         </member>
@@ -161,7 +161,7 @@
         <member name="T:vm.Aspects.Diagnostics.ClassMetadataResolver">
             <summary>
             Primary responsibility of the class is to retrieve the metadata (the buddy class) and DumpAttribute instance associated with a class to be
-            dumped. For speed the class encapsulates a cache of type (usually class or struct) and the associated <see cref="T:vm.Aspects.Diagnostics.ClassDumpData"/> which
+            dumped. For speed the class encapsulates a cache of type (usually class or struct) and the associated <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> which
             contains the buddy and DumpAttribute instance. Allows to define externally metadata and a DumpAttribute on a class/struct level - useful for
             FCL and 3rd party classes for which we do not have access to their source code.
             </summary>
@@ -171,12 +171,12 @@
             Synchronized cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
             </summary>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.ResetClassDumpData">
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.ResetClassDumpMetadata">
             <summary>
             Resets the class dump.
             </summary>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.SetClassDumpData(System.Type,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
+        <member name="M:vm.Aspects.Diagnostics.ClassMetadataResolver.SetClassDumpMetadata(System.Type,System.Type,vm.Aspects.Diagnostics.DumpAttribute,System.Boolean)">
             <summary>
             Adds buddy type and dump attribute for classes which we do not have access to, e.g. Exception.
             </summary>
@@ -925,15 +925,14 @@
             </summary>
             <param name="instanceType">Type of the instance.</param>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.IsInDumpingMode">
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpScript.DumpedCollection(System.Linq.Expressions.Expression,vm.Aspects.Diagnostics.DumpAttribute,System.Linq.Expressions.Expression)">
             <summary>
-            Gets a value indicating whether the state is in a slow dumping mode (no dump script generated - all is dumped via reflection).
+            Dumpeds the collection.
             </summary>
-        </member>
-        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.IsInScriptingMode">
-            <summary>
-            Gets a value indicating whether the state is in a building dump script mode.
-            </summary>
+            <param name="sequence">The sequence.</param>
+            <param name="dumpAttribute">The dump attribute.</param>
+            <param name="expressionCount">The expression count.</param>
+            <returns></returns>
         </member>
         <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.Instance">
             <summary>
@@ -958,7 +957,7 @@
             The instance dump attribute.
             </value>
         </member>
-        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.ClassDumpData">
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpState.ClassDumpMetadata">
             <summary>
             Gets or sets the class dump data pair - the metadata type and the class dump attribute.
             </summary>
@@ -1303,7 +1302,7 @@
             Delegate Script is the type of the generated dump script that can be cached and reused.
             </summary>
             <param name="instance">The instance being dumped.</param>
-            <param name="classDumpData">The data containing the metadata type and the dump attribute.</param>
+            <param name="classDumpMetadata">The data containing the metadata type and the dump attribute.</param>
             <param name="dumper">The dumper which has the current writer.</param>
             <param name="dumpState">The current state of the dump.</param>
         </member>

@@ -5,9 +5,9 @@ namespace vm.Aspects.Diagnostics
     /// <summary>
     /// Encapsulates a pair of a class or struct metadata and the corresponding DumpAttribute.
     /// </summary>
-    internal struct ClassDumpData : IEquatable<ClassDumpData>
+    internal struct ClassDumpMetadata : IEquatable<ClassDumpMetadata>
     {
-        public ClassDumpData(
+        public ClassDumpMetadata(
             Type metadata,
             DumpAttribute? dumpAttribute = null)
         {
@@ -68,56 +68,56 @@ namespace vm.Aspects.Diagnostics
                     : DumpAttribute.RecurseDump;
 
         #region Identity rules
-        #region IEquatable<ClassDumpData> Members
+        #region IEquatable<ClassDumpMetadata> Members
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
-        /// <param name="other">A copy of another object of type <see cref="ClassDumpData"/> to compare with this object.</param>
+        /// <param name="other">A copy of another object of type <see cref="ClassDumpMetadata"/> to compare with this object.</param>
         /// <returns>
         /// <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ClassDumpData other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
+        public bool Equals(ClassDumpMetadata other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
         #endregion
 
         /// <summary>
-        /// Determines whether this <see cref="ClassDumpData"/> instance is equal to the specified <see cref="object"/> reference.
+        /// Determines whether this <see cref="ClassDumpMetadata"/> instance is equal to the specified <see cref="object"/> reference.
         /// </summary>
-        /// <param name="obj">The <see cref="object"/> reference to compare with this <see cref="ClassDumpData"/> object.</param>
+        /// <param name="obj">The <see cref="object"/> reference to compare with this <see cref="ClassDumpMetadata"/> object.</param>
         /// <returns>
         /// <c>false</c> if <paramref name="obj"/> is equal to <c>null</c>, otherwise
         /// <c>true</c> if <paramref name="obj"/> refers to <c>this</c> object, otherwise
-        /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="ClassDumpData"/> and
+        /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="ClassDumpMetadata"/> and
         /// the fields values of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object? obj) => obj is ClassDumpData clsDumpData && Equals(clsDumpData);
+        public override bool Equals(object? obj) => obj is ClassDumpMetadata clsDumpData && Equals(clsDumpData);
 
         /// <summary>
-        /// Serves as a hash function for the objects of <see cref="ClassDumpData"/> and its derived types.
+        /// Serves as a hash function for the objects of <see cref="ClassDumpMetadata"/> and its derived types.
         /// </summary>
-        /// <returns>A hash code for the current <see cref="ClassDumpData"/> instance.</returns>
+        /// <returns>A hash code for the current <see cref="ClassDumpMetadata"/> instance.</returns>
         public override int GetHashCode() => HashCode.Combine(Metadata, DumpAttribute);
 
         /// <summary>
-        /// Compares two <see cref="ClassDumpData"/> objects.
+        /// Compares two <see cref="ClassDumpMetadata"/> objects.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>
-        /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+        /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator ==(ClassDumpData left, ClassDumpData right) => left.Equals(right);
+        public static bool operator ==(ClassDumpMetadata left, ClassDumpMetadata right) => left.Equals(right);
 
         /// <summary>
-        /// Compares two <see cref="ClassDumpData"/> objects.
+        /// Compares two <see cref="ClassDumpMetadata"/> objects.
         /// </summary>
         /// <param name="left">The left operand.</param>
         /// <param name="right">The right operand.</param>
         /// <returns>
-        /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpData}"/>);
+        /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(ClassDumpData left, ClassDumpData right) => !(left==right);
+        public static bool operator !=(ClassDumpMetadata left, ClassDumpMetadata right) => !(left==right);
         #endregion
     }
 }

@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 using vm.Aspects.Diagnostics.Properties;
+
+using ExpandoDictionary = System.Collections.Generic.IDictionary<string, object?>;
 
 namespace vm.Aspects.Diagnostics
 {
@@ -455,6 +458,65 @@ namespace vm.Aspects.Diagnostics
             }
 
             writer.Write(Resources.MethodParameterListEnd);
+
+            return true;
+        }
+
+        public static bool DumpedExpando(
+            this TextWriter writer,
+            object sequence,
+            DumpAttribute dumpAttribute,
+            Action<object?> dumpObject,
+            Action indent,
+            Action unindent)
+        {
+            if (sequence is not ExpandoObject)
+                return false;
+
+            var expando = (ExpandoDictionary)sequence;
+            var sequenceType = sequence.GetType();
+
+            writer.Write(
+                DumpFormat.SequenceTypeName,
+                nameof(ExpandoObject),
+                expando.Count);
+            writer.Write(
+                    DumpFormat.SequenceType,
+                    sequenceType.GetTypeName(),
+                    sequenceType.Namespace!,
+                    sequenceType.AssemblyQualifiedName!);
+
+            // stop the recursion if dump.Recurse is false
+            if (dumpAttribute.RecurseDump==ShouldDump.Skip)
+                return true;
+
+            // how many items to dump max?
+            var max = dumpAttribute.GetMaxToDump(expando.Count);
+            var n = 0;
+
+            writer.WriteLine();
+            writer.Write("{");
+            indent();
+
+            foreach (var kv in expando)
+            {
+                writer.WriteLine();
+                if (n++ >= max)
+                {
+                    writer.Write(DumpFormat.SequenceDumpTruncated, max, expando.Count);
+                    break;
+                }
+
+                var key = kv.Key;
+                var value = kv.Value;
+
+                writer.Write(dumpAttribute.LabelFormat, kv.Key);
+                dumpObject(value);
+            }
+
+            unindent();
+            writer.WriteLine();
+            writer.Write("}");
 
             return true;
         }

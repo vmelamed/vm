@@ -365,6 +365,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             {
                 PropertyA = "PropertyA";
                 PropertyB = "PropertyB";
+                PropertyC = (42, "Don't panic");
                 Associate = new Object4_1();
                 Associate2 = new Object4_1();
             }
@@ -374,6 +375,9 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 
             [Dump(1)]
             public string PropertyB { get; set; }
+
+            [Dump(2)]
+            public (int, string) PropertyC { get; set; }
 
             [Dump(RecurseDump = ShouldDump.Skip, DefaultProperty = "Property1")]
             public Object4_1 Associate { get; set; }

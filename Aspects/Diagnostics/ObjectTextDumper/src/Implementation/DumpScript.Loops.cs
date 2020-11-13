@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {
-        // Collection enumeration methods and properties:
-        static readonly PropertyInfo _piCollectionCount       = typeof(ICollection).GetProperty(nameof(ICollection.Count), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly MethodInfo _miGetEnumerator           = typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miEnumeratorMoveNext      = typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly PropertyInfo _piEnumeratorCurrent     = typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current), BindingFlags.Public|BindingFlags.Instance)!;
-
-        // Dictionary enumeration methods and properties:
-        static readonly MethodInfo _miGetDEnumerator          = typeof(IDictionary).GetMethod(nameof(IDictionary.GetEnumerator), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly PropertyInfo _piDictionaryEntryKey    = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Key), BindingFlags.Public|BindingFlags.Instance)!;
-        static readonly PropertyInfo _piDictionaryEntryValue  = typeof(DictionaryEntry).GetProperty(nameof(DictionaryEntry.Value), BindingFlags.Public|BindingFlags.Instance)!;
-
         internal static Expression ForEachInDictionary(
             ParameterExpression dictionaryEntry,
             Expression dictionary,
@@ -25,10 +13,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             LabelTarget? @break = null,
             LabelTarget? @continue = null)
         {
-            if (@break == null)
-                @break = Expression.Label();
-            if (@continue == null)
-                @continue = Expression.Label();
+            @break    ??= Expression.Label();
+            @continue ??= Expression.Label();
 
             ParameterExpression enumerator = Expression.Parameter(typeof(IDictionaryEnumerator), nameof(enumerator));
 
@@ -58,6 +44,52 @@ namespace vm.Aspects.Diagnostics.Implementation
                     ));
         }
 
+        internal static Expression ForEachInDictionary<TKey, TValue>(
+            ParameterExpression key,
+            ParameterExpression value,
+            Expression dictionary,
+            Expression body,
+            LabelTarget? @break = null,
+            LabelTarget? @continue = null)
+        {
+            @break    ??= Expression.Label();
+            @continue ??= Expression.Label();
+
+            var miGetEnumerator = typeof(IEnumerable<KeyValuePair<TKey, TValue>>).GetMethod(nameof(IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator))!;
+            var miMoveNext      = typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext))!;
+            var piCurrent       = typeof(IEnumerator<KeyValuePair<TKey, TValue>>).GetProperty(nameof(IEnumerator<KeyValuePair<TKey, TValue>>.Current))!;
+            var piKey           = typeof(KeyValuePair<TKey, TValue>).GetProperty(nameof(KeyValuePair<TKey, TValue>.Key))!;
+            var piValue         = typeof(KeyValuePair<TKey, TValue>).GetProperty(nameof(KeyValuePair<TKey, TValue>.Value))!;
+
+            ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator<KeyValuePair<TKey, TValue>>), nameof(enumerator));
+
+            return Expression.Block(
+                // IDictionaryEnumerator enumerator;
+                new[] { enumerator, /*key, value*/ },
+
+                // enumerator = sequence.GetEnumerator();
+                Expression.Assign(enumerator, Expression.Call(dictionary, miGetEnumerator)),
+
+                // while (enumerator.MoveNext()) {
+                Expression.Loop(
+                    Expression.Block(
+                        Expression.IfThen(
+                            Expression.Not(Expression.Call(enumerator, miMoveNext)),
+                            Expression.Break(@break)),
+
+                        // key = enumerator.Current.Key;
+                        // value = enumerator.Current.Value;
+                        Expression.Assign(key, Expression.Property(Expression.Property(enumerator, piCurrent), piKey)),
+                        Expression.Assign(value, Expression.Property(Expression.Property(enumerator, piCurrent), piValue)),
+
+                        // execute the body of the loop;
+                        body
+                    ),
+                    @break,
+                    @continue)
+                );
+        }
+
         internal static Expression ForEachInEnumerable(
             ParameterExpression entry,
             Expression sequence,
@@ -65,10 +97,8 @@ namespace vm.Aspects.Diagnostics.Implementation
             LabelTarget? @break = null,
             LabelTarget? @continue = null)
         {
-            if (@break == null)
-                @break = Expression.Label();
-            if (@continue == null)
-                @continue = Expression.Label();
+            @break    ??= Expression.Label();
+            @continue ??= Expression.Label();
 
             ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator), nameof(enumerator));
 
@@ -94,6 +124,47 @@ namespace vm.Aspects.Diagnostics.Implementation
                             @break,
                             @continue)
                         );
+        }
+
+        internal static Expression ForEachInEnumerable<T>(
+            ParameterExpression entry,
+            Expression sequence,
+            Expression body,
+            LabelTarget? @break = null,
+            LabelTarget? @continue = null)
+        {
+            @break    ??= Expression.Label();
+            @continue ??= Expression.Label();
+
+            var miGetEnumerator = typeof(ICollection<T>).GetMethod(nameof(IEnumerable<T>.GetEnumerator))!;
+            var miMoveNext      = typeof(IEnumerable<T>).GetMethod(nameof(IEnumerator<T>.MoveNext))!;
+            var piCurrent       = typeof(IEnumerable<T>).GetProperty(nameof(IEnumerator<T>.Current))!;
+
+            ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator<T>), nameof(enumerator));
+
+            return Expression.Block(
+                // IDictionaryEnumerator enumerator;
+                new[] { enumerator, entry },
+
+                // enumerator = sequence.GetEnumerator();
+                Expression.Assign(enumerator, Expression.Call(sequence, miGetEnumerator)),
+
+                // while (enumerator.MoveNext()) {
+                Expression.Loop(
+                    Expression.Block(
+                        Expression.IfThen(
+                            Expression.Not(Expression.Call(enumerator, miMoveNext)),
+                            Expression.Break(@break)),
+
+                        // item = enumerator.Current;
+                        Expression.Assign(entry, Expression.Convert(Expression.Property(enumerator, piCurrent), typeof(T))),
+
+                        // execute the body of the loop;
+                        body
+                    ),
+                    @break,
+                    @continue)
+                );
         }
     }
 }

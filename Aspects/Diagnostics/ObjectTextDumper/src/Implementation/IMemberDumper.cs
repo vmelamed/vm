@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
-    interface IDumpState
+    interface IMemberDumper
     {
         void DumpSeenAlready();
         void DumpType();
@@ -16,8 +16,9 @@ namespace vm.Aspects.Diagnostics.Implementation
         void DumpDelegate();
         void DumpedMemberInfo();
         void DumpProperty(object? value, Type type);
-        bool DumpDictionary(object sequence, DumpAttribute dumpAttribute);
-        bool DumpSequence(IEnumerable sequence, DumpAttribute dumpAttribute, bool newLineForCustom = false);
+        bool DumpExpando(IEnumerable sequence, DumpAttribute dumpAttribute);
+        bool DumpDictionary(object sequence, DumpAttribute dumpAttribute, MemberInfo? mi);
+        bool DumpSequence(IEnumerable sequence, DumpAttribute dumpAttribute, MemberInfo? _, bool newLineForCustom = false);
         void DumpToString(object value);
         bool CustomDumpProperty(object value, MethodInfo dumpMethod);
         void Write(string message);

@@ -1,32 +1,36 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
-    class DumpStateToScript : IDumpState
+    class ScriptMemberDumper : IMemberDumper
     {
-        public DumpStateToScript(DumpState dumpState)
+        public ScriptMemberDumper(DumpState dumpState)
         {
             DumpState = dumpState;
 
+            Debug.Assert(dumpState.DumpScript is not null);
+
             // shortcuts:
-            Script        = dumpState.DumpScript!;
-            DumpAttribute = dumpState.CurrentDumpAttribute!;
-            MemberInfo    = dumpState.CurrentMember!;
+            Script        = DumpState.DumpScript!;
         }
 
         DumpState DumpState { get; }
         // shortcuts:
         DumpScript Script { get; }
-        DumpAttribute DumpAttribute { get; }
-        MemberInfo MemberInfo { get; }
+        DumpAttribute DumpAttribute => DumpState.CurrentDumpAttribute!;
+        MemberInfo MemberInfo => DumpState.CurrentMember!;
 
         public void DumpSeenAlready() => Script.AddDumpSeenAlready();
 
         public void DumpType() => Script.AddDumpType();
 
-        public void DumpExpressionCSharpText(string cSharpText) => Script.AddDumpExpressionText(cSharpText);
+        public void DumpExpressionCSharpText(string cSharpText)
+        {
+            Script.AddDumpExpressionText(cSharpText);
+        }
 
         public void IncrementMaxDepth() => Script.AddIncrementMaxDepth();
 
@@ -40,7 +44,9 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public void DumpedMemberInfo() => Script.AddDumpedMemberInfo();
 
-        public void DumpProperty(object? value, Type type)
+        public void DumpProperty(
+            object? value,
+            Type type)
         {
             var dontDumpNulls = DumpAttribute.DumpNullValues==ShouldDump.Skip  ||
                                 DumpAttribute.DumpNullValues==ShouldDump.Default && DumpState.DumpNullValues==ShouldDump.Skip;
@@ -54,24 +60,41 @@ namespace vm.Aspects.Diagnostics.Implementation
             Script.EndDumpProperty(MemberInfo, dontDumpNulls);
         }
 
-        public bool DumpDictionary(object sequence, DumpAttribute dumpAttribute)
+        public bool DumpExpando(
+            IEnumerable _,
+            DumpAttribute dumpAttribute)
+        {
+            Script.AddDumpedExpando(dumpAttribute);
+            return true;
+        }
+
+        public bool DumpDictionary(
+            object sequence,
+            DumpAttribute dumpAttribute,
+            MemberInfo? mi)
         {
             if (sequence.GetType().DictionaryTypeArguments().keyType == typeof(void))
                 return false;
 
-            Script.AddDumpedDictionary(dumpAttribute);
+            if (mi is null)
+                Script.AddDumpedDictionary(dumpAttribute);
+            else
+                Script.AddDumpedDictionary(mi, dumpAttribute);
             return true;
         }
 
-        public bool DumpSequence(IEnumerable sequence, DumpAttribute dumpAttribute, bool _)
-        {
-            Script.AddDumpedCollection(dumpAttribute);
-            return true;
-        }
+        public bool DumpSequence(
+            IEnumerable sequence,
+            DumpAttribute dumpAttribute,
+            MemberInfo? mi,
+            bool _) =>
+            (mi is not null
+                ? Script.AddDumpedCollection(mi, dumpAttribute)
+                : Script.AddDumpedCollection(dumpAttribute)) is not null;
 
-        public void DumpToString(object value) => Script.AddCustomDumpPropertyOrField(MemberInfo, null);
+        public void DumpToString(object _) => Script.AddCustomDumpPropertyOrField(MemberInfo, null);
 
-        public bool CustomDumpProperty(object value, MethodInfo dumpMethod)
+        public bool CustomDumpProperty(object _, MethodInfo dumpMethod)
         {
             Script.AddCustomDumpPropertyOrField(MemberInfo, dumpMethod);
             return true;

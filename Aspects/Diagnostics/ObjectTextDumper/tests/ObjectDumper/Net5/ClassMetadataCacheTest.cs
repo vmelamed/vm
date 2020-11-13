@@ -12,67 +12,67 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
     {
         static void Reset()
         {
-            ClassMetadataResolver.ResetClassDumpData();
+            ClassMetadataResolver.ResetClassDumpMetadata();
             Assert.AreEqual(0, ClassMetadataResolver.GetSnapshotTypesDumpData().Count);
         }
 
         [TestMethod]
-        public void TestSetClassDumpData_NullArg2n3()
+        public void TestSetClassDumpMetadata_NullArg2n3()
         {
             Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count;
 
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null, true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), null, null, true);
 
             Assert.AreEqual(initialCacheSize+1, ClassMetadataResolver.GetSnapshotTypesDumpData().Count);
             Assert.AreEqual(
-                new ClassDumpData(typeof(ClassMetadataCacheTest), new DumpAttribute()),
+                new ClassDumpMetadata(typeof(ClassMetadataCacheTest), new DumpAttribute()),
                 ClassMetadataResolver.GetSnapshotTypesDumpData()[typeof(ClassMetadataCacheTest)]);
         }
 
         [TestMethod]
-        public void TestSetClassDumpData_NullArg2()
+        public void TestSetClassDumpMetadata_NullArg2()
         {
             Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count;
 
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, ClassMetadataResolver.GetSnapshotTypesDumpData().Count);
             Assert.AreEqual(
-                new ClassDumpData(typeof(ClassMetadataCacheTest), new DumpAttribute(false)),
+                new ClassDumpMetadata(typeof(ClassMetadataCacheTest), new DumpAttribute(false)),
                 ClassMetadataResolver.GetSnapshotTypesDumpData()[typeof(ClassMetadataCacheTest)]);
         }
 
         [TestMethod]
-        public void TestSetClassDumpData_NullArg3()
+        public void TestSetClassDumpMetadata_NullArg3()
         {
             Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count;
 
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
 
             Assert.AreEqual(initialCacheSize+1, ClassMetadataResolver.GetSnapshotTypesDumpData().Count);
             Assert.AreEqual(
-                new ClassDumpData(typeof(ClassMetadataResolver), null),
+                new ClassDumpMetadata(typeof(ClassMetadataResolver), null),
                 ClassMetadataResolver.GetSnapshotTypesDumpData()[typeof(ClassMetadataCacheTest)]);
         }
 
         [TestMethod]
-        public void TestSetClassDumpData()
+        public void TestSetClassDumpMetadata()
         {
             Reset();
             ClassMetadataRegistrar.RegisterMetadata();
             var initialCacheSize = ClassMetadataResolver.GetSnapshotTypesDumpData().Count;
 
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
 
             Assert.AreEqual(initialCacheSize+1, ClassMetadataResolver.GetSnapshotTypesDumpData().Count);
             Assert.AreEqual(
-                new ClassDumpData(typeof(ClassMetadataResolver), new DumpAttribute(false)),
+                new ClassDumpMetadata(typeof(ClassMetadataResolver), new DumpAttribute(false)),
                 ClassMetadataResolver.GetSnapshotTypesDumpData()[typeof(ClassMetadataCacheTest)]);
         }
 
@@ -80,34 +80,34 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestSetClassDumpData_NullArg2n3_Exception()
+        public void TestSetClassDumpMetadata_NullArg2n3_Exception()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, null, true);
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, false);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), null, null, true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, false);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestSetClassDumpData_NullArg2_Exception()
+        public void TestSetClassDumpMetadata_NullArg2_Exception()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), null, new DumpAttribute(true), false);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), null, new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), null, new DumpAttribute(true), false);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestSetClassDumpData_NullArg3_Exception()
+        public void TestSetClassDumpMetadata_NullArg3_Exception()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), null, false);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), null, true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), null, false);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestSetClassDumpData_Exception()
+        public void TestSetClassDumpMetadata_Exception()
         {
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
-            ClassMetadataResolver.SetClassDumpData(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), new DumpAttribute(true), false);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataResolver), new DumpAttribute(false), true);
+            ClassMetadataResolver.SetClassDumpMetadata(typeof(ClassMetadataCacheTest), typeof(ClassMetadataCacheTest), new DumpAttribute(true), false);
         }
 
         //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         {
             ClassMetadataRegistrar.RegisterMetadata();
 
-            var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Exception));
+            var dumpAttribute = ClassMetadataResolver.GetClassDumpMetadata(typeof(Exception));
 
             Assert.AreEqual(typeof(ExceptionDumpMetadata), dumpAttribute.Metadata);
             Assert.AreEqual(DumpAttribute.Default, dumpAttribute.DumpAttribute);
@@ -156,7 +156,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         [TestMethod]
         public void TestGetClassDumpAttribute_NotInCache1()
         {
-            var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Test1));
+            var dumpAttribute = ClassMetadataResolver.GetClassDumpMetadata(typeof(Test1));
 
             Assert.AreEqual(typeof(Test1), dumpAttribute.Metadata);
             Assert.AreEqual(DumpAttribute.Default, dumpAttribute.DumpAttribute);
@@ -165,7 +165,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         [TestMethod]
         public void TestGetClassDumpAttribute_NotInCache2()
         {
-            var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Test2));
+            var dumpAttribute = ClassMetadataResolver.GetClassDumpMetadata(typeof(Test2));
 
             Assert.AreEqual(typeof(Test2), dumpAttribute.Metadata);
             Assert.AreEqual(new DumpAttribute(false), dumpAttribute.DumpAttribute);
@@ -174,7 +174,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         [TestMethod]
         public void TestGetClassDumpAttribute_NotInCache3()
         {
-            var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Test3));
+            var dumpAttribute = ClassMetadataResolver.GetClassDumpMetadata(typeof(Test3));
 
             Assert.AreEqual(typeof(Test3Meta), dumpAttribute.Metadata);
             Assert.AreEqual(DumpAttribute.Default, dumpAttribute.DumpAttribute);
@@ -183,7 +183,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         [TestMethod]
         public void TestGetClassDumpAttribute_NotInCache4()
         {
-            var dumpAttribute = ClassMetadataResolver.GetClassDumpData(typeof(Test4));
+            var dumpAttribute = ClassMetadataResolver.GetClassDumpMetadata(typeof(Test4));
 
             Assert.AreEqual(typeof(Test4Meta), dumpAttribute.Metadata);
             Assert.AreEqual(new DumpAttribute(false), dumpAttribute.DumpAttribute);
