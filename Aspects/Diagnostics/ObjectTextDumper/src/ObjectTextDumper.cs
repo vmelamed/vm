@@ -32,7 +32,7 @@ namespace vm.Aspects.Diagnostics
     /// </summary>
     public sealed partial class ObjectTextDumper : IDisposable
     {
-        static readonly ReaderWriterLockSlim _syncDefaultDumpSettings = new ReaderWriterLockSlim();
+        static readonly ReaderWriterLockSlim _syncDefaultDumpSettings = new();
         static DumpSettings _defaultDumpSettings                      = DumpSettings.Default;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace vm.Aspects.Diagnostics
         #endregion
 
         #region Internal properties for access by the DumpState
-        readonly ReaderWriterLockSlim _syncSettings = new ReaderWriterLockSlim();
+        readonly ReaderWriterLockSlim _syncSettings = new();
         DumpSettings _settings                      = DumpSettings.Default;
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
         /// </summary>
-        internal HashSet<DumpedObject> DumpedObjects { get; } = new HashSet<DumpedObject>();
+        internal HashSet<DumpedObject> DumpedObjects { get; } = new();
         #endregion
 
         #region Constructor

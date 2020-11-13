@@ -18,7 +18,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
     {
         public static readonly Func<TextWriter, ObjectTextDumper> DefaultDumperFactory = w => new ObjectTextDumper(w);
 
-        readonly Stopwatch _sw = new Stopwatch();
+        readonly Stopwatch _sw = new();
 
         public TestContext? TestContext { get; set; }
 

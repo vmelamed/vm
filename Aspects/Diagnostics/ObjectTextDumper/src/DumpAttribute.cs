@@ -47,7 +47,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// The default dump attribute applied to instances and properties with no <c>DumpAttribute</c> specified.
         /// </summary>
-        public static DumpAttribute Default { get; } = new DumpAttribute();
+        public static DumpAttribute Default { get; } = new();
         #endregion
 
         #region Default values for some properties
@@ -288,7 +288,7 @@ namespace vm.Aspects.Diagnostics
         /// </summary>
         /// <returns>DumpAttribute.</returns>
         public DumpAttribute Clone() =>
-            new DumpAttribute
+            new()
             {
                 DumpNullValues  = DumpNullValues,
                 RecurseDump     = RecurseDump,

@@ -9,7 +9,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class CSharpDumpExpression : IDisposable
     {
-        readonly StringWriter _textWriter = new StringWriter();
+        readonly StringWriter _textWriter = new();
         readonly DumpTextWriter _writer;
 
         int Indent() => ++_writer.Indent;

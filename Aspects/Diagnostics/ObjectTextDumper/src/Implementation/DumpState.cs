@@ -211,13 +211,12 @@ namespace vm.Aspects.Diagnostics.Implementation
         #endregion
 
         public DumpState GetBaseTypeDumpState() =>
-            new DumpState(
-                    Dumper,
-                    Instance,
-                    SuperType.BaseType ?? throw new ArgumentException("System.Object does not have base type."),
-                    ClassMetadataResolver.GetClassDumpMetadata(SuperType.BaseType, dumpAttribute: InstanceDumpAttribute),
-                    InstanceDumpAttribute,
-                    DumpScript);
+            new(Dumper,
+                Instance,
+                SuperType.BaseType ?? throw new ArgumentException("System.Object does not have base type."),
+                ClassMetadataResolver.GetClassDumpMetadata(SuperType.BaseType, dumpAttribute: InstanceDumpAttribute),
+                InstanceDumpAttribute,
+                DumpScript);
 
         public bool DumpedAlready()
         {

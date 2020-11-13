@@ -40,12 +40,11 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Gets a default set of settings
         /// </summary>
-        public static DumpSettings Default => new DumpSettings(
-                                                        true,
-                                                        DefaultIndentSize,
-                                                        DumpTextWriter.DefaultMaxLength,
-                                                        DefaultPropertyBindingFlags,
-                                                        DefaultFieldBindingFlags);
+        public static DumpSettings Default => new(true,
+                                                  DefaultIndentSize,
+                                                  DumpTextWriter.DefaultMaxLength,
+                                                  DefaultPropertyBindingFlags,
+                                                  DefaultFieldBindingFlags);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DumpSettings" /> struct.

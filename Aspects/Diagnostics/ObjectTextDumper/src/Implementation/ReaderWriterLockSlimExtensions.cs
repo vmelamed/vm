@@ -39,8 +39,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// ]]>
         /// </code>
         /// </example>
-        public static UpgradeableReaderSlimSync UpgradableReaderLock(this ReaderWriterLockSlim readerWriterLock) =>
-            new UpgradeableReaderSlimSync(readerWriterLock);
+        public static UpgradeableReaderSlimSync UpgradableReaderLock(this ReaderWriterLockSlim readerWriterLock) => new(readerWriterLock);
 
         /// <summary>
         /// Gets the reader slim sync. Mere of a shortcut to <c>new ReaderSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
@@ -64,8 +63,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// ]]>
         /// </code>
         /// </example>
-        public static ReaderSlimSync ReaderLock(this ReaderWriterLockSlim readerWriterLock) =>
-            new ReaderSlimSync(readerWriterLock);
+        public static ReaderSlimSync ReaderLock(this ReaderWriterLockSlim readerWriterLock) => new(readerWriterLock);
 
         /// <summary>
         /// Gets the reader slim sync. Mere of a shortcut to <c>new WriterSlimSync(readerWriterLock)</c> however shows nicely in intellisense.
@@ -89,7 +87,6 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// ]]>
         /// </code>
         /// </example>
-        public static WriterSlimSync WriterLock(this ReaderWriterLockSlim readerWriterLock) =>
-            new WriterSlimSync(readerWriterLock);
+        public static WriterSlimSync WriterLock(this ReaderWriterLockSlim readerWriterLock) => new(readerWriterLock);
     }
 }

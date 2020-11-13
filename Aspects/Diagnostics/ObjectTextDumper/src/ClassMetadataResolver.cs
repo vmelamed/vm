@@ -19,8 +19,8 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Synchronized cache of dump metadata (buddy classes) defined explicitly either in the initializer above or by calling SetMetadataType.
         /// </summary>
-        static readonly Dictionary<Type, ClassDumpMetadata> _typesDumpData = new Dictionary<Type, ClassDumpMetadata>();
-        static readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        static readonly Dictionary<Type, ClassDumpMetadata> _typesDumpData = new();
+        static readonly ReaderWriterLockSlim _lock = new();
 
         public static Dictionary<Type, ClassDumpMetadata> GetSnapshotTypesDumpData()
         {

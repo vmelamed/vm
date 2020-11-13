@@ -48,7 +48,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             #endregion
         };
 
-        readonly static ReaderWriterLockSlim _sync = new ReaderWriterLockSlim();
+        readonly static ReaderWriterLockSlim _sync = new();
         // cache of the assembled an possibly compiled already scripts
         readonly static IDictionary<ScriptLookup, Script> _cache = new Dictionary<ScriptLookup, Script>();
         // scripts that are in the process of building

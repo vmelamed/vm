@@ -39,7 +39,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         /// <summary>
         /// Stack of temporarily saved script fragments
         /// </summary>
-        readonly Stack<ICollection<Expression>> _scripts = new Stack<ICollection<Expression>>();
+        readonly Stack<ICollection<Expression>> _scripts = new();
 
         /// <summary>
         /// The script is closed for adding more expressions to it.

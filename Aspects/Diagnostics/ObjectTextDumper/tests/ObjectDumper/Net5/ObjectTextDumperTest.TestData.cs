@@ -35,7 +35,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 
         public class Object1
         {
-            public object ObjectProperty { get; set; } = new object();
+            public object ObjectProperty { get; set; } = new();
             public object? NullObjectProperty { get; set; }
             public int? NullIntProperty { get; set; }
             public long? NullLongProperty { get; set; } = 1L;
@@ -53,10 +53,10 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             public float FloatProperty { get; set; } = (float)1.0;
             public decimal DecimalProperty { get; set; } = 1M;
             public Guid GuidProperty { get; set; } = Guid.Empty;
-            public Uri UriProperty { get; set; } = new Uri("http://localhost");
-            public DateTime DateTimeProperty { get; set; } = new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
-            public TimeSpan TimeSpanProperty { get; set; } = new TimeSpan(123L);
-            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
+            public Uri UriProperty { get; set; } = new("http://localhost");
+            public DateTime DateTimeProperty { get; set; } = new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
+            public TimeSpan TimeSpanProperty { get; set; } = new(123L);
+            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new(new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
 
             public object ObjectField;
             public int? NullIntField;
@@ -75,10 +75,10 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             public float FloatField                   = (float)1.0;
             public decimal DecimalField               = 1M;
             public Guid GuidField                     = Guid.Empty;
-            public Uri UriField                       = new Uri("http://localhost");
-            public DateTime DateTimeField             = new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
-            public TimeSpan TimeSpanField             = new TimeSpan(123L);
-            public DateTimeOffset DateTimeOffsetField = new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
+            public Uri UriField                       = new("http://localhost");
+            public DateTime DateTimeField             = new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
+            public TimeSpan TimeSpanField             = new(123L);
+            public DateTimeOffset DateTimeOffsetField = new(new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
         }
 
         abstract class Object1Metadata
@@ -261,15 +261,15 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             [Dump(-6)]
             public Guid GuidProperty { get; set; } = Guid.Empty;
             [Dump(-7)]
-            public Uri UriProperty { get; set; } = new Uri("http://localhost");
+            public Uri UriProperty { get; set; } = new("http://localhost");
             [Dump(-8)]
-            public DateTime DateTimeProperty { get; set; } = new DateTime(2013, 1, 13);
+            public DateTime DateTimeProperty { get; set; } = new(2013, 1, 13);
             [Dump(-9, ValueFormat = "ToString()")]
-            public DateTime DateTimeProperty1 { get; set; } = new DateTime(2013, 1, 25, 11, 23, 45, DateTimeKind.Utc);
+            public DateTime DateTimeProperty1 { get; set; } = new(2013, 1, 25, 11, 23, 45, DateTimeKind.Utc);
             [Dump(-10)]
-            public TimeSpan TimeSpanProperty { get; set; } = new TimeSpan(123L);
+            public TimeSpan TimeSpanProperty { get; set; } = new(123L);
             [Dump(false)]
-            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
+            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new(new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
         }
 
         [MetadataType(typeof(Object3Metadata))]
@@ -292,10 +292,10 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             public float FloatProperty { get; set; } = (float)1.0;
             public decimal DecimalProperty { get; set; } = 1M;
             public Guid GuidProperty { get; set; } = Guid.Empty;
-            public Uri UriProperty { get; set; } = new Uri("http://localhost");
-            public DateTime DateTimeProperty { get; set; } = new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
-            public TimeSpan TimeSpanProperty { get; set; } = new TimeSpan(123L);
-            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new DateTimeOffset(new DateTime(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
+            public Uri UriProperty { get; set; } = new("http://localhost");
+            public DateTime DateTimeProperty { get; set; } = new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc);
+            public TimeSpan TimeSpanProperty { get; set; } = new(123L);
+            public DateTimeOffset DateTimeOffsetProperty { get; set; } = new(new(2013, 1, 13, 0, 0, 0, DateTimeKind.Utc));
         }
 
         [Dump(DumpNullValues = ShouldDump.Skip)]
@@ -366,8 +366,8 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
                 PropertyA = "PropertyA";
                 PropertyB = "PropertyB";
                 PropertyC = (42, "Don't panic");
-                Associate = new Object4_1();
-                Associate2 = new Object4_1();
+                Associate = new();
+                Associate2 = new();
             }
 
             [Dump(0)]
@@ -429,7 +429,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
                 Array3 = new byte[] { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, };
                 Array4 = new byte[] { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, };
                 Array5 = new byte[] { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, };
-                Array6 = new ArrayList { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, };
+                Array6 = new() { 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, };
             }
 
             public string Property1 { get; set; }
@@ -498,7 +498,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         {
             public Object9()
             {
-                Object90 = new Object90 { Prop=TestEnum.One, Flags = TestFlags.Two | TestFlags.Four };
+                Object90 = new() { Prop=TestEnum.One, Flags = TestFlags.Two | TestFlags.Four };
                 Prop91 = 0;
                 Prop92 = 1;
                 Prop93 = 4;
@@ -555,7 +555,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         {
             public ObjectWithDelegates()
             {
-                Object10Prop = new Object10 { Offset = 23 };
+                Object10Prop = new() { Offset = 23 };
                 DelegateProp1 = Object10.Static;
                 DelegateProp2 = Object10Prop.Instance;
                 DelegateProp3 = TestMethod;
@@ -576,7 +576,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
 
             public MyEnumerable()
             {
-                List = new List<int> { 0, 1, 3, };
+                List = new() { 0, 1, 3, };
             }
 
             public string Property { get; set; }
@@ -591,7 +591,7 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
             public ObjectWithMyEnumerable()
             {
                 Stuff = "stuff";
-                MyEnumerable = new MyEnumerable() { Property = "foo" };
+                MyEnumerable = new() { Property = "foo" };
             }
 
             public string Stuff { get; set; }
@@ -698,15 +698,15 @@ namespace vm.Aspects.Diagnostics.ObjectTextDumperTests
         {
             public Object12()
             {
-                Object11Property_1 = new Object11();
-                Object11Property_2 = new Object11();
-                Object11Property_3 = new Object11();
-                Object11Property_4 = new Object11();
-                Object11Property_11 = new Object11_1();
-                Object11Property_21 = new Object11_1();
-                Object11Property_31 = new Object11_1();
-                Object11Property_41 = new Object11_1();
-                Object11Property_51 = new Object11_1();
+                Object11Property_1 = new();
+                Object11Property_2 = new();
+                Object11Property_3 = new();
+                Object11Property_4 = new();
+                Object11Property_11 = new();
+                Object11Property_21 = new();
+                Object11Property_31 = new();
+                Object11Property_41 = new();
+                Object11Property_51 = new();
             }
 
             [Dump(DumpClass = typeof(Object11Dumper), DumpMethod = "DumpObject11")]

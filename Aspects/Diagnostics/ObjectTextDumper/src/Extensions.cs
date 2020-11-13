@@ -29,7 +29,7 @@ namespace vm.Aspects
         /// <summary>
         /// Matches a type name with hexadecimal suffix.
         /// </summary>
-        static readonly Regex _hexadecimalSuffix = new Regex(@$"_[0-9A-F]{{{_efHexadecimalSuffixLength}}}", RegexOptions.Compiled);
+        static readonly Regex _hexadecimalSuffix = new(@$"_[0-9A-F]{{{_efHexadecimalSuffixLength}}}", RegexOptions.Compiled);
 
         /// <summary>
         /// Dumps the specified <paramref name="value"/> to a text writer.
