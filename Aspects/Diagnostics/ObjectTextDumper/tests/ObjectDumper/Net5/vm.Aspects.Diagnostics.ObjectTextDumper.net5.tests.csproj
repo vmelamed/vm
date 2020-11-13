@@ -29,18 +29,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ObjectTextDumperTest.cs" />
-    <Compile Remove="ObjectTextDumperTest.TestData.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\..\..\..\..\Common Items\Dictionary.xml" Link="Dictionary.xml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\..\..\..\..\Common Items\vm.Test.snk" Link="vm.Test.snk" />
-    <None Include="ObjectTextDumperTest.cs" />
-    <None Include="ObjectTextDumperTest.TestData.cs" />
   </ItemGroup>
 
   <ItemGroup>
