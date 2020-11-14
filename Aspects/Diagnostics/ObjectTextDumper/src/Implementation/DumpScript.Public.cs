@@ -70,7 +70,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public DumpScript AddIncrementMaxDepth() => Add(IncrementMaxDepth());
 
-        public DumpScript AddDumpSeenAlready() => Add(DumpSeenAlready());
+        public DumpScript AddDumpSeenAlready(string reference) => Add(DumpSeenAlready(reference));
 
         public DumpScript BeginDumpProperty(
             MemberInfo mi,

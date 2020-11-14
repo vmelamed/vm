@@ -133,7 +133,7 @@
     <value>C#-like expression text:</value>
   </data>
   <data name="CyclicalReferenceDesignator" xml:space="preserve">
-    <value>{0} (see above)</value>
+    <value>{0} (see "{1}" above)</value>
   </data>
   <data name="DelegateDumpFormat" xml:space="preserve">
     <value>{4}{0}.{3}</value>
@@ -276,5 +276,8 @@ The dump exceeded the maximum length of {0} characters. Either increase the valu
   </data>
   <data name="DictionaryKeyEnd" xml:space="preserve">
     <value>] = </value>
+  </data>
+  <data name="DumpedObjectReferenceFormat" xml:space="preserve">
+    <value>{0}--{1}</value>
   </data>
 </root>

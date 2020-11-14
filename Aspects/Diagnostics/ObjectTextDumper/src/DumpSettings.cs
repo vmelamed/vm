@@ -171,6 +171,5 @@ namespace vm.Aspects.Diagnostics
         /// </returns>
         public static bool operator !=(DumpSettings left, DumpSettings right) => !(left==right);
         #endregion
-
     }
 }

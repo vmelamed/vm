@@ -220,19 +220,19 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         public bool DumpedAlready()
         {
-            var type = Instance.GetType();
-
             // stop the recursion at circular references
-            if (!Dumper.DumpedObjects.Contains(new DumpedObject(Instance, type)))
+            var (isDumped, reference) = Dumper.DumpedObjects.Contains(Instance);
+
+            if (!isDumped)
                 return false;
 
-            DumpSeenAlready();
+            DumpSeenAlready(reference);
             return true;
         }
 
-        public void DumpSeenAlready()
+        public void DumpSeenAlready(string reference)
         {
-            MemberDumper.DumpSeenAlready();
+            MemberDumper.DumpSeenAlready(reference);
         }
 
         public void DumpType()

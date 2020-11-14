@@ -6,7 +6,7 @@ namespace vm.Aspects.Diagnostics.Implementation
 {
     interface IMemberDumper
     {
-        void DumpSeenAlready();
+        void DumpSeenAlready(string reference);
         void DumpType();
         void DumpExpressionCSharpText(string cSharpText);
         void IncrementMaxDepth();

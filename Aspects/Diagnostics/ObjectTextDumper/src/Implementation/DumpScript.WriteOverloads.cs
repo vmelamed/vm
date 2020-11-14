@@ -8,10 +8,10 @@ namespace vm.Aspects.Diagnostics.Implementation
     partial class DumpScript
     {
         static readonly MethodInfo _miWriteLine0 = typeof(TextWriter).GetMethod(nameof(TextWriter.WriteLine), BindingFlags.Public|BindingFlags.Instance, null, Array.Empty<Type>(), null)!;
-        static readonly MethodInfo _miWrite1     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(string), }, null)!;
-        static readonly MethodInfo _miWrite2     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(string), typeof(object), }, null)!;
-        static readonly MethodInfo _miWrite3     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(string), typeof(object), typeof(object), }, null)!;
-        static readonly MethodInfo _miWrite4     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new Type[] { typeof(string), typeof(object), typeof(object), typeof(object), }, null)!;
+        static readonly MethodInfo _miWrite1     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new[] { typeof(string), }, null)!;
+        static readonly MethodInfo _miWrite2     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new[] { typeof(string), typeof(object), }, null)!;
+        static readonly MethodInfo _miWrite3     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new[] { typeof(string), typeof(object), typeof(object), }, null)!;
+        static readonly MethodInfo _miWrite4     = typeof(TextWriter).GetMethod(nameof(TextWriter.Write), BindingFlags.Public|BindingFlags.Instance, null, new[] { typeof(string), typeof(object), typeof(object), typeof(object), }, null)!;
 
         Expression WriteLine() => Expression.Call(_writer, _miWriteLine0);
 

@@ -10,11 +10,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             ParameterExpression dictionaryEntry,
             Expression dictionary,
             Expression body,
-            LabelTarget? @break = null,
-            LabelTarget? @continue = null)
+            LabelTarget? @break = null)
         {
-            @break    ??= Expression.Label();
-            @continue ??= Expression.Label();
+            @break ??= Expression.Label();
 
             ParameterExpression enumerator = Expression.Parameter(typeof(IDictionaryEnumerator), nameof(enumerator));
 
@@ -39,8 +37,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                             // execute the body of the loop;
                             body
                         ),
-                        @break,
-                        @continue)
+                        @break)
                     ));
         }
 
@@ -49,11 +46,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             ParameterExpression value,
             Expression dictionary,
             Expression body,
-            LabelTarget? @break = null,
-            LabelTarget? @continue = null)
+            LabelTarget? @break = null)
         {
-            @break    ??= Expression.Label();
-            @continue ??= Expression.Label();
+            @break ??= Expression.Label();
 
             var miGetEnumerator = typeof(IEnumerable<KeyValuePair<TKey, TValue>>).GetMethod(nameof(IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator))!;
             var miMoveNext      = typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext))!;
@@ -85,8 +80,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                         // execute the body of the loop;
                         body
                     ),
-                    @break,
-                    @continue)
+                    @break)
                 );
         }
 
@@ -94,11 +88,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             ParameterExpression entry,
             Expression sequence,
             Expression body,
-            LabelTarget? @break = null,
-            LabelTarget? @continue = null)
+            LabelTarget? @break = null)
         {
-            @break    ??= Expression.Label();
-            @continue ??= Expression.Label();
+            @break ??= Expression.Label();
 
             ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator), nameof(enumerator));
 
@@ -121,8 +113,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                                 // execute the body of the loop;
                                 body
                             ),
-                            @break,
-                            @continue)
+                            @break)
                         );
         }
 
@@ -130,11 +121,9 @@ namespace vm.Aspects.Diagnostics.Implementation
             ParameterExpression entry,
             Expression sequence,
             Expression body,
-            LabelTarget? @break = null,
-            LabelTarget? @continue = null)
+            LabelTarget? @break = null)
         {
-            @break    ??= Expression.Label();
-            @continue ??= Expression.Label();
+            @break ??= Expression.Label();
 
             var miGetEnumerator = typeof(ICollection<T>).GetMethod(nameof(IEnumerable<T>.GetEnumerator))!;
             var miMoveNext      = typeof(IEnumerable<T>).GetMethod(nameof(IEnumerator<T>.MoveNext))!;
@@ -162,8 +151,7 @@ namespace vm.Aspects.Diagnostics.Implementation
                         // execute the body of the loop;
                         body
                     ),
-                    @break,
-                    @continue)
+                    @break)
                 );
         }
     }

@@ -61,10 +61,6 @@ Restructured and rebuilt for .NET 5.0</PackageReleaseNotes>
 
   <ItemGroup>
     <None Include="..\..\..\..\Common Items\vm.snk" Link="vm.snk" />
-    <None Include="..\..\..\..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -23,14 +23,11 @@ namespace vm.Aspects.Diagnostics.Implementation
         DumpAttribute DumpAttribute => DumpState.CurrentDumpAttribute!;
         MemberInfo MemberInfo => DumpState.CurrentMember!;
 
-        public void DumpSeenAlready() => Script.AddDumpSeenAlready();
+        public void DumpSeenAlready(string reference) => Script.AddDumpSeenAlready(reference);
 
         public void DumpType() => Script.AddDumpType();
 
-        public void DumpExpressionCSharpText(string cSharpText)
-        {
-            Script.AddDumpExpressionText(cSharpText);
-        }
+        public void DumpExpressionCSharpText(string cSharpText) => Script.AddDumpExpressionText(cSharpText);
 
         public void IncrementMaxDepth() => Script.AddIncrementMaxDepth();
 
@@ -54,7 +51,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             // write the property header
             Script.BeginDumpProperty(MemberInfo, DumpAttribute);
 
-            if (!DumpState.DumpedPropertyCustom(value, type))                                             // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
+            if (!DumpState.DumpedPropertyCustom(value, type))   // dump the property value using caller's customization (see ValueFormat="ToString", DumpClass, DumpMethod) if any.
                 Script.AddDumpPropertyOrCollectionValue(MemberInfo, DumpAttribute);
 
             Script.EndDumpProperty(MemberInfo, dontDumpNulls);

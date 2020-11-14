@@ -380,7 +380,7 @@ Object5_1 ("+ObjectTextDumperTestClass+@"+Object5_1, "+ObjectTextDumperTestAssem
         Value                    = 3
         NodeType                 = ExpressionType.Constant
         CanReduce                = False
-      Right                    = PrimitiveParameterExpression<int> (see above)
+      Right                    = PrimitiveParameterExpression<int> (see ""PrimitiveParameterExpression`1--1"" above)
       IsLiftedLogical          = False
       IsReferenceComparison    = False
       NodeType                 = ExpressionType.Multiply
@@ -537,7 +537,7 @@ Object91 ("+ObjectTextDumperTestClass+@"+Object91, "+ObjectTextDumperTestAssembl
   Prop912                  = 3
   Prop913                  = 6
   Prop914                  = 7
-  InheritedObject90        = Object90 (see above)
+  InheritedObject90        = Object90 (see ""Object90--1"" above)
   Prop93                   = 4
   Prop94                   = 5";
 

@@ -41,8 +41,8 @@ namespace vm.Aspects.Diagnostics
 
         /// <summary>
         /// Gets or sets the format of the string which designates a cyclical reference - an object that has already been duped.
-        /// Parameters: 0 - type name, 1 - type namespace and 2 - assembly qualified name of the type.
-        /// Default: &quot;{0} (see above)&quot;
+        /// Parameters: 0 - type name, 1 - reference to the dumped object
+        /// Default: &quot;{0} (see {1} above)&quot;
         /// </summary>
         public static string CyclicalReference { get; set; } = Resources.CyclicalReferenceDesignator;
 

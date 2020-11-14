@@ -26,13 +26,12 @@ namespace vm.Aspects.Diagnostics.Implementation
         DumpAttribute DumpAttribute => DumpState.CurrentDumpAttribute!;
         MemberInfo MemberInfo => DumpState.CurrentMember!;
 
-        public void DumpSeenAlready()
+        public void DumpSeenAlready(string reference)
         {
             Writer.Write(
                 DumpFormat.CyclicalReference,
                 InstanceType.GetTypeName(),
-                InstanceType.Namespace,
-                InstanceType.AssemblyQualifiedName);
+                reference);
         }
 
         public void DumpType()

@@ -109,7 +109,7 @@ namespace vm.Aspects.Diagnostics
         /// <summary>
         /// Contains references to all dumped objects to avoid infinite dumping due to cyclical references.
         /// </summary>
-        internal HashSet<DumpedObject> DumpedObjects { get; } = new();
+        internal DumpedObjects DumpedObjects { get; } = new();
         #endregion
 
         #region Constructor
@@ -162,7 +162,7 @@ namespace vm.Aspects.Diagnostics
                 MaxDepth     = int.MinValue;
                 Settings     = InstanceSettings;
 
-                Debug.Assert(DumpedObjects.Count is 0);
+                Debug.Assert(DumpedObjects.IsEmpty);
 
                 DumpObject(value, dumpMetadata, dumpAttribute);
             }
@@ -273,14 +273,14 @@ The TextDumper threw an exception:
             }
             else
                 if (parentState is null)
-                    Writer.Indent(_indentLevel, _indentSize)
-                          .WriteLine();
+                Writer.Indent(_indentLevel, _indentSize)
+                      .WriteLine();
 
             if (!state.DumpedAlready())     // the object has been dumped already (block circular and repeating references)
             {
                 // this object will be dumped below.
                 // Add it to the dumped objects now so that if nested property refers back to it, it won't be dumped in an infinite recursive chain.
-                DumpedObjects.Add(new DumpedObject(obj, objectType));
+                DumpedObjects.Add(obj);
 
                 if (!state.DumpedCollection(classDumpMetadata.DumpAttribute, false))   // custom collections are dumped after dumping all other properties (see below*)
                 {

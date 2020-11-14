@@ -503,8 +503,8 @@
         <member name="P:vm.Aspects.Diagnostics.DumpFormat.CyclicalReference">
             <summary>
             Gets or sets the format of the string which designates a cyclical reference - an object that has already been duped.
-            Parameters: 0 - type name, 1 - type namespace and 2 - assembly qualified name of the type.
-            Default: &quot;{0} (see above)&quot;
+            Parameters: 0 - type name, 1 - reference to the dumped object
+            Default: &quot;{0} (see {1} above)&quot;
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.DumpFormat.Delegate">
@@ -862,46 +862,61 @@
             the method will only try to release the unmanaged resources.
             </remarks>
         </member>
-        <member name="T:vm.Aspects.Diagnostics.Implementation.DumpedObject">
+        <member name="T:vm.Aspects.Diagnostics.Implementation.DumpedObjects">
             <summary>
-            Stores pair of type and object which has already been dumped in the current call.
+            Register of the objects that have already been dumped.
             </summary>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)">
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpedObjects.Register">
             <summary>
-            Determines whether the specified <see cref="T:System.Object" /> is equal to this instance.
+            Gets the object register.
             </summary>
-            <param name="obj">The <see cref="T:System.Object" /> to compare with this instance.</param>
+            <value>
+            The register.
+            </value>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Implementation.DumpedObjects.IsEmpty">
+            <summary>
+            Gets a value indicating whether the register is empty.
+            </summary>
+            <value>
+              <c>true</c> if this instance is empty;
+              otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObjects.Add(System.Object)">
+            <summary>
+            Adds the specified object to the register.
+            </summary>
+            <param name="obj">
+            The object to register.
+            </param>
+            <returns>The reference identifier.</returns>
+        </member>
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObjects.Contains(System.Object)">
+            <summary>Determines whether this register contains the object.</summary>
+            <param name="obj">The object.</param>
             <returns>
-              <c>true</c> if the specified <see cref="T:System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+              <para>
+              If the object is registered (i.e. already dumped) the first element of the returned tuple will be
+              <c>true</c> and the second will be a unique reference identifier; otherwise the first element will be
+              <c>false</c> and the second - empty string.</para>
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.GetHashCode">
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObjects.Clear">
             <summary>
-            Returns a hash code for this instance.
+            Empties the register.
             </summary>
-            <returns>
-            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
-            </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.op_Equality(vm.Aspects.Diagnostics.Implementation.DumpedObject,vm.Aspects.Diagnostics.Implementation.DumpedObject)">
+        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObjects.GetReference(System.Object)">
             <summary>
-            Overloads the equals operator <c>==</c> to compare two values of this struct by invoking the <see cref="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)"/> method.
+            Generates a unique reference to the dumped already object.
             </summary>
-            <param name="left">The left operand.</param>
-            <param name="right">The right operand.</param>
+            <param name="obj">
+            The object.
+            </param>
             <returns>
-            <c>true</c> if the left operand is equal by value to the right operand; otherwise <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.op_Inequality(vm.Aspects.Diagnostics.Implementation.DumpedObject,vm.Aspects.Diagnostics.Implementation.DumpedObject)">
-            <summary>
-            Overloads the not equals operator <c>!=</c> to compare two values of this struct by invoking the <see cref="M:vm.Aspects.Diagnostics.Implementation.DumpedObject.Equals(System.Object)"/> method.
-            </summary>
-            <param name="left">The left operand.</param>
-            <param name="right">The right operand.</param>
-            <returns>
-            <c>true</c> if the left operand is not equal by value to the right operand; otherwise <c>false</c>.
+            A string that can be used as a ref. identifier.
             </returns>
         </member>
         <member name="F:vm.Aspects.Diagnostics.Implementation.DumpScript._script">
@@ -1473,7 +1488,7 @@
         </member>
         <member name="P:vm.Aspects.Diagnostics.Properties.Resources.CyclicalReferenceDesignator">
             <summary>
-              Looks up a localized string similar to {0} (see above).
+              Looks up a localized string similar to {0} (see &quot;{1}&quot; above).
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DelegateDumpFormat">
@@ -1499,6 +1514,11 @@
         <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DictionaryKeyEnd">
             <summary>
               Looks up a localized string similar to ] = .
+            </summary>
+        </member>
+        <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DumpedObjectReferenceFormat">
+            <summary>
+              Looks up a localized string similar to {0}--{1}.
             </summary>
         </member>
         <member name="P:vm.Aspects.Diagnostics.Properties.Resources.DumpReachedMaxDepth">

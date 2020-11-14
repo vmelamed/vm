@@ -134,13 +134,13 @@ namespace vm.Aspects.Diagnostics.Implementation
         ////    DumpFormat.CyclicalReference,
         ////    type.GetTypeName(),
         ////    type.Namespace,
-        ////    type.AssemblyQualifiedName);
-        Expression DumpSeenAlready() =>
+        ////    type.AssemblyQualifiedName,
+        ////    reference);
+        Expression DumpSeenAlready(string reference) =>
             Write(
                 DumpFormat.CyclicalReference,
                 Expression.Call(_miGetTypeName, _instanceType, _false),
-                Expression.Property(_instanceType, _piNamespace),
-                Expression.Property(_instanceType, _piAssemblyQualifiedName));
+                Expression.Constant(reference));
 
         // ============= Dumping types:
 
@@ -575,7 +575,6 @@ namespace vm.Aspects.Diagnostics.Implementation
             if (dumpAttribute.RecurseDump != ShouldDump.Skip)
             {
                 ParameterExpression item = Expression.Parameter(typeof(object), nameof(item));          // the iteration variable
-
                 var @break = Expression.Label();
 
                 Add

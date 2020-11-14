@@ -115,7 +115,7 @@ namespace vm.Aspects.Diagnostics.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} (see above).
+        ///   Looks up a localized string similar to {0} (see &quot;{1}&quot; above).
         /// </summary>
         internal static string CyclicalReferenceDesignator {
             get {
@@ -165,6 +165,15 @@ namespace vm.Aspects.Diagnostics.Properties {
         internal static string DictionaryKeyEnd {
             get {
                 return ResourceManager.GetString("DictionaryKeyEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}--{1}.
+        /// </summary>
+        internal static string DumpedObjectReferenceFormat {
+            get {
+                return ResourceManager.GetString("DumpedObjectReferenceFormat", resourceCulture);
             }
         }
         
