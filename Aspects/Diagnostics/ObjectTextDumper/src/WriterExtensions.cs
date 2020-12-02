@@ -530,9 +530,9 @@ namespace vm.Aspects.Diagnostics
             Action unindent)
         {
             var sequenceType = sequence.GetType();
-            (var keyType, var valueType) = sequenceType.DictionaryTypeArguments();
+            (var keyType, var valueType, var isDictionary) = sequenceType.DictionaryTypeArguments();
 
-            if (keyType == typeof(void))
+            if (!isDictionary)
                 return false;
 
             var piCount = sequenceType.GetProperty(nameof(ICollection.Count), BindingFlags.Instance|BindingFlags.Public);

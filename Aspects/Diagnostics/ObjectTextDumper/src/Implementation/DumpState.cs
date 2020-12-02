@@ -19,7 +19,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         public DumpState(
             ObjectTextDumper dumper,
             object instance,
-            ClassDumpMetadata classDumpMetadata,
+            in ClassDumpMetadata classDumpMetadata,
             bool buildScript)
             : this(dumper, instance, instance.GetType(), classDumpMetadata, classDumpMetadata.DumpAttribute, null, buildScript)
         {
@@ -31,7 +31,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             ObjectTextDumper dumper,
             object instance,
             Type superType,
-            ClassDumpMetadata classDumpMetadata,
+            in ClassDumpMetadata classDumpMetadata,
             DumpAttribute instanceDumpAttribute,
             DumpScript? dumpScript = null,
             bool buildScript = false)

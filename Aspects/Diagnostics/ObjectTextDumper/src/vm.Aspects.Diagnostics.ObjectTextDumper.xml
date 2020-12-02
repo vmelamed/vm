@@ -73,7 +73,7 @@
             </summary>
             <returns>A hash code for the current <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> instance.</returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Equality(vm.Aspects.Diagnostics.ClassDumpMetadata,vm.Aspects.Diagnostics.ClassDumpMetadata)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Equality(vm.Aspects.Diagnostics.ClassDumpMetadata@,vm.Aspects.Diagnostics.ClassDumpMetadata@)">
             <summary>
             Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> objects.
             </summary>
@@ -84,7 +84,7 @@
             otherwise <c>false</c>.
             </returns>
         </member>
-        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Inequality(vm.Aspects.Diagnostics.ClassDumpMetadata,vm.Aspects.Diagnostics.ClassDumpMetadata)">
+        <member name="M:vm.Aspects.Diagnostics.ClassDumpMetadata.op_Inequality(vm.Aspects.Diagnostics.ClassDumpMetadata@,vm.Aspects.Diagnostics.ClassDumpMetadata@)">
             <summary>
             Compares two <see cref="T:vm.Aspects.Diagnostics.ClassDumpMetadata"/> objects.
             </summary>
@@ -1314,7 +1314,7 @@
         </member>
         <member name="T:vm.Aspects.Diagnostics.Script">
             <summary>
-            Delegate Script is the type of the generated dump script that can be cached and reused.
+            Delegate Script is the type of a compiled dump script that can be cached and reused.
             </summary>
             <param name="instance">The instance being dumped.</param>
             <param name="classDumpMetadata">The data containing the metadata type and the dump attribute.</param>

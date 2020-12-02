@@ -5,7 +5,7 @@ namespace vm.Aspects.Diagnostics
     /// <summary>
     /// Encapsulates a pair of a class or struct metadata and the corresponding DumpAttribute.
     /// </summary>
-    internal struct ClassDumpMetadata : IEquatable<ClassDumpMetadata>
+    internal readonly struct ClassDumpMetadata : IEquatable<ClassDumpMetadata>
     {
         public ClassDumpMetadata(
             Type metadata,
@@ -16,6 +16,8 @@ namespace vm.Aspects.Diagnostics
                                 metadata.GetCustomAttribute<DumpAttribute>() ??
                                     DumpAttribute.Default;
         }
+
+        public static readonly ClassDumpMetadata Default = new(typeof(void));
 
         /// <summary>
         /// Gets or sets the metadata associated with a given class or struct (which may be the class or struct itself).
@@ -67,6 +69,10 @@ namespace vm.Aspects.Diagnostics
                     ? ShouldDump.Dump
                     : DumpAttribute.RecurseDump;
 
+        public bool IsEqualTo(in ClassDumpMetadata other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
+
+        public bool IsDefault() => IsEqualTo(Default);
+
         #region Identity rules
         #region IEquatable<ClassDumpMetadata> Members
         /// <summary>
@@ -76,7 +82,7 @@ namespace vm.Aspects.Diagnostics
         /// <returns>
         /// <c>true</c> if the values of the fields are equal; otherwise <c>false</c>.
         /// </returns>
-        public bool Equals(ClassDumpMetadata other) => Metadata == other.Metadata  &&  DumpAttribute == other.DumpAttribute;
+        public bool Equals(ClassDumpMetadata other) => IsEqualTo(other);
         #endregion
 
         /// <summary>
@@ -89,7 +95,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if <paramref name="obj"/> <i>is an instance of</i> <see cref="ClassDumpMetadata"/> and
         /// the fields values of the current object and the <paramref name="obj"/> are equal by value; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object? obj) => obj is ClassDumpMetadata clsDumpData && Equals(clsDumpData);
+        public override bool Equals(object? obj) => obj is ClassDumpMetadata clsDumpData && IsEqualTo(clsDumpData);
 
         /// <summary>
         /// Serves as a hash function for the objects of <see cref="ClassDumpMetadata"/> and its derived types.
@@ -106,7 +112,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator ==(ClassDumpMetadata left, ClassDumpMetadata right) => left.Equals(right);
+        public static bool operator ==(in ClassDumpMetadata left, in ClassDumpMetadata right) => left.IsEqualTo(right);
 
         /// <summary>
         /// Compares two <see cref="ClassDumpMetadata"/> objects.
@@ -117,7 +123,7 @@ namespace vm.Aspects.Diagnostics
         /// <c>true</c> if the objects are not considered to be equal (<see cref="M:IEquatable.Equals{ClassDumpMetadata}"/>);
         /// otherwise <c>false</c>.
         /// </returns>
-        public static bool operator !=(ClassDumpMetadata left, ClassDumpMetadata right) => !(left==right);
+        public static bool operator !=(in ClassDumpMetadata left, in ClassDumpMetadata right) => !(left==right);
         #endregion
     }
 }

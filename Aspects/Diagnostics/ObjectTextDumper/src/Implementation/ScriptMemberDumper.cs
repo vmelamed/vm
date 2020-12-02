@@ -70,7 +70,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             DumpAttribute dumpAttribute,
             MemberInfo? mi)
         {
-            if (sequence.GetType().DictionaryTypeArguments().keyType == typeof(void))
+            if (!sequence.GetType().DictionaryTypeArguments().isDictionary)
                 return false;
 
             if (mi is null)

@@ -297,22 +297,22 @@ The TextDumper threw an exception:
         /// </summary>
         /// <param name="sequenceType">Type of the sequence.</param>
         /// <returns>Type[] - the types of the key (index 0) and the value (index 1) or <see langword="null"/> if <paramref name="sequenceType"/> is not generic dictionary.</returns>
-        public static (Type keyType, Type valueType) DictionaryTypeArguments(this Type sequenceType)
+        public static (Type keyType, Type valueType, bool isDictionary) DictionaryTypeArguments(this Type sequenceType)
         {
             var dictionaryType = Array.Find(sequenceType.GetInterfaces(),
                                             t => t.IsGenericType  &&
                                                  t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
 
             if (dictionaryType == null)
-                return (typeof(void), typeof(void));
+                return (typeof(void), typeof(void), false);
 
             var typeArguments = dictionaryType.GetGenericArguments();
 
             Debug.Assert(typeArguments.Length == 2);
 
             return typeArguments[0].IsBasicType()
-                    ? (typeArguments[0], typeArguments[1])
-                    : (typeof(void), typeof(void));
+                    ? (typeArguments[0], typeArguments[1], true)
+                    : (typeof(void), typeof(void), false);
         }
 
         internal static int GetMaxToDump(

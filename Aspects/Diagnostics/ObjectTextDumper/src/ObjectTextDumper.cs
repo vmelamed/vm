@@ -15,7 +15,7 @@ using vm.Aspects.Diagnostics.Properties;
 namespace vm.Aspects.Diagnostics
 {
     /// <summary>
-    /// Delegate Script is the type of the generated dump script that can be cached and reused.
+    /// Delegate Script is the type of a compiled dump script that can be cached and reused.
     /// </summary>
     /// <param name="instance">The instance being dumped.</param>
     /// <param name="classDumpMetadata">The data containing the metadata type and the dump attribute.</param>
@@ -23,7 +23,7 @@ namespace vm.Aspects.Diagnostics
     /// <param name="dumpState">The current state of the dump.</param>
     internal delegate void Script(
         object instance,
-        ClassDumpMetadata classDumpMetadata,
+        in ClassDumpMetadata classDumpMetadata,
         ObjectTextDumper dumper,
         DumpState dumpState);
 
@@ -255,7 +255,7 @@ The TextDumper threw an exception:
             if (buildScript)
             {
                 // does the script exist or is it in process of building
-                if (DumpScriptCache.TryFind(this, obj, classDumpMetadata, out script))
+                if (DumpScriptCache.TryFind(this, obj, in classDumpMetadata, out script))
                 {
                     if (script != null)
                     {
@@ -269,7 +269,7 @@ The TextDumper threw an exception:
                     return;
                 }
 
-                DumpScriptCache.BuildingScriptFor(this, objectType, classDumpMetadata);
+                DumpScriptCache.BuildingScriptFor(this, objectType, in classDumpMetadata);
             }
             else
                 if (parentState is null)
@@ -307,7 +307,7 @@ The TextDumper threw an exception:
             }
 
             if (buildScript  &&  state.DumpScript is not null)
-                script = DumpScriptCache.Add(this, objectType, classDumpMetadata, state.DumpScript);
+                script = DumpScriptCache.Add(this, objectType, in classDumpMetadata, state.DumpScript);
 
             if (!buildScript)
             {

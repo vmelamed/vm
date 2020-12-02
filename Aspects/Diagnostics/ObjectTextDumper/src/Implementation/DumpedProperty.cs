@@ -2,7 +2,7 @@
 
 namespace vm.Aspects.Diagnostics.Implementation
 {
-    struct DumpedProperty : IEquatable<DumpedProperty>
+    readonly struct DumpedProperty : IEquatable<DumpedProperty>
     {
         public readonly object Instance;
         public readonly string Property;
@@ -20,18 +20,20 @@ namespace vm.Aspects.Diagnostics.Implementation
 
         #region Identity rules implementation.
         #region IEquatable<DumpedProperty> Members
-        public bool Equals(DumpedProperty other) =>
-            Instance.Equals(other.Instance)  &&
-            Property.Equals(other.Property, StringComparison.Ordinal);
+        public bool Equals(DumpedProperty other) => IsEqualTo(other);
         #endregion
 
-        public override bool Equals(object? obj) => obj is DumpedProperty dp  &&  Equals(dp);
+        public bool IsEqualTo(in DumpedProperty other) =>
+            Instance.Equals(other.Instance)  &&
+            Property.Equals(other.Property, StringComparison.Ordinal);
+
+        public override bool Equals(object? obj) => obj is DumpedProperty dp  &&  IsEqualTo(dp);
 
         public override int GetHashCode() => HashCode.Combine(Instance, Property);
 
-        public static bool operator ==(DumpedProperty left, DumpedProperty right) => left.Equals(right);
+        public static bool operator ==(in DumpedProperty left, in DumpedProperty right) => left.IsEqualTo(right);
 
-        public static bool operator !=(DumpedProperty left, DumpedProperty right) => !(left==right);
+        public static bool operator !=(in DumpedProperty left, in DumpedProperty right) => !(left==right);
         #endregion
     }
 }

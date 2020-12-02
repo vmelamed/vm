@@ -14,7 +14,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         {
             @break ??= Expression.Label();
 
-            ParameterExpression enumerator = Expression.Parameter(typeof(IDictionaryEnumerator), nameof(enumerator));
+            ParameterExpression enumerator = Expression.Variable(typeof(IDictionaryEnumerator), nameof(enumerator));
 
             return Expression.Block(
                 // IDictionaryEnumerator enumerator;
@@ -56,7 +56,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             var piKey           = typeof(KeyValuePair<TKey, TValue>).GetProperty(nameof(KeyValuePair<TKey, TValue>.Key))!;
             var piValue         = typeof(KeyValuePair<TKey, TValue>).GetProperty(nameof(KeyValuePair<TKey, TValue>.Value))!;
 
-            ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator<KeyValuePair<TKey, TValue>>), nameof(enumerator));
+            ParameterExpression enumerator = Expression.Variable(typeof(IEnumerator<KeyValuePair<TKey, TValue>>), nameof(enumerator));
 
             return Expression.Block(
                 // IDictionaryEnumerator enumerator;
@@ -92,7 +92,7 @@ namespace vm.Aspects.Diagnostics.Implementation
         {
             @break ??= Expression.Label();
 
-            ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator), nameof(enumerator));
+            ParameterExpression enumerator = Expression.Variable(typeof(IEnumerator), nameof(enumerator));
 
             return Expression.Block(
                         // IDictionaryEnumerator enumerator;
@@ -129,7 +129,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             var miMoveNext      = typeof(IEnumerable<T>).GetMethod(nameof(IEnumerator<T>.MoveNext))!;
             var piCurrent       = typeof(IEnumerable<T>).GetProperty(nameof(IEnumerator<T>.Current))!;
 
-            ParameterExpression enumerator = Expression.Parameter(typeof(IEnumerator<T>), nameof(enumerator));
+            ParameterExpression enumerator = Expression.Variable(typeof(IEnumerator<T>), nameof(enumerator));
 
             return Expression.Block(
                 // IDictionaryEnumerator enumerator;

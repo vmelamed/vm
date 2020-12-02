@@ -7,11 +7,11 @@ namespace vm.Aspects.Diagnostics.Implementation
 {
     static class DumpScriptCache
     {
-        struct ScriptLookup : IEquatable<ScriptLookup>
+        readonly struct ScriptLookup : IEquatable<ScriptLookup>
         {
             public ScriptLookup(
                 Type objectType,
-                ClassDumpMetadata classDumpMetadata,
+                in ClassDumpMetadata classDumpMetadata,
                 ObjectTextDumper objectTextDumper)
             {
                 ObjectType             = objectType;
@@ -28,20 +28,22 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             public BindingFlags FieldsBindingFlags { get; }
 
-            #region Identity rules implementation.
-            #region IEquatable<ScriptLookup> Members
-            public bool Equals(ScriptLookup other) =>
+            public bool IsEqualTo(in ScriptLookup other) =>
                 ObjectType             == other.ObjectType              &&
                 ClassDumpMetadata      == other.ClassDumpMetadata       &&
                 PropertiesBindingFlags == other.PropertiesBindingFlags  &&
                 FieldsBindingFlags     == other.FieldsBindingFlags;
+
+            #region Identity rules implementation.
+            #region IEquatable<ScriptLookup> Members
+            public bool Equals(ScriptLookup other) => IsEqualTo(other);
             #endregion
 
-            public override bool Equals(object? obj) => obj is ScriptLookup sl && Equals(sl);
+            public override bool Equals(object? obj) => obj is ScriptLookup sl && IsEqualTo(sl);
 
-            public static bool operator ==(ScriptLookup left, ScriptLookup right) => left.Equals(right);
+            public static bool operator ==(in ScriptLookup left, in ScriptLookup right) => left.IsEqualTo(right);
 
-            public static bool operator !=(ScriptLookup left, ScriptLookup right) => !(left == right);
+            public static bool operator !=(in ScriptLookup left, in ScriptLookup right) => !(left == right);
 
             public override int GetHashCode() =>
                 HashCode.Combine(ObjectType, ClassDumpMetadata, PropertiesBindingFlags, FieldsBindingFlags);
@@ -57,10 +59,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static bool TryFind(
             ObjectTextDumper objectTextDumper,
             object obj,
-            ClassDumpMetadata classDumpMetadata,
+            in ClassDumpMetadata classDumpMetadata,
             out Script? script)
         {
-            var lookup = new ScriptLookup(obj.GetType(), classDumpMetadata, objectTextDumper);
+            var lookup = new ScriptLookup(obj.GetType(), in classDumpMetadata, objectTextDumper);
 
             using var _ = new ReaderSlimSync(_sync);
 
@@ -76,10 +78,10 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static Script Add(
             ObjectTextDumper objectTextDumper,
             Type objectType,
-            ClassDumpMetadata classDumpMetadata,
+            in ClassDumpMetadata classDumpMetadata,
             DumpScript _dumpScript)
         {
-            var lookup = new ScriptLookup(objectType, classDumpMetadata, objectTextDumper);
+            var lookup = new ScriptLookup(objectType, in classDumpMetadata, objectTextDumper);
             var script = _dumpScript.Compile();
 
             using var _ = new WriterSlimSync(_sync);
@@ -101,11 +103,11 @@ namespace vm.Aspects.Diagnostics.Implementation
         internal static void BuildingScriptFor(
             ObjectTextDumper objectTextDumper,
             Type objectType,
-            ClassDumpMetadata classDumpMetadata)
+            in ClassDumpMetadata classDumpMetadata)
         {
             using var _ = new WriterSlimSync(_sync);
 
-            _buildingNow.Add(new ScriptLookup(objectType, classDumpMetadata, objectTextDumper));
+            _buildingNow.Add(new ScriptLookup(objectType, in classDumpMetadata, objectTextDumper));
         }
     }
 }

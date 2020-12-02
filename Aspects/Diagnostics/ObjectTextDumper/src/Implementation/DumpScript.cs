@@ -13,12 +13,19 @@ namespace vm.Aspects.Diagnostics.Implementation
 {
     partial class DumpScript
     {
+        static void Nop(in ClassDumpMetadata _) { }
+
+        static readonly Type _inClassDumpMetadataType = typeof(DumpScript)
+                                                            .GetMethod(nameof(Nop), BindingFlags.NonPublic|BindingFlags.Static)!
+                                                            .GetParameters()[0]
+                                                            .ParameterType;
+
         // parameters to the dump script:
         readonly ParameterExpression _instance;
         readonly ParameterExpression _instanceType            = Expression.Parameter(typeof(Type),              nameof(_instanceType));
         readonly ParameterExpression _instanceAsObject        = Expression.Parameter(typeof(object),            nameof(_instanceAsObject));
         readonly ParameterExpression _instanceDumpAttribute   = Expression.Parameter(typeof(DumpAttribute),     nameof(_instanceDumpAttribute));
-        readonly ParameterExpression _classDumpMetadata       = Expression.Parameter(typeof(ClassDumpMetadata), nameof(_classDumpMetadata));
+        readonly ParameterExpression _classDumpMetadata       = Expression.Parameter(_inClassDumpMetadataType,  nameof(_classDumpMetadata));
         readonly ParameterExpression _dumper                  = Expression.Parameter(typeof(ObjectTextDumper),  nameof(_dumper));
         readonly ParameterExpression _dumpState               = Expression.Parameter(typeof(DumpState),         nameof(_dumpState));
         readonly ParameterExpression _tempBool                = Expression.Parameter(typeof(bool),              nameof(_tempBool));
@@ -330,11 +337,11 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return Expression.Block(EndScriptSegment());
             }
 
-            ParameterExpression key         = Expression.Parameter(typeof(string), nameof(key));          // the current key-value item
-            ParameterExpression value       = Expression.Parameter(typeof(object), nameof(value));        // the current key-value item
-            ParameterExpression left        = Expression.Parameter(typeof(int), nameof(left));            // how many items left to be dumped?
-            ParameterExpression max         = Expression.Parameter(typeof(int), nameof(max));             // max items to dump
-            ParameterExpression count       = Expression.Parameter(typeof(int), nameof(count));           // count of items
+            ParameterExpression key         = Expression.Variable(typeof(string), nameof(key));           // the current key-value item
+            ParameterExpression value       = Expression.Variable(typeof(object), nameof(value));         // the current key-value item
+            ParameterExpression left        = Expression.Variable(typeof(int), nameof(left));             // how many items left to be dumped?
+            ParameterExpression max         = Expression.Variable(typeof(int), nameof(max));              // max items to dump
+            ParameterExpression count       = Expression.Variable(typeof(int), nameof(count));            // count of items
 
             var @break = Expression.Label();
 
@@ -431,10 +438,10 @@ namespace vm.Aspects.Diagnostics.Implementation
                 return Expression.Block(EndScriptSegment());
             }
 
-            ParameterExpression kv    = Expression.Parameter(typeof(DictionaryEntry), nameof(kv));  // the current key-value item
-            ParameterExpression left  = Expression.Parameter(typeof(int), nameof(left));            // how many items left to be dumped?
-            ParameterExpression max   = Expression.Parameter(typeof(int), nameof(max));             // max items to dump
-            ParameterExpression count = Expression.Parameter(typeof(int), nameof(count));           // count of items
+            ParameterExpression kv    = Expression.Variable(typeof(DictionaryEntry), nameof(kv));   // the current key-value item
+            ParameterExpression left  = Expression.Variable(typeof(int), nameof(left));             // how many items left to be dumped?
+            ParameterExpression max   = Expression.Variable(typeof(int), nameof(max));              // max items to dump
+            ParameterExpression count = Expression.Variable(typeof(int), nameof(count));            // count of items
 
             var @break = Expression.Label();
 
@@ -533,7 +540,7 @@ namespace vm.Aspects.Diagnostics.Implementation
             DumpAttribute dumpAttribute,
             Expression? expressionCount = null)
         {
-            ParameterExpression sequenceType = Expression.Parameter(typeof(Type), nameof(sequenceType));    // the type of the sequence
+            ParameterExpression sequenceType = Expression.Variable(typeof(Type), nameof(sequenceType));     // the type of the sequence
 
             ////var elementsType = sequenceType.IsArray
             ////                        ? new Type[] { sequenceType.GetElementType() }
@@ -569,12 +576,12 @@ namespace vm.Aspects.Diagnostics.Implementation
                 )
             );
 
-            ParameterExpression left = Expression.Parameter(typeof(int), nameof(left));             // how many items are left to be dumped?
-            ParameterExpression max  = Expression.Parameter(typeof(int), nameof(max));              // max items to dump
+            ParameterExpression left = Expression.Variable(typeof(int), nameof(left));              // how many items are left to be dumped?
+            ParameterExpression max  = Expression.Variable(typeof(int), nameof(max));               // max items to dump
 
             if (dumpAttribute.RecurseDump != ShouldDump.Skip)
             {
-                ParameterExpression item = Expression.Parameter(typeof(object), nameof(item));          // the iteration variable
+                ParameterExpression item = Expression.Variable(typeof(object), nameof(item));           // the iteration variable
                 var @break = Expression.Label();
 
                 Add
@@ -616,8 +623,8 @@ namespace vm.Aspects.Diagnostics.Implementation
 
             var dumpingLoop = EndScriptSegment();
 
-            ParameterExpression isArray = Expression.Parameter(typeof(bool), nameof(isArray));         // flag that the sequence is an array of items not bytes
-            ParameterExpression bytes   = Expression.Parameter(typeof(byte[]), nameof(bytes));         // collection as byte[];
+            ParameterExpression isArray = Expression.Variable(typeof(bool), nameof(isArray));          // flag that the sequence is an array of items not bytes
+            ParameterExpression bytes   = Expression.Variable(typeof(byte[]), nameof(bytes));          // collection as byte[];
 
             //// if (ReferenceEqual(collection,null)) Writer.Write("<null>"); else {
             return Expression.Block
@@ -773,9 +780,9 @@ namespace vm.Aspects.Diagnostics.Implementation
                         : typeof(MemberInfo).IsAssignableFrom(type)
                             ? DumpedMemberInfo(mi)
                             : typeof(IEnumerable).IsAssignableFrom(type)  &&  (type.IsArray  ||  type.IsFromSystem())
-                                ? type.DictionaryTypeArguments().keyType == typeof(void)
-                                    ? DumpedCollection(mi, dumpAttribute)
-                                    : DumpedDictionary(mi, dumpAttribute)
+                                ? type.DictionaryTypeArguments().isDictionary
+                                    ? DumpedDictionary(mi, dumpAttribute)
+                                    : DumpedCollection(mi, dumpAttribute)
                                 : DumpObject(mi, null, !dumpAttribute.IsDefaultAttribute()
                                                             ? (Expression)_tempDumpAttribute
                                                             : _nullDumpAttribute);

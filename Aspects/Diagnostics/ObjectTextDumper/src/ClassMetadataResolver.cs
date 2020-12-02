@@ -177,7 +177,7 @@ namespace vm.Aspects.Diagnostics
 
         static void AddClassDumpMetadata(
             Type type,
-            ClassDumpMetadata classDumpMetadata,
+            in ClassDumpMetadata classDumpMetadata,
             bool replace)
         {
             using var _ = new WriterSlimSync(_lock);
